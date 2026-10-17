@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 import { FormMessage } from '../components/FormMessage';
 import { forgotPasswordService, resetPasswordService } from '../services/authService';
 import { normalizeText } from '../utils/normalizeText';
-import logoImg from '../assets/logo-girasoles.png';
+import { AuthLayout } from '../layouts/AuthLayout';
 
 interface ForgotPasswordPageProps {
   onBackToLogin: () => void;
@@ -91,48 +91,13 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#FAF7F4]">
-      {/* Panel Izquierdo Figma */}
-      <div className="hidden md:flex md:w-[48%] lg:w-[45%] bg-[#482813] text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden shrink-0 select-none">
-        <div className="absolute -bottom-28 -right-28 w-[380px] h-[380px] rounded-full border-[36px] border-[#5A351D]/35 pointer-events-none" />
-        <div className="absolute -bottom-52 -right-52 w-[520px] h-[520px] rounded-full border-[48px] border-[#5A351D]/20 pointer-events-none" />
-
-        <div className="relative z-10">
-          <div className="bg-white p-2.5 rounded-2xl w-fit shadow-md">
-            <img src={logoImg} alt="Girasoles Restaurante" className="h-16 w-auto object-contain" />
-          </div>
-        </div>
-
-        <div className="relative z-10 my-auto py-12">
-          <p className="text-[#E5A358] text-xs font-bold tracking-widest uppercase mb-4">
-            SISTEMA DE RESTAURANTE
-          </p>
-          <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.12] font-brand-serif mb-6">
-            Gestión simple.<br />
-            Servicio<br />
-            excepcional.
-          </h1>
-          <p className="text-[#D9C7BC] text-sm lg:text-base leading-relaxed max-w-sm">
-            Una plataforma segura para que cada integrante del equipo acceda a las herramientas que necesita.
-          </p>
-        </div>
-
-        <div className="relative z-10 pt-4">
-          <p className="text-[#A88B79] text-[11px] font-semibold tracking-wider uppercase">
-            SEGURIDAD Y CONTROL PARA TODO TU EQUIPO
-          </p>
-        </div>
-      </div>
-
-      {/* Panel Derecho Figma */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16 overflow-y-auto">
-        <div className="w-full max-w-[420px]">
-          {/* Volver al inicio de sesión (Vega 1.png) */}
-          <button
-            type="button"
-            onClick={onBackToLogin}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#482813] hover:text-[#D35400] mb-6 transition-colors"
-          >
+    <AuthLayout>
+      {/* Volver al inicio de sesión (Vega 1.png) */}
+      <button
+        type="button"
+        onClick={onBackToLogin}
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#482813] hover:text-[#D35400] mb-4 sm:mb-6 transition-colors"
+      >
             <ArrowLeft className="w-3.5 h-3.5" />
             Volver al inicio de sesión
           </button>
@@ -265,9 +230,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
               </Button>
             </div>
           )}
-        </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 };
 

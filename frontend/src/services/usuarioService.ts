@@ -1,3 +1,4 @@
+import { apiClient } from './apiClient';
 import type {
   UsuarioItem,
   PaginacionUsuarios,
@@ -13,13 +14,6 @@ export interface ApiResponse<T> {
   data?: T;
   errors?: Record<string, string>;
   detail?: string;
-}
-
-function getAuthHeaders(token: string) {
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`
-  };
 }
 
 export async function getUsuariosService(
@@ -40,63 +34,19 @@ export async function getUsuariosService(
   if (params.tamano) query.append('tamano', String(params.tamano));
 
   const url = `${BASE_URL}?${query.toString()}`;
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: getAuthHeaders(token)
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'No se pudo cargar la lista de usuarios. Intente nuevamente.';
-    const err: any = new Error(errorBody.message || defaultMsg);
-    err.status = response.status;
-    throw err;
-  }
-
-  const data: PaginacionUsuarios = await response.json();
-  return data;
+  return apiClient.get<PaginacionUsuarios>(url, token);
 }
 
 export async function getUsuarioByIdService(id: string, token: string): Promise<UsuarioItem> {
-  const response = await fetch(`${BASE_URL}/${id}`, {
-    method: 'GET',
-    headers: getAuthHeaders(token)
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'Usuario no encontrado.';
-    const err: any = new Error(errorBody.message || defaultMsg);
-    err.status = response.status;
-    throw err;
-  }
-
-  return await response.json();
+  return apiClient.get<UsuarioItem>(`${BASE_URL}/${id}`, token);
 }
 
-export async function crearUsuarioService(data: CrearUsuarioData, token: string): Promise<{ user: UsuarioItem; message: string }> {
-  const response = await fetch(BASE_URL, {
-    method: 'POST',
-    headers: getAuthHeaders(token),
-    body: JSON.stringify(data)
-  });
-
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok || !body.success) {
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'No se pudo completar la operación. Intente nuevamente.';
-    const err: any = new Error(body.message || defaultMsg);
-    err.status = response.status;
-    err.errors = body.errors;
-    throw err;
-  }
-
-  return { user: body.data, message: body.message };
+export async function crearUsuarioService(
+  data: CrearUsuarioData,
+  token: string
+): Promise<{ user: UsuarioItem; message: string }> {
+  const body = await apiClient.post<ApiResponse<UsuarioItem>>(BASE_URL, data, token);
+  return { user: body.data!, message: body.message };
 }
 
 export async function actualizarUsuarioService(
@@ -104,24 +54,8 @@ export async function actualizarUsuarioService(
   data: ActualizarUsuarioData,
   token: string
 ): Promise<{ user: UsuarioItem; message: string }> {
-  const response = await fetch(`${BASE_URL}/${id}`, {
-    method: 'PUT',
-    headers: getAuthHeaders(token),
-    body: JSON.stringify(data)
-  });
-
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok || !body.success) {
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'No se pudo completar la operación. Intente nuevamente.';
-    const err: any = new Error(body.message || defaultMsg);
-    err.status = response.status;
-    err.errors = body.errors;
-    throw err;
-  }
-
-  return { user: body.data, message: body.message };
+  const body = await apiClient.put<ApiResponse<UsuarioItem>>(`${BASE_URL}/${id}`, data, token);
+  return { user: body.data!, message: body.message };
 }
 
 export async function cambiarEstadoUsuarioService(
@@ -129,40 +63,11 @@ export async function cambiarEstadoUsuarioService(
   activo: boolean,
   token: string
 ): Promise<{ user: UsuarioItem; message: string }> {
-  const response = await fetch(`${BASE_URL}/${id}/estado`, {
-    method: 'PATCH',
-    headers: getAuthHeaders(token),
-    body: JSON.stringify({ activo })
-  });
-
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok || !body.success) {
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'No se pudo completar la operación. Intente nuevamente.';
-    const err: any = new Error(body.message || defaultMsg);
-    err.status = response.status;
-    throw err;
-  }
-
-  return { user: body.data, message: body.message };
+  const body = await apiClient.patch<ApiResponse<UsuarioItem>>(`${BASE_URL}/${id}/estado`, { activo }, token);
+  return { user: body.data!, message: body.message };
 }
 
 export async function eliminarUsuarioService(id: string, token: string): Promise<string> {
-  const response = await fetch(`${BASE_URL}/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders(token)
-  });
-
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok || (body.success !== undefined && !body.success)) {
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'No se pudo completar la operación. Intente nuevamente.';
-    const err: any = new Error(body.message || defaultMsg);
-    err.status = response.status;
-    throw err;
-  }
-
+  const body = await apiClient.delete<ApiResponse<any>>(`${BASE_URL}/${id}`, token);
   return body.message || 'Usuario eliminado correctamente.';
 }

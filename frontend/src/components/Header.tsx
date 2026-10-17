@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { KeyRound, LogOut, ChevronDown, Menu } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 
+import { obtenerIniciales } from '../utils/avatar';
+
 interface HeaderProps {
   session?: UserSession | null;
   onLogout?: () => void;
@@ -32,16 +34,6 @@ export const Header: React.FC<HeaderProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Obtener iniciales del nombre
-  const obtenerIniciales = (nombre?: string) => {
-    if (!nombre) return 'US';
-    const partes = nombre.trim().split(/\s+/);
-    if (partes.length >= 2) {
-      return (partes[0][0] + partes[1][0]).toUpperCase();
-    }
-    return nombre.substring(0, 2).toUpperCase();
-  };
 
   const esAdmin = session?.rol === 'Administrador';
 
