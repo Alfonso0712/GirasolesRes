@@ -24,44 +24,44 @@ public static class DatabaseSeeder
                 var usuarios = new List<Usuario>
                 {
                     new(
-                        nombreUsuario: "admin",
-                        nombreCompleto: "Administradora General",
-                        correo: "admin@girasoles.com",
-                        passwordHash: passwordHash,
-                        rol: RolUsuario.Administrador,
-                        activo: true
+                        usuUsuario: "admin",
+                        usuNombre: "Administradora General",
+                        usuCorreo: "admin@girasoles.com",
+                        usuPasswordHash: passwordHash,
+                        usuRol: RolUsuario.Administrador,
+                        usuActivo: true
                     ),
                     new(
-                        nombreUsuario: "atorres",
-                        nombreCompleto: "Ana Torres",
-                        correo: "atorres@girasoles.com",
-                        passwordHash: passwordHash,
-                        rol: RolUsuario.Cajero,
-                        activo: true
+                        usuUsuario: "atorres",
+                        usuNombre: "Ana Torres",
+                        usuCorreo: "atorres@girasoles.com",
+                        usuPasswordHash: passwordHash,
+                        usuRol: RolUsuario.Cajero,
+                        usuActivo: true
                     ),
                     new(
-                        nombreUsuario: "lperez",
-                        nombreCompleto: "Luis Pérez",
-                        correo: "lperez@girasoles.com",
-                        passwordHash: passwordHash,
-                        rol: RolUsuario.Mozo,
-                        activo: true
+                        usuUsuario: "lperez",
+                        usuNombre: "Luis Pérez",
+                        usuCorreo: "lperez@girasoles.com",
+                        usuPasswordHash: passwordHash,
+                        usuRol: RolUsuario.Mozo,
+                        usuActivo: true
                     ),
                     new(
-                        nombreUsuario: "msoto",
-                        nombreCompleto: "María Soto",
-                        correo: "msoto@girasoles.com",
-                        passwordHash: passwordHash,
-                        rol: RolUsuario.Cocinero,
-                        activo: true
+                        usuUsuario: "msoto",
+                        usuNombre: "María Soto",
+                        usuCorreo: "msoto@girasoles.com",
+                        usuPasswordHash: passwordHash,
+                        usuRol: RolUsuario.Cocinero,
+                        usuActivo: true
                     ),
                     new(
-                        nombreUsuario: "crojas",
-                        nombreCompleto: "Carlos Rojas (Inactivo)",
-                        correo: "crojas@girasoles.com",
-                        passwordHash: passwordHash,
-                        rol: RolUsuario.Mozo,
-                        activo: false
+                        usuUsuario: "crojas",
+                        usuNombre: "Carlos Rojas (Inactivo)",
+                        usuCorreo: "crojas@girasoles.com",
+                        usuPasswordHash: passwordHash,
+                        usuRol: RolUsuario.Mozo,
+                        usuActivo: false
                     )
                 };
 
@@ -125,7 +125,7 @@ public static class DatabaseSeeder
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error al ejecutar el sembrado inicial de la base de datos.");
+            logger.LogError(ex, "Ocurrió un error al ejecutar el sembrado de base de datos.");
             throw;
         }
     }

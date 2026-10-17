@@ -25,98 +25,98 @@ public class GirasolesDbContext : DbContext
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.ToTable("usuarios");
-            entity.HasKey(u => u.Id);
-            entity.Property(u => u.Id).HasColumnName("id_usuario");
-            entity.Property(u => u.NombreUsuario).HasColumnName("nom_usuario").HasMaxLength(30).IsRequired();
-            entity.HasIndex(u => u.NombreUsuario).IsUnique();
-            entity.Property(u => u.NombreCompleto).HasColumnName("nom_completo").HasMaxLength(150).IsRequired();
-            entity.Property(u => u.Correo).HasColumnName("cor_usuario").HasMaxLength(100).IsRequired(false);
-            entity.HasIndex(u => u.Correo);
-            entity.Property(u => u.PasswordHash).HasColumnName("has_usuario").IsRequired();
-            entity.Property(u => u.Rol).HasColumnName("rol_usuario").IsRequired();
-            entity.Property(u => u.Activo).HasColumnName("est_usuario").IsRequired().HasDefaultValue(true);
-            entity.Property(u => u.IntentosFallidos).HasColumnName("int_fallidos").IsRequired().HasDefaultValue(0);
-            entity.Property(u => u.BloqueadoHastaUtc).HasColumnName("bloq_hasta_utc");
-            entity.Property(u => u.FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
-            entity.Property(u => u.FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+            entity.HasKey(u => u.Id_Usuario);
+            entity.Property(u => u.Id_Usuario).HasColumnName("id_usuario");
+            entity.Property(u => u.Usu_Nombre).HasColumnName("nom_completo").HasMaxLength(150).IsRequired();
+            entity.Property(u => u.Usu_Usuario).HasColumnName("nom_usuario").HasMaxLength(30).IsRequired();
+            entity.HasIndex(u => u.Usu_Usuario).IsUnique();
+            entity.Property(u => u.Usu_Correo).HasColumnName("cor_usuario").HasMaxLength(100).IsRequired(false);
+            entity.HasIndex(u => u.Usu_Correo);
+            entity.Property(u => u.Usu_PasswordHash).HasColumnName("has_usuario").IsRequired();
+            entity.Property(u => u.Usu_Rol).HasColumnName("rol_usuario").IsRequired();
+            entity.Property(u => u.Usu_Activo).HasColumnName("est_usuario").IsRequired().HasDefaultValue(true);
+            entity.Property(u => u.Usu_IntentosFallidos).HasColumnName("int_fallidos").IsRequired().HasDefaultValue(0);
+            entity.Property(u => u.Usu_BloqueadoHastaUtc).HasColumnName("bloq_hasta_utc");
+            entity.Property(u => u.Usu_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(u => u.Usu_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
         });
 
         modelBuilder.Entity<RegistroIngreso>(entity =>
         {
             entity.ToTable("registros_ingreso");
-            entity.HasKey(r => r.Id);
-            entity.Property(r => r.Id).HasColumnName("id_registro");
-            entity.Property(r => r.NombreUsuario).HasColumnName("nom_usuario").HasMaxLength(50).IsRequired();
-            entity.Property(r => r.FechaHoraUtc).HasColumnName("fec_hora_utc").IsRequired();
-            entity.Property(r => r.Exitoso).HasColumnName("es_exitoso").IsRequired();
-            entity.Property(r => r.DetalleResultado).HasColumnName("det_resultado").HasMaxLength(250);
-            entity.Property(r => r.DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+            entity.HasKey(r => r.Id_Registro);
+            entity.Property(r => r.Id_Registro).HasColumnName("id_registro");
+            entity.Property(r => r.Reg_NombreUsuario).HasColumnName("nom_usuario").HasMaxLength(50).IsRequired();
+            entity.Property(r => r.Reg_FechaHoraUtc).HasColumnName("fec_hora_utc").IsRequired();
+            entity.Property(r => r.Reg_Exitoso).HasColumnName("es_exitoso").IsRequired();
+            entity.Property(r => r.Reg_DetalleResultado).HasColumnName("det_resultado").HasMaxLength(250);
+            entity.Property(r => r.Reg_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });
 
         modelBuilder.Entity<CodigoRecuperacion>(entity =>
         {
             entity.ToTable("codigos_recuperacion");
-            entity.HasKey(c => c.Id);
-            entity.Property(c => c.Id).HasColumnName("id_codigo");
-            entity.Property(c => c.Correo).HasColumnName("cor_usuario").HasMaxLength(100).IsRequired();
-            entity.HasIndex(c => c.Correo);
-            entity.Property(c => c.Codigo).HasColumnName("cod_recuperacion").HasMaxLength(6).IsRequired();
-            entity.Property(c => c.FechaExpiracionUtc).HasColumnName("fec_expiracion_utc").IsRequired();
-            entity.Property(c => c.Usado).HasColumnName("es_usado").IsRequired();
-            entity.Property(c => c.FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.HasKey(c => c.Id_Codigo);
+            entity.Property(c => c.Id_Codigo).HasColumnName("id_codigo");
+            entity.Property(c => c.Cod_Correo).HasColumnName("cor_usuario").HasMaxLength(100).IsRequired();
+            entity.HasIndex(c => c.Cod_Correo);
+            entity.Property(c => c.Cod_Codigo).HasColumnName("cod_recuperacion").HasMaxLength(6).IsRequired();
+            entity.Property(c => c.Cod_FechaExpiracionUtc).HasColumnName("fec_expiracion_utc").IsRequired();
+            entity.Property(c => c.Cod_Usado).HasColumnName("es_usado").IsRequired();
+            entity.Property(c => c.Cod_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
         });
 
         modelBuilder.Entity<AuditoriaUsuario>(entity =>
         {
             entity.ToTable("auditorias_usuario");
-            entity.HasKey(a => a.Id);
-            entity.Property(a => a.Id).HasColumnName("id_auditoria");
-            entity.Property(a => a.NombreAdmin).HasColumnName("nom_admin").HasMaxLength(50).IsRequired();
-            entity.Property(a => a.Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
-            entity.Property(a => a.NombreUsuarioAfectado).HasColumnName("nom_usuario_afectado").HasMaxLength(50).IsRequired();
-            entity.Property(a => a.Detalle).HasColumnName("detalle").HasMaxLength(500);
-            entity.Property(a => a.FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
-            entity.Property(a => a.DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+            entity.HasKey(a => a.Id_Auditoria);
+            entity.Property(a => a.Id_Auditoria).HasColumnName("id_auditoria");
+            entity.Property(a => a.Aud_NombreAdmin).HasColumnName("nom_admin").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_NombreUsuarioAfectado).HasColumnName("nom_usuario_afectado").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Detalle).HasColumnName("detalle").HasMaxLength(500);
+            entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
+            entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });
 
         modelBuilder.Entity<TokenRevocado>(entity =>
         {
             entity.ToTable("tokens_revocados");
-            entity.HasKey(t => t.Id);
-            entity.Property(t => t.Id).HasColumnName("id_token_revocado");
-            entity.Property(t => t.Jti).HasColumnName("jti_token").HasMaxLength(100).IsRequired();
-            entity.HasIndex(t => t.Jti);
-            entity.Property(t => t.NombreUsuario).HasColumnName("nom_usuario").HasMaxLength(50).IsRequired();
-            entity.Property(t => t.FechaExpiracionUtc).HasColumnName("fec_expiracion_utc").IsRequired();
-            entity.Property(t => t.FechaRevocacionUtc).HasColumnName("fec_revocacion_utc").IsRequired();
-            entity.Property(t => t.Motivo).HasColumnName("mot_revocacion").HasMaxLength(50).IsRequired();
+            entity.HasKey(t => t.Id_TokenRevocado);
+            entity.Property(t => t.Id_TokenRevocado).HasColumnName("id_token_revocado");
+            entity.Property(t => t.Tok_Jti).HasColumnName("jti_token").HasMaxLength(100).IsRequired();
+            entity.HasIndex(t => t.Tok_Jti);
+            entity.Property(t => t.Tok_NombreUsuario).HasColumnName("nom_usuario").HasMaxLength(50).IsRequired();
+            entity.Property(t => t.Tok_FechaExpiracionUtc).HasColumnName("fec_expiracion_utc").IsRequired();
+            entity.Property(t => t.Tok_FechaRevocacionUtc).HasColumnName("fec_revocacion_utc").IsRequired();
+            entity.Property(t => t.Tok_Motivo).HasColumnName("mot_revocacion").HasMaxLength(50).IsRequired();
         });
 
         modelBuilder.Entity<Mesa>(entity =>
         {
             entity.ToTable("mesas");
-            entity.HasKey(m => m.Id);
-            entity.Property(m => m.Id).HasColumnName("id_mesa");
-            entity.Property(m => m.Nombre).HasColumnName("nom_mesa").HasMaxLength(20).IsRequired();
-            entity.Property(m => m.NombreNormalizado).HasColumnName("nom_mesa_normalizado").HasMaxLength(20).IsRequired();
-            entity.HasIndex(m => m.NombreNormalizado).IsUnique();
-            entity.Property(m => m.Ocupacion).HasColumnName("est_ocupacion").HasConversion<string>().HasMaxLength(20).IsRequired();
-            entity.Property(m => m.Activa).HasColumnName("est_activa").IsRequired().HasDefaultValue(true);
-            entity.Property(m => m.FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
-            entity.Property(m => m.FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+            entity.HasKey(m => m.Id_Mesa);
+            entity.Property(m => m.Id_Mesa).HasColumnName("id_mesa");
+            entity.Property(m => m.Mes_Nombre).HasColumnName("nom_mesa").HasMaxLength(20).IsRequired();
+            entity.Property(m => m.Mes_NombreNormalizado).HasColumnName("nom_mesa_normalizado").HasMaxLength(20).IsRequired();
+            entity.HasIndex(m => m.Mes_NombreNormalizado).IsUnique();
+            entity.Property(m => m.Mes_Ocupacion).HasColumnName("est_ocupacion").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(m => m.Mes_Activa).HasColumnName("est_activa").IsRequired().HasDefaultValue(true);
+            entity.Property(m => m.Mes_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(m => m.Mes_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
         });
 
         modelBuilder.Entity<AuditoriaMesa>(entity =>
         {
             entity.ToTable("auditorias_mesa");
-            entity.HasKey(a => a.Id);
-            entity.Property(a => a.Id).HasColumnName("id_auditoria");
-            entity.Property(a => a.NombreAdmin).HasColumnName("nom_admin").HasMaxLength(50).IsRequired();
-            entity.Property(a => a.Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
-            entity.Property(a => a.NombreMesa).HasColumnName("nom_mesa").HasMaxLength(50).IsRequired();
-            entity.Property(a => a.Detalle).HasColumnName("detalle").HasMaxLength(500);
-            entity.Property(a => a.FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
-            entity.Property(a => a.DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+            entity.HasKey(a => a.Id_Auditoria);
+            entity.Property(a => a.Id_Auditoria).HasColumnName("id_auditoria");
+            entity.Property(a => a.Aud_NombreAdmin).HasColumnName("nom_admin").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_NombreMesa).HasColumnName("nom_mesa").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Detalle).HasColumnName("detalle").HasMaxLength(500);
+            entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
+            entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });
 
         modelBuilder.Entity<Producto>(entity =>

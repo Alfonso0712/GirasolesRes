@@ -87,14 +87,14 @@ public class AuthService : IAuthService
         }
 
         // RN-01: Estado activo
-        if (!usuario.Activo)
+        if (!usuario.Usu_Activo)
         {
             await RegistrarAuditoriaAsync(nombreUsuario, false, "Cuenta desactivada", direccionIp, cancellationToken);
             return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_05);
         }
 
         // Verificación criptográfica con PBKDF2
-        var passwordValida = _passwordHasher.VerifyPassword(usuario.PasswordHash, contrasena);
+        var passwordValida = _passwordHasher.VerifyPassword(usuario.Usu_PasswordHash, contrasena);
 
         if (!passwordValida)
         {
@@ -126,9 +126,9 @@ public class AuthService : IAuthService
         var responseData = new LoginResponse
         {
             Token = token,
-            Rol = usuario.Rol.ToString(),
-            Nombre = usuario.NombreCompleto,
-            Usuario = usuario.NombreUsuario
+            Rol = usuario.Usu_Rol.ToString(),
+            Nombre = usuario.Usu_Nombre,
+            Usuario = usuario.Usu_Usuario
         };
 
         return ApiResponse<LoginResponse>.Exitoso(responseData, MensajesCatalogo.MSG_08);
@@ -145,7 +145,7 @@ public class AuthService : IAuthService
 
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
 
-        if (usuario != null && usuario.Rol == RolUsuario.Administrador)
+        if (usuario != null && usuario.Usu_Rol == RolUsuario.Administrador)
         {
             var codigo = Random.Shared.Next(100000, 999999).ToString();
             await _codigoRecuperacionRepository.InvalidarCodigosActivosPorCorreoAsync(correo, cancellationToken);
@@ -188,7 +188,7 @@ public class AuthService : IAuthService
         }
 
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
-        if (usuario == null || usuario.Rol != RolUsuario.Administrador)
+        if (usuario == null || usuario.Usu_Rol != RolUsuario.Administrador)
         {
             return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_13);
         }
@@ -245,7 +245,7 @@ public class AuthService : IAuthService
         try
         {
             var usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync(nombreUsuario, cancellationToken);
-            if (usuario == null || !usuario.Activo)
+            if (usuario == null || !usuario.Usu_Activo)
             {
                 return ApiResponse<string>.Fallido("Sesión vencida o usuario inactivo.");
             }

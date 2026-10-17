@@ -18,7 +18,7 @@ public class CodigoRecuperacionRepository : ICodigoRecuperacionRepository
     {
         var normalizado = correo.Trim().ToLowerInvariant();
         var codigos = await _context.CodigosRecuperacion
-            .Where(c => c.Correo.ToLower() == normalizado && !c.Usado)
+            .Where(c => c.Cod_Correo.ToLower() == normalizado && !c.Cod_Usado)
             .ToListAsync(cancellationToken);
 
         foreach (var c in codigos)
@@ -31,8 +31,8 @@ public class CodigoRecuperacionRepository : ICodigoRecuperacionRepository
     {
         var normalizado = correo.Trim().ToLowerInvariant();
         return await _context.CodigosRecuperacion
-            .Where(c => c.Correo.ToLower() == normalizado && !c.Usado && c.FechaExpiracionUtc >= DateTime.UtcNow)
-            .OrderByDescending(c => c.FechaCreacionUtc)
+            .Where(c => c.Cod_Correo.ToLower() == normalizado && !c.Cod_Usado && c.Cod_FechaExpiracionUtc >= DateTime.UtcNow)
+            .OrderByDescending(c => c.Cod_FechaCreacionUtc)
             .FirstOrDefaultAsync(cancellationToken);
     }
 

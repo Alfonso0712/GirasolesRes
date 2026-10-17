@@ -33,19 +33,6 @@ public class CrearUsuarioRequest : IValidatableObject
     [Required(ErrorMessage = MensajesCatalogo.MSG_22)]
     public string Rol { get; set; } = string.Empty;
 
-    // Propiedades puente de compatibilidad con prefijos de cátedra
-    [JsonPropertyName("nom_completo")]
-    public string Nom_Completo { get => Nombre; set => Nombre = value; }
-
-    [JsonPropertyName("nom_usuario")]
-    public string Nom_Usuario { get => Usuario; set => Usuario = value; }
-
-    [JsonPropertyName("cor_usuario")]
-    public string? Cor_Usuario { get => Correo; set => Correo = value; }
-
-    [JsonPropertyName("rol_usuario")]
-    public string Rol_Usuario { get => Rol; set => Rol = value; }
-
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         // RV-15: Validar que el rol exista en la lista cerrada

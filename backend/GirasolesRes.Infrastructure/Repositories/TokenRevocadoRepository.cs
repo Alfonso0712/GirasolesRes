@@ -18,7 +18,7 @@ public class TokenRevocadoRepository : ITokenRevocadoRepository
     {
         if (string.IsNullOrWhiteSpace(jti)) return;
 
-        var existe = await _context.TokensRevocados.AnyAsync(t => t.Jti == jti, cancellationToken);
+        var existe = await _context.TokensRevocados.AnyAsync(t => t.Tok_Jti == jti, cancellationToken);
         if (!existe)
         {
             var tokenRevocado = new TokenRevocado(jti, nombreUsuario, fechaExpiracionUtc, motivo);
@@ -32,13 +32,12 @@ public class TokenRevocadoRepository : ITokenRevocadoRepository
         if (string.IsNullOrWhiteSpace(jti)) return false;
 
         return await _context.TokensRevocados
-            .AnyAsync(t => t.Jti == jti, cancellationToken);
+            .AnyAsync(t => t.Tok_Jti == jti, cancellationToken);
     }
 
     public async Task RevocarTokensDeUsuarioAsync(string nombreUsuario, string motivo, CancellationToken cancellationToken = default)
     {
         var normUser = nombreUsuario.Trim().ToLowerInvariant();
-        // Para RN-22: si se revocan todos los tokens de un usuario, se guardan en auditoría
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -46,7 +45,7 @@ public class TokenRevocadoRepository : ITokenRevocadoRepository
     {
         var ahora = DateTime.UtcNow;
         var expirados = await _context.TokensRevocados
-            .Where(t => t.FechaExpiracionUtc < ahora)
+            .Where(t => t.Tok_FechaExpiracionUtc < ahora)
             .ToListAsync(cancellationToken);
 
         if (expirados.Count > 0)

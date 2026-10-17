@@ -50,13 +50,13 @@ public class PerfilService : IPerfilService
             }
 
             // RN-16: Solo el Administrador puede cambiar su contraseña desde la barra superior
-            if (usuario.Rol != RolUsuario.Administrador)
+            if (usuario.Usu_Rol != RolUsuario.Administrador)
             {
                 return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_49);
             }
 
             // Validar contraseña actual
-            var passwordValido = _passwordHasher.VerifyPassword(usuario.PasswordHash, request.ContrasenaActual);
+            var passwordValido = _passwordHasher.VerifyPassword(usuario.Usu_PasswordHash, request.ContrasenaActual);
             if (!passwordValido)
             {
                 // RN-17: Cinco intentos consecutivos con la contraseña actual incorrecta cierran la sesión
@@ -70,14 +70,14 @@ public class PerfilService : IPerfilService
                     if (!string.IsNullOrEmpty(currentJti))
                     {
                         var exp = currentExp ?? DateTime.UtcNow.AddMinutes(30);
-                        await _tokenRevocadoRepository.RevocarAsync(currentJti, usuario.NombreUsuario, exp, "INTENTOS_FALLIDOS", cancellationToken);
+                        await _tokenRevocadoRepository.RevocarAsync(currentJti, usuario.Usu_Usuario, exp, "INTENTOS_FALLIDOS", cancellationToken);
                     }
 
                     // Registrar en auditoría (RN-21)
                     var auditoriaCierre = new AuditoriaUsuario(
-                        usuario.NombreUsuario,
+                        usuario.Usu_Usuario,
                         "CIERRE_SESION",
-                        usuario.NombreUsuario,
+                        usuario.Usu_Usuario,
                         "Cierre por 5 intentos fallidos consecutivos al cambiar contraseña",
                         ipAddress);
                     await _auditoriaRepository.RegistrarAsync(auditoriaCierre, cancellationToken);
@@ -90,7 +90,7 @@ public class PerfilService : IPerfilService
             }
 
             // RV-26 / RN-18: La nueva contraseña debe ser distinta de la actual
-            if (_passwordHasher.VerifyPassword(usuario.PasswordHash, request.NuevaContrasena))
+            if (_passwordHasher.VerifyPassword(usuario.Usu_PasswordHash, request.NuevaContrasena))
             {
                 return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_46);
             }
@@ -109,16 +109,16 @@ public class PerfilService : IPerfilService
             if (!string.IsNullOrEmpty(currentJti))
             {
                 var exp = currentExp ?? DateTime.UtcNow.AddMinutes(30);
-                await _tokenRevocadoRepository.RevocarAsync(currentJti, usuario.NombreUsuario, exp, "CAMBIO_CONTRASENA", cancellationToken);
+                await _tokenRevocadoRepository.RevocarAsync(currentJti, usuario.Usu_Usuario, exp, "CAMBIO_CONTRASENA", cancellationToken);
             }
 
             var nuevoToken = _jwtGenerator.GenerarToken(usuario);
 
             // RN-21: Auditoría del cambio de contraseña
             var auditoria = new AuditoriaUsuario(
-                usuario.NombreUsuario,
+                usuario.Usu_Usuario,
                 "CAMBIO_PASSWORD_PROPIA",
-                usuario.NombreUsuario,
+                usuario.Usu_Usuario,
                 "Cambio de contraseña exitoso desde perfil (barra superior)",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);

@@ -33,6 +33,8 @@ tags:
 4. [[#4. Estándares de Arquitectura y Clean Code (Frontend)]]
 5. [[#5. Trazabilidad de Requerimientos y Manejo de Errores]]
 6. [[#6. Guía Rápida de Replicación para Nuevos Módulos]]
+7. [[#7. Estándar de Dominio Backend (.NET 10) y Regla Anti-Deuda Técnica]]
+8. [[#8. Directriz Permanente de Arquitectura y Código (Regla Inquebrantable)]]
 
 ---
 
@@ -353,3 +355,71 @@ Al programar los módulos de **Productos, Mesas, Pedidos, Caja, Ventas o Reporte
   - Foco inicial en el primer campo; trampa de foco con tecla `Tab`; cierre con `Escape`.
 - [ ] **Intercepción 401:**
   - Conectar `onLogout` para redirigir a Login con advertencia si expira el token.
+
+---
+
+## 7. Estándar de Dominio Backend (.NET 10) y Regla Anti-Deuda Técnica
+
+> [!CAUTION]
+> **REGLA DE ORO DE MODELADO RELACIONAL Y DOMINIO (NO NEGOCIABLE):**
+> **ESTÁ TERMINANTEMENTE PROHIBIDO crear propiedades puente (`=>`) o mantener dos convenciones de nombres en paralelo dentro de las entidades de Dominio o DTOs.**
+
+### 7.1 Convención Obligatoria de Cátedra (Prefijo Trilateral + PascalCase)
+Todas las entidades del Dominio y sus mapeos en Entity Framework Core deben definir **única y exclusivamente** sus propiedades reales con `{ get; private set; }` bajo el estándar de prefijo trilateral:
+
+| Entidad | Prefijo | Propiedades de Dominio Obligatorias |
+| :--- | :--- | :--- |
+| **Usuario** | `Usu` | `Id_Usuario`, `Usu_Nombre`, `Usu_Usuario`, `Usu_Correo`, `Usu_PasswordHash`, `Usu_Rol`, `Usu_Activo`, `Usu_IntentosFallidos`, `Usu_BloqueadoHastaUtc`, `Usu_FechaCreacionUtc`, `Usu_FechaActualizacionUtc` |
+| **Mesa** | `Mes` | `Id_Mesa`, `Mes_Nombre`, `Mes_NombreNormalizado`, `Mes_Ocupacion`, `Mes_Activa`, `Mes_FechaCreacionUtc`, `Mes_FechaActualizacionUtc` |
+| **Producto** | `Pro` | `Id_Producto`, `Pro_Nombre`, `Pro_Descripcion`, `Pro_Precio`, `Pro_Stock`, `Pro_Estado`, `Pro_FechaCreacionUtc`, `Id_Categoria` |
+| **Categoría**| `Cat` | `Id_Categoria`, `Cat_Nombre`, `Cat_Descripcion`, `Cat_Activa`, `Cat_FechaCreacionUtc` |
+| **Pedido** | `Ped` | `Id_Pedido`, `Ped_FechaHoraUtc`, `Ped_Estado`, `Ped_Total`, `Ped_Notas`, `Id_Mesa`, `Id_Usuario` |
+| **Comprobante / Venta** | `Ven` / `Com` | `Id_Comprobante`, `Com_Tipo`, `Com_Serie`, `Com_Numero`, `Com_Total`, `Com_MetodoPago`, `Com_FechaHoraUtc`, `Id_Pedido` |
+| **Caja** | `Caj` | `Id_Caja`, `Caj_MontoApertura`, `Caj_MontoCierre`, `Caj_FechaAperturaUtc`, `Caj_FechaCierreUtc`, `Caj_Estado`, `Id_Usuario` |
+
+### 7.2 Reglas de Implementación en Capas
+1. **Dominio Limpio:** Cero propiedades puente, cero alias. El constructor y los métodos de negocio (`ActualizarDatos`, `CambiarEstado`) operan únicamente con las propiedades de cátedra.
+2. **Persistencia (EF Core):** `GirasolesDbContext` configura `HasKey(e => e.Id_[Entidad])` e índices mapeando directamente a estas propiedades.
+3. **Mapeo en DTOs:** Los DTOs de salida y entrada exponen contratos limpios en camelCase / PascalCase hacia el frontend (`[JsonPropertyName("nombre")]`), y el mapeo explícito se resuelve en los servicios de aplicación (`UsuarioService`, `MesaService`, etc.) sin duplicar propiedades en la entidad.
+4. **Futuros Módulos:** Todo nuevo módulo (**Productos, Categorías, Pedidos, Caja, Ventas y Reportes**) debe nacer desde cero cumpliendo estrictamente con este estándar sin excepciones.
+
+---
+
+## 8. Directriz Permanente de Arquitectura y Código (Regla Inquebrantable)
+
+> [!IMPORTANT]
+> **DIRECTRIZ ACTIVA Y VINCULANTE PARA TODOS LOS MÓDULOS DEL PROYECTO RESTAURANTE GIRASOLES:**
+> A partir de este momento, **TODO** código nuevo, módulo, entidad, servicio o interfaz que se construya para el proyecto (incluyendo Productos, Categorías, Mesas, Pedidos/Comandas, Caja, Ventas y Reportes) nace aplicando de forma estricta y obligatoria estas 4 reglas desde la primera línea.
+
+### 8.1 Pilar 1: Estándar de Nomenclatura en Dominio y Base de Datos (Backend C#)
+- **Entidades de Dominio (`Domain/Entities`):** Únicamente la convención de cátedra con prefijo trilateral:
+  * **Llave Primaria:** `Id_[Entidad]` (ej. `Id_Producto`, `Id_Categoria`, `Id_Mesa`, `Id_Pedido`, `Id_Comprobante`, `Id_Usuario`).
+  * **Atributos:** `[Prefijo]_[Atributo]` en PascalCase (ej. `Pro_Nombre`, `Pro_Precio`, `Pro_Stock`, `Pro_Estado`; `Mes_Numero`, `Mes_Capacidad`, `Mes_Estado`; `Ped_Total`, `Ped_Fecha`).
+- **Prohibición Total:** Terminantemente prohibido crear propiedades con nombres genéricos antiguos o "propiedades puente" (`=>`) dentro del dominio.
+- **Persistencia (`Infrastructure/Data` y `Repositories`):** En `GirasolesDbContext` y repositorios, todas las llaves (`HasKey`), índices únicos (`HasIndex`), relaciones y consultas LINQ (`Where`, `OrderBy`, `FirstOrDefaultAsync`) operan directamente con estas propiedades prefijadas.
+
+### 8.2 Pilar 2: Desacoplamiento en Capa de Aplicación (DTOs y Services)
+- **DTOs Semánticos (`Application/DTOs`):** Usan nombres limpios (`Id`, `Nombre`, `Precio`, `Estado`, `Usuario`, `Correo`, `Rol`, `Activo`) para comunicarse con el Frontend en React sin filtrar nomenclatura interna de BD.
+- **Mapeo Explícito (`Application/Services`):** El mapeo entre la Entidad prefijada (`Pro_Nombre`) y el DTO limpio (`Nombre`) se realiza siempre de forma explícita en métodos privados o funciones de mapeo del Servicio de Aplicación (`MapearADto`).
+- **Validación Estricta:** Todo DTO de entrada lleva `DataAnnotations` rigurosas y sanitización con `.Trim()` en cadenas.
+
+### 8.3 Pilar 3: Clean Architecture y Clean Code (Uncle Bob)
+- **Dirección de Dependencias Estricta:** `API -> Infrastructure -> Application -> Domain`.
+- **Desacoplamiento por Interfaces:**
+  * Controladores solo interactúan con `I[Entidad]Service`.
+  * Servicios de aplicación solo interactúan con `I[Entidad]Repository`.
+- **Principios Clave:**
+  * Responsabilidad Única (SRP) en cada clase y método.
+  * Separación de Comandos y Consultas (CQS).
+  * **Prohibición de retornar `null` en colecciones:** Retornar siempre colecciones vacías (`Enumerable.Empty<T>()` o `new List<T>()`).
+
+### 8.4 Pilar 4: Consistencia Absoluta en Frontend (React + TypeScript + Tailwind)
+- **Layout Fijo Global:** `MainLayout` con `Sidebar` y `Header` estáticos en `h-screen overflow-hidden`; scroll vertical confinado exclusivamente al contenedor de datos o al `<tbody>` de la tabla con scrollbar estilizada de 6px.
+- **Tipografía Híbrida Oficial:**
+  * `.font-brand-serif` (`Playfair Display`) de uso **exclusivo** para títulos principales de módulo.
+  * `Plus Jakarta Sans` con clase `tabular-nums` para todo dato operativo, números de mesas, precios, comandas, montos y tablas.
+- **Estandarización de Tablas:**
+  * **Badges/Pastillas:** Ancho y alto fijos e idénticos (`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold`) para mantener alineación tabular perfecta.
+  * **Columna de Acciones:** Botones cuadrados compactos de solo icono (`w-8 h-8 rounded-lg border`), colores semánticos (verde esmeralda, ámbar, rojo rose, gris neutro) y atributos obligatorios `title` y `aria-label`.
+
+

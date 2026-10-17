@@ -2,13 +2,13 @@ namespace GirasolesRes.Domain.Entities;
 
 public class AuditoriaMesa
 {
-    public Guid Id { get; private set; }
-    public string NombreAdmin { get; private set; } = string.Empty;
-    public string Accion { get; private set; } = string.Empty;
-    public string NombreMesa { get; private set; } = string.Empty;
-    public string? Detalle { get; private set; }
-    public DateTime FechaRegistroUtc { get; private set; }
-    public string? DireccionIp { get; private set; }
+    public Guid Id_Auditoria { get; private set; }
+    public string Aud_NombreAdmin { get; private set; } = string.Empty;
+    public string Aud_Accion { get; private set; } = string.Empty;
+    public string Aud_NombreMesa { get; private set; } = string.Empty;
+    public string? Aud_Detalle { get; private set; }
+    public DateTime Aud_FechaRegistroUtc { get; private set; }
+    public string? Aud_DireccionIp { get; private set; }
 
     // Constructor privado para EF Core
     private AuditoriaMesa() { }
@@ -20,12 +20,12 @@ public class AuditoriaMesa
         string? detalle = null,
         string? direccionIp = null)
     {
-        Id = Guid.NewGuid();
-        NombreAdmin = nombreAdmin.Trim();
-        Accion = accion.Trim().ToUpperInvariant();
-        NombreMesa = nombreMesa.Trim();
-        Detalle = detalle?.Trim();
-        FechaRegistroUtc = DateTime.UtcNow;
-        DireccionIp = direccionIp?.Trim();
+        Id_Auditoria = Guid.NewGuid();
+        Aud_NombreAdmin = nombreAdmin.Trim();
+        Aud_Accion = accion.Trim().ToUpperInvariant();
+        Aud_NombreMesa = nombreMesa.Trim();
+        Aud_Detalle = detalle?.Trim();
+        Aud_FechaRegistroUtc = DateTime.UtcNow;
+        Aud_DireccionIp = direccionIp?.Trim();
     }
 }

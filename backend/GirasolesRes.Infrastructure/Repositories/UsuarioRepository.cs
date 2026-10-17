@@ -19,20 +19,20 @@ public class UsuarioRepository : IUsuarioRepository
     {
         var normalizado = nombreUsuario.Trim().ToLowerInvariant();
         return await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.NombreUsuario.ToLower() == normalizado, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Usu_Usuario.ToLower() == normalizado, cancellationToken);
     }
 
     public async Task<Usuario?> ObtenerPorCorreoAsync(string correo, CancellationToken cancellationToken = default)
     {
         var normalizado = correo.Trim().ToLowerInvariant();
         return await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.Correo != null && u.Correo.ToLower() == normalizado, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Usu_Correo != null && u.Usu_Correo.ToLower() == normalizado, cancellationToken);
     }
 
     public async Task<Usuario?> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id_Usuario == id, cancellationToken);
     }
 
     public async Task AgregarAsync(Usuario usuario, CancellationToken cancellationToken = default)
@@ -67,27 +67,27 @@ public class UsuarioRepository : IUsuarioRepository
         {
             var b = busqueda.Trim().ToLower();
             query = query.Where(u =>
-                EF.Functions.ILike(u.NombreCompleto, $"%{b}%") ||
-                EF.Functions.ILike(u.NombreUsuario, $"%{b}%"));
+                EF.Functions.ILike(u.Usu_Nombre, $"%{b}%") ||
+                EF.Functions.ILike(u.Usu_Usuario, $"%{b}%"));
         }
 
         // Filtro por Rol
         if (rol.HasValue)
         {
-            query = query.Where(u => u.Rol == rol.Value);
+            query = query.Where(u => u.Usu_Rol == rol.Value);
         }
 
         // Filtro por Estado (Activo / Inactivo)
         if (activo.HasValue)
         {
-            query = query.Where(u => u.Activo == activo.Value);
+            query = query.Where(u => u.Usu_Activo == activo.Value);
         }
 
         var total = await query.CountAsync(cancellationToken);
 
         // Orden alfabético por nombre (Sección 1 y E-16)
         var items = await query
-            .OrderBy(u => u.NombreCompleto)
+            .OrderBy(u => u.Usu_Nombre)
             .Skip((pagina - 1) * tamano)
             .Take(tamano)
             .ToListAsync(cancellationToken);
@@ -98,17 +98,17 @@ public class UsuarioRepository : IUsuarioRepository
     public async Task<int> ContarAdministradoresActivosAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Usuarios
-            .CountAsync(u => u.Rol == RolUsuario.Administrador && u.Activo, cancellationToken);
+            .CountAsync(u => u.Usu_Rol == RolUsuario.Administrador && u.Usu_Activo, cancellationToken);
     }
 
     public async Task<bool> ExisteNombreUsuarioAsync(string nombreUsuario, Guid? excluirId = null, CancellationToken cancellationToken = default)
     {
         var normalizado = nombreUsuario.Trim().ToLowerInvariant();
-        var query = _context.Usuarios.Where(u => u.NombreUsuario.ToLower() == normalizado);
+        var query = _context.Usuarios.Where(u => u.Usu_Usuario.ToLower() == normalizado);
 
         if (excluirId.HasValue)
         {
-            query = query.Where(u => u.Id != excluirId.Value);
+            query = query.Where(u => u.Id_Usuario != excluirId.Value);
         }
 
         return await query.AnyAsync(cancellationToken);
@@ -117,11 +117,11 @@ public class UsuarioRepository : IUsuarioRepository
     public async Task<bool> ExisteCorreoAsync(string correo, Guid? excluirId = null, CancellationToken cancellationToken = default)
     {
         var normalizado = correo.Trim().ToLowerInvariant();
-        var query = _context.Usuarios.Where(u => u.Correo != null && u.Correo.ToLower() == normalizado);
+        var query = _context.Usuarios.Where(u => u.Usu_Correo != null && u.Usu_Correo.ToLower() == normalizado);
 
         if (excluirId.HasValue)
         {
-            query = query.Where(u => u.Id != excluirId.Value);
+            query = query.Where(u => u.Id_Usuario != excluirId.Value);
         }
 
         return await query.AnyAsync(cancellationToken);
@@ -129,10 +129,6 @@ public class UsuarioRepository : IUsuarioRepository
 
     public Task<bool> TieneMovimientosAsync(Guid usuarioId, CancellationToken cancellationToken = default)
     {
-        // Sección 12.3 Observación 3:
-        // Los módulos de ventas, pedidos y caja aún no existen.
-        // Se implementa la verificación devolviendo false (sin movimientos) para permitir eliminación si no hay registros.
-        // El historial de ingresos y auditoría no cuentan como movimientos según Sección 1.
         return Task.FromResult(false);
     }
 

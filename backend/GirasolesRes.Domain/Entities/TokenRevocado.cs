@@ -2,27 +2,27 @@ namespace GirasolesRes.Domain.Entities;
 
 public class TokenRevocado
 {
-    public Guid Id { get; private set; }
-    public string Jti { get; private set; } = string.Empty;
-    public string NombreUsuario { get; private set; } = string.Empty;
-    public DateTime FechaExpiracionUtc { get; private set; }
-    public DateTime FechaRevocacionUtc { get; private set; }
-    public string Motivo { get; private set; } = string.Empty;
+    public Guid Id_TokenRevocado { get; private set; }
+    public string Tok_Jti { get; private set; } = string.Empty;
+    public string Tok_NombreUsuario { get; private set; } = string.Empty;
+    public DateTime Tok_FechaExpiracionUtc { get; private set; }
+    public DateTime Tok_FechaRevocacionUtc { get; private set; }
+    public string Tok_Motivo { get; private set; } = string.Empty;
 
     // Constructor privado para EF Core
     private TokenRevocado() { }
 
     public TokenRevocado(
-        string jti,
-        string nombreUsuario,
-        DateTime fechaExpiracionUtc,
-        string motivo)
+        string tokJti,
+        string tokNombreUsuario,
+        DateTime tokFechaExpiracionUtc,
+        string tokMotivo)
     {
-        Id = Guid.NewGuid();
-        Jti = jti.Trim();
-        NombreUsuario = nombreUsuario.Trim().ToLowerInvariant();
-        FechaExpiracionUtc = fechaExpiracionUtc;
-        FechaRevocacionUtc = DateTime.UtcNow;
-        Motivo = motivo.Trim().ToUpperInvariant();
+        Id_TokenRevocado = Guid.NewGuid();
+        Tok_Jti = tokJti.Trim();
+        Tok_NombreUsuario = tokNombreUsuario.Trim().ToLowerInvariant();
+        Tok_FechaExpiracionUtc = tokFechaExpiracionUtc;
+        Tok_FechaRevocacionUtc = DateTime.UtcNow;
+        Tok_Motivo = tokMotivo.Trim().ToUpperInvariant();
     }
 }

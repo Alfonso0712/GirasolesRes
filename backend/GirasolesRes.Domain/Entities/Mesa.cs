@@ -7,58 +7,49 @@ namespace GirasolesRes.Domain.Entities;
 
 public class Mesa
 {
-    public Guid Id { get; private set; }
-    public string Nombre { get; private set; } = string.Empty;
-    public string NombreNormalizado { get; private set; } = string.Empty;
-    public EstadoOcupacionMesa Ocupacion { get; private set; } = EstadoOcupacionMesa.Libre;
-    public bool Activa { get; private set; } = true;
-    public DateTime FechaCreacionUtc { get; private set; }
-    public DateTime? FechaActualizacionUtc { get; private set; }
-
-    // Propiedades puente de compatibilidad con estándar de cátedra (Prefijo trilateral Mesa)
-    public Guid Id_Mesa => Id;
-    public string Nom_Mesa => Nombre;
-    public string Nom_MesaNormalizado => NombreNormalizado;
-    public EstadoOcupacionMesa Est_Ocupacion => Ocupacion;
-    public bool Est_Activa => Activa;
-    public DateTime Fec_CreacionUtc => FechaCreacionUtc;
-    public DateTime? Fec_ActualizacionUtc => FechaActualizacionUtc;
+    public Guid Id_Mesa { get; private set; }
+    public string Mes_Nombre { get; private set; } = string.Empty;
+    public string Mes_NombreNormalizado { get; private set; } = string.Empty;
+    public EstadoOcupacionMesa Mes_Ocupacion { get; private set; } = EstadoOcupacionMesa.Libre;
+    public bool Mes_Activa { get; private set; } = true;
+    public DateTime Mes_FechaCreacionUtc { get; private set; }
+    public DateTime? Mes_FechaActualizacionUtc { get; private set; }
 
     // Constructor privado para EF Core
     private Mesa() { }
 
-    public Mesa(string nombre)
+    public Mesa(string mesNombre)
     {
-        Id = Guid.NewGuid();
-        Nombre = LimpiarEspacios(nombre);
-        NombreNormalizado = NormalizarNombre(Nombre);
-        Ocupacion = EstadoOcupacionMesa.Libre;
-        Activa = true;
-        FechaCreacionUtc = DateTime.UtcNow;
+        Id_Mesa = Guid.NewGuid();
+        Mes_Nombre = LimpiarEspacios(mesNombre);
+        Mes_NombreNormalizado = NormalizarNombre(Mes_Nombre);
+        Mes_Ocupacion = EstadoOcupacionMesa.Libre;
+        Mes_Activa = true;
+        Mes_FechaCreacionUtc = DateTime.UtcNow;
     }
 
     public void ActualizarNombre(string nuevoNombre)
     {
-        Nombre = LimpiarEspacios(nuevoNombre);
-        NombreNormalizado = NormalizarNombre(Nombre);
-        FechaActualizacionUtc = DateTime.UtcNow;
+        Mes_Nombre = LimpiarEspacios(nuevoNombre);
+        Mes_NombreNormalizado = NormalizarNombre(Mes_Nombre);
+        Mes_FechaActualizacionUtc = DateTime.UtcNow;
     }
 
     public void CambiarActiva(bool activa)
     {
-        if (!activa && Ocupacion == EstadoOcupacionMesa.Ocupada)
+        if (!activa && Mes_Ocupacion == EstadoOcupacionMesa.Ocupada)
         {
             throw new InvalidOperationException("No se puede desactivar una mesa ocupada.");
         }
 
-        Activa = activa;
-        FechaActualizacionUtc = DateTime.UtcNow;
+        Mes_Activa = activa;
+        Mes_FechaActualizacionUtc = DateTime.UtcNow;
     }
 
     public void CambiarOcupacion(EstadoOcupacionMesa nuevaOcupacion)
     {
-        Ocupacion = nuevaOcupacion;
-        FechaActualizacionUtc = DateTime.UtcNow;
+        Mes_Ocupacion = nuevaOcupacion;
+        Mes_FechaActualizacionUtc = DateTime.UtcNow;
     }
 
     public static string LimpiarEspacios(string texto)

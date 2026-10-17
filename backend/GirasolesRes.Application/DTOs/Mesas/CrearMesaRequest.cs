@@ -10,10 +10,6 @@ public class CrearMesaRequest : IValidatableObject
     [JsonPropertyName("nombre")]
     public string Nombre { get; set; } = string.Empty;
 
-    // Propiedad puente de compatibilidad con prefijos de cátedra
-    [JsonPropertyName("nom_mesa")]
-    public string Nom_Mesa { get => Nombre; set => Nombre = value; }
-
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var nombreLimpio = MesaValidationHelper.LimpiarEspacios(Nombre);

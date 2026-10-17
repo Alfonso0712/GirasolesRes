@@ -123,12 +123,12 @@ public class UsuarioService : IUsuarioService
 
             // RN-09: Estado inicial Activo
             var usuario = new Usuario(
-                request.Usuario,
-                request.Nombre,
-                request.Correo,
-                passwordHash,
-                rolEnum,
-                activo: true);
+                usuUsuario: request.Usuario,
+                usuNombre: request.Nombre,
+                usuCorreo: request.Correo,
+                usuPasswordHash: passwordHash,
+                usuRol: rolEnum,
+                usuActivo: true);
 
             await _usuarioRepository.AgregarAsync(usuario, cancellationToken);
             await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
@@ -137,8 +137,8 @@ public class UsuarioService : IUsuarioService
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
                 "REGISTRO",
-                usuario.NombreUsuario,
-                $"Rol asignado: {usuario.Rol}",
+                usuario.Usu_Usuario,
+                $"Rol asignado: {usuario.Usu_Rol}",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
@@ -190,7 +190,7 @@ public class UsuarioService : IUsuarioService
             }
 
             // RN-10: Protección del último administrador activo ante cambio de rol
-            if (usuario.Rol == RolUsuario.Administrador && nuevoRol != RolUsuario.Administrador && usuario.Activo)
+            if (usuario.Usu_Rol == RolUsuario.Administrador && nuevoRol != RolUsuario.Administrador && usuario.Usu_Activo)
             {
                 var adminActivos = await _usuarioRepository.ContarAdministradoresActivosAsync(cancellationToken);
                 if (adminActivos <= 1)
@@ -218,8 +218,8 @@ public class UsuarioService : IUsuarioService
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
                 accionAuditoria,
-                usuario.NombreUsuario,
-                $"Rol: {usuario.Rol}",
+                usuario.Usu_Usuario,
+                $"Rol: {usuario.Usu_Rol}",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
@@ -250,13 +250,13 @@ public class UsuarioService : IUsuarioService
             if (!nuevoEstado)
             {
                 // RV-21 / RN-10: Intento de desactivar su propia cuenta
-                if (usuario.NombreUsuario.Equals(adminUsername.Trim(), StringComparison.OrdinalIgnoreCase))
+                if (usuario.Usu_Usuario.Equals(adminUsername.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
                     return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_31);
                 }
 
                 // RV-21 / RN-10: Intento de desactivar el último administrador activo
-                if (usuario.Rol == RolUsuario.Administrador)
+                if (usuario.Usu_Rol == RolUsuario.Administrador)
                 {
                     var adminActivos = await _usuarioRepository.ContarAdministradoresActivosAsync(cancellationToken);
                     if (adminActivos <= 1)
@@ -275,7 +275,7 @@ public class UsuarioService : IUsuarioService
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
                 accion,
-                usuario.NombreUsuario,
+                usuario.Usu_Usuario,
                 $"Estado cambiado a {(nuevoEstado ? "Activo" : "Inactivo")}",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
@@ -305,13 +305,13 @@ public class UsuarioService : IUsuarioService
             }
 
             // RV-21 / RN-10: No puede eliminar su propia cuenta
-            if (usuario.NombreUsuario.Equals(adminUsername.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (usuario.Usu_Usuario.Equals(adminUsername.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_31);
             }
 
             // RV-21 / RN-10: No puede eliminar el último administrador activo
-            if (usuario.Rol == RolUsuario.Administrador && usuario.Activo)
+            if (usuario.Usu_Rol == RolUsuario.Administrador && usuario.Usu_Activo)
             {
                 var adminActivos = await _usuarioRepository.ContarAdministradoresActivosAsync(cancellationToken);
                 if (adminActivos <= 1)
@@ -327,7 +327,7 @@ public class UsuarioService : IUsuarioService
                 return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_34);
             }
 
-            var nombreAfectado = usuario.NombreUsuario;
+            var nombreAfectado = usuario.Usu_Usuario;
             await _usuarioRepository.EliminarAsync(usuario, cancellationToken);
             await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
@@ -353,13 +353,13 @@ public class UsuarioService : IUsuarioService
     {
         return new UsuarioResponseDto
         {
-            Id = u.Id,
-            Nombre = u.NombreCompleto,
-            Usuario = u.NombreUsuario,
-            Correo = u.Correo,
-            Rol = u.Rol.ToString(),
-            Activo = u.Activo,
-            FechaCreacion = u.FechaCreacionUtc
+            Id = u.Id_Usuario,
+            Nombre = u.Usu_Nombre,
+            Usuario = u.Usu_Usuario,
+            Correo = u.Usu_Correo,
+            Rol = u.Usu_Rol.ToString(),
+            Activo = u.Usu_Activo,
+            FechaCreacion = u.Usu_FechaCreacionUtc
         };
     }
 }

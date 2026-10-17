@@ -45,12 +45,12 @@ public class MesaService : IMesaService
 
             // Orden natural: Mesa 2 antes que Mesa 10 (CUS06.2)
             var mesasOrdenadas = mesas
-                .OrderBy(m => m.Nombre, NaturalStringComparer.Instance)
+                .OrderBy(m => m.Mes_Nombre, NaturalStringComparer.Instance)
                 .Select(m => new MesaDto(
-                    m.Id,
-                    m.Nombre,
-                    m.Ocupacion.ToString(),
-                    m.Activa
+                    m.Id_Mesa,
+                    m.Mes_Nombre,
+                    m.Mes_Ocupacion.ToString(),
+                    m.Mes_Activa
                 ))
                 .ToList();
 
@@ -73,10 +73,10 @@ public class MesaService : IMesaService
             }
 
             return ApiResponse<MesaDto>.Exitoso(new MesaDto(
-                mesa.Id,
-                mesa.Nombre,
-                mesa.Ocupacion.ToString(),
-                mesa.Activa
+                mesa.Id_Mesa,
+                mesa.Mes_Nombre,
+                mesa.Mes_Ocupacion.ToString(),
+                mesa.Mes_Activa
             ));
         }
         catch (Exception ex)
@@ -123,15 +123,15 @@ public class MesaService : IMesaService
 
             // RN-47: Auditoría
             var auditoria = new AuditoriaMesa(
-                nombreAdmin: adminUsername,
-                accion: "CREAR",
-                nombreMesa: mesa.Nombre,
-                detalle: $"Registro de nueva mesa '{mesa.Nombre}' activa y libre",
-                direccionIp: ipAddress
+                adminUsername,
+                "CREAR",
+                mesa.Mes_Nombre,
+                $"Registro de nueva mesa '{mesa.Mes_Nombre}' activa y libre",
+                ipAddress
             );
             await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
 
-            var dto = new MesaDto(mesa.Id, mesa.Nombre, mesa.Ocupacion.ToString(), mesa.Activa);
+            var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
             return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_84);
         }
         catch (Exception ex)
@@ -178,22 +178,22 @@ public class MesaService : IMesaService
                 return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
             }
 
-            var nombreAnterior = mesa.Nombre;
+            var nombreAnterior = mesa.Mes_Nombre;
             mesa.ActualizarNombre(nombreLimpio);
             await _mesaRepository.ActualizarAsync(mesa, cancellationToken);
             await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
             // RN-47: Auditoría
             var auditoria = new AuditoriaMesa(
-                nombreAdmin: adminUsername,
-                accion: "EDITAR",
-                nombreMesa: mesa.Nombre,
-                detalle: $"Mesa modificada de '{nombreAnterior}' a '{mesa.Nombre}'",
-                direccionIp: ipAddress
+                adminUsername,
+                "EDITAR",
+                mesa.Mes_Nombre,
+                $"Mesa modificada de '{nombreAnterior}' a '{mesa.Mes_Nombre}'",
+                ipAddress
             );
             await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
 
-            var dto = new MesaDto(mesa.Id, mesa.Nombre, mesa.Ocupacion.ToString(), mesa.Activa);
+            var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
             return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_85);
         }
         catch (Exception ex)
@@ -218,9 +218,9 @@ public class MesaService : IMesaService
             }
 
             // RV-56 / RN-44: Una mesa ocupada no se puede desactivar
-            if (!activa && mesa.Ocupacion == EstadoOcupacionMesa.Ocupada)
+            if (!activa && mesa.Mes_Ocupacion == EstadoOcupacionMesa.Ocupada)
             {
-                return ApiResponse<MesaDto>.Fallido(string.Format(MensajesCatalogo.MSG_88, mesa.Nombre));
+                return ApiResponse<MesaDto>.Fallido(string.Format(MensajesCatalogo.MSG_88, mesa.Mes_Nombre));
             }
 
             mesa.CambiarActiva(activa);
@@ -230,16 +230,16 @@ public class MesaService : IMesaService
             // RN-47: Auditoría
             var accionAuditoria = activa ? "ACTIVAR" : "DESACTIVAR";
             var auditoria = new AuditoriaMesa(
-                nombreAdmin: adminUsername,
-                accion: accionAuditoria,
-                nombreMesa: mesa.Nombre,
-                detalle: $"Mesa '{mesa.Nombre}' marcada como {(activa ? "Activa" : "Inactiva")}",
-                direccionIp: ipAddress
+                adminUsername,
+                accionAuditoria,
+                mesa.Mes_Nombre,
+                $"Mesa '{mesa.Mes_Nombre}' marcada como {(activa ? "Activa" : "Inactiva")}",
+                ipAddress
             );
             await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
 
             var mensajeExito = activa ? MensajesCatalogo.MSG_90 : MensajesCatalogo.MSG_89;
-            var dto = new MesaDto(mesa.Id, mesa.Nombre, mesa.Ocupacion.ToString(), mesa.Activa);
+            var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
             return ApiResponse<MesaDto>.Exitoso(dto, mensajeExito);
         }
         catch (Exception ex)
@@ -253,9 +253,9 @@ public class MesaService : IMesaService
         try
         {
             var todas = await _mesaRepository.ListarMesasAsync(null, true, cancellationToken);
-            var libres = todas.Count(m => m.Activa && m.Ocupacion == EstadoOcupacionMesa.Libre);
-            var ocupadas = todas.Count(m => m.Activa && m.Ocupacion == EstadoOcupacionMesa.Ocupada);
-            var inactivas = todas.Count(m => !m.Activa);
+            var libres = todas.Count(m => m.Mes_Activa && m.Mes_Ocupacion == EstadoOcupacionMesa.Libre);
+            var ocupadas = todas.Count(m => m.Mes_Activa && m.Mes_Ocupacion == EstadoOcupacionMesa.Ocupada);
+            var inactivas = todas.Count(m => !m.Mes_Activa);
 
             return ApiResponse<ResumenMesasDto>.Exitoso(new ResumenMesasDto(
                 todas.Count,

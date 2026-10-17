@@ -34,13 +34,13 @@ public class JwtGenerator : IJwtGenerator
 
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-            new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new(ClaimTypes.Name, usuario.NombreUsuario),
-            new("usuario", usuario.NombreUsuario),
-            new("nombreCompleto", usuario.NombreCompleto),
-            new(ClaimTypes.Role, usuario.Rol.ToString()),
-            new(ClaimTypes.Email, usuario.Correo ?? string.Empty),
+            new(JwtRegisteredClaimNames.Sub, usuario.Id_Usuario.ToString()),
+            new(ClaimTypes.NameIdentifier, usuario.Id_Usuario.ToString()),
+            new(ClaimTypes.Name, usuario.Usu_Usuario),
+            new("usuario", usuario.Usu_Usuario),
+            new("nombreCompleto", usuario.Usu_Nombre),
+            new(ClaimTypes.Role, usuario.Usu_Rol.ToString()),
+            new(ClaimTypes.Email, usuario.Usu_Correo ?? string.Empty),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

@@ -2,22 +2,22 @@ namespace GirasolesRes.Domain.Entities;
 
 public class RegistroIngreso
 {
-    public Guid Id { get; private set; }
-    public string NombreUsuario { get; private set; } = string.Empty;
-    public DateTime FechaHoraUtc { get; private set; }
-    public bool Exitoso { get; private set; }
-    public string? DetalleResultado { get; private set; }
-    public string? DireccionIp { get; private set; }
+    public Guid Id_Registro { get; private set; }
+    public string Reg_NombreUsuario { get; private set; } = string.Empty;
+    public DateTime Reg_FechaHoraUtc { get; private set; }
+    public bool Reg_Exitoso { get; private set; }
+    public string? Reg_DetalleResultado { get; private set; }
+    public string? Reg_DireccionIp { get; private set; }
 
     private RegistroIngreso() { }
 
-    public RegistroIngreso(string nombreUsuario, bool exitoso, string? detalleResultado = null, string? direccionIp = null)
+    public RegistroIngreso(string regNombreUsuario, bool regExitoso, string? regDetalleResultado = null, string? regDireccionIp = null)
     {
-        Id = Guid.NewGuid();
-        NombreUsuario = nombreUsuario.Trim().ToLowerInvariant();
-        FechaHoraUtc = DateTime.UtcNow;
-        Exitoso = exitoso;
-        DetalleResultado = detalleResultado;
-        DireccionIp = direccionIp;
+        Id_Registro = Guid.NewGuid();
+        Reg_NombreUsuario = regNombreUsuario.Trim().ToLowerInvariant();
+        Reg_FechaHoraUtc = DateTime.UtcNow;
+        Reg_Exitoso = regExitoso;
+        Reg_DetalleResultado = regDetalleResultado;
+        Reg_DireccionIp = regDireccionIp;
     }
 }

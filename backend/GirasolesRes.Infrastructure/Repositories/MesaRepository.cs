@@ -18,13 +18,13 @@ public class MesaRepository : IMesaRepository
     public async Task<Mesa?> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Mesas
-            .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Id_Mesa == id, cancellationToken);
     }
 
     public async Task<Mesa?> ObtenerPorNombreNormalizadoAsync(string nombreNormalizado, CancellationToken cancellationToken = default)
     {
         return await _context.Mesas
-            .FirstOrDefaultAsync(m => m.NombreNormalizado == nombreNormalizado, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Mes_NombreNormalizado == nombreNormalizado, cancellationToken);
     }
 
     public async Task<bool> ExisteNombreNormalizadoAsync(string nombreNormalizado, Guid? excluirId = null, CancellationToken cancellationToken = default)
@@ -33,10 +33,10 @@ public class MesaRepository : IMesaRepository
 
         if (excluirId.HasValue)
         {
-            query = query.Where(m => m.Id != excluirId.Value);
+            query = query.Where(m => m.Id_Mesa != excluirId.Value);
         }
 
-        return await query.AnyAsync(m => m.NombreNormalizado == nombreNormalizado, cancellationToken);
+        return await query.AnyAsync(m => m.Mes_NombreNormalizado == nombreNormalizado, cancellationToken);
     }
 
     public async Task<List<Mesa>> ListarMesasAsync(EstadoOcupacionMesa? estado = null, bool incluirInactivas = false, CancellationToken cancellationToken = default)
@@ -45,12 +45,12 @@ public class MesaRepository : IMesaRepository
 
         if (!incluirInactivas)
         {
-            query = query.Where(m => m.Activa);
+            query = query.Where(m => m.Mes_Activa);
         }
 
         if (estado.HasValue)
         {
-            query = query.Where(m => m.Ocupacion == estado.Value);
+            query = query.Where(m => m.Mes_Ocupacion == estado.Value);
         }
 
         return await query.ToListAsync(cancellationToken);
