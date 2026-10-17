@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="GirasolesRes.API/GirasolesRes.API.csproj" />
+  <Project Path="GirasolesRes.Application/GirasolesRes.Application.csproj" />
+  <Project Path="GirasolesRes.Domain/GirasolesRes.Domain.csproj" />
+  <Project Path="GirasolesRes.Infrastructure/GirasolesRes.Infrastructure.csproj" />
+</Solution>
