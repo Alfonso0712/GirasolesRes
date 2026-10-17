@@ -14,6 +14,9 @@ public class GirasolesDbContext : DbContext
     public DbSet<TokenRevocado> TokensRevocados => Set<TokenRevocado>();
     public DbSet<Mesa> Mesas => Set<Mesa>();
     public DbSet<AuditoriaMesa> AuditoriasMesa => Set<AuditoriaMesa>();
+    public DbSet<Producto> Productos => Set<Producto>();
+    public DbSet<MenuDia> MenusDia => Set<MenuDia>();
+    public DbSet<MenuDiaPlato> MenuDiaPlatos => Set<MenuDiaPlato>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -114,6 +117,64 @@ public class GirasolesDbContext : DbContext
             entity.Property(a => a.Detalle).HasColumnName("detalle").HasMaxLength(500);
             entity.Property(a => a.FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
             entity.Property(a => a.DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Producto>(entity =>
+        {
+            entity.ToTable("productos");
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Id).HasColumnName("id_producto");
+            entity.Property(p => p.Nombre).HasColumnName("nom_producto").HasMaxLength(50).IsRequired();
+            entity.Property(p => p.NombreNormalizado).HasColumnName("nom_normalizado").HasMaxLength(50).IsRequired();
+            entity.HasIndex(p => p.NombreNormalizado).IsUnique();
+            entity.Property(p => p.Categoria).HasColumnName("cat_producto").IsRequired();
+            entity.Property(p => p.Precio).HasColumnName("pre_producto").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(p => p.Activo).HasColumnName("est_producto").IsRequired().HasDefaultValue(true);
+            entity.Property(p => p.FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(p => p.FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+        });
+
+        modelBuilder.Entity<MenuDia>(entity =>
+        {
+            entity.ToTable("menus_dia");
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.Id).HasColumnName("id_menu");
+            entity.Property(m => m.Fecha).HasColumnName("fec_menu").HasColumnType("date").IsRequired();
+            entity.HasIndex(m => m.Fecha).IsUnique();
+            entity.Property(m => m.DesayunoId).HasColumnName("id_desayuno");
+            entity.Property(m => m.UsuarioCreacion).HasColumnName("nom_usuario_creacion").HasMaxLength(50).IsRequired();
+            entity.Property(m => m.UsuarioActualizacion).HasColumnName("nom_usuario_actualizacion").HasMaxLength(50);
+            entity.Property(m => m.FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(m => m.FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+
+            entity.HasOne(m => m.Desayuno)
+                  .WithMany()
+                  .HasForeignKey(m => m.DesayunoId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasMany(m => m.Platos)
+                  .WithOne(p => p.MenuDia)
+                  .HasForeignKey(p => p.MenuDiaId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MenuDiaPlato>(entity =>
+        {
+            entity.ToTable("menu_dia_platos");
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Id).HasColumnName("id_menu_plato");
+            entity.Property(p => p.MenuDiaId).HasColumnName("id_menu").IsRequired();
+            entity.Property(p => p.ProductoId).HasColumnName("id_producto").IsRequired();
+            entity.Property(p => p.Agotado).HasColumnName("est_agotado").IsRequired().HasDefaultValue(false);
+            entity.Property(p => p.FechaCambioDisponibilidadUtc).HasColumnName("fec_cambio_disponibilidad_utc");
+            entity.Property(p => p.UsuarioCambioDisponibilidad).HasColumnName("nom_usuario_disponibilidad").HasMaxLength(50);
+
+            entity.HasIndex(p => new { p.MenuDiaId, p.ProductoId }).IsUnique();
+
+            entity.HasOne(p => p.Producto)
+                  .WithMany()
+                  .HasForeignKey(p => p.ProductoId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

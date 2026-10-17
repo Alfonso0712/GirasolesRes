@@ -57,6 +57,40 @@ public static class MensajesCatalogo
     public const string MSG_49 = "No tiene permiso para cambiar la contraseña. Pida a la administradora que la restablezca.";
     public const string MSG_50 = "No se pudo cerrar la sesión en el servidor, pero se cerró en este equipo.";
 
+    // CUS-04: Gestión de productos
+    public const string MSG_51 = "Ingrese el nombre del producto.";
+    public const string MSG_52 = "El nombre debe tener entre 3 y 50 caracteres.";
+    public const string MSG_53 = "Ese producto ya está registrado. Use otro nombre o edite el existente.";
+    public const string MSG_54 = "Seleccione una categoría.";
+    public const string MSG_55 = "Ingrese el precio.";
+    public const string MSG_56 = "Ingrese un precio válido, mayor a S/ 0.00 y con hasta 2 decimales (ejemplo: 8.00).";
+    public const string MSG_57 = "Producto registrado correctamente.";
+    public const string MSG_58 = "Producto actualizado correctamente.";
+    public const string MSG_59 = "El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian.";
+    public const string MSG_60 = "¿Desactivar {0}? Dejará de aparecer al tomar pedidos y en el menú del día, pero se conservará su historial.";
+    public const string MSG_61 = "¿Activar {0}? Volverá a estar disponible para pedidos y para el menú del día.";
+    public const string MSG_62 = "{0} forma parte del menú de hoy. Al desactivarlo se retirará del menú.";
+    public const string MSG_63 = "Producto desactivado.";
+    public const string MSG_64 = "Producto activado.";
+    public const string MSG_65 = "No hay productos registrados. Use \"Nuevo producto\" para crear el primero.";
+    public const string MSG_66 = "No se encontraron productos con ese criterio. Pruebe con otro nombre o quite los filtros.";
+    public const string MSG_67 = "No se pudo cargar la lista de productos. Intente nuevamente.";
+
+    // CUS-05: Gestión del menú del día
+    public const string MSG_68 = "Seleccione al menos un producto para el menú de hoy.";
+    public const string MSG_69 = "Registre productos antes de definir el menú. (enlace \"Ir a Productos\")";
+    public const string MSG_70 = "Menú del día guardado correctamente.";
+    public const string MSG_71 = "Todavía no definió el menú de hoy. Seleccione los productos y pulse GUARDAR MENÚ.";
+    public const string MSG_72 = "Tiene cambios sin guardar. ¿Desea descartarlos?";
+    public const string MSG_73 = "Solo se puede modificar el menú de la fecha actual.";
+    public const string MSG_74 = "¿Marcar {0} como agotado? Mozos y cajeros ya no podrán pedirlo; los pedidos registrados no cambian.";
+    public const string MSG_75 = "¿Marcar {0} como disponible? Podrá pedirse nuevamente.";
+    public const string MSG_76 = "{0} marcado como agotado.";
+    public const string MSG_77 = "{0} marcado como disponible.";
+    public const string MSG_78 = "No hay menú definido para hoy. La administradora debe definirlo.";
+    public const string MSG_79 = "{0} se agotó. Elija otro plato.";
+    public const string MSG_80 = "No se pudo cargar el menú del día. Intente nuevamente.";
+
     // CUS-06: Gestión de mesas
     public const string MSG_81 = "Ingrese el número o nombre de la mesa.";
     public const string MSG_82 = "El nombre de la mesa debe tener entre 1 y 20 caracteres.";

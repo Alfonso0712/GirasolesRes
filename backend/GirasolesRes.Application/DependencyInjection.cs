@@ -11,6 +11,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IPerfilService, PerfilService>();
+        services.AddScoped<IProductoService, ProductoService>();
+        services.AddScoped<IMenuDiaService, MenuDiaService>();
         services.AddScoped<IMesaService, MesaService>();
         return services;
     }

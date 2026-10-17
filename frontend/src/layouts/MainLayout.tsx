@@ -26,6 +26,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     switch (p) {
       case 'usuarios':
         return 'Usuarios';
+      case 'productos':
+        return 'Productos';
+      case 'menu-dia':
+        return 'Menú del día';
       case 'roles':
         return 'Roles y permisos';
       case 'caja':
@@ -55,7 +59,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           session={session}
           onLogout={onLogout}
           onCambiarPassword={onCambiarPassword}
-          breadcrumbSection="Administración"
+          breadcrumbSection={session?.rol === 'Cocinero' ? 'Cocina' : 'Administración'}
           breadcrumbPage={getTituloPagina(paginaActiva)}
           onToggleSidebar={() => setSidebarAbierto((prev) => !prev)}
         />

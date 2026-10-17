@@ -2,6 +2,7 @@
 -- PostgreSQL database dump
 --
 
+\restrict KUxiYtdzg13NGh5dYK4SCw2QtKY6H0hTGgf5GaDlSFRWjpWxSpkPXxyg131vCTU
 
 -- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.6
@@ -18,14 +19,23 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE IF EXISTS ONLY public.menus_dia DROP CONSTRAINT IF EXISTS fk_menus_dia_desayuno;
+ALTER TABLE IF EXISTS ONLY public.menu_dia_platos DROP CONSTRAINT IF EXISTS fk_menu_dia_platos_producto;
+ALTER TABLE IF EXISTS ONLY public.menu_dia_platos DROP CONSTRAINT IF EXISTS fk_menu_dia_platos_menu;
 DROP INDEX IF EXISTS public.ix_tokens_revocados_usuario;
 DROP INDEX IF EXISTS public.ix_tokens_revocados_jti;
+DROP INDEX IF EXISTS public.ix_productos_nom_normalizado;
 DROP INDEX IF EXISTS public.ix_auditorias_nom_afectado;
 DROP INDEX IF EXISTS public.ix_auditorias_nom_admin;
 DROP INDEX IF EXISTS public."IX_usuarios_nom_usuario";
 DROP INDEX IF EXISTS public."IX_usuarios_cor_usuario";
+DROP INDEX IF EXISTS public."IX_menus_dia_fec_menu";
+DROP INDEX IF EXISTS public."IX_menu_dia_platos_menu_producto";
 DROP INDEX IF EXISTS public."IX_codigos_recuperacion_cor_usuario";
 ALTER TABLE IF EXISTS ONLY public.tokens_revocados DROP CONSTRAINT IF EXISTS tokens_revocados_pkey;
+ALTER TABLE IF EXISTS ONLY public.productos DROP CONSTRAINT IF EXISTS pk_productos;
+ALTER TABLE IF EXISTS ONLY public.menus_dia DROP CONSTRAINT IF EXISTS menus_dia_pkey;
+ALTER TABLE IF EXISTS ONLY public.menu_dia_platos DROP CONSTRAINT IF EXISTS menu_dia_platos_pkey;
 ALTER TABLE IF EXISTS ONLY public.auditorias_usuario DROP CONSTRAINT IF EXISTS auditorias_usuario_pkey;
 ALTER TABLE IF EXISTS ONLY public.usuarios DROP CONSTRAINT IF EXISTS "PK_usuarios";
 ALTER TABLE IF EXISTS ONLY public.registros_ingreso DROP CONSTRAINT IF EXISTS "PK_registros_ingreso";
@@ -33,6 +43,9 @@ ALTER TABLE IF EXISTS ONLY public.codigos_recuperacion DROP CONSTRAINT IF EXISTS
 DROP TABLE IF EXISTS public.usuarios;
 DROP TABLE IF EXISTS public.tokens_revocados;
 DROP TABLE IF EXISTS public.registros_ingreso;
+DROP TABLE IF EXISTS public.productos;
+DROP TABLE IF EXISTS public.menus_dia;
+DROP TABLE IF EXISTS public.menu_dia_platos;
 DROP TABLE IF EXISTS public.codigos_recuperacion;
 DROP TABLE IF EXISTS public.auditorias_usuario;
 SET default_tablespace = '';
@@ -65,6 +78,51 @@ CREATE TABLE public.codigos_recuperacion (
     fec_expiracion_utc timestamp with time zone NOT NULL,
     es_usado boolean NOT NULL,
     fec_creacion_utc timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: menu_dia_platos; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.menu_dia_platos (
+    id_menu_plato uuid NOT NULL,
+    id_menu uuid NOT NULL,
+    id_producto uuid NOT NULL,
+    est_agotado boolean DEFAULT false NOT NULL,
+    fec_cambio_disponibilidad_utc timestamp with time zone,
+    nom_usuario_disponibilidad character varying(50)
+);
+
+
+--
+-- Name: menus_dia; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.menus_dia (
+    id_menu uuid NOT NULL,
+    fec_menu date NOT NULL,
+    id_desayuno uuid,
+    nom_usuario_creacion character varying(50) NOT NULL,
+    nom_usuario_actualizacion character varying(50),
+    fec_creacion_utc timestamp with time zone NOT NULL,
+    fec_actualizacion_utc timestamp with time zone
+);
+
+
+--
+-- Name: productos; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.productos (
+    id_producto uuid NOT NULL,
+    nom_producto character varying(50) NOT NULL,
+    nom_normalizado character varying(50) NOT NULL,
+    cat_producto integer NOT NULL,
+    pre_producto numeric(8,2) NOT NULL,
+    est_producto boolean DEFAULT true NOT NULL,
+    fec_creacion_utc timestamp with time zone NOT NULL,
+    fec_actualizacion_utc timestamp with time zone
 );
 
 
@@ -209,6 +267,45 @@ COPY public.codigos_recuperacion (id_codigo, cor_usuario, cod_recuperacion, fec_
 
 
 --
+-- Data for Name: menu_dia_platos; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.menu_dia_platos (id_menu_plato, id_menu, id_producto, est_agotado, fec_cambio_disponibilidad_utc, nom_usuario_disponibilidad) FROM stdin;
+2ef3900d-f8f8-493c-92d7-4eca6a782667	12eda018-7e58-474b-b43d-7ff6fbfa7c04	d7456e1d-1043-46b9-87aa-30c16b598f2e	f	\N	\N
+8c8a025a-945f-42ac-a3d5-d1914df0d2c7	12eda018-7e58-474b-b43d-7ff6fbfa7c04	8c621cd4-f5cb-49a5-bb62-a02b7e647a8a	f	2026-10-17 14:13:22.52412-05	admin
+eba1a7af-7334-4bb5-8077-07b50ba7e5b0	12eda018-7e58-474b-b43d-7ff6fbfa7c04	37935ec3-c4af-471f-a38f-7905028874ee	f	2026-10-17 14:29:42.822954-05	admin
+\.
+
+
+--
+-- Data for Name: menus_dia; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.menus_dia (id_menu, fec_menu, id_desayuno, nom_usuario_creacion, nom_usuario_actualizacion, fec_creacion_utc, fec_actualizacion_utc) FROM stdin;
+12eda018-7e58-474b-b43d-7ff6fbfa7c04	2026-10-17	c475030b-7c73-4853-9e94-1bd161492287	admin	admin	2026-10-17 14:01:32.589742-05	2026-10-17 14:29:42.822955-05
+\.
+
+
+--
+-- Data for Name: productos; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.productos (id_producto, nom_producto, nom_normalizado, cat_producto, pre_producto, est_producto, fec_creacion_utc, fec_actualizacion_utc) FROM stdin;
+18858d56-9234-4862-a00b-b6663476e306	Gaseosa 500ml	gaseosa 500ml	3	3.50	t	2026-10-17 13:04:47.131837-05	\N
+37935ec3-c4af-471f-a38f-7905028874ee	Sopa a la minuta especial	sopa a la minuta especial	2	10.00	t	2026-10-17 13:04:47.131836-05	\N
+8c621cd4-f5cb-49a5-bb62-a02b7e647a8a	Ejecutivo del día	ejecutivo del dia	2	12.00	t	2026-10-17 13:04:47.131829-05	\N
+ab587619-835c-4472-9a16-fc52afdfa2d1	Quaker con leche y pan	quaker con leche y pan	1	3.50	t	2026-10-17 13:04:47.13183-05	\N
+b39aaede-072c-414a-951b-49047194e280	Quinua carretillera con pan	quinua carretillera con pan	1	3.00	t	2026-10-17 13:04:47.13183-05	\N
+c475030b-7c73-4853-9e94-1bd161492287	Café pasado con sándwich mixto	cafe pasado con sandwich mixto	1	5.00	t	2026-10-17 13:04:47.131832-05	\N
+d1da6dd9-3333-4feb-90a2-42ef0806f14d	Caldo de gallina criollo	caldo de gallina criollo	1	10.00	f	2026-10-17 13:04:47.131838-05	\N
+d7456e1d-1043-46b9-87aa-30c16b598f2e	Menú almuerzo	menu almuerzo	2	8.00	t	2026-10-17 13:04:47.13175-05	\N
+e7db20df-a11f-4ee4-9286-cc21f772389c	Agua mineral 600ml	agua mineral 600ml	3	2.50	t	2026-10-17 13:04:47.131837-05	\N
+f1c6d752-3760-4e57-85b0-141472f6232f	Porción extra de papas fritas	porcion extra de papas fritas	3	4.00	t	2026-10-17 13:04:47.131836-05	\N
+fc21cda6-b12b-4f09-a807-df1218c7bb78	Jarra de chicha morada 1L	jarra de chicha morada 1l	3	6.00	t	2026-10-17 13:04:47.131834-05	\N
+\.
+
+
+--
 -- Data for Name: registros_ingreso; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -310,6 +407,18 @@ b1377c8c-2025-46d9-aa8f-4be02b378a8a	admin	2026-10-17 12:29:03.289322-05	t	Ingre
 7795c6c7-dc65-41b3-bf6a-ed9a8f87ee39	admin	2026-10-17 12:34:04.917895-05	t	Ingreso exitoso	::1
 9ec4f3b4-ff22-48c5-a93f-bc3dba2e09fb	admin	2026-10-17 12:34:05.095316-05	t	Ingreso exitoso	::1
 73504b90-61e9-4283-abb5-e1174a798aa1	admin	2026-10-17 12:34:05.203781-05	t	Ingreso exitoso	::1
+718d4143-4007-4799-925a-b55205f9acc1	admin	2026-10-17 12:49:17.065055-05	t	Ingreso exitoso	::1
+0db1ca96-e52b-42aa-83a8-ef1b4b22e81f	admin	2026-10-17 13:05:11.172415-05	t	Ingreso exitoso	::1
+836ab92b-5796-4971-8c3d-6409d4155e82	admin	2026-10-17 13:16:33.647304-05	t	Ingreso exitoso	::1
+a8aef4dc-4228-49be-8a30-8f3a36fc81df	admin	2026-10-17 13:16:50.282709-05	t	Ingreso exitoso	::1
+67a72c21-b879-4e77-96e1-fe44ce11fa7c	admin	2026-10-17 13:17:12.668203-05	t	Ingreso exitoso	::1
+e415d4a6-4b65-433a-8450-fc50735e8034	admin	2026-10-17 13:17:36.469517-05	t	Ingreso exitoso	::1
+ea1d5011-9272-4477-adc6-5f690945f756	admin	2026-10-17 13:20:27.418781-05	t	Ingreso exitoso	::1
+cbd4957c-31cf-4a5a-aab7-81737cbcb114	admin	2026-10-17 14:01:31.71617-05	t	Ingreso exitoso	::1
+45b17792-0f38-4d1c-b234-10f6a681d6bd	msoto	2026-10-17 14:01:32.937694-05	t	Ingreso exitoso	::1
+278bed51-bb3d-40df-9fa7-76e80cafc5f7	admin	2026-10-17 14:09:25.106682-05	t	Ingreso exitoso	::1
+01536e66-401e-4efe-949f-d1b225868208	msoto	2026-10-17 14:09:25.474718-05	t	Ingreso exitoso	::1
+e6cb280a-603f-4a3e-bd37-efe2b9c9bd3c	admin	2026-10-17 14:11:22.397251-05	t	Ingreso exitoso	::1
 \.
 
 
@@ -389,10 +498,10 @@ cabfae63-b267-40c0-8406-9bad17c4cfab	9c130035-09ae-499b-ad71-01bbd7e08bfc	admin	
 COPY public.usuarios (id_usuario, nom_usuario, nom_completo, cor_usuario, has_usuario, rol_usuario, est_usuario, int_fallidos, bloq_hasta_utc, fec_creacion_utc, fec_actualizacion_utc) FROM stdin;
 6010e97d-9fbb-4df6-b51f-ebd34b6d9433	crojas	Carlos Rojas (Inactivo)	crojas@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	3	f	0	\N	2026-10-16 10:55:25.222549-05	\N
 757dee14-699f-470d-a65b-6ae01a46d5ac	dramos	Diego Ramos	dramos.nuevo@girasoles.com	100000.uwBgvjThaWU59T48FLoDtA==.RNQ0hHFQ8QPq2Hj/1sQh9j6/9/2cFNGDRnIMqo3/X/k=	3	t	0	\N	2026-10-16 17:46:13.949806-05	2026-10-17 11:03:53.373788-05
-89d58dff-4e1b-414c-8bf9-d59d098ec29f	msoto	María Soto A	msoto@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	4	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-17 11:04:09.418724-05
 920ba4f1-d552-4c76-b1c0-087b3b75770c	atorres	Ana Torres	atorres@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	2	t	0	\N	2026-10-16 10:55:25.222546-05	2026-10-17 12:34:04.87552-05
 fdfbc247-2349-4bab-9d92-cc595b7a34d8	lperez	Luis Pérez	lperez@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	3	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-16 17:47:15.951963-05
-05c84bab-bb5e-479f-8a19-f309b7fde947	admin	Administradora General	admin@girasoles.com	100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=	1	t	0	\N	2026-10-16 10:55:25.22248-05	2026-10-17 12:34:05.271648-05
+89d58dff-4e1b-414c-8bf9-d59d098ec29f	msoto	María Soto A	msoto@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	4	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-17 14:09:25.473055-05
+05c84bab-bb5e-479f-8a19-f309b7fde947	admin	Administradora General	admin@girasoles.com	100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=	1	t	0	\N	2026-10-16 10:55:25.22248-05	2026-10-17 14:11:22.39484-05
 \.
 
 
@@ -429,6 +538,30 @@ ALTER TABLE ONLY public.auditorias_usuario
 
 
 --
+-- Name: menu_dia_platos menu_dia_platos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.menu_dia_platos
+    ADD CONSTRAINT menu_dia_platos_pkey PRIMARY KEY (id_menu_plato);
+
+
+--
+-- Name: menus_dia menus_dia_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.menus_dia
+    ADD CONSTRAINT menus_dia_pkey PRIMARY KEY (id_menu);
+
+
+--
+-- Name: productos pk_productos; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.productos
+    ADD CONSTRAINT pk_productos PRIMARY KEY (id_producto);
+
+
+--
 -- Name: tokens_revocados tokens_revocados_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -441,6 +574,20 @@ ALTER TABLE ONLY public.tokens_revocados
 --
 
 CREATE INDEX "IX_codigos_recuperacion_cor_usuario" ON public.codigos_recuperacion USING btree (cor_usuario);
+
+
+--
+-- Name: IX_menu_dia_platos_menu_producto; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_menu_dia_platos_menu_producto" ON public.menu_dia_platos USING btree (id_menu, id_producto);
+
+
+--
+-- Name: IX_menus_dia_fec_menu; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_menus_dia_fec_menu" ON public.menus_dia USING btree (fec_menu);
 
 
 --
@@ -472,6 +619,13 @@ CREATE INDEX ix_auditorias_nom_afectado ON public.auditorias_usuario USING btree
 
 
 --
+-- Name: ix_productos_nom_normalizado; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ix_productos_nom_normalizado ON public.productos USING btree (nom_normalizado);
+
+
+--
 -- Name: ix_tokens_revocados_jti; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -486,8 +640,32 @@ CREATE INDEX ix_tokens_revocados_usuario ON public.tokens_revocados USING btree 
 
 
 --
+-- Name: menu_dia_platos fk_menu_dia_platos_menu; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.menu_dia_platos
+    ADD CONSTRAINT fk_menu_dia_platos_menu FOREIGN KEY (id_menu) REFERENCES public.menus_dia(id_menu) ON DELETE CASCADE;
+
+
+--
+-- Name: menu_dia_platos fk_menu_dia_platos_producto; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.menu_dia_platos
+    ADD CONSTRAINT fk_menu_dia_platos_producto FOREIGN KEY (id_producto) REFERENCES public.productos(id_producto) ON DELETE CASCADE;
+
+
+--
+-- Name: menus_dia fk_menus_dia_desayuno; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.menus_dia
+    ADD CONSTRAINT fk_menus_dia_desayuno FOREIGN KEY (id_desayuno) REFERENCES public.productos(id_producto) ON DELETE SET NULL;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict BEntGCEexEDHwk1xR9QffhcbfKamxPfnxgx0ogaa1vDCG5Lfea8PiOHQu0X11tX
+\unrestrict KUxiYtdzg13NGh5dYK4SCw2QtKY6H0hTGgf5GaDlSFRWjpWxSpkPXxyg131vCTU
 

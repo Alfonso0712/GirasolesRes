@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Home, Users, ShieldCheck, DollarSign, Utensils, ChefHat, X } from 'lucide-react';
+import { Home, Users, ShieldCheck, DollarSign, Utensils, ChefHat, X, UtensilsCrossed } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import logoGirasoles from '../assets/logo-girasoles.png';
 
@@ -104,6 +104,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <Users className="w-5 h-5 shrink-0" />
               <span>Usuarios</span>
+            </button>
+          )}
+
+          {rol === 'Administrador' && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('productos')}
+              className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
+                paginaActiva === 'productos'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <UtensilsCrossed className="w-5 h-5 shrink-0" />
+              <span>Productos</span>
+            </button>
+          )}
+
+          {(rol === 'Administrador' || rol === 'Cocinero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('menu-dia')}
+              className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
+                paginaActiva === 'menu-dia'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Utensils className="w-5 h-5 shrink-0" />
+              <span>Menú del día</span>
             </button>
           )}
 

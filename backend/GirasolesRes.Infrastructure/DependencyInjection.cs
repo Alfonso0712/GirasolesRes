@@ -29,6 +29,8 @@ public static class DependencyInjection
         services.AddScoped<ITokenRevocadoRepository, TokenRevocadoRepository>();
         services.AddScoped<IMesaRepository, MesaRepository>();
         services.AddScoped<IAuditoriaMesaRepository, AuditoriaMesaRepository>();
+        services.AddScoped<IProductoRepository, ProductoRepository>();
+        services.AddScoped<IMenuDiaRepository, MenuDiaRepository>();
 
         // Seguridad y Servicios
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();

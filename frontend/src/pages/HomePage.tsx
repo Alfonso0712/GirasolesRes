@@ -3,11 +3,13 @@ import { MainLayout } from '../layouts/MainLayout';
 import { PageContainer } from '../components/PageContainer';
 import { UsersPage } from './UsersPage';
 import { MesasPage } from './MesasPage';
+import { ProductsPage } from './ProductsPage';
+import { MenuDiaPage } from './MenuDiaPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
 import { logoutService, renovarTokenService } from '../services/authService';
-import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check } from 'lucide-react';
+import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check, UtensilsCrossed } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 
 interface HomePageProps {
@@ -27,9 +29,15 @@ export const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onUpdateSession
 }) => {
-  // Para Administrador abre Usuarios por defecto, para Mozo abre Mesas por defecto
+  // Para Administrador abre Usuarios por defecto; para Mozo abre Mesas; para Cocinero abre Menú del Día
   const [paginaActiva, setPaginaActiva] = useState(
-    session.rol === 'Administrador' ? 'usuarios' : session.rol === 'Mozo' ? 'mesas' : 'inicio'
+    session.rol === 'Administrador'
+      ? 'usuarios'
+      : session.rol === 'Mozo'
+      ? 'mesas'
+      : session.rol === 'Cocinero'
+      ? 'menu-dia'
+      : 'inicio'
   );
 
   // Estados de Modales del CUS-03
@@ -156,7 +164,15 @@ export const HomePage: React.FC<HomePageProps> = ({
       paginaActiva={paginaActiva}
       onSelectPagina={(p) => setPaginaActiva(p)}
     >
-      {paginaActiva === 'usuarios' && session.rol === 'Administrador' ? (
+      {paginaActiva === 'productos' && session.rol === 'Administrador' ? (
+        <ProductsPage session={session} onLogout={onLogout} />
+      ) : paginaActiva === 'menu-dia' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
+        <MenuDiaPage
+          session={session}
+          onLogout={onLogout}
+          onNavigateToProductos={() => setPaginaActiva('productos')}
+        />
+      ) : paginaActiva === 'usuarios' && session.rol === 'Administrador' ? (
         <UsersPage session={session} onLogout={onLogout} />
       ) : paginaActiva === 'mesas' && (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') ? (
         <MesasPage session={session} onLogout={onLogout} />
@@ -174,6 +190,38 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              {(session.rol === 'Administrador' || session.rol === 'Cocinero') && (
+                <div
+                  onClick={() => setPaginaActiva('menu-dia')}
+                  className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                    <Utensils className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-neutral-800 font-serif">Menú del Día</h3>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    {session.rol === 'Cocinero'
+                      ? 'Disponibilidad de platos en cocina y servicio (CUS05).'
+                      : 'Definición del menú diario y control de disponibilidad (CUS05).'}
+                  </p>
+                </div>
+              )}
+
+              {session.rol === 'Administrador' && (
+                <div
+                  onClick={() => setPaginaActiva('productos')}
+                  className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                    <UtensilsCrossed className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-neutral-800 font-serif">Gestión de Productos</h3>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Administración de la carta, categorías, precios y disponibilidad (CUS04).
+                  </p>
+                </div>
+              )}
+
               {session.rol === 'Administrador' && (
                 <div
                   onClick={() => setPaginaActiva('usuarios')}
