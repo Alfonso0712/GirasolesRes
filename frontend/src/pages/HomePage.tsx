@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { PageContainer } from '../components/PageContainer';
 import { UsersPage } from './UsersPage';
+import { MesasPage } from './MesasPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
@@ -26,9 +27,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onUpdateSession
 }) => {
-  // Para Administrador abre el módulo de Usuarios (CUS-02) por defecto como en el prototipo
+  // Para Administrador abre Usuarios por defecto, para Mozo abre Mesas por defecto
   const [paginaActiva, setPaginaActiva] = useState(
-    session.rol === 'Administrador' ? 'usuarios' : 'inicio'
+    session.rol === 'Administrador' ? 'usuarios' : session.rol === 'Mozo' ? 'mesas' : 'inicio'
   );
 
   // Estados de Modales del CUS-03
@@ -157,6 +158,8 @@ export const HomePage: React.FC<HomePageProps> = ({
     >
       {paginaActiva === 'usuarios' && session.rol === 'Administrador' ? (
         <UsersPage session={session} onLogout={onLogout} />
+      ) : paginaActiva === 'mesas' && (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') ? (
+        <MesasPage session={session} onLogout={onLogout} />
       ) : (
         <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1">
           <PageContainer
@@ -201,7 +204,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
               )}
 
-              {(session.rol === 'Administrador' || session.rol === 'Mozo') && (
+              {(session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') && (
                 <div
                   onClick={() => setPaginaActiva('mesas')}
                   className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-amber-500 hover:shadow-md transition-all cursor-pointer group"

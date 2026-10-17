@@ -12,6 +12,8 @@ public class GirasolesDbContext : DbContext
     public DbSet<CodigoRecuperacion> CodigosRecuperacion => Set<CodigoRecuperacion>();
     public DbSet<AuditoriaUsuario> AuditoriasUsuario => Set<AuditoriaUsuario>();
     public DbSet<TokenRevocado> TokensRevocados => Set<TokenRevocado>();
+    public DbSet<Mesa> Mesas => Set<Mesa>();
+    public DbSet<AuditoriaMesa> AuditoriasMesa => Set<AuditoriaMesa>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -85,6 +87,33 @@ public class GirasolesDbContext : DbContext
             entity.Property(t => t.FechaExpiracionUtc).HasColumnName("fec_expiracion_utc").IsRequired();
             entity.Property(t => t.FechaRevocacionUtc).HasColumnName("fec_revocacion_utc").IsRequired();
             entity.Property(t => t.Motivo).HasColumnName("mot_revocacion").HasMaxLength(50).IsRequired();
+        });
+
+        modelBuilder.Entity<Mesa>(entity =>
+        {
+            entity.ToTable("mesas");
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.Id).HasColumnName("id_mesa");
+            entity.Property(m => m.Nombre).HasColumnName("nom_mesa").HasMaxLength(20).IsRequired();
+            entity.Property(m => m.NombreNormalizado).HasColumnName("nom_mesa_normalizado").HasMaxLength(20).IsRequired();
+            entity.HasIndex(m => m.NombreNormalizado).IsUnique();
+            entity.Property(m => m.Ocupacion).HasColumnName("est_ocupacion").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(m => m.Activa).HasColumnName("est_activa").IsRequired().HasDefaultValue(true);
+            entity.Property(m => m.FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(m => m.FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+        });
+
+        modelBuilder.Entity<AuditoriaMesa>(entity =>
+        {
+            entity.ToTable("auditorias_mesa");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Id).HasColumnName("id_auditoria");
+            entity.Property(a => a.NombreAdmin).HasColumnName("nom_admin").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.NombreMesa).HasColumnName("nom_mesa").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Detalle).HasColumnName("detalle").HasMaxLength(500);
+            entity.Property(a => a.FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
+            entity.Property(a => a.DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });
     }
 }

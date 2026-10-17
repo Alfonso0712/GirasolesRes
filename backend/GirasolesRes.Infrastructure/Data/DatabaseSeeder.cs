@@ -70,6 +70,34 @@ public static class DatabaseSeeder
 
                 logger.LogInformation("Sembrado completado: 5 usuarios creados con contraseña '{Password}'", defaultPassword);
             }
+
+            if (!await context.Mesas.AnyAsync())
+            {
+                logger.LogInformation("Iniciando sembrado inicial de mesas para el Restaurante Girasoles...");
+
+                var m1 = new Mesa("Mesa 1");
+                var m2 = new Mesa("Mesa 2");
+                var m3 = new Mesa("Mesa 3");
+                m3.CambiarOcupacion(EstadoOcupacionMesa.Ocupada);
+                var m4 = new Mesa("Mesa 4");
+                var m5 = new Mesa("Mesa 5");
+                var m6 = new Mesa("Mesa 6");
+                var m7 = new Mesa("Mesa 7");
+                m7.CambiarOcupacion(EstadoOcupacionMesa.Ocupada);
+                var m8 = new Mesa("Mesa 8");
+                var m9 = new Mesa("Mesa 9");
+                var m10 = new Mesa("Mesa 10");
+                var m11 = new Mesa("Patio 1");
+                var m12 = new Mesa("Patio 2");
+                m12.CambiarActiva(false); // Inactiva para probar el filtro de Administrador
+
+                var mesas = new List<Mesa> { m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12 };
+
+                await context.Mesas.AddRangeAsync(mesas);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation("Sembrado completado: {Count} mesas iniciales creadas.", mesas.Count);
+            }
         }
         catch (Exception ex)
         {

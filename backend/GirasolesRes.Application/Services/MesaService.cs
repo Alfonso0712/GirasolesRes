@@ -1,0 +1,272 @@
+using System.Text.RegularExpressions;
+using GirasolesRes.Application.Common;
+using GirasolesRes.Application.DTOs.Mesas;
+using GirasolesRes.Application.Interfaces.Persistence;
+using GirasolesRes.Application.Interfaces.Services;
+using GirasolesRes.Domain.Entities;
+using GirasolesRes.Domain.Enums;
+
+namespace GirasolesRes.Application.Services;
+
+public class MesaService : IMesaService
+{
+    private readonly IMesaRepository _mesaRepository;
+    private readonly IAuditoriaMesaRepository _auditoriaMesaRepository;
+
+    public MesaService(
+        IMesaRepository mesaRepository,
+        IAuditoriaMesaRepository auditoriaMesaRepository)
+    {
+        _mesaRepository = mesaRepository;
+        _auditoriaMesaRepository = auditoriaMesaRepository;
+    }
+
+    public async Task<ApiResponse<List<MesaDto>>> ListarMesasAsync(
+        string? estado,
+        bool incluirInactivas,
+        string rolUsuario,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // RN-40 / RN-45: Mozo y Cajero solo ven mesas activas
+            var puedeVerInactivas = rolUsuario.Equals("Administrador", StringComparison.OrdinalIgnoreCase) && incluirInactivas;
+
+            EstadoOcupacionMesa? filtroOcupacion = null;
+            if (!string.IsNullOrWhiteSpace(estado))
+            {
+                if (estado.Trim().Equals("libre", StringComparison.OrdinalIgnoreCase))
+                    filtroOcupacion = EstadoOcupacionMesa.Libre;
+                else if (estado.Trim().Equals("ocupada", StringComparison.OrdinalIgnoreCase))
+                    filtroOcupacion = EstadoOcupacionMesa.Ocupada;
+            }
+
+            var mesas = await _mesaRepository.ListarMesasAsync(filtroOcupacion, puedeVerInactivas, cancellationToken);
+
+            // Orden natural: Mesa 2 antes que Mesa 10 (CUS06.2)
+            var mesasOrdenadas = mesas
+                .OrderBy(m => m.Nombre, NaturalStringComparer.Instance)
+                .Select(m => new MesaDto(
+                    m.Id,
+                    m.Nombre,
+                    m.Ocupacion.ToString(),
+                    m.Activa
+                ))
+                .ToList();
+
+            return ApiResponse<List<MesaDto>>.Exitoso(mesasOrdenadas);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<List<MesaDto>>.Fallido(MensajesCatalogo.MSG_94, detalle: ex.Message);
+        }
+    }
+
+    public async Task<ApiResponse<MesaDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var mesa = await _mesaRepository.ObtenerPorIdAsync(id, cancellationToken);
+            if (mesa is null)
+            {
+                return ApiResponse<MesaDto>.Fallido("La mesa no existe.");
+            }
+
+            return ApiResponse<MesaDto>.Exitoso(new MesaDto(
+                mesa.Id,
+                mesa.Nombre,
+                mesa.Ocupacion.ToString(),
+                mesa.Activa
+            ));
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+        }
+    }
+
+    public async Task<ApiResponse<MesaDto>> RegistrarMesaAsync(
+        CrearMesaRequest request,
+        string adminUsername,
+        string? ipAddress = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // RV-53: Limpieza de espacios redundantes
+            var nombreLimpio = MesaValidationHelper.LimpiarEspacios(request.Nombre);
+
+            // RV-51: Validación obligatoria y longitud
+            if (string.IsNullOrWhiteSpace(nombreLimpio))
+            {
+                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_81);
+            }
+
+            if (nombreLimpio.Length < 1 || nombreLimpio.Length > 20 ||
+                !Regex.IsMatch(nombreLimpio, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.]+$"))
+            {
+                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_82);
+            }
+
+            // RV-52 / RN-41: Nombre único sin distinguir mayúsculas, tildes ni espacios
+            var normalizado = MesaValidationHelper.NormalizarNombre(nombreLimpio);
+            var existe = await _mesaRepository.ExisteNombreNormalizadoAsync(normalizado, null, cancellationToken);
+            if (existe)
+            {
+                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
+            }
+
+            // RN-42: Toda mesa nueva se registra Activa y Libre
+            var mesa = new Mesa(nombreLimpio);
+            await _mesaRepository.AgregarAsync(mesa, cancellationToken);
+            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
+
+            // RN-47: Auditoría
+            var auditoria = new AuditoriaMesa(
+                nombreAdmin: adminUsername,
+                accion: "CREAR",
+                nombreMesa: mesa.Nombre,
+                detalle: $"Registro de nueva mesa '{mesa.Nombre}' activa y libre",
+                direccionIp: ipAddress
+            );
+            await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
+
+            var dto = new MesaDto(mesa.Id, mesa.Nombre, mesa.Ocupacion.ToString(), mesa.Activa);
+            return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_84);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+        }
+    }
+
+    public async Task<ApiResponse<MesaDto>> ActualizarMesaAsync(
+        Guid id,
+        ActualizarMesaRequest request,
+        string adminUsername,
+        string? ipAddress = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var mesa = await _mesaRepository.ObtenerPorIdAsync(id, cancellationToken);
+            if (mesa is null)
+            {
+                return ApiResponse<MesaDto>.Fallido("La mesa no existe.");
+            }
+
+            // RV-53: Limpieza de espacios redundantes
+            var nombreLimpio = MesaValidationHelper.LimpiarEspacios(request.Nombre);
+
+            // RV-51: Validación de obligatoriedad y caracteres
+            if (string.IsNullOrWhiteSpace(nombreLimpio))
+            {
+                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_81);
+            }
+
+            if (nombreLimpio.Length < 1 || nombreLimpio.Length > 20 ||
+                !Regex.IsMatch(nombreLimpio, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.]+$"))
+            {
+                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_82);
+            }
+
+            // RV-52 / RN-41: Nombre único sin distinguir mayúsculas, tildes ni espacios (excluyendo id actual)
+            var normalizado = MesaValidationHelper.NormalizarNombre(nombreLimpio);
+            var existe = await _mesaRepository.ExisteNombreNormalizadoAsync(normalizado, id, cancellationToken);
+            if (existe)
+            {
+                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
+            }
+
+            var nombreAnterior = mesa.Nombre;
+            mesa.ActualizarNombre(nombreLimpio);
+            await _mesaRepository.ActualizarAsync(mesa, cancellationToken);
+            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
+
+            // RN-47: Auditoría
+            var auditoria = new AuditoriaMesa(
+                nombreAdmin: adminUsername,
+                accion: "EDITAR",
+                nombreMesa: mesa.Nombre,
+                detalle: $"Mesa modificada de '{nombreAnterior}' a '{mesa.Nombre}'",
+                direccionIp: ipAddress
+            );
+            await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
+
+            var dto = new MesaDto(mesa.Id, mesa.Nombre, mesa.Ocupacion.ToString(), mesa.Activa);
+            return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_85);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+        }
+    }
+
+    public async Task<ApiResponse<MesaDto>> CambiarEstadoAsync(
+        Guid id,
+        bool activa,
+        string adminUsername,
+        string? ipAddress = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var mesa = await _mesaRepository.ObtenerPorIdAsync(id, cancellationToken);
+            if (mesa is null)
+            {
+                return ApiResponse<MesaDto>.Fallido("La mesa no existe.");
+            }
+
+            // RV-56 / RN-44: Una mesa ocupada no se puede desactivar
+            if (!activa && mesa.Ocupacion == EstadoOcupacionMesa.Ocupada)
+            {
+                return ApiResponse<MesaDto>.Fallido(string.Format(MensajesCatalogo.MSG_88, mesa.Nombre));
+            }
+
+            mesa.CambiarActiva(activa);
+            await _mesaRepository.ActualizarAsync(mesa, cancellationToken);
+            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
+
+            // RN-47: Auditoría
+            var accionAuditoria = activa ? "ACTIVAR" : "DESACTIVAR";
+            var auditoria = new AuditoriaMesa(
+                nombreAdmin: adminUsername,
+                accion: accionAuditoria,
+                nombreMesa: mesa.Nombre,
+                detalle: $"Mesa '{mesa.Nombre}' marcada como {(activa ? "Activa" : "Inactiva")}",
+                direccionIp: ipAddress
+            );
+            await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
+
+            var mensajeExito = activa ? MensajesCatalogo.MSG_90 : MensajesCatalogo.MSG_89;
+            var dto = new MesaDto(mesa.Id, mesa.Nombre, mesa.Ocupacion.ToString(), mesa.Activa);
+            return ApiResponse<MesaDto>.Exitoso(dto, mensajeExito);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+        }
+    }
+
+    public async Task<ApiResponse<ResumenMesasDto>> ObtenerResumenAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var todas = await _mesaRepository.ListarMesasAsync(null, true, cancellationToken);
+            var libres = todas.Count(m => m.Activa && m.Ocupacion == EstadoOcupacionMesa.Libre);
+            var ocupadas = todas.Count(m => m.Activa && m.Ocupacion == EstadoOcupacionMesa.Ocupada);
+            var inactivas = todas.Count(m => !m.Activa);
+
+            return ApiResponse<ResumenMesasDto>.Exitoso(new ResumenMesasDto(
+                todas.Count,
+                libres,
+                ocupadas,
+                inactivas
+            ));
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<ResumenMesasDto>.Fallido(MensajesCatalogo.MSG_94, detalle: ex.Message);
+        }
+    }
+}

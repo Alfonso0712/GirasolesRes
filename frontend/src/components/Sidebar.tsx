@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           )}
 
-          {(rol === 'Administrador' || rol === 'Mozo') && (
+          {(rol === 'Administrador' || rol === 'Mozo' || rol === 'Cajero') && (
             <button
               type="button"
               onClick={() => handleNavigate('mesas')}

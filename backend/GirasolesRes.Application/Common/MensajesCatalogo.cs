@@ -56,4 +56,21 @@ public static class MensajesCatalogo
     public const string MSG_48 = "Por seguridad se cerró su sesión tras varios intentos fallidos. Inicie sesión nuevamente.";
     public const string MSG_49 = "No tiene permiso para cambiar la contraseña. Pida a la administradora que la restablezca.";
     public const string MSG_50 = "No se pudo cerrar la sesión en el servidor, pero se cerró en este equipo.";
+
+    // CUS-06: Gestión de mesas
+    public const string MSG_81 = "Ingrese el número o nombre de la mesa.";
+    public const string MSG_82 = "El nombre de la mesa debe tener entre 1 y 20 caracteres.";
+    public const string MSG_83 = "Esa mesa ya está registrada. Use otro número o nombre.";
+    public const string MSG_84 = "Mesa registrada correctamente.";
+    public const string MSG_85 = "Mesa actualizada correctamente.";
+    public const string MSG_86 = "¿Desactivar {0}? Dejará de aparecer al tomar pedidos, pero se conservará su historial.";
+    public const string MSG_87 = "¿Activar {0}? Volverá a estar disponible para pedidos.";
+    public const string MSG_88 = "No se puede desactivar {0}: tiene un pedido pendiente de cobro.";
+    public const string MSG_89 = "Mesa desactivada.";
+    public const string MSG_90 = "Mesa activada.";
+    public const string MSG_91 = "No hay mesas registradas. Use \"Nueva mesa\" para crear la primera.";
+    public const string MSG_92 = "No hay mesas registradas. Pida a la administradora que las registre.";
+    public const string MSG_93 = "No hay mesas con ese estado. Cambie el filtro.";
+    public const string MSG_94 = "No se pudieron cargar las mesas. Intente nuevamente.";
+    public const string MSG_95 = "La {0} ya tiene un pedido abierto. Agregue productos a ese pedido.";
 }
