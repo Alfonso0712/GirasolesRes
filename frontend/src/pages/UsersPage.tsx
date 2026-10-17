@@ -19,6 +19,7 @@ import { UserFormModal } from '../components/UserFormModal';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { obtenerIniciales } from '../utils/avatar';
 import { useUsersManagement } from '../hooks/useUsersManagement';
+import { StatusBadge } from '../components/StatusBadge';
 
 export interface UsersPageProps {
   session: UserSession;
@@ -421,20 +422,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
 
                         {/* Estado Indicator */}
                         <td className="py-4 px-6">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`w-2 h-2 rounded-full ${
-                                u.activo ? 'bg-emerald-500' : 'bg-neutral-400'
-                              }`}
-                            />
-                            <span
-                              className={`text-xs font-semibold ${
-                                u.activo ? 'text-emerald-700' : 'text-neutral-500'
-                              }`}
-                            >
-                              {u.activo ? 'Activo' : 'Inactivo'}
-                            </span>
-                          </div>
+                          <StatusBadge status={u.activo} variant="dot" />
                         </td>
 
                         {/* Acciones: Botones cuadrados compactos (w-8 h-8 / 32x32 px) de solo icono con accesibilidad completa */}
@@ -543,20 +531,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            u.activo ? 'bg-emerald-500' : 'bg-neutral-400'
-                          }`}
-                        />
-                        <span
-                          className={`text-xs font-semibold ${
-                            u.activo ? 'text-emerald-700' : 'text-neutral-500'
-                          }`}
-                        >
-                          {u.activo ? 'Activo' : 'Inactivo'}
-                        </span>
-                      </div>
+                      <StatusBadge status={u.activo} variant="dot" />
                     </div>
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-neutral-100">

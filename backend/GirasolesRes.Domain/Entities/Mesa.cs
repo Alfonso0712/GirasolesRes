@@ -15,6 +15,15 @@ public class Mesa
     public DateTime FechaCreacionUtc { get; private set; }
     public DateTime? FechaActualizacionUtc { get; private set; }
 
+    // Propiedades puente de compatibilidad con estándar de cátedra (Prefijo trilateral Mesa)
+    public Guid Id_Mesa => Id;
+    public string Nom_Mesa => Nombre;
+    public string Nom_MesaNormalizado => NombreNormalizado;
+    public EstadoOcupacionMesa Est_Ocupacion => Ocupacion;
+    public bool Est_Activa => Activa;
+    public DateTime Fec_CreacionUtc => FechaCreacionUtc;
+    public DateTime? Fec_ActualizacionUtc => FechaActualizacionUtc;
+
     // Constructor privado para EF Core
     private Mesa() { }
 

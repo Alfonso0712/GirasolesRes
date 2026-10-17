@@ -16,6 +16,19 @@ public class Usuario
     public DateTime FechaCreacionUtc { get; private set; }
     public DateTime? FechaActualizacionUtc { get; private set; }
 
+    // Propiedades puente de compatibilidad con estándar de cátedra (Prefijo trilateral Usuario)
+    public Guid Id_Usuario => Id;
+    public string Nom_Usuario => NombreUsuario;
+    public string Nom_Completo => NombreCompleto;
+    public string? Cor_Usuario => Correo;
+    public string Has_Usuario => PasswordHash;
+    public RolUsuario Rol_Usuario => Rol;
+    public bool Est_Usuario => Activo;
+    public int Int_Fallidos => IntentosFallidos;
+    public DateTime? Bloq_HastaUtc => BloqueadoHastaUtc;
+    public DateTime Fec_CreacionUtc => FechaCreacionUtc;
+    public DateTime? Fec_ActualizacionUtc => FechaActualizacionUtc;
+
     // Constructor privado para EF Core
     private Usuario() { }
 
