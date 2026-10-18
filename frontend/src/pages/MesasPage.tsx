@@ -22,9 +22,10 @@ interface MesasPageProps {
     type: 'success' | 'error' | 'info' | 'warning';
     message: string;
   }) => void;
+  onNavigateToPedido?: (mesaId: string) => void;
 }
 
-export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout }) => {
+export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavigateToPedido }) => {
   const {
     mesas,
     todasLasMesas,
@@ -68,6 +69,12 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout }) => {
   }>({ abierto: false, mesa: null, accion: '' });
 
   const handleAccionRol = (mesa: MesaItem, accion: string) => {
+    if (accion === 'REGISTRAR PEDIDO' || accion === 'AGREGAR PRODUCTOS') {
+      if (onNavigateToPedido) {
+        onNavigateToPedido(mesa.id);
+        return;
+      }
+    }
     setModalAccionRol({
       abierto: true,
       mesa,

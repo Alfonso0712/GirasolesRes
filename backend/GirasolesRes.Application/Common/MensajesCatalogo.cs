@@ -107,4 +107,24 @@ public static class MensajesCatalogo
     public const string MSG_93 = "No hay mesas con ese estado. Cambie el filtro.";
     public const string MSG_94 = "No se pudieron cargar las mesas. Intente nuevamente.";
     public const string MSG_95 = "La {0} ya tiene un pedido abierto. Agregue productos a ese pedido.";
+
+    // CUS-07: Registro de pedido de mesa
+    public const string MSG_96 = "Seleccione una mesa libre.";
+    public const string MSG_97 = "Agregue al menos un producto al pedido.";
+    public const string MSG_98 = "La cantidad debe ser un número entero entre 1 y 20.";
+    public const string MSG_99 = "La observación no puede superar los 100 caracteres.";
+    public const string MSG_100 = "Pedido N.º {0} registrado para {1}. La comanda se envió a cocina.";
+    public const string MSG_101 = "Productos agregados al pedido N.º {0}. Se envió una comanda adicional a cocina.";
+    public const string MSG_102 = "Tiene un pedido sin registrar. ¿Desea descartarlo?";
+    public const string MSG_103 = "Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.";
+    public const string MSG_104 = "El pedido ya no puede modificarse porque fue pagado o anulado.";
+    public const string MSG_105 = "No se pudo registrar el pedido. Su pedido sigue en pantalla; intente nuevamente.";
+    public const string MSG_106 = "No se pudieron agregar los productos. El pedido no cambió; intente nuevamente.";
+    public const string MSG_107 = "No hay productos disponibles para pedir. Avise a la administradora.";
+    public const string MSG_108 = "No hay mesas libres. Revise la vista de mesas.";
+
+    // CUS-08: Registro de pedido para llevar
+    public const string MSG_109 = "La referencia no puede superar los 30 caracteres.";
+    public const string MSG_110 = "Pedido para llevar N.º {0} registrado. La comanda se envió a cocina.";
+    public const string MSG_111 = "No se pudo registrar el pedido para llevar. Su pedido sigue en pantalla; intente nuevamente.";
 }

@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IProductoService, ProductoService>();
         services.AddScoped<IMenuDiaService, MenuDiaService>();
         services.AddScoped<IMesaService, MesaService>();
+        services.AddScoped<IPedidoService, PedidoService>();
         return services;
     }
 }

@@ -17,6 +17,11 @@ public class GirasolesDbContext : DbContext
     public DbSet<Producto> Productos => Set<Producto>();
     public DbSet<MenuDia> MenusDia => Set<MenuDia>();
     public DbSet<MenuDiaPlato> MenuDiaPlatos => Set<MenuDiaPlato>();
+    public DbSet<Pedido> Pedidos => Set<Pedido>();
+    public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
+    public DbSet<Comanda> Comandas => Set<Comanda>();
+    public DbSet<DetalleComanda> DetallesComanda => Set<DetalleComanda>();
+    public DbSet<AuditoriaPedido> AuditoriasPedido => Set<AuditoriaPedido>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -178,6 +183,126 @@ public class GirasolesDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(p => p.Id_Producto)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Pedido>(entity =>
+        {
+            entity.ToTable("pedidos");
+            entity.HasKey(p => p.Id_Pedido);
+            entity.Property(p => p.Id_Pedido).HasColumnName("id_pedido");
+            entity.Property(p => p.Ped_NumeroDiario).HasColumnName("ped_numero_diario").IsRequired();
+            entity.Property(p => p.Ped_FechaOperativa).HasColumnName("ped_fecha_operativa").HasColumnType("date").IsRequired();
+            entity.Property(p => p.Ped_FechaHoraUtc).HasColumnName("ped_fecha_hora_utc").IsRequired();
+            entity.Property(p => p.Ped_Tipo).HasColumnName("ped_tipo").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(p => p.Ped_Estado).HasColumnName("ped_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(p => p.Ped_Total).HasColumnName("ped_total").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(p => p.Ped_Notas).HasColumnName("ped_notas").HasMaxLength(250);
+            entity.Property(p => p.Id_Mesa).HasColumnName("id_mesa");
+            entity.Property(p => p.Id_Usuario).HasColumnName("id_usuario").IsRequired();
+            entity.Property(p => p.Ped_SolicitudId).HasColumnName("ped_solicitud_id").HasMaxLength(100).IsRequired();
+            entity.HasIndex(p => p.Ped_SolicitudId).IsUnique();
+            entity.HasIndex(p => new { p.Ped_FechaOperativa, p.Ped_NumeroDiario });
+            entity.Property(p => p.Ped_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(p => p.Ped_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+
+            entity.HasOne(p => p.Ped_Mesa)
+                  .WithMany()
+                  .HasForeignKey(p => p.Id_Mesa)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(p => p.Ped_Usuario)
+                  .WithMany()
+                  .HasForeignKey(p => p.Id_Usuario)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Navigation(p => p.Ped_Detalles)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            entity.Navigation(p => p.Ped_Comandas)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        modelBuilder.Entity<DetallePedido>(entity =>
+        {
+            entity.ToTable("detalles_pedido");
+            entity.HasKey(d => d.Id_Detalle);
+            entity.Property(d => d.Id_Detalle).HasColumnName("id_detalle");
+            entity.Property(d => d.Id_Pedido).HasColumnName("id_pedido").IsRequired();
+            entity.Property(d => d.Id_Producto).HasColumnName("id_producto").IsRequired();
+            entity.Property(d => d.Det_Cantidad).HasColumnName("det_cantidad").IsRequired();
+            entity.Property(d => d.Det_PrecioUnitario).HasColumnName("det_precio_unitario").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(d => d.Det_Subtotal).HasColumnName("det_subtotal").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(d => d.Det_Observacion).HasColumnName("det_observacion").HasMaxLength(100);
+            entity.Property(d => d.Det_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasOne(d => d.Det_Pedido)
+                  .WithMany(p => p.Ped_Detalles)
+                  .HasForeignKey(d => d.Id_Pedido)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.Det_Producto)
+                  .WithMany()
+                  .HasForeignKey(d => d.Id_Producto)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Comanda>(entity =>
+        {
+            entity.ToTable("comandas");
+            entity.HasKey(c => c.Id_Comanda);
+            entity.Property(c => c.Id_Comanda).HasColumnName("id_comanda");
+            entity.Property(c => c.Id_Pedido).HasColumnName("id_pedido").IsRequired();
+            entity.Property(c => c.Cmd_NumeroDiario).HasColumnName("cmd_numero_diario").IsRequired();
+            entity.Property(c => c.Cmd_FechaHoraUtc).HasColumnName("cmd_fecha_hora_utc").IsRequired();
+            entity.Property(c => c.Cmd_Estado).HasColumnName("cmd_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(c => c.Cmd_EsAdicional).HasColumnName("cmd_es_adicional").IsRequired();
+            entity.Property(c => c.Cmd_NombreMesa).HasColumnName("cmd_nombre_mesa").HasMaxLength(50).IsRequired();
+            entity.Property(c => c.Cmd_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasOne(c => c.Cmd_Pedido)
+                  .WithMany(p => p.Ped_Comandas)
+                  .HasForeignKey(c => c.Id_Pedido)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Navigation(c => c.Cmd_Detalles)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        modelBuilder.Entity<DetalleComanda>(entity =>
+        {
+            entity.ToTable("detalles_comanda");
+            entity.HasKey(d => d.Id_DetalleComanda);
+            entity.Property(d => d.Id_DetalleComanda).HasColumnName("id_detalle_comanda");
+            entity.Property(d => d.Id_Comanda).HasColumnName("id_comanda").IsRequired();
+            entity.Property(d => d.Id_Producto).HasColumnName("id_producto").IsRequired();
+            entity.Property(d => d.Dtc_NombreProducto).HasColumnName("dtc_nombre_producto").HasMaxLength(100).IsRequired();
+            entity.Property(d => d.Dtc_Cantidad).HasColumnName("dtc_cantidad").IsRequired();
+            entity.Property(d => d.Dtc_Observacion).HasColumnName("dtc_observacion").HasMaxLength(100);
+            entity.Property(d => d.Dtc_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasOne(d => d.Dtc_Comanda)
+                  .WithMany(c => c.Cmd_Detalles)
+                  .HasForeignKey(d => d.Id_Comanda)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.Dtc_Producto)
+                  .WithMany()
+                  .HasForeignKey(d => d.Id_Producto)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<AuditoriaPedido>(entity =>
+        {
+            entity.ToTable("auditorias_pedido");
+            entity.HasKey(a => a.Id_Auditoria);
+            entity.Property(a => a.Id_Auditoria).HasColumnName("id_auditoria");
+            entity.Property(a => a.Aud_Usuario).HasColumnName("nom_usuario").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_NumeroMesa).HasColumnName("nom_mesa").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_NumeroPedido).HasColumnName("num_pedido").IsRequired();
+            entity.Property(a => a.Aud_Detalle).HasColumnName("detalle").HasMaxLength(500);
+            entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
+            entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });
     }
 }

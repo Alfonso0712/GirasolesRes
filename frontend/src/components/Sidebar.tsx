@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Home, Users, ShieldCheck, DollarSign, Utensils, ChefHat, X, UtensilsCrossed } from 'lucide-react';
+import { Home, Users, ShieldCheck, DollarSign, Utensils, ChefHat, X, UtensilsCrossed, ClipboardList, ShoppingBag } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import logoGirasoles from '../assets/logo-girasoles.png';
 
@@ -178,7 +178,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }`}
             >
               <Utensils className="w-5 h-5 shrink-0" />
-              <span>Mesas y Pedidos</span>
+              <span>Mesas y Salón</span>
+            </button>
+          )}
+
+          {(rol === 'Administrador' || rol === 'Mozo') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('pedidos-mesa')}
+              className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
+                paginaActiva === 'pedidos-mesa'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ClipboardList className="w-5 h-5 shrink-0" />
+              <span>Tomar Pedido</span>
+            </button>
+          )}
+
+          {(rol === 'Administrador' || rol === 'Cajero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('pedidos-llevar')}
+              className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
+                paginaActiva === 'pedidos-llevar'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ShoppingBag className="w-5 h-5 shrink-0" />
+              <span>Pedido para Llevar</span>
             </button>
           )}
 

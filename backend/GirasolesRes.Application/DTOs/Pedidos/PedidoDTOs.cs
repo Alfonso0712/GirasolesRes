@@ -1,0 +1,110 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace GirasolesRes.Application.DTOs.Pedidos;
+
+public class LineaPedidoRequest
+{
+    [Required(ErrorMessage = "El identificador del producto es obligatorio.")]
+    public Guid ProductoId { get; set; }
+
+    [Range(1, 20, ErrorMessage = "La cantidad debe ser un número entero entre 1 y 20.")]
+    public int Cantidad { get; set; } = 1;
+
+    [MaxLength(100, ErrorMessage = "La observación no puede superar los 100 caracteres.")]
+    public string? Observacion { get; set; }
+}
+
+public class RegistrarPedidoMesaRequest
+{
+    [Required(ErrorMessage = "El identificador de solicitud es obligatorio.")]
+    public string SolicitudId { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "La mesa es obligatoria.")]
+    public Guid MesaId { get; set; }
+
+    [Required(ErrorMessage = "Agregue al menos un producto al pedido.")]
+    [MinLength(1, ErrorMessage = "Agregue al menos un producto al pedido.")]
+    public List<LineaPedidoRequest> Lineas { get; set; } = new();
+
+    [MaxLength(250, ErrorMessage = "Las notas no pueden superar los 250 caracteres.")]
+    public string? Notas { get; set; }
+}
+
+public class AgregarLineasPedidoRequest
+{
+    [Required(ErrorMessage = "El identificador de solicitud es obligatorio.")]
+    public string SolicitudId { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Agregue al menos un producto al pedido.")]
+    [MinLength(1, ErrorMessage = "Agregue al menos un producto al pedido.")]
+    public List<LineaPedidoRequest> Lineas { get; set; } = new();
+}
+
+public class RegistrarPedidoLlevarRequest
+{
+    [Required(ErrorMessage = "El identificador de solicitud es obligatorio.")]
+    public string SolicitudId { get; set; } = string.Empty;
+
+    [MaxLength(30, ErrorMessage = "La referencia no puede superar los 30 caracteres.")]
+    public string? Referencia { get; set; }
+
+    [Required(ErrorMessage = "Agregue al menos un producto al pedido.")]
+    [MinLength(1, ErrorMessage = "Agregue al menos un producto al pedido.")]
+    public List<LineaPedidoRequest> Lineas { get; set; } = new();
+}
+
+public record RegistrarPedidoResultDto(
+    Guid PedidoId,
+    int Numero,
+    decimal Total,
+    Guid ComandaId,
+    string MesaNombre
+);
+
+public record RegistrarPedidoLlevarResultDto(
+    Guid PedidoId,
+    int Numero,
+    decimal Total,
+    Guid ComandaId
+);
+
+public record AgregarLineasResultDto(
+    decimal Total,
+    Guid ComandaId,
+    int NumeroPedido
+);
+
+public record LineaPedidoResponseDto(
+    Guid Id,
+    Guid ProductoId,
+    string ProductoNombre,
+    decimal PrecioUnitario,
+    int Cantidad,
+    decimal Subtotal,
+    string? Observacion
+);
+
+public record PedidoResponseDto(
+    Guid Id,
+    int Numero,
+    DateOnly FechaOperativa,
+    DateTime FechaHora,
+    string Estado,
+    string Tipo,
+    decimal Total,
+    string? Notas,
+    Guid? MesaId,
+    string? MesaNombre,
+    Guid MozoId,
+    string MozoNombre,
+    List<LineaPedidoResponseDto> Lineas
+);
+
+public record ProductoMenuPedidoDto(
+    Guid Id,
+    string Nombre,
+    string Categoria,
+    decimal Precio,
+    bool Agotado,
+    bool Disponible
+);

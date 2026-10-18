@@ -116,6 +116,19 @@ export const MesaCard: React.FC<MesaCardProps> = ({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                onAccionRol?.(mesa, esLibre ? 'REGISTRAR PEDIDO' : 'AGREGAR PRODUCTOS');
+              }}
+              title={esLibre ? `Tomar pedido en ${mesa.nombre}` : `Ver/ampliar pedido en ${mesa.nombre}`}
+              aria-label={`Pedido ${mesa.nombre}`}
+              className="w-8 h-8 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#D35400] shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <ShoppingBag className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
                 onEditar?.(mesa, e);
               }}
               title={`Editar ${mesa.nombre}`}

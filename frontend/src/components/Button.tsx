@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isSubmitting?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   children,
   disabled = false,
   type = 'button',
@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   isSubmitting = false,
   className = '',
   ...props
-}) => {
+}, ref) => {
   const baseStyles = 'w-full min-h-[48px] py-3 px-5 rounded-xl font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 text-sm';
 
   const variants = {
@@ -25,6 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      ref={ref}
       type={type}
       disabled={disabled || isSubmitting}
       className={`${baseStyles} ${variants[variant]} ${className}`}
@@ -43,6 +44,8 @@ export const Button: React.FC<ButtonProps> = ({
       )}
     </button>
   );
-};
+});
+
+Button.displayName = 'Button';
 
 export default Button;
