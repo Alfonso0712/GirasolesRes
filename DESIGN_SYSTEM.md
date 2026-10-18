@@ -60,3 +60,43 @@ El estándar visual consolidado en el módulo de Usuarios es de réplica obligat
 - **Panel Lateral Informativo (AuthShell):** `hidden md:flex md:w-[48%] lg:w-[45%] h-full overflow-hidden` con padding vertical balanceado (`py-6 lg:py-8` en contenido central).
 - **Panel de Formulario:** `flex-1 flex items-center justify-center py-4 px-6 sm:px-10 lg:px-14 overflow-y-auto md:overflow-y-hidden h-full`.
 - **Cero Scroll en Desktop:** El contenido del formulario, incluso con banners dinámicos de notificación (`FormMessage` con `mb-3`) y tarjeta de credenciales de demostración (`p-3 mt-4 sm:mt-5`), debe mantener una altura total inferior a 500 px, garantizando ajuste al 100% sin scrollbars en pantallas estándar de laptop (1366x768 px) o monitores Full HD. Desplazamiento vertical (`overflow-y-auto`) habilitado exclusivamente en dispositivos móviles (`< md`).
+
+---
+
+## 4. Estándar Único de Encabezado de Página (Editorial Limpio)
+
+- **Lienzo Libre Directo (`#FAF7F4`):** Todos los módulos del sistema (Usuarios, Productos, Menú del Día, Mesas, Pedidos, Cocina KDS, Caja, Ventas y Reportes) deben colocar su encabezado directamente sobre el fondo crema.
+- **Prohibición de Cajas Blancas:** Queda prohibido encerrar el encabezado de página dentro de tarjetas blancas (`PageContainer` o contenedores `bg-white`) o anteponer iconos cuadrados al lado del título.
+- **Estructura Obligatoria:**
+  1. *Kicker superior de categoría:* `<p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">[CATEGORÍA]</p>`
+  2. *Título principal editorial:* `<h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">[Nombre del Módulo]</h1>` (único punto donde se usa Playfair Display).
+  3. *Subtítulo claro:* `<p className="text-sm text-neutral-500 mt-1">[Descripción operativa sin códigos técnicos]</p>`
+  4. *Acciones a la derecha:* Botón primario (`+ Nuevo...`) en naranja `#D35400` y controles con altura `min-h-[38px]`.
+
+---
+
+## 5. Matriz Estricta de Colorimetría Semántica (Cero Colisión de Colores)
+
+Para prevenir errores operativos graves (Heurística 5 de Nielsen), está prohibido asignar el mismo color a dos botones con propósitos distintos en una misma vista:
+
+1. **Acción Operativa Primaria:** Naranja corporativo sólido (`bg-[#D35400] hover:bg-[#B84600] text-white border-transparent shadow-xs`) — "Pedido / Comanda", "Cobrar", "Confirmar", "+ Nuevo".
+2. **Acción de Edición / Modificación:** Blanco / Neutro (`bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900`) — icono `Edit2`.
+3. **Acción de Desactivar / Suspender:** Ámbar de advertencia (`bg-amber-50 border-amber-200 text-[#B84600] hover:bg-amber-100`) — icono `PowerOff`.
+4. **Acción de Activar / Reanudar:** Verde esmeralda suave (`bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100`) — icono `Power`.
+5. **Acción Destructiva / Eliminar:** Rosa suave (`bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100`) — icono `Trash2`.
+6. **Acción Bloqueada / Deshabilitada:** `disabled`, fondo `bg-neutral-100 border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60` con tooltip (`title`) explicativo.
+
+---
+
+## 6. Legibilidad en Tarjetas Operativas (Mesas, Menú del Día, Cocina KDS)
+
+- **Tipografía Operativa Sans-Serif:** En tarjetas de salón, cocina y pedidos se usa `Plus Jakarta Sans` en negrita con números tabulares (`font-sans font-bold tabular-nums text-lg text-[#2C1A0E]`), nunca Serif.
+- **Cero Truncamiento:** Nombres de mesas y pedidos (`Mesa 1`, `Para llevar`) deben mostrarse íntegros sin puntos suspensivos (`...` o `Mes...`).
+- **Pastillas de Estado Compactas:** En tarjetas, las pastillas de estado usan ancho dinámico (`w-auto px-2.5 py-0.5 shrink-0`) para no competir horizontalmente con los títulos.
+
+---
+
+## 7. Lenguaje del Mundo Real y Cero Códigos Técnicos en la UI (Heurística 2 Nielsen)
+
+- Queda estrictamente prohibido mostrar identificadores de ingeniería como `(CUS06)`, `(RF-04)` o `(MSG-xx)` en textos visibles al usuario (títulos, subtítulos, descripciones, mensajes de alerta o modales).
+- Todos los mensajes deben estar formulados en lenguaje natural, claro y orientado a la operación gastronómica.

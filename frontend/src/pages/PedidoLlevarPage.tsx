@@ -94,38 +94,36 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
         <div className="w-12 h-12 rounded-2xl bg-amber-100 text-[#D35400] flex items-center justify-center animate-spin mb-4">
           <ShoppingBag className="w-6 h-6" />
         </div>
-        <p className="font-serif font-bold text-lg text-[#2C1A0E]">Cargando carta para llevar…</p>
+        <p className="font-sans font-bold text-lg text-[#2C1A0E]">Cargando carta para llevar…</p>
         <p className="text-xs text-[#7C6F66] mt-1">Consultando disponibilidad de productos</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#FDFBF9] overflow-hidden">
-      {/* 1. ENCABEZADO Y BARRA SUPERIOR (RV-72, RV-73) */}
-      <div className="shrink-0 pb-3 border-b border-neutral-200/80 bg-white px-4 sm:px-6 py-3 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] overflow-hidden">
+      {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
+      <div className="shrink-0 p-4 sm:p-6 pb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
             {onVolver && (
               <button
                 type="button"
                 onClick={onVolver}
                 aria-label="Volver"
-                className="p-2 rounded-xl text-neutral-500 hover:text-[#2C1A0E] hover:bg-neutral-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-xl text-neutral-500 hover:text-[#2C1A0E] hover:bg-neutral-100 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer mt-0.5"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
             )}
             <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-500/15 text-[#D35400] border border-amber-500/30">
-                  PEDIDO PARA LLEVAR
-                </span>
-              </div>
-              <h1 className="text-lg sm:text-xl font-serif font-bold text-[#2C1A0E] mt-0.5 leading-tight">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+                OPERACIÓN DE SALÓN
+              </p>
+              <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
                 Pedido para Llevar
               </h1>
-              <p className="text-xs text-[#7C6F66]">
+              <p className="text-sm text-neutral-500 mt-1">
                 Registre el pedido para llevar del cliente y envíe la comanda a cocina.
               </p>
             </div>
@@ -220,7 +218,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
             {catalogoFiltrado.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center p-6 text-center bg-white border border-dashed border-neutral-300 rounded-2xl">
                 <ShoppingBag className="w-10 h-10 text-neutral-300 mb-2" />
-                <p className="font-serif font-bold text-sm text-[#2C1A0E]">
+                <p className="font-sans font-bold text-sm text-[#2C1A0E]">
                   No se encontraron productos disponibles
                 </p>
                 <p className="text-xs text-[#7C6F66] mt-1 max-w-sm">
@@ -316,7 +314,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="font-serif font-bold text-sm text-[#2C1A0E]">
+                <h2 className="font-sans font-bold text-sm text-[#2C1A0E]">
                   Comanda para Llevar
                 </h2>
                 <p className="text-[11px] text-[#7C6F66]">
@@ -570,7 +568,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
             <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-[#FAF7F4]">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[#D35400]" />
-                <h3 className="font-serif font-bold text-base text-[#2C1A0E]">
+                <h3 className="font-sans font-bold text-base text-[#2C1A0E]">
                   Detalle del Pedido ({lineasBorrador.length})
                 </h3>
               </div>

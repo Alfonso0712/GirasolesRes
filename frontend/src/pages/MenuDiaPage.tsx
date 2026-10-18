@@ -75,7 +75,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           Acceso Restringido
         </h2>
         <p className="text-neutral-600 max-w-md mx-auto text-sm">
-          No tiene permiso para usar esta función. (MSG-39). Esta pantalla está reservada para administración y cocina.
+          No tiene permiso para acceder a este módulo. Esta pantalla está reservada para administración y cocina.
         </p>
       </div>
     );
@@ -141,11 +141,11 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
       {/* Encabezado Superior ESTÁTICO Y FIJO (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-0.5">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             {esCocinero ? 'COCINA Y SERVICIO' : 'GESTIÓN DE LA CARTA'}
           </p>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
               Menú del Día
             </h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-semibold">
@@ -153,7 +153,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               <span className="capitalize">{fechaHoyFormateada}</span>
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+          <p className="text-sm text-neutral-500 mt-1">
             {esCocinero
               ? 'Consulte los platos de la carta de hoy y actualice su disponibilidad en tiempo real.'
               : 'Defina el desayuno y los platos disponibles para el servicio de hoy, o gestione su disponibilidad.'}
@@ -230,7 +230,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     Menú no disponible
                   </h3>
                   <p className="text-sm text-neutral-600">
-                    No hay menú definido para hoy. La administradora debe definirlo. (MSG-78)
+                    No hay menú definido para hoy. La administradora debe definirlo.
                   </p>
                 </div>
               </div>
@@ -387,7 +387,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     No hay productos activos
                   </h3>
                   <p className="text-sm text-neutral-600 mb-4">
-                    Registre productos antes de definir el menú. (MSG-69)
+                    Registre productos antes de definir el menú.
                   </p>
                   {onNavigateToProductos && (
                     <button
@@ -403,12 +403,12 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               </div>
             ) : (
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                {/* Banner de menú no definido para hoy (MSG-71) */}
+                {/* Banner de menú no definido para hoy */}
                 {menu && !menu.definido && (
                   <div className="shrink-0 p-3.5 bg-amber-50/80 border-b border-amber-200/80 flex items-center gap-3 text-amber-900 text-xs sm:text-sm">
                     <Sparkles className="w-4 h-4 text-[#D35400] shrink-0" />
                     <span className="font-medium">
-                      Todavía no definió el menú de hoy. Seleccione los productos y pulse GUARDAR MENÚ. (MSG-71)
+                      Todavía no definió el menú de hoy. Seleccione los productos y pulse GUARDAR MENÚ.
                     </span>
                   </div>
                 )}

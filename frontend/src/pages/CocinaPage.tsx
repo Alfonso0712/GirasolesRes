@@ -147,14 +147,14 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
           return;
         }
         if (err.status === 403) {
-          setErrorCarga('Acceso denegado. Solo el rol Cocinero puede gestionar comandas (MSG-39).');
+          setErrorCarga('Acceso denegado. Solo el rol Cocinero puede gestionar comandas.');
           return;
         }
 
         // Si se pierde la conexión, franja MSG-132 y conservar comandas (RV-90 / Sección 7)
         setSinConexion(true);
         if (!silencioso) {
-          setErrorCarga('No se pudieron cargar las comandas. Intente nuevamente. (MSG-125)');
+          setErrorCarga('No se pudieron cargar las comandas. Intente nuevamente.');
         }
       } finally {
         if (!silencioso) setCargando(false);
@@ -282,7 +282,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       await comandaService.deshacerEstado(comandaId, session.token);
       cargarComandas(true);
     } catch (err: any) {
-      alert(err.message || 'No se pudo deshacer el cambio de comanda (MSG-134).');
+      alert(err.message || 'No se pudo deshacer el cambio de comanda.');
       cargarComandas(true);
     }
   };
@@ -292,7 +292,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
   const comandasEnPreparacion = comandas.filter((c) => c.estado === 'EnPreparacion');
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#F4EDE4] text-neutral-900 select-none overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] text-neutral-900 select-none overflow-hidden">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div
@@ -316,48 +316,51 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
         </div>
       )}
 
-      {/* Encabezado KDS Superior */}
-      <header className="p-4 sm:p-5 bg-[#482813] text-white flex flex-wrap items-center justify-between gap-4 shadow-md shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-[#D35400] flex items-center justify-center text-white shadow-md">
-            <ChefHat className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold font-serif tracking-tight">
+      {/* Encabezado Editorial Limpio */}
+      <div className="p-4 sm:p-6 pb-2 shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+            COCINA Y SERVICIO
+          </p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
               Cocina en Vivo (KDS)
             </h1>
-            <p className="text-xs text-amber-200/80">
-              Gestión operativa de comandas de cocina · Restaurante Girasoles
-            </p>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+              Por preparar: {resumen.reduce((acc, r) => acc + r.cantidad, 0)}
+            </span>
           </div>
+          <p className="text-sm text-neutral-500 mt-1">
+            Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real.
+          </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Botón PLATOS AGOTADOS (RN-83) */}
+          {/* Botón PLATOS AGOTADOS */}
           <button
             type="button"
             onClick={() => setAbrirModalPlatosAgotados(true)}
-            className="px-3.5 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs sm:text-sm font-bold flex items-center gap-2 border border-amber-400/30 transition-all cursor-pointer min-h-[44px]"
+            className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B84600] text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[38px]"
             title="Abrir disponibilidad de platos del menú"
           >
-            <UtensilsCrossed className="w-4 h-4 text-amber-300" />
-            <span>PLATOS AGOTADOS</span>
+            <UtensilsCrossed className="w-4 h-4 text-[#D35400]" />
+            <span>Platos agotados</span>
           </button>
 
-          {/* Botón SONIDO (RV-92) */}
+          {/* Botón SONIDO */}
           <button
             type="button"
             onClick={toggleSonido}
-            className={`px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer min-h-[44px] ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer min-h-[38px] shadow-2xs ${
               sonidoActivado
-                ? 'bg-emerald-600/30 text-emerald-200 border border-emerald-400/40 hover:bg-emerald-600/40'
-                : 'bg-white/10 text-neutral-300 border border-white/20 hover:bg-white/20'
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
             }`}
             title="Activar o desactivar sonido de nueva comanda"
           >
             {sonidoActivado ? (
               <>
-                <Volume2 className="w-4 h-4 text-emerald-300" />
+                <Volume2 className="w-4 h-4 text-emerald-600" />
                 <span>Sonido: ON</span>
               </>
             ) : (
@@ -370,22 +373,22 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
 
           {/* Contador y Actualizar Manual */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-amber-200/80 font-mono hidden sm:inline">
+            <span className="text-xs text-neutral-500 font-mono hidden sm:inline">
               Hace {segundosDesdeActualizacion} s
             </span>
             <button
               type="button"
               onClick={() => cargarComandas(false)}
               disabled={cargando}
-              className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-amber-100 transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center border border-white/15"
-              title="Actualizar comandas ahora"
-              aria-label="Actualizar comandas ahora"
+              className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
+              title="Actualizar comandas manualmente"
             >
-              <RotateCw className={`w-4 h-4 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
+              <RotateCw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
+              <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
       <section className="bg-white border-b border-amber-900/15 p-3.5 sm:px-6 shadow-2xs shrink-0 flex items-center gap-3 overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-300">
@@ -438,11 +441,11 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
             <div className="w-20 h-20 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 shadow-xs">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h2 className="text-2xl font-bold font-serif text-neutral-800 mb-1">
+            <h2 className="text-2xl font-bold font-sans text-neutral-800 mb-1">
               No hay comandas pendientes
             </h2>
             <p className="text-sm text-neutral-500 max-w-md">
-              Todo al día en cocina (MSG-124). Las nuevas comandas registradas por los mozos o en
+              Todo al día en cocina. Las nuevas comandas registradas por los mozos o en
               caja aparecerán aquí automáticamente en 5 segundos.
             </p>
           </div>
@@ -500,7 +503,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-serif">
+                            <span className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-sans tabular-nums">
                               N.º {c.pedidoNumero}
                             </span>
 
@@ -640,7 +643,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-2xl sm:text-3xl font-extrabold text-blue-950 font-serif">
+                            <span className="text-2xl sm:text-3xl font-extrabold text-blue-950 font-sans tabular-nums">
                               N.º {c.pedidoNumero}
                             </span>
 

@@ -252,7 +252,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
               <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 border border-rose-200">
                 <AlertCircle className="w-7 h-7" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#2C1A0E] mb-1">
+              <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
                 No se pudieron cargar las mesas
               </h3>
               <p className="text-xs text-[#7C6F66] max-w-sm mb-4">
@@ -273,7 +273,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
               <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-4 border border-amber-200">
                 <Utensils className="w-8 h-8" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#2C1A0E] mb-1">
+              <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
                 No hay mesas registradas
               </h3>
               <p className="text-xs text-[#7C6F66] max-w-sm mb-4">
@@ -298,7 +298,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
               <div className="w-14 h-14 rounded-2xl bg-neutral-100 text-neutral-500 flex items-center justify-center mb-3 border border-neutral-200">
                 <Filter className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-base text-[#2C1A0E] mb-1">
+              <h3 className="font-sans font-bold text-base text-[#2C1A0E] mb-1">
                 No hay mesas con ese estado
               </h3>
               <p className="text-xs text-[#7C6F66] max-w-sm mb-4">
@@ -363,12 +363,12 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
             <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200">
               <Utensils className="w-6 h-6" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#2C1A0E] mb-1">
+            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
               {modalAccionRol.accion}
             </h3>
             <p className="text-xs text-[#7C6F66] mb-4">
               Acción seleccionada para <strong>{modalAccionRol.mesa.nombre}</strong> ({modalAccionRol.mesa.ocupacion}).
-              Este enlace conectará con la interfaz de {modalAccionRol.accion === 'COBRAR' ? 'Cobro (CUS11.1)' : 'Toma de Pedido (CUS07)'}.
+              Este enlace conectará con la interfaz de {modalAccionRol.accion === 'COBRAR' ? 'Cobro en Caja' : 'Toma de Pedido'}.
             </p>
             <button
               type="button"

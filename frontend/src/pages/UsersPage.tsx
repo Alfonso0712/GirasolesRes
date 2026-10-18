@@ -93,11 +93,11 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-serif font-bold text-neutral-800 mb-2">
+        <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
           Acceso Restringido
         </h2>
         <p className="text-neutral-600 max-w-md mx-auto text-sm">
-          No tiene permiso para usar esta función. (MSG-39). Comuníquese con la administradora si requiere acceso.
+          No tiene permiso para acceder a este módulo. Comuníquese con la administradora si requiere acceso.
         </p>
       </div>
     );
@@ -144,13 +144,13 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
       {/* Encabezado Superior ESTÁTICO Y FIJO (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-0.5">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE ACCESO
           </p>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#482813] tracking-tight">
+          <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
             Usuarios
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+          <p className="text-sm text-neutral-500 mt-1">
             Administre el personal, sus roles y el acceso al sistema.
           </p>
         </div>

@@ -114,36 +114,36 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden gap-4">
-      {/* 1. RUTA SUPERIOR (BREADCRUMB) Y ENCABEZADO */}
-      <div className="shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+      {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 text-xs text-[#7C6F66] mb-1">
             <button
               onClick={onVolverAMesas}
-              className="hover:text-[#D35400] transition-colors flex items-center gap-1 cursor-pointer"
+              className="hover:text-[#D35400] transition-colors flex items-center gap-1 cursor-pointer font-medium"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Mesas
+              <span>Volver a Mesas</span>
             </button>
-            <span>/</span>
-            <span className="font-semibold text-[#2C1A0E]">
-              {modo === 'ampliacion' ? 'Ampliación de Pedido' : 'Toma de Pedido'}
+            <span>•</span>
+            <span className="font-bold uppercase tracking-wider text-[#D35400] text-[11px]">
+              OPERACIÓN DE SALÓN
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#D35400] bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200/60">
-              {modo === 'ampliacion' ? 'AMPLIACIÓN DE PEDIDO' : 'REGISTRO DE PEDIDO'}
-            </span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+              Pedido de Mesa
+            </h1>
             {mesaSeleccionada && (
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
                 {mesaSeleccionada.nombre}
               </span>
             )}
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+              {modo === 'ampliacion' ? 'Ampliación' : 'Nuevo pedido'}
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#2C1A0E] mt-1">
-            Pedido de Mesa
-          </h1>
-          <p className="text-xs sm:text-sm text-[#7C6F66]">
+          <p className="text-sm text-neutral-500 mt-1">
             Seleccione la mesa y los productos de la carta para generar la comanda a cocina.
           </p>
         </div>
@@ -394,7 +394,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[#D35400]" />
-                <h3 className="font-serif font-bold text-base text-[#2C1A0E]">
+                <h3 className="font-sans font-bold text-base text-[#2C1A0E]">
                   {modo === 'ampliacion' ? 'Ampliación de Pedido' : 'Pedido de Mesa'}
                 </h3>
               </div>
@@ -660,7 +660,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-[#FAF7F4]">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[#D35400]" />
-                <h3 className="font-serif font-bold text-base text-[#2C1A0E]">
+                <h3 className="font-sans font-bold text-base text-[#2C1A0E]">
                   Detalle del Pedido ({lineasBorrador.length})
                 </h3>
               </div>

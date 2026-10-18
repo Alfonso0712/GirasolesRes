@@ -29,6 +29,9 @@ tags:
 ## 📑 Tabla de Contenidos
 1. [[#1. Colorimetría y Tokens de Diseño (Design System)]]
 2. [[#2. Reglas de Layout y Consistencia Visual (UI)]]
+   - [[#2.5 Estándar Único de Encabezado de Página (Editorial Limpio)]]
+   - [[#2.6 Matriz Estricta de Colorimetría Semántica (Cero Colisión de Colores - Heurística 5 Nielsen)]]
+   - [[#2.7 Legibilidad de Tarjetas Operativas (Mesas, Menú del Día, Cocina KDS)]]
 3. [[#3. Fundamentos de Usabilidad y Experiencia de Usuario (Sustento Teórico)]]
 4. [[#4. Estándares de Arquitectura y Clean Code (Frontend)]]
 5. [[#5. Trazabilidad de Requerimientos y Manejo de Errores]]
@@ -204,6 +207,73 @@ Para evitar que los modales se desborden en pantallas pequeñas o cuando el tecl
   <div className="shrink-0 p-5 border-t border-neutral-100 flex justify-end gap-3 bg-neutral-50/50">...</div>
 </div>
 ```
+
+---
+
+### 2.5 Estándar Único de Encabezado de Página (Editorial Limpio)
+
+> [!IMPORTANT]
+> **REGLA DE ENCABEZADO EDITORIAL LIBRE:**
+> Queda estrictamente prohibido encerrar el título del módulo o su encabezado dentro de contenedores o tarjetas blancas (`PageContainer`, `bg-white p-6 rounded-xl border`), así como colocar iconos cuadrados decorativos al lado del título. 
+> Todo encabezado de página debe ubicarse **directamente sobre el lienzo crema (`#FAF7F4`)**, asegurando ligereza visual y consistencia global (Regla 1 de Shneiderman).
+
+#### Estructura Jerárquica del Encabezado:
+1. **Kicker Superior de Categoría:**
+   ```tsx
+   <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+     [CATEGORÍA DEL MÓDULO]
+   </p>
+   ```
+   *Ejemplos:* `GESTIÓN DE ACCESO` (Usuarios), `GESTIÓN DE LA CARTA` (Productos), `OPERACIÓN DE SALÓN` (Mesas, Pedidos), `COCINA Y SERVICIO` (Cocina KDS), `GESTIÓN DE CAJA` (Caja).
+2. **Título Principal con Tipografía Serif Editorial:**
+   ```tsx
+   <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+     [Nombre del Módulo]
+   </h1>
+   ```
+   *Nota:* Este es el único lugar de la pantalla de datos donde se permite `Playfair Display` (`font-brand-serif`). Puede ir acompañado a su derecha por pastillas resumen informativas compactas (e.g., fecha del día, contador de mesas libres/ocupadas o comandas pendientes).
+3. **Subtítulo Descriptivo en Lenguaje del Mundo Real (Heurística 2 de Nielsen):**
+   ```tsx
+   <p className="text-sm text-neutral-500 mt-1">
+     [Descripción operativa clara y concisa en lenguaje humano]
+   </p>
+   ```
+   *Prohibición Estricta:* Jamás incluir códigos de requerimiento o casos de uso en el texto visible (`(CUS06)`, `(RF-04)`, `(MSG-39)`).
+4. **Bloque de Acciones y Controles a la Derecha:**
+   - Botón primario de alta (`+ Nuevo...`) en color naranja institucional sólido (`bg-[#D35400] hover:bg-[#B84600] text-white`).
+   - Controles de refresco, filtros rápidos o indicadores temporales con altura estándar `min-h-[38px]`.
+
+---
+
+### 2.6 Matriz Estricta de Colorimetría Semántica (Cero Colisión de Colores - Heurística 5 Nielsen)
+
+> [!WARNING]
+> **PREVENCIÓN DE ERRORES Y JERARQUÍA CROMÁTICA:**
+> Queda terminantemente prohibido utilizar el mismo color o tonalidad para dos botones con objetivos distintos dentro de una misma tarjeta, fila o barra de acciones (por ejemplo, pintar del mismo color ámbar la toma de pedido y la desactivación de la mesa). Cada acción tiene un peso visual unívoco.
+
+| Jerarquía de Acción | Color y Clases Tailwind | Icono Semántico | Aplicación Operativa |
+| :--- | :--- | :--- | :--- |
+| **1. Operativa Primaria** | `bg-[#D35400] hover:bg-[#B84600] text-white border-transparent shadow-xs` | `Plus`, `Flame`, `ReceiptText` | Acción principal de negocio: "Pedido / Comanda", "Cobrar", "Confirmar", "+ Nuevo". |
+| **2. Edición / Modificación** | `bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900` | `Edit2` | Edición de datos maestros o apertura de formularios. |
+| **3. Advertencia / Desactivar** | `bg-amber-50 border-amber-200 text-[#B84600] hover:bg-amber-100` | `PowerOff`, `AlertTriangle` | Desactivación o suspensión temporal de entidades libres o activas. |
+| **4. Reactivación / Habilitar**| `bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100` | `Power`, `Check` | Reanudación o reactivación de registros inactivos. |
+| **5. Peligro / Eliminación** | `bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100` | `Trash2`, `XCircle` | Anulación definitiva de pedidos o eliminación de registros sin dependencias. |
+| **6. Acción Bloqueada / Deshabilitada** | `bg-neutral-100 border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60` | Mismo icono de la acción | Estado `disabled` cuando la regla de negocio prohíbe la acción (e.g. desactivar una mesa ocupada o eliminar un usuario con historial). Siempre con atributo `title` explicativo. |
+
+---
+
+### 2.7 Legibilidad de Tarjetas Operativas (Mesas, Menú del Día, Cocina KDS)
+
+1. **Tipografía Operativa Sin Serif:**
+   - Dentro de las tarjetas operativas (mesas, pedidos, comandas, platos del día), los títulos, códigos de comanda y números de mesa deben utilizar **exclusivamente** `Plus Jakarta Sans` en negrita con espaciado numérico uniforme:
+     ```tsx
+     className="font-sans font-bold text-lg text-[#2C1A0E] tabular-nums"
+     ```
+   - Queda estrictamente prohibido usar fuentes Serif (`Playfair Display`) dentro de tarjetas operativas o estados vacíos.
+2. **Prohibición de Texto Truncado (`truncate`) en Nombres de Tarjetas:**
+   - Los identificadores de entidades operativas (`Mesa 1`, `Mesa 12`, `Para llevar (Juan)`) deben renderizarse íntegros en una línea sin ser cortados con puntos suspensivos (`...` o `Mes...`).
+3. **Pastillas Compactas de Estado en Tarjetas:**
+   - A diferencia de las tablas donde el ancho es fijo (`w-28 h-7`), dentro de las tarjetas operativas las pastillas de estado usan ancho dinámico ajustado a su contenido (`px-2.5 py-0.5 text-xs w-auto shrink-0`), impidiendo que desplacen o aplasten el título de la tarjeta.
 
 ---
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PageContainer } from '../components/PageContainer';
 import { DetallePedidoModal } from '../components/DetallePedidoModal';
 import { ModificarPedidoModal } from '../components/ModificarPedidoModal';
 import { AnularPedidoModal } from '../components/AnularPedidoModal';
@@ -22,7 +21,7 @@ import {
   RotateCw,
   Filter,
   Eye,
-  Edit3,
+  Edit2,
   Trash2,
   Calendar,
   AlertCircle,
@@ -290,29 +289,43 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1">
-      <PageContainer
-        title="Gestión de Pedidos"
-        subtitle="Visualización y seguimiento del flujo de pedidos del servicio."
-        actions={
+    <div className="h-full flex flex-col overflow-hidden max-w-7xl mx-auto w-full gap-4">
+      {/* 1. Encabezado Superior ESTÁTICO Y FIJO sobre fondo crema */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+            GESTIÓN DE PEDIDOS
+          </p>
           <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+              Pedidos
+            </h1>
             <span className="text-xs text-neutral-500 font-mono hidden sm:inline">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
-            <button
-              type="button"
-              onClick={() => cargarPedidos()}
-              disabled={cargando}
-              className="p-2 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors flex items-center gap-1.5 text-xs font-semibold cursor-pointer min-h-[44px]"
-              aria-label="Refrescar lista de pedidos"
-            >
-              <RotateCw className={`w-4 h-4 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
-              <span className="hidden md:inline">Actualizar</span>
-            </button>
           </div>
-        }
-      >
-        {/* Contadores por Estado (RV-81: actúan como filtro al tocarlos) */}
+          <p className="text-sm text-neutral-500 mt-1">
+            Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => cargarPedidos()}
+            disabled={cargando}
+            className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 transition-colors flex items-center gap-2 text-xs font-semibold cursor-pointer min-h-[38px] shadow-2xs"
+            aria-label="Refrescar lista de pedidos"
+          >
+            <RotateCw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
+            <span>Actualizar</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Contenedor desplazable con contadores, filtros y tabla */}
+      <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1">
+        {/* Contadores por Estado (actúan como filtro al tocarlos) */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
           <button
             type="button"
@@ -327,7 +340,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               <Clock className="w-3.5 h-3.5" />
               <span>Pendientes</span>
             </div>
-            <div className="text-2xl font-bold font-serif text-neutral-900 mt-1">
+            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
               {resumen.pendiente}
             </div>
           </button>
@@ -345,7 +358,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               <ChefHat className="w-3.5 h-3.5" />
               <span>En preparación</span>
             </div>
-            <div className="text-2xl font-bold font-serif text-neutral-900 mt-1">
+            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
               {resumen.enPreparacion}
             </div>
           </button>
@@ -363,7 +376,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Listos</span>
             </div>
-            <div className="text-2xl font-bold font-serif text-neutral-900 mt-1">
+            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
               {resumen.listo}
             </div>
           </button>
@@ -380,7 +393,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <div className="text-xs font-bold text-neutral-600 uppercase tracking-wider flex items-center gap-1.5">
               <span>Pagados</span>
             </div>
-            <div className="text-2xl font-bold font-serif text-neutral-900 mt-1">
+            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
               {resumen.pagado}
             </div>
           </button>
@@ -398,7 +411,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Anulados</span>
             </div>
-            <div className="text-2xl font-bold font-serif text-neutral-900 mt-1">
+            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
               {resumen.anulado}
             </div>
           </button>
@@ -606,47 +619,47 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center justify-center gap-1.5">
-                            {/* Ver Detalle */}
+                            {/* Ver Detalle: Estilo Neutro Blanco */}
                             <button
                               type="button"
                               onClick={() => handleVerDetalle(p.id)}
-                              className="p-2 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer"
+                              className="w-8 h-8 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
                               title="Ver detalle del pedido"
                               aria-label={`Ver detalle pedido #${p.numero}`}
                             >
-                              <Eye className="w-4 h-4" />
+                              <Eye className="w-4 h-4 text-neutral-600" />
                             </button>
 
-                            {/* Modificar */}
+                            {/* Modificar: Estilo Neutro Blanco */}
                             <button
                               type="button"
                               onClick={() => handleAbrirModificar(p.id)}
                               disabled={!p.puedeModificar}
-                              className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                              className={`w-8 h-8 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
                                 p.puedeModificar
-                                  ? 'text-[#D35400] hover:bg-amber-50'
-                                  : 'text-neutral-300 cursor-not-allowed'
+                                  ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-neutral-900 cursor-pointer'
+                                  : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
                               }`}
                               title={p.motivoDeshabilitado || 'Modificar pedido'}
                               aria-label={`Modificar pedido #${p.numero}`}
                             >
-                              <Edit3 className="w-4 h-4" />
+                              <Edit2 className="w-4 h-4 text-neutral-600" />
                             </button>
 
-                            {/* Anular */}
+                            {/* Anular: Acción Destructiva Rojo/Rose */}
                             <button
                               type="button"
                               onClick={() => handleAbrirAnular(p)}
                               disabled={!p.puedeAnular}
-                              className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                              className={`w-8 h-8 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
                                 p.puedeAnular
-                                  ? 'text-rose-600 hover:bg-rose-50'
-                                  : 'text-neutral-300 cursor-not-allowed'
+                                  ? 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
+                                  : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
                               }`}
                               title={p.motivoDeshabilitado || 'Anular pedido'}
                               aria-label={`Anular pedido #${p.numero}`}
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 text-rose-600" />
                             </button>
                           </div>
                         </td>
@@ -704,9 +717,9 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                       <button
                         type="button"
                         onClick={() => handleVerDetalle(p.id)}
-                        className="py-2.5 rounded-xl border border-neutral-300 text-neutral-700 font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-neutral-50 min-h-[44px] cursor-pointer"
+                        className="py-2.5 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-neutral-50 min-h-[44px] cursor-pointer shadow-2xs"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-4 h-4 text-neutral-600" />
                         <span>Detalle</span>
                       </button>
 
@@ -714,14 +727,14 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         type="button"
                         onClick={() => handleAbrirModificar(p.id)}
                         disabled={!p.puedeModificar}
-                        className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors ${
+                        className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs ${
                           p.puedeModificar
-                            ? 'border-[#D35400] text-[#D35400] hover:bg-amber-50 cursor-pointer'
-                            : 'border-neutral-200 text-neutral-300 cursor-not-allowed'
+                            ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 cursor-pointer'
+                            : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
                         }`}
                         title={p.motivoDeshabilitado || 'Modificar'}
                       >
-                        <Edit3 className="w-4 h-4" />
+                        <Edit2 className="w-4 h-4 text-neutral-600" />
                         <span>Editar</span>
                       </button>
 
@@ -729,14 +742,14 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         type="button"
                         onClick={() => handleAbrirAnular(p)}
                         disabled={!p.puedeAnular}
-                        className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors ${
+                        className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs ${
                           p.puedeAnular
-                            ? 'border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 cursor-pointer'
-                            : 'border-neutral-200 text-neutral-300 cursor-not-allowed'
+                            ? 'border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 cursor-pointer'
+                            : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
                         }`}
                         title={p.motivoDeshabilitado || 'Anular'}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 text-rose-600" />
                         <span>Anular</span>
                       </button>
                     </div>
@@ -802,7 +815,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             </button>
           </div>
         )}
-      </PageContainer>
+      </div>
     </div>
   );
 };

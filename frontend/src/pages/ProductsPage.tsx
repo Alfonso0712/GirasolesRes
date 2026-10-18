@@ -89,11 +89,11 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-serif font-bold text-neutral-800 mb-2">
+        <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
           Acceso Restringido
         </h2>
         <p className="text-neutral-600 max-w-md mx-auto text-sm">
-          No tiene permiso para usar esta función. (MSG-39). Comuníquese con la administradora si requiere acceso al módulo de productos.
+          No tiene permiso para acceder a este módulo. Comuníquese con la administradora si requiere acceso al módulo de productos.
         </p>
       </div>
     );
@@ -142,13 +142,13 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {/* Encabezado Superior ESTÁTICO Y FIJO (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-0.5">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE LA CARTA
           </p>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#482813] tracking-tight">
+          <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
             Productos
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+          <p className="text-sm text-neutral-500 mt-1">
             Administre los productos de la carta, sus categorías, precios y disponibilidad en el sistema.
           </p>
         </div>
@@ -321,8 +321,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               </p>
               <p className="text-xs text-neutral-500 mt-1">
                 {hayFiltrosActivos
-                  ? 'Pruebe con otro nombre o quite los filtros. (MSG-66)'
-                  : 'Haga clic en "Nuevo producto" para crear el primero. (MSG-65)'}
+                  ? 'Pruebe con otro nombre o quite los filtros aplicados.'
+                  : 'Haga clic en "Nuevo producto" para crear el primero en la carta.'}
               </p>
             </div>
             {hayFiltrosActivos ? (
@@ -495,7 +495,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h4 className="font-serif font-bold text-base text-neutral-900">
+                        <h4 className="font-sans font-bold text-base text-neutral-900">
                           {prod.nombre}
                         </h4>
                         <p className="text-xs text-neutral-500 mt-0.5">
