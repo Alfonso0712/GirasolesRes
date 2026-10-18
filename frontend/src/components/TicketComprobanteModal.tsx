@@ -40,7 +40,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <div>
               <h2
                 id="modal-ticket-title"
-                className="text-base font-serif font-bold text-[#2C1A0E] tracking-tight"
+                className="text-base font-brand-serif font-bold text-[#482813] tracking-tight"
               >
                 Comprobante Emitido
               </h2>
@@ -179,7 +179,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             type="button"
             onClick={onDescargarTxt}
             disabled={descargando}
-            className="px-3.5 py-2 rounded-xl border border-neutral-200 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>{descargando ? 'Descargando...' : 'Descargar .txt'}</span>
@@ -189,7 +189,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-900 text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-[#2C1A0E] hover:bg-[#482813] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Imprimir</span>

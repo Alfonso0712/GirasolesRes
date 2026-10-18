@@ -1,18 +1,26 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { cobroService } from '../services/cobroService';
 import { cajaService } from '../services/cajaService';
-import type { CajaEstado } from '../types/caja';
+import type {
+  CajaEstado,
+  CajaActualResponseDto,
+} from '../types/caja';
 import type {
   PedidoPendienteCobro,
   CobroRequest,
   ComprobanteDetalle,
 } from '../types/cobro';
 
-export function useCobrosManagement(token: string) {
+export function useCobrosManagement(token: string, onCajaEstadoChange?: () => void) {
   const [cajaEstado, setCajaEstado] = useState<CajaEstado | null>(null);
+  const [cajaActual, setCajaActual] = useState<CajaActualResponseDto | null>(null);
   const [pedidos, setPedidos] = useState<PedidoPendienteCobro[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
+  const [segundosTranscurridos, setSegundosTranscurridos] = useState<number>(0);
+
+  const timerSegundosRef = useRef<any>(null);
+  const intervalRef = useRef<any>(null);
 
   // Filtros
   const [filtroTipo, setFiltroTipo] = useState<'todos' | 'mesa' | 'llevar' | 'listos'>('todos');
@@ -20,6 +28,7 @@ export function useCobrosManagement(token: string) {
 
   // Modales
   const [abrirCajaModalOpen, setAbrirCajaModalOpen] = useState<boolean>(false);
+  const [cerrarCajaModalOpen, setCerrarCajaModalOpen] = useState<boolean>(false);
   const [cobroModalOpen, setCobroModalOpen] = useState<boolean>(false);
   const [pedidoParaCobro, setPedidoParaCobro] = useState<PedidoPendienteCobro | null>(null);
 
@@ -27,7 +36,6 @@ export function useCobrosManagement(token: string) {
   const [comprobanteActual, setComprobanteActual] = useState<ComprobanteDetalle | null>(null);
 
   // Estados de proceso
-  const [procesandoCaja, setProcesandoCaja] = useState<boolean>(false);
   const [procesandoCobro, setProcesandoCobro] = useState<boolean>(false);
   const [descargandoTxt, setDescargandoTxt] = useState<boolean>(false);
 
@@ -46,63 +54,101 @@ export function useCobrosManagement(token: string) {
   }, []);
 
   // Cargar estado de caja y pedidos pendientes
-  const cargarDatos = useCallback(async () => {
-    if (!token) return;
-    setCargando(true);
-    setErrorCarga(null);
+  const cargarDatos = useCallback(
+    async (silencioso = false) => {
+      if (!token) return;
+      if (!silencioso) setCargando(true);
+      setErrorCarga(null);
 
-    try {
-      // 1. Consultar estado de caja
-      const estadoCaja = await cajaService.obtenerEstadoCaja(token);
-      setCajaEstado(estadoCaja);
+      try {
+        // 1. Consultar estado actual completo de caja (CUS 13)
+        const actual = await cajaService.obtenerActual(token);
+        setCajaActual(actual);
 
-      if (!estadoCaja.estaAbierta) {
-        setPedidos([]);
-        return;
+        const esAbierta = actual.estado === 'abierta';
+        setCajaEstado({
+          estaAbierta: esAbierta,
+          cajaId: actual.apertura?.cajaId || null,
+          montoApertura: actual.apertura?.montoInicial || null,
+          fechaAperturaUtc: actual.apertura?.fechaAperturaUtc || actual.apertura?.fechaApertura || null,
+          fechaAperturaLocal: actual.apertura?.fechaAperturaLocal || null,
+          cajeroNombre: actual.apertura?.nombreUsuarioApertura || null,
+          estadoOperativo: actual.estado,
+        });
+
+        if (!esAbierta) {
+          setPedidos([]);
+          setSegundosTranscurridos(0);
+          return;
+        }
+
+        // 2. Si caja está abierta, consultar pedidos pendientes de cobro
+        const items = await cobroService.obtenerPedidosPendientes(token);
+        setPedidos(items);
+        setSegundosTranscurridos(0);
+      } catch (err: any) {
+        if (err.status === 409 && err.message?.includes('caja')) {
+          setCajaEstado({ estaAbierta: false, estadoOperativo: 'sinCaja' });
+          setPedidos([]);
+        } else {
+          setErrorCarga(err.message || 'Error al conectar con el servidor.');
+        }
+      } finally {
+        if (!silencioso) setCargando(false);
       }
-
-      // 2. Si caja está abierta, consultar pedidos pendientes de cobro
-      const items = await cobroService.obtenerPedidosPendientes(token);
-      setPedidos(items);
-    } catch (err: any) {
-      if (err.status === 409 && err.message?.includes('caja')) {
-        setCajaEstado({ estaAbierta: false });
-        setPedidos([]);
-      } else {
-        setErrorCarga(err.message || 'Error al conectar con el servidor.');
-      }
-    } finally {
-      setCargando(false);
-    }
-  }, [token]);
+    },
+    [token]
+  );
 
   useEffect(() => {
     cargarDatos();
   }, [cargarDatos]);
 
-  // Apertura de caja
-  const handleAbrirCaja = async (montoApertura: number) => {
-    setProcesandoCaja(true);
-    try {
-      const nuevoEstado = await cajaService.abrirCaja({ montoApertura }, token);
-      setCajaEstado(nuevoEstado);
-      mostrarExito('Caja abierta correctamente. Ya puede registrar cobros.');
-      // Refrescar pedidos
-      const items = await cobroService.obtenerPedidosPendientes(token);
-      setPedidos(items);
-    } catch (err: any) {
-      throw err;
-    } finally {
-      setProcesandoCaja(false);
-    }
+  // Polling cada 15 segundos y contador de segundos (RNF-27)
+  useEffect(() => {
+    timerSegundosRef.current = setInterval(() => {
+      setSegundosTranscurridos((prev) => prev + 1);
+    }, 1000);
+
+    intervalRef.current = setInterval(() => {
+      cargarDatos(true);
+    }, 15000);
+
+    return () => {
+      if (timerSegundosRef.current) clearInterval(timerSegundosRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [cargarDatos]);
+
+  // Apertura de caja completada (desde modal CUS 13.1)
+  const handleCajaAbierta = async (_monto: number, msg: string) => {
+    mostrarExito(msg);
+    await cargarDatos();
+    onCajaEstadoChange?.();
   };
 
-  // Iniciar cobro de un pedido
+  // Cierre de caja completado (desde modal CUS 13.2)
+  const handleCierreCompletado = async () => {
+    mostrarExito('Caja cerrada con éxito.');
+    await cargarDatos();
+    onCajaEstadoChange?.();
+  };
+
+  // Iniciar cobro de un pedido con guardas estrictas (MSG-135, MSG-168)
   const handleIniciarCobro = (pedido: PedidoPendienteCobro) => {
-    if (!cajaEstado?.estaAbierta) {
+    if (cajaEstado?.estadoOperativo === 'anteriorSinCerrar') {
+      const fecha = cajaActual?.apertura?.fechaAperturaLocal || 'un día anterior';
+      mostrarError(`Hay una caja del ${fecha} sin cerrar. Ciérrela antes de abrir una nueva o cobrar.`); // MSG-168
+      setCerrarCajaModalOpen(true);
+      return;
+    }
+
+    if (!cajaEstado?.estaAbierta || cajaEstado?.estadoOperativo === 'sinCaja') {
+      mostrarError('Debe abrir la caja antes de cobrar.'); // MSG-135
       setAbrirCajaModalOpen(true);
       return;
     }
+
     setPedidoParaCobro(pedido);
     setCobroModalOpen(true);
   };
@@ -124,8 +170,9 @@ export function useCobrosManagement(token: string) {
 
       mostrarExito(resultado.mensaje || 'Cobro registrado y ticket emitido.');
 
-      // Refrescar lista de pedidos pendientes
+      // Refrescar lista de pedidos pendientes y resumen contable
       await cargarDatos();
+      onCajaEstadoChange?.();
     } catch (err: any) {
       throw err;
     } finally {
@@ -183,11 +230,13 @@ export function useCobrosManagement(token: string) {
 
   return {
     cajaEstado,
+    cajaActual,
     pedidos: pedidosFiltrados,
     totalPedidos: pedidos.length,
     totalPorCobrar,
     totalListos,
     cargando,
+    segundosTranscurridos,
     errorCarga,
     filtroTipo,
     setFiltroTipo,
@@ -196,6 +245,8 @@ export function useCobrosManagement(token: string) {
     // Modales
     abrirCajaModalOpen,
     setAbrirCajaModalOpen,
+    cerrarCajaModalOpen,
+    setCerrarCajaModalOpen,
     cobroModalOpen,
     setCobroModalOpen,
     pedidoParaCobro,
@@ -203,12 +254,12 @@ export function useCobrosManagement(token: string) {
     setTicketModalOpen,
     comprobanteActual,
     // Procesos
-    procesandoCaja,
     procesandoCobro,
     descargandoTxt,
     // Acciones
     cargarDatos,
-    handleAbrirCaja,
+    handleCajaAbierta,
+    handleCierreCompletado,
     handleIniciarCobro,
     handleConfirmarCobro,
     handleDescargarTxt,

@@ -128,7 +128,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
             </div>
             <h2
               id="modal-cobro-title"
-              className="text-xl font-serif font-bold text-[#2C1A0E] tracking-tight"
+              className="text-xl font-brand-serif font-bold text-[#482813] tracking-tight"
             >
               Pedido N.º {pedido.numero}
             </h2>
@@ -156,7 +156,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                 Total a Cobrar
               </span>
-              <div className="text-2xl sm:text-3xl font-bold font-mono text-[#D35400] tracking-tight">
+              <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-[#D35400] tracking-tight">
                 S/ {total.toFixed(2)}
               </div>
             </div>
@@ -191,7 +191,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 onClick={() => setMetodo('efectivo')}
                 className={`p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer ${
                   metodo === 'efectivo'
-                    ? 'bg-[#482813] text-white border-[#482813] shadow-sm'
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
                     : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
@@ -220,9 +220,9 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <div>
                 <label
                   htmlFor="monto-recibido-input"
-                  className="block text-xs font-bold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                  className="block text-xs font-semibold text-[#2C1A0E] mb-1.5"
                 >
-                  Monto Recibido del Cliente (S/)
+                  Monto Recibido del Cliente (S/) <span className="text-[#D35400]">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold text-neutral-400">
@@ -238,7 +238,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                     onChange={(e) => setMontoRecibidoStr(e.target.value)}
                     autoFocus
                     disabled={loading}
-                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20 text-neutral-900 text-xl font-bold font-mono"
+                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20 text-[#2C1A0E] text-xl font-bold font-sans tabular-nums"
                     placeholder="0.00"
                   />
                 </div>
@@ -253,7 +253,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleQuickAmount(total)}
-                    className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-xs font-semibold text-neutral-700 cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-semibold font-sans tabular-nums text-neutral-700 shadow-2xs transition-colors cursor-pointer"
                   >
                     Exacto (S/ {total.toFixed(2)})
                   </button>
@@ -262,7 +262,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                       key={b}
                       type="button"
                       onClick={() => handleQuickAmount(b)}
-                      className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-xs font-semibold text-neutral-700 cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-semibold font-sans tabular-nums text-neutral-700 shadow-2xs transition-colors cursor-pointer"
                     >
                       S/ {b}.00
                     </button>
@@ -270,7 +270,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleAddAmount(10)}
-                    className="px-2.5 py-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-xs font-semibold text-[#B84600] cursor-pointer"
+                    className="px-2.5 py-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-xs font-semibold font-sans tabular-nums text-[#B84600] shadow-2xs transition-colors cursor-pointer"
                   >
                     +S/ 10
                   </button>
@@ -286,7 +286,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                       <span className="text-xs font-bold uppercase tracking-wider block text-emerald-700">
                         Vuelto a entregar
                       </span>
-                      <span className="text-lg font-bold font-mono text-emerald-900">
+                      <span className="text-lg font-bold font-sans tabular-nums text-emerald-900">
                         S/ {vuelto.toFixed(2)}
                       </span>
                     </div>
@@ -298,7 +298,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               ) : !isNaN(montoRecibido) && montoRecibido > 0 ? (
                 <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-[#B84600] flex items-center justify-between">
                   <span>Monto menor al total requerido</span>
-                  <span className="font-bold font-mono">
+                  <span className="font-bold font-sans tabular-nums">
                     Faltan S/ {faltante.toFixed(2)}
                   </span>
                 </div>

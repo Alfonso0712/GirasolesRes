@@ -174,5 +174,47 @@ public static class MensajesCatalogo
     public const string MSG_150 = "¿Cancelar el cobro? El pedido seguirá pendiente de cobro.";
     public const string MSG_151 = "La referencia de Yape no puede superar los 20 caracteres.";
     public const string MSG_152 = "El monto recibido no puede superar S/ 9,999.99.";
+
+    // CUS-12: Gestión de ventas y anulación (Complemento CUS12)
+    public const string MSG_153 = "No se encontraron ventas con ese criterio. Pruebe con otra fecha o número de comprobante.";
+    public const string MSG_154 = "Todavía no hay ventas registradas hoy.";
+    public const string MSG_155 = "No se pudieron cargar las ventas. Intente nuevamente.";
+    public const string MSG_156 = "El número de comprobante no es válido. Use el formato T001-000123 o solo el correlativo.";
+    public const string MSG_157 = "La fecha \"desde\" no puede ser posterior a \"hasta\".";
+    public const string MSG_158 = "El rango no puede superar los 31 días ni incluir fechas futuras.";
+    public const string MSG_159 = "Solo puede consultar las ventas de los últimos 7 días.";
+    public const string MSG_160 = "Indique el motivo de la anulación (entre 5 y 100 caracteres).";
+    public const string MSG_161 = "¿Anular la venta {0} por S/ {1:F2}? No se puede deshacer y quedará registrada con su motivo.";
+    public const string MSG_162_POR_COBRAR = "Venta {0} anulada. El pedido N.º {1} volvió a pendiente de cobro.";
+    public const string MSG_162_ANULADO = "Venta {0} anulada. El pedido N.º {1} fue anulado.";
+    public const string MSG_163 = "La venta ya fue anulada.";
+    public const string MSG_164 = "No se pudo anular la venta. La venta sigue vigente; intente nuevamente.";
+    public const string MSG_165 = "La venta pertenece a una caja cerrada: se anulará y el ajuste quedará registrado en los reportes.";
+
+    // CUS-13: Gestión de caja (Catálogo de mensajes MSG-166 a MSG-189)
+    public const string MSG_166 = "Todavía no hay caja abierta. Ábrala para empezar a cobrar.";
+    public const string MSG_167 = "Ya existe una caja abierta en el sistema.";
+    public const string MSG_168 = "Hay una caja del {0} sin cerrar. Ciérrela antes de abrir una nueva o cobrar.";
+    public const string MSG_169 = "Ingrese el monto inicial.";
+    public const string MSG_170 = "Ingrese un monto válido, desde S/ 0.00 y con hasta 2 decimales.";
+    public const string MSG_171 = "El monto no puede superar S/ 99,999.99.";
+    public const string MSG_172 = "¿Abrir la caja con S/ {0:F2}? Podrá empezar a registrar cobros.";
+    public const string MSG_173 = "Caja abierta con S/ {0:F2}.";
+    public const string MSG_174 = "No se puede cerrar la caja: hay pedidos pendientes de cobro.";
+    public const string MSG_175 = "Ingrese el efectivo contado.";
+    public const string MSG_176 = "Cuadra: el efectivo contado coincide con el esperado.";
+    public const string MSG_177 = "Sobrante de S/ {0:F2}";
+    public const string MSG_178 = "Faltante de S/ {0:F2}";
+    public const string MSG_179 = "La observación no puede superar los 200 caracteres.";
+    public const string MSG_180 = "¿Cerrar la caja? No podrá cobrar hasta abrir una nueva y el cierre no se puede deshacer.";
+    public const string MSG_181 = "Caja cerrada. {0}";
+    public const string MSG_182 = "No se pudo abrir la caja. No se registró la apertura; intente nuevamente.";
+    public const string MSG_183 = "No se pudo cerrar la caja. La caja sigue abierta; intente nuevamente.";
+    public const string MSG_184 = "La cantidad debe ser un número entero entre 0 y 999.";
+    public const string MSG_185 = "No se encontraron cierres de caja con ese criterio. Pruebe con otro rango de fechas.";
+    public const string MSG_186 = "No se pudo cargar el historial de cierres. Intente nuevamente.";
+    public const string MSG_187 = "Aún no hay cierres de caja registrados.";
+    public const string MSG_188 = "La fecha \"desde\" no puede ser posterior a \"hasta\" ni incluir fechas futuras.";
+    public const string MSG_189 = "Los totales cambiaron mientras contaba. Revise el resumen antes de cerrar.";
 }
 

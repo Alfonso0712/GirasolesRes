@@ -42,3 +42,4 @@ Desktop.ini
 .vscode/*
 !.vscode/extensions.json
 .engram/
+.agents/

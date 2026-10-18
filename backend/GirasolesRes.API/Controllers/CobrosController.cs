@@ -49,12 +49,14 @@ public class CobrosController : ControllerBase
             var pedidos = await _cobroService.ObtenerPedidosPendientesCobroAsync(ct);
             return Ok(pedidos);
         }
-        catch (CobroConflictException ex) when (ex.Codigo == "caja_cerrada")
+        catch (CobroConflictException ex)
         {
             return StatusCode(StatusCodes.Status409Conflict, new
             {
                 codigo = ex.Codigo,
-                message = ex.Message
+                message = ex.Message,
+                mensaje = ex.Message,
+                totalActual = ex.TotalActual
             });
         }
         catch (Exception ex)
@@ -97,6 +99,7 @@ public class CobrosController : ControllerBase
             {
                 codigo = ex.Codigo,
                 message = ex.Message,
+                mensaje = ex.Message,
                 totalActual = ex.TotalActual
             });
         }

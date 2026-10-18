@@ -25,6 +25,11 @@ public class Venta
     public DateTime Ven_FechaHoraUtc { get; private set; }
     public DateTime Ven_FechaCreacionUtc { get; private set; }
 
+    public string? Ven_MotivoAnulacion { get; private set; }
+    public string? Ven_UsuarioAnulacion { get; private set; }
+    public DateTime? Ven_FechaHoraAnulacionUtc { get; private set; }
+    public string? Ven_DestinoPedido { get; private set; }
+
     public Comprobante? Ven_Comprobante { get; private set; }
 
     // Constructor privado para EF Core
@@ -58,8 +63,12 @@ public class Venta
         Ven_FechaCreacionUtc = DateTime.UtcNow;
     }
 
-    public void Anular()
+    public void Anular(string? motivo = null, string? usuario = null, string? destinoPedido = null)
     {
         Ven_Estado = EstadoVenta.Anulada;
+        if (!string.IsNullOrWhiteSpace(motivo)) Ven_MotivoAnulacion = motivo.Trim();
+        if (!string.IsNullOrWhiteSpace(usuario)) Ven_UsuarioAnulacion = usuario.Trim();
+        Ven_FechaHoraAnulacionUtc = DateTime.UtcNow;
+        if (!string.IsNullOrWhiteSpace(destinoPedido)) Ven_DestinoPedido = destinoPedido.Trim();
     }
 }

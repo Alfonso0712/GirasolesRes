@@ -11,6 +11,7 @@ interface MainLayoutProps {
   paginaActiva?: string;
   onSelectPagina?: (pagina: string) => void;
   pedidosListosCount?: number;
+  cajaEstado?: string;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({
@@ -20,7 +21,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   onCambiarPassword,
   paginaActiva = 'usuarios',
   onSelectPagina,
-  pedidosListosCount
+  pedidosListosCount,
+  cajaEstado,
 }) => {
   const [sidebarAbierto, setSidebarAbierto] = React.useState(false);
 
@@ -35,7 +37,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       case 'roles':
         return 'Roles y permisos';
       case 'caja':
-        return 'Caja y Ventas';
+        return 'Caja y Cobros';
+      case 'ventas':
+        return 'Gestión de Ventas';
+      case 'historial-cierres':
+        return 'Historial de Cierres de Caja';
       case 'mesas':
         return 'Mesas y Salón';
       case 'pedidos-mesa':
@@ -61,6 +67,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         isOpenMobile={sidebarAbierto}
         onCloseMobile={() => setSidebarAbierto(false)}
         pedidosListosCount={pedidosListosCount}
+        cajaEstado={cajaEstado}
       />
 
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">

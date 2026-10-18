@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   DollarSign,
   Receipt,
-  RotateCw,
+  RotateCcw,
   Search,
   Filter,
   Utensils,
   ShoppingBag,
   CheckCircle2,
+  ChefHat,
   AlertCircle,
   Check,
   CreditCard,
   Lock,
 } from 'lucide-react';
 import { useCobrosManagement } from '../hooks/useCobrosManagement';
-import { AbrirCajaModal } from '../components/AbrirCajaModal';
+import { AbrirCajaModal } from '../components/caja/AbrirCajaModal';
+import { CerrarCajaModal } from '../components/caja/CerrarCajaModal';
+import { CajaStatusBanner } from '../components/caja/CajaStatusBanner';
 import { CobroModal } from '../components/CobroModal';
 import { TicketComprobanteModal } from '../components/TicketComprobanteModal';
 import type { UserSession } from '../types/auth';
@@ -22,17 +25,30 @@ import type { UserSession } from '../types/auth';
 interface CobrosPageProps {
   session: UserSession;
   onLogout: () => void;
+  mesaSeleccionadaInicial?: { id: string; nombre: string } | null;
+  pedidoIdInicial?: string | null;
+  onClearMesaInicial?: () => void;
+  onCajaEstadoChange?: () => void;
 }
 
-export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => {
+export const CobrosPage: React.FC<CobrosPageProps> = ({
+  session,
+  onLogout,
+  mesaSeleccionadaInicial,
+  pedidoIdInicial,
+  onClearMesaInicial,
+  onCajaEstadoChange,
+}) => {
   void onLogout;
   const {
     cajaEstado,
+    cajaActual,
     pedidos,
     totalPedidos,
     totalPorCobrar,
     totalListos,
     cargando,
+    segundosTranscurridos,
     errorCarga,
     filtroTipo,
     setFiltroTipo,
@@ -40,116 +56,227 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
     setBusqueda,
     abrirCajaModalOpen,
     setAbrirCajaModalOpen,
+    cerrarCajaModalOpen,
+    setCerrarCajaModalOpen,
     cobroModalOpen,
     setCobroModalOpen,
     pedidoParaCobro,
     ticketModalOpen,
     setTicketModalOpen,
     comprobanteActual,
-    procesandoCaja,
     procesandoCobro,
     descargandoTxt,
     cargarDatos,
-    handleAbrirCaja,
+    handleCajaAbierta,
+    handleCierreCompletado,
     handleIniciarCobro,
     handleConfirmarCobro,
     handleDescargarTxt,
     avisoExito,
     avisoError,
     setAvisoError,
-  } = useCobrosManagement(session.token);
+  } = useCobrosManagement(session.token, onCajaEstadoChange);
+
+  // Auto-apertura del modal de cobro si se navegó desde Mesas o Pedidos (CUS11)
+  const mesaProcesadaRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (cargando) return;
+
+    const claveSeleccion =
+      pedidoIdInicial ||
+      (mesaSeleccionadaInicial ? `${mesaSeleccionadaInicial.id}-${mesaSeleccionadaInicial.nombre}` : null);
+    if (!claveSeleccion) return;
+    if (mesaProcesadaRef.current === claveSeleccion) return;
+
+    if (!cajaEstado?.estaAbierta) {
+      mesaProcesadaRef.current = claveSeleccion;
+      onClearMesaInicial?.();
+      if (cajaEstado?.estadoOperativo === 'anteriorSinCerrar') {
+        setCerrarCajaModalOpen(true);
+      } else {
+        setAbrirCajaModalOpen(true);
+      }
+      return;
+    }
+
+    let pedidoEncontrado: (typeof pedidos)[0] | undefined;
+
+    if (pedidoIdInicial) {
+      pedidoEncontrado = pedidos.find((p) => p.pedidoId === pedidoIdInicial);
+    } else if (mesaSeleccionadaInicial) {
+      const idBuscado = mesaSeleccionadaInicial.id?.trim().toLowerCase();
+      const nombreBuscado = mesaSeleccionadaInicial.nombre?.trim().toLowerCase();
+
+      pedidoEncontrado = pedidos.find((p) => {
+        if (p.mesaId && idBuscado && p.mesaId.trim().toLowerCase() === idBuscado) {
+          return true;
+        }
+        if (p.mesa && nombreBuscado) {
+          const mesaPedido = p.mesa.trim().toLowerCase();
+          return (
+            mesaPedido === nombreBuscado ||
+            mesaPedido.includes(nombreBuscado) ||
+            nombreBuscado.includes(mesaPedido)
+          );
+        }
+        return false;
+      });
+    }
+
+    if (pedidoEncontrado) {
+      mesaProcesadaRef.current = claveSeleccion;
+      handleIniciarCobro(pedidoEncontrado);
+      onClearMesaInicial?.();
+    } else if (mesaSeleccionadaInicial) {
+      mesaProcesadaRef.current = claveSeleccion;
+      setAvisoError(`No se encontró un pedido pendiente de cobro para ${mesaSeleccionadaInicial.nombre}.`);
+      onClearMesaInicial?.();
+    } else if (pedidoIdInicial) {
+      mesaProcesadaRef.current = claveSeleccion;
+      setAvisoError('No se encontró el pedido pendiente de cobro seleccionado.');
+      onClearMesaInicial?.();
+    }
+  }, [
+    cargando,
+    cajaEstado?.estaAbierta,
+    cajaEstado?.estadoOperativo,
+    pedidos,
+    mesaSeleccionadaInicial,
+    pedidoIdInicial,
+    handleIniciarCobro,
+    setAbrirCajaModalOpen,
+    setCerrarCajaModalOpen,
+    setAvisoError,
+    onClearMesaInicial,
+  ]);
 
   const cajaCerrada = !cajaEstado?.estaAbierta;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden p-4 sm:p-6 max-w-7xl mx-auto w-full select-none">
-      {/* 1. Encabezado Editorial Limpio Directo sobre Canvas (#FAF7F4) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+    <div className="h-full flex flex-col overflow-hidden gap-4 select-none">
+      {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE CAJA
           </p>
-          <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
-            Cobro de Pedidos
-          </h1>
-          <p className="text-sm text-neutral-500 mt-0.5">
-            Registro de cobros, cálculo de cambio y emisión de tickets térmicos.
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+              Cobro de Pedidos
+            </h1>
+
+            {/* Resumen de estado de caja integrado en pastilla */}
+            {cajaEstado?.estaAbierta ? (
+              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Caja abierta · {cajaEstado.cajeroNombre || session.nombre}
+                </span>
+              </div>
+            ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
+              <div className="px-3.5 py-1 bg-rose-50 rounded-full border border-rose-200 text-xs font-semibold text-rose-800 flex items-center gap-2 shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 text-rose-700">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  Caja anterior sin cerrar
+                </span>
+              </div>
+            ) : (
+              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 text-[#B84600]">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  Caja cerrada
+                </span>
+              </div>
+            )}
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+            Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real.
           </p>
         </div>
 
-        {/* Estado de Caja & Controles */}
-        <div className="flex items-center gap-3 shrink-0">
-          {cajaCerrada ? (
+        {/* Sincronización y Botones de Acción */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 text-xs text-[#7C6F66]">
+            <span className="hidden sm:inline font-mono">
+              Actualizado hace {segundosTranscurridos} s
+            </span>
             <button
               type="button"
-              onClick={() => setAbrirCajaModalOpen(true)}
-              className="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B84600] border border-amber-200 text-xs font-bold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
+              onClick={() => cargarDatos(false)}
+              disabled={cargando}
+              title="Actualizar pedidos ahora"
+              aria-label="Actualizar pedidos ahora"
+              className="w-8 h-8 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer disabled:opacity-60"
             >
-              <Lock className="w-4 h-4 text-[#B84600]" />
-              <span>Caja Cerrada · Abrir Caja</span>
+              <RotateCcw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
             </button>
-          ) : (
-            <div className="px-3.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs flex items-center gap-2 text-emerald-800">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>
-                Caja abierta por <strong>{cajaEstado?.cajeroNombre || session.nombre}</strong>
-              </span>
-            </div>
-          )}
+          </div>
 
-          <button
-            type="button"
-            onClick={cargarDatos}
-            disabled={cargando}
-            title="Refrescar pedidos pendientes"
-            aria-label="Refrescar pedidos pendientes"
-            className="w-9 h-9 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer disabled:opacity-60"
-          >
-            <RotateCw className={`w-4 h-4 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
-          </button>
+          {session.rol === 'Cajero' && (
+            <>
+              {cajaEstado?.estadoOperativo === 'abierta' && (
+                <button
+                  type="button"
+                  onClick={() => setCerrarCajaModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-[#C0392B] hover:bg-[#962D22] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Cerrar caja</span>
+                </button>
+              )}
+
+              {cajaEstado?.estadoOperativo === 'anteriorSinCerrar' && (
+                <button
+                  type="button"
+                  onClick={() => setCerrarCajaModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-[#C0392B] hover:bg-[#962D22] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Cerrar caja anterior</span>
+                </button>
+              )}
+
+              {cajaEstado?.estadoOperativo === 'sinCaja' && (
+                <button
+                  type="button"
+                  onClick={() => setAbrirCajaModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                >
+                  <DollarSign className="w-4 h-4" />
+                  <span>Abrir caja</span>
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
 
-      {/* Banner de Caja Cerrada si corresponde */}
-      {cajaCerrada && (
-        <div className="shrink-0 mb-4 p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 text-[#B84600] flex items-center justify-center shrink-0">
-              <AlertCircle className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-[#482813]">
-                La caja se encuentra cerrada
-              </h4>
-              <p className="text-xs text-neutral-600 mt-0.5">
-                Debe registrar el fondo inicial para habilitar la visualización y cobro de pedidos.
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAbrirCajaModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer shrink-0 min-h-[38px] flex items-center gap-1.5"
-          >
-            <DollarSign className="w-4 h-4" />
-            <span>Abrir caja ahora</span>
-          </button>
-        </div>
-      )}
+      {/* Banner de Estado de Caja (CUS 13.1 / CUS 13.2 / MSG-166, MSG-168) */}
+      <CajaStatusBanner
+        cajaActual={cajaActual}
+        estado={cajaEstado?.estadoOperativo}
+        apertura={cajaActual?.apertura}
+        resumenParcial={cajaActual?.resumenParcial}
+        rolUsuario={session.rol}
+        onAbrirCaja={() => setAbrirCajaModalOpen(true)}
+        onCerrarCaja={() => setCerrarCajaModalOpen(true)}
+        loading={cargando}
+      />
 
       {/* 2. Tarjetas KPI / Resumen Rápido (shrink-0) */}
-      <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+      <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
             <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
               Por Cobrar
             </span>
-            <span className="text-xl font-bold font-mono text-[#2C1A0E]">
+            <span className="text-xl font-bold font-sans tabular-nums text-[#2C1A0E]">
               {totalPedidos} {totalPedidos === 1 ? 'pedido' : 'pedidos'}
             </span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-orange-50 text-[#D35400] flex items-center justify-center">
-            <Receipt className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-orange-50 text-[#D35400] flex items-center justify-center">
+            <Receipt className="w-4 h-4" />
           </div>
         </div>
 
@@ -158,12 +285,12 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
             <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
               Listos en Cocina
             </span>
-            <span className="text-xl font-bold font-mono text-emerald-700">
+            <span className="text-xl font-bold font-sans tabular-nums text-[#2C1A0E]">
               {totalListos} listos
             </span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-            <CheckCircle2 className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+            <CheckCircle2 className="w-4 h-4" />
           </div>
         </div>
 
@@ -172,84 +299,69 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
             <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
               Monto Pendiente
             </span>
-            <span className="text-xl font-bold font-mono text-[#D35400]">
+            <span className="text-xl font-bold font-sans tabular-nums text-[#D35400]">
               S/ {totalPorCobrar.toFixed(2)}
             </span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center">
-            <CreditCard className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center">
+            <CreditCard className="w-4 h-4" />
           </div>
         </div>
       </div>
 
-      {/* 3. Barra de Búsqueda y Filtros Fija (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white px-4 py-3 rounded-xl border border-neutral-200/80 shadow-2xs mb-4">
-        {/* Pestañas de Filtro */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1 shrink-0">
+      {/* 3. Barra de Filtros Fija (shrink-0) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-xl border border-neutral-200/80 shadow-2xs">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" />
-            Ver:
+            Estado:
           </span>
 
-          <button
-            type="button"
-            onClick={() => setFiltroTipo('todos')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 ${
-              filtroTipo === 'todos'
-                ? 'bg-[#482813] text-white shadow-2xs'
-                : 'text-neutral-600 hover:bg-neutral-100'
-            }`}
-          >
-            Todos ({totalPedidos})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFiltroTipo('mesa')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 ${
-              filtroTipo === 'mesa'
-                ? 'bg-[#482813] text-white shadow-2xs'
-                : 'text-neutral-600 hover:bg-neutral-100'
-            }`}
-          >
-            Salón / Mesas
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFiltroTipo('llevar')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 ${
-              filtroTipo === 'llevar'
-                ? 'bg-[#482813] text-white shadow-2xs'
-                : 'text-neutral-600 hover:bg-neutral-100'
-            }`}
-          >
-            Para Llevar
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFiltroTipo('listos')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 ${
-              filtroTipo === 'listos'
-                ? 'bg-emerald-700 text-white shadow-2xs'
-                : 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
-            }`}
-          >
-            Listos ({totalListos})
-          </button>
+          {(['todos', 'mesa', 'llevar', 'listos'] as const).map((tipo) => {
+            const activo = filtroTipo === tipo;
+            const labels: Record<string, string> = {
+              todos: 'Todos',
+              mesa: 'Salón',
+              llevar: 'Para Llevar',
+              listos: 'Listos',
+            };
+            return (
+              <button
+                key={tipo}
+                type="button"
+                onClick={() => setFiltroTipo(tipo)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[36px] ${
+                  activo
+                    ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
+                    : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'
+                }`}
+              >
+                {labels[tipo]}
+              </button>
+            );
+          })}
         </div>
 
         {/* Input de Búsqueda */}
         <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar mesa o n.º..."
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-neutral-200 text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400]"
+            placeholder="Buscar mesa o n.º de pedido..."
+            className="w-full pl-8 pr-7 py-2 rounded-lg border border-neutral-200 text-xs text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-[#D35400] focus:border-[#D35400] transition-colors"
           />
+          {busqueda && (
+            <button
+              type="button"
+              onClick={() => setBusqueda('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 text-xs font-bold px-1 cursor-pointer"
+              aria-label="Limpiar búsqueda"
+            >
+              ×
+            </button>
+          )}
         </div>
       </div>
 
@@ -257,7 +369,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
       <div className="flex-1 overflow-y-auto min-h-0 bg-white border border-neutral-200/80 rounded-2xl shadow-2xs [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
         {cargando ? (
           <div className="p-12 text-center">
-            <RotateCw className="w-8 h-8 text-[#D35400] animate-spin mx-auto mb-3" />
+            <RotateCcw className="w-8 h-8 text-[#D35400] animate-spin mx-auto mb-3" />
             <p className="text-sm font-semibold text-neutral-600">
               Cargando pedidos pendientes de cobro...
             </p>
@@ -271,8 +383,8 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
             <p className="text-xs text-neutral-500 mb-4">{errorCarga}</p>
             <button
               type="button"
-              onClick={cargarDatos}
-              className="px-4 py-2 bg-[#D35400] text-white rounded-xl text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
+              onClick={() => cargarDatos(false)}
+              className="px-4 py-2 bg-[#D35400] text-white rounded-xl text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer min-h-[44px]"
             >
               Reintentar
             </button>
@@ -282,7 +394,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
             <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200/60">
               <CheckCircle2 className="w-7 h-7" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-neutral-800 mb-1">
+            <h3 className="font-brand-serif font-bold text-lg text-[#2C1A0E] mb-1">
               No hay pedidos pendientes de cobro
             </h3>
             <p className="text-xs text-neutral-500">
@@ -298,7 +410,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
             {/* Tabla Desktop (>= lg) */}
             <div className="hidden lg:block">
               <table className="w-full text-left border-collapse">
-                <thead className="sticky top-0 z-10 bg-neutral-50 text-neutral-500 font-semibold text-xs uppercase tracking-wider border-b border-neutral-200">
+                <thead className="sticky top-0 z-10 bg-neutral-50/90 text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-neutral-200">
                   <tr>
                     <th className="py-3 px-4">N.º Pedido</th>
                     <th className="py-3 px-4">Destino</th>
@@ -320,7 +432,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
                         }`}
                       >
                         {/* N.º Pedido */}
-                        <td className="py-3.5 px-4 font-bold font-mono text-neutral-900">
+                        <td className="py-3.5 px-4 font-bold font-sans tabular-nums text-[#2C1A0E]">
                           #{p.numero}
                         </td>
 
@@ -330,7 +442,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
                             {esMesa ? (
                               <Utensils className="w-4 h-4 text-[#D35400]" />
                             ) : (
-                              <ShoppingBag className="w-4 h-4 text-orange-600" />
+                              <ShoppingBag className="w-4 h-4 text-[#D35400]" />
                             )}
                             <span className="font-semibold text-neutral-900">
                               {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
@@ -344,25 +456,27 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
                         </td>
 
                         {/* Hora */}
-                        <td className="py-3.5 px-4 text-xs font-mono text-neutral-600">
+                        <td className="py-3.5 px-4 text-xs font-sans tabular-nums text-[#7C6F66]">
                           {p.hora}
                         </td>
 
                         {/* Estado Cocina */}
                         <td className="py-3.5 px-4">
-                          <span
-                            className={`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold ${
-                              p.estaListo
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : 'bg-amber-50 text-amber-800 border border-amber-200'
-                            }`}
-                          >
-                            {p.estaListo ? 'Listo' : 'En proceso'}
-                          </span>
+                          {p.estaListo ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Listo
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                              <ChefHat className="w-3 h-3" />
+                              En preparación
+                            </span>
+                          )}
                         </td>
 
                         {/* Total a Cobrar */}
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-base text-[#D35400]">
+                        <td className="py-3.5 px-4 text-right font-sans font-bold tabular-nums text-base text-[#D35400]">
                           S/ {p.total.toFixed(2)}
                         </td>
 
@@ -373,7 +487,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
                             onClick={() => handleIniciarCobro(p)}
                             title={`Cobrar pedido #${p.numero}`}
                             aria-label={`Cobrar pedido #${p.numero}`}
-                            className="px-4 py-1.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[34px]"
+                            className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
                           >
                             <DollarSign className="w-4 h-4" />
                             <span>Cobrar</span>
@@ -403,25 +517,27 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
                         {esMesa ? (
                           <Utensils className="w-4 h-4 text-[#D35400]" />
                         ) : (
-                          <ShoppingBag className="w-4 h-4 text-orange-600" />
+                          <ShoppingBag className="w-4 h-4 text-[#D35400]" />
                         )}
                         <span className="font-bold text-neutral-900">
                           {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
                         </span>
-                        <span className="text-xs font-mono font-bold text-neutral-500">
+                        <span className="text-xs font-sans tabular-nums font-bold text-neutral-500">
                           #{p.numero}
                         </span>
                       </div>
 
-                      <span
-                        className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${
-                          p.estaListo
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        {p.estaListo ? 'Listo' : 'En proceso'}
-                      </span>
+                      {p.estaListo ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Listo
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                          <ChefHat className="w-3 h-3" />
+                          En preparación
+                        </span>
+                      )}
                     </div>
 
                     {p.referencia && (
@@ -435,7 +551,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
                         <span className="text-[10px] text-neutral-400 font-bold uppercase block">
                           Total
                         </span>
-                        <span className="text-lg font-bold font-mono text-[#D35400]">
+                        <span className="text-lg font-bold font-sans tabular-nums text-[#D35400]">
                           S/ {p.total.toFixed(2)}
                         </span>
                       </div>
@@ -460,9 +576,27 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
       {/* Modales */}
       <AbrirCajaModal
         isOpen={abrirCajaModalOpen}
-        onClose={() => setAbrirCajaModalOpen(false)}
-        onConfirm={handleAbrirCaja}
-        loading={procesandoCaja}
+        onClose={() => {
+          setAbrirCajaModalOpen(false);
+          onClearMesaInicial?.();
+        }}
+        onCajaAbierta={handleCajaAbierta}
+        token={session.token}
+        sugerenciaInicial={cajaActual?.sugerenciaMontoInicial ?? null}
+      />
+
+      <CerrarCajaModal
+        isOpen={cerrarCajaModalOpen}
+        onClose={() => {
+          setCerrarCajaModalOpen(false);
+          onClearMesaInicial?.();
+        }}
+        onCierreCompletado={handleCierreCompletado}
+        token={session.token}
+        onCobrarPedido={(pedidoId) => {
+          const p = pedidos.find((item) => item.pedidoId === pedidoId);
+          if (p) handleIniciarCobro(p);
+        }}
       />
 
       <CobroModal
@@ -518,3 +652,5 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({ session, onLogout }) => 
     </div>
   );
 };
+
+export default CobrosPage;

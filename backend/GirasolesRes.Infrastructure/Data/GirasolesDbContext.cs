@@ -326,18 +326,47 @@ public class GirasolesDbContext : DbContext
             entity.HasKey(c => c.Id_Caja);
             entity.Property(c => c.Id_Caja).HasColumnName("id_caja");
             entity.Property(c => c.Id_Usuario).HasColumnName("id_usuario").IsRequired();
-            entity.Property(c => c.Caj_MontoApertura).HasColumnName("caj_monto_apertura").HasColumnType("numeric(8,2)").IsRequired();
-            entity.Property(c => c.Caj_MontoCierre).HasColumnName("caj_monto_cierre").HasColumnType("numeric(8,2)");
+            entity.Property(c => c.Caj_MontoApertura).HasColumnName("caj_monto_apertura").HasColumnType("numeric(10,2)").IsRequired();
+            entity.Property(c => c.Caj_MontoCierre).HasColumnName("caj_monto_cierre").HasColumnType("numeric(10,2)");
             entity.Property(c => c.Caj_FechaAperturaUtc).HasColumnName("caj_fec_apertura_utc").IsRequired();
             entity.Property(c => c.Caj_FechaCierreUtc).HasColumnName("caj_fec_cierre_utc");
-            entity.Property(c => c.Caj_Estado).HasColumnName("caj_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(c => c.Caj_Estado).HasColumnName("caj_estado").HasConversion<string>().HasMaxLength(20).IsRequired().IsConcurrencyToken();
             entity.Property(c => c.Caj_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
             entity.Property(c => c.Caj_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+
+            // CUS 13: Cuadre, snapshot de ventas, auditoría e idempotencia
+            entity.Property(c => c.Caj_MontoEsperado).HasColumnName("caj_mon_esperado").HasColumnType("numeric(10,2)");
+            entity.Property(c => c.Caj_Diferencia).HasColumnName("caj_diferencia").HasColumnType("numeric(10,2)");
+            entity.Property(c => c.Caj_TotalVentasEfectivo).HasColumnName("caj_tot_efectivo").HasColumnType("numeric(10,2)");
+            entity.Property(c => c.Caj_TotalVentasYape).HasColumnName("caj_tot_yape").HasColumnType("numeric(10,2)");
+            entity.Property(c => c.Caj_TotalVentas).HasColumnName("caj_tot_ventas").HasColumnType("numeric(10,2)");
+            entity.Property(c => c.Caj_CantidadVentas).HasColumnName("caj_can_ventas");
+            entity.Property(c => c.Caj_Observacion).HasColumnName("caj_observacion").HasMaxLength(200);
+            entity.Property(c => c.Id_UsuarioCierre).HasColumnName("caj_id_usu_cierre");
+            entity.Property(c => c.Caj_SolicitudId).HasColumnName("caj_solicitud_id").HasMaxLength(100).IsRequired(false);
+            entity.Property(c => c.Caj_SolicitudIdCierre).HasColumnName("caj_solicitud_id_cierre").HasMaxLength(100);
+
+            entity.HasIndex(c => c.Caj_Estado)
+                  .HasDatabaseName("uq_cajas_solo_una_abierta")
+                  .HasFilter("caj_estado = 'Abierta'")
+                  .IsUnique();
+            entity.HasIndex(c => c.Caj_SolicitudId);
+            entity.HasIndex(c => c.Id_UsuarioCierre);
+            entity.HasIndex(c => c.Caj_FechaAperturaUtc);
+            entity.HasIndex(c => c.Caj_FechaCierreUtc);
 
             entity.HasOne(c => c.Caj_Usuario)
                   .WithMany()
                   .HasForeignKey(c => c.Id_Usuario)
                   .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.Caj_UsuarioCierre)
+                  .WithMany()
+                  .HasForeignKey(c => c.Id_UsuarioCierre)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Navigation(c => c.Caj_Ventas)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
 
         modelBuilder.Entity<Venta>(entity =>
@@ -359,6 +388,10 @@ public class GirasolesDbContext : DbContext
             entity.Property(v => v.Ven_Estado).HasColumnName("ven_estado").HasConversion<string>().HasMaxLength(20).IsRequired().HasDefaultValue(Domain.Enums.EstadoVenta.Vigente);
             entity.Property(v => v.Ven_FechaHoraUtc).HasColumnName("ven_fecha_hora_utc").IsRequired();
             entity.Property(v => v.Ven_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(v => v.Ven_MotivoAnulacion).HasColumnName("ven_motivo_anulacion").HasMaxLength(200);
+            entity.Property(v => v.Ven_UsuarioAnulacion).HasColumnName("ven_usuario_anulacion").HasMaxLength(100);
+            entity.Property(v => v.Ven_FechaHoraAnulacionUtc).HasColumnName("ven_fec_anulacion_utc");
+            entity.Property(v => v.Ven_DestinoPedido).HasColumnName("ven_destino_pedido").HasMaxLength(20);
 
             entity.HasOne(v => v.Ven_Pedido)
                   .WithMany()
@@ -371,7 +404,7 @@ public class GirasolesDbContext : DbContext
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(v => v.Ven_Caja)
-                  .WithMany()
+                  .WithMany(c => c.Caj_Ventas)
                   .HasForeignKey(v => v.Id_Caja)
                   .OnDelete(DeleteBehavior.Restrict);
 

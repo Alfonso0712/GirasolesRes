@@ -42,6 +42,7 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddScoped<IJwtGenerator, JwtGenerator>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IPdfCierreService, PdfCierreService>();
 
         return services;
     }

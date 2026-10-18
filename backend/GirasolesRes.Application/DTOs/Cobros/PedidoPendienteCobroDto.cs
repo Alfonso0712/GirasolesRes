@@ -9,5 +9,6 @@ public record PedidoPendienteCobroDto(
     string Hora,
     string Estado,
     decimal Total,
-    bool EstaListo
+    bool EstaListo,
+    Guid? MesaId = null
 );

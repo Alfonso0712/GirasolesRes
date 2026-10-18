@@ -9,15 +9,19 @@ import { PedidoLlevarPage } from './PedidoLlevarPage';
 import { PedidosPage } from './PedidosPage';
 import { CocinaPage } from './CocinaPage';
 import { CobrosPage } from './CobrosPage';
+import { VentasPage } from './VentasPage';
+import { HistorialCierresPage } from './HistorialCierresPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
 import { AvisoComandaModal } from '../components/AvisoComandaModal';
 import { logoutService, renovarTokenService } from '../services/authService';
 import { pedidoService } from '../services/pedidoService';
-import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check, UtensilsCrossed, ClipboardList, ShoppingBag, ReceiptText } from 'lucide-react';
+import { cajaService } from '../services/cajaService';
+import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check, UtensilsCrossed, ClipboardList, ShoppingBag, ReceiptText, Receipt, Lock, ShieldAlert } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
+import type { CajaActualResponseDto } from '../types/caja';
 
 interface HomePageProps {
   session: UserSession;
@@ -51,6 +55,44 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Estado de mesa seleccionada para pedido (CUS07)
   const [mesaSeleccionadaParaPedido, setMesaSeleccionadaParaPedido] = useState<string | null>(null);
+
+  // Estados para navegación contextual hacia Cobros (CUS11)
+  const [mesaParaCobro, setMesaParaCobro] = useState<{ id: string; nombre: string } | null>(null);
+  const [pedidoIdParaCobro, setPedidoIdParaCobro] = useState<string | null>(null);
+
+  // Sincronización compartida del estado de caja (CUS 13)
+  const [cajaGlobal, setCajaGlobal] = useState<CajaActualResponseDto | null>(null);
+
+  const consultarCajaGlobal = useCallback(async () => {
+    if (session.rol !== 'Cajero' && session.rol !== 'Administrador') return;
+    try {
+      const data = await cajaService.obtenerActual(session.token);
+      setCajaGlobal(data);
+    } catch {
+      // ignore network errors
+    }
+  }, [session.rol, session.token]);
+
+  useEffect(() => {
+    consultarCajaGlobal();
+    const interval = setInterval(consultarCajaGlobal, 30000);
+    return () => clearInterval(interval);
+  }, [consultarCajaGlobal]);
+
+  // RN-106 / E-319: Redirección automática si un rol no autorizado intenta acceder al historial de cierres
+  useEffect(() => {
+    if (paginaActiva === 'historial-cierres' && session.rol !== 'Administrador') {
+      const defaultPage =
+        session.rol === 'Cajero'
+          ? 'pedidos-llevar'
+          : session.rol === 'Mozo'
+          ? 'mesas'
+          : session.rol === 'Cocinero'
+          ? 'cocina'
+          : 'inicio';
+      setPaginaActiva(defaultPage);
+    }
+  }, [paginaActiva, session.rol]);
 
   // Estados de Modales del CUS-03
   const [mostrarModalLogout, setMostrarModalLogout] = useState(false);
@@ -102,8 +144,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Registrar eventos de interacción de usuario (RV-32 / RN-20)
   const registrarActividad = useCallback(() => {
-    // Si el modal de inactividad está visible, la interacción pasiva no lo cierra;
-    // se requiere que el usuario haga clic en CONTINUAR según RV-32.
     if (!mostrarModalInactividad) {
       ultimaActividadRef.current = Date.now();
     }
@@ -126,7 +166,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     // Verificación periódica cada segundo
     const interval = setInterval(() => {
-      // RN-82: Mientras la pantalla de comandas esté abierta, la sesión del Cocinero se mantiene vigente
       if (paginaActiva === 'cocina' && session.rol === 'Cocinero') {
         ultimaActividadRef.current = Date.now();
         return;
@@ -159,7 +198,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       setMostrarModalLogout(false);
       onLogout({
         type: 'success',
-        message: 'Sesión cerrada correctamente.' // MSG-41
+        message: 'Sesión cerrada correctamente.'
       });
     }
   };
@@ -187,17 +226,17 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
     onLogout({
       type: 'warning',
-      message: 'Su sesión expiró por inactividad. Ingrese nuevamente.' // MSG-43
+      message: 'Su sesión expiró por inactividad. Ingrese nuevamente.'
     });
   };
 
   // Éxito al cambiar contraseña (HU-09 / RF-07 / Vista 3.2)
   const handlePasswordSuccess = (nuevoToken: string, mensaje: string) => {
     onUpdateSession({ ...session, token: nuevoToken });
-    setToastMensaje(mensaje || 'Contraseña actualizada correctamente.'); // MSG-47
+    setToastMensaje(mensaje || 'Contraseña actualizada correctamente.');
     setTimeout(() => {
       setToastMensaje(null);
-    }, 4000); // 4 segundos exactos (RV-28)
+    }, 4000);
   };
 
   // Bloqueo por 5 intentos fallidos consecutivos (RN-17 / E-51)
@@ -205,7 +244,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     setMostrarModalPassword(false);
     onLogout({
       type: 'error',
-      message: 'Por seguridad se cerró su sesión. Superó los 5 intentos fallidos.' // MSG-48
+      message: 'Por seguridad se cerró su sesión. Superó los 5 intentos fallidos.'
     });
   };
 
@@ -216,7 +255,11 @@ export const HomePage: React.FC<HomePageProps> = ({
       onCambiarPassword={() => setMostrarModalPassword(true)}
       paginaActiva={paginaActiva}
       pedidosListosCount={avisosPendientes.length}
+      cajaEstado={cajaGlobal?.estado}
       onSelectPagina={(p) => {
+        if (p === 'historial-cierres' && session.rol !== 'Administrador') {
+          return;
+        }
         if (p !== 'pedidos-mesa') {
           setMesaSeleccionadaParaPedido(null);
         }
@@ -241,7 +284,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             setMesaSeleccionadaParaPedido(mesaId);
             setPaginaActiva('pedidos-mesa');
           }}
-          onNavigateToCobro={() => {
+          onNavigateToCobro={(mesa) => {
+            setMesaParaCobro(mesa);
             setPaginaActiva('caja');
           }}
         />
@@ -268,7 +312,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         <PedidosPage
           session={session}
           onLogout={onLogout}
-          onNavigateToCobro={() => {
+          onNavigateToCobro={(pedidoId) => {
+            setPedidoIdParaCobro(pedidoId);
             setPaginaActiva('caja');
           }}
         />
@@ -276,7 +321,55 @@ export const HomePage: React.FC<HomePageProps> = ({
         <CobrosPage
           session={session}
           onLogout={onLogout}
+          mesaSeleccionadaInicial={mesaParaCobro}
+          pedidoIdInicial={pedidoIdParaCobro}
+          onClearMesaInicial={() => {
+            setMesaParaCobro(null);
+            setPedidoIdParaCobro(null);
+          }}
+          onCajaEstadoChange={consultarCajaGlobal}
         />
+      ) : paginaActiva === 'ventas' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
+        <VentasPage
+          session={session}
+          onLogout={onLogout}
+        />
+      ) : paginaActiva === 'historial-cierres' ? (
+        session.rol === 'Administrador' ? (
+          <HistorialCierresPage
+            session={session}
+            onLogout={onLogout}
+          />
+        ) : (
+          <div className="max-w-4xl mx-auto py-12 px-4 text-center">
+            <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+              <ShieldAlert className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
+              Acceso Restringido
+            </h2>
+            <p className="text-neutral-600 max-w-md mx-auto text-sm">
+              No tiene permiso para acceder al Historial de Cierres de Caja. Este módulo está restringido exclusivamente para el rol Administrador (RN-106, E-319).
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                setPaginaActiva(
+                  session.rol === 'Cajero'
+                    ? 'pedidos-llevar'
+                    : session.rol === 'Mozo'
+                    ? 'mesas'
+                    : session.rol === 'Cocinero'
+                    ? 'cocina'
+                    : 'inicio'
+                )
+              }
+              className="mt-6 px-4 py-2 bg-[#D35400] text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer"
+            >
+              Ir al módulo principal
+            </button>
+          </div>
+        )
       ) : paginaActiva === 'cocina' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
         <CocinaPage
           session={session}
@@ -341,7 +434,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             {session.rol === 'Administrador' && (
               <div
                 onClick={() => setPaginaActiva('usuarios')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-amber-500 hover:shadow-md transition-all cursor-pointer group"
+                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <Users className="w-5 h-5" />
@@ -356,14 +449,44 @@ export const HomePage: React.FC<HomePageProps> = ({
             {(session.rol === 'Administrador' || session.rol === 'Cajero') && (
               <div
                 onClick={() => setPaginaActiva('caja')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-amber-500 hover:shadow-md transition-all cursor-pointer group"
+                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <DollarSign className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Caja y Facturación</h3>
+                <h3 className="font-bold text-neutral-800 font-sans">Caja y Cobros</h3>
                 <p className="text-xs text-neutral-500 mt-1">
-                  Apertura, cobros y cierres de turno de caja.
+                  Apertura de caja, registro de cobros y emisión de comprobantes.
+                </p>
+              </div>
+            )}
+
+            {(session.rol === 'Administrador' || session.rol === 'Cajero') && (
+              <div
+                onClick={() => setPaginaActiva('ventas')}
+                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <Receipt className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-neutral-800 font-sans">Gestión de Ventas</h3>
+                <p className="text-xs text-neutral-500 mt-1">
+                  Consulta de comprobantes, reimpresión y anulación autorizada.
+                </p>
+              </div>
+            )}
+
+            {session.rol === 'Administrador' && (
+              <div
+                onClick={() => setPaginaActiva('historial-cierres')}
+                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-neutral-800 font-sans">Historial de Cierres</h3>
+                <p className="text-xs text-neutral-500 mt-1">
+                  Arqueos de caja, diferencias de dinero, platos vendidos y auditoría.
                 </p>
               </div>
             )}
@@ -371,7 +494,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             {(session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') && (
               <div
                 onClick={() => setPaginaActiva('mesas')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-amber-500 hover:shadow-md transition-all cursor-pointer group"
+                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <Utensils className="w-5 h-5" />
@@ -441,7 +564,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             {(session.rol === 'Administrador' || session.rol === 'Cocinero') && (
               <div
                 onClick={() => setPaginaActiva('cocina')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-amber-500 hover:shadow-md transition-all cursor-pointer group"
+                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <ChefHat className="w-5 h-5" />

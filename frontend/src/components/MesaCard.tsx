@@ -147,6 +147,23 @@ export const MesaCard: React.FC<MesaCardProps> = ({
 
             {/* Grupo de Acciones Secundarias / Administrativas */}
             <div className="flex items-center gap-1.5 shrink-0">
+              {/* Botón Cobrar (si está ocupada) */}
+              {esOcupada && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAccionRol?.(mesa, 'COBRAR');
+                  }}
+                  title={`Cobrar ${mesa.nombre}`}
+                  aria-label={`Cobrar ${mesa.nombre}`}
+                  className="h-8 px-2.5 rounded-lg border border-[#2C1A0E] bg-[#2C1A0E] hover:bg-[#482813] text-white shadow-2xs inline-flex items-center justify-center gap-1 transition-colors cursor-pointer text-xs font-semibold"
+                >
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span>Cobrar</span>
+                </button>
+              )}
+
               {/* Botón 2 (Editar): Estilo Neutro Blanco */}
               <button
                 type="button"

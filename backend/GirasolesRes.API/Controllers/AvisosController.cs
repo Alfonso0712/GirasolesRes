@@ -30,7 +30,8 @@ public class AvisosController : ControllerBase
     {
         var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
         if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
+            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
@@ -54,14 +55,15 @@ public class AvisosController : ControllerBase
     }
 
     /// <summary>
-    /// CUS09.3: Marca un aviso como visto tras cerrarlo en pantalla. Roles: Mozo y Cajero.
+    /// CUS09.3: Marca un aviso como visto tras cerrarlo en pantalla. Roles: Mozo, Cajero y Administrador.
     /// </summary>
     [HttpPost("{id:guid}/visto")]
     public async Task<IActionResult> MarcarVisto(Guid id, CancellationToken cancellationToken)
     {
         var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
         if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
+            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }

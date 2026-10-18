@@ -3,6 +3,7 @@ export interface PedidoPendienteCobro {
   numero: number;
   tipo: string;
   mesa?: string | null;
+  mesaId?: string | null;
   referencia?: string | null;
   hora: string;
   estado: string;

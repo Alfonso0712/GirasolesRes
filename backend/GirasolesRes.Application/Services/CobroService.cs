@@ -35,12 +35,8 @@ public class CobroService : ICobroService
 
     public async Task<IReadOnlyList<PedidoPendienteCobroDto>> ObtenerPedidosPendientesCobroAsync(CancellationToken ct = default)
     {
-        // RV-95 / RN-84: Debe haber caja abierta para consultar y cobrar
-        var cajaAbierta = await _cajaRepository.ObtenerCajaAbiertaActualAsync(ct);
-        if (cajaAbierta == null)
-        {
-            throw new CobroConflictException("caja_cerrada", MensajesCatalogo.MSG_135);
-        }
+        // RV-95 / RN-84 / RN-108: Validar caja abierta y del día actual
+        var cajaAbierta = await ValidarCajaAbiertaParaCobroAsync(ct);
 
         var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct);
 
@@ -53,7 +49,8 @@ public class CobroService : ICobroService
             Hora: TimeZoneHelper.ToPeruTime(p.Ped_FechaHoraUtc).ToString("HH:mm"),
             Estado: p.Ped_Estado.ToString(),
             Total: p.Ped_Total,
-            EstaListo: p.Ped_Estado == EstadoPedido.Listo
+            EstaListo: p.Ped_Estado == EstadoPedido.Listo,
+            MesaId: p.Id_Mesa
         )).ToList().AsReadOnly();
     }
 
@@ -86,12 +83,8 @@ public class CobroService : ICobroService
             );
         }
 
-        // 2. Precondición: Caja abierta (RV-95, RN-84)
-        var cajaAbierta = await _cajaRepository.ObtenerCajaAbiertaActualAsync(ct);
-        if (cajaAbierta == null)
-        {
-            throw new CobroConflictException("caja_cerrada", MensajesCatalogo.MSG_135);
-        }
+        // 2. Precondición: Caja abierta y vigente para la fecha operativa (RV-95, RN-84, RN-108)
+        var cajaAbierta = await ValidarCajaAbiertaParaCobroAsync(ct);
 
         // 3. Obtener pedido con detalles (bloqueo transaccional)
         var pedido = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(request.PedidoId, ct);
@@ -363,5 +356,28 @@ public class CobroService : ICobroService
         sb.AppendLine("========================================");
 
         return System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+    }
+
+    private async Task<Caja> ValidarCajaAbiertaParaCobroAsync(CancellationToken ct)
+    {
+        // 1. Debe haber caja abierta (RV-95, RN-84, MSG-135, E-294)
+        var cajaAbierta = await _cajaRepository.ObtenerCajaAbiertaActualAsync(ct);
+        if (cajaAbierta == null)
+        {
+            throw new CobroConflictException("caja_cerrada", MensajesCatalogo.MSG_135);
+        }
+
+        // 2. Si la caja abierta es de un día anterior en horario de Lima (UTC-5), bloquear cobros (RN-108, MSG-168, E-291)
+        var hoyLima = TimeZoneHelper.ObtenerFechaActualLima();
+        var fechaAperturaLima = TimeZoneHelper.GetFechaOperativa(cajaAbierta.Caj_FechaAperturaUtc);
+
+        if (fechaAperturaLima < hoyLima)
+        {
+            var fechaStr = TimeZoneHelper.ToPeruTime(cajaAbierta.Caj_FechaAperturaUtc).ToString("dd/MM/yyyy");
+            var mensaje = string.Format(MensajesCatalogo.MSG_168, fechaStr);
+            throw new CobroConflictException("caja_cerrada", mensaje);
+        }
+
+        return cajaAbierta;
     }
 }
