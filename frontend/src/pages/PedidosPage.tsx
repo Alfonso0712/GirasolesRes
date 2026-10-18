@@ -36,12 +36,14 @@ interface PedidosPageProps {
   session: UserSession;
   onLogout: () => void;
   onNavigateToCobro?: (pedidoId: string) => void;
+  filtroEstadoInicial?: string;
 }
 
 export const PedidosPage: React.FC<PedidosPageProps> = ({
   session,
   onLogout,
-  onNavigateToCobro
+  onNavigateToCobro,
+  filtroEstadoInicial = ''
 }) => {
   // Estado de lista y contadores
   const [pedidos, setPedidos] = useState<PedidoItemDto[]>([]);
@@ -56,7 +58,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   // Filtros combinables (RV-81)
-  const [filtroEstado, setFiltroEstado] = useState<string>('');
+  const [filtroEstado, setFiltroEstado] = useState<string>(filtroEstadoInicial);
   const [filtroTipo, setFiltroTipo] = useState<string>('');
   const [filtroMesaId, setFiltroMesaId] = useState<string>('');
   const [filtroSoloMios, setFiltroSoloMios] = useState<boolean>(false);

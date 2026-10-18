@@ -26,6 +26,7 @@ public class GirasolesDbContext : DbContext
     public DbSet<Venta> Ventas => Set<Venta>();
     public DbSet<Comprobante> Comprobantes => Set<Comprobante>();
     public DbSet<AuditoriaCobro> AuditoriasCobro => Set<AuditoriaCobro>();
+    public DbSet<AuditoriaReporte> AuditoriasReporte => Set<AuditoriaReporte>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -447,6 +448,19 @@ public class GirasolesDbContext : DbContext
             entity.Property(a => a.Aud_MontoRecibido).HasColumnName("monto_recibido").HasColumnType("numeric(8,2)");
             entity.Property(a => a.Aud_Vuelto).HasColumnName("vuelto").HasColumnType("numeric(8,2)");
             entity.Property(a => a.Aud_Detalle).HasColumnName("detalle").HasMaxLength(500);
+            entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
+            entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<AuditoriaReporte>(entity =>
+        {
+            entity.ToTable("auditorias_reporte");
+            entity.HasKey(a => a.Id_Auditoria);
+            entity.Property(a => a.Id_Auditoria).HasColumnName("id_auditoria");
+            entity.Property(a => a.Aud_Usuario).HasColumnName("nom_usuario").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_TipoReporte).HasColumnName("tip_reporte").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Rango).HasColumnName("ran_reporte").HasMaxLength(100).IsRequired();
+            entity.Property(a => a.Aud_Formato).HasColumnName("for_reporte").HasMaxLength(20).IsRequired();
             entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
             entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });

@@ -37,12 +37,14 @@ public static class DependencyInjection
         services.AddScoped<IComprobanteRepository, ComprobanteRepository>();
         services.AddScoped<ICajaRepository, CajaRepository>();
         services.AddScoped<IAuditoriaCobroRepository, AuditoriaCobroRepository>();
+        services.AddScoped<IReporteRepository, ReporteRepository>();
 
         // Seguridad y Servicios
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddScoped<IJwtGenerator, JwtGenerator>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IPdfCierreService, PdfCierreService>();
+        services.AddScoped<IPdfReporteService, ReportePdfService>();
 
         return services;
     }

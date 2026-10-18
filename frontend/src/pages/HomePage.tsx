@@ -11,6 +11,8 @@ import { CocinaPage } from './CocinaPage';
 import { CobrosPage } from './CobrosPage';
 import { VentasPage } from './VentasPage';
 import { HistorialCierresPage } from './HistorialCierresPage';
+import { ReportesPage } from './ReportesPage';
+import { DashboardPage } from './DashboardPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
@@ -18,7 +20,7 @@ import { AvisoComandaModal } from '../components/AvisoComandaModal';
 import { logoutService, renovarTokenService } from '../services/authService';
 import { pedidoService } from '../services/pedidoService';
 import { cajaService } from '../services/cajaService';
-import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check, UtensilsCrossed, ClipboardList, ShoppingBag, ReceiptText, Receipt, Lock, ShieldAlert } from 'lucide-react';
+import { Check, ShieldAlert } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
 import type { CajaActualResponseDto } from '../types/caja';
@@ -40,18 +42,11 @@ export const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onUpdateSession
 }) => {
-  // Para Administrador abre Usuarios por defecto; para Mozo abre Mesas; para Cocinero abre Cocina KDS; para Cajero abre Pedidos para Llevar
-  const [paginaActiva, setPaginaActiva] = useState(
-    session.rol === 'Administrador'
-      ? 'usuarios'
-      : session.rol === 'Mozo'
-      ? 'mesas'
-      : session.rol === 'Cocinero'
-      ? 'cocina'
-      : session.rol === 'Cajero'
-      ? 'pedidos-llevar'
-      : 'inicio'
-  );
+  // RN-124, RV-144, E-346: Todo usuario llega a su pantalla de inicio tras iniciar sesión
+  const [paginaActiva, setPaginaActiva] = useState('inicio');
+
+  // Filtro de estado para navegación hacia Pedidos (RV-146, E-350)
+  const [filtroEstadoPedidos, setFiltroEstadoPedidos] = useState<string>('');
 
   // Estado de mesa seleccionada para pedido (CUS07)
   const [mesaSeleccionadaParaPedido, setMesaSeleccionadaParaPedido] = useState<string | null>(null);
@@ -79,9 +74,9 @@ export const HomePage: React.FC<HomePageProps> = ({
     return () => clearInterval(interval);
   }, [consultarCajaGlobal]);
 
-  // RN-106 / E-319: Redirección automática si un rol no autorizado intenta acceder al historial de cierres
+  // RN-106 / RN-116: Redirección automática si un rol no autorizado intenta acceder a Historial de Cierres o Reportes
   useEffect(() => {
-    if (paginaActiva === 'historial-cierres' && session.rol !== 'Administrador') {
+    if ((paginaActiva === 'historial-cierres' || paginaActiva === 'reportes') && session.rol !== 'Administrador') {
       const defaultPage =
         session.rol === 'Cajero'
           ? 'pedidos-llevar'
@@ -248,6 +243,19 @@ export const HomePage: React.FC<HomePageProps> = ({
     });
   };
 
+  // Navegación contextual desde Dashboard (CUS15)
+  const handleDashboardNavigate = (pagina: string, params?: any) => {
+    if (pagina === 'pedidos') {
+      setFiltroEstadoPedidos(params?.estado || '');
+    }
+    if (pagina === 'pedido-mesa' || pagina === 'pedidos-mesa') {
+      setMesaSeleccionadaParaPedido(null);
+      setPaginaActiva('pedidos-mesa');
+      return;
+    }
+    setPaginaActiva(pagina);
+  };
+
   return (
     <MainLayout
       session={session}
@@ -312,6 +320,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <PedidosPage
           session={session}
           onLogout={onLogout}
+          filtroEstadoInicial={filtroEstadoPedidos}
           onNavigateToCobro={(pedidoId) => {
             setPedidoIdParaCobro(pedidoId);
             setPaginaActiva('caja');
@@ -370,213 +379,53 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
         )
+      ) : paginaActiva === 'reportes' ? (
+        session.rol === 'Administrador' ? (
+          <ReportesPage
+            session={session}
+            onLogout={onLogout}
+            onNavigateToCierres={() => setPaginaActiva('historial-cierres')}
+          />
+        ) : (
+          <div className="max-w-4xl mx-auto py-12 px-4 text-center">
+            <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+              <ShieldAlert className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
+              Acceso Restringido
+            </h2>
+            <p className="text-neutral-600 max-w-md mx-auto text-sm">
+              No tiene permiso para acceder a Reportes. Este módulo está restringido exclusivamente para el rol Administrador (RN-116, E-342).
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                setPaginaActiva(
+                  session.rol === 'Cajero'
+                    ? 'pedidos-llevar'
+                    : session.rol === 'Mozo'
+                    ? 'mesas'
+                    : session.rol === 'Cocinero'
+                    ? 'cocina'
+                    : 'inicio'
+                )
+              }
+              className="mt-6 px-4 py-2 bg-[#D35400] text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer"
+            >
+              Ir al módulo principal
+            </button>
+          </div>
+        )
       ) : paginaActiva === 'cocina' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
         <CocinaPage
           session={session}
           onLogout={onLogout}
         />
       ) : (
-        <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1 p-4 sm:p-6 max-w-7xl mx-auto w-full">
-          <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-                PANEL PRINCIPAL
-              </p>
-              <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
-                Bienvenido/a, {session.nombre}
-              </h1>
-              <p className="text-sm text-neutral-500 mt-1">
-                Panel operativo del restaurante · Perfil activo: {session.rol}
-              </p>
-            </div>
-          </div>
-
-          <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-emerald-800 text-sm">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <span>
-              <strong>Sesión iniciada con éxito.</strong> Bienvenido al sistema de gestión operativa de Restaurante Girasoles.
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            {(session.rol === 'Administrador' || session.rol === 'Cocinero') && (
-              <div
-                onClick={() => setPaginaActiva('menu-dia')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <Utensils className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Menú del Día</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  {session.rol === 'Cocinero'
-                    ? 'Disponibilidad de platos en cocina y servicio.'
-                    : 'Definición del menú diario y control de disponibilidad.'}
-                </p>
-              </div>
-            )}
-
-            {session.rol === 'Administrador' && (
-              <div
-                onClick={() => setPaginaActiva('productos')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <UtensilsCrossed className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Gestión de Productos</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Administración de la carta, categorías, precios y disponibilidad.
-                </p>
-              </div>
-            )}
-
-            {session.rol === 'Administrador' && (
-              <div
-                onClick={() => setPaginaActiva('usuarios')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <Users className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Gestión de Usuarios</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Administración de cuentas, roles, estados y auditoría.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Cajero') && (
-              <div
-                onClick={() => setPaginaActiva('caja')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <DollarSign className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Caja y Cobros</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Apertura de caja, registro de cobros y emisión de comprobantes.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Cajero') && (
-              <div
-                onClick={() => setPaginaActiva('ventas')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <Receipt className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Gestión de Ventas</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Consulta de comprobantes, reimpresión y anulación autorizada.
-                </p>
-              </div>
-            )}
-
-            {session.rol === 'Administrador' && (
-              <div
-                onClick={() => setPaginaActiva('historial-cierres')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Historial de Cierres</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Arqueos de caja, diferencias de dinero, platos vendidos y auditoría.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') && (
-              <div
-                onClick={() => setPaginaActiva('mesas')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <Utensils className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Mesas y Salón</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Visualización del plano de mesas, asignación y estado en vivo.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Mozo') && (
-              <div
-                onClick={() => {
-                  setMesaSeleccionadaParaPedido(null);
-                  setPaginaActiva('pedidos-mesa');
-                }}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <ClipboardList className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Tomar Pedido de Mesa</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Registro de pedido, selección de platos y comanda a cocina.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Cajero') && (
-              <div
-                onClick={() => setPaginaActiva('pedidos-llevar')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <ShoppingBag className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Pedido para Llevar</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Registro de pedido para llevar, referencia de cliente y comanda a cocina.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') && (
-              <div
-                onClick={() => setPaginaActiva('pedidos')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <ReceiptText className="w-5 h-5" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-neutral-800 font-sans">Gestión de Pedidos</h3>
-                  {avisosPendientes.length > 0 && (
-                    <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
-                      {avisosPendientes.length} listos
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Monitoreo de pedidos del día, estados, modificaciones, anulaciones y avisos de cocina.
-                </p>
-              </div>
-            )}
-
-            {(session.rol === 'Administrador' || session.rol === 'Cocinero') && (
-              <div
-                onClick={() => setPaginaActiva('cocina')}
-                className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <ChefHat className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-neutral-800 font-sans">Cocina en Vivo (KDS)</h3>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Monitor de comandas y despacho en tiempo real.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <DashboardPage
+          session={session}
+          onNavigate={handleDashboardNavigate}
+        />
       )}
 
       {/* Vista 3.1: Modal de confirmación para cerrar sesión (MSG-40 / RV-31) */}

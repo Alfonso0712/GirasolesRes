@@ -216,5 +216,32 @@ public static class MensajesCatalogo
     public const string MSG_187 = "Aún no hay cierres de caja registrados.";
     public const string MSG_188 = "La fecha \"desde\" no puede ser posterior a \"hasta\" ni incluir fechas futuras.";
     public const string MSG_189 = "Los totales cambiaron mientras contaba. Revise el resumen antes de cerrar.";
+
+    // CUS-14: Reportes (Complemento CUS14)
+    public const string MSG_190 = "La fecha \"desde\" no puede ser posterior a \"hasta\".";
+    public const string MSG_191 = "El rango no puede incluir fechas futuras ni superar los 366 días.";
+    public const string MSG_192 = "No hay ventas en el rango seleccionado. Pruebe con otras fechas.";
+    public const string MSG_193 = "No hay platos vendidos en el período. Pruebe con otras fechas o con otro producto.";
+    public const string MSG_194 = "No se pudo generar el reporte de ventas. Intente nuevamente.";
+    public const string MSG_195 = "No se pudieron consultar los platos vendidos. Intente nuevamente.";
+    public const string MSG_196 = "Los filtros cambiaron. Pulse CONSULTAR para actualizar el reporte.";
+    public const string MSG_197 = "Cuadra con ventas: el monto de los platos coincide con el total vendido (S/ {0:F2}).";
+    public const string MSG_198 = "El monto de los platos (S/ {0:F2}) no coincide con el total vendido (S/ {1:F2}). Diferencia: S/ {2:F2}. Informe al equipo técnico.";
+    public const string MSG_199 = "Incluye {0} venta(s) anulada(s) por S/ {1:F2} que no se suman.";
+    public const string MSG_200 = "Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres.";
+    public const string MSG_201 = "No se pudo descargar el archivo. Intente nuevamente.";
+
+    // CUS-15: Pantalla de inicio (Dashboard) (Complemento CUS15)
+    public const string MSG_202 = "Todavía no hay ventas registradas hoy.";
+    public const string MSG_203 = "Todo en orden: no hay alertas por atender.";
+    public const string MSG_204 = "El menú de hoy aún no está definido.";
+    public const string MSG_205 = "{0} comanda(s) llevan más de 15 minutos de espera.";
+    public const string MSG_206 = "{0} plato(s) agotado(s) hoy.";
+    public const string MSG_207 = "{0} venta(s) anulada(s) hoy por S/ {1:F2}.";
+    public const string MSG_208 = "El último cierre ({0}) tuvo {1} de S/ {2:F2}.";
+    public const string MSG_209 = "No se pudo cargar este bloque. Intente nuevamente.";
+    public const string MSG_210 = "No se pudo cargar el panel. Intente nuevamente.";
+    public const string MSG_211 = "Abra la caja primero.";
+    public const string MSG_212 = "No tiene pedidos listos por recoger.";
 }
 
