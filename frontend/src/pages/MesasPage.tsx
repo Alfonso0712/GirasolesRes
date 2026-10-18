@@ -84,48 +84,45 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
 
   return (
     <div className="h-full flex flex-col overflow-hidden gap-4">
-      {/* 1. Encabezado Fijo del Módulo (shrink-0) */}
-      <div className="shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200/80 shadow-2xs">
+      {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center shrink-0 border border-amber-200/60">
-              <Utensils className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-[#482813] tracking-tight">
-                Gestión de Mesas
-              </h1>
-              <p className="text-xs text-[#7C6F66]">
-                Estado del salón y asignación de mesas en tiempo real (CUS06)
-              </p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+            OPERACIÓN DE SALÓN
+          </p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+              Mesas
+            </h1>
+
+            {/* Resumen "Libres X · Ocupadas Y" integrado en pastilla (CUS06.2) */}
+            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                Libres {resumen.libres}
+              </span>
+              <span className="text-neutral-300">·</span>
+              <span className="inline-flex items-center gap-1.5 text-[#B84600]">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Ocupadas {resumen.ocupadas}
+              </span>
+              {esAdmin && mostrarInactivas && (
+                <>
+                  <span className="text-neutral-300">·</span>
+                  <span className="text-neutral-500">Inactivas {resumen.inactivas}</span>
+                </>
+              )}
             </div>
           </div>
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+            Supervise la disponibilidad del salón y asigne mesas en tiempo real.
+          </p>
         </div>
 
-        {/* Resumen, Sincronización y Botón Primario */}
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-          {/* Resumen "Libres X · Ocupadas Y" (CUS06.2) */}
-          <div className="px-3.5 py-1.5 bg-neutral-50 rounded-xl border border-neutral-200 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-            <span className="inline-flex items-center gap-1 text-emerald-700">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              Libres {resumen.libres}
-            </span>
-            <span className="text-neutral-300">·</span>
-            <span className="inline-flex items-center gap-1 text-[#B84600]">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              Ocupadas {resumen.ocupadas}
-            </span>
-            {esAdmin && mostrarInactivas && (
-              <>
-                <span className="text-neutral-300">·</span>
-                <span className="text-neutral-500">Inactivas {resumen.inactivas}</span>
-              </>
-            )}
-          </div>
-
-          {/* Sincronización "Actualizado hace X s" + Botón Actualizar (RNF-17) */}
+        {/* Sincronización y Botón Primario */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <div className="flex items-center gap-1.5 text-xs text-[#7C6F66]">
-            <span className="hidden sm:inline">
+            <span className="hidden sm:inline font-mono">
               Actualizado hace {segundosTranscurridos} s
             </span>
             <button
@@ -140,7 +137,6 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
             </button>
           </div>
 
-          {/* Botón "+ Nueva mesa" (Solo Administrador, RN-39) */}
           {esAdmin && (
             <button
               type="button"
@@ -236,7 +232,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
           {/* Estado de Carga Inicial (Skeletons) */}
           {cargando ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
@@ -318,7 +314,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
             </div>
           ) : (
             /* Cuadrícula de Tarjetas de Mesas en orden natural (RNF-18 / CUS06.2) */
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {mesas.map((mesa) => (
                 <MesaCard
                   key={mesa.id}

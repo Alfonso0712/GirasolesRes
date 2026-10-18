@@ -71,7 +71,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-serif font-bold text-neutral-800 mb-2">
+        <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
           Acceso Restringido
         </h2>
         <p className="text-neutral-600 max-w-md mx-auto text-sm">
@@ -145,7 +145,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             {esCocinero ? 'COCINA Y SERVICIO' : 'GESTIÓN DE LA CARTA'}
           </p>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#482813] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
               Menú del Día
             </h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-semibold">
@@ -226,7 +226,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                   <UtensilsCrossed className="w-7 h-7" />
                 </div>
                 <div className="max-w-md">
-                  <h3 className="text-base font-serif font-bold text-neutral-800 mb-1">
+                  <h3 className="text-base font-sans font-bold text-neutral-800 mb-1">
                     Menú no disponible
                   </h3>
                   <p className="text-sm text-neutral-600">
@@ -258,7 +258,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                           <span className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
                             Desayuno del día
                           </span>
-                          <h4 className="font-serif font-bold text-base text-neutral-900">
+                          <h4 className="font-sans font-bold text-base text-neutral-900">
                             {menu.desayuno.nombre}
                           </h4>
                         </div>
@@ -297,7 +297,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                           <div>
                             <div className="flex items-center gap-2">
                               <h4
-                                className={`font-serif font-bold text-base sm:text-lg ${
+                                className={`font-sans font-bold text-base sm:text-lg ${
                                   plato.agotado
                                     ? 'text-neutral-500 line-through'
                                     : 'text-neutral-900'
@@ -383,7 +383,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                   <UtensilsCrossed className="w-7 h-7" />
                 </div>
                 <div className="max-w-md">
-                  <h3 className="text-base font-serif font-bold text-neutral-800 mb-1">
+                  <h3 className="text-base font-sans font-bold text-neutral-800 mb-1">
                     No hay productos activos
                   </h3>
                   <p className="text-sm text-neutral-600 mb-4">
@@ -420,8 +420,8 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Coffee className="w-4 h-4 text-[#D35400]" />
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-700">
-                          Desayuno del Día <span className="text-xs font-normal text-neutral-400 lowercase">(opcional)</span>
+                        <h3 className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-700">
+                          DESAYUNO DEL DÍA <span className="text-xs font-normal text-neutral-400 lowercase">(opcional)</span>
                         </h3>
                       </div>
                       {desayunoSeleccionado && (
@@ -491,8 +491,8 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <UtensilsCrossed className="w-4 h-4 text-[#D35400]" />
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-700">
-                          Platos de la Carta de Hoy <span className="text-xs font-normal text-neutral-400 lowercase">(selección múltiple)</span>
+                        <h3 className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-700">
+                          PLATOS DE LA CARTA DE HOY <span className="text-xs font-normal text-neutral-400 lowercase">(selección múltiple)</span>
                         </h3>
                       </div>
                       <span className="text-xs text-neutral-500 font-medium">
@@ -693,7 +693,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                             className="p-3.5 rounded-xl border border-neutral-200/90 bg-white flex items-center justify-between gap-3 shadow-2xs"
                           >
                             <div>
-                              <h5 className="font-serif font-bold text-sm text-neutral-900">
+                              <h5 className="font-sans font-bold text-sm text-neutral-900">
                                 {plato.nombre}
                               </h5>
                               <div className="flex items-center gap-2 mt-0.5">

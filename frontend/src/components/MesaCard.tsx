@@ -88,15 +88,13 @@ export const MesaCard: React.FC<MesaCardProps> = ({
       className={`rounded-2xl border p-4 sm:p-5 flex flex-col justify-between min-h-[140px] sm:min-h-[150px] relative select-none ${estiloCard} ${claseResaltado}`}
     >
       {/* Encabezado de la Tarjeta: Nombre + Badge Estado */}
-      <div className="flex items-start justify-between gap-2 mb-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="font-serif font-bold text-lg sm:text-xl truncate text-[#2C1A0E]" title={mesa.nombre}>
-            {mesa.nombre}
-          </h3>
-          <span className="text-[11px] text-[#7C6F66] font-sans">
-            {esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}
-          </span>
-        </div>
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <h3
+          className="font-sans font-bold text-lg text-[#2C1A0E] tabular-nums whitespace-nowrap truncate min-w-0"
+          title={mesa.nombre}
+        >
+          {mesa.nombre}
+        </h3>
 
         {/* RV-58: Insignia con texto ("Libre" / "Ocupada" / "Inactiva") + icono y ancho fijo */}
         <span
@@ -106,6 +104,14 @@ export const MesaCard: React.FC<MesaCardProps> = ({
           <span>{esInactiva ? 'Inactiva' : mesa.ocupacion}</span>
         </span>
       </div>
+
+      {/* Descripción a ancho completo en una sola línea horizontal */}
+      <p
+        className="text-xs text-[#7C6F66] font-sans truncate whitespace-nowrap mb-3 w-full"
+        title={esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}
+      >
+        {esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}
+      </p>
 
       {/* Contenido / Botones de Acción según Rol */}
       <div className="pt-2 border-t border-neutral-200/50 flex items-center justify-between gap-2 mt-auto">
