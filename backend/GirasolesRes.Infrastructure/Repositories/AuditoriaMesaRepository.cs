@@ -16,6 +16,10 @@ public class AuditoriaMesaRepository : IAuditoriaMesaRepository
     public async Task RegistrarAsync(AuditoriaMesa auditoria, CancellationToken cancellationToken = default)
     {
         await _context.AuditoriasMesa.AddAsync(auditoria, cancellationToken);
+    }
+
+    public async Task GuardarCambiosAsync(CancellationToken cancellationToken = default)
+    {
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

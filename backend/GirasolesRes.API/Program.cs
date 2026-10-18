@@ -85,6 +85,21 @@ builder.Services.AddAuthentication(options =>
                 if (await tokenRevocadoRepo.EstaRevocadoAsync(jti))
                 {
                     context.Fail("Token revocado.");
+                    return;
+                }
+            }
+
+            // RN-12 (CUS-02): Validar en cada petición autenticada que el usuario siga en estado Activo y no esté bloqueado
+            var userIdStr = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                            ?? context.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
+            if (Guid.TryParse(userIdStr, out var userId))
+            {
+                var usuarioRepo = context.HttpContext.RequestServices.GetRequiredService<IUsuarioRepository>();
+                var usuario = await usuarioRepo.ObtenerPorIdAsync(userId);
+                if (usuario == null || !usuario.Usu_Activo || usuario.EstaBloqueado())
+                {
+                    context.Fail("Usuario inactivo o bloqueado.");
+                    return;
                 }
             }
         },

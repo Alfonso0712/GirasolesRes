@@ -62,7 +62,11 @@ public class MenuDiaRepository : IMenuDiaRepository
         if (menu != null)
         {
             menu.RemoverProducto(productoId, usuario);
-            await _context.SaveChangesAsync(cancellationToken);
         }
+    }
+
+    public async Task GuardarCambiosAsync(CancellationToken cancellationToken = default)
+    {
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

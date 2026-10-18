@@ -11,7 +11,9 @@ namespace GirasolesRes.Tests;
 public class CajaMigrationAndSchemaConsistencyTests
 {
     private readonly ITestOutputHelper _output;
-    private const string ConnectionString = "Host=localhost;Port=5433;Database=girasoles_db;Username=postgres;Password=1234";
+    private static readonly string ConnectionString = 
+        Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING") ?? 
+        "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=73268812";
 
     public CajaMigrationAndSchemaConsistencyTests(ITestOutputHelper output)
     {
@@ -284,7 +286,7 @@ public class CajaMigrationAndSchemaConsistencyTests
             cmd1.Transaction = tx;
             cmd1.CommandText = @"
                 INSERT INTO public.cajas (id_caja, id_usuario, caj_monto_apertura, caj_fec_apertura_utc, caj_estado, fec_creacion_utc, caj_solicitud_id)
-                VALUES (gen_random_uuid(), @userId, 100.00, NOW() AT TIME ZONE 'UTC', 'Abierta', NOW() AT TIME ZONE 'UTC', @token);";
+                VALUES (gen_random_uuid(), @userId, 100.00, NOW() AT TIME ZONE 'UTC', 'Cerrada', NOW() AT TIME ZONE 'UTC', @token);";
             cmd1.Parameters.AddWithValue("userId", userId);
             cmd1.Parameters.AddWithValue("token", token);
             await cmd1.ExecuteNonQueryAsync();
@@ -294,7 +296,7 @@ public class CajaMigrationAndSchemaConsistencyTests
             cmd2.Transaction = tx;
             cmd2.CommandText = @"
                 INSERT INTO public.cajas (id_caja, id_usuario, caj_monto_apertura, caj_fec_apertura_utc, caj_estado, fec_creacion_utc, caj_solicitud_id)
-                VALUES (gen_random_uuid(), @userId, 150.00, NOW() AT TIME ZONE 'UTC', 'Abierta', NOW() AT TIME ZONE 'UTC', @token);";
+                VALUES (gen_random_uuid(), @userId, 150.00, NOW() AT TIME ZONE 'UTC', 'Cerrada', NOW() AT TIME ZONE 'UTC', @token);";
             cmd2.Parameters.AddWithValue("userId", userId);
             cmd2.Parameters.AddWithValue("token", token);
 

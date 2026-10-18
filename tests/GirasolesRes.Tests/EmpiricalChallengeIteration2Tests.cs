@@ -9,7 +9,9 @@ namespace GirasolesRes.Tests;
 
 public class EmpiricalChallengeIteration2Tests
 {
-    private const string PostgresConnectionString = "Host=localhost;Port=5433;Database=girasoles_db;Username=postgres;Password=1234";
+    private static readonly string PostgresConnectionString = 
+        Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING") ?? 
+        "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=73268812";
 
     private static GirasolesDbContext CreateInMemoryDbContext()
     {
@@ -117,7 +119,7 @@ public class EmpiricalChallengeIteration2Tests
                     caj_observacion, caj_id_usu_cierre, caj_solicitud_id, caj_solicitud_id_cierre
                 ) VALUES (
                     {0}, {1}, 100.00, NULL,
-                    NOW(), NULL, 'Abierta',
+                    NOW(), NULL, 'Cerrada',
                     NOW(), NULL,
                     NULL, NULL, NULL,
                     NULL, NULL, NULL,
@@ -252,6 +254,14 @@ public class EmpiricalChallengeIteration2Tests
         {
             var user = await context.Usuarios.FirstAsync();
             var mesa = await context.Mesas.FirstAsync();
+
+            // Cerrar temporalmente cajas abiertas dentro de esta transacción aislada
+            var abiertasPrevia = await context.Cajas.Where(c => c.Caj_Estado == EstadoCaja.Abierta).ToListAsync();
+            foreach (var a in abiertasPrevia)
+            {
+                a.Cerrar(user.Id_Usuario, a.Caj_MontoApertura, a.Caj_MontoApertura, 0, 0, 0, 0, "Temp test close", "tx-clean-" + Guid.NewGuid());
+            }
+            await context.SaveChangesAsync();
 
             var caja = new Caja(user.Id_Usuario, 150.00m, "sol-pg-def2");
             await repo.AgregarAsync(caja);

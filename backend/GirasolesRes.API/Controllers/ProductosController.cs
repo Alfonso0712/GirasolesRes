@@ -101,6 +101,16 @@ public class ProductosController : ControllerBase
             return BadRequest(new { success = false, message = MensajesCatalogo.MSG_51 });
         }
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Datos de producto inválidos.",
+                errors = ModelState
+            });
+        }
+
         var adminUsername = ObtenerNombreAdmin();
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
@@ -143,6 +153,16 @@ public class ProductosController : ControllerBase
         if (request == null)
         {
             return BadRequest(new { success = false, message = MensajesCatalogo.MSG_51 });
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Datos de producto inválidos.",
+                errors = ModelState
+            });
         }
 
         var adminUsername = ObtenerNombreAdmin();

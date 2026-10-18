@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/GirasolesRes.API/GirasolesRes.API.csproj" />
+    <Project Path="backend/GirasolesRes.Application/GirasolesRes.Application.csproj" />
+    <Project Path="backend/GirasolesRes.Domain/GirasolesRes.Domain.csproj" />
+    <Project Path="backend/GirasolesRes.Infrastructure/GirasolesRes.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GirasolesRes.Tests/GirasolesRes.Tests.csproj" />
+  </Folder>
+</Solution>

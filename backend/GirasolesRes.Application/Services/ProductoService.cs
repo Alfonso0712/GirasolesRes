@@ -184,12 +184,13 @@ public class ProductoService : IProductoService
             producto.Actualizar(request.Nombre, categoria, request.Precio);
             await _productoRepository.ActualizarAsync(producto, cancellationToken);
 
-            // RN-30: Auditoría con precio anterior y nuevo
+            // RN-30: Auditoría con precio anterior y nuevo (formato invariante)
+            var detalleAuditoria = FormattableString.Invariant($"Precio anterior: S/ {precioAnterior:F2}, Nuevo precio: S/ {producto.Pro_Precio:F2}. Categoría: {producto.Pro_Categoria}");
             var auditoria = new AuditoriaUsuario(
                 nombreAdmin: adminUsername,
                 accion: "EDITAR_PRODUCTO",
                 nombreUsuarioAfectado: producto.Pro_Nombre,
-                detalle: $"Precio anterior: S/ {precioAnterior:F2}, Nuevo precio: S/ {producto.Pro_Precio:F2}. Categoría: {producto.Pro_Categoria}",
+                detalle: detalleAuditoria,
                 direccionIp: ipAddress);
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);

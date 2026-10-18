@@ -10,4 +10,5 @@ public interface IMenuDiaRepository
     Task AgregarAsync(MenuDia menuDia, CancellationToken cancellationToken = default);
     Task ActualizarAsync(MenuDia menuDia, CancellationToken cancellationToken = default);
     Task RemoverProductoDeMenuVigenteAsync(Guid productoId, string usuario, CancellationToken cancellationToken = default);
+    Task GuardarCambiosAsync(CancellationToken cancellationToken = default);
 }

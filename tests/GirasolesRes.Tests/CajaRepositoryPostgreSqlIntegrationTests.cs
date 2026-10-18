@@ -9,7 +9,9 @@ namespace GirasolesRes.Tests;
 
 public class CajaRepositoryPostgreSqlIntegrationTests
 {
-    private const string ConnectionString = "Host=localhost;Port=5433;Database=girasoles_db;Username=postgres;Password=1234";
+    private static readonly string ConnectionString = 
+        Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING") ?? 
+        "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=73268812";
 
     private static GirasolesDbContext CreatePostgresDbContext()
     {
@@ -27,7 +29,7 @@ public class CajaRepositoryPostgreSqlIntegrationTests
 
         // Query any caja and any usuario to ensure EF Core entity mappings align with DB columns
         var canConnect = await context.Database.CanConnectAsync();
-        Assert.True(canConnect, "Debe poder conectarse a la base de datos PostgreSQL local en el puerto 5433");
+        Assert.True(canConnect, "Debe poder conectarse a la base de datos PostgreSQL local en el puerto 5432");
 
         var anyUser = await context.Usuarios.AsNoTracking().FirstOrDefaultAsync();
         Assert.NotNull(anyUser);
@@ -111,6 +113,14 @@ public class CajaRepositoryPostgreSqlIntegrationTests
         {
             var adminUser = await context.Usuarios.FirstAsync(u => u.Usu_Rol == RolUsuario.Administrador);
             var cajeroUser = await context.Usuarios.FirstAsync(u => u.Usu_Rol == RolUsuario.Cajero);
+
+            // Cerrar temporalmente cajas abiertas dentro de esta transacción aislada
+            var abiertasPrevia = await context.Cajas.Where(c => c.Caj_Estado == EstadoCaja.Abierta).ToListAsync();
+            foreach (var a in abiertasPrevia)
+            {
+                a.Cerrar(adminUser.Id_Usuario, a.Caj_MontoApertura, a.Caj_MontoApertura, 0, 0, 0, 0, "Temp test close", "tx-clean-" + Guid.NewGuid());
+            }
+            await context.SaveChangesAsync();
 
             var solicitudApertura = "test-sol-" + Guid.NewGuid();
             var solicitudCierre = "test-cierre-" + Guid.NewGuid();

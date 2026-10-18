@@ -131,9 +131,8 @@ public class UsuarioService : IUsuarioService
                 usuActivo: true);
 
             await _usuarioRepository.AgregarAsync(usuario, cancellationToken);
-            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-14: Registro en auditoría
+            // RN-14: Registro en auditoría atómica
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
                 "REGISTRO",
@@ -141,7 +140,7 @@ public class UsuarioService : IUsuarioService
                 $"Rol asignado: {usuario.Usu_Rol}",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
-            await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
+            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
             return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario), MensajesCatalogo.MSG_25);
         }
@@ -211,9 +210,8 @@ public class UsuarioService : IUsuarioService
             }
 
             await _usuarioRepository.ActualizarAsync(usuario, cancellationToken);
-            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-14: Registro en auditoría
+            // RN-14: Registro en auditoría atómica
             var accionAuditoria = cambioPassword ? "EDICION_Y_PASSWORD" : "EDICION";
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
@@ -222,7 +220,7 @@ public class UsuarioService : IUsuarioService
                 $"Rol: {usuario.Usu_Rol}",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
-            await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
+            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
             return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario), MensajesCatalogo.MSG_26);
         }
@@ -268,9 +266,8 @@ public class UsuarioService : IUsuarioService
 
             usuario.CambiarEstado(nuevoEstado);
             await _usuarioRepository.ActualizarAsync(usuario, cancellationToken);
-            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-14: Registro en auditoría
+            // RN-14: Registro en auditoría atómica
             var accion = nuevoEstado ? "ACTIVACION" : "DESACTIVACION";
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
@@ -279,7 +276,7 @@ public class UsuarioService : IUsuarioService
                 $"Estado cambiado a {(nuevoEstado ? "Activo" : "Inactivo")}",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
-            await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
+            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
             var mensajeExito = nuevoEstado ? MensajesCatalogo.MSG_30 : MensajesCatalogo.MSG_29;
             return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario), mensajeExito);
@@ -329,9 +326,8 @@ public class UsuarioService : IUsuarioService
 
             var nombreAfectado = usuario.Usu_Usuario;
             await _usuarioRepository.EliminarAsync(usuario, cancellationToken);
-            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-14: Registro en auditoría (guarda nombre como texto)
+            // RN-14: Registro en auditoría atómica (guarda nombre como texto)
             var auditoria = new AuditoriaUsuario(
                 adminUsername,
                 "ELIMINACION",
@@ -339,7 +335,7 @@ public class UsuarioService : IUsuarioService
                 "Eliminación física del usuario sin movimientos",
                 ipAddress);
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
-            await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
+            await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
             return ApiResponse<bool>.Exitoso(true, MensajesCatalogo.MSG_35);
         }

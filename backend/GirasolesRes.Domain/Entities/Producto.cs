@@ -51,23 +51,5 @@ public class Producto
     /// <summary>
     /// Normaliza el nombre eliminando tildes, signos diacríticos, recortando espacios y convirtiendo a minúsculas (RV-34 / RV-37).
     /// </summary>
-    public static string NormalizarTexto(string texto)
-    {
-        if (string.IsNullOrWhiteSpace(texto))
-            return string.Empty;
-
-        var normalizedString = texto.Trim().Normalize(NormalizationForm.FormD);
-        var sb = new StringBuilder();
-
-        foreach (var c in normalizedString)
-        {
-            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-            {
-                sb.Append(c);
-            }
-        }
-
-        return sb.ToString().Normalize(NormalizationForm.FormC).ToLowerInvariant();
-    }
+    public static string NormalizarTexto(string texto) => Common.StringNormalizer.NormalizarParaBusqueda(texto);
 }

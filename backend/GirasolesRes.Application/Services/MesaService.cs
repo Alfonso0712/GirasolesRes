@@ -119,9 +119,8 @@ public class MesaService : IMesaService
             // RN-42: Toda mesa nueva se registra Activa y Libre
             var mesa = new Mesa(nombreLimpio);
             await _mesaRepository.AgregarAsync(mesa, cancellationToken);
-            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-47: Auditoría
+            // RN-47: Auditoría atómica
             var auditoria = new AuditoriaMesa(
                 adminUsername,
                 "CREAR",
@@ -130,6 +129,7 @@ public class MesaService : IMesaService
                 ipAddress
             );
             await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
+            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
             var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
             return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_84);
@@ -181,9 +181,8 @@ public class MesaService : IMesaService
             var nombreAnterior = mesa.Mes_Nombre;
             mesa.ActualizarNombre(nombreLimpio);
             await _mesaRepository.ActualizarAsync(mesa, cancellationToken);
-            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-47: Auditoría
+            // RN-47: Auditoría atómica
             var auditoria = new AuditoriaMesa(
                 adminUsername,
                 "EDITAR",
@@ -192,6 +191,7 @@ public class MesaService : IMesaService
                 ipAddress
             );
             await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
+            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
             var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
             return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_85);
@@ -225,9 +225,8 @@ public class MesaService : IMesaService
 
             mesa.CambiarActiva(activa);
             await _mesaRepository.ActualizarAsync(mesa, cancellationToken);
-            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
-            // RN-47: Auditoría
+            // RN-47: Auditoría atómica
             var accionAuditoria = activa ? "ACTIVAR" : "DESACTIVAR";
             var auditoria = new AuditoriaMesa(
                 adminUsername,
@@ -237,6 +236,7 @@ public class MesaService : IMesaService
                 ipAddress
             );
             await _auditoriaMesaRepository.RegistrarAsync(auditoria, cancellationToken);
+            await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
             var mensajeExito = activa ? MensajesCatalogo.MSG_90 : MensajesCatalogo.MSG_89;
             var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);

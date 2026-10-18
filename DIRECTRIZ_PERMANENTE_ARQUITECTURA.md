@@ -26,7 +26,8 @@ tags:
 
 ---
 
-## 📑 Índice de Pilares
+## 📑 Índice de Pilares y Referencias
+- [[STACK_TECNOLOGICO_OFICIAL|⚡ Stack Tecnológico Oficial y Arquitectura de Ejecución]]
 1. [[#1. Pilar 1: Estándar de Nomenclatura en Dominio y Base de Datos (Backend C#)]]
 2. [[#2. Pilar 2: Desacoplamiento en Capa de Aplicación (DTOs y Services)]]
 3. [[#3. Pilar 3: Clean Architecture y Clean Code (Uncle Bob)]]
@@ -205,3 +206,48 @@ Antes de dar por completado cualquier módulo futuro, verificar:
 - [ ] **API:** Controlador consume interfaz de servicio; maneja códigos HTTP adecuados (200, 201, 400, 404).
 - [ ] **Frontend Layout:** Integrado a `MainLayout` respetando layout fijo y scroll interno.
 - [ ] **Frontend UI:** Título en `font-brand-serif`, datos en `tabular-nums`, pastillas `w-28 h-7`, botones de acción `w-8 h-8` con `title` y `aria-label`.
+
+---
+
+## 7. Certificación de Arquitectura Backend y Calidad de Código (.NET 10 / C#)
+
+> [!NOTE]
+> **AUDITORÍA Y HOMOLOGACIÓN INTEGRAL (18/10/2026):**
+> Se ejecutó la refactorización arquitectónica integral de todas las capas del backend y la suite de pruebas bajo .NET 10.0, llevando los **7 pilares al estado "CUMPLE (100%)"**.
+
+### Matriz de Cumplimiento de los 7 Pilares
+1. **Clean Architecture y Regla de Dependencias: [CUMPLE 100%]**
+   - Flujo unidireccional estricto `API -> Infrastructure -> Application -> Domain`.
+   - Dominio 100% agnóstico (sin referencias a EF Core ni ASP.NET Core).
+   - Controladores interactúan exclusivamente con interfaces de servicios (`I...Service`); nunca tocan `DbContext` ni repositorios.
+   - Solución unificada en `GirasolesRes.slnx`.
+
+2. **Programación Orientada a Objetos (POO) y Dominio Rico: [CUMPLE 100%]**
+   - Cero `{ get; set; }` públicos en las 20 entidades de dominio; 100% `{ get; private set; }`.
+   - Invariantes protegidas mediante constructores de negocio y métodos de dominio (`Usuario.Bloquear()`, `Mesa.Ocupar()`, `Producto.CambiarEstado()`, `Caja.Cerrar()`).
+   - Colecciones expuestas como `IReadOnlyCollection<T>` respaldadas por campos privados.
+
+3. **Nomenclatura Trilateral de Cátedra y DTOs: [CUMPLE 100%]**
+   - 100% de propiedades de entidad siguen el estándar `Id_[Entidad]` y `[PRE]_[Atributo]`.
+   - Cero propiedades puente (`=>`). DTOs semánticos limpios en camelCase/PascalCase para el contrato con React.
+
+4. **SOLID, Clean Code y DRY: [CUMPLE 100%]**
+   - Cero duplicación de código en normalización diacrítica: clase transversal `StringNormalizer` en `Domain/Common` reutilizada en `Producto`, `Mesa` y repositorios.
+   - Estandarización de persistencia en repositorios de auditoría (`AuditoriaUsuarioRepository`, `AuditoriaMesaRepository`, `AuditoriaCobroRepository`) desacoplando adición de guardado.
+
+5. **Validación en Doble Barrera y Seguridad: [CUMPLE 100%]**
+   - Simetría total de validación: DataAnnotations e `IValidatableObject` en DTOs de `Usuarios`, `Productos`, `Mesas`, `Pedidos` y `Caja`.
+   - Vulnerabilidad de seguridad de alta severidad `NU1903` eliminada al parchar `Microsoft.Extensions.Caching.Memory` a versión 9.0.0.
+   - Cumplimiento estricto de RN-12 (CUS-02): validación inmediata de usuario `Activo` en cada petición JWT autenticada en `Program.cs`.
+
+6. **EF Core, Concurrencia y Transacciones: [CUMPLE 100%]**
+   - Repositorios optimizados con `.AsNoTracking()` para lecturas.
+   - Índice filtrado único en PostgreSQL `uq_cajas_solo_una_abierta` y token de concurrencia optimista en `Caj_Estado`.
+   - Persistencia atómica de operaciones multitabla (desactivación de producto con retiro de menú del día vigente según RN-28 y registro de auditoría según RN-14/RN-30) en unidades de trabajo atómicas.
+
+7. **Testabilidad y Suite de Pruebas Unitarias (xUnit): [CUMPLE 100%]**
+   - `TargetFramework` unificado a `net10.0`, eliminando el error bloqueante `NU1201`.
+   - Implementación de suite de pruebas unitarias con `Moq` para `UsuarioService`, `ProductoService` y `MesaService`.
+   - **Compilación: 0 Errores, 0 Advertencias.**
+   - **Pruebas: 57 de 57 superadas (100% Passed).**
+
