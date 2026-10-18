@@ -119,3 +119,37 @@ Para prevenir errores operativos graves (Heurística 5 de Nielsen), está prohib
   - Fila `flex items-center gap-1.5 sm:gap-2 w-full`.
   - Botones primarios (`Pedido`, `Cobrar`): `flex-1 min-w-0 justify-center text-xs px-2 rounded-lg whitespace-nowrap`.
   - Botones secundarios de icono (`Editar`, `Desactivar`): `w-8 h-8 shrink-0 flex items-center justify-center`.
+
+---
+
+## 9. Arquitectura de Navegación Lateral Jerárquica (Acordeón Gastronómico)
+
+- **Eliminación de "Roles y permisos" (Heurística 8 de Nielsen y RV-15 del CUS-02):**
+  - Los roles del sistema (`Administrador`, `Cajero`, `Mozo`, `Cocinero`) forman una lista cerrada asignada directamente en el módulo de `Usuarios`. La opción redundante queda erradicada del menú lateral y de las rutas de navegación.
+- **Botón Superior Fijo:**
+  - `Inicio` (`Home`).
+- **4 Secciones en Acordeón con Icono `ChevronDown` Rotatorio:**
+  1. **Salón y Pedidos (`salon-pedidos`):**
+     - `Mesas y Salón` (Icono: `LayoutGrid`)
+     - `Tomar Pedido` (Icono: `ClipboardList`)
+     - `Pedido para Llevar` (Icono: `ShoppingBag`)
+     - `Gestión de Pedidos` (Icono: `ReceiptText` + badge numérico de pedidos listos)
+     - `Cocina (KDS)` (Icono: `ChefHat`)
+  2. **Caja y Ventas (`caja-ventas`):**
+     - `Caja y Cobros` (Icono: `DollarSign` + badge de estado `ABIERTA` / `CERRADA` / `Cierre pend.`)
+     - `Gestión de Ventas` (Icono: `BadgeDollarSign`)
+     - `Historial de Cierres` (Icono: `Lock`)
+     * *Indicador colapsado:* Exhibe un punto cromático con el estado de la caja cuando la sección está cerrada.
+  3. **Carta y Menú (`carta-menu`):**
+     - `Menú del día` (Icono: `CalendarCheck`)
+     - `Productos` (Icono: `UtensilsCrossed`)
+  4. **Administración (`administracion`):**
+     - `Usuarios` (Icono: `Users`)
+     - `Reportes` (Icono: `BarChart3`)
+- **Comportamiento Inteligente (ISO 9241 - Eficiencia y Nielsen 1 - Visibilidad):**
+  - **Filtrado por Rol:** Se ocultan automáticamente los ítems y los grupos vacíos a los que el rol actual no tiene acceso.
+  - **Auto-Apertura y Rastro de Estado:** La sección que contiene la vista actual se expande automáticamente. Cuando está colapsada, muestra un indicador circular sutil en su cabecera.
+  - **Eficiencia Operativa:**
+    * `Administrador`: Inicia con modo acordeón compacto (solo el grupo activo expandido), asegurando visualización al 100% en laptops de 1366x768 / 1536x864 px sin scrollbar gris.
+    * `Cajero`, `Mozo` y `Cocinero`: Inician con todos sus grupos autorizados expandidos para evitar clics innecesarios en horas pico.
+  - **Accesibilidad:** Cabeceras con botón semántico y atributo `aria-expanded`, navegables por teclado (`Tab`, `Enter`, `Espacio`) con línea guía vertical `border-l border-white/10 ml-3.5`.

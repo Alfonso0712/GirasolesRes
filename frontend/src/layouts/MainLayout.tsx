@@ -34,8 +34,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         return 'Productos';
       case 'menu-dia':
         return 'Menú del día';
-      case 'roles':
-        return 'Roles y permisos';
       case 'caja':
         return 'Caja y Cobros';
       case 'ventas':

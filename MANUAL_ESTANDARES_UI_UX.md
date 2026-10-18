@@ -521,4 +521,39 @@ El sistema opera de forma armónica e impecable en dos ecosistemas físicos real
    - Botones primarios (`Pedido` y `Cobrar`): `flex-1 min-w-0 justify-center text-xs px-2 rounded-lg whitespace-nowrap`.
    - Botones secundarios de icono (`Editar`, `Desactivar`): `w-8 h-8 shrink-0 flex items-center justify-center`.
 
+---
+
+## 10. Arquitectura de Navegación Lateral Jerárquica y Acordeón Operativo
+
+### 10.1 Principios de Usabilidad Aplicados
+- **Heurística 8 de Nielsen (Diseño estético y minimalista):** Eliminación definitiva de la opción redundante `Roles y permisos`. Según el CUS-02 (RV-15), los roles del sistema son una lista cerrada (`Administrador`, `Cajero`, `Mozo`, `Cocinero`) y se seleccionan directamente dentro de `Usuarios`.
+- **Regla 8 de Shneiderman (Reducción de carga de memoria a corto plazo):** Agrupación en 4 categorías conceptuales correspondientes al flujo natural de un restaurante gastronómico, evitando listas planas extensas.
+- **Mapeo Natural de Don Norman:** Ordenamiento por secuencia operativa: Salón y Pedidos -> Caja y Ventas -> Carta y Menú -> Administración.
+- **ISO 9241 (Eficiencia):** Diferenciación por rol: roles operativos (`Cajero`, `Mozo`, `Cocinero`) inician con sus grupos expandidos para evitar clics de apertura en hora pico, mientras que el `Administrador` cuenta con modo compacto inteligente para caber al 100% en pantallas de 768px de altura sin scroll.
+
+### 10.2 Estructura Canónica de Navegación
+- **Botón Superior Fijo:** `Inicio` (Icono: `Home`).
+- **Grupo 1: "Salón y Pedidos" (`salon-pedidos`):**
+  - `Mesas y Salón` (Icono: `LayoutGrid`) — Roles: Admin, Mozo, Cajero.
+  - `Tomar Pedido` (Icono: `ClipboardList`) — Roles: Admin, Mozo.
+  - `Pedido para Llevar` (Icono: `ShoppingBag`) — Roles: Admin, Cajero.
+  - `Gestión de Pedidos` (Icono: `ReceiptText` + badge numérico) — Roles: Admin, Mozo, Cajero.
+  - `Cocina (KDS)` (Icono: `ChefHat`) — Roles: Admin, Cocinero.
+- **Grupo 2: "Caja y Ventas" (`caja-ventas`):**
+  - `Caja y Cobros` (Icono: `DollarSign` + badge de estado) — Roles: Admin, Cajero.
+  - `Gestión de Ventas` (Icono: `BadgeDollarSign`) — Roles: Admin, Cajero.
+  - `Historial de Cierres` (Icono: `Lock`) — Rol: Admin.
+  * *Estado colapsado:* Punto semántico indicador de estado de caja en la cabecera.
+- **Grupo 3: "Carta y Menú" (`carta-menu`):**
+  - `Menú del día` (Icono: `CalendarCheck`) — Roles: Admin, Cocinero.
+  - `Productos` (Icono: `UtensilsCrossed`) — Rol: Admin.
+- **Grupo 4: "Administración" (`administracion`):**
+  - `Usuarios` (Icono: `Users`) — Rol: Admin.
+  - `Reportes` (Icono: `BarChart3`) — Rol: Admin.
+
+### 10.3 Reglas de Interacción y Accesibilidad
+- **Auto-Apertura:** Si el usuario navega a un módulo, el grupo padre se expande automáticamente.
+- **Indicador de Grupo Colapsado:** Cuando una sección está cerrada pero aloja la vista activa, la cabecera muestra un punto circular naranja (`bg-[#D35400]`).
+- **Soporte de Teclado:** Cabeceras con `<button type="button" aria-expanded={isOpen}>` nativamente accionables con `Tab`, `Enter` y `Espacio`.
+
 

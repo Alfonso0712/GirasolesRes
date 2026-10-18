@@ -22,6 +22,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
+  LayoutGrid,
   Utensils,
   UtensilsCrossed,
   DollarSign,
@@ -708,7 +709,7 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
   const actions = [
     { label: 'Nuevo Pedido de Mesa', pagina: 'pedido-mesa', icon: UtensilsCrossed },
     { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
-    { label: 'Mesas y Salón', pagina: 'mesas', icon: Utensils },
+    { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
     { label: 'Gestión de Caja', pagina: 'caja', icon: DollarSign },
     { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: Receipt },
     { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: TrendingUp },
@@ -1045,7 +1046,7 @@ function renderMozoDashboard(
             onClick={() => onNavigate('mesas')}
             className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#D35400] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <Utensils className="w-5 h-5 text-[#D35400]" />
+            <LayoutGrid className="w-5 h-5 text-[#D35400]" />
             <span>VER MESAS Y SALÓN</span>
           </button>
         </div>
