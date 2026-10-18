@@ -292,7 +292,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
   const comandasEnPreparacion = comandas.filter((c) => c.estado === 'EnPreparacion');
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] text-neutral-900 select-none overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] text-neutral-900 select-none overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div

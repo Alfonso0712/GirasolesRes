@@ -101,7 +101,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
       <div className="shrink-0 p-4 sm:p-6 pb-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -240,7 +240,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 pb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5 pb-6">
                 {catalogoFiltrado.map((prod) => {
                   const enBorrador = lineasBorrador.filter((l) => l.productoId === prod.id);
                   const cantidadEnBorrador = enBorrador.reduce((s, l) => s + l.cantidad, 0);
@@ -271,31 +271,45 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           ) : null}
                         </div>
 
-                        <h3 className="font-bold text-sm text-[#2C1A0E] line-clamp-2 leading-snug">
+                        <h3 className="font-sans font-bold text-sm xl:text-base text-[#2C1A0E] line-clamp-2 leading-snug">
                           {prod.nombre}
                         </h3>
                       </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between">
-                        <span className="text-sm font-extrabold text-[#2C1A0E] tabular-nums">
+                      <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between gap-2">
+                        <span className="whitespace-nowrap font-bold tabular-nums text-base xl:text-lg text-neutral-800">
                           S/ {prod.precio.toFixed(2)}
                         </span>
 
-                        <Button
-                          type="button"
-                          variant="primary"
-                          disabled={prod.agotado}
-                          onClick={() => agregarProducto(prod)}
-                          title={prod.agotado ? 'Plato agotado' : 'Agregar al pedido para llevar'}
-                          className={`min-h-[44px] min-w-[44px] px-3.5 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs ${
-                            prod.agotado
-                              ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed opacity-60'
-                              : 'bg-[#D35400] hover:bg-[#B84600] text-white active:scale-95'
-                          }`}
-                        >
-                          <Plus className="w-4 h-4 stroke-[2.5]" />
-                          <span>Agregar</span>
-                        </Button>
+                        <div className="flex items-center gap-1.5">
+                          {cantidadEnBorrador > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => disminuirProducto(prod.id)}
+                              className="w-10 h-10 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+                              aria-label={`Disminuir ${prod.nombre}`}
+                              title="Disminuir cantidad"
+                            >
+                              <Minus className="w-4 h-4 stroke-[2.5]" />
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => agregarProducto(prod)}
+                            disabled={prod.agotado}
+                            aria-disabled={prod.agotado}
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                              prod.agotado
+                                ? 'bg-neutral-200 text-neutral-400 border border-neutral-300 cursor-not-allowed opacity-60'
+                                : 'bg-[#D35400] hover:bg-[#B84600] text-white shadow-xs cursor-pointer active:scale-95'
+                            }`}
+                            aria-label={`Agregar ${prod.nombre}`}
+                            title={prod.agotado ? 'Plato agotado - No disponible' : 'Agregar plato al pedido'}
+                          >
+                            <Plus className="w-5 h-5 stroke-[2.5]" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -306,7 +320,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
         </div>
 
         {/* COLUMNA DERECHA: RESUMEN DEL PEDIDO / TICKET (DESKTOP) */}
-        <div className="hidden lg:flex w-96 flex-col min-h-0 bg-white border-l border-neutral-200/80 shadow-xs">
+        <div className="hidden lg:flex w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px] shrink-0 flex-col min-h-0 bg-white border-l border-neutral-200/80 shadow-xs">
           {/* Cabecera del Ticket */}
           <div className="p-4 border-b border-neutral-200/80 bg-[#FAF7F4] shrink-0 flex items-center justify-between">
             <div className="flex items-center gap-2">

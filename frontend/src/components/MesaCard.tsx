@@ -117,7 +117,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
       <div className="pt-2 border-t border-neutral-200/50 flex items-center justify-between gap-2 mt-auto">
         {/* Acciones de Administrador */}
         {esAdmin && (
-          <div className="flex items-center justify-between w-full gap-2">
+          <div className="flex items-center gap-1.5 w-full">
             {/* Botón 1 (Pedido / Comanda): Acción Principal corporativa */}
             <button
               type="button"
@@ -135,83 +135,80 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   : `Ver/ampliar pedido en ${mesa.nombre}`
               }
               aria-label={`Pedido ${mesa.nombre}`}
-              className={`h-8 px-2.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-2xs ${
+              className={`flex-1 min-w-0 h-8 px-2 rounded-lg text-xs font-semibold inline-flex items-center justify-center gap-1 transition-colors shadow-2xs whitespace-nowrap ${
                 esInactiva
                   ? 'bg-neutral-100 border border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60'
                   : 'bg-[#D35400] hover:bg-[#B84600] text-white border border-transparent cursor-pointer'
               }`}
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Pedido</span>
+              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Pedido</span>
             </button>
 
-            {/* Grupo de Acciones Secundarias / Administrativas */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              {/* Botón Cobrar (si está ocupada) */}
-              {esOcupada && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAccionRol?.(mesa, 'COBRAR');
-                  }}
-                  title={`Cobrar ${mesa.nombre}`}
-                  aria-label={`Cobrar ${mesa.nombre}`}
-                  className="h-8 px-2.5 rounded-lg border border-[#2C1A0E] bg-[#2C1A0E] hover:bg-[#482813] text-white shadow-2xs inline-flex items-center justify-center gap-1 transition-colors cursor-pointer text-xs font-semibold"
-                >
-                  <DollarSign className="w-3.5 h-3.5" />
-                  <span>Cobrar</span>
-                </button>
-              )}
-
-              {/* Botón 2 (Editar): Estilo Neutro Blanco */}
+            {/* Botón Cobrar (si está ocupada) */}
+            {esOcupada && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEditar?.(mesa, e);
+                  onAccionRol?.(mesa, 'COBRAR');
                 }}
-                title={`Editar ${mesa.nombre}`}
-                aria-label={`Editar ${mesa.nombre}`}
-                className="w-8 h-8 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+                title={`Cobrar ${mesa.nombre}`}
+                aria-label={`Cobrar ${mesa.nombre}`}
+                className="flex-1 min-w-0 h-8 px-2 rounded-lg border border-[#2C1A0E] bg-[#2C1A0E] hover:bg-[#482813] text-white shadow-2xs inline-flex items-center justify-center gap-1 transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
               >
-                <Edit2 className="w-4 h-4 text-neutral-600" />
+                <DollarSign className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Cobrar</span>
               </button>
+            )}
 
-              {/* Botón 3 (Desactivar / Activar): Colorimetría Semántica y Bloqueo Operativo */}
-              <button
-                type="button"
-                disabled={mesa.activa && esOcupada}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (mesa.activa && esOcupada) return;
-                  onCambiarEstado?.(mesa, mesa.activa ? 'desactivar' : 'activar', e);
-                }}
-                title={
-                  !mesa.activa
-                    ? `Activar ${mesa.nombre}`
-                    : esOcupada
-                    ? 'No se puede desactivar una mesa ocupada'
-                    : `Desactivar ${mesa.nombre}`
-                }
-                aria-label={
-                  !mesa.activa
-                    ? `Activar ${mesa.nombre}`
-                    : esOcupada
-                    ? 'No se puede desactivar una mesa ocupada'
-                    : `Desactivar ${mesa.nombre}`
-                }
-                className={`w-8 h-8 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
-                  !mesa.activa
-                    ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 cursor-pointer'
-                    : esOcupada
-                    ? 'bg-neutral-100 border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60'
-                    : 'bg-amber-50 hover:bg-amber-100 text-[#B84600] border-amber-200 cursor-pointer'
-                }`}
-              >
-                {mesa.activa ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
-              </button>
-            </div>
+            {/* Botón 2 (Editar): Estilo Neutro Blanco */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditar?.(mesa, e);
+              }}
+              title={`Editar ${mesa.nombre}`}
+              aria-label={`Editar ${mesa.nombre}`}
+              className="w-8 h-8 shrink-0 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <Edit2 className="w-4 h-4 text-neutral-600" />
+            </button>
+
+            {/* Botón 3 (Desactivar / Activar): Colorimetría Semántica y Bloqueo Operativo */}
+            <button
+              type="button"
+              disabled={mesa.activa && esOcupada}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (mesa.activa && esOcupada) return;
+                onCambiarEstado?.(mesa, mesa.activa ? 'desactivar' : 'activar', e);
+              }}
+              title={
+                !mesa.activa
+                  ? `Activar ${mesa.nombre}`
+                  : esOcupada
+                  ? 'No se puede desactivar una mesa ocupada'
+                  : `Desactivar ${mesa.nombre}`
+              }
+              aria-label={
+                !mesa.activa
+                  ? `Activar ${mesa.nombre}`
+                  : esOcupada
+                  ? 'No se puede desactivar una mesa ocupada'
+                  : `Desactivar ${mesa.nombre}`
+              }
+              className={`w-8 h-8 shrink-0 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
+                !mesa.activa
+                  ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 cursor-pointer'
+                  : esOcupada
+                  ? 'bg-neutral-100 border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60'
+                  : 'bg-amber-50 hover:bg-amber-100 text-[#B84600] border-amber-200 cursor-pointer'
+              }`}
+            >
+              {mesa.activa ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+            </button>
           </div>
         )}
 

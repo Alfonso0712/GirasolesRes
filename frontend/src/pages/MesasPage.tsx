@@ -90,7 +90,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden gap-4">
+    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -239,7 +239,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
           {/* Estado de Carga Inicial (Skeletons) */}
           {cargando ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
@@ -321,7 +321,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
             </div>
           ) : (
             /* Cuadrícula de Tarjetas de Mesas en orden natural (RNF-18 / CUS06.2) */
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               {mesas.map((mesa) => (
                 <MesaCard
                   key={mesa.id}

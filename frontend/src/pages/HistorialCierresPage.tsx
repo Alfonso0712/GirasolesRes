@@ -185,20 +185,25 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   };
 
   return (
-    <div className="space-y-6 animate-fade-in text-[#482813]">
-      {/* Encabezado fijo */}
-      <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 animate-fade-in text-[#482813] w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10">
+      {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#D35400] bg-[#FAF6F0] px-2.5 py-0.5 rounded-full border border-[#E6D7C3]">
-              CUS 13.3 · Vista 13.3
-            </span>
-            <span className="text-xs text-stone-500 font-medium">Solo Administrador (RN-106)</span>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+            GESTIÓN DE CAJA
+          </p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+              Historial de Cierres de Caja
+            </h1>
+            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 text-neutral-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Auditoría · Solo Administrador
+              </span>
+            </div>
           </div>
-          <h1 className="font-brand-serif text-2xl md:text-3xl font-black text-[#482813]">
-            Historial de Cierres de Caja
-          </h1>
-          <p className="text-sm text-stone-600 mt-1">
+          <p className="text-sm text-neutral-500 mt-1">
             Auditoría de turnos, arqueos, cuadraturas de efectivo, sobrantes, faltantes y ajustes posteriores.
           </p>
         </div>
@@ -207,10 +212,10 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           type="button"
           onClick={() => cargarCierres()}
           disabled={cargando}
-          className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#482813] bg-[#FAF6F0] border border-[#E6D7C3] hover:bg-[#F5EBE1] active:bg-[#EBDDCF] rounded-xl shadow-xs transition-colors self-start md:self-auto cursor-pointer min-h-[44px]"
+          className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 transition-colors flex items-center gap-2 text-xs font-semibold cursor-pointer min-h-[38px] shadow-2xs self-start sm:self-auto"
         >
-          <RotateCcw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
-          Actualizar
+          <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+          <span>Actualizar</span>
         </button>
       </div>
 
@@ -319,7 +324,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           <div className="p-12 text-center space-y-3">
             <AlertCircle className="w-10 h-10 text-red-500 mx-auto" />
             <p className="text-sm font-bold text-red-800">
-              No se pudo cargar el historial de cierres. Intente nuevamente. (MSG-186)
+              No se pudo cargar el historial de cierres. Intente nuevamente.
             </p>
             <p className="text-xs text-stone-500">{errorCarga}</p>
             <button
@@ -335,8 +340,8 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
             <FileText className="w-12 h-12 mx-auto text-stone-300" />
             <p className="text-sm font-bold text-stone-700">
               {desde || hasta
-                ? 'No se encontraron cierres de caja con ese criterio. Pruebe con otro rango de fechas. (MSG-185)'
-                : 'Aún no hay cierres de caja registrados. (MSG-187)'}
+                ? 'No se encontraron cierres de caja con ese criterio. Pruebe con otro rango de fechas.'
+                : 'Aún no hay cierres de caja registrados.'}
             </p>
             {(desde || hasta) && (
               <button

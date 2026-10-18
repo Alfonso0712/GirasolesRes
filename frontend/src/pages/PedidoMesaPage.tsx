@@ -113,7 +113,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   });
 
   return (
-    <div className="h-full flex flex-col overflow-hidden gap-4">
+    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -298,7 +298,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                       </h3>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5">
                       {prods.map((prod) => {
                         const cantEnBorrador = lineasBorrador
                           .filter((l) => l.productoId === prod.id)
@@ -326,7 +326,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
                             <div>
                               <div className="flex items-start justify-between gap-2">
-                                <h4 className="text-sm font-bold text-[#2C1A0E] leading-snug line-clamp-2">
+                                <h4 className="font-sans font-bold text-sm xl:text-base text-[#2C1A0E] leading-snug line-clamp-2">
                                   {prod.nombre}
                                 </h4>
                                 {esAgotado && (
@@ -341,7 +341,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                             </div>
 
                             <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between gap-2">
-                              <span className="text-base font-extrabold text-neutral-800 tabular-nums">
+                              <span className="whitespace-nowrap font-bold tabular-nums text-base xl:text-lg text-neutral-800">
                                 S/ {prod.precio.toFixed(2)}
                               </span>
 
@@ -388,7 +388,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
         </div>
 
         {/* PANEL DERECHO: TICKET / RESUMEN DEL PEDIDO (Desktop) */}
-        <div className="hidden lg:flex w-96 shrink-0 flex-col min-h-0 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs overflow-hidden">
+        <div className="hidden lg:flex w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px] shrink-0 flex-col min-h-0 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs overflow-hidden">
           {/* Cabecera del Ticket */}
           <div className="p-4 border-b border-neutral-200/80 bg-[#FAF7F4] shrink-0">
             <div className="flex items-center justify-between">

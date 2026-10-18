@@ -103,7 +103,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   })();
 
   return (
-    <div className="h-full flex flex-col overflow-hidden max-w-7xl mx-auto w-full gap-4">
+    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
       {/* Toast Alert / Banner de Éxito (shrink-0) */}
       {avisoExito && (
         <div className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">

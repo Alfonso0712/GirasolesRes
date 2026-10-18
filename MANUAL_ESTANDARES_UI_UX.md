@@ -492,4 +492,33 @@ Todas las entidades del Dominio y sus mapeos en Entity Framework Core deben defi
   * **Badges/Pastillas:** Ancho y alto fijos e idénticos (`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold`) para mantener alineación tabular perfecta.
   * **Columna de Acciones:** Botones cuadrados compactos de solo icono (`w-8 h-8 rounded-lg border`), colores semánticos (verde esmeralda, ámbar, rojo rose, gris neutro) y atributos obligatorios `title` y `aria-label`.
 
+---
+
+## 9. Adaptabilidad Multirresolución y Fluidez de Pantalla (ISO 9241, Shneiderman, Don Norman)
+
+### 9.1 Diagnóstico de Pantallas Objetivo
+El sistema opera de forma armónica e impecable en dos ecosistemas físicos reales:
+1. **Monitor de Escritorio / PC (1920x1080 Full HD, 2K o superior):**
+   - Requiere aprovechamiento fluido del ancho para evitar márgenes muertos o columnas forzadamente estrechas.
+   - Contenedor unificado: `w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10`.
+2. **Laptop Estándar (1366x768 / 1536x864 con escalado de 125% o 150%):**
+   - Altura útil reducida (alrededor de 600-700px efectivos).
+   - El Sidebar debe contener todos los 11 accesos del Administrador sin generar scrollbar nativa antiestética entre el menú y el contenido principal.
+   - Las cuadrículas de tarjetas (Mesas, Catálogo) no deben forzar 5 columnas en anchos de laptop, evitando que los botones de acción se desborden de la tarjeta.
+
+### 9.2 Reglas de Implementación en Frontend
+1. **Sidebar Flex de 3 Bloques:**
+   - Ancho adaptativo: `w-60 xl:w-64 2xl:w-72 shrink-0`.
+   - Cabecera fija (`shrink-0`) con logotipo corporativo.
+   - Navegación central con scroll invisible: `[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden` y espaciado compacto `py-2 2xl:py-2.5 px-3 xl:px-3.5`.
+   - Pie fijo (`shrink-0`) con badge de acceso protegido.
+2. **Cuadrículas Fluidas:**
+   - **Mesas:** `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4`.
+   - **Catálogo de Pedidos:** `grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5`.
+   - **Panel Lateral de Comanda (Ticket):** `w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px] shrink-0`.
+3. **Distribución Interna de Acciones en Tarjetas de Mesas:**
+   - Contenedor: `flex items-center gap-1.5 w-full`.
+   - Botones primarios (`Pedido` y `Cobrar`): `flex-1 min-w-0 justify-center text-xs px-2 rounded-lg whitespace-nowrap`.
+   - Botones secundarios de icono (`Editar`, `Desactivar`): `w-8 h-8 shrink-0 flex items-center justify-center`.
+
 

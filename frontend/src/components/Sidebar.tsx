@@ -55,268 +55,266 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Aside (Fixed drawer on mobile/tablet, Static on desktop) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#482813] text-white h-full p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none overflow-y-auto transition-transform duration-200 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-[#482813] text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
           isOpenMobile ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <div>
-          {/* Brand Logo Container & Mobile Close Button */}
-          <div className="flex items-center justify-between mb-8 pl-1">
-            <div className="w-18 h-18 rounded-2xl bg-white/95 p-1.5 shadow-md flex items-center justify-center border border-amber-900/30">
-              <img
-                src={logoGirasoles}
-                alt="Girasoles Restaurante"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            {onCloseMobile && (
-              <button
-                type="button"
-                onClick={onCloseMobile}
-                aria-label="Cerrar menú"
-                className="lg:hidden p-2 text-amber-200/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
+        {/* Bloque 1: Cabecera Fija con Logo y botón cerrar móvil (shrink-0) */}
+        <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-amber-900/40 mb-1 xl:mb-2">
+          <div className="w-14 h-14 xl:w-16 xl:h-16 rounded-2xl bg-white/95 p-1.5 shadow-md flex items-center justify-center border border-amber-900/30">
+            <img
+              src={logoGirasoles}
+              alt="Girasoles Restaurante"
+              className="w-full h-full object-contain"
+            />
           </div>
-
-          {/* Menu Navigation */}
-          <nav className="space-y-1.5">
+          {onCloseMobile && (
             <button
               type="button"
-              onClick={() => handleNavigate('inicio')}
-              className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                paginaActiva === 'inicio'
+              onClick={onCloseMobile}
+              aria-label="Cerrar menú"
+              className="lg:hidden p-2 text-amber-200/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+
+        {/* Bloque 2: Navegación Central con Scroll Ultra Fino / Invisible */}
+        <nav className="flex-1 overflow-y-auto py-1 xl:py-2 space-y-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <button
+            type="button"
+            onClick={() => handleNavigate('inicio')}
+            className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+              paginaActiva === 'inicio'
+                ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <Home className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+            <span>Inicio</span>
+          </button>
+
+          {rol === 'Administrador' && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('usuarios')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'usuarios'
                   ? 'bg-[#D35400] text-white shadow-md font-semibold'
                   : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
               }`}
             >
-              <Home className="w-5 h-5 shrink-0" />
-              <span>Inicio</span>
+              <Users className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Usuarios</span>
             </button>
+          )}
 
-            {rol === 'Administrador' && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('usuarios')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'usuarios'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Users className="w-5 h-5 shrink-0" />
-                <span>Usuarios</span>
-              </button>
-            )}
+          {rol === 'Administrador' && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('productos')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'productos'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <UtensilsCrossed className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Productos</span>
+            </button>
+          )}
 
-            {rol === 'Administrador' && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('productos')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'productos'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <UtensilsCrossed className="w-5 h-5 shrink-0" />
-                <span>Productos</span>
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Cocinero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('menu-dia')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'menu-dia'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Utensils className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Menú del día</span>
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Cocinero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('menu-dia')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'menu-dia'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Utensils className="w-5 h-5 shrink-0" />
-                <span>Menú del día</span>
-              </button>
-            )}
+          {rol === 'Administrador' && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('roles')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'roles'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Roles y permisos</span>
+            </button>
+          )}
 
-            {rol === 'Administrador' && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('roles')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'roles'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <ShieldCheck className="w-5 h-5 shrink-0" />
-                <span>Roles y permisos</span>
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Cajero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('caja')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center justify-between transition-all cursor-pointer ${
+                paginaActiva === 'caja'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <DollarSign className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+                <span>Caja y Cobros</span>
+              </div>
+              {cajaEstado && (
+                <span
+                  className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
+                    cajaEstado === 'abierta'
+                      ? 'bg-emerald-500 text-white'
+                      : cajaEstado === 'anteriorSinCerrar'
+                      ? 'bg-rose-500 text-white animate-pulse'
+                      : 'bg-stone-600 text-amber-200'
+                  }`}
+                >
+                  {cajaEstado === 'abierta' ? 'Abierta' : cajaEstado === 'anteriorSinCerrar' ? 'Cierre pend.' : 'Cerrada'}
+                </span>
+              )}
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Cajero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('caja')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center justify-between transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'caja'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-3.5">
-                  <DollarSign className="w-5 h-5 shrink-0" />
-                  <span>Caja y Cobros</span>
-                </div>
-                {cajaEstado && (
-                  <span
-                    className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
-                      cajaEstado === 'abierta'
-                        ? 'bg-emerald-500 text-white'
-                        : cajaEstado === 'anteriorSinCerrar'
-                        ? 'bg-rose-500 text-white animate-pulse'
-                        : 'bg-stone-600 text-amber-200'
-                    }`}
-                  >
-                    {cajaEstado === 'abierta' ? 'Abierta' : cajaEstado === 'anteriorSinCerrar' ? 'Cierre pend.' : 'Cerrada'}
-                  </span>
-                )}
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Cajero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('ventas')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'ventas'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Receipt className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Gestión de Ventas</span>
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Cajero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('ventas')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'ventas'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Receipt className="w-5 h-5 shrink-0" />
-                <span>Gestión de Ventas</span>
-              </button>
-            )}
+          {rol === 'Administrador' && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('historial-cierres')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'historial-cierres'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Lock className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Historial de Cierres</span>
+            </button>
+          )}
 
-            {rol === 'Administrador' && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('historial-cierres')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'historial-cierres'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Lock className="w-5 h-5 shrink-0" />
-                <span>Historial de Cierres</span>
-              </button>
-            )}
+          {rol === 'Administrador' && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('reportes')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'reportes'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Reportes</span>
+            </button>
+          )}
 
-            {rol === 'Administrador' && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('reportes')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'reportes'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <BarChart3 className="w-5 h-5 shrink-0" />
-                <span>Reportes</span>
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Mozo' || rol === 'Cajero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('mesas')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'mesas'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Utensils className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Mesas y Salón</span>
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Mozo' || rol === 'Cajero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('mesas')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'mesas'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Utensils className="w-5 h-5 shrink-0" />
-                <span>Mesas y Salón</span>
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Mozo') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('pedidos-mesa')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'pedidos-mesa'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ClipboardList className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Tomar Pedido</span>
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Mozo') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('pedidos-mesa')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'pedidos-mesa'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <ClipboardList className="w-5 h-5 shrink-0" />
-                <span>Tomar Pedido</span>
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Cajero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('pedidos-llevar')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'pedidos-llevar'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ShoppingBag className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Pedido para Llevar</span>
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Cajero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('pedidos-llevar')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'pedidos-llevar'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <ShoppingBag className="w-5 h-5 shrink-0" />
-                <span>Pedido para Llevar</span>
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Mozo' || rol === 'Cajero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('pedidos')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center justify-between transition-all cursor-pointer ${
+                paginaActiva === 'pedidos'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <ReceiptText className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+                <span>Gestión de Pedidos</span>
+              </div>
+              {pedidosListosCount !== undefined && pedidosListosCount > 0 && (
+                <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
+                  {pedidosListosCount}
+                </span>
+              )}
+            </button>
+          )}
 
-            {(rol === 'Administrador' || rol === 'Mozo' || rol === 'Cajero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('pedidos')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center justify-between transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'pedidos'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-3.5">
-                  <ReceiptText className="w-5 h-5 shrink-0" />
-                  <span>Gestión de Pedidos</span>
-                </div>
-                {pedidosListosCount !== undefined && pedidosListosCount > 0 && (
-                  <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
-                    {pedidosListosCount}
-                  </span>
-                )}
-              </button>
-            )}
+          {(rol === 'Administrador' || rol === 'Cocinero') && (
+            <button
+              type="button"
+              onClick={() => handleNavigate('cocina')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'cocina'
+                  ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                  : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <ChefHat className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Cocina (KDS)</span>
+            </button>
+          )}
+        </nav>
 
-            {(rol === 'Administrador' || rol === 'Cocinero') && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('cocina')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all min-h-[44px] cursor-pointer ${
-                  paginaActiva === 'cocina'
-                    ? 'bg-[#D35400] text-white shadow-md font-semibold'
-                    : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <ChefHat className="w-5 h-5 shrink-0" />
-                <span>Cocina (KDS)</span>
-              </button>
-            )}
-          </nav>
-        </div>
-
-        {/* Footer Info */}
-        <div className="pt-4 border-t border-amber-900/40 flex items-center gap-3">
+        {/* Bloque 3: Pie Fijo de "Acceso protegido" (shrink-0) */}
+        <div className="shrink-0 pt-3 xl:pt-3.5 border-t border-amber-900/40 flex items-center gap-3 mt-1">
           <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-white tracking-wide">Acceso protegido</p>

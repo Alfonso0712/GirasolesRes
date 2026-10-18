@@ -290,7 +290,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden max-w-7xl mx-auto w-full gap-4">
+    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
       {/* 1. Encabezado Superior ESTÁTICO Y FIJO sobre fondo crema */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>

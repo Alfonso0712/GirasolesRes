@@ -100,3 +100,22 @@ Para prevenir errores operativos graves (Heurística 5 de Nielsen), está prohib
 
 - Queda estrictamente prohibido mostrar identificadores de ingeniería como `(CUS06)`, `(RF-04)` o `(MSG-xx)` en textos visibles al usuario (títulos, subtítulos, descripciones, mensajes de alerta o modales).
 - Todos los mensajes deben estar formulados en lenguaje natural, claro y orientado a la operación gastronómica.
+
+---
+
+## 8. Adaptabilidad Multirresolución y Layout Fluido (Monitores 1920x1080+ vs Laptops 1366x768 / 1536x864)
+
+- **Contenedor Fluido Global:**
+  - En lugar de `max-w-5xl`, `max-w-6xl` o `max-w-7xl`, todos los módulos dentro de `<main>` implementan `w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10`.
+  - Permite aprovechar monitores Full HD y 2K sin bandas vacías gigantes, manteniendo márgenes armónicos en laptops.
+- **Barra Lateral (Sidebar) Escalable de Tres Bloques:**
+  - Ancho adaptativo `w-60 xl:w-64 2xl:w-72 shrink-0`.
+  - Estructura flex con: (1) Cabecera de Logo fija (`shrink-0`); (2) Navegación central con scroll invisible (`[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden`) y padding vertical compacto (`py-2 2xl:py-2.5`), garantizando que los 11 accesos del Administrador se visualicen sin barra de scroll gris en pantallas de 768px; (3) Pie fijo "Acceso protegido" (`shrink-0`).
+- **Grillas Responsivas Inteligentes:**
+  - **Mesas:** `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4`. Evita forzar 5 columnas en anchos de laptop donde las tarjetas se apretaban.
+  - **Catálogo de Pedidos (Salón y Llevar):** `grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5`.
+  - **Panel de Ticket Derecho:** `w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px] shrink-0`.
+- **Estructura Interna de Acciones en Tarjetas de Mesas:**
+  - Fila `flex items-center gap-1.5 sm:gap-2 w-full`.
+  - Botones primarios (`Pedido`, `Cobrar`): `flex-1 min-w-0 justify-center text-xs px-2 rounded-lg whitespace-nowrap`.
+  - Botones secundarios de icono (`Editar`, `Desactivar`): `w-8 h-8 shrink-0 flex items-center justify-center`.

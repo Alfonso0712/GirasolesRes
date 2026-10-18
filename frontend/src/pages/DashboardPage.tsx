@@ -62,7 +62,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
         <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#D35400] mb-4 animate-pulse">
           <RefreshCw className="w-6 h-6 animate-spin" />
         </div>
-        <h2 className="text-xl font-bold font-brand-serif text-neutral-800 mb-1">
+        <h2 className="text-xl font-bold font-sans text-neutral-800 mb-1">
           Cargando panel de inicio...
         </h2>
         <p className="text-xs text-neutral-500 max-w-sm">
@@ -78,7 +78,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
         <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mb-4">
           <AlertCircle className="w-7 h-7" />
         </div>
-        <h2 className="text-xl font-bold font-brand-serif text-neutral-800 mb-2">
+        <h2 className="text-xl font-bold font-sans text-neutral-800 mb-2">
           No se pudo cargar el panel
         </h2>
         <p className="text-sm text-neutral-600 max-w-md mb-6">
@@ -121,7 +121,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   );
 
   return (
-    <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1 p-4 sm:p-6 max-w-7xl mx-auto w-full">
+    <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1 p-4 sm:p-6 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10">
       {/* Encabezado Editorial (RV-148) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
@@ -258,7 +258,7 @@ function renderAdminDashboard(
           <div className="p-3.5 sm:p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-center gap-3 text-emerald-800 text-sm shadow-xs">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <div className="flex-1">
-              <span className="font-semibold">Todo en orden:</span> no hay alertas por atender en este momento (MSG-203).
+              <span className="font-semibold">Todo en orden:</span> no hay alertas por atender en este momento.
             </div>
           </div>
         )}
@@ -293,7 +293,7 @@ function renderAdminDashboard(
               </div>
               {ventasHoy?.nVentas === 0 ? (
                 <p className="text-xs text-neutral-500 italic mt-1">
-                  Todavía no hay ventas registradas hoy (MSG-202).
+                  Todavía no hay ventas registradas hoy.
                 </p>
               ) : (
                 <div className="text-xs text-neutral-600 space-y-0.5 mt-2">
@@ -439,7 +439,7 @@ function renderAdminDashboard(
         <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-neutral-100">
-              <h3 className="font-bold text-neutral-800 text-sm flex items-center gap-2">
+              <h3 className="font-sans font-bold text-neutral-800 text-sm flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#D35400]" />
                 Top 5 Platos más Vendidos
               </h3>
@@ -496,7 +496,7 @@ function renderAdminDashboard(
         <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-neutral-100">
-              <h3 className="font-bold text-neutral-800 text-sm flex items-center gap-2">
+              <h3 className="font-sans font-bold text-neutral-800 text-sm flex items-center gap-2">
                 <ClipboardList className="w-4 h-4 text-blue-600" />
                 Pedidos de Hoy por Estado
               </h3>
@@ -719,7 +719,7 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
 
   return (
     <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs">
-      <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
+      <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
         Accesos Rápidos a Módulos
       </h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -773,7 +773,7 @@ function renderCajeroDashboard(
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
             <span className="text-sm font-semibold">
-              Hay una caja de un día anterior sin cerrar. Ciérrela antes de abrir una nueva o cobrar (MSG-168).
+              Hay una caja de un día anterior sin cerrar. Ciérrela antes de abrir una nueva o cobrar.
             </span>
           </div>
           <button
@@ -789,7 +789,7 @@ function renderCajeroDashboard(
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
             <span className="text-sm font-semibold">
-              Todavía no hay caja abierta. Ábrala para empezar a cobrar (MSG-166).
+              Todavía no hay caja abierta. Ábrala para empezar a cobrar.
             </span>
           </div>
           <button
@@ -804,11 +804,11 @@ function renderCajeroDashboard(
 
       {/* ACCESOS RÁPIDOS PRINCIPALES DEL CAJERO (RV-151) */}
       <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
+        <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Operaciones de Caja y Mostrador
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Botón Cobrar (Deshabilitado con motivo si no hay caja abierta: MSG-211) */}
+          {/* Botón Cobrar (Deshabilitado con motivo si no hay caja abierta) */}
           <div className="relative group">
             <button
               type="button"
@@ -825,7 +825,7 @@ function renderCajeroDashboard(
             </button>
             {!cajaAbierta && (
               <span className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-[11px] px-2.5 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-                Abra la caja primero (MSG-211)
+                Abra la caja primero
               </span>
             )}
           </div>
@@ -932,7 +932,7 @@ function renderCajeroDashboard(
               </div>
               {porCobrar?.cantidad === 0 ? (
                 <p className="text-xs text-neutral-500 italic mt-2">
-                  No hay pedidos pendientes de cobro (MSG-136).
+                  No hay pedidos pendientes de cobro.
                 </p>
               ) : (
                 <p className="text-xs text-neutral-600 mt-2">
@@ -1021,13 +1021,13 @@ function renderMozoDashboard(
       ) : (
         <div className="p-3.5 bg-neutral-50 border border-neutral-200/80 rounded-xl text-neutral-600 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-neutral-400 shrink-0" />
-          <span>No tiene pedidos listos por recoger (MSG-212).</span>
+          <span>No tiene pedidos listos por recoger.</span>
         </div>
       )}
 
       {/* ACCESOS RÁPIDOS DEL MOZO */}
       <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
+        <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Acciones Operativas del Salón
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1194,7 +1194,7 @@ function renderCocineroDashboard(
 
       {/* ACCESOS RÁPIDOS DEL COCINERO */}
       <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
+        <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Operación de Cocina KDS
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

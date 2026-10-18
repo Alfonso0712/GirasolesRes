@@ -154,7 +154,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   const cajaCerrada = !cajaEstado?.estaAbierta;
 
   return (
-    <div className="h-full flex flex-col overflow-hidden gap-4 select-none">
+    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4 select-none">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
