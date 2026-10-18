@@ -261,6 +261,12 @@ public class GirasolesDbContext : DbContext
             entity.Property(c => c.Cmd_AvisoVisto).HasColumnName("cmd_aviso_visto").IsRequired().HasDefaultValue(false);
             entity.Property(c => c.Cmd_FechaAvisoVistoUtc).HasColumnName("cmd_fec_aviso_visto_utc");
             entity.Property(c => c.Cmd_UsuarioAvisoVisto).HasColumnName("cmd_nom_usuario_aviso_visto").HasMaxLength(50);
+            entity.Property(c => c.Cmd_FecInicioPreparacionUtc).HasColumnName("cmd_fec_inicio_preparacion_utc");
+            entity.Property(c => c.Cmd_NomUsuarioPreparacion).HasColumnName("cmd_nom_usuario_preparacion").HasMaxLength(50);
+            entity.Property(c => c.Cmd_FecListaUtc).HasColumnName("cmd_fec_lista_utc");
+            entity.Property(c => c.Cmd_NomUsuarioLista).HasColumnName("cmd_nom_usuario_lista").HasMaxLength(50);
+            entity.Property(c => c.Cmd_EstadoAnterior).HasColumnName("cmd_estado_anterior").HasConversion<string>().HasMaxLength(20);
+            entity.Property(c => c.Cmd_FecUltimoCambioEstadoUtc).HasColumnName("cmd_fec_ultimo_cambio_estado_utc");
             entity.Property(c => c.Cmd_NombreMesa).HasColumnName("cmd_nombre_mesa").HasMaxLength(50).IsRequired();
             entity.Property(c => c.Cmd_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
 

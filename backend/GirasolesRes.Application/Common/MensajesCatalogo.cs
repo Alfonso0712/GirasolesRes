@@ -141,4 +141,17 @@ public static class MensajesCatalogo
     public const string MSG_121 = "Para quitar todos los productos, anule el pedido.";
     public const string MSG_122 = "No se pudo actualizar el pedido. El pedido original no cambió; intente nuevamente.";
     public const string MSG_123 = "Pedido N.º {0} listo para recoger: {1}.";
+
+    // CUS-10: Gestión de comandas de cocina (Complemento CUS10)
+    public const string MSG_124 = "No hay comandas pendientes. Todo al día.";
+    public const string MSG_125 = "No se pudieron cargar las comandas. Intente nuevamente.";
+    public const string MSG_126 = "Comanda N.º {0} en preparación.";
+    public const string MSG_127 = "Comanda N.º {0} marcada como lista. Se avisó a {1}.";
+    public const string MSG_128 = "La comanda N.º {0} fue anulada y se retiró de la pantalla.";
+    public const string MSG_129 = "El pedido N.º {0} fue modificado. Revise los cambios.";
+    public const string MSG_130 = "Primero debe iniciar la preparación de la comanda.";
+    public const string MSG_131 = "No se pudo actualizar la comanda. El estado anterior se conserva; intente nuevamente.";
+    public const string MSG_132 = "Sin conexión: las comandas pueden estar desactualizadas (datos de hace {0} s).";
+    public const string MSG_133 = "Nueva comanda N.º {0} ({1}).";
+    public const string MSG_134 = "No se puede deshacer: el pedido ya fue pagado, anulado o pasó el tiempo permitido.";
 }

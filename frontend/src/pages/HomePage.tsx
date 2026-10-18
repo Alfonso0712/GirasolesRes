@@ -8,6 +8,7 @@ import { MenuDiaPage } from './MenuDiaPage';
 import { PedidoMesaPage } from './PedidoMesaPage';
 import { PedidoLlevarPage } from './PedidoLlevarPage';
 import { PedidosPage } from './PedidosPage';
+import { CocinaPage } from './CocinaPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
@@ -35,14 +36,14 @@ export const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onUpdateSession
 }) => {
-  // Para Administrador abre Usuarios por defecto; para Mozo abre Mesas; para Cocinero abre Menú del Día; para Cajero abre Pedidos para Llevar
+  // Para Administrador abre Usuarios por defecto; para Mozo abre Mesas; para Cocinero abre Cocina KDS; para Cajero abre Pedidos para Llevar
   const [paginaActiva, setPaginaActiva] = useState(
     session.rol === 'Administrador'
       ? 'usuarios'
       : session.rol === 'Mozo'
       ? 'mesas'
       : session.rol === 'Cocinero'
-      ? 'menu-dia'
+      ? 'cocina'
       : session.rol === 'Cajero'
       ? 'pedidos-llevar'
       : 'inicio'
@@ -125,6 +126,12 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     // Verificación periódica cada segundo
     const interval = setInterval(() => {
+      // RN-82: Mientras la pantalla de comandas esté abierta, la sesión del Cocinero se mantiene vigente
+      if (paginaActiva === 'cocina' && session.rol === 'Cocinero') {
+        ultimaActividadRef.current = Date.now();
+        return;
+      }
+
       if (!mostrarModalInactividad && !mostrarModalLogout) {
         const transcurrido = Date.now() - ultimaActividadRef.current;
         if (transcurrido >= INACTIVITY_THRESHOLD_MS) {
@@ -261,6 +268,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           onNavigateToCobro={() => {
             setPaginaActiva('caja');
           }}
+        />
+      ) : paginaActiva === 'cocina' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
+        <CocinaPage
+          session={session}
+          onLogout={onLogout}
         />
       ) : (
         <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1">

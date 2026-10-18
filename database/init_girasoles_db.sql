@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict s2IxRl8H7IGGHgN0nS99jo20X68RTuC7dUbLbkDuW3h3OPrmqnhMNVQQsFbMyHe
+\restrict OMYzoW29BHxzsGPjwVY0HgkLqMWVhxJgieIDKQjIlwz9UAyMA9Rju6HiYcIobWM
 
 -- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.6
@@ -164,7 +164,13 @@ CREATE TABLE public.comandas (
     cmd_modificada boolean DEFAULT false NOT NULL,
     cmd_aviso_visto boolean DEFAULT false NOT NULL,
     cmd_fec_aviso_visto_utc timestamp with time zone,
-    cmd_nom_usuario_aviso_visto character varying(50)
+    cmd_nom_usuario_aviso_visto character varying(50),
+    cmd_fec_inicio_preparacion_utc timestamp with time zone,
+    cmd_nom_usuario_preparacion character varying(50),
+    cmd_fec_lista_utc timestamp with time zone,
+    cmd_nom_usuario_lista character varying(50),
+    cmd_estado_anterior character varying(20),
+    cmd_fec_ultimo_cambio_estado_utc timestamp with time zone
 );
 
 
@@ -366,6 +372,7 @@ INSERT INTO public.auditorias_pedido VALUES ('9ad60234-e725-4b93-82f1-0fc3930b05
 INSERT INTO public.auditorias_pedido VALUES ('1ab25e6f-731d-4edb-9faa-1caff1644c59', 'lperez', 'AmpliacionPedido', 'Mesa 4', 3, 'Ampliación de pedido #3 con 1 nuevas líneas. Nuevo total: S/ 23.00', '2026-10-17 20:19:02.770753-05', '::1');
 INSERT INTO public.auditorias_pedido VALUES ('7e3c0444-30a7-4c1c-84a2-f6a7e57f7ee4', 'atorres', 'RegistroPedidoLlevar', 'Para llevar', 4, 'Pedido para llevar #4 registrado (Ref: Sra. Rosa). Líneas: 1. Total: S/ 10.00', '2026-10-17 21:02:43.800509-05', '::1');
 INSERT INTO public.auditorias_pedido VALUES ('7e9e1786-f0e4-471e-9a88-bac59c3d5e24', 'atorres', 'RegistroPedidoLlevar', 'Para llevar', 5, 'Pedido para llevar #5 registrado (Ref: Test Idempotencia). Líneas: 1. Total: S/ 5.00', '2026-10-17 21:05:01.774801-05', '::1');
+INSERT INTO public.auditorias_pedido VALUES ('1e77761b-43c7-47f0-bc2f-89d8adb05729', 'admin', 'RegistroPedidoLlevar', 'Para llevar', 6, 'Pedido para llevar #6 registrado (Ref: Elena Flores). Líneas: 2. Total: S/ 13,00', '2026-10-17 22:02:09.022881-05', '::1');
 
 
 --
@@ -463,12 +470,13 @@ INSERT INTO public.auditorias_usuario VALUES ('0d2b241e-0b9c-4b76-8fe1-6c136f39a
 -- Data for Name: comandas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.comandas VALUES ('315a1286-3bee-4681-98a6-7cdba2d8a001', '03876d35-b378-4772-98cb-50238d1188e0', 1, '2026-10-17 20:12:10.349546-05', 'Pendiente', false, 'Mesa 1', '2026-10-17 20:12:10.349688-05', false, false, NULL, NULL);
-INSERT INTO public.comandas VALUES ('a80962ee-a6fd-4f90-98bf-094544763051', 'd58ffebd-c2b7-445d-a3e3-dfd5742c33fc', 1, '2026-10-17 20:17:13.935934-05', 'Pendiente', false, 'Mesa 2', '2026-10-17 20:17:13.936083-05', false, false, NULL, NULL);
-INSERT INTO public.comandas VALUES ('31baa64b-40c7-47c9-b3ba-dbf16b10e2f6', '3a24ca76-f431-4600-9c84-f10fc239a053', 1, '2026-10-17 20:19:02.343073-05', 'Pendiente', false, 'Mesa 4', '2026-10-17 20:19:02.343208-05', false, false, NULL, NULL);
-INSERT INTO public.comandas VALUES ('0ced0c10-64ea-4065-9103-c39af5f68bda', '3a24ca76-f431-4600-9c84-f10fc239a053', 1, '2026-10-17 20:19:02.728114-05', 'Pendiente', true, 'Mesa 4', '2026-10-17 20:19:02.728115-05', false, false, NULL, NULL);
-INSERT INTO public.comandas VALUES ('a3fe21ae-7949-4a7b-bdef-42e50d7afa56', '75ce0236-ebdc-4810-9204-df2bb000f4f7', 1, '2026-10-17 21:02:43.632278-05', 'Pendiente', false, 'Para llevar - Sra. Rosa', '2026-10-17 21:02:43.632449-05', false, false, NULL, NULL);
-INSERT INTO public.comandas VALUES ('5c383c73-bba0-46b8-b422-fb365faad080', '9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37', 1, '2026-10-17 21:05:01.770938-05', 'Pendiente', false, 'Para llevar - Test Idempotencia', '2026-10-17 21:05:01.770938-05', false, false, NULL, NULL);
+INSERT INTO public.comandas VALUES ('315a1286-3bee-4681-98a6-7cdba2d8a001', '03876d35-b378-4772-98cb-50238d1188e0', 1, '2026-10-17 20:12:10.349546-05', 'Pendiente', false, 'Mesa 1', '2026-10-17 20:12:10.349688-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.comandas VALUES ('a80962ee-a6fd-4f90-98bf-094544763051', 'd58ffebd-c2b7-445d-a3e3-dfd5742c33fc', 1, '2026-10-17 20:17:13.935934-05', 'Pendiente', false, 'Mesa 2', '2026-10-17 20:17:13.936083-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.comandas VALUES ('31baa64b-40c7-47c9-b3ba-dbf16b10e2f6', '3a24ca76-f431-4600-9c84-f10fc239a053', 1, '2026-10-17 20:19:02.343073-05', 'Pendiente', false, 'Mesa 4', '2026-10-17 20:19:02.343208-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.comandas VALUES ('0ced0c10-64ea-4065-9103-c39af5f68bda', '3a24ca76-f431-4600-9c84-f10fc239a053', 1, '2026-10-17 20:19:02.728114-05', 'Pendiente', true, 'Mesa 4', '2026-10-17 20:19:02.728115-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.comandas VALUES ('a3fe21ae-7949-4a7b-bdef-42e50d7afa56', '75ce0236-ebdc-4810-9204-df2bb000f4f7', 1, '2026-10-17 21:02:43.632278-05', 'Pendiente', false, 'Para llevar - Sra. Rosa', '2026-10-17 21:02:43.632449-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.comandas VALUES ('5c383c73-bba0-46b8-b422-fb365faad080', '9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37', 1, '2026-10-17 21:05:01.770938-05', 'Pendiente', false, 'Para llevar - Test Idempotencia', '2026-10-17 21:05:01.770938-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.comandas VALUES ('77a87aa4-a3e9-483d-a740-acdc4d1ae0f0', '5847ea15-dba5-4440-8344-fbf8fc238d78', 1, '2026-10-17 22:02:08.760149-05', 'Pendiente', false, 'Para llevar - Elena Flores', '2026-10-17 22:02:08.760482-05', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 
 --
@@ -484,6 +492,8 @@ INSERT INTO public.detalles_comanda VALUES ('faa5594f-9087-464d-b65a-9b0f367ee9b
 INSERT INTO public.detalles_comanda VALUES ('998e2db2-7b41-40f9-b852-760a0b0f14e5', '0ced0c10-64ea-4065-9103-c39af5f68bda', 'c475030b-7c73-4853-9e94-1bd161492287', 'Café pasado con sándwich mixto', 1, 'Para llevar adicional', '2026-10-17 20:19:02.728145-05');
 INSERT INTO public.detalles_comanda VALUES ('3d64b0a0-cdc7-434e-beee-ebfe0118fa24', 'a3fe21ae-7949-4a7b-bdef-42e50d7afa56', 'c475030b-7c73-4853-9e94-1bd161492287', 'Café pasado con sándwich mixto', 2, 'sin ensalada', '2026-10-17 21:02:43.633674-05');
 INSERT INTO public.detalles_comanda VALUES ('1d5745f2-11d2-4eb2-a747-b85a105dc500', '5c383c73-bba0-46b8-b422-fb365faad080', 'c475030b-7c73-4853-9e94-1bd161492287', 'Café pasado con sándwich mixto', 1, 'sin cebolla', '2026-10-17 21:05:01.770941-05');
+INSERT INTO public.detalles_comanda VALUES ('3b6035f7-777b-4977-aa9c-7312987cd2f9', '77a87aa4-a3e9-483d-a740-acdc4d1ae0f0', 'd7456e1d-1043-46b9-87aa-30c16b598f2e', 'Menú almuerzo', 1, NULL, '2026-10-17 22:02:08.762482-05');
+INSERT INTO public.detalles_comanda VALUES ('63fefeea-5c5a-495f-abd8-df9df9ccc8ab', '77a87aa4-a3e9-483d-a740-acdc4d1ae0f0', 'c475030b-7c73-4853-9e94-1bd161492287', 'Café pasado con sándwich mixto', 1, NULL, '2026-10-17 22:02:08.762393-05');
 
 
 --
@@ -499,6 +509,8 @@ INSERT INTO public.detalles_pedido VALUES ('cd7b8ce0-3192-46c3-820c-972814519550
 INSERT INTO public.detalles_pedido VALUES ('25814731-7388-495e-83f6-0a5b71289ed8', '3a24ca76-f431-4600-9c84-f10fc239a053', 'c475030b-7c73-4853-9e94-1bd161492287', 1, 5.00, 5.00, 'Para llevar adicional', '2026-10-17 20:19:02.728131-05');
 INSERT INTO public.detalles_pedido VALUES ('f97dd0f9-5acb-45dd-9ffa-f673013b86ae', '75ce0236-ebdc-4810-9204-df2bb000f4f7', 'c475030b-7c73-4853-9e94-1bd161492287', 2, 5.00, 10.00, 'sin ensalada', '2026-10-17 21:02:43.630294-05');
 INSERT INTO public.detalles_pedido VALUES ('58fd4518-a29f-4911-a851-e99e449b7073', '9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37', 'c475030b-7c73-4853-9e94-1bd161492287', 1, 5.00, 5.00, 'sin cebolla', '2026-10-17 21:05:01.770919-05');
+INSERT INTO public.detalles_pedido VALUES ('3358bfaf-06cf-4b5f-91bf-23e46aaaf4e8', '5847ea15-dba5-4440-8344-fbf8fc238d78', 'd7456e1d-1043-46b9-87aa-30c16b598f2e', 1, 8.00, 8.00, NULL, '2026-10-17 22:02:08.759569-05');
+INSERT INTO public.detalles_pedido VALUES ('85ee4979-d93d-4304-9538-34baadc5c855', '5847ea15-dba5-4440-8344-fbf8fc238d78', 'c475030b-7c73-4853-9e94-1bd161492287', 1, 5.00, 5.00, NULL, '2026-10-17 22:02:08.756717-05');
 
 
 --
@@ -544,6 +556,7 @@ INSERT INTO public.pedidos VALUES ('d58ffebd-c2b7-445d-a3e3-dfd5742c33fc', 2, '2
 INSERT INTO public.pedidos VALUES ('3a24ca76-f431-4600-9c84-f10fc239a053', 3, '2026-10-17', '2026-10-17 20:19:02.339038-05', 'Mesa', 'Pendiente', 23.00, 'Mesa cerca a la ventana', '67ae29b1-17c8-4988-b129-de60b17c3849', 'fdfbc247-2349-4bab-9d92-cc595b7a34d8', 'f1c11a58-23d2-4202-a4ca-64d503c7c135', '2026-10-17 20:19:02.339519-05', '2026-10-17 20:19:02.728146-05', NULL);
 INSERT INTO public.pedidos VALUES ('75ce0236-ebdc-4810-9204-df2bb000f4f7', 4, '2026-10-17', '2026-10-17 21:02:43.628892-05', 'ParaLlevar', 'Pendiente', 10.00, 'Sra. Rosa', NULL, '920ba4f1-d552-4c76-b1c0-087b3b75770c', '102ffbd5-99a2-4d27-9e96-a980770d1fc6', '2026-10-17 21:02:43.629212-05', '2026-10-17 21:02:43.633805-05', NULL);
 INSERT INTO public.pedidos VALUES ('9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37', 5, '2026-10-17', '2026-10-17 21:05:01.770911-05', 'ParaLlevar', 'Pendiente', 5.00, 'Test Idempotencia', NULL, '920ba4f1-d552-4c76-b1c0-087b3b75770c', '57848b97-dd22-4935-9510-626d3556d52c', '2026-10-17 21:05:01.770912-05', '2026-10-17 21:05:01.770942-05', NULL);
+INSERT INTO public.pedidos VALUES ('5847ea15-dba5-4440-8344-fbf8fc238d78', 6, '2026-10-17', '2026-10-17 22:02:08.75442-05', 'ParaLlevar', 'Pendiente', 13.00, 'Elena Flores', NULL, '05c84bab-bb5e-479f-8a19-f309b7fde947', '70058240-8088-4586-bad3-6ca3a0c5447a', '2026-10-17 22:02:08.755092-05', '2026-10-17 22:02:08.762662-05', NULL);
 
 
 --
@@ -693,6 +706,7 @@ INSERT INTO public.registros_ingreso VALUES ('1dd43bf8-be68-4075-90ec-218b5f954d
 INSERT INTO public.registros_ingreso VALUES ('5e4a5b9a-ce80-45ec-9812-0dc24cd51fb3', 'admin', '2026-10-17 21:48:39.109332-05', true, 'Ingreso exitoso', '::1');
 INSERT INTO public.registros_ingreso VALUES ('53ed5d6c-87c8-4187-bb54-222be1bc8af0', 'admin', '2026-10-17 21:48:52.383135-05', true, 'Ingreso exitoso', '::1');
 INSERT INTO public.registros_ingreso VALUES ('8a7cfc42-894f-4d0f-a541-395cc23e37bb', 'lperez', '2026-10-17 21:49:03.453742-05', true, 'Ingreso exitoso', '::1');
+INSERT INTO public.registros_ingreso VALUES ('9a32a1f5-290f-4378-83fd-39bb99741deb', 'admin', '2026-10-17 22:01:36.208983-05', true, 'Ingreso exitoso', '::1');
 
 
 --
@@ -772,8 +786,8 @@ INSERT INTO public.usuarios VALUES ('6010e97d-9fbb-4df6-b51f-ebd34b6d9433', 'cro
 INSERT INTO public.usuarios VALUES ('757dee14-699f-470d-a65b-6ae01a46d5ac', 'dramos', 'Diego Ramos', 'dramos.nuevo@girasoles.com', '100000.uwBgvjThaWU59T48FLoDtA==.RNQ0hHFQ8QPq2Hj/1sQh9j6/9/2cFNGDRnIMqo3/X/k=', 3, true, 0, NULL, '2026-10-16 17:46:13.949806-05', '2026-10-17 11:03:53.373788-05');
 INSERT INTO public.usuarios VALUES ('89d58dff-4e1b-414c-8bf9-d59d098ec29f', 'msoto', 'María Soto A', 'msoto@girasoles.com', '100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=', 4, true, 0, NULL, '2026-10-16 10:55:25.222548-05', '2026-10-17 14:09:25.473055-05');
 INSERT INTO public.usuarios VALUES ('920ba4f1-d552-4c76-b1c0-087b3b75770c', 'atorres', 'Ana Torres', 'atorres@girasoles.com', '100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=', 2, true, 0, NULL, '2026-10-16 10:55:25.222546-05', '2026-10-17 21:12:51.833152-05');
-INSERT INTO public.usuarios VALUES ('05c84bab-bb5e-479f-8a19-f309b7fde947', 'admin', 'Administradora General', 'admin@girasoles.com', '100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=', 1, true, 0, NULL, '2026-10-16 10:55:25.22248-05', '2026-10-17 21:48:52.379548-05');
 INSERT INTO public.usuarios VALUES ('fdfbc247-2349-4bab-9d92-cc595b7a34d8', 'lperez', 'Luis Pérez', 'lperez@girasoles.com', '100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=', 3, true, 0, NULL, '2026-10-16 10:55:25.222548-05', '2026-10-17 21:49:03.451388-05');
+INSERT INTO public.usuarios VALUES ('05c84bab-bb5e-479f-8a19-f309b7fde947', 'admin', 'Administradora General', 'admin@girasoles.com', '100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=', 1, true, 0, NULL, '2026-10-16 10:55:25.22248-05', '2026-10-17 22:01:36.051819-05');
 
 
 --
@@ -1099,5 +1113,5 @@ ALTER TABLE ONLY public.pedidos
 -- PostgreSQL database dump complete
 --
 
-\unrestrict s2IxRl8H7IGGHgN0nS99jo20X68RTuC7dUbLbkDuW3h3OPrmqnhMNVQQsFbMyHe
+\unrestrict OMYzoW29BHxzsGPjwVY0HgkLqMWVhxJgieIDKQjIlwz9UAyMA9Rju6HiYcIobWM
 

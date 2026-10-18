@@ -29,6 +29,17 @@ public static class TimeZoneHelper
         return DateOnly.FromDateTime(limaNow);
     }
 
+    public static DateOnly GetFechaOperativa(DateTime utcDateTime)
+    {
+        var local = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, LimaTimeZoneLazy.Value);
+        return DateOnly.FromDateTime(local);
+    }
+
+    public static DateTime ConvertirUtcALocal(DateTime utcDateTime)
+    {
+        return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, LimaTimeZoneLazy.Value);
+    }
+
     public static DateTime ObtenerFechaHoraActualLima()
     {
         return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, LimaTimeZoneLazy.Value);
