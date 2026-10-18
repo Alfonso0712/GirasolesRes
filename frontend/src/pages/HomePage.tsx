@@ -296,6 +296,12 @@ export const HomePage: React.FC<HomePageProps> = ({
             setMesaParaCobro(mesa);
             setPaginaActiva('caja');
           }}
+          onNavigateToPedidoLlevar={() => {
+            setPaginaActiva('pedidos-llevar');
+          }}
+          onNavigateToMenuDia={() => {
+            setPaginaActiva('menu-dia');
+          }}
         />
       ) : paginaActiva === 'pedidos-mesa' && (session.rol === 'Administrador' || session.rol === 'Mozo') ? (
         <PedidoMesaPage
@@ -306,15 +312,17 @@ export const HomePage: React.FC<HomePageProps> = ({
             setMesaSeleccionadaParaPedido(null);
             setPaginaActiva('mesas');
           }}
+          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
         />
       ) : paginaActiva === 'pedidos-llevar' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
         <PedidoLlevarPage
           session={session}
           onLogout={onLogout}
-          onVolver={() => setPaginaActiva('inicio')}
+          onVolver={() => setPaginaActiva('mesas')}
           onNavigateToCobro={() => {
             setPaginaActiva('caja');
           }}
+          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
         />
       ) : paginaActiva === 'pedidos' && (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') ? (
         <PedidosPage

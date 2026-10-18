@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { pedidoService } from '../services/pedidoService';
 import { getMesasService } from '../services/mesaService';
+import { menuDiaService } from '../services/menuDiaService';
 import type { MesaItem } from '../types/mesa';
 import type {
   ProductoMenuPedido,
@@ -23,6 +24,7 @@ export function usePedidoMesaManagement({
 }: UsePedidoMesaManagementProps) {
   const [cargando, setCargando] = useState(true);
   const [registrando, setRegistrando] = useState(false);
+  const [menuDefinido, setMenuDefinido] = useState(true);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [erroresLineas, setErroresLineas] = useState<Record<string, string>>({});
 
@@ -79,11 +81,14 @@ export function usePedidoMesaManagement({
     setErrorGeneral(null);
 
     try {
-      const [prods, mesas] = await Promise.all([
+      const [prods, mesas, menuHoy] = await Promise.all([
         pedidoService.obtenerCatalogoPedido(token),
-        getMesasService({ estado: 'libre' }, token)
+        getMesasService({ estado: 'libre' }, token),
+        menuDiaService.obtenerMenuHoy(token).catch(() => null)
       ]);
 
+      const esDefinido = menuHoy ? menuHoy.definido : prods.length > 0;
+      setMenuDefinido(esDefinido);
       setCatalogo(prods);
       setMesasLibres(mesas);
 
@@ -509,6 +514,7 @@ export function usePedidoMesaManagement({
     totalGeneralConExistente,
     cantidadTotalProductos,
     registrarPedido,
+    menuDefinido,
     cargarDatos
   };
 }

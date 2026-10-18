@@ -247,7 +247,13 @@ Antes de dar por completado cualquier módulo futuro, verificar:
 
 7. **Testabilidad y Suite de Pruebas Unitarias (xUnit): [CUMPLE 100%]**
    - `TargetFramework` unificado a `net10.0`, eliminando el error bloqueante `NU1201`.
-   - Implementación de suite de pruebas unitarias con `Moq` para `UsuarioService`, `ProductoService` y `MesaService`.
+   - Implementación de suite de pruebas unitarias con `Moq` para `UsuarioService`, `ProductoService`, `MesaService` y `PedidoService`.
    - **Compilación: 0 Errores, 0 Advertencias.**
-   - **Pruebas: 57 de 57 superadas (100% Passed).**
+   - **Pruebas: 60 de 60 superadas (100% Passed).**
+
+8. **Validación Estricta de Precondición de Menú del Día (CUS07.1 / CUS08): [CUMPLE 100%]**
+   - **Eliminación del fallback permisivo de RN-35:** Se retiró el comportamiento que permitía vender productos de la carta general cuando el menú del día no estaba configurado.
+   - **Validación obligatoria en Backend (`PedidoService`):** En `RegistrarPedidoMesaAsync`, `RegistrarPedidoLlevarAsync` y `AgregarLineasAsync`, si no existe Menú del Día activo/definido para la fecha operativa actual (hora de Lima), se rechaza con HTTP `409 Conflict` (`PedidoConflictException("menu_no_definido", MSG_MENU_NO_DEFINIDO)`).
+   - **Catálogo Confinado:** `ObtenerMenuParaPedidoAsync` retorna lista vacía (`Array.Empty<ProductoMenuPedidoDto>()`) cuando el menú no está definido.
+   - **Bloqueo Preventivo en Frontend (Nielsen 5 / Shneiderman 5):** `PedidoMesaPage` y `PedidoLlevarPage` bloquean la selección y deshabilitan el envío mostrando un empty/blocked state adaptativo por rol (botón `"Ir a definir Menú del Día"` para Administrador y mensaje de guía MSG-78 para Mozo/Cajero). `MesasPage` muestra banner preventivo (MSG-204).
 

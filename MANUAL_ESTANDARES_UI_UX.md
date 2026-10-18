@@ -274,6 +274,20 @@ Para evitar que los modales se desborden en pantallas pequeñas o cuando el tecl
    - Los identificadores de entidades operativas (`Mesa 1`, `Mesa 12`, `Para llevar (Juan)`) deben renderizarse íntegros en una línea sin ser cortados con puntos suspensivos (`...` o `Mes...`).
 3. **Pastillas Compactas de Estado en Tarjetas:**
    - A diferencia de las tablas donde el ancho es fijo (`w-28 h-7`), dentro de las tarjetas operativas las pastillas de estado usan ancho dinámico ajustado a su contenido (`px-2.5 py-0.5 text-xs w-auto shrink-0`), impidiendo que desplacen o aplasten el título de la tarjeta.
+4. **Distribución Anticolapso en Tarjetas de Mesas Ocupadas (Heurística 5 Nielsen):**
+   - Cuando una mesa está ocupada, las acciones operativas (`"Pedido"` / `"+ Agregar"` y `"$ Cobrar"`) ocupan en exclusiva la fila inferior con `flex-1 whitespace-nowrap px-3 py-2 text-xs font-bold`, garantizando que ningún botón corte ni trunque su texto.
+   - Las acciones administrativas del Administrador (`Editar` y `Desactivar/Activar`) se reubican en la cabecera superior derecha de la tarjeta junto a la pastilla de estado (`w-7 h-7`), eliminando el apiñamiento de 4 controles en la base.
+   - La grilla de tarjetas se estandariza a 4 columnas máximas (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`), garantizando ancho suficiente en cualquier monitor o laptop.
+5. **Unificación Estructural de Vistas de Pedido (`Pedido de Mesa` y `Pedido para Llevar` - RNF-26):**
+   - Ambas pantallas comparten el mismo contenedor raíz `h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4`.
+   - La cabecera incluye el enlace de retorno `"← Volver a Mesas • OPERACIÓN DE SALÓN"` y badge identificador (`Mesa X` o `Para llevar`).
+   - El campo `"Referencia del cliente (opcional)"` se integra directamente dentro de la barra de búsqueda en el panel izquierdo (en la misma coordenada donde `Pedido de Mesa` ubica el selector de mesa libre), ahorrando espacio vertical.
+   - El catálogo utiliza exactamente la misma cuadrícula de 3 columnas (`grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5`) y tarjetas idénticas de plato.
+   - Se eliminan las barras de scroll grises del sistema operativo aplicando la clase de scrollbar estilizado delgado `[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full`.
+6. **Centralización Operativa en Salón (Norman - Mapeo Natural):**
+   - El flujo operativo gastronómico nace siempre en `Mesas y Salón`. El menú lateral en `"Salón y Pedidos"` se simplifica a 3 opciones (`Mesas y Salón`, `Gestión de Pedidos`, `Cocina (KDS)`).
+   - En la cabecera de `Mesas y Salón` se incluye el botón de acceso directo destacado `"🛍️ Pedido para llevar"`, permitiendo iniciar ambos tipos de comanda sin cambiar de módulo.
+   - Al navegar a `/pedidos/tomar` o `/pedidos/llevar`, el Sidebar mantiene resaltada la opción `"Mesas y Salón"`.
 
 ---
 
@@ -555,5 +569,15 @@ El sistema opera de forma armónica e impecable en dos ecosistemas físicos real
 - **Auto-Apertura:** Si el usuario navega a un módulo, el grupo padre se expande automáticamente.
 - **Indicador de Grupo Colapsado:** Cuando una sección está cerrada pero aloja la vista activa, la cabecera muestra un punto circular naranja (`bg-[#D35400]`).
 - **Soporte de Teclado:** Cabeceras con `<button type="button" aria-expanded={isOpen}>` nativamente accionables con `Tab`, `Enter` y `Espacio`.
+
+## 11. Validación de Precondiciones Operativas y Estados Bloqueados Preventivos
+
+### 11.1 Fundamento UX/UI (Don Norman, Jakob Nielsen y Ben Shneiderman)
+- **Heurística 1 de Nielsen (Visibilidad del estado del sistema):** El usuario debe conocer el estado operativo antes de interactuar. Si el menú del día aún no está definido (MSG-204), `MesasPage` advierte proactivamente al personal antes de que intenten abrir una comanda o tomar pedidos para llevar.
+- **Heurística 5 de Nielsen y Regla 5 de Shneiderman (Prevención de Errores):** Mejor que un mensaje de error después de que el mozo cargó platos inexistentes es diseñar el sistema para que no sea posible cometer el error. Se erradicó el fallback permisivo de RN-35 que permitía pedir platos de la carta sin confirmación de preparación diaria.
+- **Mapeo Natural y Cierre Operativo (Norman):**
+  - Si el rol es `Administrador`: el sistema proporciona una ruta directa de acción mediante el botón primario `"Ir a definir Menú del Día"` que navega directamente a `/menu-dia`.
+  - Si el rol es `Mozo` o `Cajero`: el sistema ofrece una guía clara y educada (MSG-78 / MSG-107): *"Solicite a la administradora que publique el menú de hoy para comenzar a tomar pedidos"*, deshabilitando los botones de envío tanto en escritorio como en la barra móvil.
+
 
 

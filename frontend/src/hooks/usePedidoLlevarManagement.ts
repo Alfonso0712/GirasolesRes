@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { pedidoService } from '../services/pedidoService';
+import { menuDiaService } from '../services/menuDiaService';
 import type {
   ProductoMenuPedido,
   LineaBorrador,
@@ -17,6 +18,7 @@ export function usePedidoLlevarManagement({
 }: UsePedidoLlevarManagementProps) {
   const [cargando, setCargando] = useState(true);
   const [registrando, setRegistrando] = useState(false);
+  const [menuDefinido, setMenuDefinido] = useState(true);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [erroresLineas, setErroresLineas] = useState<Record<string, string>>({});
 
@@ -72,7 +74,12 @@ export function usePedidoLlevarManagement({
     setErrorGeneral(null);
 
     try {
-      const prods = await pedidoService.obtenerCatalogoPedido(token);
+      const [prods, menuHoy] = await Promise.all([
+        pedidoService.obtenerCatalogoPedido(token),
+        menuDiaService.obtenerMenuHoy(token).catch(() => null)
+      ]);
+      const esDefinido = menuHoy ? menuHoy.definido : prods.length > 0;
+      setMenuDefinido(esDefinido);
       setCatalogo(prods);
     } catch (err: any) {
       if (esErrorSesionVencida(err)) {
@@ -453,6 +460,7 @@ export function usePedidoLlevarManagement({
     lineaParaNota,
     abrirModalNota,
     guardarNota,
+    menuDefinido,
     recargarCatalogo: cargarDatos
   };
 }

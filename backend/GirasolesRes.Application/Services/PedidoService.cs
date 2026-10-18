@@ -84,9 +84,14 @@ public class PedidoService : IPedidoService
             }
         }
 
-        // 4. Validación de Productos y Disponibilidad (RV-63, RV-65, RN-54)
+        // 4. Validación de Productos y Disponibilidad (RV-63, RV-65, RN-54, CUS07.1)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
+
+        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue))
+        {
+            throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
+        }
 
         var productoIds = request.Lineas.Select(l => l.ProductoId).Distinct().ToList();
         var productosMap = new Dictionary<Guid, Producto>();
@@ -232,9 +237,14 @@ public class PedidoService : IPedidoService
             throw new ArgumentException(MensajesCatalogo.MSG_109);
         }
 
-        // 4. Validación de Productos y Disponibilidad (RV-63, RV-65, RN-54)
+        // 4. Validación de Productos y Disponibilidad (RV-63, RV-65, RN-54, CUS08)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
+
+        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue))
+        {
+            throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
+        }
 
         var productoIds = request.Lineas.Select(l => l.ProductoId).Distinct().ToList();
         var productosMap = new Dictionary<Guid, Producto>();
@@ -378,9 +388,14 @@ public class PedidoService : IPedidoService
             }
         }
 
-        // 4. Validar disponibilidad de productos nuevos (RV-63, RV-65, RN-54)
+        // 4. Validar disponibilidad de productos nuevos (RV-63, RV-65, RN-54, CUS07.2)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
+
+        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue))
+        {
+            throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
+        }
 
         var productoIds = request.Lineas.Select(l => l.ProductoId).Distinct().ToList();
         var productosMap = new Dictionary<Guid, Producto>();
@@ -519,18 +534,8 @@ public class PedidoService : IPedidoService
             return lista;
         }
 
-        // Si no hay menú del día definido (RN-35), todos los productos activos
-        var productos = await _productoRepository.ListarDisponiblesAsync(null, ct);
-        return productos
-            .Select(p => new ProductoMenuPedidoDto(
-                p.Id_Producto,
-                p.Pro_Nombre,
-                p.Pro_Categoria.ToString(),
-                p.Pro_Precio,
-                Agotado: false,
-                Disponible: true
-            ))
-            .ToList();
+        // Si no hay menú del día definido para la fecha actual (CUS07.1 / CUS08), retornar lista vacía
+        return Array.Empty<ProductoMenuPedidoDto>();
     }
 
     private static PedidoResponseDto MapearAPedidoDto(Pedido p)

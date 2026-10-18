@@ -7,11 +7,13 @@ import {
   Eye,
   EyeOff,
   Filter,
-  Check
+  Check,
+  ShoppingBag
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { MesaItem, FiltroEstadoMesa } from '../types/mesa';
 import { useMesasManagement } from '../hooks/useMesasManagement';
+import { menuDiaService } from '../services/menuDiaService';
 import { MesaCard } from '../components/MesaCard';
 import { MesaFormModal } from '../components/MesaFormModal';
 import { MesaConfirmModal } from '../components/MesaConfirmModal';
@@ -24,9 +26,18 @@ interface MesasPageProps {
   }) => void;
   onNavigateToPedido?: (mesaId: string) => void;
   onNavigateToCobro?: (mesa: { id: string; nombre: string }) => void;
+  onNavigateToPedidoLlevar?: () => void;
+  onNavigateToMenuDia?: () => void;
 }
 
-export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavigateToPedido, onNavigateToCobro }) => {
+export const MesasPage: React.FC<MesasPageProps> = ({
+  session,
+  onLogout,
+  onNavigateToPedido,
+  onNavigateToCobro,
+  onNavigateToPedidoLlevar,
+  onNavigateToMenuDia
+}) => {
   const {
     mesas,
     todasLasMesas,
@@ -68,6 +79,24 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
     mesa: MesaItem | null;
     accion: string;
   }>({ abierto: false, mesa: null, accion: '' });
+
+  // Estado del menú del día de hoy (MSG-204)
+  const [menuDefinido, setMenuDefinido] = useState<boolean>(true);
+
+  React.useEffect(() => {
+    let activo = true;
+    menuDiaService
+      .obtenerMenuHoy(session.token)
+      .then((res) => {
+        if (activo) {
+          setMenuDefinido(res.definido);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      activo = false;
+    };
+  }, [session.token]);
 
   const handleAccionRol = (mesa: MesaItem, accion: string) => {
     if (accion === 'REGISTRAR PEDIDO' || accion === 'AGREGAR PRODUCTOS') {
@@ -144,6 +173,17 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
             </button>
           </div>
 
+          {(esAdmin || esCajero) && onNavigateToPedidoLlevar && (
+            <button
+              type="button"
+              onClick={onNavigateToPedidoLlevar}
+              className="px-3.5 py-2 rounded-xl bg-white border-2 border-[#D35400] text-[#D35400] hover:bg-orange-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
+            >
+              <ShoppingBag className="w-4 h-4 shrink-0" />
+              <span>Pedido para llevar</span>
+            </button>
+          )}
+
           {esAdmin && (
             <button
               type="button"
@@ -156,6 +196,36 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
           )}
         </div>
       </div>
+
+      {/* Banner preventivo: Menú del día no definido aún (MSG-204 / Nielsen 5) */}
+      {!menuDefinido && (
+        <div className="shrink-0 p-3.5 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-amber-100 text-[#D35400] flex items-center justify-center shrink-0">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs sm:text-sm font-bold text-amber-950">
+                El menú de hoy aún no está definido (MSG-204)
+              </p>
+              <p className="text-xs text-amber-800 mt-0.5">
+                {esAdmin
+                  ? 'Defina el menú diario para que el personal pueda registrar comandas de salón y para llevar.'
+                  : 'Solicite a la administradora que publique el menú de hoy para comenzar a tomar pedidos.'}
+              </p>
+            </div>
+          </div>
+          {esAdmin && onNavigateToMenuDia && (
+            <button
+              type="button"
+              onClick={onNavigateToMenuDia}
+              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs self-start sm:self-auto"
+            >
+              Definir Menú
+            </button>
+          )}
+        </div>
+      )}
 
       {/* 2. Barra de Filtros Fija (shrink-0) */}
       <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-xl border border-neutral-200/80 shadow-2xs">
@@ -239,7 +309,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
           {/* Estado de Carga Inicial (Skeletons) */}
           {cargando ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
@@ -321,7 +391,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
             </div>
           ) : (
             /* Cuadrícula de Tarjetas de Mesas en orden natural (RNF-18 / CUS06.2) */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {mesas.map((mesa) => (
                 <MesaCard
                   key={mesa.id}

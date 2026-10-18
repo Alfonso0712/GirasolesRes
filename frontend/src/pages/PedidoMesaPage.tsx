@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Utensils,
+  UtensilsCrossed,
   Plus,
   Minus,
   Trash2,
@@ -24,6 +25,7 @@ interface PedidoMesaPageProps {
   mesaIdInicial?: string | null;
   onLogout: (banner?: { type: 'success' | 'error' | 'info' | 'warning'; message: string }) => void;
   onVolverAMesas: () => void;
+  onNavigateToMenuDia?: () => void;
 }
 
 export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
@@ -31,6 +33,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   mesaIdInicial,
   onLogout,
   onVolverAMesas,
+  onNavigateToMenuDia,
 }) => {
   const {
     cargando,
@@ -70,7 +73,8 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     totalCalculado,
     totalGeneralConExistente,
     cantidadTotalProductos,
-    registrarPedido
+    registrarPedido,
+    menuDefinido
   } = usePedidoMesaManagement({
     token: session.token,
     mesaIdInicial,
@@ -275,6 +279,41 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                   </div>
                 ))}
               </div>
+            ) : !menuDefinido ? (
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 max-w-lg mx-auto">
+                <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto border border-amber-200 mb-4 shadow-2xs">
+                  <UtensilsCrossed className="w-8 h-8" />
+                </div>
+                <h3 className="text-lg font-brand-serif font-bold text-[#2C1A0E] mb-2">
+                  El menú del día aún no está definido
+                </h3>
+                {session.rol === 'Administrador' ? (
+                  <div className="space-y-4">
+                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                      Para habilitar la toma de pedidos en las mesas del salón, primero debe configurar y publicar el menú del día de hoy.
+                    </p>
+                    {onNavigateToMenuDia && (
+                      <Button
+                        type="button"
+                        variant="primary"
+                        onClick={onNavigateToMenuDia}
+                        className="mx-auto !w-auto px-6 py-2.5 text-xs font-bold shadow-md cursor-pointer"
+                      >
+                        Ir a definir Menú del Día
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs sm:text-sm text-center">
+                    <p className="font-semibold text-amber-950">
+                      Solicite a la administradora que publique el menú de hoy para comenzar a tomar pedidos
+                    </p>
+                    <p className="text-xs text-amber-800 mt-1">
+                      No es posible abrir comandas hasta que el menú diario esté activo.
+                    </p>
+                  </div>
+                )}
+              </div>
             ) : catalogoFiltrado.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8 text-neutral-400">
                 <Utensils className="w-12 h-12 stroke-[1.5] mb-3 text-neutral-300" />
@@ -298,7 +337,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                       </h3>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
                       {prods.map((prod) => {
                         const cantEnBorrador = lineasBorrador
                           .filter((l) => l.productoId === prod.id)
@@ -586,6 +625,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               type="button"
               variant="primary"
               disabled={
+                !menuDefinido ||
                 registrando ||
                 lineasBorrador.length === 0 ||
                 !mesaSeleccionada ||
@@ -634,6 +674,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           type="button"
           variant="primary"
           disabled={
+            !menuDefinido ||
             registrando ||
             lineasBorrador.length === 0 ||
             !mesaSeleccionada ||

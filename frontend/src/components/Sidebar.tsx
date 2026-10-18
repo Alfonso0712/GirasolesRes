@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   Home,
   LayoutGrid,
-  ClipboardList,
-  ShoppingBag,
   ReceiptText,
   ChefHat,
   DollarSign,
@@ -85,18 +83,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             label: 'Mesas y Salón',
             icon: LayoutGrid,
             roles: ['Administrador', 'Mozo', 'Cajero'],
-          },
-          {
-            id: 'pedidos-mesa',
-            label: 'Tomar Pedido',
-            icon: ClipboardList,
-            roles: ['Administrador', 'Mozo'],
-          },
-          {
-            id: 'pedidos-llevar',
-            label: 'Pedido para Llevar',
-            icon: ShoppingBag,
-            roles: ['Administrador', 'Cajero'],
           },
           {
             id: 'pedidos',
@@ -210,6 +196,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
       .filter((grupo) => grupo.items.length > 0);
   }, [gruposConfig, rol]);
 
+  // Determina si un elemento o ruta secundaria (ej: pedidos-mesa, pedidos-llevar) activa la opción de Mesas
+  const isItemActive = (itemId: string, activePage: string) => {
+    if (activePage === itemId) return true;
+    if (
+      itemId === 'mesas' &&
+      (activePage === 'pedidos-mesa' ||
+        activePage === 'pedidos-llevar' ||
+        activePage === 'pedido-mesa' ||
+        activePage === 'pedido-llevar')
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   // Estado de apertura de acordeones (ISO 9241 - Eficiencia operativa):
   // - Roles con pocas opciones (Cajero, Mozo, Cocinero): grupos expandidos por defecto para ahorrar clics en hora pico.
   // - Administrador: modo acordeón compacto (inicia abierto el grupo activo para caber sin scroll en 768px).
@@ -229,7 +230,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       'carta-menu': false,
       'administracion': false,
     };
-    const activeGroup = gruposConfig.find((g) => g.items.some((i) => i.id === paginaActiva));
+    const activeGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i.id, paginaActiva)));
     if (activeGroup) {
       initial[activeGroup.id] = true;
     }
@@ -239,7 +240,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Auto-apertura inteligente cuando cambia la ruta activa
   useEffect(() => {
     if (!paginaActiva || paginaActiva === 'inicio') return;
-    const parentGroup = gruposConfig.find((g) => g.items.some((i) => i.id === paginaActiva));
+    const parentGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i.id, paginaActiva)));
     if (parentGroup) {
       setGruposAbiertos((prev) => ({
         ...prev,
@@ -312,7 +313,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* 4 Secciones Jerárquicas Desplegables (Acordeón) */}
           {gruposVisibles.map((grupo) => {
             const isOpen = Boolean(gruposAbiertos[grupo.id]);
-            const tieneItemActivo = grupo.items.some((i) => i.id === paginaActiva);
+            const tieneItemActivo = grupo.items.some((i) => isItemActive(i.id, paginaActiva));
 
             return (
               <div key={grupo.id} className="pt-1.5 first:pt-0">
@@ -360,7 +361,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <div className="pl-3 border-l border-white/10 ml-3.5 space-y-1 mt-1 mb-2 animate-in fade-in duration-150">
                     {grupo.items.map((item) => {
                       const Icon = item.icon;
-                      const esActivo = paginaActiva === item.id;
+                      const esActivo = isItemActive(item.id, paginaActiva);
                       return (
                         <button
                           key={item.id}

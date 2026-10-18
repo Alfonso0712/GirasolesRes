@@ -243,5 +243,6 @@ public static class MensajesCatalogo
     public const string MSG_210 = "No se pudo cargar el panel. Intente nuevamente.";
     public const string MSG_211 = "Abra la caja primero.";
     public const string MSG_212 = "No tiene pedidos listos por recoger.";
+    public const string MSG_MENU_NO_DEFINIDO = "No se puede registrar el pedido: el menú del día aún no ha sido definido.";
 }
 
