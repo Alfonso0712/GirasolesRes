@@ -8,6 +8,7 @@ import { PedidoMesaPage } from './PedidoMesaPage';
 import { PedidoLlevarPage } from './PedidoLlevarPage';
 import { PedidosPage } from './PedidosPage';
 import { CocinaPage } from './CocinaPage';
+import { CobrosPage } from './CobrosPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
@@ -240,6 +241,9 @@ export const HomePage: React.FC<HomePageProps> = ({
             setMesaSeleccionadaParaPedido(mesaId);
             setPaginaActiva('pedidos-mesa');
           }}
+          onNavigateToCobro={() => {
+            setPaginaActiva('caja');
+          }}
         />
       ) : paginaActiva === 'pedidos-mesa' && (session.rol === 'Administrador' || session.rol === 'Mozo') ? (
         <PedidoMesaPage
@@ -267,6 +271,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           onNavigateToCobro={() => {
             setPaginaActiva('caja');
           }}
+        />
+      ) : paginaActiva === 'caja' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
+        <CobrosPage
+          session={session}
+          onLogout={onLogout}
         />
       ) : paginaActiva === 'cocina' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
         <CocinaPage

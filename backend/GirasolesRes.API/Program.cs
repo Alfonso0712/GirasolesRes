@@ -6,7 +6,7 @@ using GirasolesRes.Infrastructure;
 using GirasolesRes.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "GirasolesRes API",
         Version = "v1",
-        Description = "API REST del Sistema de Gestión de Restaurante Girasoles (Clean Architecture, ASP.NET Core 10)"
+        Description = "API REST del Sistema de Gestión de Restaurante Girasoles (Clean Architecture)"
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -35,15 +35,21 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Ingrese su token JWT (sin escribir Bearer, Swagger lo antepone automáticamente)."
     });
 
-    options.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecuritySchemeReference("Bearer", doc, null),
-            new List<string>()
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
         }
     });
 });
-builder.Services.AddOpenApi();
 
 // Configuración de JWT
 var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "GirasolesRestauranteSuperClaveSecretaSegura2026!@#$%^";
@@ -140,7 +146,6 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "GirasolesRes API v1");
         c.RoutePrefix = "swagger";
     });
-    app.MapOpenApi();
 }
 
 // RNF-09: Las pantallas protegidas no se guardan en la caché del navegador

@@ -23,9 +23,10 @@ interface MesasPageProps {
     message: string;
   }) => void;
   onNavigateToPedido?: (mesaId: string) => void;
+  onNavigateToCobro?: (mesaId?: string) => void;
 }
 
-export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavigateToPedido }) => {
+export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavigateToPedido, onNavigateToCobro }) => {
   const {
     mesas,
     todasLasMesas,
@@ -72,6 +73,12 @@ export const MesasPage: React.FC<MesasPageProps> = ({ session, onLogout, onNavig
     if (accion === 'REGISTRAR PEDIDO' || accion === 'AGREGAR PRODUCTOS') {
       if (onNavigateToPedido) {
         onNavigateToPedido(mesa.id);
+        return;
+      }
+    }
+    if (accion === 'COBRAR') {
+      if (onNavigateToCobro) {
+        onNavigateToCobro(mesa.id);
         return;
       }
     }

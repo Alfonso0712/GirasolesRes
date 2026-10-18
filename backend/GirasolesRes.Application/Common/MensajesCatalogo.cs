@@ -154,4 +154,25 @@ public static class MensajesCatalogo
     public const string MSG_132 = "Sin conexión: las comandas pueden estar desactualizadas (datos de hace {0} s).";
     public const string MSG_133 = "Nueva comanda N.º {0} ({1}).";
     public const string MSG_134 = "No se puede deshacer: el pedido ya fue pagado, anulado o pasó el tiempo permitido.";
+
+    // CUS-11: Cobro de pedidos (Complemento CUS11)
+    public const string MSG_135 = "Debe abrir la caja antes de cobrar.";
+    public const string MSG_136 = "No hay pedidos pendientes de cobro.";
+    public const string MSG_137 = "El pedido N.º {0} no puede cobrarse: ya fue pagado o anulado.";
+    public const string MSG_138 = "El pedido N.º {0} aún no está listo ({1}). ¿Desea cobrarlo de todos modos?";
+    public const string MSG_139 = "El total del pedido cambió a S/ {0:F2}. Revise el detalle antes de cobrar.";
+    public const string MSG_140 = "Seleccione el método de pago.";
+    public const string MSG_141 = "Ingrese el monto recibido.";
+    public const string MSG_142 = "Ingrese un monto válido, con hasta 2 decimales (ejemplo: 20.00).";
+    public const string MSG_143 = "El monto recibido es menor al total. Falta S/ {0:F2}.";
+    public const string MSG_144 = "Confirme que recibió el pago por Yape.";
+    public const string MSG_145 = "Vuelto a entregar: S/ {0:F2}";
+    public const string MSG_146 = "Cobro registrado. Comprobante {0} por S/ {1:F2}.";
+    public const string MSG_147 = "No se pudo registrar el cobro. El pedido sigue pendiente de cobro; intente nuevamente.";
+    public const string MSG_148 = "No se pudo generar la vista del comprobante. La venta está registrada; regenérelo desde Ventas.";
+    public const string MSG_149 = "No se encontró una impresora disponible. Descargue el comprobante.";
+    public const string MSG_150 = "¿Cancelar el cobro? El pedido seguirá pendiente de cobro.";
+    public const string MSG_151 = "La referencia de Yape no puede superar los 20 caracteres.";
+    public const string MSG_152 = "El monto recibido no puede superar S/ 9,999.99.";
 }
+

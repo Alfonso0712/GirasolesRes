@@ -22,6 +22,10 @@ public class GirasolesDbContext : DbContext
     public DbSet<Comanda> Comandas => Set<Comanda>();
     public DbSet<DetalleComanda> DetallesComanda => Set<DetalleComanda>();
     public DbSet<AuditoriaPedido> AuditoriasPedido => Set<AuditoriaPedido>();
+    public DbSet<Caja> Cajas => Set<Caja>();
+    public DbSet<Venta> Ventas => Set<Venta>();
+    public DbSet<Comprobante> Comprobantes => Set<Comprobante>();
+    public DbSet<AuditoriaCobro> AuditoriasCobro => Set<AuditoriaCobro>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -315,5 +319,104 @@ public class GirasolesDbContext : DbContext
             entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
             entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
         });
+
+        modelBuilder.Entity<Caja>(entity =>
+        {
+            entity.ToTable("cajas");
+            entity.HasKey(c => c.Id_Caja);
+            entity.Property(c => c.Id_Caja).HasColumnName("id_caja");
+            entity.Property(c => c.Id_Usuario).HasColumnName("id_usuario").IsRequired();
+            entity.Property(c => c.Caj_MontoApertura).HasColumnName("caj_monto_apertura").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(c => c.Caj_MontoCierre).HasColumnName("caj_monto_cierre").HasColumnType("numeric(8,2)");
+            entity.Property(c => c.Caj_FechaAperturaUtc).HasColumnName("caj_fec_apertura_utc").IsRequired();
+            entity.Property(c => c.Caj_FechaCierreUtc).HasColumnName("caj_fec_cierre_utc");
+            entity.Property(c => c.Caj_Estado).HasColumnName("caj_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(c => c.Caj_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+            entity.Property(c => c.Caj_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+
+            entity.HasOne(c => c.Caj_Usuario)
+                  .WithMany()
+                  .HasForeignKey(c => c.Id_Usuario)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Venta>(entity =>
+        {
+            entity.ToTable("ventas");
+            entity.HasKey(v => v.Id_Venta);
+            entity.Property(v => v.Id_Venta).HasColumnName("id_venta");
+            entity.Property(v => v.Id_Pedido).HasColumnName("id_pedido").IsRequired();
+            entity.Property(v => v.Id_Usuario).HasColumnName("id_usuario").IsRequired();
+            entity.Property(v => v.Id_Caja).HasColumnName("id_caja").IsRequired();
+            entity.Property(v => v.Ven_Total).HasColumnName("ven_total").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(v => v.Ven_MetodoPago).HasColumnName("ven_metodo_pago").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(v => v.Ven_MontoRecibido).HasColumnName("ven_monto_recibido").HasColumnType("numeric(8,2)");
+            entity.Property(v => v.Ven_Vuelto).HasColumnName("ven_vuelto").HasColumnType("numeric(8,2)");
+            entity.Property(v => v.Ven_YapeConfirmado).HasColumnName("ven_yape_confirmado").IsRequired().HasDefaultValue(false);
+            entity.Property(v => v.Ven_YapeReferencia).HasColumnName("ven_yape_referencia").HasMaxLength(20);
+            entity.Property(v => v.Ven_SolicitudId).HasColumnName("ven_solicitud_id").HasMaxLength(100).IsRequired();
+            entity.HasIndex(v => v.Ven_SolicitudId).IsUnique();
+            entity.Property(v => v.Ven_Estado).HasColumnName("ven_estado").HasConversion<string>().HasMaxLength(20).IsRequired().HasDefaultValue(Domain.Enums.EstadoVenta.Vigente);
+            entity.Property(v => v.Ven_FechaHoraUtc).HasColumnName("ven_fecha_hora_utc").IsRequired();
+            entity.Property(v => v.Ven_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasOne(v => v.Ven_Pedido)
+                  .WithMany()
+                  .HasForeignKey(v => v.Id_Pedido)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(v => v.Ven_Usuario)
+                  .WithMany()
+                  .HasForeignKey(v => v.Id_Usuario)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(v => v.Ven_Caja)
+                  .WithMany()
+                  .HasForeignKey(v => v.Id_Caja)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(v => v.Ven_Comprobante)
+                  .WithOne(c => c.Com_Venta)
+                  .HasForeignKey<Comprobante>(c => c.Id_Venta)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Comprobante>(entity =>
+        {
+            entity.ToTable("comprobantes");
+            entity.HasKey(c => c.Id_Comprobante);
+            entity.Property(c => c.Id_Comprobante).HasColumnName("id_comprobante");
+            entity.Property(c => c.Id_Venta).HasColumnName("id_venta").IsRequired();
+            entity.Property(c => c.Com_Tipo).HasColumnName("com_tipo").HasMaxLength(20).IsRequired();
+            entity.Property(c => c.Com_Serie).HasColumnName("com_serie").HasMaxLength(10).IsRequired();
+            entity.Property(c => c.Com_Numero).HasColumnName("com_numero").IsRequired();
+            entity.Property(c => c.Com_Total).HasColumnName("com_total").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(c => c.Com_MetodoPago).HasColumnName("com_metodo_pago").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(c => c.Com_FechaHoraUtc).HasColumnName("com_fec_hora_utc").IsRequired();
+            entity.Property(c => c.Com_Leyenda).HasColumnName("com_leyenda").HasMaxLength(100).IsRequired();
+            entity.Property(c => c.Com_Estado).HasColumnName("com_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(c => c.Com_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasIndex(c => new { c.Com_Serie, c.Com_Numero }).IsUnique();
+        });
+
+        modelBuilder.Entity<AuditoriaCobro>(entity =>
+        {
+            entity.ToTable("auditorias_cobro");
+            entity.HasKey(a => a.Id_Auditoria);
+            entity.Property(a => a.Id_Auditoria).HasColumnName("id_auditoria");
+            entity.Property(a => a.Aud_Usuario).HasColumnName("nom_cajero").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_Accion).HasColumnName("accion_realizada").HasMaxLength(50).IsRequired();
+            entity.Property(a => a.Aud_NumeroPedido).HasColumnName("num_pedido").IsRequired();
+            entity.Property(a => a.Aud_Comprobante).HasColumnName("comprobante").HasMaxLength(30).IsRequired();
+            entity.Property(a => a.Aud_MedioPago).HasColumnName("medio_pago").HasMaxLength(20).IsRequired();
+            entity.Property(a => a.Aud_Total).HasColumnName("total").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(a => a.Aud_MontoRecibido).HasColumnName("monto_recibido").HasColumnType("numeric(8,2)");
+            entity.Property(a => a.Aud_Vuelto).HasColumnName("vuelto").HasColumnType("numeric(8,2)");
+            entity.Property(a => a.Aud_Detalle).HasColumnName("detalle").HasMaxLength(500);
+            entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
+            entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+        });
     }
 }
+

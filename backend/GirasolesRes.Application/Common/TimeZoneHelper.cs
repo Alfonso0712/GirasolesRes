@@ -40,6 +40,11 @@ public static class TimeZoneHelper
         return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, LimaTimeZoneLazy.Value);
     }
 
+    public static DateTime ToPeruTime(DateTime utcDateTime)
+    {
+        return ConvertirUtcALocal(utcDateTime);
+    }
+
     public static DateTime ObtenerFechaHoraActualLima()
     {
         return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, LimaTimeZoneLazy.Value);

@@ -33,6 +33,10 @@ public static class DependencyInjection
         services.AddScoped<IMenuDiaRepository, MenuDiaRepository>();
         services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped<IComandaRepository, ComandaRepository>();
+        services.AddScoped<IVentaRepository, VentaRepository>();
+        services.AddScoped<IComprobanteRepository, ComprobanteRepository>();
+        services.AddScoped<ICajaRepository, CajaRepository>();
+        services.AddScoped<IAuditoriaCobroRepository, AuditoriaCobroRepository>();
 
         // Seguridad y Servicios
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();

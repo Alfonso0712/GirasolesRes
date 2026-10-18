@@ -302,6 +302,17 @@ public class PedidoRepository : IPedidoRepository
             p.Ped_Estado != EstadoPedido.Anulado, ct);
     }
 
+    public async Task<IReadOnlyList<Pedido>> ListarPedidosPendientesCobroAsync(CancellationToken ct = default)
+    {
+        return await _context.Pedidos
+            .Include(p => p.Ped_Mesa)
+            .Include(p => p.Ped_Usuario)
+            .Where(p => p.Ped_Estado != EstadoPedido.Pagado && p.Ped_Estado != EstadoPedido.Anulado)
+            .OrderBy(p => p.Ped_Estado == EstadoPedido.Listo ? 0 : 1)
+            .ThenBy(p => p.Ped_FechaHoraUtc)
+            .ToListAsync(ct);
+    }
+
     public async Task RegistrarAuditoriaAsync(AuditoriaPedido auditoria, CancellationToken ct = default)
     {
         await _context.AuditoriasPedido.AddAsync(auditoria, ct);

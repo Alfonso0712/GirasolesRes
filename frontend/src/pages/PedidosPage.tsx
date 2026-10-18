@@ -28,7 +28,8 @@ import {
   X,
   Check,
   ShoppingBag,
-  Utensils
+  Utensils,
+  DollarSign
 } from 'lucide-react';
 
 interface PedidosPageProps {
@@ -42,8 +43,6 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   onLogout,
   onNavigateToCobro
 }) => {
-  void onNavigateToCobro;
-
   // Estado de lista y contadores
   const [pedidos, setPedidos] = useState<PedidoItemDto[]>([]);
   const [resumen, setResumen] = useState<ResumenEstadosDto>({
@@ -661,6 +660,21 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             >
                               <Trash2 className="w-4 h-4 text-rose-600" />
                             </button>
+
+                            {/* Cobrar en Caja: Rol Cajero / Admin */}
+                            {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
+                              !esAnulado &&
+                              p.estado.toLowerCase() !== 'pagado' && (
+                                <button
+                                  type="button"
+                                  onClick={() => onNavigateToCobro?.(p.id)}
+                                  className="w-8 h-8 rounded-lg border border-transparent bg-[#D35400] hover:bg-[#B84600] text-white shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+                                  title="Cobrar pedido en caja"
+                                  aria-label={`Cobrar pedido #${p.numero}`}
+                                >
+                                  <DollarSign className="w-4 h-4" />
+                                </button>
+                              )}
                           </div>
                         </td>
                       </tr>
@@ -752,6 +766,21 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         <Trash2 className="w-4 h-4 text-rose-600" />
                         <span>Anular</span>
                       </button>
+
+                      {/* Cobrar en Móvil */}
+                      {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
+                        !esAnulado &&
+                        p.estado.toLowerCase() !== 'pagado' && (
+                          <button
+                            type="button"
+                            onClick={() => onNavigateToCobro?.(p.id)}
+                            className="py-2.5 px-3 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs cursor-pointer"
+                            title="Cobrar pedido en caja"
+                          >
+                            <DollarSign className="w-4 h-4" />
+                            <span>Cobrar</span>
+                          </button>
+                        )}
                     </div>
                   </div>
                 );
