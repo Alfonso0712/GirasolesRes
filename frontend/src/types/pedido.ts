@@ -87,3 +87,100 @@ export interface LineaBorrador {
   subtotal: number;
   agotado?: boolean;
 }
+
+// CUS09: Tipos para Gestión de Pedidos
+export interface PedidoItemDto {
+  id: string;
+  numero: number;
+  tipo: string;
+  mesa: string | null;
+  referencia: string | null;
+  hora: string;
+  total: number;
+  estado: string;
+  registradoPor: string;
+  usuarioId: string;
+  esMio: boolean;
+  puedeModificar: boolean;
+  puedeAnular: boolean;
+  motivoDeshabilitado: string | null;
+}
+
+export interface ResumenEstadosDto {
+  pendiente: number;
+  enPreparacion: number;
+  listo: number;
+  pagado: number;
+  anulado: number;
+}
+
+export interface ListarPedidosResponseDto {
+  items: PedidoItemDto[];
+  total: number;
+  resumen: ResumenEstadosDto;
+}
+
+export interface LineaDetalleDto {
+  detalleId: string;
+  productoId: string;
+  nombre: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+  observacion?: string;
+}
+
+export interface ComandaDetalleDto {
+  comandaId: string;
+  numero: number;
+  estado: string;
+  esAdicional: boolean;
+  modificada: boolean;
+  fechaHora: string;
+}
+
+export interface DetallePedidoCompletoDto {
+  id: string;
+  numero: number;
+  tipo: string;
+  mesa: string | null;
+  referencia: string | null;
+  hora: string;
+  total: number;
+  estado: string;
+  registradoPor: string;
+  usuarioId: string;
+  motivoAnulacion: string | null;
+  lineas: LineaDetalleDto[];
+  comandas: ComandaDetalleDto[];
+}
+
+export interface ModificarPedidoRequest {
+  lineas: LineaPedidoRequest[];
+}
+
+export interface AnularPedidoRequest {
+  solicitudId: string;
+  motivo: string;
+}
+
+export interface AvisoComandaDto {
+  id: string;
+  pedidoId: string;
+  numero: number;
+  tipo: string;
+  mesa: string | null;
+  referencia: string | null;
+  hora: string;
+}
+
+export interface ListarPedidosFiltros {
+  fecha?: string;
+  estado?: string;
+  tipo?: string;
+  mesaId?: string;
+  soloMios?: boolean;
+  pagina?: number;
+  tamano?: number;
+}
+

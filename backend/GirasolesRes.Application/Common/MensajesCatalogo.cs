@@ -127,4 +127,18 @@ public static class MensajesCatalogo
     public const string MSG_109 = "La referencia no puede superar los 30 caracteres.";
     public const string MSG_110 = "Pedido para llevar N.º {0} registrado. La comanda se envió a cocina.";
     public const string MSG_111 = "No se pudo registrar el pedido para llevar. Su pedido sigue en pantalla; intente nuevamente.";
+
+    // CUS-09: Gestión de pedidos (Complemento CUS09)
+    public const string MSG_112 = "No se encontraron pedidos con ese criterio. Pruebe con otro filtro.";
+    public const string MSG_113 = "Todavía no hay pedidos hoy.";
+    public const string MSG_114 = "No se pudieron cargar los pedidos. Intente nuevamente.";
+    public const string MSG_115 = "El pedido ya está en preparación y no puede modificarse. Avise a cocina.";
+    public const string MSG_116 = "Solo puede modificar o anular los pedidos que usted registró.";
+    public const string MSG_117 = "Indique el motivo de la anulación (entre 5 y 100 caracteres).";
+    public const string MSG_118 = "¿Anular el pedido N.º {0} ({1})? No se podrá deshacer y quedará registrado con su motivo.";
+    public const string MSG_119 = "Pedido N.º {0} modificado. Cocina verá la comanda actualizada.";
+    public const string MSG_120 = "Pedido N.º {0} anulado.";
+    public const string MSG_121 = "Para quitar todos los productos, anule el pedido.";
+    public const string MSG_122 = "No se pudo actualizar el pedido. El pedido original no cambió; intente nuevamente.";
+    public const string MSG_123 = "Pedido N.º {0} listo para recoger: {1}.";
 }

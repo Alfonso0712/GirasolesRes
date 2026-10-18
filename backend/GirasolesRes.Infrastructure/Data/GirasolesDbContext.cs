@@ -197,6 +197,7 @@ public class GirasolesDbContext : DbContext
             entity.Property(p => p.Ped_Estado).HasColumnName("ped_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
             entity.Property(p => p.Ped_Total).HasColumnName("ped_total").HasColumnType("numeric(8,2)").IsRequired();
             entity.Property(p => p.Ped_Notas).HasColumnName("ped_notas").HasMaxLength(250);
+            entity.Property(p => p.Ped_MotivoAnulacion).HasColumnName("ped_motivo_anulacion").HasMaxLength(100);
             entity.Property(p => p.Id_Mesa).HasColumnName("id_mesa");
             entity.Property(p => p.Id_Usuario).HasColumnName("id_usuario").IsRequired();
             entity.Property(p => p.Ped_SolicitudId).HasColumnName("ped_solicitud_id").HasMaxLength(100).IsRequired();
@@ -256,6 +257,10 @@ public class GirasolesDbContext : DbContext
             entity.Property(c => c.Cmd_FechaHoraUtc).HasColumnName("cmd_fecha_hora_utc").IsRequired();
             entity.Property(c => c.Cmd_Estado).HasColumnName("cmd_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
             entity.Property(c => c.Cmd_EsAdicional).HasColumnName("cmd_es_adicional").IsRequired();
+            entity.Property(c => c.Cmd_Modificada).HasColumnName("cmd_modificada").IsRequired().HasDefaultValue(false);
+            entity.Property(c => c.Cmd_AvisoVisto).HasColumnName("cmd_aviso_visto").IsRequired().HasDefaultValue(false);
+            entity.Property(c => c.Cmd_FechaAvisoVistoUtc).HasColumnName("cmd_fec_aviso_visto_utc");
+            entity.Property(c => c.Cmd_UsuarioAvisoVisto).HasColumnName("cmd_nom_usuario_aviso_visto").HasMaxLength(50);
             entity.Property(c => c.Cmd_NombreMesa).HasColumnName("cmd_nombre_mesa").HasMaxLength(50).IsRequired();
             entity.Property(c => c.Cmd_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
 

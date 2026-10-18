@@ -7,12 +7,16 @@ import { ProductsPage } from './ProductsPage';
 import { MenuDiaPage } from './MenuDiaPage';
 import { PedidoMesaPage } from './PedidoMesaPage';
 import { PedidoLlevarPage } from './PedidoLlevarPage';
+import { PedidosPage } from './PedidosPage';
 import { LogoutModal } from '../components/LogoutModal';
 import { InactivityModal } from '../components/InactivityModal';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
+import { AvisoComandaModal } from '../components/AvisoComandaModal';
 import { logoutService, renovarTokenService } from '../services/authService';
-import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check, UtensilsCrossed, ClipboardList, ShoppingBag } from 'lucide-react';
+import { pedidoService } from '../services/pedidoService';
+import { Users, DollarSign, Utensils, ChefHat, CheckCircle2, Check, UtensilsCrossed, ClipboardList, ShoppingBag, ReceiptText } from 'lucide-react';
 import type { UserSession } from '../types/auth';
+import type { AvisoComandaDto } from '../types/pedido';
 
 interface HomePageProps {
   session: UserSession;
@@ -56,6 +60,41 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // RV-28: Mensaje flotante de confirmación (Toast) durante 4 segundos
   const [toastMensaje, setToastMensaje] = useState<string | null>(null);
+
+  // CUS09.3: Avisos de comandas listas para recoger (HU27 / RF-27 / RN-71)
+  const [avisosPendientes, setAvisosPendientes] = useState<AvisoComandaDto[]>([]);
+  const [cerrandoAviso, setCerrandoAviso] = useState(false);
+
+  // Sondeo cada 15 segundos para avisos de pedidos listos
+  const consultarAvisos = useCallback(async () => {
+    if (session.rol !== 'Mozo' && session.rol !== 'Cajero' && session.rol !== 'Administrador') return;
+    try {
+      const data = await pedidoService.obtenerAvisosPendientes(session.token);
+      if (Array.isArray(data)) {
+        setAvisosPendientes(data);
+      }
+    } catch (err) {
+      console.warn('Error al consultar avisos de pedidos listos:', err);
+    }
+  }, [session.rol, session.token]);
+
+  useEffect(() => {
+    consultarAvisos();
+    const interval = setInterval(consultarAvisos, 15000);
+    return () => clearInterval(interval);
+  }, [consultarAvisos]);
+
+  const handleCerrarAviso = async (comandaId: string) => {
+    setCerrandoAviso(true);
+    try {
+      await pedidoService.marcarAvisoVisto(comandaId, session.token);
+      setAvisosPendientes((prev) => prev.filter((a) => a.id !== comandaId));
+    } catch (err) {
+      console.error('Error al marcar aviso visto:', err);
+    } finally {
+      setCerrandoAviso(false);
+    }
+  };
 
   // Referencia para temporizador de inactividad
   const ultimaActividadRef = useRef<number>(Date.now());
@@ -169,6 +208,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       onLogout={() => setMostrarModalLogout(true)}
       onCambiarPassword={() => setMostrarModalPassword(true)}
       paginaActiva={paginaActiva}
+      pedidosListosCount={avisosPendientes.length}
       onSelectPagina={(p) => {
         if (p !== 'pedidos-mesa') {
           setMesaSeleccionadaParaPedido(null);
@@ -210,6 +250,14 @@ export const HomePage: React.FC<HomePageProps> = ({
           session={session}
           onLogout={onLogout}
           onVolver={() => setPaginaActiva('inicio')}
+          onNavigateToCobro={() => {
+            setPaginaActiva('caja');
+          }}
+        />
+      ) : paginaActiva === 'pedidos' && (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') ? (
+        <PedidosPage
+          session={session}
+          onLogout={onLogout}
           onNavigateToCobro={() => {
             setPaginaActiva('caja');
           }}
@@ -338,6 +386,28 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
               )}
 
+              {(session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') && (
+                <div
+                  onClick={() => setPaginaActiva('pedidos')}
+                  className="p-6 bg-white border border-neutral-200/80 rounded-2xl hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                    <ReceiptText className="w-5 h-5" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-neutral-800 font-serif">Gestión de Pedidos</h3>
+                    {avisosPendientes.length > 0 && (
+                      <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
+                        {avisosPendientes.length} listos
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Monitoreo de pedidos del día, estados, modificaciones, anulaciones y avisos de cocina (CUS09).
+                  </p>
+                </div>
+              )}
+
               {(session.rol === 'Administrador' || session.rol === 'Cocinero') && (
                 <div
                   onClick={() => setPaginaActiva('cocina')}
@@ -379,6 +449,13 @@ export const HomePage: React.FC<HomePageProps> = ({
         token={session.token}
         onSuccess={handlePasswordSuccess}
         onForceLogoutDueToFailedAttempts={handleForceLogoutDueToFailedAttempts}
+      />
+
+      {/* CUS09.3: Modal emergente de aviso de comanda lista (HU27 / RF-27 / RN-71 / RV-83) */}
+      <AvisoComandaModal
+        aviso={avisosPendientes.length > 0 ? avisosPendientes[0] : null}
+        onCerrar={handleCerrarAviso}
+        cargando={cerrandoAviso}
       />
 
       {/* Notificación flotante de confirmación (MSG-47 / RV-28 - 4 segundos) */}

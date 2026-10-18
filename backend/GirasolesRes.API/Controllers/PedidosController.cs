@@ -149,7 +149,38 @@ public class PedidosController : ControllerBase
     }
 
     /// <summary>
-    /// Consulta el detalle completo de un pedido por ID. Roles: Administrador, Cajero, Mozo.
+    /// CUS09.1: Listar pedidos con su estado y contadores de resumen (Vistas 9.1 y 9.2).
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> ListarPedidos(
+        [FromQuery] ListarPedidosQueryDto query,
+        CancellationToken cancellationToken)
+    {
+        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
+        {
+            return Unauthorized(new { message = "Token inválido o expirado." });
+        }
+
+        try
+        {
+            var resultado = await _pedidoService.ListarPedidosAsync(query, usuarioId, rol, cancellationToken);
+            return Ok(resultado);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al listar pedidos.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_114 });
+        }
+    }
+
+    /// <summary>
+    /// CUS09.1: Consulta el detalle completo de un pedido por ID (Vista 9.2). Roles: Administrador, Cajero, Mozo.
     /// </summary>
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ObtenerPorId(Guid id, CancellationToken cancellationToken)
@@ -162,13 +193,143 @@ public class PedidosController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
 
-        var pedido = await _pedidoService.ObtenerPedidoPorIdAsync(id, cancellationToken);
+        var pedido = await _pedidoService.ObtenerDetalleCompletoAsync(id, cancellationToken);
         if (pedido == null)
         {
             return NotFound(new { message = "Pedido no encontrado." });
         }
 
         return Ok(pedido);
+    }
+
+    /// <summary>
+    /// CUS09.2: Modificar pedido (Vista 9.3). Roles: Mozo y Cajero (solo creador, todas comandas pendientes).
+    /// </summary>
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> ModificarPedido(
+        Guid id,
+        [FromBody] ModificarPedidoRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
+        }
+
+        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
+        {
+            return Unauthorized(new { message = "Token inválido o expirado." });
+        }
+
+        var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Usuario";
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        try
+        {
+            var total = await _pedidoService.ModificarPedidoAsync(
+                id,
+                request,
+                usuarioId,
+                rol,
+                nombreUsuario,
+                ip,
+                cancellationToken);
+
+            return Ok(new { total });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (PedidoConflictException ex)
+        {
+            return Conflict(new
+            {
+                codigo = ex.Codigo,
+                message = ex.Message,
+                productosAgotados = ex.ProductosAgotados
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al modificar pedido {PedidoId}.", id);
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_122 });
+        }
+    }
+
+    /// <summary>
+    /// CUS09.2: Anular pedido (Vista 9.4). Roles: Mozo y Cajero (solo creador, todas comandas pendientes).
+    /// </summary>
+    [HttpPost("{id:guid}/anular")]
+    public async Task<IActionResult> AnularPedido(
+        Guid id,
+        [FromBody] AnularPedidoRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
+        }
+
+        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
+        {
+            return Unauthorized(new { message = "Token inválido o expirado." });
+        }
+
+        var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Usuario";
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        try
+        {
+            await _pedidoService.AnularPedidoAsync(
+                id,
+                request,
+                usuarioId,
+                rol,
+                nombreUsuario,
+                ip,
+                cancellationToken);
+
+            return Ok(new { success = true, message = MensajesCatalogo.MSG_120 });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (PedidoConflictException ex)
+        {
+            return Conflict(new
+            {
+                codigo = ex.Codigo,
+                message = ex.Message,
+                productosAgotados = ex.ProductosAgotados
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al anular pedido {PedidoId}.", id);
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_122 });
+        }
     }
 
     /// <summary>

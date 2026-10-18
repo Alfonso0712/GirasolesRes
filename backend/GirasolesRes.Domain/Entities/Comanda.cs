@@ -12,6 +12,10 @@ public class Comanda
     public DateTime Cmd_FechaHoraUtc { get; private set; }
     public EstadoComanda Cmd_Estado { get; private set; } = EstadoComanda.Pendiente;
     public bool Cmd_EsAdicional { get; private set; } = false;
+    public bool Cmd_Modificada { get; private set; } = false;
+    public bool Cmd_AvisoVisto { get; private set; } = false;
+    public DateTime? Cmd_FechaAvisoVistoUtc { get; private set; }
+    public string? Cmd_UsuarioAvisoVisto { get; private set; }
     public string Cmd_NombreMesa { get; private set; } = string.Empty;
     public DateTime Cmd_FechaCreacionUtc { get; private set; }
 
@@ -45,5 +49,24 @@ public class Comanda
     public void CambiarEstado(EstadoComanda nuevoEstado)
     {
         Cmd_Estado = nuevoEstado;
+    }
+
+    public void MarcarComoModificada()
+    {
+        Cmd_Modificada = true;
+    }
+
+    public void MarcarAvisoVisto(string usuario)
+    {
+        Cmd_AvisoVisto = true;
+        Cmd_FechaAvisoVistoUtc = DateTime.UtcNow;
+        Cmd_UsuarioAvisoVisto = usuario.Trim();
+    }
+
+    public void ReemplazarDetalles(IEnumerable<DetalleComanda> nuevosDetalles)
+    {
+        _cmd_Detalles.Clear();
+        _cmd_Detalles.AddRange(nuevosDetalles);
+        Cmd_Modificada = true;
     }
 }

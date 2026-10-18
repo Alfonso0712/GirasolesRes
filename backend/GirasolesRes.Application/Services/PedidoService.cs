@@ -563,4 +563,433 @@ public class PedidoService : IPedidoService
             lineas
         );
     }
+
+    public async Task<ListarPedidosResponseDto> ListarPedidosAsync(
+        ListarPedidosQueryDto query,
+        Guid usuarioId,
+        string rol,
+        CancellationToken ct = default)
+    {
+        var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
+
+        // RN-63: Solo el Administrador consulta fechas anteriores
+        if (query.Fecha.HasValue && query.Fecha.Value != fechaHoy)
+        {
+            if (!string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException(MensajesCatalogo.MSG_39);
+            }
+        }
+
+        var fechaOperativa = query.Fecha ?? fechaHoy;
+        Guid? usuarioIdFiltro = query.SoloMios ? usuarioId : null;
+
+        var (items, total, pendiente, enPrep, listo, pagado, anulado) = await _pedidoRepository.ListarPaginadoAsync(
+            fechaOperativa,
+            query.Estado,
+            query.Tipo,
+            query.MesaId,
+            usuarioIdFiltro,
+            query.Pagina,
+            query.Tamano,
+            ct);
+
+        var pedidosDto = items.Select(p =>
+        {
+            var esMio = p.Id_Usuario == usuarioId;
+            var estadoEfectivo = ResolverEstadoEfectivo(p).ToString();
+
+            // RN-65 / RV-75: Solo modifica o anula el creador, no pagado ni anulado, y todas comandas pendientes
+            bool todasComandasPendientes = p.Ped_Comandas.Any() &&
+                p.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).All(c => c.Cmd_Estado == EstadoComanda.Pendiente);
+
+            bool esMozoOCajero = string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase);
+
+            bool puedeModificarOAnular = esMozoOCajero &&
+                                         esMio &&
+                                         p.Ped_Estado != EstadoPedido.Pagado &&
+                                         p.Ped_Estado != EstadoPedido.Anulado &&
+                                         todasComandasPendientes;
+
+            string? motivoDeshabilitado = null;
+            if (!puedeModificarOAnular)
+            {
+                if (p.Ped_Estado == EstadoPedido.Pagado || p.Ped_Estado == EstadoPedido.Anulado)
+                {
+                    motivoDeshabilitado = MensajesCatalogo.MSG_104;
+                }
+                else if (!esMio)
+                {
+                    motivoDeshabilitado = MensajesCatalogo.MSG_116;
+                }
+                else if (!todasComandasPendientes)
+                {
+                    motivoDeshabilitado = MensajesCatalogo.MSG_115;
+                }
+                else if (!esMozoOCajero)
+                {
+                    motivoDeshabilitado = MensajesCatalogo.MSG_39;
+                }
+            }
+
+            return new PedidoItemDto(
+                p.Id_Pedido,
+                p.Ped_NumeroDiario,
+                p.Ped_Tipo.ToString(),
+                p.Ped_Mesa?.Mes_Nombre,
+                p.Ped_Tipo == TipoPedido.ParaLlevar ? (p.Ped_Notas ?? "Para llevar") : null,
+                p.Ped_FechaHoraUtc.AddHours(-5).ToString("HH:mm"),
+                p.Ped_Total,
+                estadoEfectivo,
+                p.Ped_Usuario?.Usu_Nombre ?? "Usuario",
+                p.Id_Usuario,
+                esMio,
+                puedeModificarOAnular,
+                puedeModificarOAnular,
+                motivoDeshabilitado
+            );
+        }).ToList();
+
+        var resumen = new ResumenEstadosDto(pendiente, enPrep, listo, pagado, anulado);
+        return new ListarPedidosResponseDto(pedidosDto, total, resumen);
+    }
+
+    public async Task<DetallePedidoCompletoDto?> ObtenerDetalleCompletoAsync(Guid pedidoId, CancellationToken ct = default)
+    {
+        var p = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(pedidoId, ct);
+        if (p == null) return null;
+
+        var lineas = p.Ped_Detalles.Select(d => new LineaDetalleDto(
+            d.Id_Detalle,
+            d.Id_Producto,
+            d.Det_Producto?.Pro_Nombre ?? "Producto",
+            d.Det_Cantidad,
+            d.Det_PrecioUnitario,
+            d.Det_Subtotal,
+            d.Det_Observacion
+        )).ToList();
+
+        var comandas = p.Ped_Comandas.Select(c => new ComandaDetalleDto(
+            c.Id_Comanda,
+            c.Cmd_NumeroDiario,
+            c.Cmd_Estado.ToString(),
+            c.Cmd_EsAdicional,
+            c.Cmd_Modificada,
+            c.Cmd_FechaHoraUtc
+        )).ToList();
+
+        var estadoEfectivo = ResolverEstadoEfectivo(p).ToString();
+
+        return new DetallePedidoCompletoDto(
+            p.Id_Pedido,
+            p.Ped_NumeroDiario,
+            p.Ped_Tipo.ToString(),
+            p.Ped_Mesa?.Mes_Nombre,
+            p.Ped_Tipo == TipoPedido.ParaLlevar ? p.Ped_Notas : null,
+            p.Ped_FechaHoraUtc.AddHours(-5).ToString("HH:mm"),
+            p.Ped_Total,
+            estadoEfectivo,
+            p.Ped_Usuario?.Usu_Nombre ?? "Usuario",
+            p.Id_Usuario,
+            p.Ped_MotivoAnulacion,
+            lineas,
+            comandas
+        );
+    }
+
+    public async Task<decimal> ModificarPedidoAsync(
+        Guid pedidoId,
+        ModificarPedidoRequest request,
+        Guid usuarioId,
+        string rol,
+        string nombreUsuario,
+        string? direccionIp,
+        CancellationToken ct = default)
+    {
+        // RN-65: Solo Mozo o Cajero
+        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new UnauthorizedAccessException(MensajesCatalogo.MSG_39);
+        }
+
+        var pedido = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(pedidoId, ct);
+        if (pedido == null)
+        {
+            throw new KeyNotFoundException("Pedido no encontrado.");
+        }
+
+        // RN-65: Mismo usuario que lo registró
+        if (pedido.Id_Usuario != usuarioId)
+        {
+            throw new UnauthorizedAccessException(MensajesCatalogo.MSG_116);
+        }
+
+        // RN-70: Pagado o anulado no se puede modificar
+        if (pedido.Ped_Estado == EstadoPedido.Pagado || pedido.Ped_Estado == EstadoPedido.Anulado)
+        {
+            throw new PedidoConflictException("pedido_bloqueado", MensajesCatalogo.MSG_104);
+        }
+
+        // RV-75 / RV-80: Revalidar que todas las comandas sigan pendientes
+        var comandasValidas = pedido.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+        if (comandasValidas.Any(c => c.Cmd_Estado != EstadoComanda.Pendiente))
+        {
+            throw new PedidoConflictException("cocina_iniciada", MensajesCatalogo.MSG_115);
+        }
+
+        // RV-78 / MSG-121: Quitar todos los productos obliga a anular
+        if (request.Lineas == null || request.Lineas.Count == 0)
+        {
+            throw new ArgumentException(MensajesCatalogo.MSG_121);
+        }
+
+        // Validación de líneas individuales (RV-78)
+        foreach (var l in request.Lineas)
+        {
+            if (l.Cantidad < 1 || l.Cantidad > 20)
+            {
+                throw new ArgumentOutOfRangeException(nameof(l.Cantidad), MensajesCatalogo.MSG_98);
+            }
+            if (l.Observacion != null && l.Observacion.Trim().Length > 100)
+            {
+                throw new ArgumentException(MensajesCatalogo.MSG_99);
+            }
+        }
+
+        // RN-69: Conservar precios de líneas existentes; productos nuevos toman precio vigente
+        var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
+        var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
+
+        var preciosOriginales = pedido.Ped_Detalles
+            .GroupBy(d => d.Id_Producto)
+            .ToDictionary(g => g.Key, g => g.First().Det_PrecioUnitario);
+
+        var nuevasLineasPedido = new List<DetallePedido>();
+        var nuevosDetallesComanda = new List<DetalleComanda>();
+
+        var comandaPrincipal = pedido.Ped_Comandas.FirstOrDefault(c => !c.Cmd_EsAdicional) ?? pedido.Ped_Comandas.FirstOrDefault();
+        if (comandaPrincipal == null)
+        {
+            throw new InvalidOperationException("El pedido no contiene una comanda asociada.");
+        }
+
+        foreach (var l in request.Lineas)
+        {
+            decimal precioUnitario;
+            string nombreProducto;
+
+            var prod = await _productoRepository.ObtenerPorIdAsync(l.ProductoId, ct);
+            if (prod == null || !prod.Pro_Activo)
+            {
+                throw new PedidoConflictException("producto_inactivo", "Uno de los productos seleccionados no se encuentra activo.");
+            }
+            nombreProducto = prod.Pro_Nombre;
+
+            if (preciosOriginales.TryGetValue(l.ProductoId, out var precioGuardado))
+            {
+                precioUnitario = precioGuardado;
+            }
+            else
+            {
+                // Producto nuevo: validar si está agotado en menú del día (MSG-79)
+                if (menuDia != null)
+                {
+                    var platoMenu = menuDia.Men_Platos.FirstOrDefault(p => p.Id_Producto == l.ProductoId);
+                    if (platoMenu != null && platoMenu.Mdp_Agotado)
+                    {
+                        throw new PedidoConflictException("plato_agotado", string.Format(MensajesCatalogo.MSG_79, prod.Pro_Nombre));
+                    }
+                }
+                precioUnitario = prod.Pro_Precio;
+            }
+
+            var nuevaLinea = new DetallePedido(pedido.Id_Pedido, l.ProductoId, l.Cantidad, precioUnitario, l.Observacion?.Trim());
+            nuevasLineasPedido.Add(nuevaLinea);
+
+            nuevosDetallesComanda.Add(new DetalleComanda(
+                comandaPrincipal.Id_Comanda,
+                l.ProductoId,
+                nombreProducto,
+                l.Cantidad,
+                l.Observacion?.Trim()
+            ));
+        }
+
+        pedido.ModificarLineas(nuevasLineasPedido);
+        comandaPrincipal.ReemplazarDetalles(nuevosDetallesComanda);
+
+        await _pedidoRepository.ActualizarAsync(pedido, ct);
+
+        // Auditoría (RN-73)
+        var auditoria = new AuditoriaPedido(
+            nombreUsuario,
+            "Modificación de pedido",
+            pedido.Ped_Mesa?.Mes_Nombre ?? "Para llevar",
+            pedido.Ped_NumeroDiario,
+            $"Pedido modificado por {nombreUsuario}. Nuevo total: S/ {pedido.Ped_Total:F2}",
+            direccionIp
+        );
+        await _pedidoRepository.RegistrarAuditoriaAsync(auditoria, ct);
+
+        return pedido.Ped_Total;
+    }
+
+    public async Task AnularPedidoAsync(
+        Guid pedidoId,
+        AnularPedidoRequest request,
+        Guid usuarioId,
+        string rol,
+        string nombreUsuario,
+        string? direccionIp,
+        CancellationToken ct = default)
+    {
+        // RN-65: Solo Mozo o Cajero
+        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new UnauthorizedAccessException(MensajesCatalogo.MSG_39);
+        }
+
+        var pedido = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(pedidoId, ct);
+        if (pedido == null)
+        {
+            throw new KeyNotFoundException("Pedido no encontrado.");
+        }
+
+        // RN-65: Mismo usuario que lo registró
+        if (pedido.Id_Usuario != usuarioId)
+        {
+            throw new UnauthorizedAccessException(MensajesCatalogo.MSG_116);
+        }
+
+        // RN-70: Pagado o anulado no se puede modificar ni anular
+        if (pedido.Ped_Estado == EstadoPedido.Pagado || pedido.Ped_Estado == EstadoPedido.Anulado)
+        {
+            throw new PedidoConflictException("pedido_bloqueado", MensajesCatalogo.MSG_104);
+        }
+
+        // RV-75 / RV-80: Revalidar que todas las comandas sigan pendientes
+        var comandasValidas = pedido.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+        if (comandasValidas.Any(c => c.Cmd_Estado != EstadoComanda.Pendiente))
+        {
+            throw new PedidoConflictException("cocina_iniciada", MensajesCatalogo.MSG_115);
+        }
+
+        // RV-76: Motivo obligatorio entre 5 y 100 caracteres
+        var motivo = request.Motivo?.Trim() ?? string.Empty;
+        if (motivo.Length < 5 || motivo.Length > 100)
+        {
+            throw new ArgumentException(MensajesCatalogo.MSG_117);
+        }
+
+        pedido.Anular(motivo);
+
+        // RN-67: Al anular el único pedido abierto de una mesa, la mesa vuelve a Libre
+        if (pedido.Id_Mesa.HasValue)
+        {
+            var tieneOtros = await _pedidoRepository.TieneOtrosPedidosAbiertosEnMesaAsync(pedido.Id_Mesa.Value, pedido.Id_Pedido, ct);
+            if (!tieneOtros)
+            {
+                var mesa = await _mesaRepository.ObtenerPorIdAsync(pedido.Id_Mesa.Value, ct);
+                if (mesa != null && mesa.Mes_Ocupacion == EstadoOcupacionMesa.Ocupada)
+                {
+                    mesa.CambiarOcupacion(EstadoOcupacionMesa.Libre);
+                    await _mesaRepository.ActualizarAsync(mesa, ct);
+                }
+            }
+        }
+
+        await _pedidoRepository.ActualizarAsync(pedido, ct);
+
+        // Auditoría (RN-73)
+        var auditoria = new AuditoriaPedido(
+            nombreUsuario,
+            "Anulación de pedido",
+            pedido.Ped_Mesa?.Mes_Nombre ?? "Para llevar",
+            pedido.Ped_NumeroDiario,
+            $"Pedido anulado por {nombreUsuario}. Motivo: {motivo}",
+            direccionIp
+        );
+        await _pedidoRepository.RegistrarAuditoriaAsync(auditoria, ct);
+    }
+
+    public async Task<IReadOnlyList<AvisoComandaDto>> ObtenerAvisosPendientesAsync(
+        Guid usuarioId,
+        string rol,
+        CancellationToken ct = default)
+    {
+        var esMozo = string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase);
+        var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
+        var comandas = await _pedidoRepository.ObtenerAvisosPendientesAsync(fechaOperativa, usuarioId, esMozo, ct);
+
+        return comandas.Select(c => new AvisoComandaDto(
+            c.Id_Comanda,
+            c.Id_Pedido,
+            c.Cmd_Pedido?.Ped_NumeroDiario ?? c.Cmd_NumeroDiario,
+            c.Cmd_Pedido?.Ped_Tipo.ToString() ?? "Mesa",
+            c.Cmd_Pedido?.Ped_Mesa?.Mes_Nombre ?? c.Cmd_NombreMesa,
+            c.Cmd_Pedido?.Ped_Notas,
+            c.Cmd_FechaHoraUtc.AddHours(-5).ToString("HH:mm")
+        )).ToList();
+    }
+
+    public async Task MarcarAvisoVistoAsync(
+        Guid comandaId,
+        Guid usuarioId,
+        string nombreUsuario,
+        string? direccionIp,
+        CancellationToken ct = default)
+    {
+        var comanda = await _pedidoRepository.ObtenerComandaPorIdAsync(comandaId, ct);
+        if (comanda == null)
+        {
+            throw new KeyNotFoundException("Comanda no encontrada.");
+        }
+
+        comanda.MarcarAvisoVisto(nombreUsuario);
+        await _pedidoRepository.ActualizarComandaAsync(comanda, ct);
+
+        var auditoria = new AuditoriaPedido(
+            nombreUsuario,
+            "Aviso de comanda visto",
+            comanda.Cmd_NombreMesa,
+            comanda.Cmd_Pedido?.Ped_NumeroDiario ?? comanda.Cmd_NumeroDiario,
+            $"Aviso de comanda lista visto y cerrado por {nombreUsuario}.",
+            direccionIp
+        );
+        await _pedidoRepository.RegistrarAuditoriaAsync(auditoria, ct);
+    }
+
+    private static EstadoPedido ResolverEstadoEfectivo(Pedido p)
+    {
+        if (p.Ped_Estado == EstadoPedido.Pagado || p.Ped_Estado == EstadoPedido.Anulado)
+        {
+            return p.Ped_Estado;
+        }
+
+        var comandasValidas = p.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+        if (!comandasValidas.Any())
+        {
+            return p.Ped_Estado;
+        }
+
+        if (comandasValidas.Any(c => c.Cmd_Estado == EstadoComanda.EnPreparacion))
+        {
+            return EstadoPedido.EnPreparacion;
+        }
+
+        if (comandasValidas.Any(c => c.Cmd_Estado == EstadoComanda.Pendiente))
+        {
+            return EstadoPedido.Pendiente;
+        }
+
+        if (comandasValidas.All(c => c.Cmd_Estado == EstadoComanda.Lista))
+        {
+            return EstadoPedido.Listo;
+        }
+
+        return p.Ped_Estado;
+    }
 }

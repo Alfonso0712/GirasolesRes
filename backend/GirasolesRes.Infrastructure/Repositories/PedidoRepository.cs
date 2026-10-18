@@ -141,6 +141,167 @@ public class PedidoRepository : IPedidoRepository
         await _context.SaveChangesAsync(ct);
     }
 
+    public async Task<(IReadOnlyList<Pedido> Items, int Total, int Pendiente, int EnPreparacion, int Listo, int Pagado, int Anulado)> ListarPaginadoAsync(
+        DateOnly fechaOperativa,
+        string? estado,
+        string? tipo,
+        Guid? mesaId,
+        Guid? usuarioIdFiltro,
+        int pagina,
+        int tamano,
+        CancellationToken ct = default)
+    {
+        var baseQuery = _context.Pedidos
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Mesa)
+            .Include(p => p.Ped_Usuario)
+            .Include(p => p.Ped_Comandas)
+            .Where(p => p.Ped_FechaOperativa == fechaOperativa);
+
+        if (usuarioIdFiltro.HasValue)
+        {
+            baseQuery = baseQuery.Where(p => p.Id_Usuario == usuarioIdFiltro.Value);
+        }
+
+        var todosPedidosDia = await baseQuery.ToListAsync(ct);
+
+        int pendiente = 0;
+        int enPreparacion = 0;
+        int listo = 0;
+        int pagado = 0;
+        int anulado = 0;
+
+        foreach (var p in todosPedidosDia)
+        {
+            var est = ResolverEstadoEfectivo(p);
+            switch (est)
+            {
+                case EstadoPedido.Pendiente: pendiente++; break;
+                case EstadoPedido.EnPreparacion: enPreparacion++; break;
+                case EstadoPedido.Listo: listo++; break;
+                case EstadoPedido.Pagado: pagado++; break;
+                case EstadoPedido.Anulado: anulado++; break;
+            }
+        }
+
+        var filtrados = todosPedidosDia.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(estado))
+        {
+            filtrados = filtrados.Where(p => ResolverEstadoEfectivo(p).ToString().Equals(estado, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(tipo) && Enum.TryParse<TipoPedido>(tipo, true, out var tipoEnum))
+        {
+            filtrados = filtrados.Where(p => p.Ped_Tipo == tipoEnum);
+        }
+
+        if (mesaId.HasValue)
+        {
+            filtrados = filtrados.Where(p => p.Id_Mesa == mesaId.Value);
+        }
+
+        var totalFiltrados = filtrados.Count();
+        var items = filtrados
+            .OrderByDescending(p => p.Ped_FechaHoraUtc)
+            .Skip((pagina - 1) * tamano)
+            .Take(tamano)
+            .ToList();
+
+        return (items, totalFiltrados, pendiente, enPreparacion, listo, pagado, anulado);
+    }
+
+    private static EstadoPedido ResolverEstadoEfectivo(Pedido p)
+    {
+        if (p.Ped_Estado == EstadoPedido.Pagado || p.Ped_Estado == EstadoPedido.Anulado)
+        {
+            return p.Ped_Estado;
+        }
+
+        var comandasValidas = p.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+        if (!comandasValidas.Any())
+        {
+            return p.Ped_Estado;
+        }
+
+        if (comandasValidas.Any(c => c.Cmd_Estado == EstadoComanda.EnPreparacion))
+        {
+            return EstadoPedido.EnPreparacion;
+        }
+
+        if (comandasValidas.Any(c => c.Cmd_Estado == EstadoComanda.Pendiente))
+        {
+            return EstadoPedido.Pendiente;
+        }
+
+        if (comandasValidas.All(c => c.Cmd_Estado == EstadoComanda.Lista))
+        {
+            return EstadoPedido.Listo;
+        }
+
+        return p.Ped_Estado;
+    }
+
+    public async Task<Pedido?> ObtenerDetalleCompletoPorIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return await _context.Pedidos
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Mesa)
+            .Include(p => p.Ped_Usuario)
+            .Include(p => p.Ped_Comandas)
+                .ThenInclude(c => c.Cmd_Detalles)
+            .FirstOrDefaultAsync(p => p.Id_Pedido == id, ct);
+    }
+
+    public async Task<IReadOnlyList<Comanda>> ObtenerAvisosPendientesAsync(DateOnly fechaOperativa, Guid? usuarioId, bool esMozo, CancellationToken ct = default)
+    {
+        var query = _context.Comandas
+            .Include(c => c.Cmd_Pedido)
+                .ThenInclude(p => p!.Ped_Mesa)
+            .Where(c => c.Cmd_Estado == EstadoComanda.Lista && !c.Cmd_AvisoVisto && c.Cmd_Pedido != null && c.Cmd_Pedido.Ped_FechaOperativa == fechaOperativa);
+
+        if (esMozo)
+        {
+            if (usuarioId.HasValue)
+            {
+                query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value);
+            }
+        }
+        else
+        {
+            query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.ParaLlevar);
+        }
+
+        return await query
+            .OrderByDescending(c => c.Cmd_FechaHoraUtc)
+            .ToListAsync(ct);
+    }
+
+    public async Task<Comanda?> ObtenerComandaPorIdAsync(Guid comandaId, CancellationToken ct = default)
+    {
+        return await _context.Comandas
+            .Include(c => c.Cmd_Pedido)
+            .Include(c => c.Cmd_Detalles)
+            .FirstOrDefaultAsync(c => c.Id_Comanda == comandaId, ct);
+    }
+
+    public async Task ActualizarComandaAsync(Comanda comanda, CancellationToken ct = default)
+    {
+        _context.Comandas.Update(comanda);
+        await _context.SaveChangesAsync(ct);
+    }
+
+    public async Task<bool> TieneOtrosPedidosAbiertosEnMesaAsync(Guid mesaId, Guid pedidoExcluidoId, CancellationToken ct = default)
+    {
+        return await _context.Pedidos.AnyAsync(p =>
+            p.Id_Mesa == mesaId &&
+            p.Id_Pedido != pedidoExcluidoId &&
+            p.Ped_Estado != EstadoPedido.Pagado &&
+            p.Ped_Estado != EstadoPedido.Anulado, ct);
+    }
+
     public async Task RegistrarAuditoriaAsync(AuditoriaPedido auditoria, CancellationToken ct = default)
     {
         await _context.AuditoriasPedido.AddAsync(auditoria, ct);

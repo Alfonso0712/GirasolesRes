@@ -20,6 +20,7 @@ public class Pedido
     public Usuario? Ped_Usuario { get; private set; }
 
     public string Ped_SolicitudId { get; private set; } = string.Empty;
+    public string? Ped_MotivoAnulacion { get; private set; }
     public DateTime Ped_FechaCreacionUtc { get; private set; }
     public DateTime? Ped_FechaActualizacionUtc { get; private set; }
 
@@ -100,6 +101,25 @@ public class Pedido
     {
         Ped_Estado = nuevoEstado;
         Ped_FechaActualizacionUtc = DateTime.UtcNow;
+    }
+
+    public void Anular(string motivo)
+    {
+        Ped_Estado = EstadoPedido.Anulado;
+        Ped_MotivoAnulacion = motivo.Trim();
+        Ped_FechaActualizacionUtc = DateTime.UtcNow;
+
+        foreach (var comanda in _ped_Comandas)
+        {
+            comanda.CambiarEstado(EstadoComanda.Cancelada);
+        }
+    }
+
+    public void ModificarLineas(List<DetallePedido> nuevasLineas)
+    {
+        _ped_Detalles.Clear();
+        _ped_Detalles.AddRange(nuevasLineas);
+        RecalcularTotal();
     }
 
     public void AgregarComanda(Comanda comanda)

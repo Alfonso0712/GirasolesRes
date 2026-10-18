@@ -108,3 +108,108 @@ public record ProductoMenuPedidoDto(
     bool Agotado,
     bool Disponible
 );
+
+// CUS09: Gestión de Pedidos DTOs
+public class ListarPedidosQueryDto
+{
+    public DateOnly? Fecha { get; set; }
+    public string? Estado { get; set; }
+    public string? Tipo { get; set; }
+    public Guid? MesaId { get; set; }
+    public bool SoloMios { get; set; } = false;
+    public int Pagina { get; set; } = 1;
+    public int Tamano { get; set; } = 20;
+}
+
+public record ResumenEstadosDto(
+    int Pendiente,
+    int EnPreparacion,
+    int Listo,
+    int Pagado,
+    int Anulado
+);
+
+public record PedidoItemDto(
+    Guid Id,
+    int Numero,
+    string Tipo,
+    string? Mesa,
+    string? Referencia,
+    string Hora,
+    decimal Total,
+    string Estado,
+    string RegistradoPor,
+    Guid UsuarioId,
+    bool EsMio,
+    bool PuedeModificar,
+    bool PuedeAnular,
+    string? MotivoDeshabilitado
+);
+
+public record ListarPedidosResponseDto(
+    IReadOnlyList<PedidoItemDto> Items,
+    int Total,
+    ResumenEstadosDto Resumen
+);
+
+public record LineaDetalleDto(
+    Guid DetalleId,
+    Guid ProductoId,
+    string Nombre,
+    int Cantidad,
+    decimal PrecioUnitario,
+    decimal Subtotal,
+    string? Observacion
+);
+
+public record ComandaDetalleDto(
+    Guid ComandaId,
+    int Numero,
+    string Estado,
+    bool EsAdicional,
+    bool Modificada,
+    DateTime FechaHora
+);
+
+public record DetallePedidoCompletoDto(
+    Guid Id,
+    int Numero,
+    string Tipo,
+    string? Mesa,
+    string? Referencia,
+    string Hora,
+    decimal Total,
+    string Estado,
+    string RegistradoPor,
+    Guid UsuarioId,
+    string? MotivoAnulacion,
+    IReadOnlyList<LineaDetalleDto> Lineas,
+    IReadOnlyList<ComandaDetalleDto> Comandas
+);
+
+public class ModificarPedidoRequest
+{
+    [Required(ErrorMessage = "Agregue al menos un producto al pedido.")]
+    [MinLength(1, ErrorMessage = "Agregue al menos un producto al pedido.")]
+    public List<LineaPedidoRequest> Lineas { get; set; } = new();
+}
+
+public class AnularPedidoRequest
+{
+    [Required(ErrorMessage = "El identificador de solicitud es obligatorio.")]
+    public string SolicitudId { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Indique el motivo de la anulación (entre 5 y 100 caracteres).")]
+    [StringLength(100, MinimumLength = 5, ErrorMessage = "Indique el motivo de la anulación (entre 5 y 100 caracteres).")]
+    public string Motivo { get; set; } = string.Empty;
+}
+
+public record AvisoComandaDto(
+    Guid Id,
+    Guid PedidoId,
+    int Numero,
+    string Tipo,
+    string? Mesa,
+    string? Referencia,
+    string Hora
+);
