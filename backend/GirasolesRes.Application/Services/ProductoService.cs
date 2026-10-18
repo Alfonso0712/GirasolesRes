@@ -118,10 +118,10 @@ public class ProductoService : IProductoService
             Enum.TryParse<CategoriaProducto>(request.Categoria.Trim(), true, out var categoria);
 
             var nuevoProducto = new Producto(
-                nombre: request.Nombre,
-                categoria: categoria,
-                precio: request.Precio,
-                activo: true);
+                proNombre: request.Nombre,
+                proCategoria: categoria,
+                proPrecio: request.Precio,
+                proActivo: true);
 
             await _productoRepository.AgregarAsync(nuevoProducto, cancellationToken);
 
@@ -129,8 +129,8 @@ public class ProductoService : IProductoService
             var auditoria = new AuditoriaUsuario(
                 nombreAdmin: adminUsername,
                 accion: "CREAR_PRODUCTO",
-                nombreUsuarioAfectado: nuevoProducto.Nombre,
-                detalle: $"Producto registrado con precio S/ {nuevoProducto.Precio:F2} y categoría {nuevoProducto.Categoria}",
+                nombreUsuarioAfectado: nuevoProducto.Pro_Nombre,
+                detalle: $"Producto registrado con precio S/ {nuevoProducto.Pro_Precio:F2} y categoría {nuevoProducto.Pro_Categoria}",
                 direccionIp: ipAddress);
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
@@ -180,7 +180,7 @@ public class ProductoService : IProductoService
 
             Enum.TryParse<CategoriaProducto>(request.Categoria.Trim(), true, out var categoria);
 
-            var precioAnterior = producto.Precio;
+            var precioAnterior = producto.Pro_Precio;
             producto.Actualizar(request.Nombre, categoria, request.Precio);
             await _productoRepository.ActualizarAsync(producto, cancellationToken);
 
@@ -188,8 +188,8 @@ public class ProductoService : IProductoService
             var auditoria = new AuditoriaUsuario(
                 nombreAdmin: adminUsername,
                 accion: "EDITAR_PRODUCTO",
-                nombreUsuarioAfectado: producto.Nombre,
-                detalle: $"Precio anterior: S/ {precioAnterior:F2}, Nuevo precio: S/ {producto.Precio:F2}. Categoría: {producto.Categoria}",
+                nombreUsuarioAfectado: producto.Pro_Nombre,
+                detalle: $"Precio anterior: S/ {precioAnterior:F2}, Nuevo precio: S/ {producto.Pro_Precio:F2}. Categoría: {producto.Pro_Categoria}",
                 direccionIp: ipAddress);
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
@@ -225,7 +225,7 @@ public class ProductoService : IProductoService
             var retiradoDelMenu = false;
             if (!nuevoEstado)
             {
-                await _menuDiaRepository.RemoverProductoDeMenuVigenteAsync(producto.Id, adminUsername, cancellationToken);
+                await _menuDiaRepository.RemoverProductoDeMenuVigenteAsync(producto.Id_Producto, adminUsername, cancellationToken);
                 retiradoDelMenu = true;
             }
 
@@ -233,7 +233,7 @@ public class ProductoService : IProductoService
             var auditoria = new AuditoriaUsuario(
                 nombreAdmin: adminUsername,
                 accion: nuevoEstado ? "ACTIVAR_PRODUCTO" : "DESACTIVAR_PRODUCTO",
-                nombreUsuarioAfectado: producto.Nombre,
+                nombreUsuarioAfectado: producto.Pro_Nombre,
                 detalle: $"Estado cambiado a {(nuevoEstado ? "Activo" : "Inactivo")}",
                 direccionIp: ipAddress);
 
@@ -245,7 +245,7 @@ public class ProductoService : IProductoService
             return ApiResponse<CambiarEstadoProductoResponseDto>.Exitoso(
                 new CambiarEstadoProductoResponseDto
                 {
-                    Activo = producto.Activo,
+                    Activo = producto.Pro_Activo,
                     RetiradoDelMenu = retiradoDelMenu
                 },
                 mensaje);
@@ -328,11 +328,11 @@ public class ProductoService : IProductoService
     {
         return new ProductoResponseDto
         {
-            Id = p.Id,
-            Nombre = p.Nombre,
-            Categoria = p.Categoria.ToString(),
-            Precio = p.Precio,
-            Activo = p.Activo
+            Id = p.Id_Producto,
+            Nombre = p.Pro_Nombre,
+            Categoria = p.Pro_Categoria.ToString(),
+            Precio = p.Pro_Precio,
+            Activo = p.Pro_Activo
         };
     }
 }

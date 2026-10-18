@@ -18,26 +18,26 @@ public class MenuDiaRepository : IMenuDiaRepository
     public async Task<MenuDia?> ObtenerPorFechaAsync(DateOnly fecha, CancellationToken cancellationToken = default)
     {
         return await _context.MenusDia
-            .Include(m => m.Desayuno)
-            .Include(m => m.Platos)
-                .ThenInclude(p => p.Producto)
-            .FirstOrDefaultAsync(m => m.Fecha == fecha, cancellationToken);
+            .Include(m => m.Men_Desayuno)
+            .Include(m => m.Men_Platos)
+                .ThenInclude(p => p.Mdp_Producto)
+            .FirstOrDefaultAsync(m => m.Men_Fecha == fecha, cancellationToken);
     }
 
     public async Task<MenuDia?> ObtenerMenuHoyConDetalleAsync(CancellationToken cancellationToken = default)
     {
         var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
         return await _context.MenusDia
-            .Include(m => m.Desayuno)
-            .Include(m => m.Platos)
-                .ThenInclude(p => p.Producto)
-            .FirstOrDefaultAsync(m => m.Fecha == fechaHoy, cancellationToken);
+            .Include(m => m.Men_Desayuno)
+            .Include(m => m.Men_Platos)
+                .ThenInclude(p => p.Mdp_Producto)
+            .FirstOrDefaultAsync(m => m.Men_Fecha == fechaHoy, cancellationToken);
     }
 
     public async Task<bool> ExisteMenuHoyAsync(CancellationToken cancellationToken = default)
     {
         var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
-        return await _context.MenusDia.AnyAsync(m => m.Fecha == fechaHoy, cancellationToken);
+        return await _context.MenusDia.AnyAsync(m => m.Men_Fecha == fechaHoy, cancellationToken);
     }
 
     public async Task AgregarAsync(MenuDia menuDia, CancellationToken cancellationToken = default)
@@ -56,8 +56,8 @@ public class MenuDiaRepository : IMenuDiaRepository
     {
         var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
         var menu = await _context.MenusDia
-            .Include(m => m.Platos)
-            .FirstOrDefaultAsync(m => m.Fecha == fechaHoy, cancellationToken);
+            .Include(m => m.Men_Platos)
+            .FirstOrDefaultAsync(m => m.Men_Fecha == fechaHoy, cancellationToken);
 
         if (menu != null)
         {

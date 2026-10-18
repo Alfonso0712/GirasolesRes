@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict CZw6mr5dxv2C9Rlq5a2j588AAb2JVMR10RSiDTwDrx6sOsVrBahGcb0a2KdFev8
+\restrict Sa2UquYNxPkT9fMWXjXWrK1S9AVJDF3psY5WwqKbqoOpYrk4UgQoQb6aK3pcyVn
 
 -- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.6
@@ -487,6 +487,7 @@ INSERT INTO public.registros_ingreso VALUES ('45b17792-0f38-4d1c-b234-10f6a681d6
 INSERT INTO public.registros_ingreso VALUES ('278bed51-bb3d-40df-9fa7-76e80cafc5f7', 'admin', '2026-10-17 14:09:25.106682-05', true, 'Ingreso exitoso', '::1');
 INSERT INTO public.registros_ingreso VALUES ('01536e66-401e-4efe-949f-d1b225868208', 'msoto', '2026-10-17 14:09:25.474718-05', true, 'Ingreso exitoso', '::1');
 INSERT INTO public.registros_ingreso VALUES ('e6cb280a-603f-4a3e-bd37-efe2b9c9bd3c', 'admin', '2026-10-17 14:11:22.397251-05', true, 'Ingreso exitoso', '::1');
+INSERT INTO public.registros_ingreso VALUES ('ccd8ef99-1943-4542-bfa9-341ae02606ee', 'admin', '2026-10-17 18:55:49.525722-05', true, 'Ingreso exitoso', '::1');
 
 
 --
@@ -565,7 +566,7 @@ INSERT INTO public.usuarios VALUES ('757dee14-699f-470d-a65b-6ae01a46d5ac', 'dra
 INSERT INTO public.usuarios VALUES ('920ba4f1-d552-4c76-b1c0-087b3b75770c', 'atorres', 'Ana Torres', 'atorres@girasoles.com', '100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=', 2, true, 0, NULL, '2026-10-16 10:55:25.222546-05', '2026-10-17 12:34:04.87552-05');
 INSERT INTO public.usuarios VALUES ('fdfbc247-2349-4bab-9d92-cc595b7a34d8', 'lperez', 'Luis Pérez', 'lperez@girasoles.com', '100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=', 3, true, 0, NULL, '2026-10-16 10:55:25.222548-05', '2026-10-16 17:47:15.951963-05');
 INSERT INTO public.usuarios VALUES ('89d58dff-4e1b-414c-8bf9-d59d098ec29f', 'msoto', 'María Soto A', 'msoto@girasoles.com', '100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=', 4, true, 0, NULL, '2026-10-16 10:55:25.222548-05', '2026-10-17 14:09:25.473055-05');
-INSERT INTO public.usuarios VALUES ('05c84bab-bb5e-479f-8a19-f309b7fde947', 'admin', 'Administradora General', 'admin@girasoles.com', '100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=', 1, true, 0, NULL, '2026-10-16 10:55:25.22248-05', '2026-10-17 14:11:22.39484-05');
+INSERT INTO public.usuarios VALUES ('05c84bab-bb5e-479f-8a19-f309b7fde947', 'admin', 'Administradora General', 'admin@girasoles.com', '100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=', 1, true, 0, NULL, '2026-10-16 10:55:25.22248-05', '2026-10-17 18:55:49.336375-05');
 
 
 --
@@ -753,5 +754,5 @@ ALTER TABLE ONLY public.menus_dia
 -- PostgreSQL database dump complete
 --
 
-\unrestrict CZw6mr5dxv2C9Rlq5a2j588AAb2JVMR10RSiDTwDrx6sOsVrBahGcb0a2KdFev8
+\unrestrict Sa2UquYNxPkT9fMWXjXWrK1S9AVJDF3psY5WwqKbqoOpYrk4UgQoQb6aK3pcyVn
 

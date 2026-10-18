@@ -58,10 +58,10 @@ public class MenuDiaService : IMenuDiaService
             
             var candidatos = productosActivos.Select(p => new CandidatoMenuDto
             {
-                Id = p.Id,
-                Nombre = p.Nombre,
-                Categoria = p.Categoria.ToString(),
-                Precio = p.Precio
+                Id = p.Id_Producto,
+                Nombre = p.Pro_Nombre,
+                Categoria = p.Pro_Categoria.ToString(),
+                Precio = p.Pro_Precio
             }).ToList();
 
             if (candidatos.Count == 0)
@@ -99,12 +99,12 @@ public class MenuDiaService : IMenuDiaService
             if (request.DesayunoId.HasValue)
             {
                 desayuno = await _productoRepository.ObtenerPorIdAsync(request.DesayunoId.Value, cancellationToken);
-                if (desayuno == null || !desayuno.Activo)
+                if (desayuno == null || !desayuno.Pro_Activo)
                 {
                     return ApiResponse<MenuDiaResponseDto>.Fallido("El desayuno seleccionado no existe o se encuentra inactivo.");
                 }
 
-                if (desayuno.Categoria != CategoriaProducto.Desayuno)
+                if (desayuno.Pro_Categoria != CategoriaProducto.Desayuno)
                 {
                     return ApiResponse<MenuDiaResponseDto>.Fallido("El producto de desayuno seleccionado debe pertenecer a la categoría Desayuno.");
                 }
@@ -120,7 +120,7 @@ public class MenuDiaService : IMenuDiaService
                     return ApiResponse<MenuDiaResponseDto>.Fallido("Uno o más platos seleccionados no existen en el sistema.");
                 }
 
-                var inactivos = platos.Where(p => !p.Activo).Select(p => p.Nombre).ToList();
+                var inactivos = platos.Where(p => !p.Pro_Activo).Select(p => p.Pro_Nombre).ToList();
                 if (inactivos.Count > 0)
                 {
                     return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes productos están inactivos y no pueden añadirse al menú: {string.Join(", ", inactivos)}.");
@@ -149,7 +149,7 @@ public class MenuDiaService : IMenuDiaService
                 nombreAdmin: usuario,
                 accion: esNuevo ? "DEFINIR_MENU" : "ACTUALIZAR_MENU",
                 nombreUsuarioAfectado: $"Menu-{fechaHoy:yyyy-MM-dd}",
-                detalle: $"Menú guardado con {platoIds.Count} platos y {(request.DesayunoId.HasValue ? $"desayuno '{desayuno?.Nombre}'" : "sin desayuno")}",
+                detalle: $"Menú guardado con {platoIds.Count} platos y {(request.DesayunoId.HasValue ? $"desayuno '{desayuno?.Pro_Nombre}'" : "sin desayuno")}",
                 direccionIp: ipAddress);
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
@@ -181,13 +181,13 @@ public class MenuDiaService : IMenuDiaService
                 return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_78);
             }
 
-            var plato = menu.Platos.FirstOrDefault(p => p.ProductoId == productoId);
+            var plato = menu.Men_Platos.FirstOrDefault(p => p.Id_Producto == productoId);
             if (plato == null)
             {
                 return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido("El producto no forma parte del menú del día de hoy.");
             }
 
-            var nombrePlato = plato.Producto?.Nombre ?? "El plato";
+            var nombrePlato = plato.Mdp_Producto?.Pro_Nombre ?? "El plato";
             var cambiado = menu.CambiarDisponibilidadPlato(productoId, agotado, usuario);
             if (!cambiado)
             {
@@ -225,23 +225,23 @@ public class MenuDiaService : IMenuDiaService
     {
         return new MenuDiaResponseDto
         {
-            Fecha = menu.Fecha.ToString("yyyy-MM-dd"),
+            Fecha = menu.Men_Fecha.ToString("yyyy-MM-dd"),
             Definido = true,
-            Desayuno = menu.Desayuno != null ? new DesayunoMenuDto
+            Desayuno = menu.Men_Desayuno != null ? new DesayunoMenuDto
             {
-                Id = menu.Desayuno.Id,
-                Nombre = menu.Desayuno.Nombre
+                Id = menu.Men_Desayuno.Id_Producto,
+                Nombre = menu.Men_Desayuno.Pro_Nombre
             } : null,
-            Platos = menu.Platos
-                .OrderBy(p => p.Producto.Categoria)
-                .ThenBy(p => p.Producto.Nombre)
+            Platos = menu.Men_Platos
+                .OrderBy(p => p.Mdp_Producto.Pro_Categoria)
+                .ThenBy(p => p.Mdp_Producto.Pro_Nombre)
                 .Select(p => new PlatoMenuDto
                 {
-                    ProductoId = p.ProductoId,
-                    Nombre = p.Producto?.Nombre ?? string.Empty,
-                    Categoria = p.Producto?.Categoria.ToString() ?? string.Empty,
-                    Precio = p.Producto?.Precio ?? 0,
-                    Agotado = p.Agotado
+                    ProductoId = p.Id_Producto,
+                    Nombre = p.Mdp_Producto?.Pro_Nombre ?? string.Empty,
+                    Categoria = p.Mdp_Producto?.Pro_Categoria.ToString() ?? string.Empty,
+                    Precio = p.Mdp_Producto?.Pro_Precio ?? 0,
+                    Agotado = p.Mdp_Agotado
                 }).ToList()
         };
     }

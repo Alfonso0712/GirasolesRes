@@ -105,17 +105,17 @@ public static class DatabaseSeeder
 
                 var productos = new List<Producto>
                 {
-                    new("Menú almuerzo", CategoriaProducto.Almuerzo, 8.00m, activo: true),
-                    new("Ejecutivo del día", CategoriaProducto.Almuerzo, 12.00m, activo: true),
-                    new("Quaker con leche y pan", CategoriaProducto.Desayuno, 3.50m, activo: true),
-                    new("Quinua carretillera con pan", CategoriaProducto.Desayuno, 3.00m, activo: true),
-                    new("Café pasado con sándwich mixto", CategoriaProducto.Desayuno, 5.00m, activo: true),
-                    new("Jarra de chicha morada 1L", CategoriaProducto.Otro, 6.00m, activo: true),
-                    new("Porción extra de papas fritas", CategoriaProducto.Otro, 4.00m, activo: true),
-                    new("Sopa a la minuta especial", CategoriaProducto.Almuerzo, 10.00m, activo: true),
-                    new("Gaseosa 500ml", CategoriaProducto.Otro, 3.50m, activo: true),
-                    new("Agua mineral 600ml", CategoriaProducto.Otro, 2.50m, activo: true),
-                    new("Caldo de gallina criollo", CategoriaProducto.Desayuno, 10.00m, activo: false) // inactivo de prueba
+                    new("Menú almuerzo", CategoriaProducto.Almuerzo, 8.00m, proActivo: true),
+                    new("Ejecutivo del día", CategoriaProducto.Almuerzo, 12.00m, proActivo: true),
+                    new("Quaker con leche y pan", CategoriaProducto.Desayuno, 3.50m, proActivo: true),
+                    new("Quinua carretillera con pan", CategoriaProducto.Desayuno, 3.00m, proActivo: true),
+                    new("Café pasado con sándwich mixto", CategoriaProducto.Desayuno, 5.00m, proActivo: true),
+                    new("Jarra de chicha morada 1L", CategoriaProducto.Otro, 6.00m, proActivo: true),
+                    new("Porción extra de papas fritas", CategoriaProducto.Otro, 4.00m, proActivo: true),
+                    new("Sopa a la minuta especial", CategoriaProducto.Almuerzo, 10.00m, proActivo: true),
+                    new("Gaseosa 500ml", CategoriaProducto.Otro, 3.50m, proActivo: true),
+                    new("Agua mineral 600ml", CategoriaProducto.Otro, 2.50m, proActivo: true),
+                    new("Caldo de gallina criollo", CategoriaProducto.Desayuno, 10.00m, proActivo: false) // inactivo de prueba
                 };
 
                 await context.Productos.AddRangeAsync(productos);

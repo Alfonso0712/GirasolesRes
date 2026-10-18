@@ -6,46 +6,46 @@ namespace GirasolesRes.Domain.Entities;
 
 public class Producto
 {
-    public Guid Id { get; private set; }
-    public string Nombre { get; private set; } = string.Empty;
-    public string NombreNormalizado { get; private set; } = string.Empty;
-    public CategoriaProducto Categoria { get; private set; }
-    public decimal Precio { get; private set; }
-    public bool Activo { get; private set; }
-    public DateTime FechaCreacionUtc { get; private set; }
-    public DateTime? FechaActualizacionUtc { get; private set; }
+    public Guid Id_Producto { get; private set; }
+    public string Pro_Nombre { get; private set; } = string.Empty;
+    public string Pro_NombreNormalizado { get; private set; } = string.Empty;
+    public CategoriaProducto Pro_Categoria { get; private set; }
+    public decimal Pro_Precio { get; private set; }
+    public bool Pro_Activo { get; private set; }
+    public DateTime Pro_FechaCreacionUtc { get; private set; }
+    public DateTime? Pro_FechaActualizacionUtc { get; private set; }
 
     // Constructor privado para EF Core
     private Producto() { }
 
     public Producto(
-        string nombre,
-        CategoriaProducto categoria,
-        decimal precio,
-        bool activo = true)
+        string proNombre,
+        CategoriaProducto proCategoria,
+        decimal proPrecio,
+        bool proActivo = true)
     {
-        Id = Guid.NewGuid();
-        Nombre = nombre.Trim();
-        NombreNormalizado = NormalizarTexto(nombre);
-        Categoria = categoria;
-        Precio = decimal.Round(precio, 2);
-        Activo = activo;
-        FechaCreacionUtc = DateTime.UtcNow;
+        Id_Producto = Guid.NewGuid();
+        Pro_Nombre = proNombre.Trim();
+        Pro_NombreNormalizado = NormalizarTexto(proNombre);
+        Pro_Categoria = proCategoria;
+        Pro_Precio = decimal.Round(proPrecio, 2);
+        Pro_Activo = proActivo;
+        Pro_FechaCreacionUtc = DateTime.UtcNow;
     }
 
-    public void Actualizar(string nombre, CategoriaProducto categoria, decimal precio)
+    public void Actualizar(string proNombre, CategoriaProducto proCategoria, decimal proPrecio)
     {
-        Nombre = nombre.Trim();
-        NombreNormalizado = NormalizarTexto(nombre);
-        Categoria = categoria;
-        Precio = decimal.Round(precio, 2);
-        FechaActualizacionUtc = DateTime.UtcNow;
+        Pro_Nombre = proNombre.Trim();
+        Pro_NombreNormalizado = NormalizarTexto(proNombre);
+        Pro_Categoria = proCategoria;
+        Pro_Precio = decimal.Round(proPrecio, 2);
+        Pro_FechaActualizacionUtc = DateTime.UtcNow;
     }
 
-    public void CambiarEstado(bool activo)
+    public void CambiarEstado(bool proActivo)
     {
-        Activo = activo;
-        FechaActualizacionUtc = DateTime.UtcNow;
+        Pro_Activo = proActivo;
+        Pro_FechaActualizacionUtc = DateTime.UtcNow;
     }
 
     /// <summary>

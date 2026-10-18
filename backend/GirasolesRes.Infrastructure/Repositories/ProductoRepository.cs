@@ -18,21 +18,21 @@ public class ProductoRepository : IProductoRepository
     public async Task<Producto?> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Productos
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Id_Producto == id, cancellationToken);
     }
 
     public async Task<Producto?> ObtenerPorNombreNormalizadoAsync(string nombreNormalizado, CancellationToken cancellationToken = default)
     {
         var norm = nombreNormalizado.Trim().ToLowerInvariant();
         return await _context.Productos
-            .FirstOrDefaultAsync(p => p.NombreNormalizado == norm, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Pro_NombreNormalizado == norm, cancellationToken);
     }
 
     public async Task<bool> ExisteNombreAsync(string nombreNormalizado, Guid? excluirId = null, CancellationToken cancellationToken = default)
     {
         var norm = nombreNormalizado.Trim().ToLowerInvariant();
         return await _context.Productos
-            .AnyAsync(p => p.NombreNormalizado == norm && (!excluirId.HasValue || p.Id != excluirId.Value), cancellationToken);
+            .AnyAsync(p => p.Pro_NombreNormalizado == norm && (!excluirId.HasValue || p.Id_Producto != excluirId.Value), cancellationToken);
     }
 
     public async Task AgregarAsync(Producto producto, CancellationToken cancellationToken = default)
@@ -60,27 +60,27 @@ public class ProductoRepository : IProductoRepository
         if (!string.IsNullOrWhiteSpace(busqueda))
         {
             var busquedaNormalizada = Producto.NormalizarTexto(busqueda);
-            query = query.Where(p => p.NombreNormalizado.Contains(busquedaNormalizada));
+            query = query.Where(p => p.Pro_NombreNormalizado.Contains(busquedaNormalizada));
         }
 
         // Filtro por categoría (RF-11)
         if (categoria.HasValue)
         {
-            query = query.Where(p => p.Categoria == categoria.Value);
+            query = query.Where(p => p.Pro_Categoria == categoria.Value);
         }
 
         // Filtro por estado activo/inactivo (RF-11)
         if (activo.HasValue)
         {
-            query = query.Where(p => p.Activo == activo.Value);
+            query = query.Where(p => p.Pro_Activo == activo.Value);
         }
 
         var total = await query.CountAsync(cancellationToken);
 
         // Orden por categoría y luego por nombre; 10 por página (RF-11 / RNF-11)
         var items = await query
-            .OrderBy(p => p.Categoria)
-            .ThenBy(p => p.Nombre)
+            .OrderBy(p => p.Pro_Categoria)
+            .ThenBy(p => p.Pro_Nombre)
             .Skip((pagina - 1) * tamano)
             .Take(tamano)
             .ToListAsync(cancellationToken);
@@ -90,16 +90,16 @@ public class ProductoRepository : IProductoRepository
 
     public async Task<List<Producto>> ListarDisponiblesAsync(CategoriaProducto? categoria, CancellationToken cancellationToken = default)
     {
-        var query = _context.Productos.Where(p => p.Activo);
+        var query = _context.Productos.Where(p => p.Pro_Activo);
 
         if (categoria.HasValue)
         {
-            query = query.Where(p => p.Categoria == categoria.Value);
+            query = query.Where(p => p.Pro_Categoria == categoria.Value);
         }
 
         return await query
-            .OrderBy(p => p.Categoria)
-            .ThenBy(p => p.Nombre)
+            .OrderBy(p => p.Pro_Categoria)
+            .ThenBy(p => p.Pro_Nombre)
             .ToListAsync(cancellationToken);
     }
 
@@ -107,7 +107,7 @@ public class ProductoRepository : IProductoRepository
     {
         var idSet = ids.Distinct().ToList();
         return await _context.Productos
-            .Where(p => idSet.Contains(p.Id))
+            .Where(p => idSet.Contains(p.Id_Producto))
             .ToListAsync(cancellationToken);
     }
 

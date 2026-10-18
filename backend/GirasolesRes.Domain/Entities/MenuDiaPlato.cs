@@ -2,32 +2,32 @@ namespace GirasolesRes.Domain.Entities;
 
 public class MenuDiaPlato
 {
-    public Guid Id { get; private set; }
-    public Guid MenuDiaId { get; private set; }
-    public MenuDia MenuDia { get; private set; } = null!;
+    public Guid Id_MenuPlato { get; private set; }
+    public Guid Id_Menu { get; private set; }
+    public MenuDia Mdp_MenuDia { get; private set; } = null!;
 
-    public Guid ProductoId { get; private set; }
-    public Producto Producto { get; private set; } = null!;
+    public Guid Id_Producto { get; private set; }
+    public Producto Mdp_Producto { get; private set; } = null!;
 
-    public bool Agotado { get; private set; }
-    public DateTime? FechaCambioDisponibilidadUtc { get; private set; }
-    public string? UsuarioCambioDisponibilidad { get; private set; }
+    public bool Mdp_Agotado { get; private set; }
+    public DateTime? Mdp_FechaCambioDisponibilidadUtc { get; private set; }
+    public string? Mdp_UsuarioDisponibilidad { get; private set; }
 
     // Constructor privado para EF Core
     private MenuDiaPlato() { }
 
-    public MenuDiaPlato(Guid menuDiaId, Guid productoId, bool agotado = false)
+    public MenuDiaPlato(Guid idMenu, Guid idProducto, bool mdpAgotado = false)
     {
-        Id = Guid.NewGuid();
-        MenuDiaId = menuDiaId;
-        ProductoId = productoId;
-        Agotado = agotado;
+        Id_MenuPlato = Guid.NewGuid();
+        Id_Menu = idMenu;
+        Id_Producto = idProducto;
+        Mdp_Agotado = mdpAgotado;
     }
 
     public void CambiarDisponibilidad(bool agotado, string usuario)
     {
-        Agotado = agotado;
-        UsuarioCambioDisponibilidad = usuario;
-        FechaCambioDisponibilidadUtc = DateTime.UtcNow;
+        Mdp_Agotado = agotado;
+        Mdp_UsuarioDisponibilidad = usuario.Trim();
+        Mdp_FechaCambioDisponibilidadUtc = DateTime.UtcNow;
     }
 }
