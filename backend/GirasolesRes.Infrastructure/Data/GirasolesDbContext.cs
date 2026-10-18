@@ -156,6 +156,9 @@ public class GirasolesDbContext : DbContext
                   .WithOne(p => p.Mdp_MenuDia)
                   .HasForeignKey(p => p.Id_Menu)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Navigation(m => m.Men_Platos)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
 
         modelBuilder.Entity<MenuDiaPlato>(entity =>

@@ -13,8 +13,8 @@ public class MenuDia
     public string Men_UsuarioCreacion { get; private set; } = string.Empty;
     public string? Men_UsuarioActualizacion { get; private set; }
 
-    private readonly List<MenuDiaPlato> _platos = new();
-    public IReadOnlyCollection<MenuDiaPlato> Men_Platos => _platos.AsReadOnly();
+    private readonly List<MenuDiaPlato> _men_Platos = new();
+    public IReadOnlyCollection<MenuDiaPlato> Men_Platos => _men_Platos.AsReadOnly();
 
     // Constructor privado para EF Core
     private MenuDia() { }
@@ -40,14 +40,14 @@ public class MenuDia
         var idsSet = nuevosProductoIds.Distinct().ToHashSet();
 
         // Remover los que ya no están
-        _platos.RemoveAll(p => !idsSet.Contains(p.Id_Producto));
+        _men_Platos.RemoveAll(p => !idsSet.Contains(p.Id_Producto));
 
         // Agregar los nuevos conservando el estado de los que ya existían
         foreach (var id in idsSet)
         {
-            if (!_platos.Any(p => p.Id_Producto == id))
+            if (!_men_Platos.Any(p => p.Id_Producto == id))
             {
-                _platos.Add(new MenuDiaPlato(Id_Menu, id, mdpAgotado: false));
+                _men_Platos.Add(new MenuDiaPlato(Id_Menu, id, mdpAgotado: false));
             }
         }
 
@@ -57,7 +57,7 @@ public class MenuDia
 
     public bool CambiarDisponibilidadPlato(Guid productoId, bool agotado, string usuario)
     {
-        var plato = _platos.FirstOrDefault(p => p.Id_Producto == productoId);
+        var plato = _men_Platos.FirstOrDefault(p => p.Id_Producto == productoId);
         if (plato == null)
             return false;
 
@@ -74,7 +74,7 @@ public class MenuDia
             Id_Desayuno = null;
         }
 
-        _platos.RemoveAll(p => p.Id_Producto == productoId);
+        _men_Platos.RemoveAll(p => p.Id_Producto == productoId);
         Men_UsuarioActualizacion = usuario.Trim();
         Men_FechaActualizacionUtc = DateTime.UtcNow;
     }
