@@ -699,7 +699,10 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
           {/* Diálogo Modal de Confirmación MSG-180 (RV-127 / E-306) */}
           {pasoConfirmacion && (
             <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-              <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-2xl max-w-md w-full p-6 text-[#482813] space-y-4 animate-in zoom-in-95 duration-200">
+              <div
+                ref={confirmDialogRef}
+                className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-2xl max-w-md w-full p-6 text-[#482813] space-y-4 animate-in zoom-in-95 duration-200"
+              >
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
                     <AlertTriangle className="w-5 h-5" />
@@ -717,16 +720,16 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                 <div className="p-3 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl text-xs space-y-1.5 tabular-nums">
                   <div className="flex justify-between">
                     <span className="text-stone-500">Efectivo esperado:</span>
-                    <span className="font-bold">S/ {resumen?.efectivoEsperado.toFixed(2)}</span>
+                    <span className="font-bold tabular-nums">S/ {resumen?.efectivoEsperado.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-stone-500">Efectivo contado:</span>
-                    <span className="font-bold">S/ {contadoNumerico?.toFixed(2)}</span>
+                    <span className="font-bold tabular-nums">S/ {contadoNumerico?.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between pt-1 border-t border-stone-200">
                     <span className="font-bold">Diferencia:</span>
                     <span
-                      className={`font-black ${
+                      className={`font-black tabular-nums ${
                         diferenciaCalculada === 0
                           ? 'text-green-700'
                           : diferenciaCalculada! > 0
@@ -736,7 +739,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     >
                       {diferenciaCalculada === 0
                         ? 'Cuadra'
-                        : `${diferenciaCalculada! > 0 ? '+' : ''}S/ ${diferenciaCalculada?.toFixed(2)}`}
+                        : <span className="tabular-nums">{`${diferenciaCalculada! > 0 ? '+' : ''}S/ ${diferenciaCalculada?.toFixed(2)}`}</span>}
                     </span>
                   </div>
                 </div>

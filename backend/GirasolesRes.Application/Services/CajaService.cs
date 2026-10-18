@@ -693,4 +693,28 @@ public class CajaService : ICajaService
 
         return string.Format(MensajesCatalogo.MSG_181, string.Format(MensajesCatalogo.MSG_178, Math.Abs(diferencia)));
     }
+
+    private static bool IsUniqueIndexViolation(Exception ex)
+    {
+        var cur = ex;
+        while (cur != null)
+        {
+            if (cur.Message.Contains("23505") || cur.Message.Contains("uq_cajas_solo_una_abierta"))
+                return true;
+            cur = cur.InnerException;
+        }
+        return false;
+    }
+
+    private static bool IsConcurrencyViolation(Exception ex)
+    {
+        var cur = ex;
+        while (cur != null)
+        {
+            if (cur.GetType().Name.Contains("Concurrency") || cur.Message.Contains("concurrency"))
+                return true;
+            cur = cur.InnerException;
+        }
+        return false;
+    }
 }
