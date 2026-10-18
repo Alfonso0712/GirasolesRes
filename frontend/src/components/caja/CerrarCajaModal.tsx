@@ -358,7 +358,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <p className="text-base font-black tabular-nums mt-0.5">
                     {resultadoCierre.diferencia === 0
                       ? 'Cuadra'
-                      : `${resultadoCierre.diferencia > 0 ? '+' : ''}S/ ${resultadoCierre.diferencia.toFixed(2)}`}
+                      : <span className="tabular-nums">{`${resultadoCierre.diferencia > 0 ? '+' : ''}S/ ${resultadoCierre.diferencia.toFixed(2)}`}</span>}
                   </p>
                 </div>
               </div>
@@ -457,7 +457,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                                 onClose();
                                 onCobrarPedido(p.pedidoId);
                               }}
-                              className="px-3 py-1.5 rounded-lg bg-[#D35400] hover:bg-[#B94600] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer min-h-[36px]"
+                              className="px-3 py-1.5 rounded-lg bg-[#D35400] hover:bg-[#B94600] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px]"
                             >
                               Cobrar
                             </button>
@@ -607,15 +607,16 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       )}
                       <div>
                         <p className="font-bold text-sm">
-                          {diferenciaCalculada === 0
-                            ? 'Cuadra: el efectivo contado coincide con el esperado.' // MSG-176
-                            : diferenciaCalculada > 0
-                            ? `Sobrante de S/ ${diferenciaCalculada.toFixed(2)}. Se recomienda indicar una observación.` // MSG-177
-                            : `Faltante de S/ ${Math.abs(diferenciaCalculada).toFixed(2)}. Se recomienda indicar una observación.`} {/* MSG-178 */}
+                          {diferenciaCalculada === 0 ? (
+                            'Cuadra: el efectivo contado coincide con el esperado.' // MSG-176
+                          ) : diferenciaCalculada > 0 ? (
+                            <span className="tabular-nums">{`Sobrante de S/ ${diferenciaCalculada.toFixed(2)}. Se recomienda indicar una observación.`}</span> // MSG-177
+                          ) : (
+                            <span className="tabular-nums">{`Faltante de S/ ${Math.abs(diferenciaCalculada).toFixed(2)}. Se recomienda indicar una observación.`}</span> // MSG-178
+                          )}
                         </p>
-                        <p className="text-[11px] opacity-80">
-                          Esperado: S/ {resumen?.efectivoEsperado.toFixed(2)} | Contado: S/{' '}
-                          {contadoNumerico?.toFixed(2)}
+                        <p className="text-[11px] opacity-80 tabular-nums">
+                          Esperado: <span className="tabular-nums">S/ {resumen?.efectivoEsperado.toFixed(2)}</span> | Contado: <span className="tabular-nums">S/ {contadoNumerico?.toFixed(2)}</span>
                         </p>
                       </div>
                     </div>

@@ -188,7 +188,24 @@ public class CajaService : ICajaService
 
         // 5. Instanciar y persistir entidad
         var nuevaCaja = new Caja(usuarioId, monto, dto.SolicitudId);
-        await _cajaRepository.AgregarAsync(nuevaCaja, ct);
+        try
+        {
+            await _cajaRepository.AgregarAsync(nuevaCaja, ct);
+        }
+        catch (CajaYaAbiertaException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (IsUniqueIndexViolation(ex))
+        {
+            var cajaAbiertaActual = await _cajaRepository.ObtenerCajaAbiertaAsync(ct);
+            throw new CajaYaAbiertaException(
+                MensajesCatalogo.MSG_167,
+                cajaAbiertaActual?.Id_Caja,
+                cajaAbiertaActual?.Caj_FechaAperturaUtc,
+                cajaAbiertaActual?.Caj_Usuario?.Usu_Nombre
+            );
+        }
 
         var fechaLocal = TimeZoneHelper.ToPeruTime(nuevaCaja.Caj_FechaAperturaUtc).ToString("dd/MM/yyyy HH:mm");
         var mensajeExito = string.Format(MensajesCatalogo.MSG_173, nuevaCaja.Caj_MontoApertura);
@@ -320,6 +337,11 @@ public class CajaService : ICajaService
             throw new CajaNoAbiertaException(MensajesCatalogo.MSG_166);
         }
 
+        if (caja.Caj_Estado != EstadoCaja.Abierta)
+        {
+            throw new CajaYaCerradaException(caja.Id_Caja);
+        }
+
         // 3. Precondición: no debe haber pedidos pendientes de cobro (RV-122, RN-110, MSG-174, E-296)
         var fechaOperativaCaja = TimeZoneHelper.GetFechaOperativa(caja.Caj_FechaAperturaUtc);
         var pedidosPendientes = (await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct))
@@ -398,7 +420,18 @@ public class CajaService : ICajaService
         );
 
         // 9. Persistir atómicamente
-        await _cajaRepository.ActualizarAsync(caja, ct);
+        try
+        {
+            await _cajaRepository.ActualizarAsync(caja, ct);
+        }
+        catch (CajaYaCerradaException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (IsConcurrencyViolation(ex))
+        {
+            throw new CajaYaCerradaException(caja.Id_Caja, MensajesCatalogo.MSG_183);
+        }
 
         // 10. Construir respuesta
         var diferencia = caja.Caj_Diferencia!.Value;
