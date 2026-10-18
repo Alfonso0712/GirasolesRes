@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Coins, Banknote, RotateCcw, Check, X } from 'lucide-react';
 
 export interface ContadorDenominacionesModalProps {
@@ -37,6 +37,57 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
 }) => {
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
   const [errores, setErrores] = useState<Record<string, string>>({});
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const firstInputRef = useRef<HTMLInputElement>(null);
+
+  // Foco inicial en el primer campo de conteo al abrir
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 50);
+    }
+  }, [isOpen]);
+
+  // Focus trap y tecla Escape global
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        if (!modalRef.current) return;
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   const handleCantidadChange = (id: string, rawVal: string) => {
     const trimmed = rawVal.trim();
@@ -108,11 +159,11 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
       aria-modal="true"
       aria-labelledby="contador-title"
       className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200"
-      onKeyDown={(e) => {
-        if (e.key === 'Escape') onClose();
-      }}
     >
-      <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+      <div
+        ref={modalRef}
+        className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+      >
         {/* Encabezado */}
         <div className="bg-gradient-to-r from-[#482813] to-[#5C341A] px-6 py-4 flex items-center justify-between text-white border-b border-[#3D2110]">
           <div className="flex items-center gap-3">

@@ -129,6 +129,15 @@ public class CajaController : ControllerBase
                 cajaIdExistente = ex.CajaIdExistente
             });
         }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pg && pg.SqlState == "23505")
+        {
+            return StatusCode(StatusCodes.Status409Conflict, new
+            {
+                codigo = "caja_ya_abierta",
+                message = MensajesCatalogo.MSG_167,
+                mensaje = MensajesCatalogo.MSG_167
+            });
+        }
         catch (CajaAnteriorSinCerrarException ex)
         {
             return StatusCode(StatusCodes.Status409Conflict, new
@@ -319,6 +328,24 @@ public class CajaController : ControllerBase
             return StatusCode(StatusCodes.Status409Conflict, new
             {
                 codigo = ex.Codigo,
+                message = ex.Message,
+                mensaje = ex.Message
+            });
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
+        {
+            return StatusCode(StatusCodes.Status409Conflict, new
+            {
+                codigo = "caja_ya_cerrada",
+                message = MensajesCatalogo.MSG_183,
+                mensaje = MensajesCatalogo.MSG_183
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(StatusCodes.Status409Conflict, new
+            {
+                codigo = "caja_conflicto",
                 message = ex.Message,
                 mensaje = ex.Message
             });
