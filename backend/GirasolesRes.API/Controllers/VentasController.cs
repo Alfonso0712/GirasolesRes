@@ -169,7 +169,7 @@ public class VentasController : ControllerBase
         try
         {
             var bytes = await _cobroService.GenerarComprobantePdfAsync(id, copia, ct);
-            return File(bytes, "text/plain; charset=utf-8", $"Ticket_{id:N}.txt");
+            return File(bytes, "application/pdf", $"Comprobante_{id:N}_{(copia ? "COPIA" : "ORIGINAL")}.pdf");
         }
         catch (KeyNotFoundException ex)
         {

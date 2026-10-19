@@ -8,10 +8,19 @@ namespace GirasolesRes.Infrastructure.Common;
 /// </summary>
 public class PdfCanvasBuilder
 {
-    public const float PageWidth = 595.28f;
-    public const float PageHeight = 841.89f;
+    public const float DefaultPageWidth = 595.28f;
+    public const float DefaultPageHeight = 841.89f;
+
+    public float PageWidth { get; }
+    public float PageHeight { get; }
 
     private readonly StringBuilder _stream = new(8192);
+
+    public PdfCanvasBuilder(float pageWidth = DefaultPageWidth, float pageHeight = DefaultPageHeight)
+    {
+        PageWidth = pageWidth;
+        PageHeight = pageHeight;
+    }
 
     private float ToPdfY(float topDownY) => PageHeight - topDownY;
 

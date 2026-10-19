@@ -219,7 +219,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>{descargando ? 'Descargando...' : 'Descargar .txt'}</span>
+            <span>{descargando ? 'Descargando PDF...' : 'Descargar PDF'}</span>
           </button>
 
           <div className="flex items-center gap-2">

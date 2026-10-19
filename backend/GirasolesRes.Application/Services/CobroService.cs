@@ -16,6 +16,7 @@ public class CobroService : ICobroService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IMesaRepository _mesaRepository;
     private readonly IAuditoriaCobroRepository _auditoriaCobroRepository;
+    private readonly IPdfComprobanteService _pdfComprobanteService;
 
     public CobroService(
         ICajaRepository cajaRepository,
@@ -23,7 +24,8 @@ public class CobroService : ICobroService
         IComprobanteRepository comprobanteRepository,
         IPedidoRepository pedidoRepository,
         IMesaRepository mesaRepository,
-        IAuditoriaCobroRepository auditoriaCobroRepository)
+        IAuditoriaCobroRepository auditoriaCobroRepository,
+        IPdfComprobanteService pdfComprobanteService)
     {
         _cajaRepository = cajaRepository;
         _ventaRepository = ventaRepository;
@@ -31,6 +33,7 @@ public class CobroService : ICobroService
         _pedidoRepository = pedidoRepository;
         _mesaRepository = mesaRepository;
         _auditoriaCobroRepository = auditoriaCobroRepository;
+        _pdfComprobanteService = pdfComprobanteService;
     }
 
     public async Task<IReadOnlyList<PedidoPendienteCobroDto>> ObtenerPedidosPendientesCobroAsync(CancellationToken ct = default)
@@ -389,81 +392,7 @@ public class CobroService : ICobroService
     public async Task<byte[]> GenerarComprobantePdfAsync(Guid ventaId, bool esCopia = false, CancellationToken ct = default)
     {
         var detalle = await ObtenerComprobanteAsync(ventaId, esCopia, ct);
-
-        // Generar archivo de texto formateado térmico de 80mm o PDF
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine("========================================");
-        sb.AppendLine("         RESTAURANTE GIRASOLES          ");
-        sb.AppendLine("           RUC: 20481234567             ");
-        sb.AppendLine("      Av. Principal 123 - Ayacucho      ");
-        sb.AppendLine("========================================");
-        if (detalle.EsCopia)
-        {
-            sb.AppendLine("             *** COPIA ***              ");
-        }
-        var tipoTitulo = detalle.TipoComprobante == "Factura"
-            ? "FACTURA ELECTRÓNICA"
-            : (detalle.TipoComprobante == "Boleta" ? "BOLETA DE VENTA ELECTRÓNICA" : "TICKET DE VENTA");
-        sb.AppendLine($"           {tipoTitulo}           ");
-        sb.AppendLine($"NÚMERO     : {detalle.NumeroFormateado}");
-        sb.AppendLine($"FECHA/HORA : {detalle.FechaHoraFormateada}");
-        sb.AppendLine($"CAJERO(A)  : {detalle.CajeroNombre}");
-        if (!string.IsNullOrWhiteSpace(detalle.NumDocReceptor))
-        {
-            sb.AppendLine($"DOC CLIENTE: {detalle.TipoDocReceptor} {detalle.NumDocReceptor}");
-        }
-        if (!string.IsNullOrWhiteSpace(detalle.RazonSocialReceptor))
-        {
-            sb.AppendLine($"CLIENTE    : {detalle.RazonSocialReceptor}");
-        }
-        if (!string.IsNullOrWhiteSpace(detalle.DireccionReceptor))
-        {
-            sb.AppendLine($"DIRECCIÓN  : {detalle.DireccionReceptor}");
-        }
-        sb.AppendLine($"PEDIDO     : N.º {detalle.PedidoNumero} ({detalle.TipoPedido})");
-        if (!string.IsNullOrWhiteSpace(detalle.MesaNombre))
-        {
-            sb.AppendLine($"MESA       : {detalle.MesaNombre}");
-        }
-        if (!string.IsNullOrWhiteSpace(detalle.Referencia))
-        {
-            sb.AppendLine($"REF / NOTAS: {detalle.Referencia}");
-        }
-        sb.AppendLine("----------------------------------------");
-        sb.AppendLine("CANT  DESCRIPCIÓN        P.UNIT  IMPORTE");
-        sb.AppendLine("----------------------------------------");
-        foreach (var l in detalle.Lineas)
-        {
-            var nombreCorto = l.ProductoNombre.Length > 18 ? l.ProductoNombre.Substring(0, 18) : l.ProductoNombre;
-            sb.AppendLine($"{l.Cantidad,4}  {nombreCorto,-18} {l.PrecioUnitario,6:F2} {l.Subtotal,8:F2}");
-            if (!string.IsNullOrWhiteSpace(l.Observacion))
-            {
-                sb.AppendLine($"      * {l.Observacion}");
-            }
-        }
-        sb.AppendLine("----------------------------------------");
-        if (detalle.TipoComprobante == "Boleta" || detalle.TipoComprobante == "Factura")
-        {
-            sb.AppendLine($"OP. GRAVADA :                S/ {detalle.OpGravada,8:F2}");
-            sb.AppendLine($"I.G.V. (18%):                S/ {detalle.Igv,8:F2}");
-        }
-        sb.AppendLine($"TOTAL A PAGAR:               S/ {detalle.Total,8:F2}");
-        sb.AppendLine($"MÉTODO PAGO  : {detalle.MetodoPago}");
-        if (detalle.MetodoPago == "Efectivo" && detalle.MontoRecibido.HasValue)
-        {
-            sb.AppendLine($"MONTO RECIBIDO:              S/ {detalle.MontoRecibido.Value,8:F2}");
-            sb.AppendLine($"VUELTO ENTREGADO:            S/ {detalle.Vuelto ?? 0,8:F2}");
-        }
-        else if (detalle.MetodoPago == "Yape" && !string.IsNullOrWhiteSpace(detalle.YapeReferencia))
-        {
-            sb.AppendLine($"REF. YAPE    : {detalle.YapeReferencia}");
-        }
-        sb.AppendLine("========================================");
-        sb.AppendLine($"    {detalle.Leyenda}    ");
-        sb.AppendLine("        ¡GRACIAS POR SU PREFERENCIA!    ");
-        sb.AppendLine("========================================");
-
-        return System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+        return _pdfComprobanteService.GenerarPdfComprobante(detalle);
     }
 
     private async Task<Caja> ValidarCajaAbiertaParaCobroAsync(CancellationToken ct)

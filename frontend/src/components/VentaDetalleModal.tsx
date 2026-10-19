@@ -299,7 +299,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
         {/* Barra de Acciones del Detalle */}
         <div className="pt-3 border-t border-neutral-200/80 flex flex-wrap items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-2">
-            {/* Botón Descargar TXT (RV-117, RN-104) */}
+            {/* Botón Descargar PDF (RV-117, RN-104) */}
             <button
               type="button"
               disabled={loading || !venta || descargandoTicket}
@@ -307,7 +307,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               className="px-3 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-[#D35400]" />
-              <span>Descargar Ticket (Copia)</span>
+              <span>{descargandoTicket ? 'Descargando PDF...' : 'Descargar PDF (Copia)'}</span>
             </button>
           </div>
 

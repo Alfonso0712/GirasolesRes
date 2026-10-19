@@ -82,17 +82,21 @@ export const ventaService = {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.message || 'Error al descargar el comprobante.');
+      throw new Error(errData.message || 'Error al descargar el comprobante en PDF.');
     }
 
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Ticket_${ventaId.substring(0, 8)}_${esCopia ? 'COPIA' : 'ORIGINAL'}.txt`;
+    a.download = `Comprobante_${ventaId.substring(0, 8)}_${esCopia ? 'COPIA' : 'ORIGINAL'}.pdf`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
+  },
+
+  async descargarTicketPdf(ventaId: string, esCopia: boolean, token: string): Promise<void> {
+    return this.descargarTicketTxt(ventaId, esCopia, token);
   }
 };

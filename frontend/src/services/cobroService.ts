@@ -25,7 +25,7 @@ export const cobroService = {
       token
     ),
 
-  descargarComprobanteTxt: async (
+  descargarComprobantePdf: async (
     ventaId: string,
     copia: boolean = false,
     token: string
@@ -40,18 +40,27 @@ export const cobroService = {
     );
 
     if (!response.ok) {
-      throw new Error('Error al descargar el ticket de cobro.');
+      throw new Error('Error al descargar el comprobante en PDF.');
     }
 
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Ticket_${ventaId.substring(0, 8)}_${copia ? 'COPIA' : 'ORIGINAL'}.txt`;
+    a.download = `Comprobante_${ventaId.substring(0, 8)}_${copia ? 'COPIA' : 'ORIGINAL'}.pdf`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
+  },
+
+  // Alias retrocompatible
+  descargarComprobanteTxt: async (
+    ventaId: string,
+    copia: boolean = false,
+    token: string
+  ): Promise<void> => {
+    return cobroService.descargarComprobantePdf(ventaId, copia, token);
   },
 
   consultarDni: (dni: string, token: string): Promise<ResultadoConsultaDni> =>

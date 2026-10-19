@@ -180,19 +180,19 @@ export function useCobrosManagement(token: string, onCajaEstadoChange?: () => vo
     }
   };
 
-  // Descarga de ticket térmico
+  // Descarga de comprobante PDF
   const handleDescargarTxt = async () => {
     if (!comprobanteActual) return;
     setDescargandoTxt(true);
     try {
-      await cobroService.descargarComprobanteTxt(
+      await cobroService.descargarComprobantePdf(
         comprobanteActual.ventaId,
         comprobanteActual.esCopia,
         token
       );
-      mostrarExito('Ticket descargado en formato de texto térmico.');
+      mostrarExito('Comprobante PDF descargado exitosamente.');
     } catch (err: any) {
-      mostrarError(err.message || 'Error al descargar el archivo.');
+      mostrarError(err.message || 'Error al descargar el archivo PDF.');
     } finally {
       setDescargandoTxt(false);
     }

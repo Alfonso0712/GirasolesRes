@@ -258,14 +258,14 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
     }
   };
 
-  // Descargar / reimprimir comprobante
+  // Descargar / reimprimir comprobante PDF
   const handleDescargarComprobante = async (ventaId: string, esCopia = true) => {
     setDescargandoTicket(true);
     try {
-      await ventaService.descargarTicketTxt(ventaId, esCopia, token);
-      mostrarExito('Ticket térmico descargado.');
+      await ventaService.descargarTicketPdf(ventaId, esCopia, token);
+      mostrarExito('Comprobante PDF descargado exitosamente.');
     } catch (err: any) {
-      mostrarError(err.message || 'Error al descargar el comprobante.');
+      mostrarError(err.message || 'Error al descargar el comprobante en PDF.');
     } finally {
       setDescargandoTicket(false);
     }
