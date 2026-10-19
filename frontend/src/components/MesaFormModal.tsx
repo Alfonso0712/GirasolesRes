@@ -179,7 +179,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+            className="modal-close-btn"
           >
             <X className="w-5 h-5" />
           </button>

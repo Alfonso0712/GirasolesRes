@@ -96,7 +96,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="absolute right-4 top-4 p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="modal-close-btn absolute right-3 top-3"
           >
             <X className="w-4 h-4" />
           </button>
@@ -186,7 +186,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           type="button"
           onClick={onClose}
           aria-label="Cerrar modal"
-          className="absolute right-4 top-4 p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+          className="modal-close-btn absolute right-3 top-3"
         >
           <X className="w-4 h-4" />
         </button>

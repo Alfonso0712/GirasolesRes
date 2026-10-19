@@ -82,7 +82,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="modal-close-btn"
             aria-label="Cerrar modal de nota"
           >
             <X className="w-5 h-5" />

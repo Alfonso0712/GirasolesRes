@@ -96,7 +96,8 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
   if (!isOpen || !cajaId) return null;
 
   const handleDescargarPdf = async () => {
-    if (descargandoPdf || !cajaId) return;
+    if (descargandoPdf) return;
+    if (!cajaId) return;
     setDescargandoPdf(true);
     try {
       const downloadFn =
@@ -245,10 +246,10 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                   <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <span className="font-bold text-sm text-amber-900 block">
-                      Cierre con ajustes posteriores
+                      Cierre con ajustes posteriores (RN-113)
                     </span>
                     <p className="text-amber-800 leading-relaxed">
-                      Una o más ventas correspondientes a este turno fueron anuladas con posterioridad al cierre de caja. El arqueo y balance histórico original permanecen estrictamente inmutables; las ventas anuladas se detallan en la sección de auditoría al final.
+                      Una o más ventas correspondientes a este turno fueron anuladas con posterioridad al cierre de caja; el arqueo y balance histórico original permanecen estrictamente inmutables; las ventas anuladas se detallan en la sección de auditoría al final.
                     </p>
                   </div>
                 </div>
@@ -496,7 +497,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                   </div>
 
                   <div className="p-3 bg-amber-100/30 border-b border-amber-200/60 text-[11px] text-amber-900 leading-normal">
-                    <strong>Nota de Auditoría:</strong> El balance de arqueo original permanece inalterado. Estas anulaciones ocurrieron después de cerrarse el turno para regularizar pedidos.
+                    <strong>Nota de Auditoría per RN-113:</strong> El balance de arqueo original permanece inalterado. Estas anulaciones ocurrieron después de cerrarse el turno para regularizar pedidos.
                   </div>
 
                   <div className="divide-y divide-amber-200/60 text-xs">

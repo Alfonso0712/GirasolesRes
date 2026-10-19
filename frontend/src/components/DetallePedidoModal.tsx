@@ -97,7 +97,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-neutral-400 hover:text-neutral-700 p-2 rounded-xl hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="modal-close-btn"
             aria-label="Cerrar detalle"
           >
             <X className="w-5 h-5" />

@@ -269,7 +269,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="w-8 h-8 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+            className="modal-close-btn"
             aria-label="Cerrar modal de cobro"
           >
             <X className="w-5 h-5" />

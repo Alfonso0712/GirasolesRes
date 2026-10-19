@@ -562,7 +562,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 type="button"
                 disabled={pagina <= 1}
                 onClick={() => setPagina(pagina - 1)}
-                className={`p-1.5 rounded-lg border shadow-2xs transition-colors ${
+                className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
                   pagina <= 1
                     ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
                     : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
@@ -580,7 +580,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 type="button"
                 disabled={pagina >= totalPaginas}
                 onClick={() => setPagina(pagina + 1)}
-                className={`p-1.5 rounded-lg border shadow-2xs transition-colors ${
+                className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
                   pagina >= totalPaginas
                     ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
                     : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'

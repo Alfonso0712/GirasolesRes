@@ -76,7 +76,19 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // RN-106 / RN-116: Redirección automática si un rol no autorizado intenta acceder a Historial de Cierres o Reportes
   useEffect(() => {
-    if ((paginaActiva === 'historial-cierres' || paginaActiva === 'reportes') && session.rol !== 'Administrador') {
+    if (paginaActiva === 'historial-cierres' && session.rol !== 'Administrador') {
+      const defaultPage =
+        session.rol === 'Cajero'
+          ? 'pedidos-llevar'
+          : session.rol === 'Mozo'
+          ? 'mesas'
+          : session.rol === 'Cocinero'
+          ? 'cocina'
+          : 'inicio';
+      setPaginaActiva(defaultPage);
+      return;
+    }
+    if (paginaActiva === 'reportes' && session.rol !== 'Administrador') {
       const defaultPage =
         session.rol === 'Cajero'
           ? 'pedidos-llevar'
@@ -352,6 +364,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           onLogout={onLogout}
         />
       ) : paginaActiva === 'historial-cierres' ? (
+        // RN-106: session.rol === 'Administrador' && (
         session.rol === 'Administrador' ? (
           <HistorialCierresPage
             session={session}
@@ -366,7 +379,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Acceso Restringido
             </h2>
             <p className="text-neutral-600 max-w-md mx-auto text-sm">
-              No tiene permiso para acceder al Historial de Cierres de Caja. Este módulo está restringido exclusivamente para el rol Administrador.
+              No tiene permiso para acceder al Historial de Cierres de Caja (RN-106, E-319). Este módulo está restringido exclusivamente para el rol Administrador.
             </p>
             <button
               type="button"

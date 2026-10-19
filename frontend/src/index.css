@@ -2,6 +2,31 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --color-primary: #D35400;
+    --color-primary-hover: #B84600;
+    --color-brand-dark: #482813;
+    --color-brand-surface: #5A351D;
+    --color-text-main: #2C1A0E;
+    --color-text-muted: #7C6F66;
+    --color-canvas: #FAF7F4;
+    --color-surface: #FFFFFF;
+    
+    /* Semántica */
+    --color-success: #059669;
+    --color-success-bg: #ECFDF5;
+    --color-success-border: #A7F3D0;
+    --color-warning: #D97706;
+    --color-warning-bg: #FFFBEB;
+    --color-warning-border: #FDE68A;
+    --color-danger: #E11D48;
+    --color-danger-bg: #FFF1F2;
+    --color-danger-border: #FECDD3;
+    --color-info: #2563EB;
+    --color-info-bg: #EFF6FF;
+    --color-info-border: #BFDBFE;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     color: #2C1A0E;
@@ -15,3 +40,97 @@
     font-family: 'Playfair Display', Georgia, serif;
   }
 }
+
+/* Clases Utilitarias Estandarizadas para Componentes del Sistema */
+.table-th-standard {
+  background-color: #FAF7F4;
+  color: #482813;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #E5E7EB;
+  text-align: left;
+}
+
+.table-td-standard {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #2C1A0E;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+.table-action-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  cursor: pointer;
+}
+
+.input-filter-standard {
+  height: 2.5rem;
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid #E5E7EB;
+  background-color: #FFFFFF;
+  font-size: 0.875rem;
+  color: #1F2937;
+  outline: none;
+  transition-property: border-color, box-shadow;
+  transition-duration: 150ms;
+}
+.input-filter-standard:focus {
+  border-color: #D35400;
+  box-shadow: 0 0 0 2px #FDE68A;
+}
+
+.modal-header-standard {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  background-color: #FFFFFF;
+}
+
+.modal-close-btn {
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  color: #9CA3AF;
+  transition-property: color, background-color;
+  transition-duration: 150ms;
+  cursor: pointer;
+  min-height: 38px;
+  min-width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close-btn:hover {
+  color: #374151;
+  background-color: #F3F4F6;
+}
+
+.modal-footer-standard {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #E5E7EB;
+  background-color: rgba(249, 250, 251, 0.8);
+}
+

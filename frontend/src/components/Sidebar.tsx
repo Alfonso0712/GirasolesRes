@@ -53,6 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   cajaEstado,
 }) => {
   const rol = session?.rol;
+  // Guard estricto RN-106: rol === 'Administrador' && (
 
   // Cerrar drawer con tecla Escape en móvil
   useEffect(() => {

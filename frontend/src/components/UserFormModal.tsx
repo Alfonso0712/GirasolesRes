@@ -257,7 +257,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="modal-close-btn"
           >
             <X className="w-5 h-5" />
           </button>

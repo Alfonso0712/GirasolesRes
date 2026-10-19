@@ -78,7 +78,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
               onClick={onClose}
               disabled={procesando}
               aria-label="Cerrar diálogo"
-              className="text-neutral-400 hover:text-neutral-600 p-1 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+              className="modal-close-btn"
             >
               <X className="w-5 h-5" />
             </button>

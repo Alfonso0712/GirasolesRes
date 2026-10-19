@@ -1,4 +1,5 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -8,6 +9,7 @@ export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElem
   error?: string | null;
   rightElement?: React.ReactNode;
   leftIcon?: React.ReactNode;
+  isPassword?: boolean;
 }
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
@@ -21,11 +23,29 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   error = '',
   rightElement,
   leftIcon,
+  isPassword = false,
   className = '',
   id,
   ...props
 }, ref) => {
   const inputId = id || name;
+  const [showPassword, setShowPassword] = useState(false);
+
+  const effectiveType = isPassword ? (showPassword ? 'text' : 'password') : type;
+
+  const renderRightElement = rightElement ? (
+    rightElement
+  ) : isPassword ? (
+    <button
+      type="button"
+      tabIndex={0}
+      onClick={() => setShowPassword(!showPassword)}
+      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+      className="p-1.5 text-stone-400 hover:text-[#D35400] transition-colors rounded-lg cursor-pointer"
+    >
+      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+    </button>
+  ) : null;
 
   return (
     <div className={`mb-4 text-left ${className}`}>
@@ -44,14 +64,14 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           id={inputId}
           ref={ref}
           name={name}
-          type={type}
+          type={effectiveType}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
           required={required}
           className={`w-full min-h-[48px] py-3 rounded-xl border text-sm transition-all duration-150 outline-none text-[#2C1A0E] placeholder:text-[#A89F96] ${
             leftIcon ? 'pl-10' : 'pl-4'
-          } ${rightElement ? 'pr-20' : 'pr-4'} ${
+          } ${renderRightElement ? 'pr-12' : 'pr-4'} ${
             error
               ? 'border-red-500 bg-white focus:border-red-500 focus:ring-2 focus:ring-red-200'
               : 'border-[#E5E0DB] bg-white focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20'
@@ -61,9 +81,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           {...props}
         />
 
-        {rightElement && (
+        {renderRightElement && (
           <div className="absolute inset-y-0 right-0 flex items-center pr-3.5">
-            {rightElement}
+            {renderRightElement}
           </div>
         )}
       </div>

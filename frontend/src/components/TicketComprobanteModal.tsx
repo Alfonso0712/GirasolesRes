@@ -52,7 +52,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+            className="modal-close-btn"
             aria-label="Cerrar vista de ticket"
           >
             <X className="w-5 h-5" />

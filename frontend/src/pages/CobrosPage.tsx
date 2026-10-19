@@ -154,8 +154,9 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   const cajaCerrada = !cajaEstado?.estaAbierta;
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
+    <div className="h-full flex flex-col overflow-hidden w-full">
+      <div className="flex-1 overflow-y-auto min-h-0 w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
       {/* 1. Encabezado Fijo del Módulo */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <div>
@@ -328,7 +329,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                 key={tipo}
                 type="button"
                 onClick={() => setFiltroTipo(tipo)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[36px] ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[44px] ${
                   activo
                     ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
                     : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'
@@ -648,6 +649,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
           </button>
         </div>
       )}
+        </div>
       </div>
     </div>
   );

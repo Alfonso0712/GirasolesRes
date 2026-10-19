@@ -652,7 +652,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                     onClick={() => setPagina((p) => Math.max(1, p - 1))}
                     disabled={pagina <= 1}
                     aria-label="Página anterior"
-                    className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -661,7 +661,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                     onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
                     disabled={pagina >= totalPaginas}
                     aria-label="Página siguiente"
-                    className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>

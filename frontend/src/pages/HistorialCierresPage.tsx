@@ -163,15 +163,16 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
     return (
       <div className="p-8 text-center bg-[#FFFDF9] border border-red-200 rounded-2xl shadow-sm space-y-3 animate-fade-in text-[#482813] max-w-2xl mx-auto my-8">
         <ShieldAlert className="w-12 h-12 text-red-600 mx-auto" />
-        <h2 className="text-lg font-bold text-red-800">Acceso restringido</h2>
+        <h2 className="text-lg font-bold text-red-800">Acceso restringido (RN-106 / E-319)</h2>
         <p className="text-sm text-stone-600">
-          No tiene permisos para acceder al historial de cierres. Esta vista es exclusiva para el rol Administrador.
+          MSG-39: No tiene permisos para acceder al historial de cierres. Esta vista es exclusiva para el rol Administrador.
         </p>
       </div>
     );
   }
 
   const handleDescargarPdf = async (cajaId: string) => {
+    if (descargandoPdfId) return;
     try {
       setDescargandoPdfId(cajaId);
       const downloadFn =
@@ -261,7 +262,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
               <button
                 type="button"
                 onClick={limpiarFiltros}
-                className="px-3 py-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl cursor-pointer min-h-[40px] transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl cursor-pointer min-h-[44px] transition-colors"
               >
                 Limpiar filtro
               </button>
@@ -274,28 +275,28 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(0)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[36px]"
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
             >
               Hoy
             </button>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(1)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[36px]"
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
             >
               Ayer
             </button>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(7)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[36px]"
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
             >
               7 días
             </button>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(30)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[36px]"
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
             >
               30 días
             </button>
@@ -454,7 +455,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                         {abierta ? (
                           <span className="text-stone-400 font-normal">—</span>
                         ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
-                          `S/ ${Number(c.efectivoContado).toFixed(2)}`
+                          <span className="tabular-nums font-semibold">{`S/ ${Number(c.efectivoContado).toFixed(2)}`}</span>
                         ) : (
                           '—'
                         )}
@@ -467,15 +468,15 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                         ) : diferenciaNum === null ? (
                           <span className="text-stone-400">—</span>
                         ) : diferenciaNum === 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
                             Cuadra · S/ 0.00
                           </span>
                         ) : diferenciaNum > 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 tabular-nums">
                             + S/ {diferenciaNum.toFixed(2)}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 tabular-nums">
                             - S/ {Math.abs(diferenciaNum).toFixed(2)}
                           </span>
                         )}
@@ -517,7 +518,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               type="button"
                               onClick={() => handleDescargarPdf(cajaId)}
                               disabled={descargandoPdfId === cajaId}
-                              className="p-2 text-stone-600 hover:text-stone-900 hover:bg-[#FAF6F0] disabled:opacity-40 rounded-lg transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                              className="p-2 text-stone-600 hover:text-stone-900 hover:bg-[#FAF6F0] disabled:opacity-40 rounded-lg transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
                               title="Descargar comprobante de cierre PDF"
                               aria-label={`Descargar PDF del cierre ${cajaId}`}
                             >
@@ -531,7 +532,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                             <button
                               type="button"
                               disabled
-                              className="p-2 text-stone-300 cursor-not-allowed min-h-[36px] min-w-[36px] flex items-center justify-center"
+                              className="p-2 text-stone-300 cursor-not-allowed min-h-[44px] min-w-[44px] flex items-center justify-center"
                               title="No disponible mientras la caja esté abierta"
                               aria-label="PDF no disponible para caja abierta"
                             >
@@ -559,7 +560,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                 type="button"
                 disabled={pagina <= 1 || cargando}
                 onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                className="p-2 border border-stone-300 rounded-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors"
+                className="p-2 border border-stone-300 rounded-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
                 aria-label="Página anterior"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -571,7 +572,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                 type="button"
                 disabled={pagina >= totalPaginas || cargando}
                 onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                className="p-2 border border-stone-300 rounded-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors"
+                className="p-2 border border-stone-300 rounded-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
                 aria-label="Página siguiente"
               >
                 <ChevronRight className="w-4 h-4" />
