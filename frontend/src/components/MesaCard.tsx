@@ -85,22 +85,22 @@ export const MesaCard: React.FC<MesaCardProps> = ({
       role="article"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`rounded-2xl border p-4 sm:p-5 flex flex-col justify-between min-h-[140px] sm:min-h-[150px] relative select-none ${estiloCard} ${claseResaltado}`}
+      className={`rounded-2xl border p-3.5 sm:p-4 flex flex-col justify-between min-h-[140px] h-auto relative select-none ${estiloCard} ${claseResaltado}`}
     >
       {/* Encabezado de la Tarjeta con Flexbox Limpio (Título + Badge a la izquierda, Acciones Admin a la derecha) */}
-      <div className="flex justify-between items-start gap-2 mb-2">
+      <div className="flex justify-between items-start gap-2 mb-1.5">
         <div className="flex flex-col gap-1 min-w-0">
           <h3
-            className="font-sans font-bold text-base sm:text-lg text-[#2C1A0E] tabular-nums truncate"
+            className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-[#2C1A0E] tabular-nums break-words leading-snug line-clamp-2"
             title={mesa.nombre}
           >
             {mesa.nombre}
           </h3>
           <span
-            className={`px-2 py-0.5 text-[11px] font-semibold rounded-lg border shadow-2xs inline-flex items-center gap-1 w-fit ${badgeColor}`}
+            className={`px-2 py-0.5 text-xs font-semibold rounded-lg border shadow-2xs inline-flex items-center gap-1 w-fit ${badgeColor}`}
           >
             <IconoEstado className="w-3 h-3 shrink-0" />
-            <span className="truncate">{esInactiva ? 'Inactiva' : mesa.ocupacion}</span>
+            <span>{esInactiva ? 'Inactiva' : mesa.ocupacion}</span>
           </span>
         </div>
 
@@ -156,9 +156,9 @@ export const MesaCard: React.FC<MesaCardProps> = ({
         )}
       </div>
 
-      {/* Descripción a ancho completo en una sola línea horizontal */}
+      {/* Descripción con texto flexible */}
       <p
-        className="text-xs text-[#7C6F66] font-sans truncate whitespace-nowrap mb-3 w-full"
+        className="text-xs sm:text-sm text-[#7C6F66] font-sans break-words line-clamp-2 mb-2 w-full"
         title={esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}
       >
         {esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}

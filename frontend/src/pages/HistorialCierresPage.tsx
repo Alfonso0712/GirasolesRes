@@ -186,9 +186,9 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 text-[#482813] animate-fade-in">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 text-[#482813] animate-fade-in">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE CAJA
@@ -221,7 +221,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
       </div>
 
       {/* Barra de Filtros de Fecha (RV-130) */}
-      <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl p-4 shadow-sm space-y-3">
+      <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl px-3.5 py-2.5 shadow-sm space-y-2">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">

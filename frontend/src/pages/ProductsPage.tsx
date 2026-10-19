@@ -249,7 +249,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-3.5">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
       {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
       {avisoExito && (
         <div
@@ -360,7 +360,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {pestañaActiva === 'catalogo' && (
         <>
           {/* Barra de Filtros y Búsqueda */}
-          <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 p-3 shadow-xs flex flex-col sm:flex-row gap-3 items-center">
+          <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
               <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -549,7 +549,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                       <UtensilsCrossed className="w-4 h-4 xl:w-5 xl:h-5" />
                                     )}
                                   </div>
-                                  <span className="font-semibold text-neutral-900 text-sm xl:text-base">
+                                  <span className="font-semibold text-neutral-900 text-sm sm:text-base lg:text-lg break-words">
                                     {prod.nombre}
                                   </span>
                                 </div>
@@ -850,7 +850,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                             {icono}
                           </div>
                           <div>
-                            <h3 className="font-sans font-bold text-lg text-[#482813] leading-snug">
+                            <h3 className="font-sans font-bold text-base sm:text-lg lg:text-xl text-[#482813] leading-snug break-words">
                               {m.nombre}
                             </h3>
                             <span className="text-[11px] text-neutral-500 font-medium">

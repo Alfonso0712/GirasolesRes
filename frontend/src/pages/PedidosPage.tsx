@@ -291,9 +291,9 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
       {/* 1. Encabezado Superior ESTÁTICO Y FIJO sobre fondo crema */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE PEDIDOS
@@ -328,7 +328,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
       {/* Contenedor sin confinamiento artificial */}
       <div className="w-full">
         {/* Contadores por Estado (actúan como filtro al tocarlos) */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-3">
           <button
             type="button"
             onClick={() => setFiltroEstado(filtroEstado === 'Pendiente' ? '' : 'Pendiente')}
@@ -420,7 +420,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
         </div>
 
         {/* Barra de Filtros Combinables (RV-81) */}
-        <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-xs mb-6 flex flex-wrap items-center gap-3">
+        <div className="px-3.5 py-2.5 bg-white rounded-2xl border border-neutral-200/80 shadow-xs mb-3 flex flex-wrap items-center gap-2.5">
           <div className="flex items-center gap-2 text-xs font-semibold text-neutral-600">
             <Filter className="w-4 h-4 text-[#D35400]" />
             <span>Filtros:</span>

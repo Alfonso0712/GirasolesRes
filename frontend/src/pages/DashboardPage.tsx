@@ -123,9 +123,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
       {/* Encabezado Editorial (RV-148) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 mb-2">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             PANEL PRINCIPAL
@@ -470,7 +470,7 @@ function renderAdminDashboard(
                       }`}>
                         {idx + 1}
                       </span>
-                      <span className="text-xs font-semibold text-neutral-800 truncate" title={p.producto}>
+                      <span className="text-xs sm:text-sm font-semibold text-neutral-800 break-words line-clamp-2" title={p.producto}>
                         {p.producto}
                       </span>
                     </div>

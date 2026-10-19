@@ -154,7 +154,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
                             type="button"
                             disabled={agotada}
                             onClick={() => handleSeleccionarOpcion(parte.nombre, opc.productoId, opc.nombre, agotada)}
-                            className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer font-sans ${
+                            className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer font-sans min-h-[44px] h-auto ${
                               agotada
                                 ? 'bg-neutral-50 border-neutral-200 opacity-60 cursor-not-allowed'
                                 : seleccionada
@@ -162,7 +162,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
                                 : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50 text-[#2C1A0E]'
                             }`}
                           >
-                            <span className="text-xs sm:text-sm font-medium line-clamp-1">
+                            <span className="text-xs sm:text-sm font-medium break-words text-wrap leading-snug mr-2">
                               {opc.nombre}
                             </span>
                             {agotada ? (

@@ -175,9 +175,9 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-32 space-y-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-32 space-y-2.5 sm:space-y-3">
         {/* CABECERA PRINCIPAL */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-2 border-b border-neutral-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 pb-2.5 mb-1.5 border-b border-neutral-200">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             PLANIFICACIÓN Y SERVICIO
@@ -823,7 +823,7 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
             No hay componentes registrados con este rol. Regístrelos en Carta y Menú &gt; Productos.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-3.5">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -832,7 +832,7 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center gap-2.5 xl:gap-3 transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] ${
+                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center gap-2.5 xl:gap-3 transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] h-auto ${
                     estaSeleccionado
                       ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
@@ -846,7 +846,7 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs sm:text-sm xl:text-base font-bold block truncate">
+                    <span className="text-sm sm:text-base lg:text-lg font-semibold block break-words text-wrap leading-snug">
                       {item.nombre}
                     </span>
                   </div>
@@ -1007,7 +1007,7 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
             No hay productos registrados en esta categoría de carta.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-3.5">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -1016,13 +1016,13 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] ${
+                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] h-auto ${
                     estaSeleccionado
                       ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 xl:gap-3 min-w-0">
+                  <div className="flex-1 min-w-0 flex items-center gap-2.5 xl:gap-3 mr-2">
                     <div className="shrink-0">
                       {estaSeleccionado ? (
                         <CheckSquare className="w-4 h-4 xl:w-5 xl:h-5 text-[#D35400]" />
@@ -1030,11 +1030,11 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                         <Square className="w-4 h-4 xl:w-5 xl:h-5 text-neutral-400" />
                       )}
                     </div>
-                    <span className="text-xs sm:text-sm xl:text-base font-bold block truncate">
+                    <span className="text-sm sm:text-base lg:text-lg font-semibold block break-words text-wrap leading-snug">
                       {item.nombre}
                     </span>
                   </div>
-                  <span className="text-xs sm:text-sm xl:text-base font-sans font-bold tabular-nums whitespace-nowrap text-neutral-600 shrink-0 ml-2">
+                  <span className="text-xs sm:text-sm xl:text-base font-sans font-bold tabular-nums whitespace-nowrap text-neutral-600 shrink-0 ml-1">
                     S/ {item.precio?.toFixed(2) ?? '0.00'}
                   </span>
                 </button>

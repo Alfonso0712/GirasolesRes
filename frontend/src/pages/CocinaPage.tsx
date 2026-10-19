@@ -293,7 +293,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 bg-[#FAF7F4] text-neutral-900 select-none">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 bg-[#FAF7F4] text-neutral-900 select-none">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div
@@ -392,7 +392,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       </div>
 
       {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
-      <section className="bg-white border-b border-amber-900/15 p-3.5 sm:px-6 shadow-2xs shrink-0 flex items-center gap-3 overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-300">
+      <section className="bg-white border-b border-amber-900/15 py-2 px-3.5 sm:px-6 shadow-2xs shrink-0 flex items-center gap-3 overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-300">
         <div className="flex items-center gap-1.5 text-xs font-bold text-amber-950 uppercase tracking-wide shrink-0">
           <Flame className="w-4 h-4 text-[#D35400]" />
           <span>Por preparar:</span>
@@ -410,7 +410,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
                 className="px-3 py-1 rounded-xl bg-amber-100/90 text-amber-900 text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 border border-amber-300/60 shadow-2xs"
               >
                 <span className="text-[#D35400] text-sm">{r.cantidad} ×</span>
-                <span className="truncate max-w-[200px]">{r.producto}</span>
+                <span className="max-w-[280px] break-words text-wrap">{r.producto}</span>
               </div>
             ))}
           </div>

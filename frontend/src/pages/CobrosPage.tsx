@@ -155,9 +155,9 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 select-none">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE CAJA
@@ -311,7 +311,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
       </div>
 
       {/* 3. Barra de Filtros Fija (shrink-0) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-xl border border-neutral-200/80 shadow-2xs">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-2.5 bg-white px-3.5 py-2 rounded-xl border border-neutral-200/80 shadow-2xs">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" />

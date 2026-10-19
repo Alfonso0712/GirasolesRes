@@ -116,9 +116,9 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
         <div>
           <div className="flex items-center gap-2 text-xs text-[#7C6F66] mb-1">
             {onVolver && (
@@ -342,15 +342,15 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                               )}
                               <div>
                                 <div className="flex items-start justify-between gap-1 mb-1">
-                                  <h4 className="font-bold text-sm text-[#2C1A0E] font-sans line-clamp-1" title={mc.nombre}>
+                                  <h4 className="font-bold text-sm sm:text-base text-[#2C1A0E] font-sans break-words line-clamp-2 leading-snug" title={mc.nombre}>
                                     {mc.nombre}
                                   </h4>
-                                  <span className="font-extrabold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap">
+                                  <span className="font-extrabold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap ml-1">
                                     S/ {mc.precio.toFixed(2)}
                                   </span>
                                 </div>
                                 {mc.incluye && (
-                                  <p className="text-[11px] text-[#7C6F66] font-sans mb-1.5 line-clamp-1">
+                                  <p className="text-xs text-[#7C6F66] font-sans mb-1.5 break-words line-clamp-2">
                                     Incluye: {mc.incluye}
                                   </p>
                                 )}
@@ -421,7 +421,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
 
                       <div>
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-sans font-bold text-sm xl:text-base text-[#2C1A0E] leading-snug line-clamp-2">
+                          <h4 className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-[#2C1A0E] leading-snug break-words">
                             {prod.nombre}
                           </h4>
                           {prod.agotado && (
@@ -430,7 +430,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                             </span>
                           )}
                         </div>
-                        <span className="block text-xs text-[#7C6F66] mt-0.5">
+                        <span className="block text-xs sm:text-sm text-[#7C6F66] mt-0.5">
                           {prod.categoria}
                         </span>
                       </div>

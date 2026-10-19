@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
   const esAdmin = session?.rol === 'Administrador';
 
   return (
-    <header className="bg-white border-b border-neutral-200 px-4 sm:px-8 py-3.5 flex justify-between items-center shadow-xs relative shrink-0">
+    <header className="bg-white border-b border-neutral-200 px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center shadow-xs relative shrink-0">
       {/* Left side: Hamburger (mobile/tablet) + Breadcrumbs */}
       <div className="flex items-center gap-2 sm:gap-3">
         {onToggleSidebar && (

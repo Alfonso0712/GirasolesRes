@@ -120,9 +120,9 @@ export const MesasPage: React.FC<MesasPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             OPERACIÓN DE SALÓN
@@ -229,7 +229,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
       )}
 
       {/* 2. Barra de Filtros Fija (shrink-0) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-xl border border-neutral-200/80 shadow-2xs">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-2.5 bg-white px-3.5 py-2 rounded-xl border border-neutral-200/80 shadow-2xs">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" />
@@ -306,11 +306,11 @@ export const MesasPage: React.FC<MesasPageProps> = ({
       )}
 
       {/* 3. Contenedor Principal de Cuadrícula */}
-      <div className="w-full bg-white rounded-2xl border border-neutral-200/80 p-4 sm:p-6 flex flex-col shadow-2xs">
+      <div className="w-full bg-white rounded-2xl border border-neutral-200/80 p-3.5 sm:p-4 lg:p-5 flex flex-col shadow-2xs">
         <div className="w-full">
           {/* Estado de Carga Inicial (Skeletons) */}
           {cargando ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3.5 sm:gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
@@ -392,7 +392,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
           ) : (
             /* Cuadrícula de Tarjetas de Mesas en orden natural (RNF-18 / CUS06.2) */
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3.5 sm:gap-4">
               {mesas.map((mesa) => (
                 <MesaCard
                   key={mesa.id}

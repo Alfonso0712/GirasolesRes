@@ -107,7 +107,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
       {/* Toast Alert / Banner de Éxito (shrink-0) */}
       {avisoExito && (
         <div className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
@@ -167,7 +167,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
       </div>
 
       {/* Barra de Filtros y Búsqueda ESTÁTICA Y FIJA (shrink-0) */}
-      <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 p-3 shadow-xs flex flex-col sm:flex-row gap-3 items-center">
+      <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
         {/* Search Input with Debounce 300ms (RV-22) */}
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -399,7 +399,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                             <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-xs xl:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                               {obtenerIniciales(u.nombre)}
                             </div>
-                            <span className="font-semibold text-neutral-900 text-sm xl:text-base">
+                            <span className="font-semibold text-neutral-900 text-sm sm:text-base lg:text-lg break-words">
                               {u.nombre}
                             </span>
                           </div>
