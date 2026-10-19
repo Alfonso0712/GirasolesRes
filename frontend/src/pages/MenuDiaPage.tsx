@@ -174,8 +174,9 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   });
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-24 space-y-4">
-      {/* CABECERA PRINCIPAL */}
+    <div className="flex-1 overflow-y-auto w-full relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-32 space-y-4">
+        {/* CABECERA PRINCIPAL */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-2 border-b border-neutral-200">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
@@ -680,61 +681,64 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           )}
         </>
       )}
+      </div>
 
       {/* BARRA INFERIOR FIJA (STICKY FOOTER) PARA GUARDAR MENÚ */}
       {esAdmin && (
-        <div className="sticky bottom-0 z-20 -mx-4 sm:-mx-6 lg:-mx-8 2xl:-mx-10 px-4 sm:px-6 lg:px-8 2xl:px-10 py-3.5 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-auto">
-          <div className="flex items-center gap-3">
-            {tieneCambiosSinGuardar ? (
-              <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#D35400] animate-ping shrink-0" />
-                <div>
-                  <p className="text-xs sm:text-sm font-bold text-neutral-900">
-                    Tiene cambios pendientes sin publicar
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-neutral-500 hidden sm:block">
-                    Haga clic en Guardar para actualizar las opciones y menús disponibles hoy.
-                  </p>
+        <div className="sticky bottom-0 z-50 w-full bg-white/95 backdrop-blur-md border-t border-neutral-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3.5 mt-auto">
+          <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              {tieneCambiosSinGuardar ? (
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#D35400] animate-ping shrink-0" />
+                  <div>
+                    <p className="text-xs sm:text-sm font-bold text-neutral-900">
+                      Tiene cambios pendientes sin publicar
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-neutral-500 hidden sm:block">
+                      Haga clic en Guardar para actualizar las opciones y menús disponibles hoy.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>El menú actual está publicado y guardado.</span>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>El menú actual está publicado y guardado.</span>
+                </div>
+              )}
+            </div>
 
-          <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
-            {tieneCambiosSinGuardar && (
+            <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+              {tieneCambiosSinGuardar && (
+                <button
+                  type="button"
+                  onClick={() => setDiscardModalOpen(true)}
+                  disabled={guardando}
+                  className="px-4 py-2 text-xs sm:text-sm font-bold text-neutral-700 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
+                >
+                  Descartar cambios
+                </button>
+              )}
+
               <button
                 type="button"
-                onClick={() => setDiscardModalOpen(true)}
+                onClick={handleGuardarMenu}
                 disabled={guardando}
-                className="px-4 py-2 text-xs sm:text-sm font-bold text-neutral-700 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
+                className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
               >
-                Descartar cambios
+                {guardando ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Guardando…</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>GUARDAR MENÚ DEL DÍA</span>
+                  </>
+                )}
               </button>
-            )}
-
-            <button
-              type="button"
-              onClick={handleGuardarMenu}
-              disabled={guardando}
-              className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
-            >
-              {guardando ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Guardando…</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>GUARDAR MENÚ DEL DÍA</span>
-                </>
-              )}
-            </button>
+            </div>
           </div>
         </div>
       )}

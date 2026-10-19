@@ -106,7 +106,8 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
   const totalPaginas = Math.ceil(total / tamano) || 1;
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
       {/* Toast Alert / Banner de Éxito (shrink-0) */}
       {avisoExito && (
         <div className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
@@ -691,6 +692,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
           setConfirmErrorMovimientos(false);
         }}
       />
+      </div>
     </div>
   );
 };

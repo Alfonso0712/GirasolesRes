@@ -185,7 +185,8 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   };
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 text-[#482813] animate-fade-in">
+    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 text-[#482813] animate-fade-in">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -593,6 +594,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
         }}
         token={session.token}
       />
+      </div>
     </div>
   );
 };

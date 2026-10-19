@@ -122,7 +122,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   );
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
+    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
       {/* Encabezado Editorial (RV-148) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
@@ -170,6 +171,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
       {session.rol === 'Cajero' && renderCajeroDashboard(bloques, onNavigate, renderBloqueError)}
       {session.rol === 'Mozo' && renderMozoDashboard(bloques, onNavigate, renderBloqueError)}
       {session.rol === 'Cocinero' && renderCocineroDashboard(bloques, onNavigate, renderBloqueError)}
+      </div>
     </div>
   );
 };

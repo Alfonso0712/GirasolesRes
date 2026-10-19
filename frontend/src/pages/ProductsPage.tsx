@@ -248,7 +248,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     filtroTipo !== 'Todos';
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-3.5">
+    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-3.5">
       {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
       {avisoExito && (
         <div
@@ -1115,6 +1116,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
