@@ -142,24 +142,21 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         </div>
       )}
 
-      {/* Encabezado Superior ESTÁTICO Y FIJO (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            GESTIÓN DE ACCESO
-          </p>
-          <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+      {/* Encabezado Superior ESTÁTICO Y FIJO (Single-Row Action Header) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#2C1A0E]">
             Usuarios
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Administre el personal, sus roles y el acceso al sistema.
-          </p>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+            {total} usuarios registrados
+          </span>
         </div>
 
         <button
           type="button"
           onClick={handleAbrirNuevo}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-sm shadow-sm hover:shadow transition-all shrink-0 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[38px]"
         >
           <Plus className="w-4 h-4" />
           <span>Nuevo usuario</span>

@@ -156,44 +156,36 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            GESTIÓN DE CAJA
-          </p>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
-              Cobro de Pedidos
-            </h1>
+      {/* 1. Encabezado Fijo del Módulo (Single-Row Action Header) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#2C1A0E]">
+            Cobro de Pedidos
+          </h1>
 
-            {/* Resumen de estado de caja integrado en pastilla */}
-            {cajaEstado?.estaAbierta ? (
-              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Caja abierta · {cajaEstado.cajeroNombre || session.nombre}
-                </span>
-              </div>
-            ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
-              <div className="px-3.5 py-1 bg-rose-50 rounded-full border border-rose-200 text-xs font-semibold text-rose-800 flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-rose-700">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                  Caja anterior sin cerrar
-                </span>
-              </div>
-            ) : (
-              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-[#B84600]">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  Caja cerrada
-                </span>
-              </div>
-            )}
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real.
-          </p>
+          {/* Resumen de estado de caja integrado en pastilla */}
+          {cajaEstado?.estaAbierta ? (
+            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Caja abierta · {cajaEstado.cajeroNombre || session.nombre}
+              </span>
+            </div>
+          ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
+            <div className="px-3.5 py-1 bg-rose-50 rounded-full border border-rose-200 text-xs font-semibold text-rose-800 flex items-center gap-2 shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 text-rose-700">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                Caja anterior sin cerrar
+              </span>
+            </div>
+          ) : (
+            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 text-[#B84600]">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Caja cerrada
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Sincronización y Botones de Acción */}

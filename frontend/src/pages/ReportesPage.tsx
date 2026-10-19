@@ -71,22 +71,19 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo (Directamente sobre fondo crema #FAF7F4, Cero cajas blancas) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            REPORTES Y ESTADÍSTICAS
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+      {/* 1. Encabezado Fijo del Módulo (Single-Row Action Header) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#482813]">
             Reportes del Restaurante
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-            Consulte el volumen de platos vendidos y el balance general de ventas en el período.
-          </p>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+            Exportación y métricas
+          </span>
         </div>
 
         {/* Acciones de Exportación (Desktop / Tablet) */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => descargar('pdf')}

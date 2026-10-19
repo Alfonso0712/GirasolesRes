@@ -86,33 +86,25 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            GESTIÓN DE VENTAS
-          </p>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
-              Historial de Ventas
-            </h1>
+      {/* 1. Encabezado Fijo del Módulo (Single-Row Action Header) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#2C1A0E]">
+            Historial de Ventas
+          </h1>
 
-            {/* Pastilla de estado de rol idéntica a Mesas y Cobros */}
-            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-              <span className="inline-flex items-center gap-1.5 text-neutral-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Consultas y comprobantes · {session.rol}
-              </span>
-            </div>
+          {/* Pastilla de estado de rol idéntica a Mesas y Cobros */}
+          <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 text-neutral-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Consultas y comprobantes · {session.rol}
+            </span>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registro histórico de ventas, consulta de comprobantes, reimpresión de copias y anulación autorizada.
-          </p>
         </div>
 
         {/* Contador RNF y Botón Actualizar */}
-        <div className="flex items-center gap-3 self-end sm:self-auto">
-          <span className="text-xs text-neutral-500 tabular-nums">
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
             Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
           </span>
           <button
@@ -120,7 +112,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             onClick={() => cargarVentas()}
             title="Actualizar lista de ventas"
             aria-label="Actualizar lista de ventas"
-            className="p-2 sm:px-3 sm:py-2 text-xs font-medium rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="p-2 sm:px-3 sm:py-2 text-xs font-medium rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px]"
           >
             <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualizar</span>

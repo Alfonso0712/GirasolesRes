@@ -124,19 +124,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* Encabezado Editorial (RV-148) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 mb-2">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            PANEL PRINCIPAL
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+      {/* Encabezado Editorial (Single-Row Action Header) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#482813]">
             Bienvenido/a, {session.nombre}
           </h1>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+            {session.rol}
+          </span>
         </div>
 
-        {/* Indicador discreto de actualización y botón manual (RV-148, RNF-57) */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        {/* Indicador discreto de actualización y botón manual */}
+        <div className="flex items-center gap-2 shrink-0">
           {sinConexion ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
               <WifiOff className="w-3.5 h-3.5 text-amber-600" />
@@ -148,7 +148,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
               Actualizando...
             </span>
           ) : (
-            <span className="text-xs text-neutral-500 font-medium tabular-nums">
+            <span className="text-xs text-neutral-500 font-medium tabular-nums hidden sm:inline">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
           )}
@@ -158,7 +158,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
             onClick={() => refrescarManual()}
             disabled={actualizando}
             aria-label="Actualizar datos del panel"
-            className="p-2 sm:px-3 sm:py-2 bg-white border border-neutral-200/80 rounded-xl text-neutral-700 hover:text-[#D35400] hover:border-[#D35400] text-xs font-semibold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[44px] min-w-[44px] justify-center"
+            className="p-2 sm:px-3 sm:py-2 bg-white border border-neutral-200/80 rounded-xl text-neutral-700 hover:text-[#D35400] hover:border-[#D35400] text-xs font-semibold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[38px] justify-center"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${actualizando ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">ACTUALIZAR</span>

@@ -202,32 +202,27 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className={`w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 ${esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar ? 'pb-28' : 'pb-8'} space-y-2.5 sm:space-y-3`}>
-        {/* CABECERA PRINCIPAL */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 pb-2.5 mb-1.5 border-b border-neutral-200">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            PLANIFICACIÓN Y SERVICIO
-          </p>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
-              Menú del Día
-            </h1>
-            {menu?.definido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Menú definido
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-                <AlertCircle className="w-3.5 h-3.5" />
-                Menú no definido hoy
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-neutral-500 capitalize flex items-center gap-1.5 mt-1">
-            <Calendar className="w-4 h-4 text-neutral-400" />
+        {/* CABECERA PRINCIPAL (Single-Row Action Header) */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-2.5 mb-1 border-b border-neutral-200">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#2C1A0E]">
+            Menú del Día
+          </h1>
+          <span className="text-xs text-neutral-600 font-medium capitalize flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-neutral-200 shadow-2xs">
+            <Calendar className="w-3.5 h-3.5 text-neutral-400" />
             {fechaHoyFormateada}
-          </p>
+          </span>
+          {menu?.definido ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Menú definido
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+              <AlertCircle className="w-3.5 h-3.5" />
+              Menú no definido hoy
+            </span>
+          )}
         </div>
 
         {/* CONTROLES ADMINISTRADOR */}

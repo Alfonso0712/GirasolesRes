@@ -117,39 +117,19 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-[#7C6F66] mb-1">
-            {onVolver && (
-              <button
-                onClick={onVolver}
-                className="hover:text-[#D35400] transition-colors flex items-center gap-1 cursor-pointer font-medium"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Volver a Mesas</span>
-              </button>
-            )}
-            <span>•</span>
-            <span className="font-bold uppercase tracking-wider text-[#D35400] text-[11px]">
-              OPERACIÓN DE SALÓN
-            </span>
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
-              Pedido para Llevar
-            </h1>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              Para llevar
-            </span>
-          </div>
-          <p className="text-sm text-neutral-500 mt-1">
-            Registre el pedido para llevar del cliente y envíe la comanda a cocina.
-          </p>
+      {/* 1. Encabezado Fijo del Módulo (Single-Row Action Header) */}
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl font-bold text-[#2C1A0E]">
+            Pedido para Llevar
+          </h1>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+            Para llevar
+          </span>
         </div>
 
         {/* Acciones de cabecera */}
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             type="button"
             variant="secondary"
@@ -168,6 +148,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               onClick={onVolver}
               className="text-xs px-3 py-2 min-h-[38px]"
             >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
               Volver a Mesas
             </Button>
           )}
