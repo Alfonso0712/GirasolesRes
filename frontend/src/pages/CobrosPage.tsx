@@ -154,7 +154,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   const cajaCerrada = !cajaEstado?.estaAbierta;
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4 select-none">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 select-none">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -365,8 +365,8 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
         </div>
       </div>
 
-      {/* 4. Contenedor de Datos con Scroll Confinado */}
-      <div className="flex-1 overflow-y-auto min-h-0 bg-white border border-neutral-200/80 rounded-2xl shadow-2xs [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      {/* 4. Contenedor de Datos: Fluye con el scroll principal */}
+      <div className="w-full bg-white border border-neutral-200/80 rounded-2xl shadow-2xs overflow-hidden">
         {cargando ? (
           <div className="p-12 text-center">
             <RotateCcw className="w-8 h-8 text-[#D35400] animate-spin mx-auto mb-3" />

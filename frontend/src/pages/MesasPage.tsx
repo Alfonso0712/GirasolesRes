@@ -119,7 +119,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -304,12 +304,12 @@ export const MesasPage: React.FC<MesasPageProps> = ({
         </div>
       )}
 
-      {/* 3. Contenedor Principal de Cuadrícula (flex-1, min-h-0, scroll 6px) */}
-      <div className="flex-1 min-h-0 bg-white rounded-2xl border border-neutral-200/80 p-4 sm:p-6 flex flex-col overflow-hidden shadow-2xs">
-        <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      {/* 3. Contenedor Principal de Cuadrícula */}
+      <div className="w-full bg-white rounded-2xl border border-neutral-200/80 p-4 sm:p-6 flex flex-col shadow-2xs">
+        <div className="w-full">
           {/* Estado de Carga Inicial (Skeletons) */}
           {cargando ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
@@ -325,7 +325,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
           ) : errorCarga && mesas.length === 0 ? (
             /* Estado de Error Total sin datos (MSG-94) */
-            <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+            <div className="py-12 flex flex-col items-center justify-center p-8 text-center">
               <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 border border-rose-200">
                 <AlertCircle className="w-7 h-7" />
               </div>
@@ -346,7 +346,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
           ) : todasLasMesas.length === 0 ? (
             /* Estado: Sin mesas registradas (MSG-91 / MSG-92) */
-            <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+            <div className="py-12 flex flex-col items-center justify-center p-8 text-center">
               <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-4 border border-amber-200">
                 <Utensils className="w-8 h-8" />
               </div>
@@ -371,7 +371,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
           ) : mesas.length === 0 ? (
             /* Estado: Sin resultados con el filtro (MSG-93) */
-            <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+            <div className="py-12 flex flex-col items-center justify-center p-8 text-center">
               <div className="w-14 h-14 rounded-2xl bg-neutral-100 text-neutral-500 flex items-center justify-center mb-3 border border-neutral-200">
                 <Filter className="w-6 h-6" />
               </div>
@@ -391,7 +391,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
           ) : (
             /* Cuadrícula de Tarjetas de Mesas en orden natural (RNF-18 / CUS06.2) */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
               {mesas.map((mesa) => (
                 <MesaCard
                   key={mesa.id}

@@ -106,7 +106,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
   const totalPaginas = Math.ceil(total / tamano) || 1;
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
       {/* Toast Alert / Banner de Éxito (shrink-0) */}
       {avisoExito && (
         <div className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
@@ -221,10 +221,10 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
       </div>
 
       {/* Contenedor Blanco de la Tabla: Ocupa el espacio restante */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white rounded-2xl border border-neutral-200/80 shadow-xs">
+      <div className="w-full bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
         {/* Error de carga (MSG-37) */}
         {errorCarga ? (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+          <div className="p-8 text-center space-y-4">
             <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
             <p className="text-sm font-medium text-neutral-700">{errorCarga}</p>
             <button
@@ -238,8 +238,8 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
           </div>
         ) : cargando ? (
           /* Estado de Carga (Sección 7 / Nielsen 1: Texto "Cargando usuarios…" con marcadores de posición) */
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            <div className="shrink-0 px-6 py-2.5 bg-amber-50/60 border-b border-amber-100/80 flex items-center justify-between text-xs text-neutral-600">
+          <div className="w-full">
+            <div className="px-6 py-2.5 bg-amber-50/60 border-b border-amber-100/80 flex items-center justify-between text-xs text-neutral-600">
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
                 <span className="font-semibold text-neutral-700">Cargando usuarios…</span>
@@ -247,7 +247,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
               <span className="text-[11px] text-neutral-400 font-medium">Actualizando lista</span>
             </div>
 
-            <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+            <div className="w-full overflow-x-auto">
               {/* Desktop Skeleton Table */}
               <div className="hidden lg:block">
                 <table className="w-full text-left border-collapse">
@@ -354,31 +354,31 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
           </div>
         ) : (
           <>
-            {/* Contenedor con Scroll Confinado y Barra Personalizada Sutil */}
-            <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+            {/* Contenedor sin Scroll Confinado: Fluye con el scroll principal */}
+            <div className="w-full overflow-x-auto">
               {/* Desktop Table matching UsersApp (Vega).png */}
               <div className="hidden lg:block">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-neutral-200/80 text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                    <tr className="border-b border-neutral-200/80 text-[11px] xl:text-xs font-bold text-neutral-400 uppercase tracking-wider">
+                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
                         NOMBRE
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
                         USUARIO
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
                         ROL
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
                         ESTADO
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 text-right border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 text-right border-b border-neutral-200/80">
                         ACCIONES
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100 text-sm">
+                  <tbody className="divide-y divide-neutral-100 text-sm xl:text-base">
                   {usuarios.map((u) => {
                     const esResaltado = usuarioResaltadoId === u.id;
                     const esPropiaCuenta = u.usuario.toLowerCase() === session.usuario.toLowerCase();
@@ -393,26 +393,26 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                         }`}
                       >
                         {/* Nombre con Badge de iniciales */}
-                        <td className="py-4 px-6">
+                        <td className="py-3.5 xl:py-4 px-4 xl:px-6">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                            <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-xs xl:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                               {obtenerIniciales(u.nombre)}
                             </div>
-                            <span className="font-semibold text-neutral-900">
+                            <span className="font-semibold text-neutral-900 text-sm xl:text-base">
                               {u.nombre}
                             </span>
                           </div>
                         </td>
 
                         {/* Usuario */}
-                        <td className="py-4 px-6 text-neutral-500 font-normal">
+                        <td className="py-3.5 xl:py-4 px-4 xl:px-6 text-neutral-500 font-normal text-xs xl:text-sm">
                           @{u.usuario}
                         </td>
 
                         {/* Rol Pill estandarizada con tamaño fijo w-28 h-7 */}
-                        <td className="py-4 px-6">
+                        <td className="py-3.5 xl:py-4 px-4 xl:px-6">
                           <span
-                            className={`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border ${obtenerEstiloRol(
+                            className={`w-28 xl:w-32 h-7 xl:h-8 inline-flex items-center justify-center rounded-lg text-xs xl:text-sm font-semibold border ${obtenerEstiloRol(
                               u.rol
                             )} text-center shadow-2xs`}
                           >
@@ -421,22 +421,22 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                         </td>
 
                         {/* Estado Indicator */}
-                        <td className="py-4 px-6">
+                        <td className="py-3.5 xl:py-4 px-4 xl:px-6">
                           <StatusBadge status={u.activo} variant="dot" />
                         </td>
 
-                        {/* Acciones: Botones cuadrados compactos (w-8 h-8 / 32x32 px) de solo icono con accesibilidad completa */}
-                        <td className="py-4 px-6 text-right">
+                        {/* Acciones: Botones cuadrados compactos */}
+                        <td className="py-3.5 xl:py-4 px-4 xl:px-6 text-right">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             {/* Botón Editar */}
                             <button
                               type="button"
                               onClick={(e) => handleAbrirEditar(u, e)}
-                              className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 transition-colors shadow-2xs cursor-pointer"
+                              className="w-8 h-8 xl:w-9 xl:h-9 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 transition-colors shadow-2xs cursor-pointer"
                               title="Editar usuario"
                               aria-label="Editar usuario"
                             >
-                              <Edit2 className="w-4 h-4 text-neutral-600" />
+                              <Edit2 className="w-4 h-4 xl:w-4.5 xl:h-4.5 text-neutral-600" />
                             </button>
 
                             {/* Botón dinámico de Estado (Activar / Desactivar) */}

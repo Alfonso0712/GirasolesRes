@@ -84,7 +84,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
   const tieneFiltrosActivos = Boolean(busqueda.trim() || errorFechas || errorBusqueda || filtroTipoComprobante !== 'todos');
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4 select-none">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 select-none">
       {/* 1. Encabezado Fijo del Módulo libre sobre fondo (shrink-0) */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -357,8 +357,8 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
         )}
       </div>
 
-      {/* 4. Lista / Tabla de Ventas (shrink-0 / flex-1) */}
-      <div className="flex-1 min-h-0 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col overflow-hidden">
+      {/* 4. Lista / Tabla de Ventas: Fluye con el scroll principal */}
+      <div className="w-full bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col overflow-hidden">
         {cargando ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-2.5 text-neutral-500 py-16">
             <span className="w-8 h-8 border-3 border-[#D35400]/20 border-t-[#D35400] rounded-full animate-spin" />
@@ -405,7 +405,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             )}
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-xs text-left border-collapse">
               <thead className="sticky top-0 z-10 bg-neutral-100/80 backdrop-blur-xs text-neutral-600 uppercase font-semibold text-[11px] border-b border-neutral-200">
                 <tr>

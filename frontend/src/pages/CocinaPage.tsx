@@ -292,7 +292,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
   const comandasEnPreparacion = comandas.filter((c) => c.estado === 'EnPreparacion');
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#FAF7F4] text-neutral-900 select-none overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 bg-[#FAF7F4] text-neutral-900 select-none">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div
@@ -317,13 +317,13 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       )}
 
       {/* Encabezado Editorial Limpio */}
-      <div className="p-4 sm:p-6 pb-2 shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             COCINA Y SERVICIO
           </p>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
               Cocina en Vivo (KDS)
             </h1>
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
@@ -417,7 +417,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       </section>
 
       {/* Contenido Principal: Zonas "Pendientes" y "En preparación" (RV-85) */}
-      <main className="flex-1 p-3 sm:p-5 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+      <div className="w-full">
         {cargando && comandas.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-neutral-400 gap-3">
             <RotateCw className="w-8 h-8 animate-spin text-[#D35400]" />
@@ -736,7 +736,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
             </section>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Aviso Inferior Flotante con Botón DESHACER (RV-88, RN-78, RN-79 - 10s) */}
       {avisoDeshacer && (

@@ -290,7 +290,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
       {/* 1. Encabezado Superior ESTÁTICO Y FIJO sobre fondo crema */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -298,14 +298,14 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             GESTIÓN DE PEDIDOS
           </p>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
               Pedidos
             </h1>
             <span className="text-xs text-neutral-500 font-mono hidden sm:inline">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
           </div>
-          <p className="text-sm text-neutral-500 mt-1">
+          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
             Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar.
           </p>
         </div>
@@ -324,8 +324,8 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
         </div>
       </div>
 
-      {/* Contenedor desplazable con contadores, filtros y tabla */}
-      <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent pr-1">
+      {/* Contenedor sin confinamiento artificial */}
+      <div className="w-full">
         {/* Contadores por Estado (actúan como filtro al tocarlos) */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
           <button
@@ -552,18 +552,18 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             {/* Vista Desktop: Tabla */}
             <div className="hidden md:block bg-white border border-neutral-200/80 rounded-2xl overflow-hidden shadow-xs">
               <table className="w-full text-left">
-                <thead className="bg-neutral-50 text-neutral-500 font-semibold text-xs uppercase tracking-wider border-b border-neutral-200">
+                <thead className="bg-neutral-50 text-neutral-500 font-semibold text-xs xl:text-sm uppercase tracking-wider border-b border-neutral-200">
                   <tr>
-                    <th className="py-3 px-4">N.º</th>
-                    <th className="py-3 px-4">Destino</th>
-                    <th className="py-3 px-4">Hora</th>
-                    <th className="py-3 px-4">Registrado por</th>
-                    <th className="py-3 px-4">Estado</th>
-                    <th className="py-3 px-4 text-right">Total</th>
-                    <th className="py-3 px-4 text-center">Acciones</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">N.º</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Destino</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Hora</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Registrado por</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Estado</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Total</th>
+                    <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100 text-sm">
+                <tbody className="divide-y divide-neutral-100 text-sm xl:text-base">
                   {pedidos.map((p) => {
                     const esAnulado = p.estado.toLowerCase() === 'anulado';
                     const esListo = p.estado.toLowerCase() === 'listo';
@@ -579,10 +579,10 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             : 'hover:bg-neutral-50/60'
                         } ${esListo ? 'ring-1 ring-emerald-300' : ''}`}
                       >
-                        <td className="py-3 px-4 font-bold font-mono text-neutral-900">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 font-bold font-mono text-neutral-900">
                           #{p.numero}
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6">
                           <div className="flex items-center gap-2">
                             {p.tipo === 'Mesa' ? (
                               <Utensils className="w-4 h-4 text-[#D35400]" />
@@ -599,10 +599,10 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             </span>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-neutral-600 text-xs font-mono">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-neutral-600 text-xs xl:text-sm font-mono">
                           {p.hora}
                         </td>
-                        <td className="py-3 px-4 text-neutral-700 text-xs">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-neutral-700 text-xs xl:text-sm">
                           <div className="flex items-center gap-1.5">
                             <span>{p.registradoPor}</span>
                             {p.esMio && (
@@ -612,19 +612,19 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             )}
                           </div>
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6">
                           {renderBadgeEstado(p.estado)}
                         </td>
-                        <td className="py-3 px-4 text-right font-mono font-bold text-neutral-900">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-mono font-bold text-neutral-900 text-sm xl:text-base">
                           S/ {p.total.toFixed(2)}
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 xl:py-3.5 px-4 xl:px-6">
                           <div className="flex items-center justify-center gap-1.5">
                             {/* Ver Detalle: Estilo Neutro Blanco */}
                             <button
                               type="button"
                               onClick={() => handleVerDetalle(p.id)}
-                              className="w-8 h-8 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-8 h-8 xl:w-9 xl:h-9 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
                               title="Ver detalle del pedido"
                               aria-label={`Ver detalle pedido #${p.numero}`}
                             >
@@ -636,7 +636,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               type="button"
                               onClick={() => handleAbrirModificar(p.id)}
                               disabled={!p.puedeModificar}
-                              className={`w-8 h-8 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
+                              className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
                                 p.puedeModificar
                                   ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-neutral-900 cursor-pointer'
                                   : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
@@ -652,7 +652,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               type="button"
                               onClick={() => handleAbrirAnular(p)}
                               disabled={!p.puedeAnular}
-                              className={`w-8 h-8 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
+                              className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
                                 p.puedeAnular
                                   ? 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
                                   : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'

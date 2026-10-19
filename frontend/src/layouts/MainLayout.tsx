@@ -83,7 +83,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           breadcrumbPage={getTituloPagina(paginaActiva)}
           onToggleSidebar={() => setSidebarAbierto((prev) => !prev)}
         />
-        <main className="flex-1 flex flex-col min-h-0 overflow-hidden w-full p-3 sm:p-4 lg:p-6">
+        <main className="flex-1 flex flex-col overflow-y-auto relative w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
           {children}
         </main>
       </div>

@@ -115,7 +115,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -190,7 +190,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
       )}
 
       {/* 2. CUERPO PRINCIPAL: VISTA DIVIDIDA (CATÁLOGO A LA IZQUIERDA / TICKET A LA DERECHA) */}
-      <div className="flex-1 flex flex-col lg:flex-row min-h-0 gap-4 overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0 gap-4 lg:min-h-[640px] lg:h-[calc(100vh-140px)]">
         {/* PANEL IZQUIERDO: Búsqueda, Categorías y Grilla de Productos */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white rounded-2xl border border-neutral-200/80 p-4 sm:p-5 shadow-2xs">
           {/* Barra de Filtros y Búsqueda */}
@@ -315,7 +315,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                       <div className="h-px bg-amber-200 flex-1" />
                     </h3>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5">
                       {menusCompletos
                         .filter((mc) => !busqueda || mc.nombre.toLowerCase().includes(busqueda.toLowerCase()))
                         .map((mc) => {
@@ -395,7 +395,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 )}
 
                 {categoriaActiva !== 'Menús Completos' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5">
                 {catalogoFiltrado.map((prod) => {
                   const enBorrador = lineasBorrador.filter((l) => l.productoId === prod.id);
                   const cantidadEnBorrador = enBorrador.reduce((s, l) => s + l.cantidad, 0);

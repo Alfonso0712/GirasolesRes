@@ -185,7 +185,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   };
 
   return (
-    <div className="space-y-6 animate-fade-in text-[#482813] w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-8 flex flex-col gap-4 text-[#482813] animate-fade-in">
       {/* 1. Encabezado Fijo del Módulo sobre fondo crema */}
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>

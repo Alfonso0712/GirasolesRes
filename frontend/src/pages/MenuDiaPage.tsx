@@ -13,7 +13,9 @@ import {
   Square,
   Soup,
   Salad,
-  ChefHat
+  ChefHat,
+  Save,
+  RefreshCw
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { CandidatoMenu } from '../types/menuDia';
@@ -172,7 +174,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   });
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-4 space-y-4">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-24 space-y-4">
       {/* CABECERA PRINCIPAL */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-2 border-b border-neutral-200">
         <div>
@@ -617,13 +619,13 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                   No se encontraron ítems en el menú con ese criterio.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3.5">
                   {itemsDispFiltrados.map((item) => {
                     const esResaltado = platoResaltadoId === item.productoId;
                     return (
                       <div
                         key={item.productoId}
-                        className={`p-4 rounded-xl border bg-white flex flex-col justify-between transition-all ${
+                        className={`p-3.5 xl:p-4 rounded-xl border bg-white flex flex-col justify-between transition-all ${
                           item.agotado
                             ? 'border-neutral-300 bg-neutral-50/70 opacity-75'
                             : 'border-neutral-200 hover:border-neutral-300 shadow-2xs'
@@ -631,7 +633,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                       >
                         <div>
                           <div className="flex items-start justify-between gap-2 mb-2">
-                            <span className="font-semibold text-sm text-neutral-900 leading-snug">
+                            <span className="font-semibold text-sm xl:text-base text-neutral-900 leading-snug">
                               {item.nombre}
                             </span>
                             <span
@@ -677,6 +679,64 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             </div>
           )}
         </>
+      )}
+
+      {/* BARRA INFERIOR FIJA (STICKY FOOTER) PARA GUARDAR MENÚ */}
+      {esAdmin && (
+        <div className="sticky bottom-0 z-20 -mx-4 sm:-mx-6 lg:-mx-8 2xl:-mx-10 px-4 sm:px-6 lg:px-8 2xl:px-10 py-3.5 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-auto">
+          <div className="flex items-center gap-3">
+            {tieneCambiosSinGuardar ? (
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#D35400] animate-ping shrink-0" />
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-neutral-900">
+                    Tiene cambios pendientes sin publicar
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-neutral-500 hidden sm:block">
+                    Haga clic en Guardar para actualizar las opciones y menús disponibles hoy.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>El menú actual está publicado y guardado.</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+            {tieneCambiosSinGuardar && (
+              <button
+                type="button"
+                onClick={() => setDiscardModalOpen(true)}
+                disabled={guardando}
+                className="px-4 py-2 text-xs sm:text-sm font-bold text-neutral-700 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
+              >
+                Descartar cambios
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleGuardarMenu}
+              disabled={guardando}
+              className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
+            >
+              {guardando ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Guardando…</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>GUARDAR MENÚ DEL DÍA</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       )}
 
       {/* MODAL DE CONFIRMACIÓN DE DISPONIBILIDAD (CUS05.2 / RV-49) */}
@@ -725,20 +785,20 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
 
   return (
     <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
-      <div className="px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="px-5 xl:px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-orange-100 text-[#D35400] flex items-center justify-center shrink-0">
-            <Icon className="w-5 h-5" />
+          <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-xl bg-orange-100 text-[#D35400] flex items-center justify-center shrink-0">
+            <Icon className="w-5 h-5 xl:w-6 xl:h-6" />
           </div>
           <div>
-            <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base">
+            <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base xl:text-lg">
               {titulo}
             </h3>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
-          <span className="text-xs font-semibold text-neutral-600 mr-2">
+          <span className="text-xs sm:text-sm xl:text-base font-semibold text-neutral-600 mr-1 sm:mr-2">
             {seleccionadosCount} de {items.length}
           </span>
           <button
@@ -746,20 +806,20 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
             onClick={() =>
               todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
             }
-            className="px-3 py-1.5 text-xs font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors cursor-pointer"
+            className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs sm:text-sm xl:text-base font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-xl transition-colors cursor-pointer"
           >
             {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
           </button>
         </div>
       </div>
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5 xl:p-6">
         {items.length === 0 ? (
-          <p className="text-xs text-neutral-400 italic">
+          <p className="text-xs sm:text-sm text-neutral-400 italic">
             No hay componentes registrados con este rol. Regístrelos en Carta y Menú &gt; Productos.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -768,7 +828,7 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`py-2.5 px-3.5 rounded-xl border text-left flex items-center gap-2.5 transition-all cursor-pointer min-h-[44px] ${
+                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center gap-2.5 xl:gap-3 transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] ${
                     estaSeleccionado
                       ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
@@ -776,13 +836,13 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                 >
                   <div className="shrink-0">
                     {estaSeleccionado ? (
-                      <CheckSquare className="w-4 h-4 text-[#D35400]" />
+                      <CheckSquare className="w-4 h-4 xl:w-5 xl:h-5 text-[#D35400]" />
                     ) : (
-                      <Square className="w-4 h-4 text-neutral-400" />
+                      <Square className="w-4 h-4 xl:w-5 xl:h-5 text-neutral-400" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs font-bold block truncate">
+                    <span className="text-xs sm:text-sm xl:text-base font-bold block truncate">
                       {item.nombre}
                     </span>
                   </div>
@@ -824,7 +884,7 @@ const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
 
   return (
     <div
-      className={`rounded-2xl border p-5 flex flex-col justify-between transition-all ${
+      className={`rounded-2xl border p-5 xl:p-6 flex flex-col justify-between transition-all ${
         habilitado
           ? 'bg-white border-[#D35400] shadow-sm'
           : 'bg-neutral-50/80 border-neutral-200 opacity-80'
@@ -833,10 +893,10 @@ const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
-            <h3 className="font-sans font-bold text-neutral-900 text-base">
+            <h3 className="font-sans font-bold text-neutral-900 text-base xl:text-lg">
               {nombre}
             </h3>
-            <span className="text-lg font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
+            <span className="text-lg xl:text-xl font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
               S/ {precio.toFixed(2)}
             </span>
           </div>
@@ -914,15 +974,15 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
 
   return (
     <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
-      <div className="px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="px-5 xl:px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base">
+          <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base xl:text-lg">
             Categoría: {categoriaNombre}
           </h3>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
-          <span className="text-xs font-semibold text-neutral-600 mr-2">
+          <span className="text-xs sm:text-sm xl:text-base font-semibold text-neutral-600 mr-1 sm:mr-2">
             {seleccionadosCount} de {items.length}
           </span>
           <button
@@ -930,20 +990,20 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
             onClick={() =>
               todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
             }
-            className="px-3 py-1.5 text-xs font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors cursor-pointer"
+            className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs sm:text-sm xl:text-base font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-xl transition-colors cursor-pointer"
           >
             {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
           </button>
         </div>
       </div>
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5 xl:p-6">
         {items.length === 0 ? (
-          <p className="text-xs text-neutral-400 italic">
+          <p className="text-xs sm:text-sm text-neutral-400 italic">
             No hay productos registrados en esta categoría de carta.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -952,25 +1012,25 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`py-2.5 px-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer min-h-[44px] ${
+                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] ${
                     estaSeleccionado
                       ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2.5 xl:gap-3 min-w-0">
                     <div className="shrink-0">
                       {estaSeleccionado ? (
-                        <CheckSquare className="w-4 h-4 text-[#D35400]" />
+                        <CheckSquare className="w-4 h-4 xl:w-5 xl:h-5 text-[#D35400]" />
                       ) : (
-                        <Square className="w-4 h-4 text-neutral-400" />
+                        <Square className="w-4 h-4 xl:w-5 xl:h-5 text-neutral-400" />
                       )}
                     </div>
-                    <span className="text-xs font-bold block truncate">
+                    <span className="text-xs sm:text-sm xl:text-base font-bold block truncate">
                       {item.nombre}
                     </span>
                   </div>
-                  <span className="text-xs font-sans font-bold tabular-nums whitespace-nowrap text-neutral-600 shrink-0 ml-2">
+                  <span className="text-xs sm:text-sm xl:text-base font-sans font-bold tabular-nums whitespace-nowrap text-neutral-600 shrink-0 ml-2">
                     S/ {item.precio?.toFixed(2) ?? '0.00'}
                   </span>
                 </button>
