@@ -13,6 +13,7 @@ public record ComprobanteLineaDto(
 public record ComprobanteDetalleDto(
     Guid ComprobanteId,
     Guid VentaId,
+    string TipoComprobante,
     string Serie,
     int Numero,
     string NumeroFormateado,
@@ -25,10 +26,16 @@ public record ComprobanteDetalleDto(
     string CajeroNombre,
     IReadOnlyList<ComprobanteLineaDto> Lineas,
     decimal Total,
+    decimal OpGravada,
+    decimal Igv,
     string MetodoPago,
     decimal? MontoRecibido,
     decimal? Vuelto,
     string? YapeReferencia,
     string Leyenda,
+    string? TipoDocReceptor,
+    string? NumDocReceptor,
+    string? RazonSocialReceptor,
+    string? DireccionReceptor,
     bool EsCopia
 );

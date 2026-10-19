@@ -16,6 +16,7 @@ public class CobroService : ICobroService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IMesaRepository _mesaRepository;
     private readonly IAuditoriaCobroRepository _auditoriaCobroRepository;
+    private readonly IPdfComprobanteService _pdfComprobanteService;
 
     public CobroService(
         ICajaRepository cajaRepository,
@@ -23,7 +24,8 @@ public class CobroService : ICobroService
         IComprobanteRepository comprobanteRepository,
         IPedidoRepository pedidoRepository,
         IMesaRepository mesaRepository,
-        IAuditoriaCobroRepository auditoriaCobroRepository)
+        IAuditoriaCobroRepository auditoriaCobroRepository,
+        IPdfComprobanteService pdfComprobanteService)
     {
         _cajaRepository = cajaRepository;
         _ventaRepository = ventaRepository;
@@ -31,6 +33,7 @@ public class CobroService : ICobroService
         _pedidoRepository = pedidoRepository;
         _mesaRepository = mesaRepository;
         _auditoriaCobroRepository = auditoriaCobroRepository;
+        _pdfComprobanteService = pdfComprobanteService;
     }
 
     public async Task<IReadOnlyList<PedidoPendienteCobroDto>> ObtenerPedidosPendientesCobroAsync(CancellationToken ct = default)
@@ -182,16 +185,96 @@ public class CobroService : ICobroService
             venYapeReferencia: yapeReferencia
         );
 
-        // B. Generar Comprobante con serie T001 y correlativo continuo único (RN-91)
-        var siguienteNumero = await _comprobanteRepository.ObtenerSiguienteNumeroCorrelativoAsync("T001", ct);
+        // B. Determinar Tipo de Comprobante, Serie y Validaciones SUNAT
+        var tipoComprobanteRaw = request.TipoComprobante?.Trim();
+        string tipoComprobante;
+        string serie;
+        string leyenda;
+        string? tipoDocReceptor = null;
+        string? numDocReceptor = null;
+        string? razonSocialReceptor = null;
+        string? direccionReceptor = null;
+
+        if (string.Equals(tipoComprobanteRaw, "Factura", StringComparison.OrdinalIgnoreCase))
+        {
+            tipoComprobante = "Factura";
+            serie = "F001";
+            leyenda = "Representación impresa de comprobante electrónico";
+            tipoDocReceptor = "RUC";
+
+            var ruc = request.NumDocReceptor?.Trim();
+            if (string.IsNullOrWhiteSpace(ruc) || ruc.Length != 11 || !ruc.All(char.IsDigit) || (!ruc.StartsWith("10") && !ruc.StartsWith("20")))
+            {
+                throw new ArgumentException("El RUC debe tener 11 dígitos numéricos y comenzar con 10 o 20.");
+            }
+            numDocReceptor = ruc;
+
+            var razon = request.RazonSocialReceptor?.Trim();
+            if (string.IsNullOrWhiteSpace(razon))
+            {
+                throw new ArgumentException("La razón social es obligatoria para emitir una Factura.");
+            }
+            razonSocialReceptor = razon;
+            direccionReceptor = string.IsNullOrWhiteSpace(request.DireccionReceptor) ? null : request.DireccionReceptor.Trim();
+        }
+        else if (string.Equals(tipoComprobanteRaw, "Boleta", StringComparison.OrdinalIgnoreCase))
+        {
+            tipoComprobante = "Boleta";
+            serie = "B001";
+            leyenda = "Representación impresa de comprobante electrónico";
+
+            var dni = request.NumDocReceptor?.Trim();
+            if (!string.IsNullOrWhiteSpace(dni))
+            {
+                if (dni.Length != 8 || !dni.All(char.IsDigit))
+                {
+                    throw new ArgumentException("El DNI debe contener exactamente 8 dígitos numéricos.");
+                }
+                tipoDocReceptor = "DNI";
+                numDocReceptor = dni;
+                razonSocialReceptor = string.IsNullOrWhiteSpace(request.RazonSocialReceptor) ? null : request.RazonSocialReceptor.Trim();
+            }
+            else
+            {
+                // Boleta Simple
+                if (totalReal >= 700.00m)
+                {
+                    throw new ArgumentException("Por normativa SUNAT, ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.");
+                }
+                tipoDocReceptor = null;
+                numDocReceptor = null;
+                razonSocialReceptor = "CLIENTES VARIOS";
+            }
+        }
+        else
+        {
+            // Ticket Interno por defecto
+            tipoComprobante = "Ticket";
+            serie = "T001";
+            leyenda = "Documento sin validez tributaria";
+            tipoDocReceptor = null;
+            numDocReceptor = null;
+            razonSocialReceptor = null;
+        }
+
+        var opGravada = decimal.Round(totalReal / 1.18m, 2);
+        var igv = totalReal - opGravada;
+
+        var siguienteNumero = await _comprobanteRepository.ObtenerSiguienteNumeroCorrelativoAsync(serie, ct);
         var comprobante = new Comprobante(
             idVenta: venta.Id_Venta,
             comNumero: siguienteNumero,
             comTotal: totalReal,
             comMetodoPago: metodoPago,
-            comSerie: "T001",
-            comTipo: "Ticket",
-            comLeyenda: "Documento sin validez tributaria"
+            comSerie: serie,
+            comTipo: tipoComprobante,
+            comLeyenda: leyenda,
+            comTipoDocReceptor: tipoDocReceptor,
+            comNumDocReceptor: numDocReceptor,
+            comRazonSocialReceptor: razonSocialReceptor,
+            comDireccionReceptor: direccionReceptor,
+            comOpGravada: opGravada,
+            comIgv: igv
         );
 
         // C. Pasar pedido a Pagado (RN-88, RN-93)
@@ -293,6 +376,7 @@ public class CobroService : ICobroService
         return new ComprobanteDetalleDto(
             ComprobanteId: comprobante.Id_Comprobante,
             VentaId: venta.Id_Venta,
+            TipoComprobante: comprobante.Com_Tipo,
             Serie: comprobante.Com_Serie,
             Numero: comprobante.Com_Numero,
             NumeroFormateado: comprobante.ObtenerNumeroFormateado(),
@@ -305,11 +389,17 @@ public class CobroService : ICobroService
             CajeroNombre: venta.Ven_Usuario?.Usu_Nombre ?? "Cajero",
             Lineas: lineasDto,
             Total: comprobante.Com_Total,
+            OpGravada: comprobante.Com_OpGravada,
+            Igv: comprobante.Com_Igv,
             MetodoPago: comprobante.Com_MetodoPago.ToString(),
             MontoRecibido: venta.Ven_MontoRecibido,
             Vuelto: venta.Ven_Vuelto,
             YapeReferencia: venta.Ven_YapeReferencia,
             Leyenda: comprobante.Com_Leyenda,
+            TipoDocReceptor: comprobante.Com_TipoDocReceptor,
+            NumDocReceptor: comprobante.Com_NumDocReceptor,
+            RazonSocialReceptor: comprobante.Com_RazonSocialReceptor,
+            DireccionReceptor: comprobante.Com_DireccionReceptor,
             EsCopia: esCopia
         );
     }
@@ -317,60 +407,7 @@ public class CobroService : ICobroService
     public async Task<byte[]> GenerarComprobantePdfAsync(Guid ventaId, bool esCopia = false, CancellationToken ct = default)
     {
         var detalle = await ObtenerComprobanteAsync(ventaId, esCopia, ct);
-
-        // Generar archivo de texto formateado térmico de 80mm o PDF
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine("========================================");
-        sb.AppendLine("         RESTAURANTE GIRASOLES          ");
-        sb.AppendLine("           RUC: 20481234567             ");
-        sb.AppendLine("      Av. Principal 123 - Ayacucho      ");
-        sb.AppendLine("========================================");
-        if (detalle.EsCopia)
-        {
-            sb.AppendLine("             *** COPIA ***              ");
-        }
-        sb.AppendLine($"COMPROBANTE: {detalle.NumeroFormateado}");
-        sb.AppendLine($"FECHA/HORA : {detalle.FechaHoraFormateada}");
-        sb.AppendLine($"CAJERO(A)  : {detalle.CajeroNombre}");
-        sb.AppendLine($"PEDIDO     : N.º {detalle.PedidoNumero} ({detalle.TipoPedido})");
-        if (!string.IsNullOrWhiteSpace(detalle.MesaNombre))
-        {
-            sb.AppendLine($"MESA       : {detalle.MesaNombre}");
-        }
-        if (!string.IsNullOrWhiteSpace(detalle.Referencia))
-        {
-            sb.AppendLine($"REF / CLIENTE: {detalle.Referencia}");
-        }
-        sb.AppendLine("----------------------------------------");
-        sb.AppendLine("CANT  DESCRIPCIÓN        P.UNIT  IMPORTE");
-        sb.AppendLine("----------------------------------------");
-        foreach (var l in detalle.Lineas)
-        {
-            var nombreCorto = l.ProductoNombre.Length > 18 ? l.ProductoNombre.Substring(0, 18) : l.ProductoNombre;
-            sb.AppendLine($"{l.Cantidad,4}  {nombreCorto,-18} {l.PrecioUnitario,6:F2} {l.Subtotal,8:F2}");
-            if (!string.IsNullOrWhiteSpace(l.Observacion))
-            {
-                sb.AppendLine($"      * {l.Observacion}");
-            }
-        }
-        sb.AppendLine("----------------------------------------");
-        sb.AppendLine($"TOTAL A PAGAR:               S/ {detalle.Total,8:F2}");
-        sb.AppendLine($"MÉTODO PAGO  : {detalle.MetodoPago}");
-        if (detalle.MetodoPago == "Efectivo" && detalle.MontoRecibido.HasValue)
-        {
-            sb.AppendLine($"MONTO RECIBIDO:              S/ {detalle.MontoRecibido.Value,8:F2}");
-            sb.AppendLine($"VUELTO ENTREGADO:            S/ {detalle.Vuelto ?? 0,8:F2}");
-        }
-        else if (detalle.MetodoPago == "Yape" && !string.IsNullOrWhiteSpace(detalle.YapeReferencia))
-        {
-            sb.AppendLine($"REF. YAPE    : {detalle.YapeReferencia}");
-        }
-        sb.AppendLine("========================================");
-        sb.AppendLine($"    {detalle.Leyenda}    ");
-        sb.AppendLine("        ¡GRACIAS POR SU PREFERENCIA!    ");
-        sb.AppendLine("========================================");
-
-        return System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+        return _pdfComprobanteService.GenerarPdfComprobante(detalle);
     }
 
     private async Task<Caja> ValidarCajaAbiertaParaCobroAsync(CancellationToken ct)

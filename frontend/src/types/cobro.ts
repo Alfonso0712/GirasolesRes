@@ -11,6 +11,8 @@ export interface PedidoPendienteCobro {
   estaListo: boolean;
 }
 
+export type TipoComprobante = 'Ticket' | 'Boleta' | 'Factura';
+
 export interface CobroRequest {
   pedidoId: string;
   solicitudId: string;
@@ -19,6 +21,11 @@ export interface CobroRequest {
   montoRecibido?: number | null;
   yapeConfirmado?: boolean | null;
   yapeReferencia?: string | null;
+  tipoComprobante?: TipoComprobante;
+  tipoDocReceptor?: 'DNI' | 'RUC' | null;
+  numDocReceptor?: string | null;
+  razonSocialReceptor?: string | null;
+  direccionReceptor?: string | null;
 }
 
 export interface ComprobanteResumen {
@@ -49,6 +56,7 @@ export interface ComprobanteLinea {
 export interface ComprobanteDetalle {
   comprobanteId: string;
   ventaId: string;
+  tipoComprobante: string;
   serie: string;
   numero: number;
   numeroFormateado: string;
@@ -61,10 +69,35 @@ export interface ComprobanteDetalle {
   cajeroNombre: string;
   lineas: ComprobanteLinea[];
   total: number;
+  opGravada: number;
+  igv: number;
   metodoPago: string;
   montoRecibido?: number | null;
   vuelto?: number | null;
   yapeReferencia?: string | null;
   leyenda: string;
+  tipoDocReceptor?: string | null;
+  numDocReceptor?: string | null;
+  razonSocialReceptor?: string | null;
+  direccionReceptor?: string | null;
   esCopia: boolean;
+}
+
+export interface ResultadoConsultaDni {
+  dni: string;
+  nombres: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
+  nombreCompleto: string;
+}
+
+export interface ResultadoConsultaRuc {
+  ruc: string;
+  razonSocial: string;
+  estado?: string | null;
+  condicion?: string | null;
+  direccion?: string | null;
+  departamento?: string | null;
+  provincia?: string | null;
+  distrito?: string | null;
 }

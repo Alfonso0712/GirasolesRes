@@ -78,6 +78,13 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
 
             {/* Metadatos */}
             <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-0.5 text-[11px]">
+              <div className="text-center font-bold text-xs text-[#D35400] pb-1">
+                {comprobante.tipoComprobante === 'Factura'
+                  ? 'FACTURA ELECTRÓNICA'
+                  : comprobante.tipoComprobante === 'Boleta'
+                  ? 'BOLETA DE VENTA ELECTRÓNICA'
+                  : 'TICKET DE VENTA'}
+              </div>
               <div className="flex justify-between">
                 <span className="text-neutral-500">COMPROBANTE:</span>
                 <span className="font-bold">{comprobante.numeroFormateado}</span>
@@ -90,6 +97,24 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                 <span className="text-neutral-500">CAJERO(A):</span>
                 <span>{comprobante.cajeroNombre}</span>
               </div>
+              {comprobante.numDocReceptor && (
+                <div className="flex justify-between">
+                  <span className="text-neutral-500">{comprobante.tipoDocReceptor || 'DOC'}:</span>
+                  <span className="font-bold">{comprobante.numDocReceptor}</span>
+                </div>
+              )}
+              {comprobante.razonSocialReceptor && (
+                <div className="flex justify-between">
+                  <span className="text-neutral-500">CLIENTE:</span>
+                  <span className="font-semibold text-right max-w-[200px] truncate">{comprobante.razonSocialReceptor}</span>
+                </div>
+              )}
+              {comprobante.direccionReceptor && (
+                <div className="flex justify-between text-[10px]">
+                  <span className="text-neutral-500">DIR:</span>
+                  <span className="text-right max-w-[200px] truncate">{comprobante.direccionReceptor}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-neutral-500">PEDIDO:</span>
                 <span>N.º {comprobante.pedidoNumero} ({comprobante.tipoPedido})</span>
@@ -142,6 +167,18 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
 
             {/* Totales y Medio de Pago */}
             <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-1 text-xs">
+              {(comprobante.tipoComprobante === 'Boleta' || comprobante.tipoComprobante === 'Factura') && (
+                <>
+                  <div className="flex justify-between text-[11px] text-neutral-600">
+                    <span>OP. GRAVADA:</span>
+                    <span>S/ {(comprobante.opGravada ?? (comprobante.total / 1.18)).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-[11px] text-neutral-600">
+                    <span>I.G.V. (18%):</span>
+                    <span>S/ {(comprobante.igv ?? (comprobante.total - comprobante.total / 1.18)).toFixed(2)}</span>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between font-bold text-sm text-neutral-900 pt-0.5">
                 <span>TOTAL A PAGAR:</span>
                 <span>S/ {comprobante.total.toFixed(2)}</span>
@@ -187,7 +224,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>{descargando ? 'Descargando...' : 'Descargar .txt'}</span>
+            <span>{descargando ? 'Descargando PDF...' : 'Descargar PDF'}</span>
           </button>
 
           <div className="flex items-center gap-2">

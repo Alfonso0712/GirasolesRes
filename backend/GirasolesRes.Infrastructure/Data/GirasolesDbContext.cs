@@ -504,6 +504,13 @@ public class GirasolesDbContext : DbContext
             entity.Property(c => c.Com_Estado).HasColumnName("com_estado").HasConversion<string>().HasMaxLength(20).IsRequired();
             entity.Property(c => c.Com_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
 
+            entity.Property(c => c.Com_TipoDocReceptor).HasColumnName("com_tipo_doc_receptor").HasMaxLength(10);
+            entity.Property(c => c.Com_NumDocReceptor).HasColumnName("com_num_doc_receptor").HasMaxLength(15);
+            entity.Property(c => c.Com_RazonSocialReceptor).HasColumnName("com_razon_social_receptor").HasMaxLength(200);
+            entity.Property(c => c.Com_DireccionReceptor).HasColumnName("com_direccion_receptor").HasMaxLength(300);
+            entity.Property(c => c.Com_OpGravada).HasColumnName("com_op_gravada").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(c => c.Com_Igv).HasColumnName("com_igv").HasColumnType("numeric(8,2)").IsRequired();
+
             entity.HasIndex(c => new { c.Com_Serie, c.Com_Numero }).IsUnique();
         });
 

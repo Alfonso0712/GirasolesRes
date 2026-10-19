@@ -12,7 +12,10 @@ public record VentaItemDto(
     decimal Total,
     string Metodo,
     string Cajero,
-    string Estado
+    string Estado,
+    string? TipoComprobante = null,
+    string? ClienteDocumento = null,
+    string? ClienteNombre = null
 );
 
 public record ResumenVentasDto(
@@ -64,7 +67,14 @@ public record VentaDetalleDto(
     string? MotivoAnulacion,
     string? UsuarioAnulacion,
     string? FechaHoraAnulacionFormateada,
-    string? DestinoPedido
+    string? DestinoPedido,
+    string? TipoComprobante = null,
+    string? TipoDocReceptor = null,
+    string? NumDocReceptor = null,
+    string? RazonSocialReceptor = null,
+    string? DireccionReceptor = null,
+    decimal OpGravada = 0,
+    decimal Igv = 0
 );
 
 public record AnularVentaRequest(
