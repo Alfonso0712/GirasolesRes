@@ -20,6 +20,7 @@ public class GirasolesDbContext : DbContext
     public DbSet<MenuCompletoParte> MenusCompletosPartes => Set<MenuCompletoParte>();
     public DbSet<MenuDia> MenusDia => Set<MenuDia>();
     public DbSet<MenuDiaPlato> MenuDiaPlatos => Set<MenuDiaPlato>();
+    public DbSet<MenuDiaMenuCompleto> MenuDiaMenusCompletos => Set<MenuDiaMenuCompleto>();
     public DbSet<Pedido> Pedidos => Set<Pedido>();
     public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
     public DbSet<Comanda> Comandas => Set<Comanda>();
@@ -174,6 +175,31 @@ public class GirasolesDbContext : DbContext
 
             entity.Navigation(m => m.Men_Platos)
                   .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            entity.HasMany(m => m.Men_MenusCompletos)
+                  .WithOne(mc => mc.Mmc_MenuDia)
+                  .HasForeignKey(mc => mc.Id_Menu)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Navigation(m => m.Men_MenusCompletos)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        modelBuilder.Entity<MenuDiaMenuCompleto>(entity =>
+        {
+            entity.ToTable("menu_dia_menus_completos");
+            entity.HasKey(mc => mc.Id_MenuDiaMenuCompleto);
+            entity.Property(mc => mc.Id_MenuDiaMenuCompleto).HasColumnName("id_menu_dia_menu_completo");
+            entity.Property(mc => mc.Id_Menu).HasColumnName("id_menu").IsRequired();
+            entity.Property(mc => mc.Id_MenuCompleto).HasColumnName("id_menu_completo").IsRequired();
+            entity.Property(mc => mc.Mmc_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasIndex(mc => new { mc.Id_Menu, mc.Id_MenuCompleto }).IsUnique();
+
+            entity.HasOne(mc => mc.Mmc_MenuCompleto)
+                  .WithMany()
+                  .HasForeignKey(mc => mc.Id_MenuCompleto)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MenuDiaPlato>(entity =>

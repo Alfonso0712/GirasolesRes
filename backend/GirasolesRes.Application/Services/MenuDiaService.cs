@@ -11,15 +11,18 @@ public class MenuDiaService : IMenuDiaService
 {
     private readonly IMenuDiaRepository _menuDiaRepository;
     private readonly IProductoRepository _productoRepository;
+    private readonly IMenuCompletoRepository _menuCompletoRepository;
     private readonly IAuditoriaUsuarioRepository _auditoriaRepository;
 
     public MenuDiaService(
         IMenuDiaRepository menuDiaRepository,
         IProductoRepository productoRepository,
+        IMenuCompletoRepository menuCompletoRepository,
         IAuditoriaUsuarioRepository auditoriaRepository)
     {
         _menuDiaRepository = menuDiaRepository;
         _productoRepository = productoRepository;
+        _menuCompletoRepository = menuCompletoRepository;
         _auditoriaRepository = auditoriaRepository;
     }
 
@@ -37,7 +40,9 @@ public class MenuDiaService : IMenuDiaService
                     Fecha = fechaHoy.ToString("yyyy-MM-dd"),
                     Definido = false,
                     Desayuno = null,
-                    Platos = new List<PlatoMenuDto>()
+                    Platos = new List<PlatoMenuDto>(),
+                    Opciones = new List<OpcionMenuDto>(),
+                    MenusCompletos = new List<MenuCompletoDiaDto>()
                 });
             }
 
@@ -60,8 +65,10 @@ public class MenuDiaService : IMenuDiaService
             {
                 Id = p.Id_Producto,
                 Nombre = p.Pro_Nombre,
-                Categoria = p.Pro_Categoria?.ToString() ?? string.Empty,
-                Precio = p.Pro_Precio.GetValueOrDefault()
+                Tipo = p.Pro_Tipo == TipoProducto.Componente ? "Componente" : "Carta",
+                Rol = p.Pro_Rol?.ToString(),
+                Categoria = p.Pro_Categoria?.ToString(),
+                Precio = p.Pro_Precio
             }).ToList();
 
             if (candidatos.Count == 0)
@@ -87,45 +94,100 @@ public class MenuDiaService : IMenuDiaService
         {
             var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
 
-            // RV-43: Al menos un producto seleccionado (desayuno o platos)
-            var totalSeleccionados = (request.DesayunoId.HasValue ? 1 : 0) + (request.PlatoIds?.Count ?? 0);
-            if (totalSeleccionados == 0)
-            {
-                return ApiResponse<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_68);
-            }
+            // Normalizar listas recibidas
+            var productosCartaIds = request.ProductosCarta?.Distinct().ToList() ?? new List<Guid>();
+            var opcionesIds = request.Opciones?.Distinct().ToList() ?? new List<Guid>();
+            var menusCompletosIds = request.MenusCompletos?.Distinct().ToList() ?? new List<int>();
 
-            // Validar desayuno si fue provisto (RV-44)
-            Producto? desayuno = null;
-            if (request.DesayunoId.HasValue)
+            // Soporte retrocompatible si vienen en platoIds
+            if (productosCartaIds.Count == 0 && opcionesIds.Count == 0 && request.PlatoIds != null && request.PlatoIds.Count > 0)
             {
-                desayuno = await _productoRepository.ObtenerPorIdAsync(request.DesayunoId.Value, cancellationToken);
-                if (desayuno == null || !desayuno.Pro_Activo)
+                var legacyPlatos = await _productoRepository.ObtenerPorIdsAsync(request.PlatoIds, cancellationToken);
+                foreach (var lp in legacyPlatos)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido("El desayuno seleccionado no existe o se encuentra inactivo.");
-                }
-
-                if (desayuno.Pro_Categoria != CategoriaProducto.Desayuno)
-                {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido("El producto de desayuno seleccionado debe pertenecer a la categoría Desayuno.");
+                    if (lp.Pro_Tipo == TipoProducto.Componente)
+                        opcionesIds.Add(lp.Id_Producto);
+                    else
+                        productosCartaIds.Add(lp.Id_Producto);
                 }
             }
 
-            // Validar platos seleccionados (RV-45, RN-34)
-            var platoIds = request.PlatoIds?.Distinct().ToList() ?? new List<Guid>();
-            if (platoIds.Count > 0)
+            if (request.DesayunoId.HasValue && !productosCartaIds.Contains(request.DesayunoId.Value))
             {
-                var platos = await _productoRepository.ObtenerPorIdsAsync(platoIds, cancellationToken);
-                if (platos.Count != platoIds.Count)
+                productosCartaIds.Add(request.DesayunoId.Value);
+            }
+
+            // RV-162 / MSG-224: Para guardar el menú del día debe haber al menos un producto de carta o un menú completo habilitado
+            if (productosCartaIds.Count == 0 && menusCompletosIds.Count == 0)
+            {
+                return ApiResponse<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_224);
+            }
+
+            // Validar productos de carta seleccionados
+            List<Producto> cartaProductos = new();
+            if (productosCartaIds.Count > 0)
+            {
+                cartaProductos = await _productoRepository.ObtenerPorIdsAsync(productosCartaIds, cancellationToken);
+                if (cartaProductos.Count != productosCartaIds.Count)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido("Uno o más platos seleccionados no existen en el sistema.");
+                    return ApiResponse<MenuDiaResponseDto>.Fallido("Uno o más productos de carta seleccionados no existen en el sistema.");
                 }
 
-                var inactivos = platos.Where(p => !p.Pro_Activo).Select(p => p.Pro_Nombre).ToList();
+                var inactivos = cartaProductos.Where(p => !p.Pro_Activo).Select(p => p.Pro_Nombre).ToList();
                 if (inactivos.Count > 0)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes productos están inactivos y no pueden añadirse al menú: {string.Join(", ", inactivos)}.");
+                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes productos de carta están inactivos y no pueden añadirse: {string.Join(", ", inactivos)}.");
                 }
             }
+
+            // Validar componentes de menú (opciones) seleccionados
+            List<Producto> componentes = new();
+            if (opcionesIds.Count > 0)
+            {
+                componentes = await _productoRepository.ObtenerPorIdsAsync(opcionesIds, cancellationToken);
+                if (componentes.Count != opcionesIds.Count)
+                {
+                    return ApiResponse<MenuDiaResponseDto>.Fallido("Uno o más componentes seleccionados no existen en el sistema.");
+                }
+
+                var inactivos = componentes.Where(p => !p.Pro_Activo).Select(p => p.Pro_Nombre).ToList();
+                if (inactivos.Count > 0)
+                {
+                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes componentes están inactivos y no pueden añadirse: {string.Join(", ", inactivos)}.");
+                }
+
+                var noComponentes = componentes.Where(p => p.Pro_Tipo != TipoProducto.Componente).Select(p => p.Pro_Nombre).ToList();
+                if (noComponentes.Count > 0)
+                {
+                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes ítems no son componentes: {string.Join(", ", noComponentes)}.");
+                }
+            }
+
+            // RV-161 / MSG-219: Un menú completo solo se habilita en el menú del día si cada una de sus partes tiene al menos una opción seleccionada
+            if (menusCompletosIds.Count > 0)
+            {
+                var todosMenusCompletos = await _menuCompletoRepository.ObtenerTodosAsync(soloActivos: true, cancellationToken);
+                var dictMenus = todosMenusCompletos.ToDictionary(m => m.Id_MenuCompleto);
+
+                foreach (var mcId in menusCompletosIds)
+                {
+                    if (!dictMenus.TryGetValue(mcId, out var mc))
+                    {
+                        return ApiResponse<MenuDiaResponseDto>.Fallido($"El menú completo con ID {mcId} no existe o se encuentra inactivo.");
+                    }
+
+                    foreach (var parte in mc.Men_Partes.OrderBy(p => p.Par_Orden))
+                    {
+                        bool tieneOpcion = componentes.Any(c => c.Pro_Rol.HasValue && parte.Par_RolesPermitidos.Contains(c.Pro_Rol.Value));
+                        if (!tieneOpcion)
+                        {
+                            return ApiResponse<MenuDiaResponseDto>.Fallido(string.Format(MensajesCatalogo.MSG_219, mc.Men_Nombre, parte.Par_Nombre));
+                        }
+                    }
+                }
+            }
+
+            var todosLosPlatosIds = productosCartaIds.Concat(opcionesIds).Distinct().ToList();
 
             var menu = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
             var esNuevo = menu == null;
@@ -133,14 +195,16 @@ public class MenuDiaService : IMenuDiaService
             if (esNuevo)
             {
                 menu = new MenuDia(fechaHoy, request.DesayunoId, usuario);
-                menu.SincronizarPlatos(platoIds, usuario);
+                menu.SincronizarPlatos(todosLosPlatosIds, usuario);
+                menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.AgregarAsync(menu, cancellationToken);
             }
             else
             {
                 menu!.ActualizarDesayuno(request.DesayunoId, usuario);
-                // RN-33 / E-80: Conserva los platos ya marcados como agotados
-                menu.SincronizarPlatos(platoIds, usuario);
+                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
+                menu.SincronizarPlatos(todosLosPlatosIds, usuario);
+                menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.ActualizarAsync(menu, cancellationToken);
             }
 
@@ -149,12 +213,11 @@ public class MenuDiaService : IMenuDiaService
                 nombreAdmin: usuario,
                 accion: esNuevo ? "DEFINIR_MENU" : "ACTUALIZAR_MENU",
                 nombreUsuarioAfectado: $"Menu-{fechaHoy:yyyy-MM-dd}",
-                detalle: $"Menú guardado con {platoIds.Count} platos y {(request.DesayunoId.HasValue ? $"desayuno '{desayuno?.Pro_Nombre}'" : "sin desayuno")}",
+                detalle: $"Menú guardado con {productosCartaIds.Count} productos de carta, {opcionesIds.Count} opciones de componente y {menusCompletosIds.Count} menús completos habilitados.",
                 direccionIp: ipAddress);
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
 
-            // Recargar con detalle actualizado
             var menuActualizado = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
             var responseDto = MapearAMenuDiaDto(menuActualizado ?? menu, fechaHoy);
 
@@ -187,11 +250,11 @@ public class MenuDiaService : IMenuDiaService
                 return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido("El producto no forma parte del menú del día de hoy.");
             }
 
-            var nombrePlato = plato.Mdp_Producto?.Pro_Nombre ?? "El plato";
+            var nombrePlato = plato.Mdp_Producto?.Pro_Nombre ?? "El ítem";
             var cambiado = menu.CambiarDisponibilidadPlato(productoId, agotado, usuario);
             if (!cambiado)
             {
-                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido("No se pudo actualizar la disponibilidad del plato.");
+                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido("No se pudo actualizar la disponibilidad.");
             }
 
             await _menuDiaRepository.ActualizarAsync(menu, cancellationToken);
@@ -223,6 +286,70 @@ public class MenuDiaService : IMenuDiaService
 
     private static MenuDiaResponseDto MapearAMenuDiaDto(MenuDia menu, DateOnly fechaHoy)
     {
+        var opcionesDto = menu.Men_Platos
+            .Where(p => p.Mdp_Producto?.Pro_Tipo == TipoProducto.Componente)
+            .OrderBy(p => p.Mdp_Producto?.Pro_Rol)
+            .ThenBy(p => p.Mdp_Producto?.Pro_Nombre)
+            .Select(p => new OpcionMenuDto
+            {
+                ProductoId = p.Id_Producto,
+                Nombre = p.Mdp_Producto?.Pro_Nombre ?? string.Empty,
+                Rol = p.Mdp_Producto?.Pro_Rol?.ToString() ?? string.Empty,
+                Agotado = p.Mdp_Agotado
+            }).ToList();
+
+        var menusCompletosDto = new List<MenuCompletoDiaDto>();
+        foreach (var mmc in menu.Men_MenusCompletos.OrderBy(m => m.Id_MenuCompleto))
+        {
+            var mc = mmc.Mmc_MenuCompleto;
+            if (mc == null) continue;
+
+            var partesDto = new List<MenuCompletoParteDiaDto>();
+            bool disponible = true;
+            string? motivoNoDisponible = null;
+
+            foreach (var parte in mc.Men_Partes.OrderBy(p => p.Par_Orden))
+            {
+                var rolesPermitidosStrings = parte.Par_RolesPermitidos.Select(r => r.ToString()).ToList();
+                var opcionesParaParte = opcionesDto
+                    .Where(o => rolesPermitidosStrings.Contains(o.Rol))
+                    .Select(o => new OpcionParteDiaDto
+                    {
+                        ProductoId = o.ProductoId,
+                        Nombre = o.Nombre,
+                        Agotado = o.Agotado
+                    }).ToList();
+
+                partesDto.Add(new MenuCompletoParteDiaDto
+                {
+                    Id = parte.Id_Parte,
+                    Nombre = parte.Par_Nombre,
+                    Orden = parte.Par_Orden,
+                    RolesPermitidos = rolesPermitidosStrings,
+                    Opciones = opcionesParaParte
+                });
+
+                // RN-136: Solo se ofrece si cada parte tiene al menos una opción disponible ese día
+                bool parteTieneDisponibles = opcionesParaParte.Any(o => !o.Agotado);
+                if (!parteTieneDisponibles && disponible)
+                {
+                    disponible = false;
+                    motivoNoDisponible = string.Format(MensajesCatalogo.MSG_220, mc.Men_Nombre, parte.Par_Nombre);
+                }
+            }
+
+            menusCompletosDto.Add(new MenuCompletoDiaDto
+            {
+                Id = mc.Id_MenuCompleto,
+                Nombre = mc.Men_Nombre,
+                Precio = mc.Men_Precio,
+                Incluye = mc.Men_Incluye,
+                Disponible = disponible,
+                MotivoNoDisponible = motivoNoDisponible,
+                Partes = partesDto
+            });
+        }
+
         return new MenuDiaResponseDto
         {
             Fecha = menu.Men_Fecha.ToString("yyyy-MM-dd"),
@@ -233,16 +360,19 @@ public class MenuDiaService : IMenuDiaService
                 Nombre = menu.Men_Desayuno.Pro_Nombre
             } : null,
             Platos = menu.Men_Platos
-                .OrderBy(p => p.Mdp_Producto.Pro_Categoria)
-                .ThenBy(p => p.Mdp_Producto.Pro_Nombre)
+                .Where(p => p.Mdp_Producto?.Pro_Tipo == TipoProducto.Carta)
+                .OrderBy(p => p.Mdp_Producto?.Pro_Categoria)
+                .ThenBy(p => p.Mdp_Producto?.Pro_Nombre)
                 .Select(p => new PlatoMenuDto
                 {
                     ProductoId = p.Id_Producto,
                     Nombre = p.Mdp_Producto?.Pro_Nombre ?? string.Empty,
-                    Categoria = p.Mdp_Producto?.Pro_Categoria.ToString() ?? string.Empty,
+                    Categoria = p.Mdp_Producto?.Pro_Categoria?.ToString() ?? string.Empty,
                     Precio = p.Mdp_Producto?.Pro_Precio ?? 0,
                     Agotado = p.Mdp_Agotado
-                }).ToList()
+                }).ToList(),
+            Opciones = opcionesDto,
+            MenusCompletos = menusCompletosDto
         };
     }
 }

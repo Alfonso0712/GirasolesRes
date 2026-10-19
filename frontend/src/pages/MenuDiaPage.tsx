@@ -4,26 +4,23 @@ import {
   Coffee,
   CheckCircle2,
   AlertCircle,
-  RotateCcw,
   ShieldAlert,
-  PowerOff,
   Power,
   Calendar,
   Sparkles,
-  ArrowRight,
-  Flame,
   CupSoda,
-  Layers,
-  ChevronDown,
-  ChevronUp,
   CheckSquare,
   Square,
-  Grid
+  Soup,
+  Salad,
+  ChefHat
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { CandidatoMenu } from '../types/menuDia';
-import { CATEGORIA_LABELS } from '../types/producto';
-import { useMenuDiaManagement } from '../hooks/useMenuDiaManagement';
+import {
+  useMenuDiaManagement,
+  type ItemDisponibilidad
+} from '../hooks/useMenuDiaManagement';
 import { MenuDisponibilidadConfirmModal } from '../components/MenuDisponibilidadConfirmModal';
 import { DiscardChangesModal } from '../components/DiscardChangesModal';
 
@@ -36,78 +33,66 @@ export interface MenuDiaPageProps {
   onNavigateToProductos?: () => void;
 }
 
-type TabMenu =
-  | 'almuerzos'
-  | 'extras'
-  | 'desayunos'
-  | 'combinados'
-  | 'bebidas'
-  | 'otros'
-  | 'disponibilidad'
-  | 'todos';
+type TabMenuPrincipal = 'opciones' | 'menus' | 'carta' | 'disponibilidad';
 
 export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   session,
-  onLogout,
-  onNavigateToProductos
+  onLogout
 }) => {
   const {
     menu,
     candidatos,
     cargando,
     guardando,
-    errorCarga,
-    cargarDatos,
-    desayunoSeleccionado,
-    platosSeleccionados,
-    handleTogglePlato,
-    handleSeleccionarVarios,
-    handleDesmarcarVarios,
-    handleSeleccionarDesayuno,
+    // Opciones del día
+    opcionesSeleccionadas,
+    handleToggleOpcion,
+    handleSeleccionarVariosOpciones,
+    handleDesmarcarVariosOpciones,
+    // Menús completos
+    menusCompletosHabilitados,
+    handleToggleMenuCompleto,
+    // Carta
+    platosCartaSeleccionados,
+    handleTogglePlatoCarta,
+    handleSeleccionarVariosCarta,
+    handleDesmarcarVariosCarta,
+    // Guardar / Descartar
     handleGuardarMenu,
+    handleDescartarCambios,
     tieneCambiosSinGuardar,
     errorValidacionGuardar,
+    // Avisos
     avisoExito,
-    setAvisoExito,
     avisoError,
-    setAvisoError,
     platoResaltadoId,
+    // Modal Disponibilidad
     dispModalOpen,
     setDispModalOpen,
-    platoAConfirmar,
+    itemAConfirmar,
     nuevoEstadoAgotado,
     procesandoDisp,
     handleAbrirDisponibilidadModal,
     handleConfirmarDisponibilidad,
+    // Modal Descartar
     discardModalOpen,
     setDiscardModalOpen,
-    handleDescartarCambios,
-    esCocinero,
+    // Permisos
+    esAdmin,
     tienePermiso
   } = useMenuDiaManagement({ session, onLogout });
 
-  // Pestaña activa (por defecto Almuerzos)
-  const [tabActiva, setTabActiva] = useState<TabMenu>('almuerzos');
+  const [tabActiva, setTabActiva] = useState<TabMenuPrincipal>(
+    session.rol === 'Cocinero' ? 'disponibilidad' : 'opciones'
+  );
 
-  // Estado para secciones en modo Acordeón ("todos")
-  const [seccionesAbiertas, setSeccionesAbiertas] = useState<Record<string, boolean>>({
-    desayunos: true,
-    almuerzos: true,
-    extras: true,
-    combinados: true,
-    bebidas: true,
-    otros: true,
-    disponibilidad: true
-  });
+  // Sub-categoría activa en pestaña Carta
+  const [catCartaActiva, setCatCartaActiva] = useState<string>('Desayuno');
 
-  const toggleSeccion = (seccion: string) => {
-    setSeccionesAbiertas((prev) => ({
-      ...prev,
-      [seccion]: !prev[seccion]
-    }));
-  };
+  // Filtro de búsqueda en Disponibilidad
+  const [busquedaDisp, setBusquedaDisp] = useState('');
+  const [filtroTipoDisp, setFiltroTipoDisp] = useState<'Todos' | 'Componente' | 'Carta' | 'Agotados'>('Todos');
 
-  // Si no tiene rol autorizado (Administrador o Cocinero, RN-31/RN-32/RNF-16)
   if (!tienePermiso) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
@@ -124,44 +109,23 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
     );
   }
 
-  // Agrupamiento de candidatos por categoría
-  const candidatosDesayunos = candidatos.filter((c) => c.categoria === 'Desayuno');
-  const candidatosAlmuerzos = candidatos.filter((c) => c.categoria === 'Almuerzo');
-  const candidatosExtras = candidatos.filter(
-    (c) =>
-      c.categoria === 'PlatosExtras' ||
-      c.categoria === 'Platos Extras' ||
-      c.categoria === 'Platos Extras / A la Carta'
-  );
-  const candidatosCombinados = candidatos.filter((c) => c.categoria === 'Combinados');
-  const candidatosBebidas = candidatos.filter(
-    (c) => c.categoria === 'Bebidas' || c.categoria === 'Bebidas y Refrescos'
-  );
-  const candidatosOtros = candidatos.filter((c) => c.categoria === 'Otro' || c.categoria === 'Otros');
-  const noHayCandidatosActivos = candidatos.length === 0;
+  // Agrupamiento de candidatos: Componentes por Rol
+  const componentesActivos = candidatos.filter((c) => c.tipo === 'Componente');
+  const compBebidasDesayuno = componentesActivos.filter((c) => c.rol === 'BebidaDesayuno');
+  const compPlatosDesayuno = componentesActivos.filter((c) => c.rol === 'PlatoDesayuno');
+  const compSopas = componentesActivos.filter((c) => c.rol === 'Sopa');
+  const compEntradas = componentesActivos.filter((c) => c.rol === 'Entrada');
+  const compSegundos = componentesActivos.filter((c) => c.rol === 'Segundo');
 
-  // Contadores de selección en tiempo real
-  const cantDesayunos = desayunoSeleccionado !== null ? 1 : 0;
-  const cantAlmuerzos = candidatosAlmuerzos.filter((c) => platosSeleccionados.has(c.id)).length;
-  const cantExtras = candidatosExtras.filter((c) => platosSeleccionados.has(c.id)).length;
-  const cantCombinados = candidatosCombinados.filter((c) => platosSeleccionados.has(c.id)).length;
-  const cantBebidas = candidatosBebidas.filter((c) => platosSeleccionados.has(c.id)).length;
-  const cantOtros = candidatosOtros.filter((c) => platosSeleccionados.has(c.id)).length;
-  const totalSeleccionados = cantDesayunos + platosSeleccionados.size;
+  // Agrupamiento de candidatos: Carta por Categoría
+  const cartaActiva = candidatos.filter((c) => c.tipo === 'Carta');
+  const cartaDesayunos = cartaActiva.filter((c) => c.categoria === 'Desayuno');
+  const cartaAlmuerzos = cartaActiva.filter((c) => c.categoria === 'Almuerzo' || c.categoria === 'PlatosExtras' || c.categoria === 'Platos Extras');
+  const cartaCombinados = cartaActiva.filter((c) => c.categoria === 'Combinados');
+  const cartaBebidas = cartaActiva.filter((c) => c.categoria === 'Bebidas' || c.categoria === 'Bebidas y Refrescos');
+  const cartaOtros = cartaActiva.filter((c) => c.categoria === 'Otro' || c.categoria === 'Otros');
 
-  // Toggle de selección masiva por categoría
-  const toggleSeleccionCategoria = (items: CandidatoMenu[]) => {
-    const ids = items.map((i) => i.id);
-    if (ids.length === 0) return;
-    const todosSeleccionados = ids.every((id) => platosSeleccionados.has(id));
-    if (todosSeleccionados) {
-      handleDesmarcarVarios(ids);
-    } else {
-      handleSeleccionarVarios(ids);
-    }
-  };
-
-  // Formateo de fecha de Lima
+  // Fecha legible
   const fechaHoyFormateada = (() => {
     try {
       const hoy = new Date();
@@ -176,1134 +140,610 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
     }
   })();
 
-  // Configuración de pestañas
-  const tabsNav: {
-    id: TabMenu;
-    label: string;
-    count: number;
-    total: number;
-    icon: React.ComponentType<{ className?: string }>;
-    accentColor: string;
-  }[] = [
-    {
-      id: 'almuerzos',
-      label: 'Almuerzos y Segundos',
-      count: cantAlmuerzos,
-      total: candidatosAlmuerzos.length,
-      icon: UtensilsCrossed,
-      accentColor: 'border-orange-500'
-    },
-    {
-      id: 'extras',
-      label: 'Platos Extras / A la Carta',
-      count: cantExtras,
-      total: candidatosExtras.length,
-      icon: Sparkles,
-      accentColor: 'border-rose-500'
-    },
-    {
-      id: 'desayunos',
-      label: 'Desayunos',
-      count: cantDesayunos,
-      total: candidatosDesayunos.length,
-      icon: Coffee,
-      accentColor: 'border-amber-500'
-    },
-    {
-      id: 'combinados',
-      label: 'Combinados',
-      count: cantCombinados,
-      total: candidatosCombinados.length,
-      icon: Flame,
-      accentColor: 'border-purple-500'
-    },
-    {
-      id: 'bebidas',
-      label: 'Bebidas y Refrescos',
-      count: cantBebidas,
-      total: candidatosBebidas.length,
-      icon: CupSoda,
-      accentColor: 'border-emerald-500'
-    },
-    {
-      id: 'otros',
-      label: 'Otros y Guarniciones',
-      count: cantOtros,
-      total: candidatosOtros.length,
-      icon: Layers,
-      accentColor: 'border-sky-500'
-    }
+  // Resumen de disponibilidad consolidada
+  const itemsDisponibilidad: ItemDisponibilidad[] = [
+    ...(menu?.opciones?.map((o) => ({
+      productoId: o.productoId,
+      nombre: o.nombre,
+      tipo: 'Componente' as const,
+      clasificacion: o.rol,
+      agotado: o.agotado
+    })) || []),
+    ...(menu?.platos?.map((p) => ({
+      productoId: p.productoId,
+      nombre: p.nombre,
+      tipo: 'Carta' as const,
+      clasificacion: p.categoria,
+      precio: p.precio,
+      agotado: p.agotado
+    })) || [])
   ];
 
-  if (menu && menu.definido && menu.platos.length > 0) {
-    tabsNav.push({
-      id: 'disponibilidad',
-      label: 'Disponibilidad en Servicio',
-      count: menu.platos.length,
-      total: menu.platos.length,
-      icon: CheckCircle2,
-      accentColor: 'border-emerald-600'
-    });
-  }
-
-  // Renderizadores de secciones individuales
-  const renderSeccionDesayunos = () => (
-    <section className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-neutral-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center border border-amber-200">
-            <Coffee className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-800">
-              Desayuno del Día
-            </h3>
-            <p className="text-xs text-neutral-500">
-              Selección única y opcional. Define el desayuno especial ofrecido hoy.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
-            {cantDesayunos > 0 ? '1 seleccionado' : 'Sin desayuno seleccionado'}
-          </span>
-          {desayunoSeleccionado && (
-            <button
-              type="button"
-              onClick={() => handleSeleccionarDesayuno(null)}
-              className="text-xs text-[#D35400] hover:text-[#B84600] font-semibold cursor-pointer underline"
-            >
-              Limpiar selección
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {/* Opción Ninguno */}
-        <label
-          className={`p-3.5 rounded-xl border flex items-center gap-3 cursor-pointer transition-all min-h-[44px] ${
-            desayunoSeleccionado === null
-              ? 'bg-neutral-100/80 border-neutral-300 text-neutral-900 font-semibold shadow-2xs'
-              : 'bg-white border-neutral-200 hover:bg-neutral-50 text-neutral-600'
-          }`}
-        >
-          <input
-            type="radio"
-            name="desayuno"
-            checked={desayunoSeleccionado === null}
-            onChange={() => handleSeleccionarDesayuno(null)}
-            className="w-4 h-4 text-[#D35400] focus:ring-amber-300 cursor-pointer"
-          />
-          <span className="text-xs sm:text-sm">Sin desayuno especial hoy</span>
-        </label>
-
-        {/* Lista de desayunos activos */}
-        {candidatosDesayunos.map((des) => {
-          const esSeleccionado = desayunoSeleccionado === des.id;
-
-          return (
-            <label
-              key={des.id}
-              className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 cursor-pointer transition-all min-h-[44px] ${
-                esSeleccionado
-                  ? 'bg-amber-50/80 border-amber-300 text-amber-950 shadow-2xs font-semibold ring-1 ring-amber-300'
-                  : 'bg-white border-neutral-200 hover:bg-neutral-50 text-neutral-800'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="desayuno"
-                  checked={esSeleccionado}
-                  onChange={() => handleSeleccionarDesayuno(des.id)}
-                  className="w-4 h-4 text-[#D35400] focus:ring-amber-300 cursor-pointer"
-                />
-                <span className="text-xs sm:text-sm">{des.nombre}</span>
-              </div>
-              <span className="text-xs font-mono font-semibold text-neutral-700 shrink-0">
-                S/ {des.precio.toFixed(2)}
-              </span>
-            </label>
-          );
-        })}
-      </div>
-    </section>
-  );
-
-  const renderSeccionMultiples = (
-    titulo: string,
-    descripcion: string,
-    Icono: React.ComponentType<{ className?: string }>,
-    items: CandidatoMenu[],
-    cantSeleccionados: number,
-    colorIcono: string = 'text-[#D35400] bg-amber-50 border-amber-200'
-  ) => {
-    const todosSeleccionados = items.length > 0 && items.every((i) => platosSeleccionados.has(i.id));
-
-    return (
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-neutral-100">
-          <div className="flex items-center gap-2.5">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${colorIcono}`}>
-              <Icono className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-800">
-                {titulo}
-              </h3>
-              <p className="text-xs text-neutral-500">{descripcion}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span
-              className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${
-                cantSeleccionados > 0
-                  ? 'bg-amber-50 text-amber-900 border-amber-200'
-                  : 'bg-neutral-100 text-neutral-500 border-neutral-200'
-              }`}
-            >
-              {cantSeleccionados} de {items.length} seleccionados
-            </span>
-            {items.length > 0 && (
-              <button
-                type="button"
-                onClick={() => toggleSeleccionCategoria(items)}
-                className="inline-flex items-center gap-1.5 text-xs text-[#D35400] hover:text-[#B84600] font-semibold cursor-pointer py-1 px-2 rounded-lg hover:bg-amber-50/60 transition-colors"
-              >
-                {todosSeleccionados ? (
-                  <>
-                    <Square className="w-3.5 h-3.5" />
-                    <span>Desmarcar todos</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckSquare className="w-3.5 h-3.5" />
-                    <span>Seleccionar todos</span>
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {items.length === 0 ? (
-          <div className="p-8 text-center text-xs text-neutral-400 bg-neutral-50/50 rounded-xl border border-dashed border-neutral-200">
-            No hay productos registrados en esta categoría.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {items.map((plato) => {
-              const estaMarcado = platosSeleccionados.has(plato.id);
-
-              return (
-                <label
-                  key={plato.id}
-                  className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 cursor-pointer transition-all min-h-[44px] ${
-                    estaMarcado
-                      ? 'bg-amber-50/70 border-amber-300 text-neutral-900 shadow-2xs font-semibold ring-1 ring-amber-300/60'
-                      : 'bg-white border-neutral-200 hover:bg-neutral-50 text-neutral-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={estaMarcado}
-                      onChange={() => handleTogglePlato(plato.id)}
-                      className="w-4 h-4 text-[#D35400] rounded-sm focus:ring-amber-300 cursor-pointer"
-                    />
-                    <span className="text-xs sm:text-sm">{plato.nombre}</span>
-                  </div>
-                  <span className="text-xs font-mono font-semibold text-neutral-600 shrink-0">
-                    S/ {plato.precio.toFixed(2)}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    );
-  };
-
-  const renderSeccionDisponibilidad = () => {
-    if (!menu || !menu.definido || menu.platos.length === 0) {
-      return (
-        <div className="p-8 text-center text-sm text-neutral-500 bg-neutral-50 rounded-xl border border-neutral-200">
-          Aún no hay platos en el menú del día actual. Defina y guarde la selección para gestionar la disponibilidad.
-        </div>
-      );
+  const itemsDispFiltrados = itemsDisponibilidad.filter((item) => {
+    if (busquedaDisp.trim()) {
+      if (!item.nombre.toLowerCase().includes(busquedaDisp.toLowerCase().trim())) {
+        return false;
+      }
     }
-
-    const disponiblesCount = menu.platos.filter((p) => !p.agotado).length;
-    const agotadosCount = menu.platos.filter((p) => p.agotado).length;
-
-    return (
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-neutral-100">
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-800">
-              Disponibilidad Actual en el Servicio
-            </h3>
-            <p className="text-xs text-neutral-400 mt-0.5">
-              Platos ofrecidos a mozos y cajeros hoy. Marque agotado cuando se termine la preparación.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-              {disponiblesCount} disponibles
-            </span>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
-              {agotadosCount} agotados
-            </span>
-          </div>
-        </div>
-
-        {/* Desktop Table */}
-        <div className="hidden lg:block rounded-xl border border-neutral-200/80 overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-neutral-50 text-[11px] font-bold text-neutral-400 uppercase tracking-wider border-b border-neutral-200/80">
-                <th className="py-3 px-6">PLATO</th>
-                <th className="py-3 px-6">CATEGORÍA</th>
-                <th className="py-3 px-6 text-right">PRECIO</th>
-                <th className="py-3 px-6">ESTADO</th>
-                <th className="py-3 px-6 text-right">DISPONIBILIDAD</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-100 text-sm">
-              {menu.platos.map((plato) => {
-                const estaResaltado = platoResaltadoId === plato.productoId;
-
-                return (
-                  <tr
-                    key={plato.productoId}
-                    className={`transition-colors ${
-                      estaResaltado ? 'bg-amber-100/60 font-medium' : 'hover:bg-neutral-50/60'
-                    }`}
-                  >
-                    <td className="py-3.5 px-6 font-semibold text-neutral-900">
-                      <div className="flex items-center gap-2">
-                        <span>{plato.nombre}</span>
-                        {estaResaltado && (
-                          <span className="text-[10px] bg-[#D35400] text-white px-1.5 py-0.5 rounded-full font-bold">
-                            Actualizado
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-6 text-neutral-600 text-xs">
-                      {CATEGORIA_LABELS[plato.categoria] || plato.categoria}
-                    </td>
-                    <td className="py-3.5 px-6 text-right font-mono font-semibold text-neutral-800">
-                      S/ {plato.precio.toFixed(2)}
-                    </td>
-                    <td className="py-3.5 px-6">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            plato.agotado ? 'bg-amber-500' : 'bg-emerald-500'
-                          }`}
-                        />
-                        <span
-                          className={`text-xs font-semibold ${
-                            plato.agotado ? 'text-amber-800' : 'text-emerald-700'
-                          }`}
-                        >
-                          {plato.agotado ? 'Agotado' : 'Disponible'}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-6 text-right">
-                      <div className="relative inline-flex items-center justify-end group">
-                        <button
-                          type="button"
-                          onClick={() => handleAbrirDisponibilidadModal(plato)}
-                          title={plato.agotado ? 'Marcar como disponible' : 'Marcar como agotado'}
-                          aria-label={plato.agotado ? 'Marcar como disponible' : 'Marcar como agotado'}
-                          className={`w-8 h-8 rounded-full inline-flex items-center justify-center border shadow-2xs transition-all cursor-pointer ${
-                            plato.agotado
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300'
-                              : 'bg-amber-50 text-[#B84600] border-amber-200 hover:bg-amber-100 hover:border-amber-300'
-                          }`}
-                        >
-                          {plato.agotado ? <Power className="w-4 h-4" /> : <PowerOff className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile Cards */}
-        <div className="lg:hidden space-y-3">
-          {menu.platos.map((plato) => (
-            <div
-              key={plato.productoId}
-              className={`p-4 rounded-xl border flex items-center justify-between gap-3 ${
-                plato.agotado ? 'bg-neutral-50 border-neutral-200 opacity-90' : 'bg-white border-neutral-200/80 shadow-2xs'
-              }`}
-            >
-              <div>
-                <h4 className="font-semibold text-sm text-neutral-900">{plato.nombre}</h4>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-neutral-500">
-                    {CATEGORIA_LABELS[plato.categoria] || plato.categoria}
-                  </span>
-                  <span className="text-xs font-mono font-semibold text-neutral-800">
-                    S/ {plato.precio.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleAbrirDisponibilidadModal(plato)}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-semibold min-h-[38px] flex items-center gap-1.5 cursor-pointer ${
-                  plato.agotado
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-amber-50 text-[#B84600] border-amber-200'
-                }`}
-              >
-                {plato.agotado ? <Power className="w-3.5 h-3.5" /> : <PowerOff className="w-3.5 h-3.5" />}
-                <span>{plato.agotado ? 'Reactivar' : 'Agotar'}</span>
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  };
+    if (filtroTipoDisp === 'Componente') return item.tipo === 'Componente';
+    if (filtroTipoDisp === 'Carta') return item.tipo === 'Carta';
+    if (filtroTipoDisp === 'Agotados') return item.agotado;
+    return true;
+  });
 
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-3 sm:gap-4">
-      {/* Toast Alert / Banner de Éxito (shrink-0) */}
-      {avisoExito && (
-        <div className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <span className="font-semibold">{avisoExito}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAvisoExito(null)}
-            className="text-emerald-700 hover:text-emerald-900 text-xs font-semibold cursor-pointer"
-          >
-            Cerrar
-          </button>
-        </div>
-      )}
-
-      {/* Toast Alert / Banner de Error (shrink-0) */}
-      {avisoError && (
-        <div className="shrink-0 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between text-rose-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
-            <span className="font-semibold">{avisoError}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAvisoError(null)}
-            className="text-rose-700 hover:text-rose-900 text-xs font-semibold cursor-pointer"
-          >
-            Cerrar
-          </button>
-        </div>
-      )}
-
-      {/* Encabezado Superior ESTÁTICO Y FIJO (shrink-0) */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      {/* CABECERA PRINCIPAL */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-200">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
-            {esCocinero ? 'COCINA Y SERVICIO' : 'GESTIÓN DE LA CARTA'}
-          </p>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 tracking-tight">
               Menú del Día
             </h1>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-semibold">
-              <Calendar className="w-3.5 h-3.5 text-[#D35400]" />
-              <span className="capitalize">{fechaHoyFormateada}</span>
-            </span>
+            {menu?.definido ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Menú definido
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+                <AlertCircle className="w-3.5 h-3.5" />
+                Menú no definido hoy
+              </span>
+            )}
           </div>
-          <p className="text-sm text-neutral-500 mt-1">
-            {esCocinero
-              ? 'Consulte los platos de la carta de hoy y actualice su disponibilidad en tiempo real.'
-              : 'Defina los platos disponibles de la carta peruana para el servicio de hoy de manera ágil.'}
+          <p className="text-sm text-neutral-500 capitalize flex items-center gap-1.5 mt-1">
+            <Calendar className="w-4 h-4 text-neutral-400" />
+            {fechaHoyFormateada}
           </p>
         </div>
 
-        {/* Indicador de estado del menú en la cabecera */}
-        {menu && (
-          <div className="shrink-0 flex items-center gap-2">
-            <span
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold border ${
-                menu.definido
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200 shadow-2xs'
-                  : 'bg-amber-50 text-amber-900 border-amber-200 shadow-2xs'
-              }`}
+        {/* CONTROLES ADMINISTRADOR */}
+        {esAdmin && (
+          <div className="flex items-center gap-3 flex-wrap">
+            {tieneCambiosSinGuardar && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-200 animate-pulse">
+                Cambios sin guardar
+              </span>
+            )}
+
+            {tieneCambiosSinGuardar && (
+              <button
+                type="button"
+                onClick={() => setDiscardModalOpen(true)}
+                disabled={guardando}
+                className="px-4 py-2 text-xs font-bold text-neutral-600 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
+              >
+                Descartar cambios
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleGuardarMenu}
+              disabled={guardando}
+              className="px-5 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-xs transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
             >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  menu.definido ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'
-                }`}
-              />
-              {menu.definido ? 'Menú definido para hoy' : 'Menú no definido aún'}
-            </span>
+              {guardando ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Guardando…</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>GUARDAR MENÚ DEL DÍA</span>
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>
 
-      {/* Contenedor Principal Confinado (Zero Global Scroll) */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white rounded-2xl border border-neutral-200/80 shadow-xs">
-        {errorCarga ? (
-          /* Error de carga (MSG-80) */
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-            <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
-            <p className="text-sm font-medium text-neutral-700">{errorCarga}</p>
+      {/* AVISOS DE VALIDACIÓN Y RETROALIMENTACIÓN */}
+      {errorValidacionGuardar && (
+        <div
+          role="alert"
+          className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3"
+        >
+          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5" />
+          <div className="flex-1 font-medium">{errorValidacionGuardar}</div>
+        </div>
+      )}
+
+      {avisoExito && (
+        <div
+          role="status"
+          className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3 animate-in fade-in"
+        >
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+          <span className="font-medium">{avisoExito}</span>
+        </div>
+      )}
+
+      {avisoError && (
+        <div
+          role="alert"
+          className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3"
+        >
+          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
+          <span className="font-medium">{avisoError}</span>
+        </div>
+      )}
+
+      {/* PESTAÑAS PRINCIPALES (CUS05.1 & CUS05.2) */}
+      <div className="border-b border-neutral-200 flex gap-2 overflow-x-auto">
+        {esAdmin && (
+          <>
             <button
               type="button"
-              onClick={() => cargarDatos(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer"
+              onClick={() => setTabActiva('opciones')}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                tabActiva === 'opciones'
+                  ? 'border-[#D35400] text-[#D35400]'
+                  : 'border-transparent text-neutral-600 hover:text-neutral-900'
+              }`}
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reintentar</span>
+              <Sparkles className="w-4 h-4" />
+              <span>Opciones del día (Componentes)</span>
+              <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-[#D35400] font-bold">
+                {opcionesSeleccionadas.size}
+              </span>
             </button>
-          </div>
-        ) : cargando ? (
-          /* Estado de Carga / Skeleton */
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            <div className="shrink-0 px-6 py-2.5 bg-amber-50/60 border-b border-amber-100/80 flex items-center justify-between text-xs text-neutral-600">
-              <div className="flex items-center gap-2">
-                <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
-                <span className="font-semibold text-neutral-700">Cargando menú del día…</span>
-              </div>
-              <span className="text-[11px] text-neutral-400 font-medium">Sincronizando productos</span>
-            </div>
 
-            <div className="flex-1 p-6 space-y-4 overflow-y-auto">
-              <div className="h-20 bg-neutral-100 rounded-xl animate-pulse" />
-              <div className="h-40 bg-neutral-50 rounded-xl animate-pulse" />
-              <div className="h-40 bg-neutral-50 rounded-xl animate-pulse" />
-            </div>
-          </div>
-        ) : esCocinero ? (
-          /* ========================================================
-             VISTA DEL COCINERO (Vista 5.3): Minimalismo Total (Nielsen 8)
-             ======================================================== */
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            {!menu || !menu.definido ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto border border-amber-200">
-                  <UtensilsCrossed className="w-7 h-7" />
-                </div>
-                <div className="max-w-md">
-                  <h3 className="text-base font-sans font-bold text-neutral-800 mb-1">
-                    Menú no disponible
-                  </h3>
-                  <p className="text-sm text-neutral-600">
-                    No hay menú definido para hoy. La administradora debe definirlo.
+            <button
+              type="button"
+              onClick={() => setTabActiva('menus')}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                tabActiva === 'menus'
+                  ? 'border-[#D35400] text-[#D35400]'
+                  : 'border-transparent text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              <UtensilsCrossed className="w-4 h-4" />
+              <span>Menús completos (CUS04.5)</span>
+              <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-700 font-bold">
+                {menusCompletosHabilitados.size}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTabActiva('carta')}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                tabActiva === 'carta'
+                  ? 'border-[#D35400] text-[#D35400]'
+                  : 'border-transparent text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              <Coffee className="w-4 h-4" />
+              <span>Productos de carta</span>
+              <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-700 font-bold">
+                {platosCartaSeleccionados.size}
+              </span>
+            </button>
+          </>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setTabActiva('disponibilidad')}
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+            tabActiva === 'disponibilidad'
+              ? 'border-emerald-600 text-emerald-700'
+              : 'border-transparent text-neutral-600 hover:text-neutral-900'
+          }`}
+        >
+          <Power className="w-4 h-4" />
+          <span>Disponibilidad en servicio (Agotados)</span>
+          {menu?.definido && (
+            <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 font-bold">
+              {itemsDisponibilidad.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {cargando ? (
+        <div className="py-20 text-center text-neutral-500">
+          <div className="w-8 h-8 border-3 border-[#D35400] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm font-medium">Cargando menú del día y productos activos…</p>
+        </div>
+      ) : (
+        <>
+          {/* TAB 1: OPCIONES DEL DÍA (COMPONENTES POR ROL) */}
+          {tabActiva === 'opciones' && esAdmin && (
+            <div className="space-y-8">
+              <div className="p-4 bg-orange-50/70 border border-orange-200 rounded-2xl flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-[#D35400] shrink-0 mt-0.5" />
+                <div className="text-xs text-neutral-700 space-y-1">
+                  <p className="font-semibold text-neutral-900">
+                    Opciones que integran los Menús Completos de hoy
+                  </p>
+                  <p>
+                    Elija en cada sección las opciones disponibles. Los componentes no llevan precio independiente y se
+                    asignan a las partes fijas de cada menú (Bebida, Plato de desayuno, Sopa, Entrada o Segundo).
                   </p>
                 </div>
               </div>
-            ) : (
-              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                <div className="shrink-0 px-6 py-3 bg-neutral-50 border-b border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
-                  <span>
-                    Mostrando <strong className="text-neutral-800">{menu.platos.length}</strong> platos en el menú de hoy
-                  </span>
-                  <span className="text-[11px] text-neutral-400">
-                    Toque el botón para cambiar disponibilidad
-                  </span>
+
+              {/* SECCIÓN 1: BEBIDAS DE DESAYUNO */}
+              <SeccionComponentesRol
+                titulo="Bebidas de Desayuno"
+                descripcion="Opciones para la primera parte del Desayuno completo (Quaker, Quinua, Soya, Anís, etc.)"
+                icon={CupSoda}
+                items={compBebidasDesayuno}
+                seleccionados={opcionesSeleccionadas}
+                onToggle={handleToggleOpcion}
+                onSelectAll={handleSeleccionarVariosOpciones}
+                onDeselectAll={handleDesmarcarVariosOpciones}
+              />
+
+              {/* SECCIÓN 2: PLATOS DE DESAYUNO */}
+              <SeccionComponentesRol
+                titulo="Platos de Desayuno"
+                descripcion="Opciones para la segunda parte del Desayuno completo (Seco de pollo, Asado de pollo, etc.)"
+                icon={ChefHat}
+                items={compPlatosDesayuno}
+                seleccionados={opcionesSeleccionadas}
+                onToggle={handleToggleOpcion}
+                onSelectAll={handleSeleccionarVariosOpciones}
+                onDeselectAll={handleDesmarcarVariosOpciones}
+              />
+
+              {/* SECCIÓN 3: SOPAS */}
+              <SeccionComponentesRol
+                titulo="Sopas del Día"
+                descripcion="Opciones de entrada/sopa para el Almuerzo completo (Sopa a la minuta, Caldo de gallina, etc.)"
+                icon={Soup}
+                items={compSopas}
+                seleccionados={opcionesSeleccionadas}
+                onToggle={handleToggleOpcion}
+                onSelectAll={handleSeleccionarVariosOpciones}
+                onDeselectAll={handleDesmarcarVariosOpciones}
+              />
+
+              {/* SECCIÓN 4: ENTRADAS */}
+              <SeccionComponentesRol
+                titulo="Entradas del Día"
+                descripcion="Opciones de entrada alternativa para el Almuerzo completo (Papa a la huancaína, Ocopa, etc.)"
+                icon={Salad}
+                items={compEntradas}
+                seleccionados={opcionesSeleccionadas}
+                onToggle={handleToggleOpcion}
+                onSelectAll={handleSeleccionarVariosOpciones}
+                onDeselectAll={handleDesmarcarVariosOpciones}
+              />
+
+              {/* SECCIÓN 5: SEGUNDOS */}
+              <SeccionComponentesRol
+                titulo="Segundos del Día"
+                descripcion="Opciones de plato de fondo para Almuerzo completo y Solo segundo (Lomo saltado, Seco de res, etc.)"
+                icon={UtensilsCrossed}
+                items={compSegundos}
+                seleccionados={opcionesSeleccionadas}
+                onToggle={handleToggleOpcion}
+                onSelectAll={handleSeleccionarVariosOpciones}
+                onDeselectAll={handleDesmarcarVariosOpciones}
+              />
+            </div>
+          )}
+
+          {/* TAB 2: MENÚS COMPLETOS (CUS04.5) */}
+          {tabActiva === 'menus' && esAdmin && (
+            <div className="space-y-6">
+              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl flex items-start gap-3">
+                <UtensilsCrossed className="w-5 h-5 text-neutral-700 shrink-0 mt-0.5" />
+                <div className="text-xs text-neutral-700 space-y-1">
+                  <p className="font-semibold text-neutral-900">
+                    Menús Completos Ofrecidos Hoy (CUS04.5)
+                  </p>
+                  <p>
+                    Active o desactive los menús completos para la atención del día. Recuerde la regla{' '}
+                    <strong>RV-161</strong>: cada parte del menú debe tener al menos una opción seleccionada en la pestaña
+                    de opciones para poder habilitarse.
+                  </p>
                 </div>
+              </div>
 
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-                  {menu.desayuno && (
-                    <div className="p-4 rounded-2xl border border-amber-200 bg-amber-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 text-[#D35400] flex items-center justify-center shrink-0">
-                          <Coffee className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
-                            Desayuno del día
-                          </span>
-                          <h4 className="font-sans font-bold text-base text-neutral-900">
-                            {menu.desayuno.nombre}
-                          </h4>
-                        </div>
-                      </div>
-                      <span className="w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
-                        Disponible
-                      </span>
-                    </div>
-                  )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* 1. DESAYUNO COMPLETO */}
+                <CardMenuCompletoDia
+                  id={1}
+                  nombre="Desayuno completo"
+                  precio={7.0}
+                  incluye="Pan"
+                  habilitado={menusCompletosHabilitados.has(1)}
+                  onToggle={() => handleToggleMenuCompleto(1)}
+                  partes={[
+                    {
+                      nombre: 'Bebida',
+                      opciones: compBebidasDesayuno
+                        .filter((c) => opcionesSeleccionadas.has(c.id))
+                        .map((c) => c.nombre)
+                    },
+                    {
+                      nombre: 'Plato',
+                      opciones: compPlatosDesayuno
+                        .filter((c) => opcionesSeleccionadas.has(c.id))
+                        .map((c) => c.nombre)
+                    }
+                  ]}
+                />
 
-                  {menu.platos.map((plato) => {
-                    const estaResaltado = platoResaltadoId === plato.productoId;
+                {/* 2. ALMUERZO COMPLETO */}
+                <CardMenuCompletoDia
+                  id={2}
+                  nombre="Almuerzo completo"
+                  precio={8.0}
+                  incluye="Refresco del día"
+                  habilitado={menusCompletosHabilitados.has(2)}
+                  onToggle={() => handleToggleMenuCompleto(2)}
+                  partes={[
+                    {
+                      nombre: 'Sopa o entrada',
+                      opciones: [...compSopas, ...compEntradas]
+                        .filter((c) => opcionesSeleccionadas.has(c.id))
+                        .map((c) => c.nombre)
+                    },
+                    {
+                      nombre: 'Segundo',
+                      opciones: compSegundos
+                        .filter((c) => opcionesSeleccionadas.has(c.id))
+                        .map((c) => c.nombre)
+                    }
+                  ]}
+                />
 
-                    return (
+                {/* 3. SOLO SEGUNDO */}
+                <CardMenuCompletoDia
+                  id={3}
+                  nombre="Solo segundo"
+                  precio={7.0}
+                  incluye="Refresco del día"
+                  habilitado={menusCompletosHabilitados.has(3)}
+                  onToggle={() => handleToggleMenuCompleto(3)}
+                  partes={[
+                    {
+                      nombre: 'Segundo',
+                      opciones: compSegundos
+                        .filter((c) => opcionesSeleccionadas.has(c.id))
+                        .map((c) => c.nombre)
+                    }
+                  ]}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: PRODUCTOS DE CARTA */}
+          {tabActiva === 'carta' && esAdmin && (
+            <div className="space-y-6">
+              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl flex items-start gap-3">
+                <Coffee className="w-5 h-5 text-neutral-700 shrink-0 mt-0.5" />
+                <div className="text-xs text-neutral-700 space-y-1">
+                  <p className="font-semibold text-neutral-900">
+                    Productos de Carta Disponibles Hoy
+                  </p>
+                  <p>
+                    Platos y bebidas que se venden de forma independiente a precio de lista. Ahora los desayunos
+                    individuales también admiten selección múltiple.
+                  </p>
+                </div>
+              </div>
+
+              {/* SELECTOR DE CATEGORÍA DE CARTA */}
+              <div className="flex gap-2 border-b border-neutral-200 pb-2 overflow-x-auto">
+                {[
+                  { id: 'Desayuno', label: 'Desayunos de carta', count: cartaDesayunos.filter((c) => platosCartaSeleccionados.has(c.id)).length, total: cartaDesayunos.length },
+                  { id: 'Almuerzo', label: 'Platos / Extras', count: cartaAlmuerzos.filter((c) => platosCartaSeleccionados.has(c.id)).length, total: cartaAlmuerzos.length },
+                  { id: 'Combinados', label: 'Combinados', count: cartaCombinados.filter((c) => platosCartaSeleccionados.has(c.id)).length, total: cartaCombinados.length },
+                  { id: 'Bebidas', label: 'Bebidas', count: cartaBebidas.filter((c) => platosCartaSeleccionados.has(c.id)).length, total: cartaBebidas.length },
+                  { id: 'Otros', label: 'Otros', count: cartaOtros.filter((c) => platosCartaSeleccionados.has(c.id)).length, total: cartaOtros.length }
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setCatCartaActiva(cat.id)}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+                      catCartaActiva === cat.id
+                        ? 'bg-neutral-900 text-white'
+                        : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                    }`}
+                  >
+                    {cat.label} ({cat.count}/{cat.total})
+                  </button>
+                ))}
+              </div>
+
+              {/* GRILLA DE PRODUCTOS DE CARTA SEGÚN CATEGORÍA SELECCIONADA */}
+              <SeccionCartaCategoria
+                categoriaNombre={catCartaActiva}
+                items={
+                  catCartaActiva === 'Desayuno'
+                    ? cartaDesayunos
+                    : catCartaActiva === 'Almuerzo'
+                    ? cartaAlmuerzos
+                    : catCartaActiva === 'Combinados'
+                    ? cartaCombinados
+                    : catCartaActiva === 'Bebidas'
+                    ? cartaBebidas
+                    : cartaOtros
+                }
+                seleccionados={platosCartaSeleccionados}
+                onToggle={handleTogglePlatoCarta}
+                onSelectAll={handleSeleccionarVariosCarta}
+                onDeselectAll={handleDesmarcarVariosCarta}
+              />
+            </div>
+          )}
+
+          {/* TAB 4: DISPONIBILIDAD EN SERVICIO (CUS05.2 - AGOTADOS) */}
+          {tabActiva === 'disponibilidad' && (
+            <div className="space-y-6">
+              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex items-start gap-3">
+                <Power className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
+                <div className="text-xs text-neutral-700 space-y-1">
+                  <p className="font-semibold text-neutral-900">
+                    Control de Disponibilidad en Tiempo Real (CUS05.2)
+                  </p>
+                  <p>
+                    Marque como agotado cualquier componente o plato de carta cuando se termine durante el servicio.
+                    Si se agotan todas las opciones de una parte, el menú completo quedará automáticamente marcado como
+                    &quot;No disponible hoy&quot; para mozos y cajeros (RN-136).
+                  </p>
+                </div>
+              </div>
+
+              {/* MENÚS COMPLETOS: ESTADO DE DISPONIBILIDAD */}
+              {menu?.menusCompletos && menu.menusCompletos.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500">
+                    Estado de Menús Completos en Servicio
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {menu.menusCompletos.map((mc) => (
                       <div
-                        key={plato.productoId}
-                        className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs ${
-                          estaResaltado
-                            ? 'bg-amber-100/60 border-amber-300 scale-[1.01]'
-                            : plato.agotado
-                            ? 'bg-neutral-50/90 border-neutral-200 opacity-90'
-                            : 'bg-white border-neutral-200/80 hover:border-neutral-300'
+                        key={mc.id}
+                        className={`p-4 rounded-xl border flex flex-col justify-between ${
+                          mc.disponible
+                            ? 'bg-white border-neutral-200'
+                            : 'bg-amber-50/80 border-amber-300'
                         }`}
                       >
-                        <div className="flex items-center gap-3.5">
-                          <div
-                            className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${
-                              plato.agotado
-                                ? 'bg-neutral-100 text-neutral-400 border-neutral-200'
-                                : 'bg-[#FFF3E0] text-[#D35400] border-amber-200/80'
-                            }`}
-                          >
-                            <UtensilsCrossed className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-sans font-bold text-base text-neutral-900">
-                                {plato.nombre}
-                              </h4>
-                              {estaResaltado && (
-                                <span className="text-[10px] bg-[#D35400] text-white px-2 py-0.5 rounded-full font-bold">
-                                  Actualizado
-                                </span>
-                              )}
-                            </div>
-                            <span className="text-xs text-neutral-500 font-medium">
-                              {CATEGORIA_LABELS[plato.categoria] || plato.categoria}
+                        <div className="flex items-center justify-between">
+                          <span className="font-serif font-bold text-neutral-900 text-sm">
+                            {mc.nombre}
+                          </span>
+                          {mc.disponible ? (
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                              Disponible
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-200 text-amber-900">
+                              No disponible hoy
+                            </span>
+                          )}
+                        </div>
+
+                        {!mc.disponible && mc.motivoNoDisponible && (
+                          <p className="text-xs text-amber-900 mt-2 font-medium">
+                            {mc.motivoNoDisponible}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* FILTROS Y BÚSQUEDA */}
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-neutral-50 p-3 rounded-xl border border-neutral-200">
+                <input
+                  type="text"
+                  placeholder="Buscar plato o componente…"
+                  value={busquedaDisp}
+                  onChange={(e) => setBusquedaDisp(e.target.value)}
+                  className="w-full sm:w-72 px-3 py-2 text-xs bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+                />
+
+                <div className="flex gap-1.5 overflow-x-auto w-full sm:w-auto">
+                  {(['Todos', 'Componente', 'Carta', 'Agotados'] as const).map((tipo) => (
+                    <button
+                      key={tipo}
+                      type="button"
+                      onClick={() => setFiltroTipoDisp(tipo)}
+                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+                        filtroTipoDisp === tipo
+                          ? 'bg-neutral-900 text-white'
+                          : 'bg-white text-neutral-700 hover:bg-neutral-200 border border-neutral-200'
+                      }`}
+                    >
+                      {tipo}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* LISTA / TABLA DE ÍTEMS EN SERVICIO */}
+              {itemsDispFiltrados.length === 0 ? (
+                <div className="py-12 text-center text-neutral-400 text-sm">
+                  No se encontraron ítems en el menú con ese criterio.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                  {itemsDispFiltrados.map((item) => {
+                    const esResaltado = platoResaltadoId === item.productoId;
+                    return (
+                      <div
+                        key={item.productoId}
+                        className={`p-4 rounded-xl border bg-white flex flex-col justify-between transition-all ${
+                          item.agotado
+                            ? 'border-neutral-300 bg-neutral-50/70 opacity-75'
+                            : 'border-neutral-200 hover:border-neutral-300 shadow-2xs'
+                        } ${esResaltado ? 'ring-2 ring-[#D35400]' : ''}`}
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <span className="font-semibold text-sm text-neutral-900 leading-snug">
+                              {item.nombre}
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
+                                item.tipo === 'Componente'
+                                  ? 'bg-purple-100 text-purple-800'
+                                  : 'bg-blue-100 text-blue-800'
+                              }`}
+                            >
+                              {item.tipo === 'Componente'
+                                ? `Opción · ${item.clasificacion}`
+                                : `Carta · S/ ${item.precio?.toFixed(2)}`}
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-100">
+                        <div className="flex items-center justify-between pt-3 mt-2 border-t border-neutral-100">
                           <span
-                            className={`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border shadow-2xs ${
-                              plato.agotado
-                                ? 'bg-amber-50 text-amber-900 border-amber-200'
-                                : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                            className={`text-xs font-bold ${
+                              item.agotado ? 'text-amber-700' : 'text-emerald-700'
                             }`}
                           >
-                            {plato.agotado ? 'Agotado' : 'Disponible'}
+                            {item.agotado ? 'Agotado' : 'Disponible'}
                           </span>
 
                           <button
                             type="button"
-                            onClick={() => handleAbrirDisponibilidadModal(plato)}
-                            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] flex items-center justify-center gap-2 cursor-pointer shadow-xs ${
-                              plato.agotado
+                            onClick={() => handleAbrirDisponibilidadModal(item)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer min-h-[38px] ${
+                              item.agotado
                                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                                : 'bg-amber-600 hover:bg-amber-700 text-white'
+                                : 'bg-neutral-100 hover:bg-amber-100 text-neutral-800 hover:text-amber-900'
                             }`}
                           >
-                            {plato.agotado ? (
-                              <>
-                                <Power className="w-4 h-4" />
-                                <span>Marcar disponible</span>
-                              </>
-                            ) : (
-                              <>
-                                <PowerOff className="w-4 h-4" />
-                                <span>Marcar agotado</span>
-                              </>
-                            )}
+                            {item.agotado ? 'Marcar disponible' : 'Marcar agotado'}
                           </button>
                         </div>
                       </div>
                     );
                   })}
                 </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          /* ========================================================
-             VISTA DEL ADMINISTRADOR: NAVEGACIÓN EN TABS Y ACORDEÓN (CUS05)
-             ======================================================== */
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            {noHayCandidatosActivos ? (
-              /* Sin productos activos (MSG-69) */
-              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto border border-amber-200">
-                  <UtensilsCrossed className="w-7 h-7" />
-                </div>
-                <div className="max-w-md">
-                  <h3 className="text-base font-sans font-bold text-neutral-800 mb-1">
-                    No hay productos activos
-                  </h3>
-                  <p className="text-sm text-neutral-600 mb-4">
-                    Registre productos antes de definir el menú.
-                  </p>
-                  {onNavigateToProductos && (
-                    <button
-                      type="button"
-                      onClick={onNavigateToProductos}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-                    >
-                      <span>Ir a Productos</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                {/* Banner de menú no definido para hoy */}
-                {menu && !menu.definido && (
-                  <div className="shrink-0 p-3 bg-amber-50/80 border-b border-amber-200/80 flex items-center justify-between gap-3 text-amber-900 text-xs sm:text-sm">
-                    <div className="flex items-center gap-2.5">
-                      <Sparkles className="w-4 h-4 text-[#D35400] shrink-0" />
-                      <span className="font-medium">
-                        Todavía no definió el menú de hoy. Seleccione los productos en cada pestaña y pulse{' '}
-                        <strong>Guardar menú del día</strong>.
-                      </span>
-                    </div>
-                  </div>
-                )}
+              )}
+            </div>
+          )}
+        </>
+      )}
 
-                {/* ========================================================
-                    BARRA SUPERIOR DE TABS / PESTAÑAS (SHRINK-0)
-                    Evita el scroll vertical excesivo y navega al instante
-                   ======================================================== */}
-                <div className="shrink-0 bg-neutral-50/90 border-b border-neutral-200/80 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 overflow-x-auto [&::-webkit-scrollbar]:h-1">
-                  <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    {tabsNav.map((tab) => {
-                      const Icono = tab.icon;
-                      const esActiva = tabActiva === tab.id;
-
-                      return (
-                        <button
-                          key={tab.id}
-                          type="button"
-                          onClick={() => setTabActiva(tab.id)}
-                          className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap border ${
-                            esActiva
-                              ? 'bg-white text-[#D35400] border-amber-300 shadow-2xs ring-1 ring-amber-300/60'
-                              : 'bg-transparent text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/70 border-transparent'
-                          }`}
-                        >
-                          <Icono className={`w-4 h-4 ${esActiva ? 'text-[#D35400]' : 'text-neutral-500'}`} />
-                          <span>{tab.label}</span>
-                          <span
-                            className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors ${
-                              tab.count > 0
-                                ? esActiva
-                                  ? 'bg-[#D35400] text-white'
-                                  : 'bg-amber-100 text-[#B84600]'
-                                : 'bg-neutral-200/80 text-neutral-500'
-                            }`}
-                          >
-                            {tab.count}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Botón de alternancia a Vista Completa (Acordeón) */}
-                  <div className="shrink-0 pl-2 border-l border-neutral-200">
-                    <button
-                      type="button"
-                      onClick={() => setTabActiva(tabActiva === 'todos' ? 'almuerzos' : 'todos')}
-                      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer whitespace-nowrap ${
-                        tabActiva === 'todos'
-                          ? 'bg-[#482813] text-white border-[#482813] shadow-xs'
-                          : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50'
-                      }`}
-                      title={tabActiva === 'todos' ? 'Volver a pestañas individuales' : 'Ver todas las categorías en acordeón'}
-                    >
-                      <Grid className="w-3.5 h-3.5" />
-                      <span>{tabActiva === 'todos' ? 'Por Pestañas' : 'Vista Completa'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* ========================================================
-                    ÁREA DE CONTENIDO CON SCROLL CONFINADO (FLEX-1)
-                   ======================================================== */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-                  {/* CASO A: TAB INDIVIDUAL */}
-                  {tabActiva === 'desayunos' && renderSeccionDesayunos()}
-
-                  {tabActiva === 'almuerzos' &&
-                    renderSeccionMultiples(
-                      'Almuerzos y Segundos',
-                      'Menú del día estándar, sopas y entradas criollas',
-                      UtensilsCrossed,
-                      candidatosAlmuerzos,
-                      cantAlmuerzos,
-                      'text-orange-600 bg-orange-50 border-orange-200'
-                    )}
-
-                  {tabActiva === 'extras' &&
-                    renderSeccionMultiples(
-                      'Platos Extras / A la Carta',
-                      'Lomo saltado, ceviches, bistec, caldos criollos y platos a la carta',
-                      Sparkles,
-                      candidatosExtras,
-                      cantExtras,
-                      'text-rose-600 bg-rose-50 border-rose-200'
-                    )}
-
-                  {tabActiva === 'combinados' &&
-                    renderSeccionMultiples(
-                      'Combinados',
-                      'Dúos marinos, chaufa con chicharrón y platos compuestos',
-                      Flame,
-                      candidatosCombinados,
-                      cantCombinados,
-                      'text-purple-600 bg-purple-50 border-purple-200'
-                    )}
-
-                  {tabActiva === 'bebidas' &&
-                    renderSeccionMultiples(
-                      'Bebidas y Refrescos',
-                      'Gaseosas personales/familiares, aguas y jarras artesanales (500ml y 1L)',
-                      CupSoda,
-                      candidatosBebidas,
-                      cantBebidas,
-                      'text-emerald-600 bg-emerald-50 border-emerald-200'
-                    )}
-
-                  {tabActiva === 'otros' &&
-                    renderSeccionMultiples(
-                      'Otros y Guarniciones',
-                      'Porciones adicionales, arroz, papas y guarniciones de la casa',
-                      Layers,
-                      candidatosOtros,
-                      cantOtros,
-                      'text-sky-600 bg-sky-50 border-sky-200'
-                    )}
-
-                  {tabActiva === 'disponibilidad' && renderSeccionDisponibilidad()}
-
-                  {/* CASO B: MODO ACORDEÓN / VISTA COMPLETA */}
-                  {tabActiva === 'todos' && (
-                    <div className="space-y-4">
-                      {/* Acordeón: Desayunos */}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => toggleSeccion('desayunos')}
-                          className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <Coffee className="w-4 h-4 text-[#D35400]" />
-                            <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                              Desayunos
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-[#B84600]">
-                              {cantDesayunos} seleccionados
-                            </span>
-                          </div>
-                          {seccionesAbiertas.desayunos ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-500" />
-                          )}
-                        </button>
-                        {seccionesAbiertas.desayunos && <div className="p-4">{renderSeccionDesayunos()}</div>}
-                      </div>
-
-                      {/* Acordeón: Almuerzos */}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => toggleSeccion('almuerzos')}
-                          className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <UtensilsCrossed className="w-4 h-4 text-orange-600" />
-                            <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                              Almuerzos y Segundos
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">
-                              {cantAlmuerzos} seleccionados
-                            </span>
-                          </div>
-                          {seccionesAbiertas.almuerzos ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-500" />
-                          )}
-                        </button>
-                        {seccionesAbiertas.almuerzos && (
-                          <div className="p-4">
-                            {renderSeccionMultiples(
-                              'Almuerzos y Segundos',
-                              'Menú del día estándar, sopas y entradas criollas',
-                              UtensilsCrossed,
-                              candidatosAlmuerzos,
-                              cantAlmuerzos,
-                              'text-orange-600 bg-orange-50 border-orange-200'
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Acordeón: Platos Extras */}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => toggleSeccion('extras')}
-                          className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <Sparkles className="w-4 h-4 text-rose-600" />
-                            <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                              Platos Extras / A la Carta
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
-                              {cantExtras} seleccionados
-                            </span>
-                          </div>
-                          {seccionesAbiertas.extras ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-500" />
-                          )}
-                        </button>
-                        {seccionesAbiertas.extras && (
-                          <div className="p-4">
-                            {renderSeccionMultiples(
-                              'Platos Extras / A la Carta',
-                              'Lomo saltado, ceviches, bistec, caldos criollos y platos a la carta',
-                              Sparkles,
-                              candidatosExtras,
-                              cantExtras,
-                              'text-rose-600 bg-rose-50 border-rose-200'
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Acordeón: Combinados */}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => toggleSeccion('combinados')}
-                          className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <Flame className="w-4 h-4 text-purple-600" />
-                            <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                              Combinados
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">
-                              {cantCombinados} seleccionados
-                            </span>
-                          </div>
-                          {seccionesAbiertas.combinados ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-500" />
-                          )}
-                        </button>
-                        {seccionesAbiertas.combinados && (
-                          <div className="p-4">
-                            {renderSeccionMultiples(
-                              'Combinados',
-                              'Dúos marinos, chaufa con chicharrón y platos compuestos',
-                              Flame,
-                              candidatosCombinados,
-                              cantCombinados,
-                              'text-purple-600 bg-purple-50 border-purple-200'
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Acordeón: Bebidas */}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => toggleSeccion('bebidas')}
-                          className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <CupSoda className="w-4 h-4 text-emerald-600" />
-                            <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                              Bebidas y Refrescos
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                              {cantBebidas} seleccionadas
-                            </span>
-                          </div>
-                          {seccionesAbiertas.bebidas ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-500" />
-                          )}
-                        </button>
-                        {seccionesAbiertas.bebidas && (
-                          <div className="p-4">
-                            {renderSeccionMultiples(
-                              'Bebidas y Refrescos',
-                              'Gaseosas personales/familiares, aguas y jarras artesanales (500ml y 1L)',
-                              CupSoda,
-                              candidatosBebidas,
-                              cantBebidas,
-                              'text-emerald-600 bg-emerald-50 border-emerald-200'
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Acordeón: Otros */}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => toggleSeccion('otros')}
-                          className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <Layers className="w-4 h-4 text-sky-600" />
-                            <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                              Otros y Guarniciones
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800">
-                              {cantOtros} seleccionados
-                            </span>
-                          </div>
-                          {seccionesAbiertas.otros ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-500" />
-                          )}
-                        </button>
-                        {seccionesAbiertas.otros && (
-                          <div className="p-4">
-                            {renderSeccionMultiples(
-                              'Otros y Guarniciones',
-                              'Porciones adicionales, arroz, papas y guarniciones de la casa',
-                              Layers,
-                              candidatosOtros,
-                              cantOtros,
-                              'text-sky-600 bg-sky-50 border-sky-200'
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Acordeón: Disponibilidad (si el menú está definido) */}
-                      {menu && menu.definido && menu.platos.length > 0 && (
-                        <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-2xs">
-                          <button
-                            type="button"
-                            onClick={() => toggleSeccion('disponibilidad')}
-                            className="w-full px-4 py-3 bg-neutral-50/70 hover:bg-neutral-100/70 flex items-center justify-between text-left cursor-pointer transition-colors"
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                              <span className="font-bold text-xs uppercase tracking-wider text-neutral-800">
-                                Disponibilidad en Servicio
-                              </span>
-                              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                                {menu.platos.length} platos en carta
-                              </span>
-                            </div>
-                            {seccionesAbiertas.disponibilidad ? (
-                              <ChevronUp className="w-4 h-4 text-neutral-500" />
-                            ) : (
-                              <ChevronDown className="w-4 h-4 text-neutral-500" />
-                            )}
-                          </button>
-                          {seccionesAbiertas.disponibilidad && (
-                            <div className="p-4">{renderSeccionDisponibilidad()}</div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* ========================================================
-                    BARRA DE GUARDADO PERMANENTE Y FIJA AL PIE (SHRINK-0)
-                    Siempre visible sin importar en qué pestaña se navegue
-                   ======================================================== */}
-                <div className="shrink-0 p-4 sm:px-6 bg-white border-t border-neutral-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
-                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
-                    {/* Contador total en carta */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-neutral-500">Total en carta:</span>
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-[#B84600] border border-amber-200 text-xs font-bold font-mono">
-                        {totalSeleccionados} {totalSeleccionados === 1 ? 'producto' : 'productos'}
-                      </span>
-                      {desayunoSeleccionado && (
-                        <span className="text-[11px] text-amber-800 bg-amber-100/60 px-2 py-0.5 rounded-md font-medium">
-                          + 1 desayuno
-                        </span>
-                      )}
-                    </div>
-
-                    {tieneCambiosSinGuardar && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold animate-pulse">
-                        <span className="w-2 h-2 rounded-full bg-[#D35400]" />
-                        Cambios sin guardar
-                      </span>
-                    )}
-
-                    {errorValidacionGuardar && (
-                      <span className="text-xs font-semibold text-rose-600 flex items-center gap-1.5">
-                        <AlertCircle className="w-4 h-4 shrink-0" />
-                        {errorValidacionGuardar}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-end gap-3 w-full sm:w-auto">
-                    {tieneCambiosSinGuardar && (
-                      <button
-                        type="button"
-                        onClick={() => setDiscardModalOpen(true)}
-                        className="px-4 py-2.5 rounded-xl border border-neutral-300 text-xs sm:text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-                      >
-                        Descartar cambios
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={handleGuardarMenu}
-                      disabled={guardando}
-                      className="px-6 py-2.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs sm:text-sm font-semibold shadow-sm hover:shadow transition-all disabled:opacity-50 cursor-pointer min-h-[44px] flex items-center justify-center gap-2"
-                    >
-                      {guardando ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Guardando menú…</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Guardar menú del día</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* MODALES DEL CUS05 */}
+      {/* MODAL DE CONFIRMACIÓN DE DISPONIBILIDAD (CUS05.2 / RV-49) */}
       <MenuDisponibilidadConfirmModal
         isOpen={dispModalOpen}
         onClose={() => setDispModalOpen(false)}
         onConfirm={handleConfirmarDisponibilidad}
-        plato={platoAConfirmar}
+        plato={itemAConfirmar}
         nuevoEstadoAgotado={nuevoEstadoAgotado}
         procesando={procesandoDisp}
       />
 
+      {/* MODAL DE DESCARTE DE CAMBIOS (RV-48 / MSG-72) */}
       <DiscardChangesModal
         isOpen={discardModalOpen}
         onClose={() => setDiscardModalOpen(false)}
@@ -1313,4 +753,295 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   );
 };
 
-export default MenuDiaPage;
+/* COMPONENTE AUXILIAR: SECCIÓN DE COMPONENTES POR ROL */
+interface SeccionComponentesRolProps {
+  titulo: string;
+  descripcion: string;
+  icon: React.ComponentType<{ className?: string }>;
+  items: CandidatoMenu[];
+  seleccionados: Set<string>;
+  onToggle: (id: string) => void;
+  onSelectAll: (ids: string[]) => void;
+  onDeselectAll: (ids: string[]) => void;
+}
+
+const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
+  titulo,
+  descripcion,
+  icon: Icon,
+  items,
+  seleccionados,
+  onToggle,
+  onSelectAll,
+  onDeselectAll
+}) => {
+  const ids = items.map((i) => i.id);
+  const seleccionadosCount = items.filter((i) => seleccionados.has(i.id)).length;
+  const todosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
+
+  return (
+    <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
+      <div className="px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-orange-100 text-[#D35400] flex items-center justify-center shrink-0">
+            <Icon className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-serif font-bold text-neutral-900 text-sm sm:text-base">
+              {titulo}
+            </h3>
+            <p className="text-xs text-neutral-500">{descripcion}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-end sm:self-center">
+          <span className="text-xs font-semibold text-neutral-600 mr-2">
+            {seleccionadosCount} de {items.length}
+          </span>
+          <button
+            type="button"
+            onClick={() =>
+              todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
+            }
+            className="px-3 py-1.5 text-xs font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors cursor-pointer"
+          >
+            {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
+          </button>
+        </div>
+      </div>
+
+      <div className="p-6">
+        {items.length === 0 ? (
+          <p className="text-xs text-neutral-400 italic">
+            No hay componentes registrados con este rol. Regístrelos en Carta y Menú &gt; Productos.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {items.map((item) => {
+              const estaSeleccionado = seleccionados.has(item.id);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onToggle(item.id)}
+                  aria-pressed={estaSeleccionado}
+                  className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer min-h-[52px] ${
+                    estaSeleccionado
+                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
+                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
+                  }`}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    {estaSeleccionado ? (
+                      <CheckSquare className="w-5 h-5 text-[#D35400]" />
+                    ) : (
+                      <Square className="w-5 h-5 text-neutral-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-bold block truncate">
+                      {item.nombre}
+                    </span>
+                    <span className="text-[10px] text-neutral-400 block mt-0.5">
+                      Componente (sin precio)
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* COMPONENTE AUXILIAR: TARJETA DE MENÚ COMPLETO (CUS04.5 / RV-161) */
+interface CardMenuCompletoDiaProps {
+  id: number;
+  nombre: string;
+  precio: number;
+  incluye: string;
+  habilitado: boolean;
+  onToggle: () => void;
+  partes: {
+    nombre: string;
+    opciones: string[];
+  }[];
+}
+
+const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
+  nombre,
+  precio,
+  incluye,
+  habilitado,
+  onToggle,
+  partes
+}) => {
+  // Comprobar si cada parte tiene opciones seleccionadas (RV-161)
+  const partesConFalta = partes.filter((p) => p.opciones.length === 0);
+  const cumpleRV161 = partesConFalta.length === 0;
+
+  return (
+    <div
+      className={`rounded-2xl border p-5 flex flex-col justify-between transition-all ${
+        habilitado
+          ? 'bg-white border-[#D35400] shadow-sm'
+          : 'bg-neutral-50/80 border-neutral-200 opacity-80'
+      }`}
+    >
+      <div>
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div>
+            <h3 className="font-serif font-bold text-neutral-900 text-base">
+              {nombre}
+            </h3>
+            <span className="text-lg font-mono font-bold text-[#D35400]">
+              S/ {precio.toFixed(2)}
+            </span>
+          </div>
+
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={habilitado}
+              onChange={onToggle}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D35400]"></div>
+          </label>
+        </div>
+
+        <p className="text-xs text-neutral-500 mb-4">
+          Incluye: <strong>{incluye}</strong>
+        </p>
+
+        {/* RESUMEN DE PARTES Y OPCIONES */}
+        <div className="space-y-3 pt-3 border-t border-neutral-100">
+          {partes.map((p) => (
+            <div key={p.nombre} className="text-xs">
+              <span className="font-bold text-neutral-700 block mb-1">
+                Parte: {p.nombre}
+              </span>
+              {p.opciones.length === 0 ? (
+                <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md inline-block">
+                  Sin opciones seleccionadas (MSG-219)
+                </span>
+              ) : (
+                <span className="text-[11px] text-neutral-600 block line-clamp-2">
+                  {p.opciones.length} opción(es): {p.opciones.join(', ')}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {habilitado && !cumpleRV161 && (
+        <div className="mt-4 p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-[11px] flex items-start gap-2">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <span>
+            {nombre} necesita al menos una opción en &quot;
+            {partesConFalta[0]?.nombre}&quot;. Seleccione opciones o quite el menú de hoy (MSG-219).
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* COMPONENTE AUXILIAR: SECCIÓN DE PRODUCTOS DE CARTA POR CATEGORÍA */
+interface SeccionCartaCategoriaProps {
+  categoriaNombre: string;
+  items: CandidatoMenu[];
+  seleccionados: Set<string>;
+  onToggle: (id: string) => void;
+  onSelectAll: (ids: string[]) => void;
+  onDeselectAll: (ids: string[]) => void;
+}
+
+const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
+  categoriaNombre,
+  items,
+  seleccionados,
+  onToggle,
+  onSelectAll,
+  onDeselectAll
+}) => {
+  const ids = items.map((i) => i.id);
+  const seleccionadosCount = items.filter((i) => seleccionados.has(i.id)).length;
+  const todosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
+
+  return (
+    <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
+      <div className="px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 className="font-serif font-bold text-neutral-900 text-sm sm:text-base">
+            Categoría: {categoriaNombre}
+          </h3>
+          <p className="text-xs text-neutral-500">
+            Productos con precio de venta independiente para la carta de hoy.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-end sm:self-center">
+          <span className="text-xs font-semibold text-neutral-600 mr-2">
+            {seleccionadosCount} de {items.length}
+          </span>
+          <button
+            type="button"
+            onClick={() =>
+              todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
+            }
+            className="px-3 py-1.5 text-xs font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors cursor-pointer"
+          >
+            {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
+          </button>
+        </div>
+      </div>
+
+      <div className="p-6">
+        {items.length === 0 ? (
+          <p className="text-xs text-neutral-400 italic">
+            No hay productos registrados en esta categoría de carta.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {items.map((item) => {
+              const estaSeleccionado = seleccionados.has(item.id);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onToggle(item.id)}
+                  aria-pressed={estaSeleccionado}
+                  className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer min-h-[52px] ${
+                    estaSeleccionado
+                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
+                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
+                  }`}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    {estaSeleccionado ? (
+                      <CheckSquare className="w-5 h-5 text-[#D35400]" />
+                    ) : (
+                      <Square className="w-5 h-5 text-neutral-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-bold block truncate">
+                      {item.nombre}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-neutral-600 block mt-0.5">
+                      S/ {item.precio?.toFixed(2) ?? '0.00'}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

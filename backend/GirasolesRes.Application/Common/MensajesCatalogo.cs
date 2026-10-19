@@ -252,5 +252,13 @@ public static class MensajesCatalogo
     public const string MSG_216 = "No se puede cambiar el tipo: el producto ya tiene pedidos. Desactívelo y cree uno nuevo.";
     public const string MSG_217 = "Menú completo actualizado correctamente.";
     public const string MSG_218 = "¿Desactivar el menú completo {0}? No se podrá pedir hasta activarlo, pero se conservará su historial.";
+
+    // CUS-05 y CUS-07/08: Menú del día y armado de pedidos con componentes
+    public const string MSG_219 = "{0} necesita al menos una opción en \"{1}\". Seleccione opciones o quite el menú de hoy.";
+    public const string MSG_220 = "{0} no está disponible hoy: no hay opciones en \"{1}\".";
+    public const string MSG_221 = "Elija una opción en \"{0}\".";
+    public const string MSG_222 = "{0} agregado: {1} + {2}.";
+    public const string MSG_223 = "La opción \"{0}\" se agotó. Elija otra en \"{1}\".";
+    public const string MSG_224 = "Seleccione al menos un producto de carta o habilite un menú completo con sus opciones.";
 }
 

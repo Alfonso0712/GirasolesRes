@@ -21,6 +21,9 @@ public class MenuDiaRepository : IMenuDiaRepository
             .Include(m => m.Men_Desayuno)
             .Include(m => m.Men_Platos)
                 .ThenInclude(p => p.Mdp_Producto)
+            .Include(m => m.Men_MenusCompletos)
+                .ThenInclude(mc => mc.Mmc_MenuCompleto)
+                    .ThenInclude(mcp => mcp.Men_Partes)
             .FirstOrDefaultAsync(m => m.Men_Fecha == fecha, cancellationToken);
     }
 
@@ -31,6 +34,9 @@ public class MenuDiaRepository : IMenuDiaRepository
             .Include(m => m.Men_Desayuno)
             .Include(m => m.Men_Platos)
                 .ThenInclude(p => p.Mdp_Producto)
+            .Include(m => m.Men_MenusCompletos)
+                .ThenInclude(mc => mc.Mmc_MenuCompleto)
+                    .ThenInclude(mcp => mcp.Men_Partes)
             .FirstOrDefaultAsync(m => m.Men_Fecha == fechaHoy, cancellationToken);
     }
 
@@ -48,7 +54,65 @@ public class MenuDiaRepository : IMenuDiaRepository
 
     public async Task ActualizarAsync(MenuDia menuDia, CancellationToken cancellationToken = default)
     {
-        _context.MenusDia.Update(menuDia);
+        if (_context.Entry(menuDia).State == EntityState.Detached)
+        {
+            _context.MenusDia.Update(menuDia);
+        }
+
+        // 1. Synchronize MenuDiaPlatos
+        var currentPlatoIds = menuDia.Men_Platos.Select(p => p.Id_MenuPlato).ToHashSet();
+        var platosToDelete = await _context.MenuDiaPlatos
+            .Where(p => p.Id_Menu == menuDia.Id_Menu && !currentPlatoIds.Contains(p.Id_MenuPlato))
+            .ToListAsync(cancellationToken);
+
+        if (platosToDelete.Count > 0)
+        {
+            _context.MenuDiaPlatos.RemoveRange(platosToDelete);
+        }
+
+        var existingPlatoIds = await _context.MenuDiaPlatos
+            .Where(p => p.Id_Menu == menuDia.Id_Menu)
+            .Select(p => p.Id_MenuPlato)
+            .ToListAsync(cancellationToken);
+        var existingPlatoSet = existingPlatoIds.ToHashSet();
+
+        foreach (var plato in menuDia.Men_Platos)
+        {
+            var entry = _context.Entry(plato);
+            if (entry.State == EntityState.Detached || 
+                (entry.State == EntityState.Modified && !existingPlatoSet.Contains(plato.Id_MenuPlato)))
+            {
+                entry.State = EntityState.Added;
+            }
+        }
+
+        // 2. Synchronize MenuDiaMenusCompletos
+        var currentMcIds = menuDia.Men_MenusCompletos.Select(mc => mc.Id_MenuDiaMenuCompleto).ToHashSet();
+        var mcToDelete = await _context.MenuDiaMenusCompletos
+            .Where(mc => mc.Id_Menu == menuDia.Id_Menu && !currentMcIds.Contains(mc.Id_MenuDiaMenuCompleto))
+            .ToListAsync(cancellationToken);
+
+        if (mcToDelete.Count > 0)
+        {
+            _context.MenuDiaMenusCompletos.RemoveRange(mcToDelete);
+        }
+
+        var existingMcIds = await _context.MenuDiaMenusCompletos
+            .Where(mc => mc.Id_Menu == menuDia.Id_Menu)
+            .Select(mc => mc.Id_MenuDiaMenuCompleto)
+            .ToListAsync(cancellationToken);
+        var existingMcSet = existingMcIds.ToHashSet();
+
+        foreach (var mc in menuDia.Men_MenusCompletos)
+        {
+            var entry = _context.Entry(mc);
+            if (entry.State == EntityState.Detached ||
+                (entry.State == EntityState.Modified && !existingMcSet.Contains(mc.Id_MenuDiaMenuCompleto)))
+            {
+                entry.State = EntityState.Added;
+            }
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 

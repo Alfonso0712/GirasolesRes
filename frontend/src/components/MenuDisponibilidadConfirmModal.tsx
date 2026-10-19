@@ -1,12 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { AlertCircle, CheckCircle2, X } from 'lucide-react';
-import type { PlatoMenu } from '../types/menuDia';
 
 interface MenuDisponibilidadConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  plato: PlatoMenu | null;
+  plato: { nombre: string; agotado?: boolean } | null;
   nuevoEstadoAgotado: boolean;
   procesando: boolean;
 }

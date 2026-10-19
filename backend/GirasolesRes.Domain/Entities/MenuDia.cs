@@ -16,6 +16,9 @@ public class MenuDia
     private readonly List<MenuDiaPlato> _men_Platos = new();
     public IReadOnlyCollection<MenuDiaPlato> Men_Platos => _men_Platos.AsReadOnly();
 
+    private readonly List<MenuDiaMenuCompleto> _men_MenusCompletos = new();
+    public IReadOnlyCollection<MenuDiaMenuCompleto> Men_MenusCompletos => _men_MenusCompletos.AsReadOnly();
+
     // Constructor privado para EF Core
     private MenuDia() { }
 
@@ -48,6 +51,26 @@ public class MenuDia
             if (!_men_Platos.Any(p => p.Id_Producto == id))
             {
                 _men_Platos.Add(new MenuDiaPlato(Id_Menu, id, mdpAgotado: false));
+            }
+        }
+
+        Men_UsuarioActualizacion = usuario.Trim();
+        Men_FechaActualizacionUtc = DateTime.UtcNow;
+    }
+
+    public void SincronizarMenusCompletos(IEnumerable<int> nuevosMenuCompletoIds, string usuario)
+    {
+        var idsSet = nuevosMenuCompletoIds.Distinct().ToHashSet();
+
+        // Remover los que ya no están habilitados
+        _men_MenusCompletos.RemoveAll(m => !idsSet.Contains(m.Id_MenuCompleto));
+
+        // Agregar los nuevos que no estaban
+        foreach (var id in idsSet)
+        {
+            if (!_men_MenusCompletos.Any(m => m.Id_MenuCompleto == id))
+            {
+                _men_MenusCompletos.Add(new MenuDiaMenuCompleto(Id_Menu, id));
             }
         }
 
