@@ -481,16 +481,29 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
                         {/* Acción */}
                         <td className="py-3.5 px-4 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleIniciarCobro(p)}
-                            title={`Cobrar pedido #${p.numero}`}
-                            aria-label={`Cobrar pedido #${p.numero}`}
-                            className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
-                          >
-                            <DollarSign className="w-4 h-4" />
-                            <span>Cobrar</span>
-                          </button>
+                          {p.estaListo ? (
+                            <button
+                              type="button"
+                              onClick={() => handleIniciarCobro(p)}
+                              title={`Cobrar pedido #${p.numero}`}
+                              aria-label={`Cobrar pedido #${p.numero}`}
+                              className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
+                            >
+                              <DollarSign className="w-4 h-4" />
+                              <span>Cobrar</span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              disabled
+                              title="Esperando que cocina termine la preparación"
+                              aria-label={`Pedido #${p.numero} en cocina - esperando a cocina`}
+                              className="px-3.5 py-2 rounded-xl bg-neutral-100 text-neutral-400 border border-neutral-200 text-xs font-semibold flex items-center gap-1.5 cursor-not-allowed mx-auto min-h-[44px]"
+                            >
+                              <ChefHat className="w-4 h-4 text-neutral-400" />
+                              <span>Esperando a cocina</span>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
@@ -555,14 +568,26 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                         </span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleIniciarCobro(p)}
-                        className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                      >
-                        <DollarSign className="w-4 h-4" />
-                        <span>Cobrar pedido</span>
-                      </button>
+                      {p.estaListo ? (
+                        <button
+                          type="button"
+                          onClick={() => handleIniciarCobro(p)}
+                          className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                        >
+                          <DollarSign className="w-4 h-4" />
+                          <span>Cobrar pedido</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled
+                          title="Esperando que cocina termine la preparación"
+                          className="px-3.5 py-2 rounded-xl bg-neutral-100 text-neutral-400 border border-neutral-200 text-xs font-semibold flex items-center gap-1.5 cursor-not-allowed min-h-[44px]"
+                        >
+                          <ChefHat className="w-4 h-4 text-neutral-400" />
+                          <span>Esperando a cocina</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 );

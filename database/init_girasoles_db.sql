@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 9d1uhIeLaRvk392qkdZJZbxpj97G09Iy8Dgv1qccBk89VY01YUf0aNxrJg9Dhjf
+\restrict 5xSqPnw85Tgc95L9ChlVwrs0AZUXLMGVmQr6Gs2wP7tJqjs4mmV4YyjtmghwEhT
 
 -- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.6
@@ -808,6 +808,12 @@ f1b3ebe2-dc16-4113-80ea-25f836b20cde	admin	CIERRE_SESION	admin	Cierre de sesión
 b3c35a86-87b5-4486-b414-e782d6458582	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 00:54:49.131937-05	::1
 05430975-25e2-42ad-a826-256e61810688	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 11:57:41.664529-05	::1
 6375dba0-b1ed-4a6b-806d-174d7ada3db7	lperez	CIERRE_SESION	lperez	Cierre de sesión motivo: manual	2026-10-19 12:07:50.586104-05	::1
+b01e551d-f38d-4e58-a633-40e3d7ef8071	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 12:36:25.805299-05	::1
+698f0fb3-7041-41ad-a078-99789fd9823d	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 13:01:06.061029-05	::1
+77aab37c-7295-492d-8059-8e56b149f7b6	atorres	CIERRE_SESION	atorres	Cierre de sesión motivo: manual	2026-10-19 13:01:33.14649-05	::1
+49618e98-fc5a-4028-960d-6c6fea65951b	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 13:16:14.244489-05	::1
+47d763ed-836f-4a43-afe7-31a6557c5b7e	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 13:24:48.984005-05	::1
+d0b483de-ccca-454c-a7b6-e985e3a0afbf	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-19 13:40:27.09034-05	::1
 \.
 
 
@@ -816,6 +822,7 @@ b3c35a86-87b5-4486-b414-e782d6458582	admin	CIERRE_SESION	admin	Cierre de sesión
 --
 
 COPY public.cajas (id_caja, id_usuario, caj_monto_apertura, caj_monto_cierre, caj_fec_apertura_utc, caj_fec_cierre_utc, caj_estado, fec_creacion_utc, fec_actualizacion_utc, caj_mon_esperado, caj_diferencia, caj_tot_efectivo, caj_tot_yape, caj_tot_ventas, caj_can_ventas, caj_observacion, caj_id_usu_cierre, caj_solicitud_id, caj_solicitud_id_cierre) FROM stdin;
+7626c8ac-835b-400c-9462-847bc031401b	920ba4f1-d552-4c76-b1c0-087b3b75770c	68.00	\N	2026-10-19 13:01:15.975085-05	\N	Abierta	2026-10-19 13:01:15.975332-05	\N	\N	\N	\N	\N	\N	\N	\N	\N	79e4c614-8f24-49d1-9d51-5dbde47885dc	\N
 2ce4ef96-2d32-4e3a-b70c-90ffaf48c4e3	920ba4f1-d552-4c76-b1c0-087b3b75770c	50.00	68.00	2026-10-18 13:25:21.153568-05	2026-10-18 17:43:21.208942-05	Cerrada	2026-10-18 13:25:21.154262-05	2026-10-18 17:43:21.209093-05	68.00	0.00	18.00	0.00	18.00	1	\N	920ba4f1-d552-4c76-b1c0-087b3b75770c	8eea75b5-38f2-4cad-bb53-5bc7591c2100	09379d77-2c33-44d2-ac4f-49e9804f7ea7
 \.
 
@@ -833,16 +840,16 @@ COPY public.codigos_recuperacion (id_codigo, cor_usuario, cod_recuperacion, fec_
 --
 
 COPY public.comandas (id_comanda, id_pedido, cmd_numero_diario, cmd_fecha_hora_utc, cmd_estado, cmd_es_adicional, cmd_nombre_mesa, fec_creacion_utc, cmd_modificada, cmd_aviso_visto, cmd_fec_aviso_visto_utc, cmd_nom_usuario_aviso_visto, cmd_fec_inicio_preparacion_utc, cmd_nom_usuario_preparacion, cmd_fec_lista_utc, cmd_nom_usuario_lista, cmd_estado_anterior, cmd_fec_ultimo_cambio_estado_utc) FROM stdin;
-a80962ee-a6fd-4f90-98bf-094544763051	d58ffebd-c2b7-445d-a3e3-dfd5742c33fc	1	2026-10-17 20:17:13.935934-05	Lista	f	Mesa 2	2026-10-17 20:17:13.936083-05	f	t	2026-10-17 22:30:43.652823-05	lperez	2026-10-17 22:27:01.690213-05	msoto	2026-10-17 22:30:33.804156-05	msoto	EnPreparacion	2026-10-17 22:30:33.804157-05
 315a1286-3bee-4681-98a6-7cdba2d8a001	03876d35-b378-4772-98cb-50238d1188e0	1	2026-10-17 20:12:10.349546-05	Lista	f	Mesa 1	2026-10-17 20:12:10.349688-05	f	t	2026-10-17 22:30:44.90899-05	lperez	2026-10-17 22:26:53.950773-05	msoto	2026-10-17 22:30:28.18203-05	msoto	EnPreparacion	2026-10-17 22:30:28.182584-05
-31baa64b-40c7-47c9-b3ba-dbf16b10e2f6	3a24ca76-f431-4600-9c84-f10fc239a053	1	2026-10-17 20:19:02.343073-05	Lista	f	Mesa 4	2026-10-17 20:19:02.343208-05	f	f	\N	\N	2026-10-17 22:27:12.702438-05	msoto	2026-10-17 23:07:48.393988-05	msoto	EnPreparacion	2026-10-17 23:07:48.393989-05
-0ced0c10-64ea-4065-9103-c39af5f68bda	3a24ca76-f431-4600-9c84-f10fc239a053	1	2026-10-17 20:19:02.728114-05	Lista	t	Mesa 4	2026-10-17 20:19:02.728115-05	f	f	\N	\N	2026-10-17 23:07:36.953673-05	msoto	2026-10-17 23:07:49.146032-05	msoto	EnPreparacion	2026-10-17 23:07:49.146033-05
-a3fe21ae-7949-4a7b-bdef-42e50d7afa56	75ce0236-ebdc-4810-9204-df2bb000f4f7	1	2026-10-17 21:02:43.632278-05	Lista	f	Para llevar - Sra. Rosa	2026-10-17 21:02:43.632449-05	f	f	\N	\N	2026-10-17 23:07:43.561088-05	msoto	2026-10-17 23:07:49.657068-05	msoto	EnPreparacion	2026-10-17 23:07:49.657069-05
-5c383c73-bba0-46b8-b422-fb365faad080	9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37	1	2026-10-17 21:05:01.770938-05	Lista	f	Para llevar - Test Idempotencia	2026-10-17 21:05:01.770938-05	f	f	\N	\N	2026-10-17 23:07:39.165175-05	msoto	2026-10-17 23:07:50.110642-05	msoto	EnPreparacion	2026-10-17 23:07:50.110645-05
-77a87aa4-a3e9-483d-a740-acdc4d1ae0f0	5847ea15-dba5-4440-8344-fbf8fc238d78	1	2026-10-17 22:02:08.760149-05	Lista	f	Para llevar - Elena Flores	2026-10-17 22:02:08.760482-05	f	f	\N	\N	2026-10-17 23:07:42.322421-05	msoto	2026-10-17 23:07:50.5108-05	msoto	EnPreparacion	2026-10-17 23:07:50.510802-05
-d8fac8a7-f511-421b-aecf-b93a48a4afd1	e0e1adea-5a2a-4ec8-b746-b244178e84c0	1	2026-10-17 22:44:33.514747-05	Lista	f	Para llevar	2026-10-17 22:44:33.515015-05	f	f	\N	\N	2026-10-17 23:07:44.73183-05	msoto	2026-10-17 23:07:51.087547-05	msoto	EnPreparacion	2026-10-17 23:07:51.087548-05
 85fba1d3-9ac2-40ec-8e19-ef30cfdf7de7	222f091e-3836-4241-9d74-aaaaa52e8ee3	2	2026-10-19 11:55:08.246986-05	Pendiente	f	Mesa 8	2026-10-19 11:55:08.246986-05	f	f	\N	\N	\N	\N	\N	\N	\N	\N
 46c3fa97-1a5c-40d5-abba-adf6731fe8cf	17641da5-54b7-4f44-943b-5675a9b7988e	1	2026-10-19 11:52:28.501423-05	Lista	f	Mesa 1	2026-10-19 11:52:28.50186-05	f	f	\N	\N	2026-10-19 11:52:44.029363-05	admin	2026-10-19 11:57:36.652713-05	admin	EnPreparacion	2026-10-19 11:57:36.653109-05
+a80962ee-a6fd-4f90-98bf-094544763051	d58ffebd-c2b7-445d-a3e3-dfd5742c33fc	1	2026-10-17 20:17:13.935934-05	Cancelada	f	Mesa 2	2026-10-17 20:17:13.936083-05	f	t	2026-10-17 22:30:43.652823-05	lperez	2026-10-17 22:27:01.690213-05	msoto	2026-10-17 22:30:33.804156-05	msoto	EnPreparacion	2026-10-17 22:30:33.804157-05
+31baa64b-40c7-47c9-b3ba-dbf16b10e2f6	3a24ca76-f431-4600-9c84-f10fc239a053	1	2026-10-17 20:19:02.343073-05	Cancelada	f	Mesa 4	2026-10-17 20:19:02.343208-05	f	f	\N	\N	2026-10-17 22:27:12.702438-05	msoto	2026-10-17 23:07:48.393988-05	msoto	EnPreparacion	2026-10-17 23:07:48.393989-05
+0ced0c10-64ea-4065-9103-c39af5f68bda	3a24ca76-f431-4600-9c84-f10fc239a053	1	2026-10-17 20:19:02.728114-05	Cancelada	t	Mesa 4	2026-10-17 20:19:02.728115-05	f	f	\N	\N	2026-10-17 23:07:36.953673-05	msoto	2026-10-17 23:07:49.146032-05	msoto	EnPreparacion	2026-10-17 23:07:49.146033-05
+a3fe21ae-7949-4a7b-bdef-42e50d7afa56	75ce0236-ebdc-4810-9204-df2bb000f4f7	1	2026-10-17 21:02:43.632278-05	Cancelada	f	Para llevar - Sra. Rosa	2026-10-17 21:02:43.632449-05	f	f	\N	\N	2026-10-17 23:07:43.561088-05	msoto	2026-10-17 23:07:49.657068-05	msoto	EnPreparacion	2026-10-17 23:07:49.657069-05
+5c383c73-bba0-46b8-b422-fb365faad080	9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37	1	2026-10-17 21:05:01.770938-05	Cancelada	f	Para llevar - Test Idempotencia	2026-10-17 21:05:01.770938-05	f	f	\N	\N	2026-10-17 23:07:39.165175-05	msoto	2026-10-17 23:07:50.110642-05	msoto	EnPreparacion	2026-10-17 23:07:50.110645-05
+77a87aa4-a3e9-483d-a740-acdc4d1ae0f0	5847ea15-dba5-4440-8344-fbf8fc238d78	1	2026-10-17 22:02:08.760149-05	Cancelada	f	Para llevar - Elena Flores	2026-10-17 22:02:08.760482-05	f	f	\N	\N	2026-10-17 23:07:42.322421-05	msoto	2026-10-17 23:07:50.5108-05	msoto	EnPreparacion	2026-10-17 23:07:50.510802-05
+d8fac8a7-f511-421b-aecf-b93a48a4afd1	e0e1adea-5a2a-4ec8-b746-b244178e84c0	1	2026-10-17 22:44:33.514747-05	Cancelada	f	Para llevar	2026-10-17 22:44:33.515015-05	f	f	\N	\N	2026-10-17 23:07:44.73183-05	msoto	2026-10-17 23:07:51.087547-05	msoto	EnPreparacion	2026-10-17 23:07:51.087548-05
 \.
 
 
@@ -1033,10 +1040,10 @@ c7ab6d48-fdbb-4390-b83c-22db58739237	Mesa 3	MESA 3	Ocupada	t	2026-10-17 17:57:04
 cece6ca8-921e-4ea4-90c1-6055011bddc1	Mesa 5	MESA 5	Libre	t	2026-10-17 17:57:04.459054-05	\N
 dc56cf12-fb4d-4da6-bf2d-f6818fd94b23	Patio 1	PATIO 1	Libre	t	2026-10-17 17:57:04.459083-05	\N
 fdf88ec4-9aec-4efd-ba77-2c2284d05c45	Mesa 6	MESA 6	Libre	t	2026-10-17 17:57:04.459058-05	\N
-a970b954-bdd5-44b7-bd73-8ec860f54541	Mesa 2	MESA 2	Ocupada	t	2026-10-17 17:57:04.458686-05	2026-10-17 20:17:13.937331-05
-67ae29b1-17c8-4988-b129-de60b17c3849	Mesa 4	MESA 4	Ocupada	t	2026-10-17 17:57:04.459048-05	2026-10-17 20:19:02.344374-05
 d0ceb30b-0322-474f-9da5-e5d72de0f66a	Mesa 1	MESA 1	Ocupada	t	2026-10-17 17:57:04.458417-05	2026-10-19 11:52:28.512896-05
 c1fea4f5-11e0-40b3-a449-f52164e8dd2e	Mesa 8	MESA 8	Ocupada	t	2026-10-17 17:57:04.459068-05	2026-10-19 11:55:08.251979-05
+a970b954-bdd5-44b7-bd73-8ec860f54541	Mesa 2	MESA 2	Libre	t	2026-10-17 17:57:04.458686-05	2026-10-19 14:41:16.945571-05
+67ae29b1-17c8-4988-b129-de60b17c3849	Mesa 4	MESA 4	Libre	t	2026-10-17 17:57:04.459048-05	2026-10-19 14:41:16.945571-05
 \.
 
 
@@ -1045,15 +1052,15 @@ c1fea4f5-11e0-40b3-a449-f52164e8dd2e	Mesa 8	MESA 8	Ocupada	t	2026-10-17 17:57:04
 --
 
 COPY public.pedidos (id_pedido, ped_numero_diario, ped_fecha_operativa, ped_fecha_hora_utc, ped_tipo, ped_estado, ped_total, ped_notas, id_mesa, id_usuario, ped_solicitud_id, fec_creacion_utc, fec_actualizacion_utc, ped_motivo_anulacion) FROM stdin;
-d58ffebd-c2b7-445d-a3e3-dfd5742c33fc	2	2026-10-17	2026-10-17 20:17:13.932125-05	Mesa	Listo	18.00	Mesa cerca a la ventana	a970b954-bdd5-44b7-bd73-8ec860f54541	fdfbc247-2349-4bab-9d92-cc595b7a34d8	509db897-fb42-46a4-8786-a71b292217db	2026-10-17 20:17:13.932473-05	2026-10-17 22:30:33.808672-05	\N
-3a24ca76-f431-4600-9c84-f10fc239a053	3	2026-10-17	2026-10-17 20:19:02.339038-05	Mesa	Listo	23.00	Mesa cerca a la ventana	67ae29b1-17c8-4988-b129-de60b17c3849	fdfbc247-2349-4bab-9d92-cc595b7a34d8	f1c11a58-23d2-4202-a4ca-64d503c7c135	2026-10-17 20:19:02.339519-05	2026-10-17 23:07:49.150194-05	\N
-75ce0236-ebdc-4810-9204-df2bb000f4f7	4	2026-10-17	2026-10-17 21:02:43.628892-05	ParaLlevar	Listo	10.00	Sra. Rosa	\N	920ba4f1-d552-4c76-b1c0-087b3b75770c	102ffbd5-99a2-4d27-9e96-a980770d1fc6	2026-10-17 21:02:43.629212-05	2026-10-17 23:07:49.661852-05	\N
-9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37	5	2026-10-17	2026-10-17 21:05:01.770911-05	ParaLlevar	Listo	5.00	Test Idempotencia	\N	920ba4f1-d552-4c76-b1c0-087b3b75770c	57848b97-dd22-4935-9510-626d3556d52c	2026-10-17 21:05:01.770912-05	2026-10-17 23:07:50.115954-05	\N
-5847ea15-dba5-4440-8344-fbf8fc238d78	6	2026-10-17	2026-10-17 22:02:08.75442-05	ParaLlevar	Listo	13.00	Elena Flores	\N	05c84bab-bb5e-479f-8a19-f309b7fde947	70058240-8088-4586-bad3-6ca3a0c5447a	2026-10-17 22:02:08.755092-05	2026-10-17 23:07:50.515441-05	\N
-e0e1adea-5a2a-4ec8-b746-b244178e84c0	7	2026-10-17	2026-10-17 22:44:33.5095-05	ParaLlevar	Listo	13.00	\N	\N	05c84bab-bb5e-479f-8a19-f309b7fde947	6f1ea598-97de-4a7b-9b59-03f1b6c19349	2026-10-17 22:44:33.510086-05	2026-10-17 23:07:51.092726-05	\N
 03876d35-b378-4772-98cb-50238d1188e0	1	2026-10-17	2026-10-17 20:12:10.345954-05	Mesa	Pagado	18.00	Mesa cerca a la ventana	d0ceb30b-0322-474f-9da5-e5d72de0f66a	fdfbc247-2349-4bab-9d92-cc595b7a34d8	b0992399-6d3c-45f6-a589-6b9909cfc4a8	2026-10-17 20:12:10.346251-05	2026-10-18 17:35:58.002496-05	\N
 222f091e-3836-4241-9d74-aaaaa52e8ee3	2	2026-10-19	2026-10-19 11:55:08.246983-05	Mesa	Pendiente	31.00	\N	c1fea4f5-11e0-40b3-a449-f52164e8dd2e	05c84bab-bb5e-479f-8a19-f309b7fde947	ce24ae73-6d0b-453d-a86b-3edf8b102b0f	2026-10-19 11:55:08.246984-05	2026-10-19 11:55:08.251978-05	\N
 17641da5-54b7-4f44-943b-5675a9b7988e	1	2026-10-19	2026-10-19 11:52:28.499882-05	Mesa	Listo	8.00	\N	d0ceb30b-0322-474f-9da5-e5d72de0f66a	05c84bab-bb5e-479f-8a19-f309b7fde947	943545bd-fb3c-40c3-9dfd-d54606056412	2026-10-19 11:52:28.500543-05	2026-10-19 11:57:36.661769-05	\N
+d58ffebd-c2b7-445d-a3e3-dfd5742c33fc	2	2026-10-17	2026-10-17 20:17:13.932125-05	Mesa	Anulado	18.00	Mesa cerca a la ventana	a970b954-bdd5-44b7-bd73-8ec860f54541	fdfbc247-2349-4bab-9d92-cc595b7a34d8	509db897-fb42-46a4-8786-a71b292217db	2026-10-17 20:17:13.932473-05	2026-10-19 14:41:16.945571-05	Saneamiento administrativo: Pedido huérfano de prueba de fecha anterior
+3a24ca76-f431-4600-9c84-f10fc239a053	3	2026-10-17	2026-10-17 20:19:02.339038-05	Mesa	Anulado	23.00	Mesa cerca a la ventana	67ae29b1-17c8-4988-b129-de60b17c3849	fdfbc247-2349-4bab-9d92-cc595b7a34d8	f1c11a58-23d2-4202-a4ca-64d503c7c135	2026-10-17 20:19:02.339519-05	2026-10-19 14:41:16.945571-05	Saneamiento administrativo: Pedido huérfano de prueba de fecha anterior
+75ce0236-ebdc-4810-9204-df2bb000f4f7	4	2026-10-17	2026-10-17 21:02:43.628892-05	ParaLlevar	Anulado	10.00	Sra. Rosa	\N	920ba4f1-d552-4c76-b1c0-087b3b75770c	102ffbd5-99a2-4d27-9e96-a980770d1fc6	2026-10-17 21:02:43.629212-05	2026-10-19 14:41:16.945571-05	Saneamiento administrativo: Pedido huérfano de prueba de fecha anterior
+9ff6d8bb-1c9b-49ee-bb96-b6c0e00c9f37	5	2026-10-17	2026-10-17 21:05:01.770911-05	ParaLlevar	Anulado	5.00	Test Idempotencia	\N	920ba4f1-d552-4c76-b1c0-087b3b75770c	57848b97-dd22-4935-9510-626d3556d52c	2026-10-17 21:05:01.770912-05	2026-10-19 14:41:16.945571-05	Saneamiento administrativo: Pedido huérfano de prueba de fecha anterior
+5847ea15-dba5-4440-8344-fbf8fc238d78	6	2026-10-17	2026-10-17 22:02:08.75442-05	ParaLlevar	Anulado	13.00	Elena Flores	\N	05c84bab-bb5e-479f-8a19-f309b7fde947	70058240-8088-4586-bad3-6ca3a0c5447a	2026-10-17 22:02:08.755092-05	2026-10-19 14:41:16.945571-05	Saneamiento administrativo: Pedido huérfano de prueba de fecha anterior
+e0e1adea-5a2a-4ec8-b746-b244178e84c0	7	2026-10-17	2026-10-17 22:44:33.5095-05	ParaLlevar	Anulado	13.00	\N	\N	05c84bab-bb5e-479f-8a19-f309b7fde947	6f1ea598-97de-4a7b-9b59-03f1b6c19349	2026-10-17 22:44:33.510086-05	2026-10-19 14:41:16.945571-05	Saneamiento administrativo: Pedido huérfano de prueba de fecha anterior
 \.
 
 
@@ -1336,6 +1343,12 @@ c03b75d4-0063-4f0c-9536-1731a7f5f060	admin	2026-10-19 00:43:01.344108-05	t	Ingre
 6382e5ee-20a4-4b47-999d-45441d6ed117	admin	2026-10-19 11:29:54.634282-05	t	Ingreso exitoso	::1
 0da1eeb0-b3cc-4c2d-ad87-a65a529f4a9a	lperez	2026-10-19 11:57:44.772897-05	t	Ingreso exitoso	::1
 7f6377b9-10f7-4df3-bcc7-60c2c37cf787	admin	2026-10-19 12:07:54.338461-05	t	Ingreso exitoso	::1
+39f74d92-a73e-4253-aa7e-c18d03f2b23e	admin	2026-10-19 12:40:54.162459-05	t	Ingreso exitoso	::1
+e757b889-fb24-44c3-86dc-7c7cd253211e	atorres	2026-10-19 13:01:07.996056-05	t	Ingreso exitoso	::1
+8d527169-ab38-4eef-bf4c-05a7900d226f	admin	2026-10-19 13:01:35.347277-05	t	Ingreso exitoso	::1
+7baa5750-b81c-4582-a08a-03c6841eb85b	admin	2026-10-19 13:18:05.29408-05	t	Ingreso exitoso	::1
+a76143c3-b086-4571-88d1-f9b186abef74	admin	2026-10-19 13:24:57.740267-05	t	Ingreso exitoso	::1
+593f0466-7dd1-4281-8aa9-2ecb5b9c83f0	admin	2026-10-19 13:40:30.424718-05	t	Ingreso exitoso	::1
 \.
 
 
@@ -1431,6 +1444,12 @@ c6451a66-45a5-4847-aaa3-1e93156556ab	ae500481-2ba8-4397-9692-3fc3bc4aab87	admin	
 72399955-ae08-4fa8-90cf-d325fbd16b9f	6cc4da7c-2123-4838-8727-cac8edefc7da	admin	2026-10-19 01:13:01-05	2026-10-19 00:54:48.946985-05	MANUAL
 2d80811c-813e-4bfa-b9f4-42174973d0e4	f9874667-a352-4234-813d-b21f0d49ea15	admin	2026-10-19 11:59:54-05	2026-10-19 11:57:41.615615-05	MANUAL
 b1324c4a-c260-4080-827b-fe2d1a6c2127	4bc6695c-0327-4d2f-8b83-93f55f5c6be4	lperez	2026-10-19 12:27:44-05	2026-10-19 12:07:50.582617-05	MANUAL
+5157c4a3-e86b-4563-b324-d6cdf93bd726	37bf256b-3875-4912-8b9b-2a36187d2bff	admin	2026-10-19 12:37:54-05	2026-10-19 12:36:25.80065-05	MANUAL
+e73a8000-2232-4ca9-83af-3c7899e9c4c9	4e233eea-edb8-435a-903f-11626f930f7c	admin	2026-10-19 13:10:54-05	2026-10-19 13:01:06.058166-05	MANUAL
+701810c8-2ca2-4886-a85a-b50a9b2cda86	66221bde-3610-4415-912e-3c116cd37a89	atorres	2026-10-19 13:31:07-05	2026-10-19 13:01:33.14518-05	MANUAL
+c3823d11-efdd-419e-8131-cf9024a30024	e1462c8e-66fe-401b-beef-48e4bcdccc40	admin	2026-10-19 13:31:35-05	2026-10-19 13:16:14.238242-05	MANUAL
+f53f64f0-730e-4333-b0f2-2db7b51070cf	cf85b519-39df-4327-bb75-efa5deea31a1	admin	2026-10-19 13:48:05-05	2026-10-19 13:24:48.980537-05	MANUAL
+ecd42742-5577-44d2-9a73-9dca4a82706d	4534cc14-04a8-4dcc-9ed7-2c409a19fefc	admin	2026-10-19 13:54:57-05	2026-10-19 13:40:27.087367-05	MANUAL
 \.
 
 
@@ -1441,9 +1460,9 @@ b1324c4a-c260-4080-827b-fe2d1a6c2127	4bc6695c-0327-4d2f-8b83-93f55f5c6be4	lperez
 COPY public.usuarios (id_usuario, nom_usuario, nom_completo, cor_usuario, has_usuario, rol_usuario, est_usuario, int_fallidos, bloq_hasta_utc, fec_creacion_utc, fec_actualizacion_utc) FROM stdin;
 6010e97d-9fbb-4df6-b51f-ebd34b6d9433	crojas	Carlos Rojas (Inactivo)	crojas@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	3	f	0	\N	2026-10-16 10:55:25.222549-05	\N
 757dee14-699f-470d-a65b-6ae01a46d5ac	dramos	Diego Ramos	dramos.nuevo@girasoles.com	100000.uwBgvjThaWU59T48FLoDtA==.RNQ0hHFQ8QPq2Hj/1sQh9j6/9/2cFNGDRnIMqo3/X/k=	3	t	0	\N	2026-10-16 17:46:13.949806-05	2026-10-17 11:03:53.373788-05
-920ba4f1-d552-4c76-b1c0-087b3b75770c	atorres	Ana Torres	atorres@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	2	t	0	\N	2026-10-16 10:55:25.222546-05	2026-10-18 17:42:58.184663-05
 fdfbc247-2349-4bab-9d92-cc595b7a34d8	lperez	Luis Pérez	lperez@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	3	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-19 11:57:44.769155-05
-05c84bab-bb5e-479f-8a19-f309b7fde947	admin	Administradora General	admin@girasoles.com	100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=	1	t	0	\N	2026-10-16 10:55:25.22248-05	2026-10-19 12:07:54.335665-05
+920ba4f1-d552-4c76-b1c0-087b3b75770c	atorres	Ana Torres	atorres@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	2	t	0	\N	2026-10-16 10:55:25.222546-05	2026-10-19 13:01:07.993606-05
+05c84bab-bb5e-479f-8a19-f309b7fde947	admin	Administradora General	admin@girasoles.com	100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=	1	t	0	\N	2026-10-16 10:55:25.22248-05	2026-10-19 13:40:30.422265-05
 89d58dff-4e1b-414c-8bf9-d59d098ec29f	msoto	María Soto A	msoto@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	4	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-17 23:09:54.965215-05
 \.
 
@@ -2155,5 +2174,5 @@ ALTER TABLE ONLY public.menus_completos_partes
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 9d1uhIeLaRvk392qkdZJZbxpj97G09Iy8Dgv1qccBk89VY01YUf0aNxrJg9Dhjf
+\unrestrict 5xSqPnw85Tgc95L9ChlVwrs0AZUXLMGVmQr6Gs2wP7tJqjs4mmV4YyjtmghwEhT
 

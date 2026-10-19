@@ -40,21 +40,28 @@ public class CobroService : ICobroService
     {
         // RV-95 / RN-84 / RN-108: Validar caja abierta y del día actual
         var cajaAbierta = await ValidarCajaAbiertaParaCobroAsync(ct);
+        var fechaOperativa = TimeZoneHelper.GetFechaOperativa(cajaAbierta.Caj_FechaAperturaUtc);
 
-        var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct);
+        var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(fechaOperativa, ct);
 
-        return pedidos.Select(p => new PedidoPendienteCobroDto(
-            PedidoId: p.Id_Pedido,
-            Numero: p.Ped_NumeroDiario,
-            Tipo: p.Ped_Tipo.ToString(),
-            Mesa: p.Ped_Mesa?.Mes_Nombre,
-            Referencia: p.Ped_Notas,
-            Hora: TimeZoneHelper.ToPeruTime(p.Ped_FechaHoraUtc).ToString("HH:mm"),
-            Estado: p.Ped_Estado.ToString(),
-            Total: p.Ped_Total,
-            EstaListo: p.Ped_Estado == EstadoPedido.Listo,
-            MesaId: p.Id_Mesa
-        )).ToList().AsReadOnly();
+        return pedidos.Select(p =>
+        {
+            var comandasActivas = p.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+            bool estaListo = p.Ped_Estado == EstadoPedido.Listo && (!comandasActivas.Any() || comandasActivas.All(c => c.Cmd_Estado == EstadoComanda.Lista));
+
+            return new PedidoPendienteCobroDto(
+                PedidoId: p.Id_Pedido,
+                Numero: p.Ped_NumeroDiario,
+                Tipo: p.Ped_Tipo.ToString(),
+                Mesa: p.Ped_Mesa?.Mes_Nombre,
+                Referencia: p.Ped_Notas,
+                Hora: TimeZoneHelper.ToPeruTime(p.Ped_FechaHoraUtc).ToString("HH:mm"),
+                Estado: estaListo ? EstadoPedido.Listo.ToString() : p.Ped_Estado.ToString(),
+                Total: p.Ped_Total,
+                EstaListo: estaListo,
+                MesaId: p.Id_Mesa
+            );
+        }).ToList().AsReadOnly();
     }
 
     public async Task<CobroResponseDto> ProcesarCobroAsync(
@@ -101,6 +108,14 @@ public class CobroService : ICobroService
         if (pedido.Ped_Estado == EstadoPedido.Pagado || pedido.Ped_Estado == EstadoPedido.Anulado)
         {
             throw new CobroConflictException("pedido_no_cobrable", string.Format(MensajesCatalogo.MSG_137, pedido.Ped_NumeroDiario));
+        }
+
+        // 4.1. Validar que el pedido esté Listo en cocina antes de permitir el cobro
+        var comandasActivas = pedido.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+        bool comandasEnCocina = comandasActivas.Any(c => c.Cmd_Estado == EstadoComanda.Pendiente || c.Cmd_Estado == EstadoComanda.EnPreparacion);
+        if (pedido.Ped_Estado != EstadoPedido.Listo || comandasEnCocina)
+        {
+            throw new CobroConflictException("pedido_en_cocina", "No se puede cobrar el pedido porque aún se encuentra en preparación en cocina.");
         }
 
         // 5. Validar que el total no haya cambiado durante el cobro (RV-101, RN-90)

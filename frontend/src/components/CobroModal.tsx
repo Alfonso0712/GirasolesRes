@@ -183,6 +183,11 @@ export const CobroModal: React.FC<CobroModalProps> = ({
       }
     }
 
+    if (!pedido?.estaListo) {
+      setErrorLocal('No se puede cobrar el pedido porque aún se encuentra en preparación en cocina.');
+      return;
+    }
+
     const payload: CobroRequest = {
       pedidoId: pedido.pedidoId,
       solicitudId,
@@ -230,6 +235,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
   const canSubmit =
     !loading &&
     !buscandoDoc &&
+    Boolean(pedido?.estaListo) &&
     docValido &&
     ((metodo === 'efectivo' && !isNaN(montoRecibido) && montoRecibido >= total) ||
       (metodo === 'yape' && yapeConfirmado));
@@ -305,6 +311,15 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               </span>
             </div>
           </div>
+
+          {!pedido.estaListo && (
+            <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-amber-700" />
+              <span>
+                <strong>Esperando a cocina:</strong> Este pedido aún no ha sido marcado como <strong>Listo</strong>. No se puede emitir el cobro hasta que cocina termine la preparación.
+              </span>
+            </div>
+          )}
 
           {errorLocal && (
             <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">

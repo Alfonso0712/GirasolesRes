@@ -208,7 +208,8 @@ public class InicioService : IInicioService
             fechaActual, null, null, null, null, 1, 1000, ct
         );
 
-        var porCobrar = pendiente + enPreparacion + listo;
+        // Desacoplado: porCobrar representa únicamente los pedidos cuyo estado es Listo (pendientes de pago)
+        var porCobrar = listo;
 
         return new BloquePedidosPorEstadoDto(
             pendiente,
@@ -442,13 +443,14 @@ public class InicioService : IInicioService
 
     private async Task<BloquePorCobrarDto> ObtenerPorCobrarCajeroAsync(CancellationToken ct)
     {
-        var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct);
-        return new BloquePorCobrarDto(pedidos.Count, pedidos.Sum(p => p.Ped_Total));
+        var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(null, ct);
+        var pedidosListos = pedidos.Where(p => p.Ped_Estado == EstadoPedido.Listo).ToList();
+        return new BloquePorCobrarDto(pedidosListos.Count, pedidosListos.Sum(p => p.Ped_Total));
     }
 
     private async Task<BloqueListosDto> ObtenerListosCajeroAsync(CancellationToken ct)
     {
-        var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct);
+        var pedidos = await _pedidoRepository.ListarPedidosPendientesCobroAsync(null, ct);
         var listos = pedidos.Count(p => p.Ped_Estado == EstadoPedido.Listo);
         return new BloqueListosDto(listos);
     }

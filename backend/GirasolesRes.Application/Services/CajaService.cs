@@ -242,7 +242,7 @@ public class CajaService : ICajaService
 
         // 2. Obtener pedidos pendientes de cobro (RV-122, RN-110, MSG-174)
         var fechaOperativaCaja = TimeZoneHelper.GetFechaOperativa(caja.Caj_FechaAperturaUtc);
-        var pedidosPendientesEntidades = (await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct))
+        var pedidosPendientesEntidades = (await _pedidoRepository.ListarPedidosPendientesCobroAsync(fechaOperativaCaja, ct))
             .Where(p => p.Ped_FechaOperativa == fechaOperativaCaja)
             .ToList();
         var pedidosPendientesDto = pedidosPendientesEntidades.Select(p => new PedidoPendienteCierreDto(
@@ -344,7 +344,7 @@ public class CajaService : ICajaService
 
         // 3. Precondición: no debe haber pedidos pendientes de cobro (RV-122, RN-110, MSG-174, E-296)
         var fechaOperativaCaja = TimeZoneHelper.GetFechaOperativa(caja.Caj_FechaAperturaUtc);
-        var pedidosPendientes = (await _pedidoRepository.ListarPedidosPendientesCobroAsync(ct))
+        var pedidosPendientes = (await _pedidoRepository.ListarPedidosPendientesCobroAsync(fechaOperativaCaja, ct))
             .Where(p => p.Ped_FechaOperativa == fechaOperativaCaja)
             .ToList();
         if (pedidosPendientes.Count > 0)
@@ -503,6 +503,27 @@ public class CajaService : ICajaService
 
             var cajeroNombre = c.Caj_Usuario?.Usu_Nombre ?? "Cajero";
 
+            decimal ventasEfectivo;
+            decimal ventasYape;
+            decimal totalVentas;
+            decimal? efectivoEsperado;
+
+            if (c.Caj_Estado == EstadoCaja.Abierta)
+            {
+                var ventasVigentes = c.Caj_Ventas.Where(v => v.Ven_Estado == EstadoVenta.Vigente).ToList();
+                ventasEfectivo = decimal.Round(ventasVigentes.Where(v => v.Ven_MetodoPago == MetodoPago.Efectivo).Sum(v => v.Ven_Total), 2);
+                ventasYape = decimal.Round(ventasVigentes.Where(v => v.Ven_MetodoPago == MetodoPago.Yape).Sum(v => v.Ven_Total), 2);
+                totalVentas = decimal.Round(ventasEfectivo + ventasYape, 2);
+                efectivoEsperado = decimal.Round(c.Caj_MontoApertura + ventasEfectivo, 2);
+            }
+            else
+            {
+                ventasEfectivo = c.Caj_TotalVentasEfectivo ?? 0.00m;
+                ventasYape = c.Caj_TotalVentasYape ?? 0.00m;
+                totalVentas = c.Caj_TotalVentas ?? 0.00m;
+                efectivoEsperado = c.Caj_MontoEsperado;
+            }
+
             return new CierreItemHistorialDto(
                 Id: c.Id_Caja,
                 CajaId: c.Id_Caja,
@@ -517,11 +538,11 @@ public class CajaService : ICajaService
                 MontoInicial: c.Caj_MontoApertura,
                 MontoCierre: c.Caj_MontoCierre,
                 EfectivoContado: c.Caj_MontoCierre,
-                EfectivoEsperado: c.Caj_MontoEsperado,
+                EfectivoEsperado: efectivoEsperado,
                 Diferencia: c.Caj_Diferencia,
-                VentasEfectivo: c.Caj_TotalVentasEfectivo ?? 0.00m,
-                VentasYape: c.Caj_TotalVentasYape ?? 0.00m,
-                TotalVentas: c.Caj_TotalVentas ?? 0.00m,
+                VentasEfectivo: ventasEfectivo,
+                VentasYape: ventasYape,
+                TotalVentas: totalVentas,
                 Estado: estadoStr,
                 Resultado: resultado,
                 TieneAjustesPosteriores: tieneAjustes,

@@ -25,7 +25,7 @@ public interface IPedidoRepository
     Task<Comanda?> ObtenerComandaPorIdAsync(Guid comandaId, CancellationToken ct = default);
     Task ActualizarComandaAsync(Comanda comanda, CancellationToken ct = default);
     Task<bool> TieneOtrosPedidosAbiertosEnMesaAsync(Guid mesaId, Guid pedidoExcluidoId, CancellationToken ct = default);
-    Task<IReadOnlyList<Pedido>> ListarPedidosPendientesCobroAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<Pedido>> ListarPedidosPendientesCobroAsync(DateOnly? fechaOperativa = null, CancellationToken ct = default);
     Task AgregarAsync(Pedido pedido, CancellationToken ct = default);
     Task ActualizarAsync(Pedido pedido, CancellationToken ct = default);
     Task RegistrarAuditoriaAsync(AuditoriaPedido auditoria, CancellationToken ct = default);

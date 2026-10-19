@@ -1,3 +1,4 @@
+using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Domain.Entities;
 using GirasolesRes.Domain.Enums;
@@ -342,12 +343,14 @@ public class PedidoRepository : IPedidoRepository
             p.Ped_Estado != EstadoPedido.Anulado, ct);
     }
 
-    public async Task<IReadOnlyList<Pedido>> ListarPedidosPendientesCobroAsync(CancellationToken ct = default)
+    public async Task<IReadOnlyList<Pedido>> ListarPedidosPendientesCobroAsync(DateOnly? fechaOperativa = null, CancellationToken ct = default)
     {
+        var fecha = fechaOperativa ?? TimeZoneHelper.ObtenerFechaActualLima();
         return await _context.Pedidos
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
-            .Where(p => p.Ped_Estado != EstadoPedido.Pagado && p.Ped_Estado != EstadoPedido.Anulado)
+            .Include(p => p.Ped_Comandas)
+            .Where(p => p.Ped_FechaOperativa == fecha && p.Ped_Estado != EstadoPedido.Pagado && p.Ped_Estado != EstadoPedido.Anulado)
             .OrderBy(p => p.Ped_Estado == EstadoPedido.Listo ? 0 : 1)
             .ThenBy(p => p.Ped_FechaHoraUtc)
             .ToListAsync(ct);
