@@ -31,6 +31,7 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
   // Filtros
   const [busqueda, setBusqueda] = useState<string>('');
   const [errorBusqueda, setErrorBusqueda] = useState<string | null>(null);
+  const [filtroTipoComprobante, setFiltroTipoComprobante] = useState<'todos' | 'ticket' | 'boleta' | 'factura'>('todos');
 
   // Formato YYYY-MM-DD en hora local Perú
   const getHoyString = () => {
@@ -77,11 +78,11 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
     setErrorBusqueda(null);
     setErrorFechas(null);
 
-    // RV-108: búsqueda max 15 caracteres y formato correlativo o serie-correlativo
+    // Búsqueda: comprobante, DNI, RUC o cliente (hasta 50 caracteres)
     if (busqueda.trim()) {
       const b = busqueda.trim();
-      if (b.length > 15 || !/^[a-zA-Z0-9\-]+$/.test(b)) {
-        setErrorBusqueda('El número de comprobante no es válido. Use el formato T001-000123 o solo el correlativo.');
+      if (b.length > 50 || !/^[a-zA-Z0-9\-\s\.\,ñÑáéíóúÁÉÍÓÚ]+$/.test(b)) {
+        setErrorBusqueda('La búsqueda contiene caracteres no válidos o supera los 50 caracteres.');
         return false;
       }
     }
@@ -206,6 +207,7 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
   const limpiarFiltros = () => {
     setBusqueda('');
     setErrorBusqueda(null);
+    setFiltroTipoComprobante('todos');
     const hoyStr = getHoyString();
     setDesde(hoyStr);
     setHasta(hoyStr);
@@ -279,6 +281,8 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
     busqueda,
     setBusqueda,
     errorBusqueda,
+    filtroTipoComprobante,
+    setFiltroTipoComprobante,
     desde,
     setDesde,
     hasta,

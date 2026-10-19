@@ -45,6 +45,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IPdfCierreService, PdfCierreService>();
         services.AddScoped<IPdfReporteService, ReportePdfService>();
+        services.AddHttpClient<IConsultaDocumentoService, ConsultaDocumentoService>();
 
         return services;
     }

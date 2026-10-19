@@ -121,13 +121,16 @@ public class VentaRepository : IVentaRepository
             {
                 query = query.Where(v => v.Ven_Comprobante != null &&
                     (v.Ven_Comprobante.Com_Numero == correlativoNum ||
-                     (v.Ven_Comprobante.Com_Serie + "-" + v.Ven_Comprobante.Com_Numero.ToString("D6")).Contains(bTrim)));
+                     (v.Ven_Comprobante.Com_Serie + "-" + v.Ven_Comprobante.Com_Numero.ToString("D6")).Contains(bTrim) ||
+                     (v.Ven_Comprobante.Com_NumDocReceptor != null && v.Ven_Comprobante.Com_NumDocReceptor.Contains(bTrim))));
             }
             else
             {
                 var lower = bTrim.ToLower();
                 query = query.Where(v => v.Ven_Comprobante != null &&
-                    (v.Ven_Comprobante.Com_Serie + "-" + v.Ven_Comprobante.Com_Numero.ToString()).ToLower().Contains(lower));
+                    ((v.Ven_Comprobante.Com_Serie + "-" + v.Ven_Comprobante.Com_Numero.ToString()).ToLower().Contains(lower) ||
+                     (v.Ven_Comprobante.Com_NumDocReceptor != null && v.Ven_Comprobante.Com_NumDocReceptor.ToLower().Contains(lower)) ||
+                     (v.Ven_Comprobante.Com_RazonSocialReceptor != null && v.Ven_Comprobante.Com_RazonSocialReceptor.ToLower().Contains(lower))));
             }
         }
 

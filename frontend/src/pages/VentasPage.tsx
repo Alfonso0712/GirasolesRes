@@ -42,6 +42,8 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     busqueda,
     setBusqueda,
     errorBusqueda,
+    filtroTipoComprobante,
+    setFiltroTipoComprobante,
     desde,
     setDesde,
     hasta,
@@ -69,8 +71,17 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     setAvisoError
   } = useVentasManagement({ token: session.token, esAdmin, esCajero });
 
+  const ventasFiltradas = ventas.filter((v) => {
+    if (filtroTipoComprobante === 'todos') return true;
+    const serie = v.comprobante.substring(0, 1).toUpperCase();
+    if (filtroTipoComprobante === 'ticket') return serie === 'T';
+    if (filtroTipoComprobante === 'boleta') return serie === 'B';
+    if (filtroTipoComprobante === 'factura') return serie === 'F';
+    return true;
+  });
+
   const totalPaginas = Math.max(1, Math.ceil(total / tamano));
-  const tieneFiltrosActivos = Boolean(busqueda.trim() || errorFechas || errorBusqueda);
+  const tieneFiltrosActivos = Boolean(busqueda.trim() || errorFechas || errorBusqueda || filtroTipoComprobante !== 'todos');
 
   return (
     <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 gap-4 select-none">
@@ -197,17 +208,45 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
 
       {/* 3. Barra de Filtros y Búsqueda (RV-108, RV-109, RV-118) */}
       <div className="shrink-0 bg-white p-3.5 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-3">
+        {/* Filtro por Tipo de Comprobante */}
+        <div className="flex flex-wrap items-center gap-1.5 pb-2 border-b border-neutral-100">
+          <span className="text-xs font-semibold text-[#7C6F66] mr-1">Comprobante:</span>
+          {(['todos', 'ticket', 'boleta', 'factura'] as const).map((tipo) => {
+            const activo = filtroTipoComprobante === tipo;
+            const labels: Record<string, string> = {
+              todos: 'Todos',
+              ticket: 'Tickets (T001)',
+              boleta: 'Boletas (B001)',
+              factura: 'Facturas (F001)',
+            };
+            return (
+              <button
+                key={tipo}
+                type="button"
+                onClick={() => setFiltroTipoComprobante(tipo)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[30px] ${
+                  activo
+                    ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
+                    : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'
+                }`}
+              >
+                {labels[tipo]}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Campo Buscar Comprobante (RV-108) */}
+          {/* Campo Buscar Comprobante, DNI, RUC o Cliente */}
           <div className="flex-1 min-w-[260px]">
             <div className="relative">
               <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={busqueda}
-                maxLength={15}
+                maxLength={50}
                 onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar por comprobante (ej. T001-000123 o 123)..."
+                placeholder="Buscar por comprobante (T001, B001, F001), DNI, RUC o cliente..."
                 className={`w-full pl-9 pr-8 py-2 text-xs rounded-xl border bg-white focus:outline-none focus:ring-2 transition-all ${
                   errorBusqueda
                     ? 'border-rose-400 focus:ring-rose-200 text-rose-900'
@@ -340,7 +379,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               Reintentar
             </button>
           </div>
-        ) : ventas.length === 0 ? (
+        ) : ventasFiltradas.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-neutral-500">
             <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 border border-amber-200">
               <Receipt className="w-6 h-6" />
@@ -352,7 +391,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             </p>
             <p className="text-xs text-neutral-400 max-w-sm mb-4">
               {tieneFiltrosActivos
-                ? 'Pruebe con otra fecha o número de comprobante.'
+                ? 'Pruebe con otra fecha, tipo o número de comprobante.'
                 : 'Las ventas cobradas en caja se listarán automáticamente aquí.'}
             </p>
             {tieneFiltrosActivos && (
@@ -382,7 +421,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100">
-                {ventas.map((v) => {
+                {ventasFiltradas.map((v) => {
                   const esAnulada = v.estado === 'Anulada';
                   return (
                     <tr
@@ -393,9 +432,29 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                     >
                       {/* Comprobante */}
                       <td className="py-3 px-4">
-                        <span className={`font-mono font-bold text-xs ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
-                          {v.comprobante}
-                        </span>
+                        <div className="flex flex-col gap-0.5 items-start">
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className={`px-1.5 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider ${
+                                v.comprobante.startsWith('F')
+                                  ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                                  : v.comprobante.startsWith('B')
+                                  ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                                  : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
+                              }`}
+                            >
+                              {v.comprobante.startsWith('F') ? 'Factura' : v.comprobante.startsWith('B') ? 'Boleta' : 'Ticket'}
+                            </span>
+                            <span className={`font-mono font-bold text-xs ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
+                              {v.comprobante}
+                            </span>
+                          </div>
+                          {(v.clienteDocumento || v.clienteNombre) && (
+                            <span className="text-[10px] text-neutral-500 truncate max-w-[170px]" title={`${v.clienteDocumento ? v.clienteDocumento + ' - ' : ''}${v.clienteNombre || ''}`}>
+                              {v.clienteDocumento ? `${v.clienteDocumento} · ` : ''}{v.clienteNombre || ''}
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Fecha y Hora */}
@@ -493,10 +552,10 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
         )}
 
         {/* 5. Barra de Paginación inferior (20 en 20) */}
-        {!cargando && ventas.length > 0 && (
+        {!cargando && ventasFiltradas.length > 0 && (
           <div className="shrink-0 px-4 py-2.5 border-t border-neutral-200/80 bg-neutral-50/70 flex items-center justify-between gap-3 text-xs text-neutral-600">
             <span className="tabular-nums">
-              Mostrando <span className="font-semibold text-neutral-800">{ventas.length}</span> de{' '}
+              Mostrando <span className="font-semibold text-neutral-800">{ventasFiltradas.length}</span> de{' '}
               <span className="font-semibold text-neutral-800">{total}</span> ventas registradas
             </span>
 

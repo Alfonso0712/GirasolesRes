@@ -20,4 +20,10 @@ public class CobroRequest
     public decimal? MontoRecibido { get; set; }
     public bool? YapeConfirmado { get; set; }
     public string? YapeReferencia { get; set; }
+
+    public string TipoComprobante { get; set; } = "Ticket";
+    public string? TipoDocReceptor { get; set; }
+    public string? NumDocReceptor { get; set; }
+    public string? RazonSocialReceptor { get; set; }
+    public string? DireccionReceptor { get; set; }
 }

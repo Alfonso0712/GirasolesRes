@@ -139,7 +139,10 @@ public class VentaService : IVentaService
                 Total: v.Ven_Total,
                 Metodo: v.Ven_MetodoPago == MetodoPago.Efectivo ? "Efectivo" : "Yape",
                 Cajero: cajeroStr,
-                Estado: v.Ven_Estado == EstadoVenta.Vigente ? "Vigente" : "Anulada"
+                Estado: v.Ven_Estado == EstadoVenta.Vigente ? "Vigente" : "Anulada",
+                TipoComprobante: v.Ven_Comprobante?.Com_Tipo,
+                ClienteDocumento: v.Ven_Comprobante?.Com_NumDocReceptor,
+                ClienteNombre: v.Ven_Comprobante?.Com_RazonSocialReceptor
             );
         }).ToList().AsReadOnly();
 
@@ -197,7 +200,14 @@ public class VentaService : IVentaService
             MotivoAnulacion: venta.Ven_MotivoAnulacion,
             UsuarioAnulacion: venta.Ven_UsuarioAnulacion,
             FechaHoraAnulacionFormateada: fechaHoraAnulacionFormateada,
-            DestinoPedido: venta.Ven_DestinoPedido
+            DestinoPedido: venta.Ven_DestinoPedido,
+            TipoComprobante: comprobante?.Com_Tipo,
+            TipoDocReceptor: comprobante?.Com_TipoDocReceptor,
+            NumDocReceptor: comprobante?.Com_NumDocReceptor,
+            RazonSocialReceptor: comprobante?.Com_RazonSocialReceptor,
+            DireccionReceptor: comprobante?.Com_DireccionReceptor,
+            OpGravada: comprobante?.Com_OpGravada ?? 0.00m,
+            Igv: comprobante?.Com_Igv ?? 0.00m
         );
     }
 

@@ -11,6 +11,9 @@ export interface VentaItem {
   metodo: 'Efectivo' | 'Yape';
   cajero: string;
   estado: 'Vigente' | 'Anulada';
+  tipoComprobante?: string;
+  clienteDocumento?: string | null;
+  clienteNombre?: string | null;
 }
 
 export interface ResumenVentas {
@@ -61,6 +64,13 @@ export interface VentaDetalle {
   usuarioAnulacion?: string | null;
   fechaHoraAnulacionFormateada?: string | null;
   destinoPedido?: string | null;
+  tipoComprobante?: string;
+  tipoDocReceptor?: string | null;
+  numDocReceptor?: string | null;
+  razonSocialReceptor?: string | null;
+  direccionReceptor?: string | null;
+  opGravada?: number;
+  igv?: number;
 }
 
 export interface AnularVentaRequest {
@@ -80,6 +90,7 @@ export interface FiltroVentasParams {
   busqueda?: string;
   desde?: string;
   hasta?: string;
+  tipoComprobante?: string;
   pagina?: number;
   tamano?: number;
 }

@@ -4,6 +4,8 @@ import type {
   CobroRequest,
   CobroResponse,
   ComprobanteDetalle,
+  ResultadoConsultaDni,
+  ResultadoConsultaRuc,
 } from '../types/cobro';
 
 export const cobroService = {
@@ -51,4 +53,10 @@ export const cobroService = {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   },
+
+  consultarDni: (dni: string, token: string): Promise<ResultadoConsultaDni> =>
+    apiClient.get<ResultadoConsultaDni>(`/api/consultas/dni/${dni}`, token),
+
+  consultarRuc: (ruc: string, token: string): Promise<ResultadoConsultaRuc> =>
+    apiClient.get<ResultadoConsultaRuc>(`/api/consultas/ruc/${ruc}`, token),
 };

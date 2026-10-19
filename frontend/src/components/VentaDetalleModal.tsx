@@ -152,6 +152,36 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 </div>
               </div>
 
+              {/* Receptor Fiscal (SUNAT / RENIEC) */}
+              {(venta.numDocReceptor || venta.razonSocialReceptor) && (
+                <div className="p-3.5 bg-blue-50/50 rounded-xl border border-blue-200/80 text-xs space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800">
+                      Datos del Receptor Fiscal ({venta.tipoDocReceptor || (venta.numDocReceptor?.length === 11 ? 'RUC' : 'DNI')})
+                    </span>
+                    <span className="px-2 py-0.2 bg-blue-100 text-blue-800 text-[10px] font-bold rounded-md">
+                      {venta.comprobante.startsWith('F') ? 'Factura' : venta.comprobante.startsWith('B') ? 'Boleta' : 'Comprobante'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-neutral-800">
+                    <div>
+                      <span className="text-neutral-500 font-medium">N.º Documento: </span>
+                      <span className="font-mono font-bold text-neutral-900">{venta.numDocReceptor}</span>
+                    </div>
+                    <div>
+                      <span className="text-neutral-500 font-medium">Nombre / Razón Social: </span>
+                      <span className="font-semibold text-neutral-900">{venta.razonSocialReceptor || 'No especificado'}</span>
+                    </div>
+                  </div>
+                  {venta.direccionReceptor && (
+                    <div className="pt-1 text-[11px] text-neutral-700">
+                      <span className="text-neutral-500 font-medium">Dirección Fiscal: </span>
+                      <span>{venta.direccionReceptor}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Tabla de Consumo (Líneas) */}
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#482813] mb-2 flex items-center gap-1.5">
@@ -195,15 +225,32 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 </div>
               </div>
 
-              {/* Desglose de Pago */}
-              <div className="p-3.5 bg-amber-50/30 rounded-xl border border-amber-200/60 text-xs space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-bold text-[#482813]">TOTAL COBRADO:</span>
-                  <span className="font-brand-serif font-bold text-lg text-[#D35400] tabular-nums">
-                    S/ {venta.total.toFixed(2)}
-                  </span>
+              {/* Desglose Fiscal y de Pago */}
+              <div className="p-3.5 bg-amber-50/30 rounded-xl border border-amber-200/60 text-xs space-y-3">
+                {/* Desglose Tributario */}
+                <div className="space-y-1 pb-2 border-b border-amber-200/50 text-[11px]">
+                  <div className="flex items-center justify-between text-neutral-600">
+                    <span>Op. Gravada (Base imponible):</span>
+                    <span className="font-mono tabular-nums font-semibold text-neutral-800">
+                      S/ {(venta.opGravada ?? Number((venta.total / 1.18).toFixed(2))).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-neutral-600">
+                    <span>I.G.V. (18%):</span>
+                    <span className="font-mono tabular-nums font-semibold text-neutral-800">
+                      S/ {(venta.igv ?? Number((venta.total - (venta.total / 1.18)).toFixed(2))).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm pt-1 border-t border-amber-200/30">
+                    <span className="font-bold text-[#482813]">TOTAL COBRADO:</span>
+                    <span className="font-brand-serif font-bold text-lg text-[#D35400] tabular-nums">
+                      S/ {venta.total.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-amber-200/40 text-[11px] text-neutral-600">
+
+                {/* Métodos de Pago */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-600">
                   <div>
                     <span className="text-neutral-400 block uppercase font-medium">Método de Pago</span>
                     <span className="font-bold text-[#2C1A0E] flex items-center gap-1 mt-0.5">

@@ -605,6 +605,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
         pedido={pedidoParaCobro}
         onConfirmarCobro={handleConfirmarCobro}
         loading={procesandoCobro}
+        token={session.token}
       />
 
       <TicketComprobanteModal
