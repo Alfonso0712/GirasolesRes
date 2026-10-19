@@ -431,6 +431,12 @@ public class ProductoService : IProductoService
             {
                 errores["rol"] = MensajesCatalogo.MSG_214;
             }
+
+            // RV-156 / MSG-215 / E-372: Los componentes no llevan precio
+            if (precio.HasValue && precio.Value > 0)
+            {
+                errores["precio"] = MensajesCatalogo.MSG_215;
+            }
         }
 
         var esValido = errores.Count == 0;

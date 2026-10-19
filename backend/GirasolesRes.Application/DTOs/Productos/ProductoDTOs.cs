@@ -68,6 +68,11 @@ public class CrearProductoRequest : IValidatableObject
             {
                 yield return new ValidationResult(MensajesCatalogo.MSG_214, new[] { nameof(Rol) });
             }
+
+            if (Precio.HasValue && Precio.Value > 0)
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_215, new[] { nameof(Precio) });
+            }
         }
     }
 }
@@ -133,6 +138,11 @@ public class ActualizarProductoRequest : IValidatableObject
             if (string.IsNullOrWhiteSpace(Rol) || !RolComponenteExtensions.TryParseFlexible(Rol, out _))
             {
                 yield return new ValidationResult(MensajesCatalogo.MSG_214, new[] { nameof(Rol) });
+            }
+
+            if (Precio.HasValue && Precio.Value > 0)
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_215, new[] { nameof(Precio) });
             }
         }
     }

@@ -248,7 +248,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     filtroTipo !== 'Todos';
 
   return (
-    <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-[1600px] mx-auto h-[calc(100vh-4rem)] overflow-hidden">
       {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
       {avisoExito && (
         <div
@@ -297,7 +297,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             GESTIÓN DE LA CARTA Y MENÚS
           </p>
-          <h1 className="text-3xl font-serif font-bold text-[#482813] tracking-tight">
+          <h1 className="text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
             Carta y Menús
           </h1>
           <p className="text-sm text-neutral-500 mt-1">
@@ -852,7 +852,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                             {icono}
                           </div>
                           <div>
-                            <h3 className="font-serif font-bold text-lg text-[#482813] leading-snug">
+                            <h3 className="font-sans font-bold text-lg text-[#482813] leading-snug">
                               {m.nombre}
                             </h3>
                             <span className="text-[11px] text-neutral-500 font-medium">
@@ -879,7 +879,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                         </span>
                         <div className="flex items-baseline gap-1">
                           <span className="text-xs font-bold text-[#D35400]">S/</span>
-                          <span className="text-2xl font-mono font-bold text-[#D35400]">
+                          <span className="text-2xl font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
                             {m.precio.toFixed(2)}
                           </span>
                         </div>
@@ -980,7 +980,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center">
                   <DollarSign className="w-4 h-4" />
                 </div>
-                <h3 className="font-serif font-bold text-base text-[#482813]">
+                <h3 className="font-sans font-bold text-base text-[#482813]">
                   Modificar Precio
                 </h3>
               </div>
@@ -1081,13 +1081,13 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               {menuParaEstado.activo ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
             </div>
 
-            <h3 className="font-serif font-bold text-lg text-neutral-900 mb-2">
+            <h3 className="font-sans font-bold text-lg text-neutral-900 mb-2">
               {menuParaEstado.activo ? '¿Desactivar menú completo?' : '¿Activar menú completo?'}
             </h3>
 
             <p className="text-xs text-neutral-600 leading-relaxed mb-6">
               {menuParaEstado.activo
-                ? `¿Desactivar el menú completo "${menuParaEstado.nombre}"? No se podrá pedir hasta activarlo, pero se conservará su historial (MSG-218).`
+                ? `¿Desactivar el menú completo "${menuParaEstado.nombre}"? No se podrá pedir hasta activarlo, pero se conservará su historial.`
                 : `¿Activar nuevamente "${menuParaEstado.nombre}" para que esté disponible en los pedidos de salón y para llevar?`}
             </p>
 

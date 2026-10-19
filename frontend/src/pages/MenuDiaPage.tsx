@@ -172,12 +172,15 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* CABECERA PRINCIPAL */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-200">
         <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
+            PLANIFICACIÓN Y SERVICIO
+          </p>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-brand-serif font-bold text-[#482813] tracking-tight">
               Menú del Día
             </h1>
             {menu?.definido ? (
@@ -612,7 +615,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-serif font-bold text-neutral-900 text-sm">
+                          <span className="font-sans font-bold text-neutral-900 text-sm">
                             {mc.nombre}
                           </span>
                           {mc.disponible ? (
@@ -787,7 +790,7 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
             <Icon className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-serif font-bold text-neutral-900 text-sm sm:text-base">
+            <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base">
               {titulo}
             </h3>
             <p className="text-xs text-neutral-500">{descripcion}</p>
@@ -893,10 +896,10 @@ const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
-            <h3 className="font-serif font-bold text-neutral-900 text-base">
+            <h3 className="font-sans font-bold text-neutral-900 text-base">
               {nombre}
             </h3>
-            <span className="text-lg font-mono font-bold text-[#D35400]">
+            <span className="text-lg font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
               S/ {precio.toFixed(2)}
             </span>
           </div>
@@ -976,7 +979,7 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
     <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
       <div className="px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-serif font-bold text-neutral-900 text-sm sm:text-base">
+          <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base">
             Categoría: {categoriaNombre}
           </h3>
           <p className="text-xs text-neutral-500">

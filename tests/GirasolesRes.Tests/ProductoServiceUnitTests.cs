@@ -356,4 +356,136 @@ public class ProductoServiceUnitTests
             10,
             It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task RegistrarProductoAsync_E371_ComponenteSinPrecio_RegistraCorrectamente()
+    {
+        // ARRANGE
+        var request = new CrearProductoRequest
+        {
+            Nombre = "Quinua",
+            Tipo = "Componente",
+            Rol = "BebidaDesayuno",
+            Precio = null
+        };
+
+        _productoRepoMock.Setup(r => r.ExisteNombreAsync("quinua", TipoProducto.Componente, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        // ACT
+        var resultado = await _service.RegistrarProductoAsync(request, "admin");
+
+        // ASSERT
+        Assert.True(resultado.Success);
+        Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
+        Assert.NotNull(resultado.Data);
+        Assert.Equal("Quinua", resultado.Data!.Nombre);
+        Assert.Equal("Componente", resultado.Data.Tipo);
+        Assert.Equal("BebidaDesayuno", resultado.Data.Rol);
+        Assert.Null(resultado.Data.Precio);
+    }
+
+    [Fact]
+    public async Task RegistrarProductoAsync_E372_ComponenteConPrecio_RechazaConMSG215()
+    {
+        // ARRANGE
+        var request = new CrearProductoRequest
+        {
+            Nombre = "Quinua",
+            Tipo = "Componente",
+            Rol = "BebidaDesayuno",
+            Precio = 3.50m
+        };
+
+        // ACT
+        var resultado = await _service.RegistrarProductoAsync(request, "admin");
+
+        // ASSERT
+        Assert.False(resultado.Success);
+        Assert.Equal(MensajesCatalogo.MSG_215, resultado.Message);
+        var errors = resultado.Errors as Dictionary<string, string>;
+        Assert.NotNull(errors);
+        Assert.True(errors.ContainsKey("precio"));
+        Assert.Equal(MensajesCatalogo.MSG_215, errors["precio"]);
+    }
+
+    [Fact]
+    public async Task RegistrarProductoAsync_E373_ComponenteSinRol_RechazaConMSG214()
+    {
+        // ARRANGE
+        var request = new CrearProductoRequest
+        {
+            Nombre = "Quinua",
+            Tipo = "Componente",
+            Rol = null
+        };
+
+        // ACT
+        var resultado = await _service.RegistrarProductoAsync(request, "admin");
+
+        // ASSERT
+        Assert.False(resultado.Success);
+        Assert.Equal(MensajesCatalogo.MSG_214, resultado.Message);
+        var errors = resultado.Errors as Dictionary<string, string>;
+        Assert.NotNull(errors);
+        Assert.True(errors.ContainsKey("rol"));
+    }
+
+    [Fact]
+    public async Task RegistrarProductoAsync_E374_MismoNombreEnDistintoTipo_Permite_PeroMismoTipo_RechazaMSG53()
+    {
+        // ARRANGE: "Papa a la huancaína" ya existe como Carta, queremos crearla como Componente (RN-139)
+        var requestComponente = new CrearProductoRequest
+        {
+            Nombre = "Papa a la huancaína",
+            Tipo = "Componente",
+            Rol = "Entrada"
+        };
+
+        _productoRepoMock.Setup(r => r.ExisteNombreAsync("papa a la huancaina", TipoProducto.Componente, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        // ACT 1: Crear como componente -> permitido
+        var resultado1 = await _service.RegistrarProductoAsync(requestComponente, "admin");
+        Assert.True(resultado1.Success);
+
+        // ARRANGE 2: Intentar crear otro componente con el mismo nombre -> rechazado MSG-53
+        _productoRepoMock.Setup(r => r.ExisteNombreAsync("papa a la huancaina", TipoProducto.Componente, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        // ACT 2: Crear otro componente duplicado -> rechazado
+        var resultado2 = await _service.RegistrarProductoAsync(requestComponente, "admin");
+        Assert.False(resultado2.Success);
+        Assert.Equal(MensajesCatalogo.MSG_53, resultado2.Message);
+    }
+
+    [Fact]
+    public async Task ActualizarProductoAsync_E375_CambiarTipoDeProductoConPedidos_RechazaConMSG216()
+    {
+        // ARRANGE: Producto existente de tipo Carta que ya tiene pedidos
+        var prodExistente = new Producto("Lomo Saltado", CategoriaProducto.Almuerzo, 25.00m);
+        _productoRepoMock.Setup(r => r.ObtenerPorIdAsync(prodExistente.Id_Producto, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(prodExistente);
+        _productoRepoMock.Setup(r => r.TienePedidosAsync(prodExistente.Id_Producto, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var request = new ActualizarProductoRequest
+        {
+            Nombre = "Lomo Saltado",
+            Tipo = "Componente",
+            Rol = "Segundo",
+            Precio = null
+        };
+
+        // ACT
+        var resultado = await _service.ActualizarProductoAsync(prodExistente.Id_Producto, request, "admin");
+
+        // ASSERT
+        Assert.False(resultado.Success);
+        Assert.Equal(MensajesCatalogo.MSG_216, resultado.Message);
+        var errors = resultado.Errors as Dictionary<string, string>;
+        Assert.NotNull(errors);
+        Assert.True(errors.ContainsKey("tipo"));
+        Assert.Equal(MensajesCatalogo.MSG_216, errors["tipo"]);
+    }
 }
