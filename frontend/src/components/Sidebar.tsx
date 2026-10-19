@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
-import logoGirasoles from '../assets/logo-girasoles.png';
+import logoGirasoles from '../assets/LOGO_GIRASOLES.png';
 
 interface SidebarProps {
   session?: UserSession | null;
@@ -275,11 +275,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {/* Bloque 1: Cabecera Fija con Logo y botón cerrar móvil (shrink-0) */}
         <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-amber-900/40 mb-2">
-          <div className="w-14 h-14 xl:w-16 xl:h-16 rounded-2xl bg-white/95 p-1.5 shadow-md flex items-center justify-center border border-amber-900/30">
+          <div className="flex-1 flex items-center py-1">
             <img
               src={logoGirasoles}
               alt="Girasoles Restaurante"
-              className="w-full h-full object-contain"
+              className="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
             />
           </div>
           {onCloseMobile && (
@@ -287,7 +287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               type="button"
               onClick={onCloseMobile}
               aria-label="Cerrar menú"
-              className="lg:hidden p-2 text-amber-200/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+              className="lg:hidden p-2 text-amber-200/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
             >
               <X className="w-5 h-5" />
             </button>
