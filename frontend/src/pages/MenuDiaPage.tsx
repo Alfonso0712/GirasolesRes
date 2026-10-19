@@ -173,9 +173,35 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
     return true;
   });
 
+  const formatearBadgeClasificacion = (item: { tipo: string; clasificacion: string; precio?: number }) => {
+    if (item.tipo === 'Carta') {
+      return item.precio != null ? `Carta · S/ ${item.precio.toFixed(2)}` : 'Carta';
+    }
+    const rol = item.clasificacion || '';
+    const MAPEO_ROLES: Record<string, string> = {
+      BebidaDesayuno: 'Bebida desayuno',
+      PlatoDesay: 'Plato desayuno',
+      PlatoDesayuno: 'Plato desayuno',
+      Sopa: 'Sopa',
+      Entrada: 'Entrada',
+      Segundo: 'Segundo',
+      Postre: 'Postre',
+      Refresco: 'Refresco',
+      Bebida: 'Bebida',
+    };
+    if (MAPEO_ROLES[rol]) return MAPEO_ROLES[rol];
+    return (
+      rol
+        .replace(/([A-Z])/g, ' $1')
+        .trim()
+        .toLowerCase()
+        .replace(/^\w/, (c) => c.toUpperCase()) || 'Opción'
+    );
+  };
+
   return (
     <div className="flex-1 overflow-y-auto w-full relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-32 space-y-2.5 sm:space-y-3">
+      <div className={`w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 ${esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar ? 'pb-28' : 'pb-8'} space-y-2.5 sm:space-y-3`}>
         {/* CABECERA PRINCIPAL */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 pb-2.5 mb-1.5 border-b border-neutral-200">
         <div>
@@ -205,7 +231,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         </div>
 
         {/* CONTROLES ADMINISTRADOR */}
-        {esAdmin && (
+        {esAdmin && tabActiva !== 'disponibilidad' && (
           <div className="flex items-center gap-3 flex-wrap">
             {tieneCambiosSinGuardar && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-200 animate-pulse">
@@ -620,43 +646,44 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                   No se encontraron ítems en el menú con ese criterio.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {itemsDispFiltrados.map((item) => {
                     const esResaltado = platoResaltadoId === item.productoId;
                     return (
                       <div
                         key={item.productoId}
-                        className={`p-3.5 xl:p-4 rounded-xl border bg-white flex flex-col justify-between transition-all ${
+                        className={`p-4 rounded-2xl border bg-white flex flex-col justify-between min-h-[140px] transition-all ${
                           item.agotado
-                            ? 'border-neutral-300 bg-neutral-50/70 opacity-75'
+                            ? 'border-neutral-300 bg-neutral-50/70 opacity-80'
                             : 'border-neutral-200 hover:border-neutral-300 shadow-2xs'
                         } ${esResaltado ? 'ring-2 ring-[#D35400]' : ''}`}
                       >
-                        <div>
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <span className="font-semibold text-sm xl:text-base text-neutral-900 leading-snug">
-                              {item.nombre}
-                            </span>
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
-                                item.tipo === 'Componente'
-                                  ? 'bg-purple-100 text-purple-800'
-                                  : 'bg-blue-100 text-blue-800'
-                              }`}
-                            >
-                              {item.tipo === 'Componente'
-                                ? `Opción · ${item.clasificacion}`
-                                : `Carta · S/ ${item.precio?.toFixed(2)}`}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-3 mt-2 border-t border-neutral-100">
+                        <div className="flex flex-col items-start gap-1.5 mb-2">
                           <span
-                            className={`text-xs font-bold ${
-                              item.agotado ? 'text-amber-700' : 'text-emerald-700'
+                            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                              item.tipo === 'Componente'
+                                ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                : 'bg-blue-100 text-blue-800 border border-blue-200'
                             }`}
                           >
+                            {formatearBadgeClasificacion(item)}
+                          </span>
+                          <h4 className="font-semibold text-sm sm:text-base text-neutral-900 leading-snug break-words w-full">
+                            {item.nombre}
+                          </h4>
+                        </div>
+
+                        <div className="mt-auto pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
+                          <span
+                            className={`inline-flex items-center gap-1.5 text-xs font-bold ${
+                              item.agotado ? 'text-rose-700' : 'text-emerald-700'
+                            }`}
+                          >
+                            <span
+                              className={`w-2 h-2 rounded-full ${
+                                item.agotado ? 'bg-rose-500' : 'bg-emerald-500'
+                              }`}
+                            />
                             {item.agotado ? 'Agotado' : 'Disponible'}
                           </span>
 
@@ -665,11 +692,11 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                             onClick={() => handleAbrirDisponibilidadModal(item)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer min-h-[38px] ${
                               item.agotado
-                                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                                : 'bg-neutral-100 hover:bg-amber-100 text-neutral-800 hover:text-amber-900'
+                                ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs'
+                                : 'bg-neutral-100 hover:bg-rose-50 text-neutral-800 hover:text-rose-700 border border-neutral-200'
                             }`}
                           >
-                            {item.agotado ? 'Marcar disponible' : 'Marcar agotado'}
+                            {item.agotado ? 'Habilitar' : 'Marcar agotado'}
                           </button>
                         </div>
                       </div>
@@ -683,8 +710,8 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
       )}
       </div>
 
-      {/* BARRA INFERIOR FIJA (STICKY FOOTER) PARA GUARDAR MENÚ */}
-      {esAdmin && (
+      {/* BARRA INFERIOR FIJA (STICKY FOOTER): SOLO SE MUESTRA CUANDO HAY CAMBIOS SIN GUARDAR Y FUERA DE DISPONIBILIDAD */}
+      {esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar && (
         <div className="sticky bottom-0 z-50 w-full bg-white/95 backdrop-blur-md border-t border-neutral-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3.5 mt-auto">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -823,7 +850,7 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
             No hay componentes registrados con este rol. Regístrelos en Carta y Menú &gt; Productos.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -832,21 +859,21 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center gap-2.5 xl:gap-3 transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] h-auto ${
+                  className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer min-h-[56px] ${
                     estaSeleccionado
-                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
+                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs ring-1 ring-[#D35400]'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
-                  <div className="shrink-0">
-                    {estaSeleccionado ? (
-                      <CheckSquare className="w-4 h-4 xl:w-5 xl:h-5 text-[#D35400]" />
-                    ) : (
-                      <Square className="w-4 h-4 xl:w-5 xl:h-5 text-neutral-400" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm sm:text-base lg:text-lg font-semibold block break-words text-wrap leading-snug">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="shrink-0">
+                      {estaSeleccionado ? (
+                        <CheckSquare className="w-5 h-5 text-[#D35400]" />
+                      ) : (
+                        <Square className="w-5 h-5 text-neutral-400" />
+                      )}
+                    </div>
+                    <span className="text-sm font-semibold text-[#2C1A0E] leading-snug break-words">
                       {item.nombre}
                     </span>
                   </div>
@@ -1007,7 +1034,7 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
             No hay productos registrados en esta categoría de carta.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -1016,25 +1043,25 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`p-3 xl:p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer min-h-[48px] xl:min-h-[52px] h-auto ${
+                  className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer min-h-[56px] ${
                     estaSeleccionado
-                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
+                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs ring-1 ring-[#D35400]'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
-                  <div className="flex-1 min-w-0 flex items-center gap-2.5 xl:gap-3 mr-2">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="shrink-0">
                       {estaSeleccionado ? (
-                        <CheckSquare className="w-4 h-4 xl:w-5 xl:h-5 text-[#D35400]" />
+                        <CheckSquare className="w-5 h-5 text-[#D35400]" />
                       ) : (
-                        <Square className="w-4 h-4 xl:w-5 xl:h-5 text-neutral-400" />
+                        <Square className="w-5 h-5 text-neutral-400" />
                       )}
                     </div>
-                    <span className="text-sm sm:text-base lg:text-lg font-semibold block break-words text-wrap leading-snug">
+                    <span className="text-sm font-semibold text-[#2C1A0E] leading-snug break-words">
                       {item.nombre}
                     </span>
                   </div>
-                  <span className="text-xs sm:text-sm xl:text-base font-sans font-bold tabular-nums whitespace-nowrap text-neutral-600 shrink-0 ml-1">
+                  <span className="text-sm font-bold tabular-nums whitespace-nowrap shrink-0 pl-2 text-neutral-700">
                     S/ {item.precio?.toFixed(2) ?? '0.00'}
                   </span>
                 </button>
