@@ -80,7 +80,15 @@ public class PdfComprobanteService : IPdfComprobanteService
         bool alt = false;
         foreach (var linea in detalle.Lineas)
         {
-            float rowH = string.IsNullOrWhiteSpace(linea.Observacion) ? 17f : 26f;
+            var eleccionesSubtexto = !string.IsNullOrWhiteSpace(linea.Elecciones)
+                ? linea.Elecciones + (!string.IsNullOrWhiteSpace(linea.Incluye) ? $" (incluye {linea.Incluye})" : "")
+                : null;
+
+            float extraHeight = 0f;
+            if (!string.IsNullOrWhiteSpace(eleccionesSubtexto)) extraHeight += 9f;
+            if (!string.IsNullOrWhiteSpace(linea.Observacion)) extraHeight += 9f;
+
+            float rowH = 17f + extraHeight;
 
             if (alt)
             {
@@ -92,9 +100,17 @@ public class PdfComprobanteService : IPdfComprobanteService
             builder.DrawText($"S/ {linea.PrecioUnitario:F2}", 435f, curY + 11f, "/F1", 8.5f, 0.25f, 0.25f, 0.25f, alignRight: true);
             builder.DrawText($"S/ {linea.Subtotal:F2}", 555f, curY + 11f, "/F2", 8.5f, 0.17f, 0.17f, 0.17f, alignRight: true);
 
+            float subY = curY + 11f;
+            if (!string.IsNullOrWhiteSpace(eleccionesSubtexto))
+            {
+                subY += 9f;
+                builder.DrawText($"  > {eleccionesSubtexto}", 95f, subY, "/F3", 7f, 0.40f, 0.40f, 0.40f);
+            }
+
             if (!string.IsNullOrWhiteSpace(linea.Observacion))
             {
-                builder.DrawText($"* Nota: {linea.Observacion}", 95f, curY + 21f, "/F3", 7f, 0.45f, 0.45f, 0.45f);
+                subY += 9f;
+                builder.DrawText($"* Nota: {linea.Observacion}", 95f, subY, "/F3", 7f, 0.45f, 0.45f, 0.45f);
             }
 
             builder.DrawLine(28f, curY + rowH, 567.28f, curY + rowH, 0.92f, 0.92f, 0.92f, 0.5f);
