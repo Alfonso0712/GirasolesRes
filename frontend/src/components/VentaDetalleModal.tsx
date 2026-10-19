@@ -189,38 +189,38 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   <span>Platos y Bebidas Consumidos</span>
                 </h3>
                 <div className="border border-neutral-200 rounded-xl overflow-hidden shadow-2xs">
-                  <table className="w-full text-xs">
-                    <thead className="bg-neutral-100/70 text-neutral-600 font-semibold border-b border-neutral-200">
+                  <table className="w-full text-left border-collapse">
+                    <thead className="bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
                       <tr>
-                        <th className="py-2 px-3 text-left w-12">Cant.</th>
-                        <th className="py-2 px-3 text-left">Descripción</th>
-                        <th className="py-2 px-3 text-right w-24">P. Unit.</th>
-                        <th className="py-2 px-3 text-right w-24">Importe</th>
+                        <th className="py-2.5 px-3 text-left w-14">Cant.</th>
+                        <th className="py-2.5 px-3 text-left">Descripción</th>
+                        <th className="py-2.5 px-3 text-right w-24">P. Unit.</th>
+                        <th className="py-2.5 px-3 text-right w-24">Importe</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 bg-white">
+                    <tbody className="divide-y divide-[#F0EBE6] bg-white text-sm">
                       {venta.lineas.map((linea, idx) => (
-                        <tr key={idx} className="hover:bg-neutral-50/50">
-                          <td className="py-2 px-3 tabular-nums font-bold text-center text-neutral-700">
+                        <tr key={idx} className="hover:bg-neutral-50/50 border-b border-[#F0EBE6]">
+                          <td className="py-2.5 px-3 tabular-nums font-semibold text-center text-[#2C1A0E] text-sm">
                             {linea.cantidad}
                           </td>
-                          <td className="py-2 px-3">
-                            <span className="font-semibold text-neutral-800">{linea.productoNombre}</span>
+                          <td className="py-2.5 px-3">
+                            <span className="font-semibold text-sm text-[#2C1A0E]">{linea.productoNombre}</span>
                             {linea.elecciones && (
-                              <span className="text-[11px] text-neutral-500 italic block">
+                              <span className="text-xs text-stone-500 italic block mt-0.5">
                                 {linea.elecciones}{linea.incluye ? ` (incluye ${linea.incluye})` : ''}
                               </span>
                             )}
                             {linea.observacion && (
-                              <span className="text-[11px] text-neutral-500 block">
+                              <span className="text-xs text-stone-500 block mt-0.5">
                                 Obs: {linea.observacion}
                               </span>
                             )}
                           </td>
-                          <td className="py-2 px-3 text-right tabular-nums text-neutral-600">
+                          <td className="py-2.5 px-3 text-right tabular-nums text-sm text-stone-600">
                             S/ {linea.precioUnitario.toFixed(2)}
                           </td>
-                          <td className="py-2 px-3 text-right tabular-nums font-bold text-neutral-800">
+                          <td className="py-2.5 px-3 text-right tabular-nums font-semibold text-sm text-[#2C1A0E]">
                             S/ {linea.subtotal.toFixed(2)}
                           </td>
                         </tr>

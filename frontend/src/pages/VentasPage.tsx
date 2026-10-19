@@ -404,8 +404,8 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           </div>
         ) : (
           <div className="w-full overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse">
-              <thead className="sticky top-0 z-10 bg-neutral-100/80 backdrop-blur-xs text-neutral-600 uppercase font-semibold text-[11px] border-b border-neutral-200">
+            <table className="w-full text-left border-collapse">
+              <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] uppercase font-semibold text-xs border-b border-[#E5E0DB]">
                 <tr>
                   <th className="py-3 px-4">Comprobante</th>
                   <th className="py-3 px-4">Fecha y Hora</th>
@@ -418,13 +418,13 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   <th className="py-3 px-4 text-center">Acción</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
+              <tbody className="divide-y divide-[#F0EBE6] text-sm">
                 {ventasFiltradas.map((v) => {
                   const esAnulada = v.estado === 'Anulada';
                   return (
                     <tr
                       key={v.ventaId}
-                      className={`transition-colors hover:bg-neutral-50/70 ${
+                      className={`transition-colors border-b border-[#F0EBE6] hover:bg-neutral-50/70 ${
                         esAnulada ? 'bg-neutral-50/60 opacity-65 text-neutral-500' : 'bg-white text-neutral-800'
                       }`}
                     >
@@ -433,7 +433,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                         <div className="flex flex-col gap-0.5 items-start">
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`px-1.5 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider ${
+                              className={`px-1.5 py-0.5 text-xs font-semibold rounded uppercase tracking-wider ${
                                 v.comprobante.startsWith('F')
                                   ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
                                   : v.comprobante.startsWith('B')
@@ -443,12 +443,12 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                             >
                               {v.comprobante.startsWith('F') ? 'Factura' : v.comprobante.startsWith('B') ? 'Boleta' : 'Ticket'}
                             </span>
-                            <span className={`font-mono font-bold text-xs ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
+                            <span className={`font-mono font-semibold text-sm ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
                               {v.comprobante}
                             </span>
                           </div>
                           {(v.clienteDocumento || v.clienteNombre) && (
-                            <span className="text-[10px] text-neutral-500 truncate max-w-[170px]" title={`${v.clienteDocumento ? v.clienteDocumento + ' - ' : ''}${v.clienteNombre || ''}`}>
+                            <span className="text-xs text-stone-500 truncate max-w-[170px]" title={`${v.clienteDocumento ? v.clienteDocumento + ' - ' : ''}${v.clienteNombre || ''}`}>
                               {v.clienteDocumento ? `${v.clienteDocumento} · ` : ''}{v.clienteNombre || ''}
                             </span>
                           )}
@@ -456,18 +456,18 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                       </td>
 
                       {/* Fecha y Hora */}
-                      <td className="py-3 px-4 tabular-nums text-neutral-600 whitespace-nowrap">
+                      <td className="py-3 px-4 tabular-nums text-xs text-stone-600 whitespace-nowrap">
                         {v.fechaHoraFormateada}
                       </td>
 
                       {/* Pedido N.º */}
-                      <td className="py-3 px-4 tabular-nums font-semibold text-neutral-700">
+                      <td className="py-3 px-4 tabular-nums font-semibold text-sm text-[#2C1A0E]">
                         #{v.pedidoNumero}
                       </td>
 
                       {/* Destino (Mesa o Llevar) */}
                       <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 font-medium">
+                        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2C1A0E]">
                           {v.tipo === 'Para Llevar' ? (
                             <>
                               <ShoppingBag className="w-3.5 h-3.5 text-orange-600 shrink-0" />
@@ -487,7 +487,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                       {/* Método de Pago */}
                       <td className="py-3 px-4">
                         <span
-                          className={`px-2 py-0.5 text-[11px] font-semibold rounded-md inline-flex items-center gap-1 border ${
+                          className={`px-2.5 py-1 text-xs font-medium rounded-lg inline-flex items-center gap-1 border ${
                             v.metodo === 'Efectivo'
                               ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                               : 'bg-purple-50 text-purple-800 border-purple-200'
@@ -503,21 +503,21 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                       </td>
 
                       {/* Total */}
-                      <td className="py-3 px-4 text-right tabular-nums font-bold text-sm whitespace-nowrap">
+                      <td className="py-3 px-4 text-right tabular-nums font-semibold text-sm whitespace-nowrap">
                         <span className={esAnulada ? 'line-through text-neutral-400' : 'text-[#2C1A0E]'}>
                           S/ {v.total.toFixed(2)}
                         </span>
                       </td>
 
                       {/* Cajero */}
-                      <td className="py-3 px-4 text-neutral-600 truncate max-w-[110px]" title={v.cajero}>
+                      <td className="py-3 px-4 text-sm font-medium text-[#2C1A0E] truncate max-w-[110px]" title={v.cajero}>
                         {v.cajero}
                       </td>
 
                       {/* Estado */}
                       <td className="py-3 px-4 text-center">
                         <span
-                          className={`px-2.5 py-0.5 text-[11px] font-bold rounded-lg border inline-flex items-center gap-1 shadow-2xs ${
+                          className={`px-2.5 py-1 text-xs font-medium rounded-lg border inline-flex items-center gap-1 shadow-2xs ${
                             esAnulada
                               ? 'bg-neutral-200/70 text-neutral-600 border-neutral-300'
                               : 'bg-emerald-100 text-emerald-900 border-emerald-300'

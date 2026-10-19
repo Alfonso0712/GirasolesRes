@@ -354,22 +354,22 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#482813] text-amber-100 text-[10px] uppercase font-bold tracking-wider border-b border-[#3A1F0D]">
+            <table className="w-full text-left border-collapse">
+              <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] text-xs uppercase font-semibold tracking-wider border-b border-[#E5E0DB]">
                 <tr>
-                  <th scope="col" className="px-4 py-3.5">Estado / Turno</th>
-                  <th scope="col" className="px-4 py-3.5">Cajero(a)</th>
-                  <th scope="col" className="px-4 py-3.5 text-right">Monto Inicial</th>
-                  <th scope="col" className="px-4 py-3.5 text-right">Efectivo</th>
-                  <th scope="col" className="px-4 py-3.5 text-right">Yape</th>
-                  <th scope="col" className="px-4 py-3.5 text-right">Total Ventas</th>
-                  <th scope="col" className="px-4 py-3.5 text-right">Contado</th>
-                  <th scope="col" className="px-4 py-3.5 text-right">Diferencia</th>
-                  <th scope="col" className="px-4 py-3.5 text-center">Ajustes</th>
-                  <th scope="col" className="px-4 py-3.5 text-center">Acciones</th>
+                  <th scope="col" className="px-4 py-3">Estado / Turno</th>
+                  <th scope="col" className="px-4 py-3">Cajero(a)</th>
+                  <th scope="col" className="px-4 py-3 text-right">Monto Inicial</th>
+                  <th scope="col" className="px-4 py-3 text-right">Efectivo</th>
+                  <th scope="col" className="px-4 py-3 text-right">Yape</th>
+                  <th scope="col" className="px-4 py-3 text-right">Total Ventas</th>
+                  <th scope="col" className="px-4 py-3 text-right">Contado</th>
+                  <th scope="col" className="px-4 py-3 text-right">Diferencia</th>
+                  <th scope="col" className="px-4 py-3 text-center">Ajustes</th>
+                  <th scope="col" className="px-4 py-3 text-center">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E6D7C3]">
+              <tbody className="divide-y divide-[#F0EBE6] text-sm">
                 {cierres.map((c) => {
                   const abierta = esCajaAbierta(c);
                   const diferenciaNum =
@@ -379,7 +379,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   return (
                     <tr
                       key={cajaId}
-                      className={`hover:bg-[#FAF6F0]/60 transition-colors ${
+                      className={`hover:bg-[#FAF6F0]/60 transition-colors border-b border-[#F0EBE6] ${
                         abierta ? 'bg-emerald-50/40 font-medium' : ''
                       }`}
                     >
@@ -387,11 +387,11 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       <td className="px-4 py-3">
                         {abierta ? (
                           <div className="space-y-1">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
                               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                               Abierta
                             </span>
-                            <p className="text-[10px] text-stone-500">
+                            <p className="text-xs text-stone-500">
                               Desde{' '}
                               {c.fechaAperturaLocal?.split(' ')[1] ||
                                 new Date(c.fechaApertura).toLocaleTimeString('es-PE', {
@@ -402,11 +402,11 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                           </div>
                         ) : (
                           <div>
-                            <p className="font-bold text-[#482813]">
+                            <p className="font-semibold text-sm text-[#2C1A0E]">
                               {c.fechaAperturaLocal?.split(' ')[0] ||
                                 new Date(c.fechaApertura).toLocaleDateString('es-PE')}
                             </p>
-                            <p className="text-[10px] text-stone-500">
+                            <p className="text-xs text-stone-500">
                               {c.fechaAperturaLocal?.split(' ')[1] ||
                                 new Date(c.fechaApertura).toLocaleTimeString('es-PE', {
                                   hour: '2-digit',
@@ -426,32 +426,32 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       </td>
 
                       {/* Cajero */}
-                      <td className="px-4 py-3 font-semibold text-stone-800">
+                      <td className="px-4 py-3 font-semibold text-sm text-[#2C1A0E]">
                         {c.cajero || c.cajeroApertura || 'Cajero'}
                       </td>
 
                       {/* Monto Inicial */}
-                      <td className="px-4 py-3 text-right font-medium text-stone-600 tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-stone-600 tabular-nums">
                         S/ {(c.montoInicial ?? 0).toFixed(2)}
                       </td>
 
                       {/* Efectivo */}
-                      <td className="px-4 py-3 text-right font-medium text-[#482813] tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-[#2C1A0E] tabular-nums">
                         S/ {(c.ventasEfectivo ?? c.efectivo ?? 0).toFixed(2)}
                       </td>
 
                       {/* Yape */}
-                      <td className="px-4 py-3 text-right font-medium text-purple-900 tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-purple-900 tabular-nums">
                         S/ {(c.ventasYape ?? c.yape ?? 0).toFixed(2)}
                       </td>
 
                       {/* Total Ventas */}
-                      <td className="px-4 py-3 text-right font-bold text-[#D35400] tabular-nums">
+                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#D35400] tabular-nums">
                         S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
                       </td>
 
                       {/* Contado */}
-                      <td className="px-4 py-3 text-right font-semibold text-stone-800 tabular-nums">
+                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums">
                         {abierta ? (
                           <span className="text-stone-400 font-normal">—</span>
                         ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
@@ -468,15 +468,15 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                         ) : diferenciaNum === null ? (
                           <span className="text-stone-400">—</span>
                         ) : diferenciaNum === 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
                             Cuadra · S/ 0.00
                           </span>
                         ) : diferenciaNum > 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 tabular-nums">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 tabular-nums">
                             + S/ {diferenciaNum.toFixed(2)}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 tabular-nums">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300 tabular-nums">
                             - S/ {Math.abs(diferenciaNum).toFixed(2)}
                           </span>
                         )}
@@ -486,10 +486,10 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       <td className="px-4 py-3 text-center">
                         {c.conAjustes || c.tieneAjustesPosteriores ? (
                           <span
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-300"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-300"
                             title="Contiene ventas anuladas después del cierre sin alterar el arqueo histórico"
                           >
-                            <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                             Con ajustes
                           </span>
                         ) : (

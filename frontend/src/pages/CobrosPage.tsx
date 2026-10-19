@@ -409,7 +409,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
             {/* Tabla Desktop (>= lg) */}
             <div className="hidden lg:block">
               <table className="w-full text-left border-collapse">
-                <thead className="sticky top-0 z-10 bg-neutral-50/90 text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-neutral-200">
+                <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
                   <tr>
                     <th className="py-3 px-4">N.º Pedido</th>
                     <th className="py-3 px-4">Destino</th>
@@ -419,63 +419,63 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                     <th className="py-3 px-4 text-center">Acción</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100 text-sm">
+                <tbody className="divide-y divide-[#F0EBE6] text-sm">
                   {pedidos.map((p) => {
                     const esMesa = p.tipo.toLowerCase() === 'mesa';
 
                     return (
                       <tr
                         key={p.pedidoId}
-                        className={`transition-colors hover:bg-neutral-50/70 ${
+                        className={`transition-colors border-b border-[#F0EBE6] hover:bg-neutral-50/70 ${
                           p.estaListo ? 'bg-emerald-50/25' : ''
                         }`}
                       >
                         {/* N.º Pedido */}
-                        <td className="py-3.5 px-4 font-bold font-sans tabular-nums text-[#2C1A0E]">
+                        <td className="py-3 px-4 font-semibold font-sans tabular-nums text-sm text-[#2C1A0E]">
                           #{p.numero}
                         </td>
 
                         {/* Destino */}
-                        <td className="py-3.5 px-4">
+                        <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             {esMesa ? (
                               <Utensils className="w-4 h-4 text-[#D35400]" />
                             ) : (
                               <ShoppingBag className="w-4 h-4 text-[#D35400]" />
                             )}
-                            <span className="font-semibold text-neutral-900">
+                            <span className="font-semibold text-sm text-[#2C1A0E]">
                               {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
                             </span>
                           </div>
                           {p.referencia && (
-                            <span className="text-xs text-neutral-400 italic block mt-0.5">
+                            <span className="text-xs text-stone-500 italic block mt-0.5">
                               Ref: {p.referencia}
                             </span>
                           )}
                         </td>
 
                         {/* Hora */}
-                        <td className="py-3.5 px-4 text-xs font-sans tabular-nums text-[#7C6F66]">
+                        <td className="py-3 px-4 text-xs font-sans tabular-nums text-stone-600">
                           {p.hora}
                         </td>
 
                         {/* Estado Cocina */}
-                        <td className="py-3.5 px-4">
+                        <td className="py-3 px-4">
                           {p.estaListo ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
-                              <CheckCircle2 className="w-3 h-3" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
                               Listo
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                              <ChefHat className="w-3 h-3" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300">
+                              <ChefHat className="w-3.5 h-3.5" />
                               En preparación
                             </span>
                           )}
                         </td>
 
                         {/* Total a Cobrar */}
-                        <td className="py-3.5 px-4 text-right font-sans font-bold tabular-nums text-base text-[#D35400]">
+                        <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#D35400]">
                           S/ {p.total.toFixed(2)}
                         </td>
 

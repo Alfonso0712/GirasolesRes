@@ -255,48 +255,47 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
               <div className="hidden lg:block">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-neutral-200/80 text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                    <tr className="border-b border-[#E5E0DB] bg-[#FAF7F4] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         NOMBRE
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         USUARIO
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         ROL
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         ESTADO
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80 text-right">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB] text-right">
                         ACCIONES
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100 animate-pulse">
+                  <tbody className="divide-y divide-[#F0EBE6] animate-pulse">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <tr key={i} className="hover:bg-neutral-50/40">
-                        <td className="py-4 px-6">
+                      <tr key={i} className="hover:bg-neutral-50/40 border-b border-[#F0EBE6]">
+                        <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-neutral-200 shrink-0" />
+                            <div className="w-8 h-8 rounded-lg bg-neutral-200 shrink-0" />
                             <div className="space-y-1.5">
                               <div className="w-32 h-3.5 bg-neutral-200 rounded" />
                               <div className="w-24 h-2.5 bg-neutral-100 rounded" />
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-6">
+                        <td className="py-3 px-4">
                           <div className="w-20 h-3 bg-neutral-200 rounded" />
                         </td>
-                        <td className="py-4 px-6">
-                          <div className="w-28 h-7 bg-neutral-100 rounded-lg border border-neutral-200/60" />
+                        <td className="py-3 px-4">
+                          <div className="w-24 h-6 bg-neutral-100 rounded-lg border border-neutral-200/60" />
                         </td>
-                        <td className="py-4 px-6">
+                        <td className="py-3 px-4">
                           <div className="w-16 h-3 bg-neutral-200 rounded" />
                         </td>
-                        <td className="py-4 px-6 text-right">
+                        <td className="py-3 px-4 text-right">
                           <div className="inline-flex gap-1.5 justify-end">
-                            <div className="w-8 h-8 rounded-lg bg-neutral-100 border border-neutral-200/60" />
                             <div className="w-8 h-8 rounded-lg bg-neutral-100 border border-neutral-200/60" />
                             <div className="w-8 h-8 rounded-lg bg-neutral-100 border border-neutral-200/60" />
                           </div>
@@ -363,25 +362,25 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
               <div className="hidden lg:block">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-neutral-200/80 text-[11px] xl:text-xs font-bold text-neutral-400 uppercase tracking-wider">
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
+                    <tr className="border-b border-[#E5E0DB] bg-[#FAF7F4] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         NOMBRE
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         USUARIO
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         ROL
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                         ESTADO
                       </th>
-                      <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3 xl:py-3.5 px-4 xl:px-6 text-right border-b border-neutral-200/80">
+                      <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 text-right border-b border-[#E5E0DB]">
                         ACCIONES
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100 text-sm xl:text-base">
+                  <tbody className="divide-y divide-[#F0EBE6] text-sm">
                   {usuarios.map((u) => {
                     const esResaltado = usuarioResaltadoId === u.id;
                     const esPropiaCuenta = u.usuario.toLowerCase() === session.usuario.toLowerCase();
@@ -389,33 +388,33 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                     return (
                       <tr
                         key={u.id}
-                        className={`transition-colors ${
+                        className={`transition-colors border-b border-[#F0EBE6] ${
                           esResaltado
                             ? 'bg-amber-100/60 font-medium'
                             : 'hover:bg-neutral-50/60'
                         }`}
                       >
                         {/* Nombre con Badge de iniciales */}
-                        <td className="py-3.5 xl:py-4 px-4 xl:px-6">
+                        <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-xs xl:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#D35400] font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                               {obtenerIniciales(u.nombre)}
                             </div>
-                            <span className="font-semibold text-neutral-900 text-sm sm:text-base lg:text-lg break-words">
+                            <span className="font-semibold text-[#2C1A0E] text-sm break-words">
                               {u.nombre}
                             </span>
                           </div>
                         </td>
 
                         {/* Usuario */}
-                        <td className="py-3.5 xl:py-4 px-4 xl:px-6 text-neutral-500 font-normal text-xs xl:text-sm">
+                        <td className="py-3 px-4 text-stone-500 font-normal text-xs">
                           @{u.usuario}
                         </td>
 
-                        {/* Rol Pill estandarizada con tamaño fijo w-28 h-7 */}
-                        <td className="py-3.5 xl:py-4 px-4 xl:px-6">
+                        {/* Rol Pill estandarizada */}
+                        <td className="py-3 px-4">
                           <span
-                            className={`w-28 xl:w-32 h-7 xl:h-8 inline-flex items-center justify-center rounded-lg text-xs xl:text-sm font-semibold border ${obtenerEstiloRol(
+                            className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border ${obtenerEstiloRol(
                               u.rol
                             )} text-center shadow-2xs`}
                           >
@@ -424,12 +423,12 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                         </td>
 
                         {/* Estado Indicator */}
-                        <td className="py-3.5 xl:py-4 px-4 xl:px-6">
+                        <td className="py-3 px-4">
                           <StatusBadge status={u.activo} variant="dot" />
                         </td>
 
                         {/* Acciones: Botones cuadrados compactos */}
-                        <td className="py-3.5 xl:py-4 px-4 xl:px-6 text-right">
+                        <td className="py-3 px-4 text-right">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             {/* Botón Editar */}
                             <button

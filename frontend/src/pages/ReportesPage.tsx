@@ -449,36 +449,36 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-neutral-50/90 border-b border-neutral-200 text-[11px] xl:text-xs font-bold text-neutral-600 uppercase tracking-wider sticky top-0 z-10 backdrop-blur-xs">
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6">Producto</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6">Categoría</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">Estado</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Cantidad Vendida</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Monto Total</th>
+                      <tr className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider sticky top-0 z-10">
+                        <th className="py-3 px-4">Producto</th>
+                        <th className="py-3 px-4">Categoría</th>
+                        <th className="py-3 px-4 text-center">Estado</th>
+                        <th className="py-3 px-4 text-right">Cantidad Vendida</th>
+                        <th className="py-3 px-4 text-right">Monto Total</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 text-xs xl:text-sm text-neutral-700">
+                    <tbody className="divide-y divide-[#F0EBE6] text-sm text-neutral-700">
                       {platosOrdenados.map((item) => (
-                        <tr key={item.productoId} className="hover:bg-neutral-50/60 transition-colors">
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 font-semibold text-[#2C1A0E]">
+                        <tr key={item.productoId} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
+                          <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">
                             <span>{item.producto}</span>
                             {!item.activo && (
-                              <span className="ml-2 text-[10px] font-semibold text-neutral-500 bg-neutral-100 border border-neutral-200 rounded px-1.5 py-0.5">
+                              <span className="ml-2 text-xs font-medium text-neutral-500 bg-neutral-100 border border-neutral-200 rounded px-1.5 py-0.5">
                                 inactivo
                               </span>
                             )}
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                          <td className="py-3 px-4">
                             <span
-                              className="w-28 xl:w-32 h-7 xl:h-8 inline-flex items-center justify-center rounded-lg text-xs xl:text-sm font-semibold border shadow-2xs bg-neutral-50 text-neutral-700 border-neutral-200"
+                              className="inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border shadow-2xs bg-neutral-50 text-neutral-700 border-neutral-200"
                               title={CATEGORIA_LABELS[item.categoria] || item.categoria}
                             >
                               {CATEGORIA_BADGE_LABELS[item.categoria] || item.categoria}
                             </span>
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">
+                          <td className="py-3 px-4 text-center">
                             <span
-                              className={`w-24 xl:w-28 h-7 xl:h-8 inline-flex items-center justify-center rounded-lg text-xs xl:text-sm font-semibold border shadow-2xs ${
+                              className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border shadow-2xs ${
                                 item.activo
                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                     : 'bg-neutral-100 text-neutral-500 border-neutral-200'
@@ -487,10 +487,10 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                               {item.activo ? 'Activo' : 'Desactivado'}
                             </span>
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-sans font-bold tabular-nums text-sm xl:text-base text-[#2C1A0E]">
+                          <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#2C1A0E]">
                             {item.cantidad}
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-sans font-bold tabular-nums text-sm xl:text-base text-[#D35400]">
+                          <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#D35400]">
                             S/ {item.monto.toFixed(2)}
                           </td>
                         </tr>
@@ -667,44 +667,44 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-neutral-50/90 border-b border-neutral-200 text-[11px] xl:text-xs font-bold text-neutral-600 uppercase tracking-wider sticky top-0 z-10 backdrop-blur-xs">
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6">Fecha</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">N.° Ventas</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Efectivo</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Yape</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Total Día</th>
-                        <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">Estado / Cierre</th>
+                      <tr className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider sticky top-0 z-10">
+                        <th className="py-3 px-4">Fecha</th>
+                        <th className="py-3 px-4 text-center">N.° Ventas</th>
+                        <th className="py-3 px-4 text-right">Efectivo</th>
+                        <th className="py-3 px-4 text-right">Yape</th>
+                        <th className="py-3 px-4 text-right">Total Día</th>
+                        <th className="py-3 px-4 text-center">Estado / Cierre</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 text-xs xl:text-sm text-neutral-700">
+                    <tbody className="divide-y divide-[#F0EBE6] text-sm text-neutral-700">
                       {reporteVentas.porDia.map((d) => (
-                        <tr key={d.fecha} className="hover:bg-neutral-50/60 transition-colors">
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 font-semibold text-[#2C1A0E]">{d.fecha}</td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-center font-sans font-bold tabular-nums">
+                        <tr key={d.fecha} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
+                          <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">{d.fecha}</td>
+                          <td className="py-3 px-4 text-center font-sans font-medium text-sm tabular-nums">
                             {d.nVentas}
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-sans font-bold tabular-nums text-emerald-700">
+                          <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-emerald-700">
                             S/ {d.efectivo.toFixed(2)}
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-sans font-bold tabular-nums text-purple-700">
+                          <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-purple-700">
                             S/ {d.yape.toFixed(2)}
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-sans font-bold tabular-nums text-sm xl:text-base text-[#D35400]">
+                          <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-[#D35400]">
                             S/ {d.total.toFixed(2)}
                           </td>
-                          <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">
+                          <td className="py-3 px-4 text-center">
                             {d.conAjustes ? (
                               <button
                                 type="button"
                                 onClick={onNavigateToCierres}
                                 title="Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres."
-                                className="w-32 xl:w-36 h-7 xl:h-8 inline-flex items-center justify-center gap-1.5 rounded-lg text-xs xl:text-sm font-semibold bg-amber-50 text-[#B84600] border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
+                                className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-[#B84600] border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
                               >
                                 <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                                 <span>Con ajustes</span>
                               </button>
                             ) : (
-                              <span className="w-28 xl:w-32 h-7 xl:h-8 inline-flex items-center justify-center rounded-lg text-xs xl:text-sm font-semibold bg-neutral-50 text-neutral-600 border border-neutral-200">
+                              <span className="inline-flex items-center justify-center rounded-lg text-xs font-medium px-2.5 py-1 bg-neutral-50 text-neutral-600 border border-neutral-200">
                                 Normal
                               </span>
                             )}

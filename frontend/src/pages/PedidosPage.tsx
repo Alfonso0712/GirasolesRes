@@ -247,42 +247,42 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
     switch (estado.toLowerCase()) {
       case 'pendiente':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-            <Clock className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300">
+            <Clock className="w-3.5 h-3.5" />
             Pendiente
           </span>
         );
       case 'enpreparacion':
       case 'en preparación':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300">
-            <ChefHat className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300">
+            <ChefHat className="w-3.5 h-3.5" />
             En preparación
           </span>
         );
       case 'listo':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
-            <CheckCircle2 className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
+            <CheckCircle2 className="w-3.5 h-3.5" />
             Listo
           </span>
         );
       case 'pagado':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-700 border border-neutral-300">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-neutral-100 text-neutral-700 border border-neutral-300">
             Pagado
           </span>
         );
       case 'anulado':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
-            <AlertTriangle className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">
+            <AlertTriangle className="w-3.5 h-3.5" />
             Anulado
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-700">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-neutral-100 text-neutral-700">
             {estado}
           </span>
         );
@@ -549,19 +549,19 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <div className="space-y-3">
             {/* Vista Desktop: Tabla */}
             <div className="hidden md:block bg-white border border-neutral-200/80 rounded-2xl overflow-hidden shadow-xs">
-              <table className="w-full text-left">
-                <thead className="bg-neutral-50 text-neutral-500 font-semibold text-xs xl:text-sm uppercase tracking-wider border-b border-neutral-200">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
                   <tr>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">N.º</th>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Destino</th>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Hora</th>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Registrado por</th>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6">Estado</th>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-right">Total</th>
-                    <th className="py-3 xl:py-3.5 px-4 xl:px-6 text-center">Acciones</th>
+                    <th className="py-3 px-4">N.º</th>
+                    <th className="py-3 px-4">Destino</th>
+                    <th className="py-3 px-4">Hora</th>
+                    <th className="py-3 px-4">Registrado por</th>
+                    <th className="py-3 px-4">Estado</th>
+                    <th className="py-3 px-4 text-right">Total</th>
+                    <th className="py-3 px-4 text-center">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100 text-sm xl:text-base">
+                <tbody className="divide-y divide-[#F0EBE6] text-sm">
                   {pedidos.map((p) => {
                     const esAnulado = p.estado.toLowerCase() === 'anulado';
                     const esListo = p.estado.toLowerCase() === 'listo';
@@ -569,7 +569,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                     return (
                       <tr
                         key={p.id}
-                        className={`transition-colors ${
+                        className={`transition-colors border-b border-[#F0EBE6] ${
                           esAnulado
                             ? 'opacity-60 bg-neutral-50/70'
                             : p.esMio
@@ -577,46 +577,46 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             : 'hover:bg-neutral-50/60'
                         } ${esListo ? 'ring-1 ring-emerald-300' : ''}`}
                       >
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 font-bold font-mono text-neutral-900">
+                        <td className="py-3 px-4 font-semibold font-mono text-sm text-[#2C1A0E]">
                           #{p.numero}
                         </td>
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                        <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             {p.tipo === 'Mesa' ? (
                               <Utensils className="w-4 h-4 text-[#D35400]" />
                             ) : (
                               <ShoppingBag className="w-4 h-4 text-orange-600" />
                             )}
-                            <span className="font-semibold text-neutral-900">
+                            <span className="font-semibold text-sm text-[#2C1A0E]">
                               {p.tipo === 'Mesa' ? (p.mesa || 'Mesa') : 'Para llevar'}
                             </span>
                           </div>
                           {p.tipo !== 'Mesa' && p.referencia && (
-                            <span className="text-xs text-neutral-400 italic block">
+                            <span className="text-xs text-stone-500 italic block">
                               Ref: {p.referencia}
                             </span>
                           )}
                         </td>
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-neutral-600 text-xs xl:text-sm font-mono">
+                        <td className="py-3 px-4 text-stone-600 text-xs font-mono">
                           {p.hora}
                         </td>
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-neutral-700 text-xs xl:text-sm">
+                        <td className="py-3 px-4 text-stone-700 text-xs">
                           <div className="flex items-center gap-1.5">
                             <span>{p.registradoPor}</span>
                             {p.esMio && (
-                              <span className="px-1.5 py-0.2 rounded-md bg-amber-500/15 text-[#D35400] font-bold text-[10px]">
+                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-semibold text-[10px]">
                                 Mío
                               </span>
                             )}
                           </div>
                         </td>
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                        <td className="py-3 px-4">
                           {renderBadgeEstado(p.estado)}
                         </td>
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-mono font-bold text-neutral-900 text-sm xl:text-base">
+                        <td className="py-3 px-4 text-right font-mono font-semibold tabular-nums text-sm text-[#2C1A0E]">
                           S/ {p.total.toFixed(2)}
                         </td>
-                        <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                        <td className="py-3 px-4">
                           <div className="flex items-center justify-center gap-1.5">
                             {/* Ver Detalle: Estilo Neutro Blanco */}
                             <button

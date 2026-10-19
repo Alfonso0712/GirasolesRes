@@ -442,34 +442,34 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
                 {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
                   <div className="max-h-48 overflow-y-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-[#FAF6F0]/60 border-b border-stone-200 text-[10px] uppercase font-bold text-stone-500 tracking-wider sticky top-0">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs uppercase font-semibold text-[#7C6F66] tracking-wider sticky top-0">
                         <tr>
-                          <th className="px-4 py-2">Plato / Producto</th>
-                          <th className="px-4 py-2 text-center w-24">Cantidad</th>
-                          <th className="px-4 py-2 text-right w-28 tabular-nums">Subtotal (S/)</th>
+                          <th className="px-4 py-2.5">Plato / Producto</th>
+                          <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
+                          <th className="px-4 py-2.5 text-right w-28 tabular-nums">Subtotal (S/)</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-stone-100">
+                      <tbody className="divide-y divide-[#F0EBE6] text-sm">
                         {detalle.platosVendidos.map((p, idx) => (
-                          <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-[#FAF6F0]/40 transition-colors">
-                            <td className="px-4 py-2 font-medium text-stone-800">{p.nombre}</td>
-                            <td className="px-4 py-2 text-center font-semibold text-stone-700 tabular-nums">
+                          <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-[#FAF6F0]/40 transition-colors border-b border-[#F0EBE6]">
+                            <td className="px-4 py-2.5 font-semibold text-sm text-[#2C1A0E]">{p.nombre}</td>
+                            <td className="px-4 py-2.5 text-center font-medium text-sm text-stone-700 tabular-nums">
                               {p.cantidad}
                             </td>
-                            <td className="px-4 py-2 text-right font-bold text-[#482813] tabular-nums">
+                            <td className="px-4 py-2.5 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums">
                               S/ {(p.total ?? 0).toFixed(2)}
                             </td>
                           </tr>
                         ))}
                       </tbody>
-                      <tfoot className="bg-[#FAF6F0] border-t border-[#E6D7C3] font-bold text-xs">
+                      <tfoot className="bg-[#FAF7F4] border-t border-[#E5E0DB] font-semibold text-xs">
                         <tr>
-                          <td className="px-4 py-2 text-[#482813]">TOTAL CONSOLIDADO</td>
-                          <td className="px-4 py-2 text-center text-stone-800 tabular-nums">
+                          <td className="px-4 py-2.5 text-[#2C1A0E]">TOTAL CONSOLIDADO</td>
+                          <td className="px-4 py-2.5 text-center text-stone-800 tabular-nums font-semibold">
                             {detalle.platosVendidos.reduce((acc, p) => acc + p.cantidad, 0)}
                           </td>
-                          <td className="px-4 py-2 text-right text-[#D35400] tabular-nums">
+                          <td className="px-4 py-2.5 text-right text-[#D35400] tabular-nums font-bold text-sm">
                             S/ {detalle.platosVendidos.reduce((acc, p) => acc + (p.total ?? 0), 0).toFixed(2)}
                           </td>
                         </tr>

@@ -134,34 +134,34 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
             <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">
               Líneas del Pedido
             </h4>
-            <div className="border border-neutral-200 rounded-xl overflow-hidden text-sm">
-              <table className="w-full text-left">
-                <thead className="bg-neutral-50 text-neutral-600 font-semibold text-xs border-b border-neutral-200">
+            <div className="border border-neutral-200 rounded-xl overflow-hidden text-sm shadow-2xs">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
                   <tr>
-                    <th className="py-2.5 px-3">Cant.</th>
+                    <th className="py-2.5 px-3 w-14 text-center">Cant.</th>
                     <th className="py-2.5 px-3">Plato / Bebida</th>
-                    <th className="py-2.5 px-3 text-right">P. Unit.</th>
-                    <th className="py-2.5 px-3 text-right">Subtotal</th>
+                    <th className="py-2.5 px-3 text-right w-24">P. Unit.</th>
+                    <th className="py-2.5 px-3 text-right w-24">Subtotal</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100">
+                <tbody className="divide-y divide-[#F0EBE6]">
                   {pedido.lineas.map((linea) => (
-                    <tr key={linea.detalleId} className="hover:bg-neutral-50/50">
-                      <td className="py-2.5 px-3 font-semibold text-neutral-800">
+                    <tr key={linea.detalleId} className="hover:bg-neutral-50/50 border-b border-[#F0EBE6]">
+                      <td className="py-2.5 px-3 font-semibold text-sm text-[#2C1A0E] text-center tabular-nums">
                         {linea.cantidad}
                       </td>
                       <td className="py-2.5 px-3">
-                        <div className="font-medium text-neutral-900">{linea.nombre}</div>
+                        <div className="font-semibold text-sm text-[#2C1A0E]">{linea.nombre}</div>
                         {linea.observacion && (
-                          <div className="text-xs text-[#D35400] italic">
+                          <div className="text-xs text-[#D35400] italic mt-0.5">
                             Nota: {linea.observacion}
                           </div>
                         )}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-neutral-600 font-mono text-xs">
+                      <td className="py-2.5 px-3 text-right text-stone-600 font-mono text-xs tabular-nums">
                         S/ {linea.precioUnitario.toFixed(2)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-neutral-900 font-mono text-xs">
+                      <td className="py-2.5 px-3 text-right font-semibold text-[#2C1A0E] font-mono text-sm tabular-nums">
                         S/ {linea.subtotal.toFixed(2)}
                       </td>
                     </tr>

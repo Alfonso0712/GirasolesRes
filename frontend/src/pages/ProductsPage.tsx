@@ -501,28 +501,28 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   <div className="hidden lg:block">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-neutral-200/80 text-[11px] xl:text-xs font-bold text-neutral-400 uppercase tracking-wider">
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 xl:py-3 px-4 xl:px-6 border-b border-neutral-200/90 shadow-2xs">
+                        <tr className="border-b border-[#E5E0DB] bg-[#FAF7F4] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                             PRODUCTO / COMPONENTE
                           </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 xl:py-3 px-4 xl:px-6 border-b border-neutral-200/90 shadow-2xs">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                             TIPO
                           </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 xl:py-3 px-4 xl:px-6 border-b border-neutral-200/90 shadow-2xs">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                             ROL / CATEGORÍA
                           </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 xl:py-3 px-4 xl:px-6 text-right border-b border-neutral-200/90 shadow-2xs">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 text-right border-b border-[#E5E0DB]">
                             PRECIO
                           </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 xl:py-3 px-4 xl:px-6 border-b border-neutral-200/90 shadow-2xs">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
                             ESTADO
                           </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 xl:py-3 px-4 xl:px-6 text-right border-b border-neutral-200/90 shadow-2xs">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 text-right border-b border-[#E5E0DB]">
                             ACCIONES
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-neutral-100 text-sm xl:text-base">
+                      <tbody className="divide-y divide-[#F0EBE6] text-sm">
                         {productos.map((prod) => {
                           const estaResaltado = prod.id === productoResaltadoId;
                           const esComponente = prod.tipo === 'Componente';
@@ -530,36 +530,36 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           return (
                             <tr
                               key={prod.id}
-                              className={`transition-colors hover:bg-neutral-50/60 ${
+                              className={`transition-colors border-b border-[#F0EBE6] hover:bg-neutral-50/60 ${
                                 estaResaltado
                                   ? 'bg-amber-50/70 ring-2 ring-inset ring-[#D35400]/40'
                                   : ''
                               }`}
                             >
-                              <td className="py-3 xl:py-3.5 px-4 xl:px-6 font-medium text-neutral-900">
+                              <td className="py-3 px-4 font-medium text-neutral-900">
                                 <div className="flex items-center gap-3">
                                   <div
-                                    className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                                       esComponente
                                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                         : 'bg-amber-50 text-[#D35400] border border-amber-200'
                                     }`}
                                   >
                                     {esComponente ? (
-                                      <Layers className="w-4 h-4 xl:w-5 xl:h-5" />
+                                      <Layers className="w-4 h-4" />
                                     ) : (
-                                      <UtensilsCrossed className="w-4 h-4 xl:w-5 xl:h-5" />
+                                      <UtensilsCrossed className="w-4 h-4" />
                                     )}
                                   </div>
-                                  <span className="font-semibold text-neutral-900 text-sm sm:text-base lg:text-lg break-words">
+                                  <span className="font-semibold text-[#2C1A0E] text-sm break-words">
                                     {prod.nombre}
                                   </span>
                                 </div>
                               </td>
 
-                              <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                              <td className="py-3 px-4">
                                 <span
-                                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs xl:text-sm font-bold ${
+                                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${
                                     esComponente
                                       ? 'bg-emerald-100 text-emerald-800'
                                       : 'bg-neutral-100 text-neutral-800'
@@ -569,14 +569,14 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 </span>
                               </td>
 
-                              <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                              <td className="py-3 px-4">
                                 {esComponente ? (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs xl:text-sm font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90">
                                     Rol: {ROL_LABELS[prod.rol || ''] || prod.rol || 'Segundo'}
                                   </span>
                                 ) : (
                                   <span
-                                    className={`w-28 xl:w-32 h-7 xl:h-8 inline-flex items-center justify-center rounded-lg text-xs xl:text-sm font-semibold border ${obtenerEstiloCategoria(
+                                    className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border ${obtenerEstiloCategoria(
                                       prod.categoria || 'Otro'
                                     )} text-center shadow-2xs`}
                                   >
@@ -587,21 +587,21 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 )}
                               </td>
 
-                              <td className="py-3 xl:py-3.5 px-4 xl:px-6 text-right font-medium">
+                              <td className="py-3 px-4 text-right font-medium">
                                 {prod.precio != null ? (
-                                  <span className="text-neutral-900 font-bold text-sm xl:text-base tabular-nums whitespace-nowrap">
+                                  <span className="text-[#2C1A0E] font-semibold text-sm tabular-nums whitespace-nowrap">
                                     S/ {prod.precio.toFixed(2)}
                                   </span>
                                 ) : (
-                                  <span className="text-xs xl:text-sm text-neutral-400 italic">
+                                  <span className="text-xs text-stone-400 italic">
                                     En menú completo
                                   </span>
                                 )}
                               </td>
 
-                              <td className="py-3 xl:py-3.5 px-4 xl:px-6">
+                              <td className="py-3 px-4">
                                 <span
-                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs xl:text-sm font-medium ${
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
                                     prod.activo
                                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                       : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
@@ -616,16 +616,16 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 </span>
                               </td>
 
-                              <td className="py-2.5 xl:py-3 px-4 xl:px-6 text-right">
+                              <td className="py-3 px-4 text-right">
                                 <div className="inline-flex items-center justify-end gap-1.5">
                                   <button
                                     type="button"
                                     onClick={(e) => handleAbrirEditar(prod, e.currentTarget)}
                                     title="Editar producto o componente"
                                     aria-label="Editar producto o componente"
-                                    className="w-8 h-8 xl:w-9 xl:h-9 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 transition-colors shadow-2xs cursor-pointer"
+                                    className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 transition-colors shadow-2xs cursor-pointer"
                                   >
-                                    <Edit2 className="w-4 h-4 xl:w-4.5 xl:h-4.5" />
+                                    <Edit2 className="w-4 h-4" />
                                   </button>
 
                                   {prod.activo ? (
@@ -640,9 +640,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                       }
                                       title="Desactivar"
                                       aria-label="Desactivar"
-                                      className="w-8 h-8 xl:w-9 xl:h-9 inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#B84600] transition-colors shadow-2xs cursor-pointer"
+                                      className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#B84600] transition-colors shadow-2xs cursor-pointer"
                                     >
-                                      <PowerOff className="w-4 h-4 xl:w-4.5 xl:h-4.5" />
+                                      <PowerOff className="w-4 h-4" />
                                     </button>
                                   ) : (
                                     <button
