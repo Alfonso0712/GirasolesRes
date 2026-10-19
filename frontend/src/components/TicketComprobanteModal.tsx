@@ -125,6 +125,11 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                       <span className="w-12 text-right">{l.precioUnitario.toFixed(2)}</span>
                       <span className="w-14 text-right font-semibold">{l.subtotal.toFixed(2)}</span>
                     </div>
+                    {l.elecciones && (
+                      <div className="text-[10px] text-neutral-500 pl-8 italic">
+                        {l.elecciones}{l.incluye ? ` (incluye ${l.incluye})` : ''}
+                      </div>
+                    )}
                     {l.observacion && (
                       <div className="text-[10px] text-neutral-500 pl-8 italic">
                         * {l.observacion}

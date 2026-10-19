@@ -3,6 +3,7 @@ import { pedidoService } from '../services/pedidoService';
 import { getMesasService } from '../services/mesaService';
 import { menuDiaService } from '../services/menuDiaService';
 import type { MesaItem } from '../types/mesa';
+import type { MenuCompletoDia } from '../types/menuDia';
 import type {
   ProductoMenuPedido,
   LineaBorrador,
@@ -28,8 +29,9 @@ export function usePedidoMesaManagement({
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [erroresLineas, setErroresLineas] = useState<Record<string, string>>({});
 
-  // Catálogo y Mesas
+  // Catálogo, Menús Completos y Mesas
   const [catalogo, setCatalogo] = useState<ProductoMenuPedido[]>([]);
+  const [menusCompletos, setMenusCompletos] = useState<MenuCompletoDia[]>([]);
   const [mesasLibres, setMesasLibres] = useState<MesaItem[]>([]);
   const [mesaSeleccionada, setMesaSeleccionada] = useState<MesaItem | null>(null);
 
@@ -56,6 +58,7 @@ export function usePedidoMesaManagement({
 
   const [modalNotaOpen, setModalNotaOpen] = useState(false);
   const [lineaParaNota, setLineaParaNota] = useState<LineaBorrador | null>(null);
+  const [lineaIndexParaNota, setLineaIndexParaNota] = useState<number | null>(null);
 
   // UUID de solicitud para idempotencia (RNF-21)
   const solicitudIdRef = useRef<string>(
@@ -91,6 +94,10 @@ export function usePedidoMesaManagement({
       setMenuDefinido(esDefinido);
       setCatalogo(prods);
       setMesasLibres(mesas);
+
+      if (menuHoy?.menusCompletos) {
+        setMenusCompletos(menuHoy.menusCompletos);
+      }
 
       if (mesaIdInicial) {
         // Verificar si la mesa ya tiene un pedido activo (deriva a ampliación CUS07.2)
@@ -157,15 +164,22 @@ export function usePedidoMesaManagement({
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const prods = await pedidoService.obtenerCatalogoPedido(token);
+        const [prods, menuHoy] = await Promise.all([
+          pedidoService.obtenerCatalogoPedido(token),
+          menuDiaService.obtenerMenuHoy(token).catch(() => null)
+        ]);
+
         setCatalogo(prods);
+        if (menuHoy?.menusCompletos) {
+          setMenusCompletos(menuHoy.menusCompletos);
+        }
 
         // Validar si algún producto en el borrador pasó a estar agotado
         const agotadosIds = new Set(prods.filter((p) => p.agotado || !p.disponible).map((p) => p.id));
         if (agotadosIds.size > 0) {
           setLineasBorrador((prev) =>
             prev.map((linea) => {
-              if (agotadosIds.has(linea.productoId)) {
+              if (linea.productoId && agotadosIds.has(linea.productoId)) {
                 return { ...linea, agotado: true };
               }
               return linea;
@@ -175,7 +189,7 @@ export function usePedidoMesaManagement({
           setErroresLineas((prev) => {
             const next = { ...prev };
             lineasBorrador.forEach((l) => {
-              if (agotadosIds.has(l.productoId)) {
+              if (l.productoId && agotadosIds.has(l.productoId)) {
                 next[l.productoId] = `${l.nombre} se agotó. Elija otro plato.`;
               }
             });
@@ -192,14 +206,13 @@ export function usePedidoMesaManagement({
     return () => clearInterval(interval);
   }, [token, lineasBorrador, onLogout]);
 
-  // Acciones sobre el pedido en armado
+  // Agregar producto de carta al borrador
   const agregarProducto = (prod: ProductoMenuPedido) => {
     if (prod.agotado || !prod.disponible) return;
 
     setErrorGeneral(null);
 
     setLineasBorrador((prev) => {
-      // Regla: Si tiene la misma observación (vacía inicialmente), suma cantidad; máx 20
       const index = prev.findIndex(
         (l) => l.productoId === prod.id && (!l.observacion || l.observacion.trim() === '')
       );
@@ -220,6 +233,7 @@ export function usePedidoMesaManagement({
       return [
         ...prev,
         {
+          id: `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
           productoId: prod.id,
           nombre: prod.nombre,
           precioUnitario: prod.precio,
@@ -231,7 +245,6 @@ export function usePedidoMesaManagement({
       ];
     });
 
-    // Limpiar error previo en la línea
     if (erroresLineas[prod.id]) {
       setErroresLineas((prev) => {
         const copy = { ...prev };
@@ -241,16 +254,124 @@ export function usePedidoMesaManagement({
     }
   };
 
+  // Agregar menú completo al borrador (RV-164 / RV-165)
+  const agregarMenuCompleto = (
+    menu: MenuCompletoDia,
+    elecciones: { parte: string; productoId: string; productoNombre: string }[],
+    observacion = ''
+  ) => {
+    setErrorGeneral(null);
+    const obsNormalizada = observacion.trim();
+
+    setLineasBorrador((prev) => {
+      // Regla RV-164: Si coincide menú, observación y elecciones exactas, suma la cantidad
+      const index = prev.findIndex((l) => {
+        if (l.menuCompletoId !== menu.id) return false;
+        if ((l.observacion || '').trim().toLowerCase() !== obsNormalizada.toLowerCase()) return false;
+        if (!l.elecciones || l.elecciones.length !== elecciones.length) return false;
+        return elecciones.every((e) =>
+          l.elecciones!.some(
+            (le) =>
+              le.parte.toLowerCase() === e.parte.toLowerCase() &&
+              le.productoId.toLowerCase() === e.productoId.toLowerCase()
+          )
+        );
+      });
+
+      if (index >= 0) {
+        const linea = prev[index];
+        if (linea.cantidad >= 20) return prev;
+        const nuevaCantidad = linea.cantidad + 1;
+        const copia = [...prev];
+        copia[index] = {
+          ...linea,
+          cantidad: nuevaCantidad,
+          subtotal: Number((nuevaCantidad * linea.precioUnitario).toFixed(2))
+        };
+        return copia;
+      }
+
+      const nuevaLinea: LineaBorrador = {
+        id: `mc-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        menuCompletoId: menu.id,
+        nombre: menu.nombre,
+        incluye: menu.incluye,
+        precioUnitario: menu.precio,
+        cantidad: 1,
+        observacion: obsNormalizada,
+        subtotal: menu.precio,
+        agotado: false,
+        elecciones: elecciones
+      };
+
+      return [...prev, nuevaLinea];
+    });
+  };
+
+  // Repetir combinación en un toque (RV-165)
+  const repetirLinea = (lineaIndex: number) => {
+    setErrorGeneral(null);
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const linea = prev[lineaIndex];
+      if (linea.cantidad >= 20) return prev;
+      const nuevaCantidad = linea.cantidad + 1;
+      const copia = [...prev];
+      copia[lineaIndex] = {
+        ...linea,
+        cantidad: nuevaCantidad,
+        subtotal: Number((nuevaCantidad * linea.precioUnitario).toFixed(2))
+      };
+      return copia;
+    });
+  };
+
+  const disminuirLinea = (lineaIndex: number) => {
+    setErrorGeneral(null);
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const linea = prev[lineaIndex];
+      if (linea.cantidad > 1) {
+        const nuevaCantidad = linea.cantidad - 1;
+        const copia = [...prev];
+        copia[lineaIndex] = {
+          ...linea,
+          cantidad: nuevaCantidad,
+          subtotal: Number((nuevaCantidad * linea.precioUnitario).toFixed(2))
+        };
+        return copia;
+      }
+      return prev.filter((_, i) => i !== lineaIndex);
+    });
+  };
+
+  const actualizarCantidadByIndex = (lineaIndex: number, cantidad: number) => {
+    if (cantidad < 1 || cantidad > 20) return;
+    setErrorGeneral(null);
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const copia = [...prev];
+      copia[lineaIndex] = {
+        ...copia[lineaIndex],
+        cantidad,
+        subtotal: Number((cantidad * copia[lineaIndex].precioUnitario).toFixed(2))
+      };
+      return copia;
+    });
+  };
+
+  const quitarLineaByIndex = (lineaIndex: number) => {
+    setLineasBorrador((prev) => prev.filter((_, i) => i !== lineaIndex));
+  };
+
+  // Métodos retrocompatibles basados en productoId
   const disminuirProducto = (productoId: string, observacion = '') => {
     setErrorGeneral(null);
-
     setLineasBorrador((prev) => {
       const index = prev.findIndex(
         (l) => l.productoId === productoId && l.observacion === observacion
       );
-
       if (index < 0) return prev;
-
       const linea = prev[index];
       if (linea.cantidad > 1) {
         const nuevaCantidad = linea.cantidad - 1;
@@ -262,23 +383,18 @@ export function usePedidoMesaManagement({
         };
         return copia;
       }
-
-      // Si llega a 0, se remueve la línea
       return prev.filter((_, i) => i !== index);
     });
   };
 
   const actualizarCantidad = (productoId: string, cantidad: number, observacion = '') => {
     if (cantidad < 1 || cantidad > 20) return;
-
     setErrorGeneral(null);
-
     setLineasBorrador((prev) => {
       const index = prev.findIndex(
         (l) => l.productoId === productoId && l.observacion === observacion
       );
       if (index < 0) return prev;
-
       const copia = [...prev];
       copia[index] = {
         ...copia[index],
@@ -301,17 +417,33 @@ export function usePedidoMesaManagement({
   };
 
   const abrirModalNota = (linea: LineaBorrador) => {
+    const idx = lineasBorrador.indexOf(linea);
     setLineaParaNota(linea);
+    setLineaIndexParaNota(idx >= 0 ? idx : null);
     setModalNotaOpen(true);
   };
 
+  const abrirModalNotaByIndex = (index: number) => {
+    if (index >= 0 && index < lineasBorrador.length) {
+      setLineaParaNota(lineasBorrador[index]);
+      setLineaIndexParaNota(index);
+      setModalNotaOpen(true);
+    }
+  };
+
   const guardarNota = (nuevaObservacion: string) => {
+    if (lineaIndexParaNota !== null && lineaIndexParaNota >= 0 && lineaIndexParaNota < lineasBorrador.length) {
+      guardarNotaByIndex(lineaIndexParaNota, nuevaObservacion);
+      return;
+    }
+
     if (!lineaParaNota) return;
 
     setLineasBorrador((prev) => {
       const index = prev.findIndex(
         (l) =>
           l.productoId === lineaParaNota.productoId &&
+          l.menuCompletoId === lineaParaNota.menuCompletoId &&
           l.observacion === lineaParaNota.observacion
       );
       if (index < 0) return prev;
@@ -326,6 +458,22 @@ export function usePedidoMesaManagement({
 
     setModalNotaOpen(false);
     setLineaParaNota(null);
+    setLineaIndexParaNota(null);
+  };
+
+  const guardarNotaByIndex = (lineaIndex: number, nuevaObservacion: string) => {
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const copia = [...prev];
+      copia[lineaIndex] = {
+        ...copia[lineaIndex],
+        observacion: nuevaObservacion.trim()
+      };
+      return copia;
+    });
+    setModalNotaOpen(false);
+    setLineaParaNota(null);
+    setLineaIndexParaNota(null);
   };
 
   const solicitarDescarte = () => {
@@ -362,7 +510,7 @@ export function usePedidoMesaManagement({
   const totalGeneralConExistente = totalCalculado + (pedidoExistente?.total || 0);
   const cantidadTotalProductos = lineasBorrador.reduce((acc, l) => acc + l.cantidad, 0);
 
-  // Registro en el servidor
+  // Registro en el servidor (soporta productos de carta y menús completos con elecciones)
   const registrarPedido = async (_onSuccess?: () => void) => {
     setErrorGeneral(null);
 
@@ -388,15 +536,22 @@ export function usePedidoMesaManagement({
     setRegistrando(true);
 
     try {
+      const lineasPayload = lineasBorrador.map((l) => ({
+        productoId: l.productoId ?? undefined,
+        menuCompletoId: l.menuCompletoId ?? undefined,
+        elecciones: l.elecciones?.map((e) => ({
+          parte: e.parte,
+          productoId: e.productoId
+        })),
+        cantidad: l.cantidad,
+        observacion: l.observacion?.trim() || undefined
+      }));
+
       if (modo === 'nuevo') {
         const payload = {
           solicitudId: solicitudIdRef.current,
           mesaId: mesaSeleccionada.id,
-          lineas: lineasBorrador.map((l) => ({
-            productoId: l.productoId,
-            cantidad: l.cantidad,
-            observacion: l.observacion || undefined
-          })),
+          lineas: lineasPayload,
           notas: notas.trim() || undefined
         };
 
@@ -411,11 +566,7 @@ export function usePedidoMesaManagement({
       } else if (modo === 'ampliacion' && pedidoExistente) {
         const payload = {
           solicitudId: solicitudIdRef.current,
-          lineas: lineasBorrador.map((l) => ({
-            productoId: l.productoId,
-            cantidad: l.cantidad,
-            observacion: l.observacion || undefined
-          }))
+          lineas: lineasPayload
         };
 
         const res: AgregarLineasResultDto = await pedidoService.agregarLineas(
@@ -440,13 +591,13 @@ export function usePedidoMesaManagement({
       if (err.status === 409) {
         if (err.codigo === 'mesa_ocupada') {
           setErrorGeneral(err.message || 'La mesa ya tiene un pedido abierto. Agregue productos a ese pedido.');
-        } else if (err.codigo === 'platos_agotados') {
-          setErrorGeneral(err.message || 'Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.');
+        } else if (err.codigo === 'platos_agotados' || err.codigo === 'opcion_agotada') {
+          setErrorGeneral(err.message || 'Hay platos u opciones agotadas en su pedido. Revise las líneas marcadas.');
           if (Array.isArray(err.productosAgotados)) {
             const nuevosErrores: Record<string, string> = {};
             setLineasBorrador((prev) =>
               prev.map((l) => {
-                if (err.productosAgotados.includes(l.productoId)) {
+                if (l.productoId && err.productosAgotados.includes(l.productoId)) {
                   nuevosErrores[l.productoId] = `${l.nombre} se agotó. Elija otro plato.`;
                   return { ...l, agotado: true };
                 }
@@ -455,20 +606,13 @@ export function usePedidoMesaManagement({
             );
             setErroresLineas(nuevosErrores);
           }
-        } else if (err.codigo === 'pedido_cerrado') {
-          setErrorGeneral('El pedido ya no puede modificarse porque fue pagado o anulado.');
         } else {
-          setErrorGeneral(err.message || 'Conflicto al procesar el pedido.');
+          setErrorGeneral(err.message || 'Conflicto al procesar el pedido. Intente nuevamente.');
         }
-      } else if (err.status === 400) {
-        setErrorGeneral(err.message || 'Datos del pedido inválidos. Revise las líneas.');
-      } else {
-        setErrorGeneral(
-          modo === 'nuevo'
-            ? 'No se pudo registrar el pedido. Su pedido sigue en pantalla; intente nuevamente.'
-            : 'No se pudieron agregar los productos. El pedido no cambió; intente nuevamente.'
-        );
+        return;
       }
+
+      setErrorGeneral(err.message || 'No se pudo registrar el pedido. Su pedido sigue en pantalla; intente nuevamente.');
     } finally {
       setRegistrando(false);
     }
@@ -481,6 +625,7 @@ export function usePedidoMesaManagement({
     setErrorGeneral,
     erroresLineas,
     catalogo,
+    menusCompletos,
     mesasLibres,
     mesaSeleccionada,
     setMesaSeleccionada,
@@ -502,11 +647,18 @@ export function usePedidoMesaManagement({
     setModalNotaOpen,
     lineaParaNota,
     agregarProducto,
+    agregarMenuCompleto,
+    repetirLinea,
     disminuirProducto,
+    disminuirLinea,
     actualizarCantidad,
+    actualizarCantidadByIndex,
     quitarLinea,
+    quitarLineaByIndex,
     abrirModalNota,
+    abrirModalNotaByIndex,
     guardarNota,
+    guardarNotaByIndex,
     solicitarDescarte,
     confirmarDescarte,
     reiniciarParaNuevoPedido,

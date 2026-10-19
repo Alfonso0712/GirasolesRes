@@ -11,14 +11,17 @@ import {
   Search,
   ShoppingBag,
   RotateCcw,
-  ArrowLeft
+  ArrowLeft,
+  Copy
 } from 'lucide-react';
 import { usePedidoMesaManagement } from '../hooks/usePedidoMesaManagement';
 import { NotaObservacionModal } from '../components/NotaObservacionModal';
 import { PedidoDescartarModal } from '../components/PedidoDescartarModal';
 import { PedidoConfirmacionModal } from '../components/PedidoConfirmacionModal';
+import { ArmarMenuCompletoModal } from '../components/ArmarMenuCompletoModal';
 import { Button } from '../components/Button';
 import type { UserSession } from '../types/auth';
+import type { MenuCompletoDia } from '../types/menuDia';
 
 interface PedidoMesaPageProps {
   session: UserSession;
@@ -42,6 +45,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     setErrorGeneral,
     erroresLineas,
     catalogo,
+    menusCompletos,
     mesasLibres,
     mesaSeleccionada,
     setMesaSeleccionada,
@@ -62,9 +66,11 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     setModalNotaOpen,
     lineaParaNota,
     agregarProducto,
+    agregarMenuCompleto,
+    repetirLinea,
     disminuirProducto,
-    actualizarCantidad,
-    quitarLinea,
+    disminuirLinea,
+    quitarLineaByIndex,
     abrirModalNota,
     guardarNota,
     solicitarDescarte,
@@ -81,11 +87,19 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     onLogout,
   });
 
+  // Modal para armado de Menú Completo paso a paso
+  const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDia | null>(null);
+  const [modalArmarOpen, setModalArmarOpen] = useState(false);
+
   // Visibilidad del resumen en dispositivos móviles (drawer / bottom sheet)
   const [drawerMovilAbierto, setDrawerMovilAbierto] = useState(false);
 
   // Categorías presentes en el catálogo
-  const categorias = ['Todas', ...Array.from(new Set(catalogo.map((p) => p.categoria)))];
+  const categorias = [
+    'Todas',
+    ...(menusCompletos.length > 0 ? ['Menús Completos'] : []),
+    ...Array.from(new Set(catalogo.map((p) => p.categoria)))
+  ];
 
   // Lista de mesas para el selector garantizando que la mesa seleccionada esté incluida
   const opcionesMesas = React.useMemo(() => {
@@ -314,7 +328,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                   </div>
                 )}
               </div>
-            ) : catalogoFiltrado.length === 0 ? (
+            ) : catalogoFiltrado.length === 0 && (categoriaActiva !== 'Menús Completos' && menusCompletos.length === 0) ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8 text-neutral-400">
                 <Utensils className="w-12 h-12 stroke-[1.5] mb-3 text-neutral-300" />
                 <p className="text-sm font-semibold text-neutral-600">
@@ -328,6 +342,95 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               </div>
             ) : (
               <div className="space-y-6">
+                {/* Bloque de Menús Completos de Hoy */}
+                {menusCompletos.length > 0 &&
+                  (categoriaActiva === 'Todas' || categoriaActiva === 'Menús Completos') &&
+                  (!busqueda || menusCompletos.some((m) => m.nombre.toLowerCase().includes(busqueda.toLowerCase()))) && (
+                  <div>
+                    <h3 className="text-xs uppercase font-bold tracking-wider text-[#D35400] mb-2.5 flex items-center gap-2 font-sans">
+                      <Utensils className="w-3.5 h-3.5" />
+                      <span>Menús Completos de Hoy</span>
+                      <div className="h-px bg-amber-200 flex-1" />
+                    </h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
+                      {menusCompletos
+                        .filter((mc) => !busqueda || mc.nombre.toLowerCase().includes(busqueda.toLowerCase()))
+                        .map((mc) => {
+                          const cantEnBorrador = lineasBorrador
+                            .filter((l) => l.menuCompletoId === mc.id)
+                            .reduce((sum, l) => sum + l.cantidad, 0);
+
+                          return (
+                            <div
+                              key={mc.id}
+                              className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between relative ${
+                                !mc.disponible
+                                  ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-400 select-none opacity-75'
+                                  : cantEnBorrador > 0
+                                  ? 'bg-amber-50/50 border-[#D35400] shadow-xs'
+                                  : 'bg-white border-neutral-200 hover:border-neutral-300 hover:shadow-xs'
+                              }`}
+                            >
+                              {cantEnBorrador > 0 && mc.disponible && (
+                                <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#D35400] text-white text-xs font-bold flex items-center justify-center shadow-xs z-10 font-sans tabular-nums">
+                                  {cantEnBorrador}
+                                </span>
+                              )}
+                              <div>
+                                <div className="flex items-start justify-between gap-1 mb-1">
+                                  <h4 className="font-bold text-sm text-[#2C1A0E] font-sans line-clamp-1" title={mc.nombre}>
+                                    {mc.nombre}
+                                  </h4>
+                                  <span className="font-extrabold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap">
+                                    S/ {mc.precio.toFixed(2)}
+                                  </span>
+                                </div>
+                                {mc.incluye && (
+                                  <p className="text-[11px] text-[#7C6F66] font-sans mb-1.5 line-clamp-1">
+                                    Incluye: {mc.incluye}
+                                  </p>
+                                )}
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  {mc.partes.map((p) => (
+                                    <span
+                                      key={p.id}
+                                      className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium font-sans"
+                                    >
+                                      {p.nombre}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <div className="pt-2 border-t border-neutral-100 mt-1 flex items-center justify-between gap-2">
+                                {!mc.disponible ? (
+                                  <span
+                                    className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200 w-full text-center font-sans"
+                                    title={mc.motivoNoDisponible || undefined}
+                                  >
+                                    No disponible hoy
+                                  </span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setMenuParaArmar(mc);
+                                      setModalArmarOpen(true);
+                                    }}
+                                    className="w-full py-1.5 px-3 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#D35400] border border-amber-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer font-sans"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" />
+                                    <span>Armar menú</span>
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
                 {Object.entries(productosPorCategoria).map(([catNombre, prods]) => (
                   <div key={catNombre}>
                     {categoriaActiva === 'Todas' && (
@@ -465,11 +568,11 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               </div>
             ) : (
               lineasBorrador.map((linea, index) => {
-                const tieneError = Boolean(erroresLineas[linea.productoId] || linea.agotado);
+                const tieneError = Boolean(erroresLineas[linea.productoId || ''] || linea.agotado);
 
                 return (
                   <div
-                    key={`${linea.productoId}-${linea.observacion}-${index}`}
+                    key={`${linea.productoId || linea.menuCompletoId}-${linea.observacion}-${index}`}
                     className={`p-3 rounded-xl border transition-all ${
                       tieneError
                         ? 'bg-rose-50/70 border-rose-300 text-rose-900 shadow-2xs'
@@ -482,11 +585,17 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         <span className="font-bold text-xs sm:text-sm text-[#2C1A0E] block truncate" title={linea.nombre}>
                           {linea.nombre}
                         </span>
-                        <span className="text-[11px] text-[#7C6F66] tabular-nums">
+                        {linea.elecciones && linea.elecciones.length > 0 && (
+                          <span className="text-[11px] text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
+                            {linea.elecciones.map((e) => e.productoNombre).join(' + ')}
+                            {linea.incluye ? ` (incluye ${linea.incluye})` : ''}
+                          </span>
+                        )}
+                        <span className="text-[11px] text-[#7C6F66] tabular-nums whitespace-nowrap">
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
-                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums">
+                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {linea.subtotal.toFixed(2)}
                       </span>
                     </div>
@@ -495,7 +604,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                     {tieneError && (
                       <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-[11px] text-rose-800 font-semibold flex items-center gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
-                        <span>{erroresLineas[linea.productoId] || 'Plato marcado como agotado.'}</span>
+                        <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
                     )}
 
@@ -516,27 +625,43 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
                     {/* Controles de línea: Botón "+ Nota" a la izquierda y Controles de Cantidad (+/-) a la derecha */}
                     <div className="mt-2.5 pt-2 border-t border-neutral-200/60 flex items-center justify-between gap-2">
-                      {/* Botón compacto o ícono "+ Nota" */}
-                      <button
-                        type="button"
-                        onClick={() => abrirModalNota(linea)}
-                        title={linea.observacion ? `Editar observación: "${linea.observacion}"` : 'Agregar nota de preparación (máx 100 caracteres)'}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border shadow-2xs ${
-                          linea.observacion
-                            ? 'bg-amber-100/80 border-amber-300 text-amber-900 hover:bg-amber-200'
-                            : 'bg-white border-amber-300/80 text-[#D35400] hover:bg-amber-50 hover:border-[#D35400]'
-                        }`}
-                      >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>{linea.observacion ? 'Editar Nota' : '+ Nota'}</span>
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        {/* Botón compacto o ícono "+ Nota" */}
+                        <button
+                          type="button"
+                          onClick={() => abrirModalNota(linea)}
+                          title={linea.observacion ? `Editar observación: "${linea.observacion}"` : 'Agregar nota de preparación (máx 100 caracteres)'}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border shadow-2xs ${
+                            linea.observacion
+                              ? 'bg-amber-100/80 border-amber-300 text-amber-900 hover:bg-amber-200'
+                              : 'bg-white border-amber-300/80 text-[#D35400] hover:bg-amber-50 hover:border-[#D35400]'
+                          }`}
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>{linea.observacion ? 'Editar Nota' : '+ Nota'}</span>
+                        </button>
+
+                        {/* Botón Repetir (RV-165) para Menús Completos */}
+                        {linea.menuCompletoId && (
+                          <button
+                            type="button"
+                            onClick={() => repetirLinea(index)}
+                            disabled={linea.cantidad >= 20}
+                            title="Repetir esta misma combinación de menú completo (RV-165)"
+                            className="px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-[#D35400] border border-amber-200 flex items-center gap-1 transition-colors cursor-pointer shadow-2xs font-sans disabled:opacity-40"
+                          >
+                            <Copy className="w-3 h-3" />
+                            <span>Repetir</span>
+                          </button>
+                        )}
+                      </div>
 
                       <div className="flex items-center gap-2">
                         {/* Control de cantidad rápido + / - */}
                         <div className="flex items-center bg-white border border-neutral-200 rounded-lg shadow-2xs">
                           <button
                             type="button"
-                            onClick={() => disminuirProducto(linea.productoId, linea.observacion)}
+                            onClick={() => disminuirLinea(index)}
                             className="w-7 h-7 rounded-l-lg flex items-center justify-center text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors cursor-pointer active:scale-95"
                             aria-label="Restar una unidad"
                             title="Restar una unidad"
@@ -548,13 +673,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           </span>
                           <button
                             type="button"
-                            onClick={() =>
-                              actualizarCantidad(
-                                linea.productoId,
-                                Math.min(20, linea.cantidad + 1),
-                                linea.observacion
-                              )
-                            }
+                            onClick={() => repetirLinea(index)}
                             disabled={linea.cantidad >= 20}
                             className="w-7 h-7 rounded-r-lg flex items-center justify-center text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 disabled:opacity-30 transition-colors cursor-pointer active:scale-95"
                             aria-label="Sumar una unidad"
@@ -567,7 +686,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         {/* Botón Quitar */}
                         <button
                           type="button"
-                          onClick={() => quitarLinea(linea.productoId, linea.observacion)}
+                          onClick={() => quitarLineaByIndex(index)}
                           className="w-7 h-7 rounded-lg border border-neutral-200 bg-white text-neutral-400 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                           title="Quitar línea del pedido"
                           aria-label="Quitar línea"
@@ -715,7 +834,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
             <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
               {lineasBorrador.map((linea, idx) => {
-                const tieneError = Boolean(erroresLineas[linea.productoId] || linea.agotado);
+                const tieneError = Boolean(erroresLineas[linea.productoId || ''] || linea.agotado);
                 return (
                   <div
                     key={`${linea.productoId}-${linea.observacion}-${idx}`}
@@ -731,11 +850,17 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         <span className="font-bold text-xs sm:text-sm text-[#2C1A0E] block truncate">
                           {linea.nombre}
                         </span>
-                        <span className="text-[11px] text-[#7C6F66] tabular-nums">
+                        {linea.elecciones && linea.elecciones.length > 0 && (
+                          <span className="text-[11px] text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
+                            {linea.elecciones.map((e) => e.productoNombre).join(' + ')}
+                            {linea.incluye ? ` (incluye ${linea.incluye})` : ''}
+                          </span>
+                        )}
+                        <span className="text-[11px] text-[#7C6F66] tabular-nums whitespace-nowrap">
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
-                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums">
+                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {linea.subtotal.toFixed(2)}
                       </span>
                     </div>
@@ -744,7 +869,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                     {tieneError && (
                       <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-[11px] text-rose-800 font-semibold flex items-center gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
-                        <span>{erroresLineas[linea.productoId] || 'Plato marcado como agotado.'}</span>
+                        <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
                     )}
 
@@ -764,24 +889,40 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
                     {/* Controles de línea: Botón "+ Nota" a la izquierda y Controles de Cantidad (+/-) a la derecha */}
                     <div className="mt-2.5 pt-2 border-t border-neutral-200/60 flex items-center justify-between gap-2">
-                      <button
-                        type="button"
-                        onClick={() => abrirModalNota(linea)}
-                        className={`min-h-[36px] px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border shadow-2xs ${
-                          linea.observacion
-                            ? 'bg-amber-100/80 border-amber-300 text-amber-900'
-                            : 'bg-white border-amber-300/80 text-[#D35400]'
-                        }`}
-                      >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>{linea.observacion ? 'Editar Nota' : '+ Nota'}</span>
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => abrirModalNota(linea)}
+                          className={`min-h-[36px] px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border shadow-2xs ${
+                            linea.observacion
+                              ? 'bg-amber-100/80 border-amber-300 text-amber-900'
+                              : 'bg-white border-amber-300/80 text-[#D35400]'
+                          }`}
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>{linea.observacion ? 'Editar Nota' : '+ Nota'}</span>
+                        </button>
+
+                        {/* Botón Repetir (RV-165) */}
+                        {linea.menuCompletoId && (
+                          <button
+                            type="button"
+                            onClick={() => repetirLinea(idx)}
+                            disabled={linea.cantidad >= 20}
+                            title="Repetir esta misma combinación de menú completo (RV-165)"
+                            className="min-h-[36px] px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-[#D35400] border border-amber-200 flex items-center gap-1 shadow-2xs font-sans disabled:opacity-40"
+                          >
+                            <Copy className="w-3 h-3" />
+                            <span>Repetir</span>
+                          </button>
+                        )}
+                      </div>
 
                       <div className="flex items-center gap-2">
                         <div className="flex items-center bg-white border border-neutral-200 rounded-lg shadow-2xs">
                           <button
                             type="button"
-                            onClick={() => disminuirProducto(linea.productoId, linea.observacion)}
+                            onClick={() => disminuirLinea(idx)}
                             className="min-h-[36px] min-w-[36px] flex items-center justify-center text-neutral-600 hover:bg-neutral-100 active:scale-95"
                             aria-label="Restar una unidad"
                           >
@@ -792,13 +933,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           </span>
                           <button
                             type="button"
-                            onClick={() =>
-                              actualizarCantidad(
-                                linea.productoId,
-                                Math.min(20, linea.cantidad + 1),
-                                linea.observacion
-                              )
-                            }
+                            onClick={() => repetirLinea(idx)}
                             disabled={linea.cantidad >= 20}
                             className="min-h-[36px] min-w-[36px] flex items-center justify-center text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 active:scale-95"
                             aria-label="Sumar una unidad"
@@ -809,7 +944,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
                         <button
                           type="button"
-                          onClick={() => quitarLinea(linea.productoId, linea.observacion)}
+                          onClick={() => quitarLineaByIndex(idx)}
                           className="min-h-[36px] min-w-[36px] rounded-lg border border-neutral-200 bg-white text-rose-600 hover:bg-rose-50 flex items-center justify-center active:scale-95"
                           title="Quitar línea del pedido"
                           aria-label="Quitar línea"
@@ -878,6 +1013,20 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
         isOpen={modalDescartarOpen}
         onClose={() => setModalDescartarOpen(false)}
         onConfirmarDescarte={confirmarDescarte}
+      />
+
+      <ArmarMenuCompletoModal
+        isOpen={modalArmarOpen}
+        onClose={() => {
+          setModalArmarOpen(false);
+          setMenuParaArmar(null);
+        }}
+        menu={menuParaArmar}
+        onConfirm={(elecciones, obs) => {
+          if (menuParaArmar) {
+            agregarMenuCompleto(menuParaArmar, elecciones, obs);
+          }
+        }}
       />
 
       {exitoData && (

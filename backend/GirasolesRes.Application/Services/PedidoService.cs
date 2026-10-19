@@ -14,17 +14,20 @@ public class PedidoService : IPedidoService
     private readonly IMesaRepository _mesaRepository;
     private readonly IProductoRepository _productoRepository;
     private readonly IMenuDiaRepository _menuDiaRepository;
+    private readonly IMenuCompletoRepository? _menuCompletoRepository;
 
     public PedidoService(
         IPedidoRepository pedidoRepository,
         IMesaRepository mesaRepository,
         IProductoRepository productoRepository,
-        IMenuDiaRepository menuDiaRepository)
+        IMenuDiaRepository menuDiaRepository,
+        IMenuCompletoRepository? menuCompletoRepository = null)
     {
         _pedidoRepository = pedidoRepository;
         _mesaRepository = mesaRepository;
         _productoRepository = productoRepository;
         _menuDiaRepository = menuDiaRepository;
+        _menuCompletoRepository = menuCompletoRepository;
     }
 
     public async Task<RegistrarPedidoResultDto> RegistrarPedidoMesaAsync(
@@ -66,74 +69,16 @@ public class PedidoService : IPedidoService
             throw new PedidoConflictException("mesa_ocupada", string.Format(MensajesCatalogo.MSG_95, mesa.Mes_Nombre));
         }
 
-        // 3. Validación de Líneas (RV-61, RV-62, RV-64)
-        if (request.Lineas == null || request.Lineas.Count == 0)
-        {
-            throw new ArgumentException(MensajesCatalogo.MSG_97);
-        }
-
-        foreach (var l in request.Lineas)
-        {
-            if (l.Cantidad < 1 || l.Cantidad > 20)
-            {
-                throw new ArgumentOutOfRangeException(nameof(l.Cantidad), MensajesCatalogo.MSG_98);
-            }
-            if (l.Observacion != null && l.Observacion.Trim().Length > 100)
-            {
-                throw new ArgumentException(MensajesCatalogo.MSG_99);
-            }
-        }
-
-        // 4. Validación de Productos y Disponibilidad (RV-63, RV-65, RN-54, CUS07.1)
+        // 3 y 4. Validación de Productos y Menús Completos (RV-61, RV-62, RV-63, RV-64, RV-65, RV-163, RV-166, RN-54, CUS07.1)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue))
+        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue && menuDia.Men_MenusCompletos.Count == 0))
         {
             throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
         }
 
-        var productoIds = request.Lineas.Select(l => l.ProductoId).Distinct().ToList();
-        var productosMap = new Dictionary<Guid, Producto>();
-        var productosAgotadosOInvalidos = new List<Guid>();
-
-        foreach (var pid in productoIds)
-        {
-            var prod = await _productoRepository.ObtenerPorIdAsync(pid, ct);
-            if (prod == null || !prod.Pro_Activo)
-            {
-                productosAgotadosOInvalidos.Add(pid);
-                continue;
-            }
-
-            productosMap[pid] = prod;
-
-            if (menuDia != null)
-            {
-                var platoMenu = menuDia.Men_Platos.FirstOrDefault(p => p.Id_Producto == pid);
-                var esDesayuno = menuDia.Id_Desayuno == pid;
-
-                if (platoMenu == null && !esDesayuno)
-                {
-                    productosAgotadosOInvalidos.Add(pid);
-                }
-                else if (platoMenu != null && platoMenu.Mdp_Agotado)
-                {
-                    productosAgotadosOInvalidos.Add(pid);
-                }
-            }
-        }
-
-        if (productosAgotadosOInvalidos.Count > 0)
-        {
-            var nombres = productosAgotadosOInvalidos
-                .Select(id => productosMap.TryGetValue(id, out var p) ? p.Pro_Nombre : "Plato")
-                .Distinct()
-                .ToList();
-
-            var detalleMsg = string.Format(MensajesCatalogo.MSG_79, string.Join(", ", nombres)) + " " + MensajesCatalogo.MSG_103;
-            throw new PedidoConflictException("platos_agotados", detalleMsg, productosAgotadosOInvalidos);
-        }
+        var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
 
         // 5. Generación de Correlativos Diarios (RN-49)
         var siguienteNumeroPedido = await _pedidoRepository.ObtenerSiguienteNumeroDiarioAsync(fechaOperativa, ct);
@@ -150,19 +95,8 @@ public class PedidoService : IPedidoService
             request.Notas
         );
 
-        foreach (var linea in request.Lineas)
-        {
-            var prod = productosMap[linea.ProductoId];
-            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio.GetValueOrDefault(), linea.Observacion);
-        }
-
-        // Crear Comanda para cocina
         var comanda = new Comanda(pedido.Id_Pedido, siguienteNumeroComanda, mesa.Mes_Nombre, cmdEsAdicional: false);
-        foreach (var detalle in pedido.Ped_Detalles)
-        {
-            var prod = productosMap[detalle.Id_Producto];
-            comanda.AgregarDetalle(detalle.Id_Producto, prod.Pro_Nombre, detalle.Det_Cantidad, detalle.Det_Observacion);
-        }
+        AplicarLineasAPedidoYComanda(pedido, comanda, itemsProcesados);
         pedido.AgregarComanda(comanda);
 
         // Ocupar Mesa
@@ -237,56 +171,16 @@ public class PedidoService : IPedidoService
             throw new ArgumentException(MensajesCatalogo.MSG_109);
         }
 
-        // 4. Validación de Productos y Disponibilidad (RV-63, RV-65, RN-54, CUS08)
+        // 4. Validación de Productos y Menús Completos (RV-63, RV-65, RV-163, RV-166, RN-54, CUS08)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue))
+        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue && menuDia.Men_MenusCompletos.Count == 0))
         {
             throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
         }
 
-        var productoIds = request.Lineas.Select(l => l.ProductoId).Distinct().ToList();
-        var productosMap = new Dictionary<Guid, Producto>();
-        var productosAgotadosOInvalidos = new List<Guid>();
-
-        foreach (var pid in productoIds)
-        {
-            var prod = await _productoRepository.ObtenerPorIdAsync(pid, ct);
-            if (prod == null || !prod.Pro_Activo)
-            {
-                productosAgotadosOInvalidos.Add(pid);
-                continue;
-            }
-
-            productosMap[pid] = prod;
-
-            if (menuDia != null)
-            {
-                var platoMenu = menuDia.Men_Platos.FirstOrDefault(p => p.Id_Producto == pid);
-                var esDesayuno = menuDia.Id_Desayuno == pid;
-
-                if (platoMenu == null && !esDesayuno)
-                {
-                    productosAgotadosOInvalidos.Add(pid);
-                }
-                else if (platoMenu != null && platoMenu.Mdp_Agotado)
-                {
-                    productosAgotadosOInvalidos.Add(pid);
-                }
-            }
-        }
-
-        if (productosAgotadosOInvalidos.Count > 0)
-        {
-            var nombres = productosAgotadosOInvalidos
-                .Select(id => productosMap.TryGetValue(id, out var p) ? p.Pro_Nombre : "Plato")
-                .Distinct()
-                .ToList();
-
-            var detalleMsg = string.Format(MensajesCatalogo.MSG_79, string.Join(", ", nombres)) + " " + MensajesCatalogo.MSG_103;
-            throw new PedidoConflictException("platos_agotados", detalleMsg, productosAgotadosOInvalidos);
-        }
+        var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
 
         // 5. Generación de Correlativos Diarios (RN-49, RN-58)
         var siguienteNumeroPedido = await _pedidoRepository.ObtenerSiguienteNumeroDiarioAsync(fechaOperativa, ct);
@@ -303,12 +197,6 @@ public class PedidoService : IPedidoService
             referenciaNormalizada
         );
 
-        foreach (var linea in request.Lineas)
-        {
-            var prod = productosMap[linea.ProductoId];
-            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio.GetValueOrDefault(), linea.Observacion);
-        }
-
         // Crear Comanda para cocina con rótulo "Para llevar" o "Para llevar - [Referencia]"
         var nombreComanda = string.IsNullOrWhiteSpace(referenciaNormalizada)
             ? "Para llevar"
@@ -320,11 +208,7 @@ public class PedidoService : IPedidoService
         }
 
         var comanda = new Comanda(pedido.Id_Pedido, siguienteNumeroComanda, nombreComanda, cmdEsAdicional: false);
-        foreach (var detalle in pedido.Ped_Detalles)
-        {
-            var prod = productosMap[detalle.Id_Producto];
-            comanda.AgregarDetalle(detalle.Id_Producto, prod.Pro_Nombre, detalle.Det_Cantidad, detalle.Det_Observacion);
-        }
+        AplicarLineasAPedidoYComanda(pedido, comanda, itemsProcesados);
         pedido.AgregarComanda(comanda);
 
         // Guardar Pedido (sin ocupar ninguna mesa)
@@ -388,70 +272,23 @@ public class PedidoService : IPedidoService
             }
         }
 
-        // 4. Validar disponibilidad de productos nuevos (RV-63, RV-65, RN-54, CUS07.2)
+        // 4. Validar disponibilidad de productos nuevos y menús completos (RV-63, RV-65, RV-163, RV-166, RN-54, CUS07.2)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue))
+        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue && menuDia.Men_MenusCompletos.Count == 0))
         {
             throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
         }
 
-        var productoIds = request.Lineas.Select(l => l.ProductoId).Distinct().ToList();
-        var productosMap = new Dictionary<Guid, Producto>();
-        var productosAgotadosOInvalidos = new List<Guid>();
-
-        foreach (var pid in productoIds)
-        {
-            var prod = await _productoRepository.ObtenerPorIdAsync(pid, ct);
-            if (prod == null || !prod.Pro_Activo)
-            {
-                productosAgotadosOInvalidos.Add(pid);
-                continue;
-            }
-
-            productosMap[pid] = prod;
-
-            if (menuDia != null)
-            {
-                var platoMenu = menuDia.Men_Platos.FirstOrDefault(p => p.Id_Producto == pid);
-                var esDesayuno = menuDia.Id_Desayuno == pid;
-
-                if (platoMenu == null && !esDesayuno)
-                {
-                    productosAgotadosOInvalidos.Add(pid);
-                }
-                else if (platoMenu != null && platoMenu.Mdp_Agotado)
-                {
-                    productosAgotadosOInvalidos.Add(pid);
-                }
-            }
-        }
-
-        if (productosAgotadosOInvalidos.Count > 0)
-        {
-            var nombres = productosAgotadosOInvalidos
-                .Select(id => productosMap.TryGetValue(id, out var p) ? p.Pro_Nombre : "Plato")
-                .Distinct()
-                .ToList();
-
-            var detalleMsg = string.Format(MensajesCatalogo.MSG_79, string.Join(", ", nombres)) + " " + MensajesCatalogo.MSG_103;
-            throw new PedidoConflictException("platos_agotados", detalleMsg, productosAgotadosOInvalidos);
-        }
+        var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
 
         // 5. Correlativo de comanda adicional
         var siguienteNumeroComanda = await _pedidoRepository.ObtenerSiguienteNumeroComandaDiarioAsync(fechaOperativa, ct);
         var mesaNombre = pedido.Ped_Mesa?.Mes_Nombre ?? "Mesa";
 
         var comandaAdicional = new Comanda(pedido.Id_Pedido, siguienteNumeroComanda, mesaNombre, cmdEsAdicional: true);
-
-        foreach (var linea in request.Lineas)
-        {
-            var prod = productosMap[linea.ProductoId];
-            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio.GetValueOrDefault(), linea.Observacion);
-            comandaAdicional.AgregarDetalle(linea.ProductoId, prod.Pro_Nombre, linea.Cantidad, linea.Observacion);
-        }
-
+        AplicarLineasAPedidoYComanda(pedido, comandaAdicional, itemsProcesados);
         pedido.AgregarComanda(comandaAdicional);
 
         // 6. Regla RN-53: Si el pedido estaba "Listo", vuelve a "Pendiente" hasta que cocina marque la adicional
@@ -514,11 +351,11 @@ public class PedidoService : IPedidoService
                 }
             }
 
-            // Platos del menú del día
+            // Platos del menú del día (exclusivamente productos de Carta)
             foreach (var plato in menuDia.Men_Platos)
             {
                 var prod = plato.Mdp_Producto ?? await _productoRepository.ObtenerPorIdAsync(plato.Id_Producto, ct);
-                if (prod != null && prod.Pro_Activo)
+                if (prod != null && prod.Pro_Activo && prod.Pro_Tipo == TipoProducto.Carta)
                 {
                     lista.Add(new ProductoMenuPedidoDto(
                         prod.Id_Producto,
@@ -541,15 +378,35 @@ public class PedidoService : IPedidoService
     private static PedidoResponseDto MapearAPedidoDto(Pedido p)
     {
         var lineas = p.Ped_Detalles
-            .Select(d => new LineaPedidoResponseDto(
-                d.Id_Detalle,
-                d.Id_Producto,
-                d.Det_Producto?.Pro_Nombre ?? "Producto",
-                d.Det_PrecioUnitario,
-                d.Det_Cantidad,
-                d.Det_Subtotal,
-                d.Det_Observacion
-            ))
+            .Select(d =>
+            {
+                var nombre = !string.IsNullOrWhiteSpace(d.Det_Nombre)
+                    ? d.Det_Nombre
+                    : d.Det_Producto?.Pro_Nombre ?? "Producto";
+
+                List<EleccionOpcionResponseDto>? elecciones = null;
+                if (d.Det_Opciones.Count > 0)
+                {
+                    elecciones = d.Det_Opciones.Select(o => new EleccionOpcionResponseDto(
+                        o.Lpo_ParteNombre,
+                        o.Id_Producto,
+                        o.Lpo_ProductoNombre
+                    )).ToList();
+                }
+
+                return new LineaPedidoResponseDto(
+                    d.Id_Detalle,
+                    d.Id_Producto,
+                    d.Id_MenuCompleto,
+                    nombre,
+                    d.Det_Incluye,
+                    d.Det_PrecioUnitario,
+                    d.Det_Cantidad,
+                    d.Det_Subtotal,
+                    d.Det_Observacion,
+                    elecciones
+                );
+            })
             .ToList();
 
         return new PedidoResponseDto(
@@ -665,15 +522,35 @@ public class PedidoService : IPedidoService
         var p = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(pedidoId, ct);
         if (p == null) return null;
 
-        var lineas = p.Ped_Detalles.Select(d => new LineaDetalleDto(
-            d.Id_Detalle,
-            d.Id_Producto,
-            d.Det_Producto?.Pro_Nombre ?? "Producto",
-            d.Det_Cantidad,
-            d.Det_PrecioUnitario,
-            d.Det_Subtotal,
-            d.Det_Observacion
-        )).ToList();
+        var lineas = p.Ped_Detalles.Select(d =>
+        {
+            var nombre = !string.IsNullOrWhiteSpace(d.Det_Nombre)
+                ? d.Det_Nombre
+                : d.Det_Producto?.Pro_Nombre ?? "Producto";
+
+            List<EleccionOpcionResponseDto>? elecciones = null;
+            if (d.Det_Opciones.Count > 0)
+            {
+                elecciones = d.Det_Opciones.Select(o => new EleccionOpcionResponseDto(
+                    o.Lpo_ParteNombre,
+                    o.Id_Producto,
+                    o.Lpo_ProductoNombre
+                )).ToList();
+            }
+
+            return new LineaDetalleDto(
+                d.Id_Detalle,
+                d.Id_Producto,
+                d.Id_MenuCompleto,
+                nombre,
+                d.Det_Incluye,
+                d.Det_Cantidad,
+                d.Det_PrecioUnitario,
+                d.Det_Subtotal,
+                d.Det_Observacion,
+                elecciones
+            );
+        }).ToList();
 
         var comandas = p.Ped_Comandas.Select(c => new ComandaDetalleDto(
             c.Id_Comanda,
@@ -767,8 +644,16 @@ public class PedidoService : IPedidoService
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        var preciosOriginales = pedido.Ped_Detalles
-            .GroupBy(d => d.Id_Producto)
+        var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
+
+        var preciosOriginalesProductos = pedido.Ped_Detalles
+            .Where(d => d.Id_Producto.HasValue)
+            .GroupBy(d => d.Id_Producto!.Value)
+            .ToDictionary(g => g.Key, g => g.First().Det_PrecioUnitario);
+
+        var preciosOriginalesMenus = pedido.Ped_Detalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Id_MenuCompleto!.Value)
             .ToDictionary(g => g.Key, g => g.First().Det_PrecioUnitario);
 
         var nuevasLineasPedido = new List<DetallePedido>();
@@ -780,46 +665,69 @@ public class PedidoService : IPedidoService
             throw new InvalidOperationException("El pedido no contiene una comanda asociada.");
         }
 
-        foreach (var l in request.Lineas)
+        foreach (var item in itemsProcesados)
         {
-            decimal precioUnitario;
-            string nombreProducto;
-
-            var prod = await _productoRepository.ObtenerPorIdAsync(l.ProductoId, ct);
-            if (prod == null || !prod.Pro_Activo)
+            decimal precioUnitario = item.PrecioUnitario;
+            if (item.EsMenuCompleto)
             {
-                throw new PedidoConflictException("producto_inactivo", "Uno de los productos seleccionados no se encuentra activo.");
-            }
-            nombreProducto = prod.Pro_Nombre;
+                if (preciosOriginalesMenus.TryGetValue(item.MenuCompletoId!.Value, out var precioGuardado))
+                {
+                    precioUnitario = precioGuardado;
+                }
 
-            if (preciosOriginales.TryGetValue(l.ProductoId, out var precioGuardado))
-            {
-                precioUnitario = precioGuardado;
+                var nuevaLinea = new DetallePedido(
+                    pedido.Id_Pedido,
+                    item.MenuCompletoId.Value,
+                    item.Nombre,
+                    item.Incluye,
+                    item.Cantidad,
+                    precioUnitario,
+                    item.Observacion?.Trim()
+                );
+
+                foreach (var op in item.Opciones)
+                {
+                    nuevaLinea.AgregarOpcion(op.ParteNombre, op.ProductoId, op.ProductoNombre);
+                }
+                nuevasLineasPedido.Add(nuevaLinea);
+
+                var eleccionesStr = string.Join(" + ", item.Opciones.Select(o => o.ProductoNombre));
+                nuevosDetallesComanda.Add(new DetalleComanda(
+                    comandaPrincipal.Id_Comanda,
+                    null,
+                    item.MenuCompletoId.Value,
+                    item.Nombre,
+                    item.Cantidad,
+                    item.Observacion?.Trim(),
+                    eleccionesStr,
+                    item.Incluye
+                ));
             }
             else
             {
-                // Producto nuevo: validar si está agotado en menú del día (MSG-79)
-                if (menuDia != null)
+                if (preciosOriginalesProductos.TryGetValue(item.ProductoId!.Value, out var precioGuardado))
                 {
-                    var platoMenu = menuDia.Men_Platos.FirstOrDefault(p => p.Id_Producto == l.ProductoId);
-                    if (platoMenu != null && platoMenu.Mdp_Agotado)
-                    {
-                        throw new PedidoConflictException("plato_agotado", string.Format(MensajesCatalogo.MSG_79, prod.Pro_Nombre));
-                    }
+                    precioUnitario = precioGuardado;
                 }
-                precioUnitario = prod.Pro_Precio.GetValueOrDefault();
+
+                var nuevaLinea = new DetallePedido(
+                    pedido.Id_Pedido,
+                    item.ProductoId!.Value,
+                    item.Nombre,
+                    item.Cantidad,
+                    precioUnitario,
+                    item.Observacion?.Trim()
+                );
+                nuevasLineasPedido.Add(nuevaLinea);
+
+                nuevosDetallesComanda.Add(new DetalleComanda(
+                    comandaPrincipal.Id_Comanda,
+                    item.ProductoId.Value,
+                    item.Nombre,
+                    item.Cantidad,
+                    item.Observacion?.Trim()
+                ));
             }
-
-            var nuevaLinea = new DetallePedido(pedido.Id_Pedido, l.ProductoId, l.Cantidad, precioUnitario, l.Observacion?.Trim());
-            nuevasLineasPedido.Add(nuevaLinea);
-
-            nuevosDetallesComanda.Add(new DetalleComanda(
-                comandaPrincipal.Id_Comanda,
-                l.ProductoId,
-                nombreProducto,
-                l.Cantidad,
-                l.Observacion?.Trim()
-            ));
         }
 
         pedido.ModificarLineas(nuevasLineasPedido);
@@ -997,4 +905,219 @@ public class PedidoService : IPedidoService
 
         return p.Ped_Estado;
     }
+
+    private class ItemProcesadoLinea
+    {
+        public bool EsMenuCompleto { get; set; }
+        public Guid? ProductoId { get; set; }
+        public int? MenuCompletoId { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Incluye { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public int Cantidad { get; set; }
+        public string? Observacion { get; set; }
+        public List<(string ParteNombre, Guid ProductoId, string ProductoNombre)> Opciones { get; set; } = new();
+    }
+
+    private async Task<List<ItemProcesadoLinea>> ValidarYProcesarLineasAsync(
+        List<LineaPedidoRequest> lineas,
+        MenuDia? menuDia,
+        CancellationToken ct)
+    {
+        if (lineas == null || lineas.Count == 0)
+        {
+            throw new ArgumentException(MensajesCatalogo.MSG_97);
+        }
+
+        var todosProductoIds = new HashSet<Guid>();
+        var todosMenuCompletoIds = new HashSet<int>();
+
+        foreach (var l in lineas)
+        {
+            if (l.MenuCompletoId.HasValue)
+            {
+                todosMenuCompletoIds.Add(l.MenuCompletoId.Value);
+                if (l.Elecciones != null)
+                {
+                    foreach (var e in l.Elecciones)
+                    {
+                        todosProductoIds.Add(e.ProductoId);
+                    }
+                }
+            }
+            else if (l.ProductoId.HasValue)
+            {
+                todosProductoIds.Add(l.ProductoId.Value);
+            }
+            else
+            {
+                throw new ArgumentException(MensajesCatalogo.MSG_97);
+            }
+        }
+
+        var productos = await _productoRepository.ObtenerPorIdsAsync(todosProductoIds, ct);
+        var productosDict = productos.ToDictionary(p => p.Id_Producto);
+
+        Dictionary<int, MenuCompleto> menusDict = new();
+        if (_menuCompletoRepository != null && todosMenuCompletoIds.Count > 0)
+        {
+            var menus = await _menuCompletoRepository.ObtenerTodosAsync(soloActivos: false, ct);
+            menusDict = menus.ToDictionary(m => m.Id_MenuCompleto);
+        }
+
+        var menusHabilitadosHoy = menuDia?.Men_MenusCompletos.Select(m => m.Id_MenuCompleto).ToHashSet() ?? new HashSet<int>();
+        var platosMenuDiaDict = menuDia?.Men_Platos.ToDictionary(p => p.Id_Producto, p => p.Mdp_Agotado) ?? new Dictionary<Guid, bool>();
+
+        var itemsProcesados = new List<ItemProcesadoLinea>();
+
+        foreach (var l in lineas)
+        {
+            if (l.MenuCompletoId.HasValue)
+            {
+                if (!menusDict.TryGetValue(l.MenuCompletoId.Value, out var menuCompleto) || !menuCompleto.Men_Activo)
+                {
+                    throw new KeyNotFoundException($"El menú completo con ID {l.MenuCompletoId.Value} no existe o está inactivo.");
+                }
+
+                // RV-166 / MSG-220: Verificar que el menú completo esté habilitado en el menú del día
+                if (!menusHabilitadosHoy.Contains(menuCompleto.Id_MenuCompleto))
+                {
+                    throw new PedidoConflictException("menu_no_disponible", string.Format(MensajesCatalogo.MSG_220, menuCompleto.Men_Nombre, "menú del día"));
+                }
+
+                // RV-163 / MSG-221: Validar que se envíe exactamente una opción por cada parte obligatoria
+                var partesOrdenadas = menuCompleto.Men_Partes.OrderBy(p => p.Par_Orden).ToList();
+                var opcionesProcesadas = new List<(string ParteNombre, Guid ProductoId, string ProductoNombre)>();
+
+                if (l.Elecciones == null || l.Elecciones.Count != partesOrdenadas.Count)
+                {
+                    var parteFaltante = partesOrdenadas.FirstOrDefault(p =>
+                        l.Elecciones == null || !l.Elecciones.Any(e => string.Equals(e.Parte?.Trim(), p.Par_Nombre?.Trim(), StringComparison.OrdinalIgnoreCase)));
+                    var nombreParte = parteFaltante?.Par_Nombre ?? "menú completo";
+                    throw new ArgumentException(string.Format(MensajesCatalogo.MSG_221, nombreParte));
+                }
+
+                foreach (var parte in partesOrdenadas)
+                {
+                    var eleccion = l.Elecciones.FirstOrDefault(e =>
+                        string.Equals(e.Parte?.Trim(), parte.Par_Nombre?.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                    if (eleccion == null)
+                    {
+                        throw new ArgumentException(string.Format(MensajesCatalogo.MSG_221, parte.Par_Nombre));
+                    }
+
+                    if (!productosDict.TryGetValue(eleccion.ProductoId, out var productoComponente) || !productoComponente.Pro_Activo)
+                    {
+                        throw new ArgumentException($"La opción seleccionada para '{parte.Par_Nombre}' no existe o se encuentra inactiva.");
+                    }
+
+                    // Validar rol de componente con roles permitidos de la parte
+                    if (!productoComponente.Pro_Rol.HasValue || !parte.Par_RolesPermitidos.Contains(productoComponente.Pro_Rol.Value))
+                    {
+                        throw new ArgumentException($"El producto '{productoComponente.Pro_Nombre}' no es válido para la parte '{parte.Par_Nombre}'.");
+                    }
+
+                    // RV-166 / MSG-223: Revalidar que la opción elegida no esté agotada en el menú del día
+                    if (platosMenuDiaDict.TryGetValue(productoComponente.Id_Producto, out var estaAgotado) && estaAgotado)
+                    {
+                        throw new PedidoConflictException("opcion_agotada", string.Format(MensajesCatalogo.MSG_223, productoComponente.Pro_Nombre, parte.Par_Nombre));
+                    }
+
+                    opcionesProcesadas.Add((parte.Par_Nombre, productoComponente.Id_Producto, productoComponente.Pro_Nombre));
+                }
+
+                itemsProcesados.Add(new ItemProcesadoLinea
+                {
+                    EsMenuCompleto = true,
+                    MenuCompletoId = menuCompleto.Id_MenuCompleto,
+                    Nombre = menuCompleto.Men_Nombre,
+                    Incluye = menuCompleto.Men_Incluye,
+                    PrecioUnitario = menuCompleto.Men_Precio,
+                    Cantidad = l.Cantidad,
+                    Observacion = l.Observacion?.Trim(),
+                    Opciones = opcionesProcesadas
+                });
+            }
+            else if (l.ProductoId.HasValue)
+            {
+                if (!productosDict.TryGetValue(l.ProductoId.Value, out var producto) || !producto.Pro_Activo)
+                {
+                    throw new KeyNotFoundException($"El producto especificado no existe o está inactivo.");
+                }
+
+                // RN-140 / MSG-215: Los componentes no se pueden pedir directamente como productos de carta
+                if (producto.Pro_Tipo == TipoProducto.Componente)
+                {
+                    throw new ArgumentException(MensajesCatalogo.MSG_215);
+                }
+
+                // RV-63 / MSG-79: Revalidar disponibilidad y que no esté agotado
+                if (platosMenuDiaDict.TryGetValue(producto.Id_Producto, out var estaAgotado) && estaAgotado)
+                {
+                    throw new PedidoConflictException("producto_agotado", string.Format(MensajesCatalogo.MSG_79, producto.Pro_Nombre));
+                }
+
+                itemsProcesados.Add(new ItemProcesadoLinea
+                {
+                    EsMenuCompleto = false,
+                    ProductoId = producto.Id_Producto,
+                    Nombre = producto.Pro_Nombre,
+                    PrecioUnitario = producto.Pro_Precio.GetValueOrDefault(),
+                    Cantidad = l.Cantidad,
+                    Observacion = l.Observacion?.Trim()
+                });
+            }
+        }
+
+        return itemsProcesados;
+    }
+
+    private static void AplicarLineasAPedidoYComanda(Pedido pedido, Comanda comanda, List<ItemProcesadoLinea> items)
+    {
+        foreach (var item in items)
+        {
+            if (item.EsMenuCompleto)
+            {
+                pedido.AgregarOLineaMenuCompleto(
+                    item.MenuCompletoId!.Value,
+                    item.Nombre,
+                    item.Incluye,
+                    item.Cantidad,
+                    item.PrecioUnitario,
+                    item.Observacion,
+                    item.Opciones
+                );
+
+                var eleccionesStr = string.Join(" + ", item.Opciones.Select(o => o.ProductoNombre));
+                comanda.AgregarDetalle(
+                    null,
+                    item.MenuCompletoId.Value,
+                    item.Nombre,
+                    item.Cantidad,
+                    item.Observacion,
+                    eleccionesStr,
+                    item.Incluye
+                );
+            }
+            else
+            {
+                pedido.AgregarOLinea(
+                    item.ProductoId!.Value,
+                    item.Nombre,
+                    item.Cantidad,
+                    item.PrecioUnitario,
+                    item.Observacion
+                );
+
+                comanda.AgregarDetalle(
+                    item.ProductoId.Value,
+                    item.Nombre,
+                    item.Cantidad,
+                    item.Observacion
+                );
+            }
+        }
+    }
 }
+

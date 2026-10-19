@@ -42,6 +42,8 @@ export interface ComprobanteLinea {
   precioUnitario: number;
   subtotal: number;
   observacion?: string | null;
+  elecciones?: string | null;
+  incluye?: string | null;
 }
 
 export interface ComprobanteDetalle {

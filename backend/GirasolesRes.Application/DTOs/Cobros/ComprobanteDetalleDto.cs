@@ -5,7 +5,9 @@ public record ComprobanteLineaDto(
     string ProductoNombre,
     decimal PrecioUnitario,
     decimal Subtotal,
-    string? Observacion
+    string? Observacion,
+    string? Elecciones = null,
+    string? Incluye = null
 );
 
 public record ComprobanteDetalleDto(

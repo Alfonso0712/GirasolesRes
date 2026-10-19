@@ -1,5 +1,7 @@
 export interface LineaComanda {
   producto: string;
+  elecciones?: string | null;
+  incluye?: string | null;
   cantidad: number;
   observacion?: string;
 }

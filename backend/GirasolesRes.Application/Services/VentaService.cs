@@ -158,13 +158,28 @@ public class VentaService : IVentaService
         var pedido = venta.Ven_Pedido;
         var localTime = TimeZoneHelper.ToPeruTime(venta.Ven_FechaHoraUtc);
 
-        var lineas = (pedido?.Ped_Detalles ?? Enumerable.Empty<DetallePedido>()).Select(d => new LineaVentaDetalleDto(
-            Cantidad: d.Det_Cantidad,
-            ProductoNombre: d.Det_Producto?.Pro_Nombre ?? "Producto",
-            PrecioUnitario: d.Det_PrecioUnitario,
-            Subtotal: d.Det_Subtotal,
-            Observacion: d.Det_Observacion
-        )).ToList().AsReadOnly();
+        var lineas = (pedido?.Ped_Detalles ?? Enumerable.Empty<DetallePedido>()).Select(d =>
+        {
+            var nombre = !string.IsNullOrWhiteSpace(d.Det_Nombre)
+                ? d.Det_Nombre
+                : d.Det_Producto?.Pro_Nombre ?? "Producto";
+
+            string? elecciones = null;
+            if (d.Det_Opciones.Count > 0)
+            {
+                elecciones = string.Join(" + ", d.Det_Opciones.Select(o => o.Lpo_ProductoNombre));
+            }
+
+            return new LineaVentaDetalleDto(
+                Cantidad: d.Det_Cantidad,
+                ProductoNombre: nombre,
+                PrecioUnitario: d.Det_PrecioUnitario,
+                Subtotal: d.Det_Subtotal,
+                Observacion: d.Det_Observacion,
+                Elecciones: elecciones,
+                Incluye: d.Det_Incluye
+            );
+        }).ToList().AsReadOnly();
 
         string? fechaHoraAnulacionFormateada = null;
         if (venta.Ven_FechaHoraAnulacionUtc.HasValue)

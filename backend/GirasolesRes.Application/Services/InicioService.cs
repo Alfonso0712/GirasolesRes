@@ -186,10 +186,17 @@ public class InicioService : IInicioService
     private async Task<BloquePlatosHoyDto> ObtenerPlatosHoyAsync(string fechaStr, CancellationToken ct)
     {
         var reportePlatos = await _reporteService.ConsultarReportePlatosAsync(fechaStr, fechaStr, null, ct);
-        var principales = (reportePlatos.Items ?? new())
+        
+        var itemsCarta = (reportePlatos.Items ?? new())
+            .Select(i => new PlatoPrincipalDto(i.Producto, i.Cantidad));
+
+        var itemsMenus = (reportePlatos.MenusCompletos ?? new())
+            .Select(m => new PlatoPrincipalDto(m.Nombre, m.Cantidad));
+
+        var principales = itemsCarta
+            .Concat(itemsMenus)
             .OrderByDescending(i => i.Cantidad)
             .Take(5)
-            .Select(i => new PlatoPrincipalDto(i.Producto, i.Cantidad))
             .ToList();
 
         return new BloquePlatosHoyDto(reportePlatos.TotalPlatos, principales);

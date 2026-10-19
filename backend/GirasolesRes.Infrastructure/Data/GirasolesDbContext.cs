@@ -23,6 +23,7 @@ public class GirasolesDbContext : DbContext
     public DbSet<MenuDiaMenuCompleto> MenuDiaMenusCompletos => Set<MenuDiaMenuCompleto>();
     public DbSet<Pedido> Pedidos => Set<Pedido>();
     public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
+    public DbSet<LineaPedidoOpcion> LineasPedidoOpciones => Set<LineaPedidoOpcion>();
     public DbSet<Comanda> Comandas => Set<Comanda>();
     public DbSet<DetalleComanda> DetallesComanda => Set<DetalleComanda>();
     public DbSet<AuditoriaPedido> AuditoriasPedido => Set<AuditoriaPedido>();
@@ -265,7 +266,10 @@ public class GirasolesDbContext : DbContext
             entity.HasKey(d => d.Id_Detalle);
             entity.Property(d => d.Id_Detalle).HasColumnName("id_detalle");
             entity.Property(d => d.Id_Pedido).HasColumnName("id_pedido").IsRequired();
-            entity.Property(d => d.Id_Producto).HasColumnName("id_producto").IsRequired();
+            entity.Property(d => d.Id_Producto).HasColumnName("id_producto").IsRequired(false);
+            entity.Property(d => d.Id_MenuCompleto).HasColumnName("id_menu_completo").IsRequired(false);
+            entity.Property(d => d.Det_Nombre).HasColumnName("det_nombre").HasMaxLength(100).IsRequired();
+            entity.Property(d => d.Det_Incluye).HasColumnName("det_incluye").HasMaxLength(100);
             entity.Property(d => d.Det_Cantidad).HasColumnName("det_cantidad").IsRequired();
             entity.Property(d => d.Det_PrecioUnitario).HasColumnName("det_precio_unitario").HasColumnType("numeric(8,2)").IsRequired();
             entity.Property(d => d.Det_Subtotal).HasColumnName("det_subtotal").HasColumnType("numeric(8,2)").IsRequired();
@@ -280,6 +284,36 @@ public class GirasolesDbContext : DbContext
             entity.HasOne(d => d.Det_Producto)
                   .WithMany()
                   .HasForeignKey(d => d.Id_Producto)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(d => d.Det_MenuCompleto)
+                  .WithMany()
+                  .HasForeignKey(d => d.Id_MenuCompleto)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Navigation(d => d.Det_Opciones)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        modelBuilder.Entity<LineaPedidoOpcion>(entity =>
+        {
+            entity.ToTable("lineas_pedido_opciones");
+            entity.HasKey(o => o.Id_LineaPedidoOpcion);
+            entity.Property(o => o.Id_LineaPedidoOpcion).HasColumnName("id_linea_pedido_opcion");
+            entity.Property(o => o.Id_DetallePedido).HasColumnName("id_detalle").IsRequired();
+            entity.Property(o => o.Lpo_ParteNombre).HasColumnName("lpo_parte_nombre").HasMaxLength(100).IsRequired();
+            entity.Property(o => o.Id_Producto).HasColumnName("id_producto").IsRequired();
+            entity.Property(o => o.Lpo_ProductoNombre).HasColumnName("lpo_producto_nombre").HasMaxLength(100).IsRequired();
+            entity.Property(o => o.Lpo_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
+
+            entity.HasOne(o => o.Lpo_DetallePedido)
+                  .WithMany(d => d.Det_Opciones)
+                  .HasForeignKey(o => o.Id_DetallePedido)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(o => o.Lpo_Producto)
+                  .WithMany()
+                  .HasForeignKey(o => o.Id_Producto)
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -321,8 +355,11 @@ public class GirasolesDbContext : DbContext
             entity.HasKey(d => d.Id_DetalleComanda);
             entity.Property(d => d.Id_DetalleComanda).HasColumnName("id_detalle_comanda");
             entity.Property(d => d.Id_Comanda).HasColumnName("id_comanda").IsRequired();
-            entity.Property(d => d.Id_Producto).HasColumnName("id_producto").IsRequired();
+            entity.Property(d => d.Id_Producto).HasColumnName("id_producto").IsRequired(false);
+            entity.Property(d => d.Id_MenuCompleto).HasColumnName("id_menu_completo").IsRequired(false);
             entity.Property(d => d.Dtc_NombreProducto).HasColumnName("dtc_nombre_producto").HasMaxLength(100).IsRequired();
+            entity.Property(d => d.Dtc_Elecciones).HasColumnName("dtc_elecciones").HasMaxLength(250);
+            entity.Property(d => d.Dtc_Incluye).HasColumnName("dtc_incluye").HasMaxLength(100);
             entity.Property(d => d.Dtc_Cantidad).HasColumnName("dtc_cantidad").IsRequired();
             entity.Property(d => d.Dtc_Observacion).HasColumnName("dtc_observacion").HasMaxLength(100);
             entity.Property(d => d.Dtc_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
@@ -335,6 +372,11 @@ public class GirasolesDbContext : DbContext
             entity.HasOne(d => d.Dtc_Producto)
                   .WithMany()
                   .HasForeignKey(d => d.Id_Producto)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(d => d.Dtc_MenuCompleto)
+                  .WithMany()
+                  .HasForeignKey(d => d.Id_MenuCompleto)
                   .OnDelete(DeleteBehavior.Restrict);
         });
 

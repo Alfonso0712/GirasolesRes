@@ -2,10 +2,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GirasolesRes.Application.DTOs.Pedidos;
 
+public class EleccionOpcionRequest
+{
+    [Required(ErrorMessage = "El nombre de la parte del menú es obligatorio.")]
+    [MaxLength(100, ErrorMessage = "El nombre de la parte no puede superar los 100 caracteres.")]
+    public string Parte { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "El identificador del componente es obligatorio.")]
+    public Guid ProductoId { get; set; }
+}
+
 public class LineaPedidoRequest
 {
-    [Required(ErrorMessage = "El identificador del producto es obligatorio.")]
-    public Guid ProductoId { get; set; }
+    public Guid? ProductoId { get; set; }
+
+    public int? MenuCompletoId { get; set; }
+
+    public List<EleccionOpcionRequest>? Elecciones { get; set; }
 
     [Range(1, 20, ErrorMessage = "La cantidad debe ser un número entero entre 1 y 20.")]
     public int Cantidad { get; set; } = 1;
@@ -74,14 +87,23 @@ public record AgregarLineasResultDto(
     int NumeroPedido
 );
 
+public record EleccionOpcionResponseDto(
+    string Parte,
+    Guid ProductoId,
+    string ProductoNombre
+);
+
 public record LineaPedidoResponseDto(
     Guid Id,
-    Guid ProductoId,
+    Guid? ProductoId,
+    int? MenuCompletoId,
     string ProductoNombre,
+    string? Incluye,
     decimal PrecioUnitario,
     int Cantidad,
     decimal Subtotal,
-    string? Observacion
+    string? Observacion,
+    List<EleccionOpcionResponseDto>? Elecciones = null
 );
 
 public record PedidoResponseDto(
@@ -154,12 +176,15 @@ public record ListarPedidosResponseDto(
 
 public record LineaDetalleDto(
     Guid DetalleId,
-    Guid ProductoId,
+    Guid? ProductoId,
+    int? MenuCompletoId,
     string Nombre,
+    string? Incluye,
     int Cantidad,
     decimal PrecioUnitario,
     decimal Subtotal,
-    string? Observacion
+    string? Observacion,
+    List<EleccionOpcionResponseDto>? Elecciones = null
 );
 
 public record ComandaDetalleDto(

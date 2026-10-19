@@ -1,5 +1,18 @@
-export interface LineaPedidoRequest {
+export interface EleccionOpcionRequest {
+  parte: string;
   productoId: string;
+}
+
+export interface EleccionOpcionResponseDto {
+  parte: string;
+  productoId: string;
+  productoNombre: string;
+}
+
+export interface LineaPedidoRequest {
+  productoId?: string | null;
+  menuCompletoId?: number | null;
+  elecciones?: EleccionOpcionRequest[];
   cantidad: number;
   observacion?: string;
 }
@@ -45,12 +58,15 @@ export interface AgregarLineasResultDto {
 
 export interface LineaPedidoResponseDto {
   id: string;
-  productoId: string;
+  productoId?: string | null;
+  menuCompletoId?: number | null;
   productoNombre: string;
+  incluye?: string | null;
   precioUnitario: number;
   cantidad: number;
   subtotal: number;
   observacion?: string;
+  elecciones?: EleccionOpcionResponseDto[];
 }
 
 export interface PedidoResponseDto {
@@ -79,13 +95,21 @@ export interface ProductoMenuPedido {
 }
 
 export interface LineaBorrador {
-  productoId: string;
+  id?: string;
+  productoId?: string | null;
+  menuCompletoId?: number | null;
   nombre: string;
+  incluye?: string | null;
   precioUnitario: number;
   cantidad: number;
   observacion: string;
   subtotal: number;
   agotado?: boolean;
+  elecciones?: {
+    parte: string;
+    productoId: string;
+    productoNombre: string;
+  }[];
 }
 
 // CUS09: Tipos para Gestión de Pedidos
@@ -122,12 +146,15 @@ export interface ListarPedidosResponseDto {
 
 export interface LineaDetalleDto {
   detalleId: string;
-  productoId: string;
+  productoId?: string | null;
+  menuCompletoId?: number | null;
   nombre: string;
+  incluye?: string | null;
   cantidad: number;
   precioUnitario: number;
   subtotal: number;
   observacion?: string;
+  elecciones?: EleccionOpcionResponseDto[];
 }
 
 export interface ComandaDetalleDto {

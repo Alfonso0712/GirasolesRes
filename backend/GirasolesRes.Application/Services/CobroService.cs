@@ -265,13 +265,28 @@ public class CobroService : ICobroService
         var comprobante = venta.Ven_Comprobante;
         var pedido = venta.Ven_Pedido;
 
-        var lineasDto = (pedido?.Ped_Detalles ?? Enumerable.Empty<DetallePedido>()).Select(d => new ComprobanteLineaDto(
-            Cantidad: d.Det_Cantidad,
-            ProductoNombre: d.Det_Producto?.Pro_Nombre ?? "Producto",
-            PrecioUnitario: d.Det_PrecioUnitario,
-            Subtotal: d.Det_Subtotal,
-            Observacion: d.Det_Observacion
-        )).ToList().AsReadOnly();
+        var lineasDto = (pedido?.Ped_Detalles ?? Enumerable.Empty<DetallePedido>()).Select(d =>
+        {
+            var nombre = !string.IsNullOrWhiteSpace(d.Det_Nombre)
+                ? d.Det_Nombre
+                : d.Det_Producto?.Pro_Nombre ?? "Producto";
+
+            string? elecciones = null;
+            if (d.Det_Opciones.Count > 0)
+            {
+                elecciones = string.Join(" + ", d.Det_Opciones.Select(o => o.Lpo_ProductoNombre));
+            }
+
+            return new ComprobanteLineaDto(
+                Cantidad: d.Det_Cantidad,
+                ProductoNombre: nombre,
+                PrecioUnitario: d.Det_PrecioUnitario,
+                Subtotal: d.Det_Subtotal,
+                Observacion: d.Det_Observacion,
+                Elecciones: elecciones,
+                Incluye: d.Det_Incluye
+            );
+        }).ToList().AsReadOnly();
 
         var fechaHoraLocal = TimeZoneHelper.ToPeruTime(comprobante.Com_FechaHoraUtc).ToString("dd/MM/yyyy HH:mm:ss");
 

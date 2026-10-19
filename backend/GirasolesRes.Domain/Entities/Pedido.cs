@@ -60,7 +60,7 @@ public class Pedido
     /// Regla: Agregar el mismo producto con la misma observación suma la cantidad; con otra observación crea otra línea.
     /// Cantidad entera de 1 a 20 por línea.
     /// </summary>
-    public DetallePedido AgregarOLinea(Guid idProducto, int cantidad, decimal precioUnitario, string? observacion)
+    public DetallePedido AgregarOLinea(Guid idProducto, string nombreProducto, int cantidad, decimal precioUnitario, string? observacion)
     {
         var obsNormalizada = string.IsNullOrWhiteSpace(observacion) ? null : observacion.Trim();
 
@@ -85,7 +85,61 @@ public class Pedido
             throw new ArgumentOutOfRangeException(nameof(cantidad), "La cantidad debe ser un número entero entre 1 y 20.");
         }
 
-        var nuevaLinea = new DetallePedido(Id_Pedido, idProducto, cantidad, precioUnitario, obsNormalizada);
+        var nuevaLinea = new DetallePedido(Id_Pedido, idProducto, nombreProducto, cantidad, precioUnitario, obsNormalizada);
+        _ped_Detalles.Add(nuevaLinea);
+        RecalcularTotal();
+        return nuevaLinea;
+    }
+
+    public DetallePedido AgregarOLinea(Guid idProducto, int cantidad, decimal precioUnitario, string? observacion)
+        => AgregarOLinea(idProducto, string.Empty, cantidad, precioUnitario, observacion);
+
+    /// <summary>
+    /// Regla RV-164/RV-165: Agregar el mismo menú completo con las mismas opciones y la misma nota
+    /// suma la cantidad; si cambia alguna opción o nota, crea otra línea.
+    /// </summary>
+    public DetallePedido AgregarOLineaMenuCompleto(
+        int idMenuCompleto,
+        string nombreMenu,
+        string? incluye,
+        int cantidad,
+        decimal precioUnitario,
+        string? observacion,
+        List<(string ParteNombre, Guid ProductoId, string ProductoNombre)> opciones)
+    {
+        var obsNormalizada = string.IsNullOrWhiteSpace(observacion) ? null : observacion.Trim();
+
+        var lineaExistente = _ped_Detalles.FirstOrDefault(d =>
+            d.Id_MenuCompleto == idMenuCompleto &&
+            string.Equals(d.Det_Observacion, obsNormalizada, StringComparison.OrdinalIgnoreCase) &&
+            d.Det_Opciones.Count == opciones.Count &&
+            opciones.All(o => d.Det_Opciones.Any(doOp =>
+                string.Equals(doOp.Lpo_ParteNombre, o.ParteNombre, StringComparison.OrdinalIgnoreCase) &&
+                doOp.Id_Producto == o.ProductoId)));
+
+        if (lineaExistente != null)
+        {
+            var nuevaCantidad = lineaExistente.Det_Cantidad + cantidad;
+            if (nuevaCantidad > 20)
+            {
+                throw new InvalidOperationException("La cantidad acumulada por línea no puede superar 20.");
+            }
+            lineaExistente.AumentarCantidad(cantidad);
+            RecalcularTotal();
+            return lineaExistente;
+        }
+
+        if (cantidad < 1 || cantidad > 20)
+        {
+            throw new ArgumentOutOfRangeException(nameof(cantidad), "La cantidad debe ser un número entero entre 1 y 20.");
+        }
+
+        var nuevaLinea = new DetallePedido(Id_Pedido, idMenuCompleto, nombreMenu, incluye, cantidad, precioUnitario, obsNormalizada);
+        foreach (var op in opciones)
+        {
+            nuevaLinea.AgregarOpcion(op.ParteNombre, op.ProductoId, op.ProductoNombre);
+        }
+
         _ped_Detalles.Add(nuevaLinea);
         RecalcularTotal();
         return nuevaLinea;

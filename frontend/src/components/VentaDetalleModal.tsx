@@ -176,6 +176,11 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                           </td>
                           <td className="py-2 px-3">
                             <span className="font-semibold text-neutral-800">{linea.productoNombre}</span>
+                            {linea.elecciones && (
+                              <span className="text-[11px] text-neutral-500 italic block">
+                                {linea.elecciones}{linea.incluye ? ` (incluye ${linea.incluye})` : ''}
+                              </span>
+                            )}
                             {linea.observacion && (
                               <span className="text-[11px] text-neutral-500 block">
                                 Obs: {linea.observacion}

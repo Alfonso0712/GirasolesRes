@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { pedidoService } from '../services/pedidoService';
 import { menuDiaService } from '../services/menuDiaService';
+import type { MenuCompletoDia } from '../types/menuDia';
 import type {
   ProductoMenuPedido,
   LineaBorrador,
@@ -22,8 +23,9 @@ export function usePedidoLlevarManagement({
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [erroresLineas, setErroresLineas] = useState<Record<string, string>>({});
 
-  // Catálogo de productos disponibles
+  // Catálogo de productos y Menús Completos
   const [catalogo, setCatalogo] = useState<ProductoMenuPedido[]>([]);
+  const [menusCompletos, setMenusCompletos] = useState<MenuCompletoDia[]>([]);
 
   // Referencia opcional del cliente (RV-73: máx 30 caracteres)
   const [referencia, setReferencia] = useState('');
@@ -49,6 +51,7 @@ export function usePedidoLlevarManagement({
 
   const [modalNotaOpen, setModalNotaOpen] = useState(false);
   const [lineaParaNota, setLineaParaNota] = useState<LineaBorrador | null>(null);
+  const [lineaIndexParaNota, setLineaIndexParaNota] = useState<number | null>(null);
 
   // UUID de solicitud para idempotencia (RNF-21)
   const solicitudIdRef = useRef<string>(
@@ -68,7 +71,7 @@ export function usePedidoLlevarManagement({
     return err?.status === 401 || err?.message?.toLowerCase().includes('sesión expiró');
   };
 
-  // Carga inicial del catálogo de productos (RN-35 / CUS05)
+  // Carga inicial del catálogo de productos y menú del día (RN-35 / CUS05)
   const cargarDatos = useCallback(async () => {
     setCargando(true);
     setErrorGeneral(null);
@@ -81,6 +84,9 @@ export function usePedidoLlevarManagement({
       const esDefinido = menuHoy ? menuHoy.definido : prods.length > 0;
       setMenuDefinido(esDefinido);
       setCatalogo(prods);
+      if (menuHoy?.menusCompletos) {
+        setMenusCompletos(menuHoy.menusCompletos);
+      }
     } catch (err: any) {
       if (esErrorSesionVencida(err)) {
         onLogout({
@@ -98,6 +104,28 @@ export function usePedidoLlevarManagement({
   useEffect(() => {
     cargarDatos();
   }, [cargarDatos]);
+
+  // Polling de 30 segundos para refresco de catálogo
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const [prods, menuHoy] = await Promise.all([
+          pedidoService.obtenerCatalogoPedido(token),
+          menuDiaService.obtenerMenuHoy(token).catch(() => null)
+        ]);
+        setCatalogo(prods);
+        if (menuHoy?.menusCompletos) {
+          setMenusCompletos(menuHoy.menusCompletos);
+        }
+      } catch (err: any) {
+        if (esErrorSesionVencida(err)) {
+          onLogout({ type: 'warning', message: 'Su sesión expiró. Ingrese nuevamente.' });
+        }
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [token, onLogout]);
 
   // Manejador del cambio en la referencia del cliente con validación en vivo (RV-73 / MSG-109)
   const handleCambioReferencia = (valor: string) => {
@@ -137,6 +165,7 @@ export function usePedidoLlevarManagement({
       }
 
       const nuevaLinea: LineaBorrador = {
+        id: `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         productoId: producto.id,
         nombre: producto.nombre,
         precioUnitario: producto.precio,
@@ -148,177 +177,271 @@ export function usePedidoLlevarManagement({
 
       return [...prev, nuevaLinea];
     });
-
-    // Limpiar errores si existían en esa línea
-    if (erroresLineas[producto.id]) {
-      setErroresLineas((prev) => {
-        const copy = { ...prev };
-        delete copy[producto.id];
-        return copy;
-      });
-    }
   };
 
-  // Modificar cantidad exacta (1 a 20) (RV-62 / MSG-98)
-  const actualizarCantidad = (productoId: string, cantidad: number, observacion = '') => {
-    if (cantidad < 1 || cantidad > 20) return;
+  // Agregar menú completo al borrador (RV-164 / RV-165)
+  const agregarMenuCompleto = (
+    menu: MenuCompletoDia,
+    elecciones: { parte: string; productoId: string; productoNombre: string }[],
+    observacion = ''
+  ) => {
+    setErrorGeneral(null);
+    const obsTrim = observacion.trim();
 
-    setLineasBorrador((prev) =>
-      prev.map((l) => {
-        if (l.productoId === productoId && l.observacion === observacion) {
-          return {
-            ...l,
-            cantidad,
-            subtotal: Number((cantidad * l.precioUnitario).toFixed(2))
-          };
-        }
-        return l;
-      })
-    );
-  };
-
-  // Disminuir en 1 la cantidad o quitar si llega a 0
-  const disminuirProducto = (productoId: string, observacion = '') => {
     setLineasBorrador((prev) => {
-      const linea = prev.find(
-        (l) => l.productoId === productoId && l.observacion === observacion
-      );
-      if (!linea) return prev;
+      const index = prev.findIndex((l) => {
+        if (l.menuCompletoId !== menu.id) return false;
+        if ((l.observacion || '').trim().toLowerCase() !== obsTrim.toLowerCase()) return false;
+        if (!l.elecciones || l.elecciones.length !== elecciones.length) return false;
+        return elecciones.every((e) =>
+          l.elecciones!.some(
+            (le) =>
+              le.parte.toLowerCase() === e.parte.toLowerCase() &&
+              le.productoId.toLowerCase() === e.productoId.toLowerCase()
+          )
+        );
+      });
 
-      if (linea.cantidad <= 1) {
-        return prev.filter((l) => !(l.productoId === productoId && l.observacion === observacion));
+      if (index >= 0) {
+        const lineaActual = prev[index];
+        const nuevaCantidad = Math.min(20, lineaActual.cantidad + 1);
+        const nuevaLinea: LineaBorrador = {
+          ...lineaActual,
+          cantidad: nuevaCantidad,
+          subtotal: Number((nuevaCantidad * lineaActual.precioUnitario).toFixed(2))
+        };
+        const nuevo = [...prev];
+        nuevo[index] = nuevaLinea;
+        return nuevo;
       }
 
-      return prev.map((l) => {
-        if (l.productoId === productoId && l.observacion === observacion) {
-          const nuevaCant = l.cantidad - 1;
-          return {
-            ...l,
-            cantidad: nuevaCant,
-            subtotal: Number((nuevaCant * l.precioUnitario).toFixed(2))
-          };
-        }
-        return l;
-      });
+      const nuevaLinea: LineaBorrador = {
+        id: `mc-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        menuCompletoId: menu.id,
+        nombre: menu.nombre,
+        incluye: menu.incluye,
+        precioUnitario: menu.precio,
+        cantidad: 1,
+        observacion: obsTrim,
+        subtotal: menu.precio,
+        agotado: false,
+        elecciones: elecciones
+      };
+
+      return [...prev, nuevaLinea];
     });
   };
 
-  // Quitar línea completa del borrador
-  const quitarLinea = (productoId: string, observacion = '') => {
-    setLineasBorrador((prev) =>
-      prev.filter((l) => !(l.productoId === productoId && l.observacion === observacion))
-    );
-    if (erroresLineas[productoId]) {
-      setErroresLineas((prev) => {
-        const copy = { ...prev };
-        delete copy[productoId];
-        return copy;
-      });
-    }
+  // Repetir combinación en un toque (RV-165)
+  const repetirLinea = (lineaIndex: number) => {
+    setErrorGeneral(null);
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const linea = prev[lineaIndex];
+      if (linea.cantidad >= 20) return prev;
+      const nuevaCantidad = linea.cantidad + 1;
+      const copia = [...prev];
+      copia[lineaIndex] = {
+        ...linea,
+        cantidad: nuevaCantidad,
+        subtotal: Number((nuevaCantidad * linea.precioUnitario).toFixed(2))
+      };
+      return copia;
+    });
   };
 
-  // Abrir modal de nota por ítem
+  const disminuirLinea = (lineaIndex: number) => {
+    setErrorGeneral(null);
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const linea = prev[lineaIndex];
+      if (linea.cantidad > 1) {
+        const nuevaCantidad = linea.cantidad - 1;
+        const copia = [...prev];
+        copia[lineaIndex] = {
+          ...linea,
+          cantidad: nuevaCantidad,
+          subtotal: Number((nuevaCantidad * linea.precioUnitario).toFixed(2))
+        };
+        return copia;
+      }
+      return prev.filter((_, i) => i !== lineaIndex);
+    });
+  };
+
+  const actualizarCantidadByIndex = (lineaIndex: number, cantidad: number) => {
+    if (cantidad < 1 || cantidad > 20) return;
+    setErrorGeneral(null);
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const copia = [...prev];
+      copia[lineaIndex] = {
+        ...copia[lineaIndex],
+        cantidad,
+        subtotal: Number((cantidad * copia[lineaIndex].precioUnitario).toFixed(2))
+      };
+      return copia;
+    });
+  };
+
+  const quitarLineaByIndex = (lineaIndex: number) => {
+    setLineasBorrador((prev) => prev.filter((_, i) => i !== lineaIndex));
+  };
+
+  const disminuirProducto = (productoId: string, observacion = '') => {
+    const obsTrim = observacion.trim();
+    setLineasBorrador((prev) => {
+      const index = prev.findIndex(
+        (l) => l.productoId === productoId && l.observacion.toLowerCase() === obsTrim.toLowerCase()
+      );
+      if (index === -1) return prev;
+      const lineaActual = prev[index];
+      if (lineaActual.cantidad > 1) {
+        const nuevaCantidad = lineaActual.cantidad - 1;
+        const copia = [...prev];
+        copia[index] = {
+          ...lineaActual,
+          cantidad: nuevaCantidad,
+          subtotal: Number((nuevaCantidad * lineaActual.precioUnitario).toFixed(2))
+        };
+        return copia;
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const actualizarCantidad = (productoId: string, cantidad: number, observacion = '') => {
+    if (cantidad < 1 || cantidad > 20) return;
+    const obsTrim = observacion.trim();
+    setLineasBorrador((prev) => {
+      const index = prev.findIndex(
+        (l) => l.productoId === productoId && l.observacion.toLowerCase() === obsTrim.toLowerCase()
+      );
+      if (index === -1) return prev;
+      const copia = [...prev];
+      copia[index] = {
+        ...copia[index],
+        cantidad,
+        subtotal: Number((cantidad * copia[index].precioUnitario).toFixed(2))
+      };
+      return copia;
+    });
+  };
+
+  const quitarLinea = (productoId: string, observacion = '') => {
+    const obsTrim = observacion.trim();
+    setLineasBorrador((prev) =>
+      prev.filter((l) => !(l.productoId === productoId && l.observacion.toLowerCase() === obsTrim.toLowerCase()))
+    );
+  };
+
   const abrirModalNota = (linea: LineaBorrador) => {
+    const idx = lineasBorrador.indexOf(linea);
     setLineaParaNota(linea);
+    setLineaIndexParaNota(idx >= 0 ? idx : null);
     setModalNotaOpen(true);
   };
 
-  // Guardar nota del ítem (RV-64: máx 100 caracteres)
-  const guardarNota = (nuevaNota: string) => {
-    if (!lineaParaNota) return;
-
-    const notaLimpia = nuevaNota.trim();
-    if (notaLimpia.length > 100) return; // MSG-99
-
-    setLineasBorrador((prev) => {
-      const sinOriginal = prev.filter(
-        (l) =>
-          !(l.productoId === lineaParaNota.productoId && l.observacion === lineaParaNota.observacion)
-      );
-
-      const existeDestino = sinOriginal.find(
-        (l) =>
-          l.productoId === lineaParaNota.productoId &&
-          l.observacion.toLowerCase() === notaLimpia.toLowerCase()
-      );
-
-      if (existeDestino) {
-        const fusionadaCant = Math.min(20, existeDestino.cantidad + lineaParaNota.cantidad);
-        return sinOriginal.map((l) =>
-          l === existeDestino
-            ? {
-                ...l,
-                cantidad: fusionadaCant,
-                subtotal: Number((fusionadaCant * l.precioUnitario).toFixed(2))
-              }
-            : l
-        );
-      }
-
-      const lineaActualizada: LineaBorrador = {
-        ...lineaParaNota,
-        observacion: notaLimpia
-      };
-
-      return [...sinOriginal, lineaActualizada];
-    });
-
-    setModalNotaOpen(false);
-    setLineaParaNota(null);
+  const abrirModalNotaByIndex = (index: number) => {
+    if (index >= 0 && index < lineasBorrador.length) {
+      setLineaParaNota(lineasBorrador[index]);
+      setLineaIndexParaNota(index);
+      setModalNotaOpen(true);
+    }
   };
 
-  // Calcular totales reactivos
-  const totalCalculado = Number(
-    lineasBorrador.reduce((sum, l) => sum + l.subtotal, 0).toFixed(2)
-  );
+  const guardarNota = (nuevaObservacion: string) => {
+    if (lineaIndexParaNota !== null && lineaIndexParaNota >= 0 && lineaIndexParaNota < lineasBorrador.length) {
+      guardarNotaByIndex(lineaIndexParaNota, nuevaObservacion);
+      return;
+    }
+    if (!lineaParaNota) return;
+    const obsTrim = nuevaObservacion.trim();
+    setLineasBorrador((prev) => {
+      const index = prev.findIndex(
+        (l) =>
+          l.productoId === lineaParaNota.productoId &&
+          l.menuCompletoId === lineaParaNota.menuCompletoId &&
+          l.observacion.toLowerCase() === lineaParaNota.observacion.toLowerCase()
+      );
+      if (index === -1) return prev;
+      const copia = [...prev];
+      copia[index] = { ...copia[index], observacion: obsTrim };
+      return copia;
+    });
+    setModalNotaOpen(false);
+    setLineaParaNota(null);
+    setLineaIndexParaNota(null);
+  };
 
-  const cantidadTotalProductos = lineasBorrador.reduce((sum, l) => sum + l.cantidad, 0);
+  const guardarNotaByIndex = (lineaIndex: number, nuevaObservacion: string) => {
+    setLineasBorrador((prev) => {
+      if (lineaIndex < 0 || lineaIndex >= prev.length) return prev;
+      const copia = [...prev];
+      copia[lineaIndex] = {
+        ...copia[lineaIndex],
+        observacion: nuevaObservacion.trim()
+      };
+      return copia;
+    });
+    setModalNotaOpen(false);
+    setLineaParaNota(null);
+    setLineaIndexParaNota(null);
+  };
 
-  // Descartar pedido actual (RV-68 / MSG-102)
-  const descartarPedido = () => {
+  const solicitarDescarte = () => {
+    if (lineasBorrador.length > 0 || referencia.trim().length > 0) {
+      setModalDescartarOpen(true);
+    }
+  };
+
+  const confirmarDescarte = () => {
     setLineasBorrador([]);
     setReferencia('');
     setErrorReferencia(null);
-    setErroresLineas({});
     setErrorGeneral(null);
+    setErroresLineas({});
     generarNuevoSolicitudId();
     setModalDescartarOpen(false);
   };
 
-  // Iniciar nuevo pedido limpio (E-160 / RV-74)
-  const iniciarNuevoPedido = () => {
+  const reiniciarParaNuevoPedido = () => {
     setLineasBorrador([]);
     setReferencia('');
     setErrorReferencia(null);
-    setErroresLineas({});
     setErrorGeneral(null);
+    setErroresLineas({});
     generarNuevoSolicitudId();
     setModalExitoOpen(false);
     setExitoData(null);
+    cargarDatos();
   };
+
+  // Cálculos totales
+  const totalCalculado = lineasBorrador.reduce((acc, l) => acc + l.subtotal, 0);
+  const cantidadTotalProductos = lineasBorrador.reduce((acc, l) => acc + l.cantidad, 0);
 
   // Enviar pedido para llevar al backend (RN-57, RN-58, RN-59, RN-60, RNF-21)
   const registrarPedidoLlevar = async () => {
-    // Validaciones locales
     if (lineasBorrador.length === 0) {
-      setErrorGeneral('Agregue al menos un producto al pedido.'); // MSG-97
+      setErrorGeneral('Agregue al menos un producto al pedido.');
       return;
     }
 
     if (referencia.trim().length > 30) {
-      setErrorReferencia('La referencia no puede superar los 30 caracteres.'); // MSG-109
+      setErrorReferencia('La referencia no puede superar los 30 caracteres.');
       return;
     }
 
     const lineaInvalida = lineasBorrador.find((l) => l.cantidad < 1 || l.cantidad > 20);
     if (lineaInvalida) {
-      setErrorGeneral('La cantidad debe ser un número entero entre 1 y 20.'); // MSG-98
+      setErrorGeneral('La cantidad debe ser un número entero entre 1 y 20.');
       return;
     }
 
     const lineaObsInvalida = lineasBorrador.find((l) => l.observacion.length > 100);
     if (lineaObsInvalida) {
-      setErrorGeneral('La observación no puede superar los 100 caracteres.'); // MSG-99
+      setErrorGeneral('La observación no puede superar los 100 caracteres.');
       return;
     }
 
@@ -333,7 +456,12 @@ export function usePedidoLlevarManagement({
           solicitudId: solicitudIdRef.current,
           referencia: refFinal || undefined,
           lineas: lineasBorrador.map((l) => ({
-            productoId: l.productoId,
+            productoId: l.productoId ?? undefined,
+            menuCompletoId: l.menuCompletoId ?? undefined,
+            elecciones: l.elecciones?.map((e) => ({
+              parte: e.parte,
+              productoId: e.productoId
+            })),
             cantidad: l.cantidad,
             observacion: l.observacion.trim() || undefined
           }))
@@ -341,7 +469,6 @@ export function usePedidoLlevarManagement({
         token
       );
 
-      // Éxito: abrir modal de confirmación (Vista 8.2 / MSG-110 / RV-74)
       setExitoData({
         pedidoId: resultado.pedidoId,
         numeroPedido: resultado.numero,
@@ -359,7 +486,6 @@ export function usePedidoLlevarManagement({
         return;
       }
 
-      // Conflicto de platos agotados (409 Conflict / RV-65 / MSG-79 / MSG-103)
       if (err.status === 409 && err.productosAgotados) {
         const agotados: string[] = err.productosAgotados;
         const mapaErrores: Record<string, string> = {};
@@ -370,11 +496,10 @@ export function usePedidoLlevarManagement({
 
         setErroresLineas(mapaErrores);
 
-        // Actualizar visualmente en el borrador y en el catálogo local
         setLineasBorrador((prev) =>
           prev.map((l) => ({
             ...l,
-            agotado: agotados.includes(l.productoId) ? true : l.agotado
+            agotado: l.productoId && agotados.includes(l.productoId) ? true : l.agotado
           }))
         );
 
@@ -383,27 +508,18 @@ export function usePedidoLlevarManagement({
         );
 
         setErrorGeneral(
-          err.message ||
-            'Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.' // MSG-103
+          err.message || 'Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.'
         );
         return;
       }
 
-      // Error 403: Rol no permitido (RN-57 / MSG-39)
       if (err.status === 403) {
         setErrorGeneral('No tiene permiso para usar esta función. Solo el Cajero puede registrar pedidos para llevar.');
         return;
       }
 
-      // Error 400: Validación inválida
-      if (err.status === 400) {
-        setErrorGeneral(err.message || 'Verifique los datos del pedido antes de continuar.');
-        return;
-      }
-
-      // Error 500 o fallo de conexión: MSG-111
       setErrorGeneral(
-        'No se pudo registrar el pedido para llevar. Su pedido sigue en pantalla; intente nuevamente.' // MSG-111
+        err.message || 'No se pudo registrar el pedido para llevar. Su pedido sigue en pantalla; intente nuevamente.'
       );
     } finally {
       setRegistrando(false);
@@ -432,6 +548,7 @@ export function usePedidoLlevarManagement({
     setErrorGeneral,
     erroresLineas,
     catalogoFiltrado,
+    menusCompletos,
     categorias,
     categoriaActiva,
     setCategoriaActiva,
@@ -442,6 +559,11 @@ export function usePedidoLlevarManagement({
     errorReferencia,
     lineasBorrador,
     agregarProducto,
+    agregarMenuCompleto,
+    repetirLinea,
+    disminuirLinea,
+    actualizarCantidadByIndex,
+    quitarLineaByIndex,
     actualizarCantidad,
     disminuirProducto,
     quitarLinea,
@@ -449,18 +571,24 @@ export function usePedidoLlevarManagement({
     cantidadTotalProductos,
     modalDescartarOpen,
     setModalDescartarOpen,
-    descartarPedido,
     modalExitoOpen,
     setModalExitoOpen,
     exitoData,
-    iniciarNuevoPedido,
-    registrarPedidoLlevar,
     modalNotaOpen,
     setModalNotaOpen,
     lineaParaNota,
     abrirModalNota,
+    abrirModalNotaByIndex,
     guardarNota,
+    guardarNotaByIndex,
+    solicitarDescarte,
+    confirmarDescarte,
+    descartarPedido: confirmarDescarte,
+    reiniciarParaNuevoPedido,
+    iniciarNuevoPedido: reiniciarParaNuevoPedido,
+    registrarPedidoLlevar,
     menuDefinido,
+    cargarDatos,
     recargarCatalogo: cargarDatos
   };
 }

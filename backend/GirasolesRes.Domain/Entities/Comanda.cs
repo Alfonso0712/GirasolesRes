@@ -52,6 +52,18 @@ public class Comanda
         _cmd_Detalles.Add(new DetalleComanda(Id_Comanda, idProducto, nombreProducto, cantidad, observacion));
     }
 
+    public void AgregarDetalle(
+        Guid? idProducto,
+        int? idMenuCompleto,
+        string nombreProducto,
+        int cantidad,
+        string? observacion,
+        string? elecciones = null,
+        string? incluye = null)
+    {
+        _cmd_Detalles.Add(new DetalleComanda(Id_Comanda, idProducto, idMenuCompleto, nombreProducto, cantidad, observacion, elecciones, incluye));
+    }
+
     public void CambiarEstado(EstadoComanda nuevoEstado)
     {
         Cmd_Estado = nuevoEstado;

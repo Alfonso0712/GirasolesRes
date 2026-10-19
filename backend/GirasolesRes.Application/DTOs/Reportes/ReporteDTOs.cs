@@ -25,6 +25,20 @@ public record VentaPorDiaDto(
     bool ConAjustes
 );
 
+public record ItemMenuCompletoVendidoDto(
+    int MenuCompletoId,
+    string Nombre,
+    int Cantidad,
+    decimal Monto
+);
+
+public record ItemComponenteVendidoDto(
+    Guid ProductoId,
+    string Producto,
+    string Rol,
+    int Cantidad
+);
+
 public record ReportePlatosResponseDto(
     int TotalPlatos,
     decimal TotalMonto,
@@ -32,7 +46,9 @@ public record ReportePlatosResponseDto(
     bool Coincide,
     List<SubtotalCategoriaDto> Subtotales,
     List<ItemPlatoVendidoDto> Items,
-    List<PlatoPorDiaDto>? PorDia
+    List<PlatoPorDiaDto>? PorDia,
+    List<ItemMenuCompletoVendidoDto>? MenusCompletos = null,
+    List<ItemComponenteVendidoDto>? Componentes = null
 );
 
 public record SubtotalCategoriaDto(

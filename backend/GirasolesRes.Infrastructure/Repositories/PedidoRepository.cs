@@ -20,6 +20,11 @@ public class PedidoRepository : IPedidoRepository
         return await _context.Pedidos
             .Include(p => p.Ped_Detalles)
                 .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Opciones)
+                    .ThenInclude(o => o.Lpo_Producto)
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
             .Include(p => p.Ped_Comandas)
@@ -34,6 +39,11 @@ public class PedidoRepository : IPedidoRepository
         return await _context.Pedidos
             .Include(p => p.Ped_Detalles)
                 .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Opciones)
+                    .ThenInclude(o => o.Lpo_Producto)
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
             .Include(p => p.Ped_Comandas)
@@ -46,6 +56,11 @@ public class PedidoRepository : IPedidoRepository
         return await _context.Pedidos
             .Include(p => p.Ped_Detalles)
                 .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Opciones)
+                    .ThenInclude(o => o.Lpo_Producto)
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
             .Include(p => p.Ped_Comandas)
@@ -93,6 +108,11 @@ public class PedidoRepository : IPedidoRepository
         return await _context.Pedidos
             .Include(p => p.Ped_Detalles)
                 .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Opciones)
+                    .ThenInclude(o => o.Lpo_Producto)
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
             .Where(p => p.Ped_FechaOperativa == fechaOperativa)
@@ -115,6 +135,16 @@ public class PedidoRepository : IPedidoRepository
                (entry.State == EntityState.Modified && !_context.DetallesPedido.Any(d => d.Id_Detalle == detalle.Id_Detalle)))
             {
                 entry.State = EntityState.Added;
+            }
+
+            foreach (var op in detalle.Det_Opciones)
+            {
+                var entryOp = _context.Entry(op);
+                if (entryOp.State == EntityState.Detached ||
+                   (entryOp.State == EntityState.Modified && !_context.LineasPedidoOpciones.Any(lpo => lpo.Id_LineaPedidoOpcion == op.Id_LineaPedidoOpcion)))
+                {
+                    entryOp.State = EntityState.Added;
+                }
             }
         }
 
@@ -154,6 +184,11 @@ public class PedidoRepository : IPedidoRepository
         var baseQuery = _context.Pedidos
             .Include(p => p.Ped_Detalles)
                 .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Opciones)
+                    .ThenInclude(o => o.Lpo_Producto)
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
             .Include(p => p.Ped_Comandas)
@@ -248,6 +283,11 @@ public class PedidoRepository : IPedidoRepository
         return await _context.Pedidos
             .Include(p => p.Ped_Detalles)
                 .ThenInclude(d => d.Det_Producto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(p => p.Ped_Detalles)
+                .ThenInclude(d => d.Det_Opciones)
+                    .ThenInclude(o => o.Lpo_Producto)
             .Include(p => p.Ped_Mesa)
             .Include(p => p.Ped_Usuario)
             .Include(p => p.Ped_Comandas)

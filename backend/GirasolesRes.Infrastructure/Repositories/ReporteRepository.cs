@@ -111,6 +111,13 @@ public class ReporteRepository : IReporteRepository
             .Include(v => v.Ven_Pedido)
                 .ThenInclude(p => p!.Ped_Detalles)
                     .ThenInclude(d => d.Det_Producto)
+            .Include(v => v.Ven_Pedido)
+                .ThenInclude(p => p!.Ped_Detalles)
+                    .ThenInclude(d => d.Det_MenuCompleto)
+            .Include(v => v.Ven_Pedido)
+                .ThenInclude(p => p!.Ped_Detalles)
+                    .ThenInclude(d => d.Det_Opciones)
+                        .ThenInclude(o => o.Lpo_Producto)
             .Where(v => v.Ven_Estado == EstadoVenta.Vigente &&
                         v.Ven_FechaHoraUtc >= desdeUtc &&
                         v.Ven_FechaHoraUtc <= hastaUtc)
@@ -121,11 +128,15 @@ public class ReporteRepository : IReporteRepository
         var todosDetalles = ventasVigentes
             .Where(v => v.Ven_Pedido != null)
             .SelectMany(v => v.Ven_Pedido!.Ped_Detalles)
-            .Where(d => d.Det_Producto != null)
             .ToList();
 
-        var agrupadosPorProducto = todosDetalles
-            .GroupBy(d => d.Id_Producto)
+        // 1. Platos de carta tradicionales
+        var detallesCarta = todosDetalles
+            .Where(d => d.Id_Producto.HasValue && d.Det_Producto != null)
+            .ToList();
+
+        var agrupadosPorProducto = detallesCarta
+            .GroupBy(d => d.Id_Producto!.Value)
             .Select(g =>
             {
                 var prod = g.First().Det_Producto!;
@@ -143,6 +154,53 @@ public class ReporteRepository : IReporteRepository
             .OrderByDescending(p => p.Cantidad)
             .ToList();
 
+        // 2. Menús completos vendidos (con cantidad y monto)
+        var detallesMenus = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .ToList();
+
+        var menusCompletos = detallesMenus
+            .GroupBy(d => d.Id_MenuCompleto!.Value)
+            .Select(g =>
+            {
+                var first = g.First();
+                var nombre = !string.IsNullOrWhiteSpace(first.Det_Nombre)
+                    ? first.Det_Nombre
+                    : first.Det_MenuCompleto?.Men_Nombre ?? $"Menú #{g.Key}";
+                var cantidad = g.Sum(d => d.Det_Cantidad);
+                var monto = decimal.Round(g.Sum(d => d.Det_Subtotal), 2);
+                return new ItemMenuCompletoVendidoDto(
+                    MenuCompletoId: g.Key,
+                    Nombre: nombre,
+                    Cantidad: cantidad,
+                    Monto: monto
+                );
+            })
+            .OrderByDescending(m => m.Cantidad)
+            .ToList();
+
+        // 3. Componentes elegidos dentro de los menús completos (con rol y cantidad, sin monto - S/ 0.00 según RN-138)
+        var opcionesMenus = detallesMenus
+            .SelectMany(d => d.Det_Opciones.Select(o => new { Opcion = o, Cantidad = d.Det_Cantidad }))
+            .ToList();
+
+        var componentes = opcionesMenus
+            .GroupBy(x => x.Opcion.Id_Producto)
+            .Select(g =>
+            {
+                var first = g.First().Opcion;
+                var cantidad = g.Sum(x => x.Cantidad);
+                return new ItemComponenteVendidoDto(
+                    ProductoId: g.Key,
+                    Producto: first.Lpo_ProductoNombre,
+                    Rol: first.Lpo_ParteNombre,
+                    Cantidad: cantidad
+                );
+            })
+            .OrderByDescending(c => c.Cantidad)
+            .ToList();
+
+        // Subtotales por categoría de carta + Menús completos
         var categorias = Enum.GetValues<CategoriaProducto>();
         var subtotales = categorias
             .Select(cat =>
@@ -157,8 +215,17 @@ public class ReporteRepository : IReporteRepository
             })
             .ToList();
 
-        var totalPlatos = agrupadosPorProducto.Sum(p => p.Cantidad);
-        var totalMonto = decimal.Round(agrupadosPorProducto.Sum(p => p.Monto), 2);
+        if (menusCompletos.Count > 0)
+        {
+            subtotales.Add(new SubtotalCategoriaDto(
+                Categoria: "Menús completos",
+                Cantidad: menusCompletos.Sum(m => m.Cantidad),
+                Monto: decimal.Round(menusCompletos.Sum(m => m.Monto), 2)
+            ));
+        }
+
+        var totalPlatos = agrupadosPorProducto.Sum(p => p.Cantidad) + menusCompletos.Sum(m => m.Cantidad);
+        var totalMonto = decimal.Round(agrupadosPorProducto.Sum(p => p.Monto) + menusCompletos.Sum(m => m.Monto), 2);
         var coincide = (totalMonto == totalVentas);
 
         List<PlatoPorDiaDto>? porDia = null;
@@ -167,7 +234,7 @@ public class ReporteRepository : IReporteRepository
             var detallesProd = ventasVigentes
                 .Where(v => v.Ven_Pedido != null)
                 .SelectMany(v => v.Ven_Pedido!.Ped_Detalles
-                    .Where(d => d.Id_Producto == productoId.Value)
+                    .Where(d => d.Id_Producto == productoId.Value || d.Det_Opciones.Any(o => o.Id_Producto == productoId.Value))
                     .Select(d => new { VentaFecha = v.Ven_FechaHoraUtc, d.Det_Cantidad }))
                 .ToList();
 
@@ -183,6 +250,10 @@ public class ReporteRepository : IReporteRepository
             agrupadosPorProducto = agrupadosPorProducto
                 .Where(i => i.ProductoId == productoId.Value)
                 .ToList();
+
+            componentes = componentes
+                .Where(c => c.ProductoId == productoId.Value)
+                .ToList();
         }
 
         return new ReportePlatosResponseDto(
@@ -192,7 +263,9 @@ public class ReporteRepository : IReporteRepository
             Coincide: coincide,
             Subtotales: subtotales,
             Items: agrupadosPorProducto,
-            PorDia: porDia
+            PorDia: porDia,
+            MenusCompletos: menusCompletos,
+            Componentes: componentes
         );
     }
 

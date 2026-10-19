@@ -5,6 +5,8 @@ namespace GirasolesRes.Application.DTOs.Comandas;
 public class LineaComandaDto
 {
     public string Producto { get; set; } = string.Empty;
+    public string? Elecciones { get; set; }
+    public string? Incluye { get; set; }
     public int Cantidad { get; set; }
     public string? Observacion { get; set; }
 }

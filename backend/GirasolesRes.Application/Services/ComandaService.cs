@@ -71,25 +71,54 @@ public class ComandaService : IComandaService
                 RegistradoPor = c.Cmd_Pedido?.Ped_Usuario?.Usu_Nombre ?? "Sistema",
                 MinutosEspera = minutosEspera,
                 EsDemora = minutosEspera >= 15, // RV-91: Demora a partir de 15 minutos
-                Lineas = c.Cmd_Detalles.Select(d => new LineaComandaDto
+                Lineas = c.Cmd_Detalles.Select(d =>
                 {
-                    Producto = d.Dtc_NombreProducto,
-                    Cantidad = d.Dtc_Cantidad,
-                    Observacion = d.Dtc_Observacion
+                    var nombreCompleto = !string.IsNullOrWhiteSpace(d.Dtc_Elecciones)
+                        ? $"{d.Dtc_NombreProducto}: {d.Dtc_Elecciones}{(!string.IsNullOrWhiteSpace(d.Dtc_Incluye) ? $" (incluye {d.Dtc_Incluye})" : "")}"
+                        : d.Dtc_NombreProducto;
+
+                    return new LineaComandaDto
+                    {
+                        Producto = nombreCompleto,
+                        Elecciones = d.Dtc_Elecciones,
+                        Incluye = d.Dtc_Incluye,
+                        Cantidad = d.Dtc_Cantidad,
+                        Observacion = d.Dtc_Observacion
+                    };
                 }).ToList()
             };
 
             items.Add(item);
         }
 
-        // Resumen superior "Por preparar" (RV-86 / Nielsen 8)
-        var resumen = items
-            .SelectMany(i => i.Lineas)
-            .GroupBy(l => l.Producto)
-            .Select(g => new ResumenProductoDto
+        // Resumen superior "Por preparar" (RV-86 / RN-137): Sumar componentes de menús completos y platos de carta
+        var resumenDict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var comanda in items)
+        {
+            foreach (var l in comanda.Lineas)
             {
-                Producto = g.Key,
-                Cantidad = g.Sum(x => x.Cantidad)
+                if (!string.IsNullOrWhiteSpace(l.Elecciones))
+                {
+                    var componentes = l.Elecciones.Split(new[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var comp in componentes)
+                    {
+                        var compTrim = comp.Trim();
+                        resumenDict[compTrim] = resumenDict.GetValueOrDefault(compTrim) + l.Cantidad;
+                    }
+                }
+                else
+                {
+                    resumenDict[l.Producto] = resumenDict.GetValueOrDefault(l.Producto) + l.Cantidad;
+                }
+            }
+        }
+
+        var resumen = resumenDict
+            .Select(kvp => new ResumenProductoDto
+            {
+                Producto = kvp.Key,
+                Cantidad = kvp.Value
             })
             .OrderBy(r => r.Producto)
             .ToList();
