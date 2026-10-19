@@ -292,15 +292,20 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Superior (Single-Row Action Header) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold text-[#2C1A0E]">
-            Pedidos
-          </h1>
-          <span className="text-xs text-neutral-500 font-mono hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
-            Actualizado hace {segundosDesdeActualizacion} s
-          </span>
+      {/* 1. Encabezado Superior */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
+        <div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-bold text-[#2C1A0E]">
+              Pedidos
+            </h1>
+            <span className="text-xs text-neutral-500 font-mono hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
+              Actualizado hace {segundosDesdeActualizacion} s
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+            Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar.
+          </p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">

@@ -124,15 +124,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* Encabezado Editorial (Single-Row Action Header) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold text-[#482813]">
-            Bienvenido/a, {session.nombre}
-          </h1>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-            {session.rol}
-          </span>
+      {/* Encabezado Editorial */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
+        <div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-bold text-[#482813]">
+              Bienvenido/a, {session.nombre}
+            </h1>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+              {session.rol}
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+            Resumen operativo y métricas principales según su rol de trabajo.
+          </p>
         </div>
 
         {/* Indicador discreto de actualización y botón manual */}

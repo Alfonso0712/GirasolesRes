@@ -292,15 +292,20 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         </div>
       )}
 
-      {/* Encabezado Superior ESTÁTICO Y FIJO (Single-Row Action Header) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold text-[#2C1A0E]">
-            Carta y Menús
-          </h1>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-            {total} items registrados
-          </span>
+      {/* Encabezado Superior ESTÁTICO Y FIJO */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
+        <div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-bold text-[#2C1A0E]">
+              Carta y Menús
+            </h1>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+              {total} items registrados
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+            Administre productos de carta, componentes y los menús completos del restaurante.
+          </p>
         </div>
 
         {pestañaActiva === 'catalogo' && (

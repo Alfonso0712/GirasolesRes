@@ -317,15 +317,20 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
         </div>
       )}
 
-      {/* Encabezado Editorial Limpio (Single-Row Action Header) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 mb-1">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold text-[#2C1A0E]">
-            Cocina en Vivo (KDS)
-          </h1>
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-            Por preparar: {resumen.reduce((acc, r) => acc + r.cantidad, 0)}
-          </span>
+      {/* Encabezado Editorial Limpio */}
+      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
+        <div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-bold text-[#2C1A0E]">
+              Cocina en Vivo (KDS)
+            </h1>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+              Por preparar: {resumen.reduce((acc, r) => acc + r.cantidad, 0)}
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
+            Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real.
+          </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap shrink-0">
