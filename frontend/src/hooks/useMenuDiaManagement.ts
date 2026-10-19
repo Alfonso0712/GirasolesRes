@@ -181,6 +181,26 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
     });
   };
 
+  // Selección de múltiples platos de una categoría
+  const handleSeleccionarVarios = (productoIds: string[]) => {
+    setErrorValidacionGuardar(null);
+    setPlatosSeleccionados((prev) => {
+      const next = new Set(prev);
+      productoIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+
+  // Desmarcar múltiples platos de una categoría
+  const handleDesmarcarVarios = (productoIds: string[]) => {
+    setErrorValidacionGuardar(null);
+    setPlatosSeleccionados((prev) => {
+      const next = new Set(prev);
+      productoIds.forEach((id) => next.delete(id));
+      return next;
+    });
+  };
+
   // Selección única de desayuno
   const handleSeleccionarDesayuno = (desayunoId: string | null) => {
     setErrorValidacionGuardar(null);
@@ -288,6 +308,8 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
     desayunoSeleccionado,
     platosSeleccionados,
     handleTogglePlato,
+    handleSeleccionarVarios,
+    handleDesmarcarVarios,
     handleSeleccionarDesayuno,
     handleGuardarMenu,
     tieneCambiosSinGuardar,

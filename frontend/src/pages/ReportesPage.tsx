@@ -19,6 +19,7 @@ import {
 import { useReportesManagement } from '../hooks/useReportesManagement';
 import type { UserSession } from '../types/auth';
 import type { TipoAtajoFecha, CriterioOrdenPlatos } from '../types/reporte';
+import { CATEGORIA_LABELS, CATEGORIA_BADGE_LABELS } from '../types/producto';
 
 interface ReportesPageProps {
   session: UserSession;
@@ -362,7 +363,9 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                       className="p-3 rounded-xl bg-neutral-50/70 border border-neutral-200/70 flex items-center justify-between"
                     >
                       <div>
-                        <span className="text-xs font-bold text-[#482813] block">{sub.categoria}</span>
+                        <span className="text-xs font-bold text-[#482813] block">
+                          {CATEGORIA_LABELS[sub.categoria] || sub.categoria}
+                        </span>
                         <span className="text-[11px] text-neutral-500">
                           {sub.cantidad} {sub.cantidad === 1 ? 'plato' : 'platos'}
                         </span>
@@ -463,8 +466,11 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                             )}
                           </td>
                           <td className="py-3 px-4">
-                            <span className="w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border shadow-2xs bg-neutral-50 text-neutral-700 border-neutral-200">
-                              {item.categoria}
+                            <span
+                              className="w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border shadow-2xs bg-neutral-50 text-neutral-700 border-neutral-200"
+                              title={CATEGORIA_LABELS[item.categoria] || item.categoria}
+                            >
+                              {CATEGORIA_BADGE_LABELS[item.categoria] || item.categoria}
                             </span>
                           </td>
                           <td className="py-3 px-4 text-center">
@@ -505,8 +511,11 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                             </span>
                           )}
                         </div>
-                        <span className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-neutral-100 text-neutral-700 border border-neutral-200">
-                          {item.categoria}
+                        <span
+                          className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-neutral-100 text-neutral-700 border border-neutral-200"
+                          title={CATEGORIA_LABELS[item.categoria] || item.categoria}
+                        >
+                          {CATEGORIA_BADGE_LABELS[item.categoria] || item.categoria}
                         </span>
                       </div>
 

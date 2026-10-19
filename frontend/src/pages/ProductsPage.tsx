@@ -15,7 +15,11 @@ import {
   UtensilsCrossed
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
-import type { CategoriaProducto } from '../types/producto';
+import {
+  CATEGORIAS_PRODUCTO,
+  CATEGORIA_LABELS,
+  CATEGORIA_BADGE_LABELS
+} from '../types/producto';
 import { useProductsManagement } from '../hooks/useProductsManagement';
 import { ProductFormModal } from '../components/ProductFormModal';
 import { ProductConfirmModal } from '../components/ProductConfirmModal';
@@ -69,13 +73,23 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
   const nuevoBtnRef = useRef<HTMLButtonElement | null>(null);
 
   // Estandarización de badges de categoría (w-28 h-7 exactos)
-  const obtenerEstiloCategoria = (categoria: CategoriaProducto) => {
+  const obtenerEstiloCategoria = (categoria: string) => {
     switch (categoria) {
       case 'Desayuno':
         return 'bg-amber-50 text-amber-900 border-amber-200/90';
       case 'Almuerzo':
         return 'bg-orange-50 text-orange-900 border-orange-200/90';
+      case 'PlatosExtras':
+      case 'Platos Extras':
+      case 'Platos Extras / A la Carta':
+        return 'bg-rose-50 text-rose-900 border-rose-200/90';
+      case 'Combinados':
+        return 'bg-purple-50 text-purple-900 border-purple-200/90';
+      case 'Bebidas':
+      case 'Bebidas y Refrescos':
+        return 'bg-emerald-50 text-emerald-900 border-emerald-200/90';
       case 'Otro':
+      case 'Otros':
         return 'bg-sky-50 text-sky-900 border-sky-200/90';
       default:
         return 'bg-neutral-100 text-neutral-700 border-neutral-200';
@@ -194,9 +208,11 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
           >
             <option value="Todas">Todas las categorías</option>
-            <option value="Desayuno">Desayunos</option>
-            <option value="Almuerzo">Almuerzos</option>
-            <option value="Otro">Otros</option>
+            {CATEGORIAS_PRODUCTO.map((cat) => (
+              <option key={cat.valor} value={cat.valor}>
+                {cat.etiqueta}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -409,8 +425,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                               className={`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border ${obtenerEstiloCategoria(
                                 prod.categoria
                               )} text-center shadow-2xs`}
+                              title={CATEGORIA_LABELS[prod.categoria] || prod.categoria}
                             >
-                              {prod.categoria}
+                              {CATEGORIA_BADGE_LABELS[prod.categoria] || prod.categoria}
                             </span>
                           </td>
 
@@ -499,7 +516,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           {prod.nombre}
                         </h4>
                         <p className="text-xs text-neutral-500 mt-0.5">
-                          Categoría: <strong className="text-neutral-800">{prod.categoria}</strong>
+                          Categoría: <strong className="text-neutral-800">{CATEGORIA_LABELS[prod.categoria] || prod.categoria}</strong>
                         </p>
                       </div>
 
@@ -507,8 +524,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                         className={`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border ${obtenerEstiloCategoria(
                           prod.categoria
                         )} text-center shadow-2xs`}
+                        title={CATEGORIA_LABELS[prod.categoria] || prod.categoria}
                       >
-                        {prod.categoria}
+                        {CATEGORIA_BADGE_LABELS[prod.categoria] || prod.categoria}
                       </span>
                     </div>
 

@@ -37,7 +37,7 @@ public class CrearProductoRequest : IValidatableObject
             yield return new ValidationResult(MensajesCatalogo.MSG_52, new[] { nameof(Nombre) });
         }
 
-        if (string.IsNullOrWhiteSpace(Categoria) || !Enum.TryParse<CategoriaProducto>(Categoria.Trim(), true, out var cat) || !Enum.IsDefined(typeof(CategoriaProducto), cat))
+        if (string.IsNullOrWhiteSpace(Categoria) || !CategoriaProductoExtensions.TryParseFlexible(Categoria, out _))
         {
             yield return new ValidationResult(MensajesCatalogo.MSG_54, new[] { nameof(Categoria) });
         }
@@ -84,7 +84,7 @@ public class ActualizarProductoRequest : IValidatableObject
             yield return new ValidationResult(MensajesCatalogo.MSG_52, new[] { nameof(Nombre) });
         }
 
-        if (string.IsNullOrWhiteSpace(Categoria) || !Enum.TryParse<CategoriaProducto>(Categoria.Trim(), true, out var cat) || !Enum.IsDefined(typeof(CategoriaProducto), cat))
+        if (string.IsNullOrWhiteSpace(Categoria) || !CategoriaProductoExtensions.TryParseFlexible(Categoria, out _))
         {
             yield return new ValidationResult(MensajesCatalogo.MSG_54, new[] { nameof(Categoria) });
         }

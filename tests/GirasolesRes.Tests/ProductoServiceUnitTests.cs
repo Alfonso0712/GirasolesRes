@@ -183,4 +183,64 @@ public class ProductoServiceUnitTests
 
         _productoRepoMock.Verify(r => r.GuardarCambiosAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Theory]
+    [InlineData("PlatosExtras", CategoriaProducto.PlatosExtras)]
+    [InlineData("Platos Extras / A la Carta", CategoriaProducto.PlatosExtras)]
+    [InlineData("Combinados", CategoriaProducto.Combinados)]
+    [InlineData("Bebidas", CategoriaProducto.Bebidas)]
+    [InlineData("Bebidas y Refrescos", CategoriaProducto.Bebidas)]
+    public async Task RegistrarProductoAsync_NuevasCategoriasYFormatoFlexible_RegistraConEnumCorrespondiente(string categoriaInput, CategoriaProducto categoriaEsperada)
+    {
+        // ARRANGE
+        var request = new CrearProductoRequest
+        {
+            Nombre = "Plato de Prueba Peruano",
+            Categoria = categoriaInput,
+            Precio = 22.50m
+        };
+
+        _productoRepoMock.Setup(r => r.ExisteNombreAsync("plato de prueba peruano", null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        // ACT
+        var resultado = await _service.RegistrarProductoAsync(request, "admin");
+
+        // ASSERT
+        Assert.True(resultado.Success);
+        Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
+        Assert.NotNull(resultado.Data);
+        Assert.Equal(categoriaEsperada.ToString(), resultado.Data!.Categoria);
+
+        _productoRepoMock.Verify(r => r.AgregarAsync(
+            It.Is<Producto>(p => p.Pro_Categoria == categoriaEsperada),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ListarProductosAsync_FiltroPorNuevaCategoria_InvocaRepositorioConEnumAdecuado()
+    {
+        // ARRANGE
+        _productoRepoMock.Setup(r => r.ListarProductosAsync(
+            null,
+            CategoriaProducto.PlatosExtras,
+            null,
+            1,
+            10,
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new List<Producto>(), 0));
+
+        // ACT
+        var resultado = await _service.ListarProductosAsync(null, "Platos Extras / A la Carta", null, 1, 10);
+
+        // ASSERT
+        Assert.True(resultado.Success);
+        _productoRepoMock.Verify(r => r.ListarProductosAsync(
+            null,
+            CategoriaProducto.PlatosExtras,
+            null,
+            1,
+            10,
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

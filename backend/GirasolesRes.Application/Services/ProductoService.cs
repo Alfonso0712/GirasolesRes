@@ -42,7 +42,7 @@ public class ProductoService : IProductoService
             CategoriaProducto? categoriaEnum = null;
             if (!string.IsNullOrWhiteSpace(categoria) && !categoria.Equals("Todas", StringComparison.OrdinalIgnoreCase))
             {
-                if (Enum.TryParse<CategoriaProducto>(categoria.Trim(), true, out var cat))
+                if (CategoriaProductoExtensions.TryParseFlexible(categoria, out var cat))
                 {
                     categoriaEnum = cat;
                 }
@@ -115,7 +115,7 @@ public class ProductoService : IProductoService
                     errores: new Dictionary<string, string> { { "nombre", MensajesCatalogo.MSG_53 } });
             }
 
-            Enum.TryParse<CategoriaProducto>(request.Categoria.Trim(), true, out var categoria);
+            CategoriaProductoExtensions.TryParseFlexible(request.Categoria, out var categoria);
 
             var nuevoProducto = new Producto(
                 proNombre: request.Nombre,
@@ -178,7 +178,7 @@ public class ProductoService : IProductoService
                     errores: new Dictionary<string, string> { { "nombre", MensajesCatalogo.MSG_53 } });
             }
 
-            Enum.TryParse<CategoriaProducto>(request.Categoria.Trim(), true, out var categoria);
+            CategoriaProductoExtensions.TryParseFlexible(request.Categoria, out var categoria);
 
             var precioAnterior = producto.Pro_Precio;
             producto.Actualizar(request.Nombre, categoria, request.Precio);
@@ -266,7 +266,7 @@ public class ProductoService : IProductoService
             CategoriaProducto? categoriaEnum = null;
             if (!string.IsNullOrWhiteSpace(categoria) && !categoria.Equals("Todas", StringComparison.OrdinalIgnoreCase))
             {
-                if (Enum.TryParse<CategoriaProducto>(categoria.Trim(), true, out var cat))
+                if (CategoriaProductoExtensions.TryParseFlexible(categoria, out var cat))
                 {
                     categoriaEnum = cat;
                 }
@@ -304,7 +304,7 @@ public class ProductoService : IProductoService
         {
             errores["categoria"] = MensajesCatalogo.MSG_54;
         }
-        else if (!Enum.TryParse<CategoriaProducto>(categoria.Trim(), true, out _))
+        else if (!CategoriaProductoExtensions.TryParseFlexible(categoria, out _))
         {
             errores["categoria"] = MensajesCatalogo.MSG_54;
         }

@@ -143,7 +143,7 @@ public class ReporteRepository : IReporteRepository
             .OrderByDescending(p => p.Cantidad)
             .ToList();
 
-        var categorias = new[] { CategoriaProducto.Desayuno, CategoriaProducto.Almuerzo, CategoriaProducto.Otro };
+        var categorias = Enum.GetValues<CategoriaProducto>();
         var subtotales = categorias
             .Select(cat =>
             {

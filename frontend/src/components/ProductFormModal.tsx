@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Loader2, Info, AlertCircle, Utensils } from 'lucide-react';
-import type {
-  ProductoItem,
-  CategoriaProducto,
-  CrearProductoData,
-  ActualizarProductoData
+import {
+  type ProductoItem,
+  type CategoriaProducto,
+  type CrearProductoData,
+  type ActualizarProductoData,
+  CATEGORIAS_PRODUCTO
 } from '../types/producto';
 import { normalizeText } from '../utils/normalizeText';
 import type { ApiClientError } from '../services/apiClient';
@@ -310,9 +311,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 }`}
                 disabled={guardando}
               >
-                <option value="Desayuno">Desayuno</option>
-                <option value="Almuerzo">Almuerzo</option>
-                <option value="Otro">Otro</option>
+                {CATEGORIAS_PRODUCTO.map((cat) => (
+                  <option key={cat.valor} value={cat.valor}>
+                    {cat.etiqueta} — ({cat.descripcion})
+                  </option>
+                ))}
               </select>
               {errores.categoria && (
                 <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
