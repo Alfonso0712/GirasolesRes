@@ -41,7 +41,7 @@ export const PedidoDescartarModal: React.FC<PedidoDescartarModalProps> = ({
               <AlertTriangle className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <h2 id="modal-descartar-title" className="text-lg font-serif font-bold text-[#2C1A0E]">
+              <h2 id="modal-descartar-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 Descartar Pedido en Armado
               </h2>
             </div>

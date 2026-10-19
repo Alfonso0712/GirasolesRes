@@ -256,7 +256,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
             </div>
             <h2
               id="modal-cobro-title"
-              className="text-xl font-brand-serif font-bold text-[#482813] tracking-tight"
+              className="text-xl font-sans font-bold text-[#2C1A0E] tracking-tight"
             >
               Pedido N.º {pedido.numero}
             </h2>

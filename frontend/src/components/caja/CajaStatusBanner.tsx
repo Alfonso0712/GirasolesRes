@@ -76,9 +76,9 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-200 text-rose-800">
-                Bloqueo Operativo (RN-108)
+                Bloqueo Operativo: Caja anterior sin cerrar
               </span>
-              <h3 className="font-brand-serif font-bold text-base sm:text-lg text-rose-900">
+              <h3 className="font-sans font-bold text-base sm:text-lg text-rose-900">
                 Caja anterior sin cerrar
               </h3>
             </div>

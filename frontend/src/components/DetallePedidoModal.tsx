@@ -87,7 +87,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
         <div className="flex items-start justify-between pb-4 border-b border-neutral-100">
           <div>
             <div className="flex items-center gap-3">
-              <h3 id="detalle-title" className="text-xl font-bold font-serif text-neutral-800">
+              <h3 id="detalle-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 Pedido N.º {pedido.numero}
               </h3>
               {renderBadgeEstado(pedido.estado)}

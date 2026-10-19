@@ -100,7 +100,7 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
           <div className="flex-1">
             <h3
               id="confirm-modal-title"
-              className="text-lg font-serif font-bold text-[#482813] leading-snug"
+              className="text-xl font-sans font-bold text-[#2C1A0E] leading-snug"
             >
               {esDesactivar
                 ? `¿Desactivar "${producto.nombre}"?`
@@ -109,16 +109,16 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
 
             <p className="mt-2 text-sm text-[#7C6F66] leading-relaxed">
               {esDesactivar
-                ? `¿Desactivar ${producto.nombre}? Dejará de aparecer al tomar pedidos y en el menú del día, pero se conservará su historial. (MSG-60)`
-                : `¿Activar ${producto.nombre}? Volverá a estar disponible para pedidos y para el menú del día. (MSG-61)`}
+                ? `¿Desactivar ${producto.nombre}? Dejará de aparecer al tomar pedidos y en el menú del día, pero se conservará su historial.`
+                : `¿Activar ${producto.nombre}? Volverá a estar disponible para pedidos y para el menú del día.`}
             </p>
 
-            {/* MSG-62: Advertencia si forma parte del menú vigente de hoy */}
+            {/* Advertencia si forma parte del menú vigente de hoy */}
             {esDesactivar && formaParteDelMenuHoy && (
               <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2 text-xs text-amber-900">
                 <AlertTriangle className="w-4 h-4 text-[#D35400] shrink-0 mt-0.5" />
                 <span>
-                  {producto.nombre} forma parte del menú de hoy. Al desactivarlo se retirará del menú. (MSG-62)
+                  {producto.nombre} forma parte del menú de hoy. Al desactivarlo se retirará del menú.
                 </span>
               </div>
             )}

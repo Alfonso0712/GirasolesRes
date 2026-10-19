@@ -166,7 +166,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
         {/* Encabezado fijo (shrink-0) */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div>
-            <h2 id="modal-mesa-title" className="font-serif font-bold text-xl text-[#2C1A0E]">
+            <h2 id="modal-mesa-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
               {isEdit ? 'Editar Mesa' : 'Nueva Mesa'}
             </h2>
             <p className="text-xs text-[#7C6F66] mt-0.5">

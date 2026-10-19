@@ -394,7 +394,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
             <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200/60">
               <CheckCircle2 className="w-7 h-7" />
             </div>
-            <h3 className="font-brand-serif font-bold text-lg text-[#2C1A0E] mb-1">
+            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
               No hay pedidos pendientes de cobro
             </h3>
             <p className="text-xs text-neutral-500">

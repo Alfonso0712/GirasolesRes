@@ -241,7 +241,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             <div>
               <h2
                 id="modal-title"
-                className="text-lg sm:text-xl font-serif font-bold text-[#482813] leading-tight"
+                className="text-lg sm:text-xl font-sans font-bold text-[#2C1A0E] leading-tight"
               >
                 {isEditing ? 'Editar Producto' : 'Nuevo Producto o Componente'}
               </h2>
@@ -313,7 +313,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               </div>
               {isEditing && (
                 <p className="mt-1 text-[11px] text-neutral-500 italic">
-                  El tipo no se puede modificar en productos existentes para preservar el historial (MSG-216).
+                  El tipo no se puede modificar en productos existentes para preservar el historial.
                 </p>
               )}
             </div>
@@ -359,7 +359,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </p>
               ) : (
                 <p className="mt-1 text-[11px] text-[#7C6F66]">
-                  De 3 a 50 caracteres. Único dentro de su tipo (RN-139 / RV-157).
+                  De 3 a 50 caracteres.
                 </p>
               )}
             </div>
@@ -447,12 +447,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </p>
                   )}
 
-                  {/* RV-42: Mensaje informativo MSG-59 cuando se edita el precio */}
+                  {/* Mensaje informativo cuando se edita el precio */}
                   {precioCambioEnEdicion && !errores.precio && (
                     <div className="mt-2 p-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl flex items-start gap-2 text-xs text-amber-900 animate-in fade-in duration-200">
                       <Info className="w-4 h-4 text-[#D35400] shrink-0 mt-0.5" />
                       <span>
-                        El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian. (MSG-59)
+                        El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian.
                       </span>
                     </div>
                   )}
@@ -463,7 +463,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             {/* CASO B: Componente de Menú (Rol + Aviso sin precio) */}
             {tipo === 'Componente' && (
               <>
-                {/* Campo Rol del Componente (RV-156) */}
+                {/* Campo Rol del Componente */}
                 <div>
                   <label
                     htmlFor="prod-rol"
@@ -502,11 +502,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   )}
                 </div>
 
-                {/* Aviso informativo: Sin precio (MSG-215) */}
+                {/* Aviso informativo: Sin precio individual */}
                 <div className="p-3.5 bg-emerald-50/80 border border-emerald-200/90 rounded-xl flex items-start gap-2.5 text-xs text-emerald-900">
                   <Info className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-bold text-emerald-950">Sin precio de venta independiente (MSG-215)</p>
+                    <p className="font-bold text-emerald-950">Componente incluido dentro del menú completo (sin precio individual).</p>
                     <p className="mt-0.5 text-emerald-800 leading-relaxed">
                       Los componentes no llevan precio: se integran en los menús completos (Desayuno completo, Almuerzo completo o Solo segundo) definidos por la administración.
                     </p>

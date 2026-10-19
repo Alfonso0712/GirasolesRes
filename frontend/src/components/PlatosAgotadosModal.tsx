@@ -80,7 +80,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
               <UtensilsCrossed className="w-5 h-5" />
             </div>
             <div>
-              <h3 id="platos-agotados-title" className="text-xl font-bold font-serif text-neutral-800">
+              <h3 id="platos-agotados-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 Disponibilidad de Platos
               </h3>
               <p className="text-xs text-neutral-500">

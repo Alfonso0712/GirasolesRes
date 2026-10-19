@@ -105,7 +105,7 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h2 id="confirm-mesa-title" className="font-serif font-bold text-lg text-[#2C1A0E]">
+              <h2 id="confirm-mesa-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
                 {estaBloqueadaPorOcupada
                   ? 'Acción no permitida'
                   : esDesactivar

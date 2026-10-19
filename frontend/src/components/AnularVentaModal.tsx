@@ -99,7 +99,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
               <p className="text-[10px] font-bold uppercase tracking-wider text-rose-600">
                 ACCIÓN IRREVERSIBLE
               </p>
-              <h2 id="titulo-anular-venta" className="text-xl font-brand-serif font-bold text-[#482813]">
+              <h2 id="titulo-anular-venta" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 Anular Venta {venta.comprobante}
               </h2>
             </div>

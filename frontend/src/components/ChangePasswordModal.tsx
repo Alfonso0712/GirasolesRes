@@ -162,7 +162,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <KeyRound className="w-5 h-5" />
             </div>
             <div>
-              <h2 id="change-password-title" className="text-xl font-serif font-bold text-[#482813]">
+              <h2 id="change-password-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 Cambiar contraseña
               </h2>
               <p className="text-xs text-neutral-500 mt-0.5">

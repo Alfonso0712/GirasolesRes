@@ -244,7 +244,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
         {/* Header (shrink-0) */}
         <div className="shrink-0 flex items-center justify-between pb-4 border-b border-neutral-100 mb-4">
           <div>
-            <h2 id="modal-title" className="text-xl font-serif font-bold text-[#482813]">
+            <h2 id="modal-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
               {isEdit ? `Editar usuario - ${usuarioAEditar?.nombre}` : 'Nuevo usuario'}
             </h2>
             <p className="text-xs text-neutral-500 mt-0.5">

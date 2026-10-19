@@ -61,7 +61,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
         </div>
 
         {/* MSG-40 */}
-        <h3 id="logout-title" className="text-lg font-serif font-bold text-neutral-900 mb-2">
+        <h3 id="logout-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
           ¿Cerrar sesión?
         </h3>
 

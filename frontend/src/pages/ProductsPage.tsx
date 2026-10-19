@@ -145,11 +145,11 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
     const precioNum = parseFloat(nuevoPrecioStr.trim().replace(',', '.'));
     if (isNaN(precioNum) || precioNum <= 0) {
-      setErrorPrecio('El precio debe ser un número mayor a cero (MSG-55).');
+      setErrorPrecio('El precio debe ser un número mayor a cero.');
       return;
     }
     if (precioNum > 999.99 || parseFloat(precioNum.toFixed(2)) !== precioNum) {
-      setErrorPrecio('El precio no puede superar S/ 999.99 y acepta hasta dos decimales (MSG-56).');
+      setErrorPrecio('El precio no puede superar S/ 999.99 y acepta hasta dos decimales.');
       return;
     }
 
@@ -163,7 +163,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         session.token
       );
       setModalPrecioOpen(false);
-      setAvisoExito('Menú completo actualizado correctamente (MSG-217).');
+      setAvisoExito('Menú completo actualizado correctamente.');
       await cargarMenusCompletos();
     } catch (err: any) {
       setErrorPrecio(err.message || 'No se pudo actualizar el precio del menú completo.');
@@ -178,7 +178,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     setModalEstadoMenuOpen(true);
   };
 
-  // Confirmar cambio de estado de menú completo (MSG-218)
+  // Confirmar cambio de estado de menú completo
   const handleConfirmarEstadoMenu = async () => {
     if (!menuParaEstado || guardandoEstadoMenu) return;
 
@@ -190,7 +190,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         session.token
       );
       setModalEstadoMenuOpen(false);
-      setAvisoExito('Menú completo actualizado correctamente (MSG-217).');
+      setAvisoExito('Menú completo actualizado correctamente.');
       await cargarMenusCompletos();
     } catch (err: any) {
       setAvisoError(err.message || 'No se pudo cambiar el estado del menú completo.');
@@ -233,7 +233,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           </div>
           <h2 className="text-xl font-bold text-neutral-900 mb-2">Acceso Restringido</h2>
           <p className="text-sm text-neutral-600 mb-6">
-            Solo los usuarios con rol <strong className="text-neutral-900">Administrador</strong> tienen autorización para gestionar la carta del restaurante (RN-23).
+            Solo los usuarios con rol <strong className="text-neutral-900">Administrador</strong> tienen autorización para gestionar la carta del restaurante.
           </p>
         </div>
       </div>
@@ -248,7 +248,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     filtroTipo !== 'Todos';
 
   return (
-    <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-[1600px] mx-auto h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-3 pb-4 gap-3.5">
       {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
       {avisoExito && (
         <div
@@ -346,7 +346,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span>Menús Completos (CUS04.5)</span>
+          <span>Menús completos</span>
           <span className="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-900 font-semibold">
             3 configurados
           </span>
@@ -377,7 +377,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             </div>
 
             {/* Filter Tipo (Carta vs Componente) */}
-            <div className="w-full sm:w-44">
+            <div className="w-full sm:w-auto min-w-[170px]">
               <select
                 value={filtroTipo}
                 onChange={(e) => {
@@ -385,7 +385,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   setPagina(1);
                 }}
                 aria-label="Filtrar por tipo"
-                className="w-full px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
+                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
               >
                 <option value="Todos">Todos los tipos</option>
                 <option value="Carta">Productos de carta</option>
@@ -394,7 +394,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             </div>
 
             {/* Filter Category */}
-            <div className="w-full sm:w-44">
+            <div className="w-full sm:w-auto min-w-[170px]">
               <select
                 value={filtroCategoria}
                 onChange={(e) => {
@@ -403,7 +403,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 }}
                 disabled={filtroTipo === 'Componente'}
                 aria-label="Filtrar por categoría"
-                className={`w-full px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer ${
+                className={`w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer ${
                   filtroTipo === 'Componente' ? 'opacity-50 cursor-not-allowed bg-neutral-50' : ''
                 }`}
               >
@@ -417,7 +417,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             </div>
 
             {/* Filter Status */}
-            <div className="w-full sm:w-36">
+            <div className="w-full sm:w-auto min-w-[170px]">
               <select
                 value={filtroEstado}
                 onChange={(e) => {
@@ -425,7 +425,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   setPagina(1);
                 }}
                 aria-label="Filtrar por estado"
-                className="w-full px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
+                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
               >
                 <option value="Todos">Todos los estados</option>
                 <option value="Activo">Activo</option>
@@ -499,22 +499,22 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="border-b border-neutral-200/80 text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                          <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 px-6 border-b border-neutral-200/90 shadow-2xs">
                             PRODUCTO / COMPONENTE
                           </th>
-                          <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 px-6 border-b border-neutral-200/90 shadow-2xs">
                             TIPO
                           </th>
-                          <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 px-6 border-b border-neutral-200/90 shadow-2xs">
                             ROL / CATEGORÍA
                           </th>
-                          <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 text-right border-b border-neutral-200/80">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 px-6 text-right border-b border-neutral-200/90 shadow-2xs">
                             PRECIO
                           </th>
-                          <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 border-b border-neutral-200/80">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 px-6 border-b border-neutral-200/90 shadow-2xs">
                             ESTADO
                           </th>
-                          <th className="sticky top-0 bg-neutral-50/90 backdrop-blur-xs z-10 py-3.5 px-6 text-right border-b border-neutral-200/80">
+                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-2.5 px-6 text-right border-b border-neutral-200/90 shadow-2xs">
                             ACCIONES
                           </th>
                         </tr>
@@ -613,41 +613,51 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 </span>
                               </td>
 
-                              <td className="py-3 px-6 text-right">
-                                <div className="flex items-center justify-end gap-1">
+                              <td className="py-2.5 px-6 text-right">
+                                <div className="inline-flex items-center justify-end gap-1.5">
                                   <button
                                     type="button"
                                     onClick={(e) => handleAbrirEditar(prod, e.currentTarget)}
                                     title="Editar producto o componente"
-                                    aria-label="Editar"
-                                    className="p-1.5 text-neutral-500 hover:text-neutral-800 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+                                    aria-label="Editar producto o componente"
+                                    className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 transition-colors shadow-2xs cursor-pointer"
                                   >
                                     <Edit2 className="w-4 h-4" />
                                   </button>
 
-                                  <button
-                                    type="button"
-                                    onClick={(e) =>
-                                      handleAbrirConfirmacion(
-                                        prod,
-                                        prod.activo ? 'desactivar' : 'activar',
-                                        e.currentTarget
-                                      )
-                                    }
-                                    title={prod.activo ? 'Desactivar' : 'Activar'}
-                                    aria-label={prod.activo ? 'Desactivar' : 'Activar'}
-                                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                                      prod.activo
-                                        ? 'text-neutral-400 hover:text-[#D35400] hover:bg-amber-50'
-                                        : 'text-neutral-400 hover:text-emerald-600 hover:bg-emerald-50'
-                                    }`}
-                                  >
-                                    {prod.activo ? (
+                                  {prod.activo ? (
+                                    <button
+                                      type="button"
+                                      onClick={(e) =>
+                                        handleAbrirConfirmacion(
+                                          prod,
+                                          'desactivar',
+                                          e.currentTarget
+                                        )
+                                      }
+                                      title="Desactivar"
+                                      aria-label="Desactivar"
+                                      className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#B84600] transition-colors shadow-2xs cursor-pointer"
+                                    >
                                       <PowerOff className="w-4 h-4" />
-                                    ) : (
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={(e) =>
+                                        handleAbrirConfirmacion(
+                                          prod,
+                                          'activar',
+                                          e.currentTarget
+                                        )
+                                      }
+                                      title="Activar"
+                                      aria-label="Activar"
+                                      className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors shadow-2xs cursor-pointer"
+                                    >
                                       <Power className="w-4 h-4" />
-                                    )}
-                                  </button>
+                                    </button>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -790,23 +800,10 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       )}
 
       {/* ============================================================== */}
-      {/* PESTAÑA 2: MENÚS COMPLETOS (CUS04.5)                           */}
+      {/* PESTAÑA 2: MENÚS COMPLETOS                                     */}
       {/* ============================================================== */}
       {pestañaActiva === 'menus_completos' && (
-        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto space-y-5 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-          {/* Banner explicativo de negocio */}
-          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50/50 rounded-2xl border border-amber-200/80 flex items-start gap-3.5 shadow-2xs">
-            <Sparkles className="w-5 h-5 text-[#D35400] shrink-0 mt-0.5" />
-            <div className="text-xs text-amber-950 leading-relaxed">
-              <p className="font-bold text-sm text-[#482813]">
-                Fórmulas de Menú Completo del Restaurante (CUS04.5)
-              </p>
-              <p className="mt-1 text-neutral-600">
-                El restaurante Girasoles opera con 3 fórmulas cerradas de atención. Como administradora, puede actualizar el precio de venta (RV-160) o suspender temporalmente cualquiera de ellos (MSG-218).
-              </p>
-            </div>
-          </div>
-
+        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto space-y-4 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
           {errorMenus ? (
             <div className="p-8 text-center bg-white rounded-2xl border border-neutral-200">
               <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
@@ -1032,7 +1029,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   <p className="mt-1 text-xs text-rose-600 font-medium">{errorPrecio}</p>
                 )}
                 <p className="mt-1 text-[11px] text-neutral-500">
-                  Mayor a S/ 0.00 y no superior a S/ 999.99 (RV-160 / RN-140).
+                  Mayor a S/ 0.00 y no superior a S/ 999.99.
                 </p>
               </div>
 

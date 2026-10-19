@@ -82,7 +82,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   </span>
                 )}
               </div>
-              <h2 id="titulo-detalle-venta" className="text-xl font-brand-serif font-bold text-[#482813]">
+              <h2 id="titulo-detalle-venta" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 {loading ? 'Cargando comprobante…' : venta ? `Comprobante ${venta.comprobante}` : 'Detalle'}
               </h2>
             </div>
@@ -248,7 +248,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   </div>
                   <div className="flex items-center justify-between text-sm pt-1 border-t border-amber-200/30">
                     <span className="font-bold text-[#482813]">TOTAL COBRADO:</span>
-                    <span className="font-brand-serif font-bold text-lg text-[#D35400] tabular-nums">
+                    <span className="font-sans font-bold text-lg text-[#D35400] tabular-nums whitespace-nowrap">
                       S/ {venta.total.toFixed(2)}
                     </span>
                   </div>

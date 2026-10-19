@@ -31,7 +31,7 @@ export const AvisoComandaModal: React.FC<AvisoComandaModalProps> = ({
           <BellRing className="w-8 h-8" />
         </div>
 
-        <h3 id="aviso-title" className="text-xl sm:text-2xl font-bold font-serif text-neutral-800 mb-2">
+        <h3 id="aviso-title" className="text-xl sm:text-2xl font-sans font-bold text-[#2C1A0E] mb-2">
           ¡Pedido Listo para Recoger!
         </h3>
 

@@ -62,13 +62,13 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
 
           <h3
             id="discard-modal-title"
-            className="text-lg font-serif font-bold text-neutral-900 mb-2"
+            className="text-xl font-sans font-bold text-[#2C1A0E] mb-2"
           >
             Tiene cambios sin guardar
           </h3>
 
           <p className="text-sm text-neutral-600 leading-relaxed">
-            ¿Desea descartarlos? Se restablecerán las selecciones de productos no guardadas. (MSG-72)
+            ¿Desea descartarlos? Se restablecerán las selecciones de productos no guardadas.
           </p>
         </div>
 

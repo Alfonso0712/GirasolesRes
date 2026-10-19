@@ -298,7 +298,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                 <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto border border-amber-200 mb-4 shadow-2xs">
                   <UtensilsCrossed className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-brand-serif font-bold text-[#2C1A0E] mb-2">
+                <h3 className="text-lg font-sans font-bold text-[#2C1A0E] mb-2">
                   El menú del día aún no está definido
                 </h3>
                 {session.rol === 'Administrador' ? (
@@ -647,7 +647,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                             type="button"
                             onClick={() => repetirLinea(index)}
                             disabled={linea.cantidad >= 20}
-                            title="Repetir esta misma combinación de menú completo (RV-165)"
+                            title="Repetir esta misma combinación de menú completo"
                             className="px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-[#D35400] border border-amber-200 flex items-center gap-1 transition-colors cursor-pointer shadow-2xs font-sans disabled:opacity-40"
                           >
                             <Copy className="w-3 h-3" />
@@ -909,7 +909,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                             type="button"
                             onClick={() => repetirLinea(idx)}
                             disabled={linea.cantidad >= 20}
-                            title="Repetir esta misma combinación de menú completo (RV-165)"
+                            title="Repetir esta misma combinación de menú completo"
                             className="min-h-[36px] px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-[#D35400] border border-amber-200 flex items-center gap-1 shadow-2xs font-sans disabled:opacity-40"
                           >
                             <Copy className="w-3 h-3" />

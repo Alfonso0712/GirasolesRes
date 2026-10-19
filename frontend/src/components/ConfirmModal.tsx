@@ -105,12 +105,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <AlertTriangle className="w-7 h-7 text-amber-600" />
           </div>
 
-          <h3 id="confirm-title" className="text-lg font-serif font-bold text-neutral-900 mb-2">
+          <h3 id="confirm-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
             No se puede eliminar a {nombreUsuario}
           </h3>
 
           <p className="text-sm text-neutral-600 mb-6 leading-relaxed">
-            No se puede eliminar: el usuario tiene movimientos registrados. Desactívelo para conservar su historial. (MSG-34)
+            No se puede eliminar: el usuario tiene movimientos registrados. Desactívelo para conservar su historial.
           </p>
 
           <div className="flex gap-3 justify-center">
@@ -195,7 +195,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           {config.icono}
         </div>
 
-        <h3 id="confirm-title" className="text-lg font-serif font-bold text-neutral-900 mb-2">
+        <h3 id="confirm-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
           {config.titulo}
         </h3>
 

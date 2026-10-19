@@ -196,9 +196,9 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
             </div>
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-[#F39C12]">
-                CUS 13.1 · Vista 13.1
+                GESTIÓN DE CAJA
               </p>
-              <h2 id="abrir-caja-title" className="font-brand-serif text-lg font-bold">
+              <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-white">
                 Apertura de Caja
               </h2>
             </div>

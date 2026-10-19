@@ -144,7 +144,7 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
           });
           return;
         }
-        setErrorCarga('No se pudo cargar el menú del día. Intente nuevamente. (MSG-80)');
+        setErrorCarga('No se pudo cargar el menú del día. Intente nuevamente.');
       } finally {
         if (mostrarSpinner) setCargando(false);
       }
@@ -294,12 +294,12 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
     // RV-162 / MSG-224: Para guardar el menú del día debe haber al menos un producto de carta o un menú completo habilitado
     if (platosCartaSeleccionados.size === 0 && menusCompletosHabilitados.size === 0) {
       setErrorValidacionGuardar(
-        'Seleccione al menos un producto de carta o habilite un menú completo con sus opciones. (MSG-224)'
+        'Seleccione al menos un producto de carta o habilite un menú completo con sus opciones.'
       );
       return;
     }
 
-    // RV-161 / MSG-219: Validación de opciones por parte de cada menú habilitado
+    // Validación de opciones por parte de cada menú habilitado
     const selectedComponentObjects = candidatos.filter(
       (c) => c.tipo === 'Componente' && opcionesSeleccionadas.has(c.id)
     );
@@ -309,14 +309,14 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
       const hasBebida = selectedComponentObjects.some((c) => c.rol === 'BebidaDesayuno');
       if (!hasBebida) {
         setErrorValidacionGuardar(
-          'Desayuno completo necesita al menos una opción en "Bebida". Seleccione opciones o quite el menú de hoy. (MSG-219)'
+          'Desayuno completo necesita al menos una opción en "Bebida". Seleccione opciones o quite el menú de hoy.'
         );
         return;
       }
       const hasPlato = selectedComponentObjects.some((c) => c.rol === 'PlatoDesayuno');
       if (!hasPlato) {
         setErrorValidacionGuardar(
-          'Desayuno completo necesita al menos una opción en "Plato". Seleccione opciones o quite el menú de hoy. (MSG-219)'
+          'Desayuno completo necesita al menos una opción en "Plato". Seleccione opciones o quite el menú de hoy.'
         );
         return;
       }
@@ -329,14 +329,14 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
       );
       if (!hasSopaOEntrada) {
         setErrorValidacionGuardar(
-          'Almuerzo completo necesita al menos una opción en "Sopa o entrada". Seleccione opciones o quite el menú de hoy. (MSG-219)'
+          'Almuerzo completo necesita al menos una opción en "Sopa o entrada". Seleccione opciones o quite el menú de hoy.'
         );
         return;
       }
       const hasSegundo = selectedComponentObjects.some((c) => c.rol === 'Segundo');
       if (!hasSegundo) {
         setErrorValidacionGuardar(
-          'Almuerzo completo necesita al menos una opción en "Segundo". Seleccione opciones o quite el menú de hoy. (MSG-219)'
+          'Almuerzo completo necesita al menos una opción en "Segundo". Seleccione opciones o quite el menú de hoy.'
         );
         return;
       }
@@ -347,7 +347,7 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
       const hasSegundo = selectedComponentObjects.some((c) => c.rol === 'Segundo');
       if (!hasSegundo) {
         setErrorValidacionGuardar(
-          'Solo segundo necesita al menos una opción en "Segundo". Seleccione opciones o quite el menú de hoy. (MSG-219)'
+          'Solo segundo necesita al menos una opción en "Segundo". Seleccione opciones o quite el menú de hoy.'
         );
         return;
       }
@@ -371,9 +371,9 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
         carta: new Set(platosCartaSeleccionados)
       };
 
-      setAvisoExito(res.message || 'Menú del día guardado correctamente. (MSG-70)');
+      setAvisoExito(res.message || 'Menú del día guardado correctamente.');
     } catch (err) {
-      handleApiError(err, 'No se pudo guardar el menú del día. Intente nuevamente. (MSG-38)');
+      handleApiError(err, 'No se pudo guardar el menú del día. Intente nuevamente.');
     } finally {
       setGuardando(false);
     }
@@ -411,7 +411,7 @@ export const useMenuDiaManagement = ({ session, onLogout }: UseMenuDiaManagement
       // Recargar menú para reflejar disponibilidades y recalcular menús completos (RN-136)
       await cargarDatos(false);
     } catch (err) {
-      handleApiError(err, 'No se pudo actualizar la disponibilidad. Intente nuevamente. (MSG-38)');
+      handleApiError(err, 'No se pudo actualizar la disponibilidad. Intente nuevamente.');
     } finally {
       setProcesandoDisp(false);
     }

@@ -281,9 +281,9 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
             </div>
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-[#F39C12]">
-                CUS 13.2 · Vista 13.2
+                GESTIÓN DE CAJA
               </p>
-              <h2 id="cerrar-caja-title" className="font-brand-serif text-lg font-bold">
+              <h2 id="cerrar-caja-title" className="font-sans text-xl font-bold text-white">
                 Cierre de Caja y Cuadre de Turno
               </h2>
             </div>
@@ -708,7 +708,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-brand-serif text-base font-bold text-red-950">
+                    <h3 className="font-sans text-base font-bold text-red-950">
                       ¿Confirmar Cierre de Caja?
                     </h3>
                     <p className="text-xs text-stone-600 mt-1">

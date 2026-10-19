@@ -206,7 +206,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
             <div>
               <p className="text-xs sm:text-sm font-bold text-amber-950">
-                El menú de hoy aún no está definido (MSG-204)
+                El menú de hoy aún no está definido
               </p>
               <p className="text-xs text-amber-800 mt-0.5">
                 {esAdmin

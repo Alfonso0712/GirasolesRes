@@ -204,9 +204,9 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
             </div>
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-[#F39C12]">
-                CUS 13.3 · Vista 13.4
+                HISTORIAL DE CAJA
               </p>
-              <h2 id="detalle-cierre-title" className="font-brand-serif text-lg font-bold">
+              <h2 id="detalle-cierre-title" className="font-sans text-xl font-bold text-white">
                 Detalle de Cierre de Caja
               </h2>
             </div>
@@ -239,16 +239,16 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
             </div>
           ) : detalle ? (
             <>
-              {/* Alerta de Ajustes Posteriores por Anulación (RN-113, RV-131) */}
+              {/* Alerta de Ajustes Posteriores por Anulación */}
               {tieneAjustes && (
                 <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fade-in break-inside-avoid">
                   <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <span className="font-bold text-sm text-amber-900 block">
-                      Cierre con ajustes posteriores (RN-113)
+                      Cierre con ajustes posteriores
                     </span>
                     <p className="text-amber-800 leading-relaxed">
-                      Una o más ventas correspondientes a este turno fueron anuladas con posterioridad al cierre de caja. Conforme a la regla de negocio <strong>RN-113</strong>, el arqueo y balance histórico original permanecen estrictamente inmutables; las ventas anuladas se detallan en la sección de auditoría al final.
+                      Una o más ventas correspondientes a este turno fueron anuladas con posterioridad al cierre de caja. El arqueo y balance histórico original permanecen estrictamente inmutables; las ventas anuladas se detallan en la sección de auditoría al final.
                     </p>
                   </div>
                 </div>
@@ -491,12 +491,12 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                       Ventas Anuladas Posteriores al Cierre ({detalle.ajustesPosteriores.length})
                     </span>
                     <span className="text-[10px] text-amber-800 font-semibold">
-                      Inmutabilidad garantizada (RN-113)
+                      Inmutabilidad garantizada
                     </span>
                   </div>
 
                   <div className="p-3 bg-amber-100/30 border-b border-amber-200/60 text-[11px] text-amber-900 leading-normal">
-                    <strong>Nota de Auditoría per RN-113:</strong> El balance de arqueo original permanece inalterado. Estas anulaciones ocurrieron después de cerrarse el turno para regularizar pedidos.
+                    <strong>Nota de Auditoría:</strong> El balance de arqueo original permanece inalterado. Estas anulaciones ocurrieron después de cerrarse el turno para regularizar pedidos.
                   </div>
 
                   <div className="divide-y divide-amber-200/60 text-xs">
@@ -536,7 +536,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               onClick={handleDescargarPdf}
               disabled={cargando || !detalle || descargandoPdf || esAbierta}
               className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B94600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
-              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF (RNF-48)'}
+              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
             >
               {descargandoPdf ? (
                 <>

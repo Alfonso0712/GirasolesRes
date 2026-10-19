@@ -163,9 +163,9 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
     return (
       <div className="p-8 text-center bg-[#FFFDF9] border border-red-200 rounded-2xl shadow-sm space-y-3 animate-fade-in text-[#482813] max-w-2xl mx-auto my-8">
         <ShieldAlert className="w-12 h-12 text-red-600 mx-auto" />
-        <h2 className="text-lg font-bold text-red-800">Acceso restringido (RN-106 / E-319)</h2>
+        <h2 className="text-lg font-bold text-red-800">Acceso restringido</h2>
         <p className="text-sm text-stone-600">
-          No tiene permisos para acceder al historial de cierres. Esta vista es exclusiva para el rol Administrador. (MSG-39)
+          No tiene permisos para acceder al historial de cierres. Esta vista es exclusiva para el rol Administrador.
         </p>
       </div>
     );
@@ -488,7 +488,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                         {c.conAjustes || c.tieneAjustesPosteriores ? (
                           <span
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-300"
-                            title="Contiene ventas anuladas después del cierre sin alterar el arqueo histórico (RN-113)"
+                            title="Contiene ventas anuladas después del cierre sin alterar el arqueo histórico"
                           >
                             <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
                             Con ajustes

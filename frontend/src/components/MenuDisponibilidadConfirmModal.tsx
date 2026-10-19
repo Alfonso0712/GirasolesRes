@@ -86,7 +86,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
 
           <h3
             id="disponibilidad-modal-title"
-            className="text-lg font-serif font-bold text-neutral-900 mb-2"
+            className="text-xl font-sans font-bold text-[#2C1A0E] mb-2"
           >
             {esAgotar
               ? `¿Marcar ${plato.nombre} como agotado?`

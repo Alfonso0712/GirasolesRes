@@ -168,7 +168,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
             <div>
               <div className="flex items-center gap-3">
-                <h3 id="modificar-title" className="text-xl font-bold font-serif text-neutral-800">
+                <h3 id="modificar-title" className="text-xl font-bold font-sans text-[#2C1A0E]">
                   Modificar Pedido N.º {pedido.numero}
                 </h3>
                 {hayCambiosSinGuardar && (
@@ -214,7 +214,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
                 {lineas.length === 0 ? (
                   <div className="p-8 text-center text-xs text-neutral-400">
-                    No quedan productos en el pedido. Para quitar todos, debe anular el pedido (MSG-121).
+                    No quedan productos en el pedido. Para quitar todos, debe anular el pedido.
                   </div>
                 ) : (
                   lineas.map((l, index) => (
@@ -383,7 +383,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
           className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-150"
         >
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-amber-200 text-center animate-in zoom-in-95 duration-150">
-            <h4 className="font-bold text-neutral-800 text-base mb-2 font-serif">
+            <h4 className="font-bold text-[#2C1A0E] text-base mb-2 font-sans">
               Cambios sin guardar
             </h4>
             <p className="text-xs text-neutral-600 mb-5 leading-relaxed">

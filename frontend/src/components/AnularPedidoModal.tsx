@@ -83,7 +83,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 id="anular-title" className="font-bold text-neutral-800 font-serif text-lg">
+              <h3 id="anular-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
                 Anular Pedido N.º {pedido.numero}
               </h3>
               <p className="text-xs text-neutral-500">{destino}</p>

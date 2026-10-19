@@ -44,7 +44,7 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
           <CheckCircle2 className="w-10 h-10" />
         </div>
 
-        <h2 id="modal-exito-title" className="text-xl font-serif font-bold text-[#2C1A0E] mb-1">
+        <h2 id="modal-exito-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-1">
           {mensajeTitulo}
         </h2>
         <p className="text-sm text-[#7C6F66] mb-5">

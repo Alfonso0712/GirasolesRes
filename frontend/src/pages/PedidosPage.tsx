@@ -527,7 +527,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-4">
               <Utensils className="w-7 h-7" />
             </div>
-            <h4 className="text-base font-bold text-neutral-800 font-serif mb-1">
+            <h4 className="text-base font-bold text-neutral-800 font-sans mb-1">
               {hayFiltrosActivos
                 ? 'No se encontraron pedidos con ese criterio.'
                 : 'Todavía no hay pedidos hoy.'}

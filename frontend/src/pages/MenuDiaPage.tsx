@@ -172,9 +172,9 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   });
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-4 space-y-4">
       {/* CABECERA PRINCIPAL */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-2 border-b border-neutral-200">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#D35400] mb-1">
             PLANIFICACIÓN Y SERVICIO
@@ -274,22 +274,22 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         </div>
       )}
 
-      {/* PESTAÑAS PRINCIPALES (CUS05.1 & CUS05.2) */}
-      <div className="border-b border-neutral-200 flex gap-2 overflow-x-auto">
+      {/* PESTAÑAS PRINCIPALES */}
+      <div className="border-b border-neutral-200 flex flex-wrap gap-2 sm:gap-3 no-scrollbar">
         {esAdmin && (
           <>
             <button
               type="button"
               onClick={() => setTabActiva('opciones')}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'opciones'
                   ? 'border-[#D35400] text-[#D35400]'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
               <Sparkles className="w-4 h-4" />
-              <span>Opciones del día (Componentes)</span>
-              <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-[#D35400] font-bold">
+              <span>Opciones del día</span>
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-[#D35400] font-bold">
                 {opcionesSeleccionadas.size}
               </span>
             </button>
@@ -297,15 +297,15 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             <button
               type="button"
               onClick={() => setTabActiva('menus')}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'menus'
                   ? 'border-[#D35400] text-[#D35400]'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
               <UtensilsCrossed className="w-4 h-4" />
-              <span>Menús completos (CUS04.5)</span>
-              <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-700 font-bold">
+              <span>Menús completos</span>
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-700 font-bold">
                 {menusCompletosHabilitados.size}
               </span>
             </button>
@@ -313,7 +313,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             <button
               type="button"
               onClick={() => setTabActiva('carta')}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'carta'
                   ? 'border-[#D35400] text-[#D35400]'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
@@ -321,7 +321,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             >
               <Coffee className="w-4 h-4" />
               <span>Productos de carta</span>
-              <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-700 font-bold">
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-700 font-bold">
                 {platosCartaSeleccionados.size}
               </span>
             </button>
@@ -331,16 +331,16 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         <button
           type="button"
           onClick={() => setTabActiva('disponibilidad')}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             tabActiva === 'disponibilidad'
               ? 'border-emerald-600 text-emerald-700'
               : 'border-transparent text-neutral-600 hover:text-neutral-900'
           }`}
         >
           <Power className="w-4 h-4" />
-          <span>Disponibilidad en servicio (Agotados)</span>
+          <span>Disponibilidad / Agotados</span>
           {menu?.definido && (
-            <span className="ml-1.5 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 font-bold">
+            <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 font-bold">
               {itemsDisponibilidad.length}
             </span>
           )}
@@ -356,24 +356,11 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         <>
           {/* TAB 1: OPCIONES DEL DÍA (COMPONENTES POR ROL) */}
           {tabActiva === 'opciones' && esAdmin && (
-            <div className="space-y-8">
-              <div className="p-4 bg-orange-50/70 border border-orange-200 rounded-2xl flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-[#D35400] shrink-0 mt-0.5" />
-                <div className="text-xs text-neutral-700 space-y-1">
-                  <p className="font-semibold text-neutral-900">
-                    Opciones que integran los Menús Completos de hoy
-                  </p>
-                  <p>
-                    Elija en cada sección las opciones disponibles. Los componentes no llevan precio independiente y se
-                    asignan a las partes fijas de cada menú (Bebida, Plato de desayuno, Sopa, Entrada o Segundo).
-                  </p>
-                </div>
-              </div>
+            <div className="space-y-6">
 
               {/* SECCIÓN 1: BEBIDAS DE DESAYUNO */}
               <SeccionComponentesRol
                 titulo="Bebidas de Desayuno"
-                descripcion="Opciones para la primera parte del Desayuno completo (Quaker, Quinua, Soya, Anís, etc.)"
                 icon={CupSoda}
                 items={compBebidasDesayuno}
                 seleccionados={opcionesSeleccionadas}
@@ -385,7 +372,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               {/* SECCIÓN 2: PLATOS DE DESAYUNO */}
               <SeccionComponentesRol
                 titulo="Platos de Desayuno"
-                descripcion="Opciones para la segunda parte del Desayuno completo (Seco de pollo, Asado de pollo, etc.)"
                 icon={ChefHat}
                 items={compPlatosDesayuno}
                 seleccionados={opcionesSeleccionadas}
@@ -397,7 +383,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               {/* SECCIÓN 3: SOPAS */}
               <SeccionComponentesRol
                 titulo="Sopas del Día"
-                descripcion="Opciones de entrada/sopa para el Almuerzo completo (Sopa a la minuta, Caldo de gallina, etc.)"
                 icon={Soup}
                 items={compSopas}
                 seleccionados={opcionesSeleccionadas}
@@ -409,7 +394,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               {/* SECCIÓN 4: ENTRADAS */}
               <SeccionComponentesRol
                 titulo="Entradas del Día"
-                descripcion="Opciones de entrada alternativa para el Almuerzo completo (Papa a la huancaína, Ocopa, etc.)"
                 icon={Salad}
                 items={compEntradas}
                 seleccionados={opcionesSeleccionadas}
@@ -421,7 +405,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               {/* SECCIÓN 5: SEGUNDOS */}
               <SeccionComponentesRol
                 titulo="Segundos del Día"
-                descripcion="Opciones de plato de fondo para Almuerzo completo y Solo segundo (Lomo saltado, Seco de res, etc.)"
                 icon={UtensilsCrossed}
                 items={compSegundos}
                 seleccionados={opcionesSeleccionadas}
@@ -432,23 +415,9 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             </div>
           )}
 
-          {/* TAB 2: MENÚS COMPLETOS (CUS04.5) */}
+          {/* TAB 2: MENÚS COMPLETOS */}
           {tabActiva === 'menus' && esAdmin && (
             <div className="space-y-6">
-              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl flex items-start gap-3">
-                <UtensilsCrossed className="w-5 h-5 text-neutral-700 shrink-0 mt-0.5" />
-                <div className="text-xs text-neutral-700 space-y-1">
-                  <p className="font-semibold text-neutral-900">
-                    Menús Completos Ofrecidos Hoy (CUS04.5)
-                  </p>
-                  <p>
-                    Active o desactive los menús completos para la atención del día. Recuerde la regla{' '}
-                    <strong>RV-161</strong>: cada parte del menú debe tener al menos una opción seleccionada en la pestaña
-                    de opciones para poder habilitarse.
-                  </p>
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* 1. DESAYUNO COMPLETO */}
                 <CardMenuCompletoDia
@@ -522,19 +491,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           {/* TAB 3: PRODUCTOS DE CARTA */}
           {tabActiva === 'carta' && esAdmin && (
             <div className="space-y-6">
-              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl flex items-start gap-3">
-                <Coffee className="w-5 h-5 text-neutral-700 shrink-0 mt-0.5" />
-                <div className="text-xs text-neutral-700 space-y-1">
-                  <p className="font-semibold text-neutral-900">
-                    Productos de Carta Disponibles Hoy
-                  </p>
-                  <p>
-                    Platos y bebidas que se venden de forma independiente a precio de lista. Ahora los desayunos
-                    individuales también admiten selección múltiple.
-                  </p>
-                </div>
-              </div>
-
               {/* SELECTOR DE CATEGORÍA DE CARTA */}
               <div className="flex gap-2 border-b border-neutral-200 pb-2 overflow-x-auto">
                 {[
@@ -581,22 +537,9 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             </div>
           )}
 
-          {/* TAB 4: DISPONIBILIDAD EN SERVICIO (CUS05.2 - AGOTADOS) */}
+          {/* TAB 4: DISPONIBILIDAD EN SERVICIO */}
           {tabActiva === 'disponibilidad' && (
             <div className="space-y-6">
-              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex items-start gap-3">
-                <Power className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-                <div className="text-xs text-neutral-700 space-y-1">
-                  <p className="font-semibold text-neutral-900">
-                    Control de Disponibilidad en Tiempo Real (CUS05.2)
-                  </p>
-                  <p>
-                    Marque como agotado cualquier componente o plato de carta cuando se termine durante el servicio.
-                    Si se agotan todas las opciones de una parte, el menú completo quedará automáticamente marcado como
-                    &quot;No disponible hoy&quot; para mozos y cajeros (RN-136).
-                  </p>
-                </div>
-              </div>
 
               {/* MENÚS COMPLETOS: ESTADO DE DISPONIBILIDAD */}
               {menu?.menusCompletos && menu.menusCompletos.length > 0 && (
@@ -759,7 +702,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 /* COMPONENTE AUXILIAR: SECCIÓN DE COMPONENTES POR ROL */
 interface SeccionComponentesRolProps {
   titulo: string;
-  descripcion: string;
   icon: React.ComponentType<{ className?: string }>;
   items: CandidatoMenu[];
   seleccionados: Set<string>;
@@ -770,7 +712,6 @@ interface SeccionComponentesRolProps {
 
 const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
   titulo,
-  descripcion,
   icon: Icon,
   items,
   seleccionados,
@@ -793,7 +734,6 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
             <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base">
               {titulo}
             </h3>
-            <p className="text-xs text-neutral-500">{descripcion}</p>
           </div>
         </div>
 
@@ -813,13 +753,13 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-5">
         {items.length === 0 ? (
           <p className="text-xs text-neutral-400 italic">
             No hay componentes registrados con este rol. Regístrelos en Carta y Menú &gt; Productos.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -828,25 +768,22 @@ const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer min-h-[52px] ${
+                  className={`py-2.5 px-3.5 rounded-xl border text-left flex items-center gap-2.5 transition-all cursor-pointer min-h-[44px] ${
                     estaSeleccionado
                       ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
-                  <div className="mt-0.5 shrink-0">
+                  <div className="shrink-0">
                     {estaSeleccionado ? (
-                      <CheckSquare className="w-5 h-5 text-[#D35400]" />
+                      <CheckSquare className="w-4 h-4 text-[#D35400]" />
                     ) : (
-                      <Square className="w-5 h-5 text-neutral-400" />
+                      <Square className="w-4 h-4 text-neutral-400" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-bold block truncate">
                       {item.nombre}
-                    </span>
-                    <span className="text-[10px] text-neutral-400 block mt-0.5">
-                      Componente (sin precio)
                     </span>
                   </div>
                 </button>
@@ -928,7 +865,7 @@ const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
               </span>
               {p.opciones.length === 0 ? (
                 <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md inline-block">
-                  Sin opciones seleccionadas (MSG-219)
+                  Falta elegir opciones
                 </span>
               ) : (
                 <span className="text-[11px] text-neutral-600 block line-clamp-2">
@@ -945,7 +882,7 @@ const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
           <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
           <span>
             {nombre} necesita al menos una opción en &quot;
-            {partesConFalta[0]?.nombre}&quot;. Seleccione opciones o quite el menú de hoy (MSG-219).
+            {partesConFalta[0]?.nombre}&quot;. Seleccione opciones o quite el menú de hoy.
           </span>
         </div>
       )}
@@ -982,9 +919,6 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
           <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base">
             Categoría: {categoriaNombre}
           </h3>
-          <p className="text-xs text-neutral-500">
-            Productos con precio de venta independiente para la carta de hoy.
-          </p>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
@@ -1003,13 +937,13 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-5">
         {items.length === 0 ? (
           <p className="text-xs text-neutral-400 italic">
             No hay productos registrados en esta categoría de carta.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
             {items.map((item) => {
               const estaSeleccionado = seleccionados.has(item.id);
               return (
@@ -1018,27 +952,27 @@ const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                   type="button"
                   onClick={() => onToggle(item.id)}
                   aria-pressed={estaSeleccionado}
-                  className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer min-h-[52px] ${
+                  className={`py-2.5 px-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer min-h-[44px] ${
                     estaSeleccionado
                       ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
-                  <div className="mt-0.5 shrink-0">
-                    {estaSeleccionado ? (
-                      <CheckSquare className="w-5 h-5 text-[#D35400]" />
-                    ) : (
-                      <Square className="w-5 h-5 text-neutral-400" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="shrink-0">
+                      {estaSeleccionado ? (
+                        <CheckSquare className="w-4 h-4 text-[#D35400]" />
+                      ) : (
+                        <Square className="w-4 h-4 text-neutral-400" />
+                      )}
+                    </div>
                     <span className="text-xs font-bold block truncate">
                       {item.nombre}
                     </span>
-                    <span className="text-xs font-mono font-bold text-neutral-600 block mt-0.5">
-                      S/ {item.precio?.toFixed(2) ?? '0.00'}
-                    </span>
                   </div>
+                  <span className="text-xs font-sans font-bold tabular-nums whitespace-nowrap text-neutral-600 shrink-0 ml-2">
+                    S/ {item.precio?.toFixed(2) ?? '0.00'}
+                  </span>
                 </button>
               );
             })}

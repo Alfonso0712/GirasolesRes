@@ -40,7 +40,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <div>
               <h2
                 id="modal-ticket-title"
-                className="text-base font-brand-serif font-bold text-[#482813] tracking-tight"
+                className="text-base font-sans font-bold text-[#2C1A0E] tracking-tight"
               >
                 Comprobante Emitido
               </h2>

@@ -366,7 +366,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Acceso Restringido
             </h2>
             <p className="text-neutral-600 max-w-md mx-auto text-sm">
-              No tiene permiso para acceder al Historial de Cierres de Caja. Este módulo está restringido exclusivamente para el rol Administrador (RN-106, E-319).
+              No tiene permiso para acceder al Historial de Cierres de Caja. Este módulo está restringido exclusivamente para el rol Administrador.
             </p>
             <button
               type="button"
@@ -403,7 +403,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Acceso Restringido
             </h2>
             <p className="text-neutral-600 max-w-md mx-auto text-sm">
-              No tiene permiso para acceder a Reportes. Este módulo está restringido exclusivamente para el rol Administrador (RN-116, E-342).
+              No tiene permiso para acceder a Reportes. Este módulo está restringido exclusivamente para el rol Administrador.
             </p>
             <button
               type="button"

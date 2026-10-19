@@ -73,7 +73,7 @@ export const InactivityModal: React.FC<InactivityModalProps> = ({
         </div>
 
         {/* MSG-42 */}
-        <h3 id="inactivity-title" className="text-lg font-serif font-bold text-neutral-900 mb-2">
+        <h3 id="inactivity-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
           Aviso de inactividad
         </h3>
 

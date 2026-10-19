@@ -174,7 +174,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               <p className="text-[11px] font-bold uppercase tracking-wider text-[#F39C12]">
                 Herramienta de Arqueo
               </p>
-              <h2 id="contador-title" className="font-brand-serif text-lg font-bold">
+              <h2 id="contador-title" className="font-sans text-xl font-bold text-white">
                 Contador de Billetes y Monedas
               </h2>
             </div>
@@ -192,7 +192,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
         {/* Contenido scrolleable */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 text-[#482813]">
           <p className="text-sm text-stone-600">
-            Ingrese la cantidad de unidades por cada denominación peruana. El total se suma en tiempo real y no se guarda el desglose individual (RV-128).
+            Ingrese la cantidad de unidades por cada denominación. El total se suma en tiempo real y no se guarda el desglose individual.
           </p>
 
           {/* Sección Billetes */}
@@ -319,7 +319,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               <span className="text-[10px] uppercase font-bold tracking-wider text-stone-500 block">
                 Total Contado
               </span>
-              <span className="font-brand-serif text-2xl font-black text-[#482813] tabular-nums">
+              <span className="font-sans text-2xl font-black text-[#482813] tabular-nums whitespace-nowrap">
                 S/ {totalCalculado.toFixed(2)}
               </span>
             </div>

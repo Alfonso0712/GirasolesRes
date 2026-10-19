@@ -339,7 +339,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                 No se encontraron usuarios con ese criterio.
               </p>
               <p className="text-xs text-neutral-500 mt-1">
-                Pruebe con otro nombre o quite los filtros. (MSG-36)
+                Pruebe con otro nombre o quite los filtros.
               </p>
             </div>
             {(busqueda || filtroRol !== 'Todos' || filtroEstado !== 'Todos') && (

@@ -227,7 +227,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
             {capsLockActivo && (
               <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg -mt-1.5 mb-1.5 font-medium">
-                Mayúsculas activadas. (MSG-10)
+                Mayúsculas activadas.
               </p>
             )}
 
@@ -286,7 +286,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 type="button"
                 onClick={() => cargarDemo('crojas', 'Password123!')}
                 className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors"
-                title="Cuenta inactiva para probar bloqueo MSG-05"
+                title="Cuenta de demostración inactiva"
               >
                 Inactivo
               </button>

@@ -71,7 +71,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
               <MessageSquare className="w-5 h-5" />
             </div>
             <div>
-              <h2 id="modal-nota-title" className="text-lg font-serif font-bold text-[#2C1A0E]">
+              <h2 id="modal-nota-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
                 Nota para {productoNombre}
               </h2>
               <p className="text-xs text-[#7C6F66]">

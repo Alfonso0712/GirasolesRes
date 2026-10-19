@@ -42,7 +42,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
           <span>Para Llevar</span>
         </div>
 
-        <h2 id="modal-llevar-exito-title" className="text-xl font-serif font-bold text-[#2C1A0E] mb-1">
+        <h2 id="modal-llevar-exito-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-1">
           Pedido para llevar N.º {numeroPedido} registrado
         </h2>
         <p className="text-sm text-[#7C6F66] mb-5">
