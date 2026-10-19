@@ -54,14 +54,14 @@ public class MenuDiaService : IMenuDiaService
     {
         try
         {
-            var productosActivos = await _productoRepository.ListarDisponiblesAsync(null, cancellationToken);
+            var productosActivos = await _productoRepository.ListarDisponiblesAsync(null, cancellationToken: cancellationToken);
             
             var candidatos = productosActivos.Select(p => new CandidatoMenuDto
             {
                 Id = p.Id_Producto,
                 Nombre = p.Pro_Nombre,
-                Categoria = p.Pro_Categoria.ToString(),
-                Precio = p.Pro_Precio
+                Categoria = p.Pro_Categoria?.ToString() ?? string.Empty,
+                Precio = p.Pro_Precio.GetValueOrDefault()
             }).ToList();
 
             if (candidatos.Count == 0)

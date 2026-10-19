@@ -15,11 +15,15 @@ export async function getProductosService(
   estado?: string,
   pagina = 1,
   tamano = 10,
-  token?: string
+  token?: string,
+  tipo?: string,
+  rol?: string
 ): Promise<PaginacionProductos> {
   const params = new URLSearchParams();
   if (busqueda?.trim()) params.append('busqueda', busqueda.trim());
   if (categoria && categoria !== 'Todas') params.append('categoria', categoria);
+  if (tipo && tipo !== 'Todos') params.append('tipo', tipo);
+  if (rol && rol !== 'Todos') params.append('rol', rol);
   if (estado && estado !== 'Todos') {
     params.append('estado', estado === 'Activo' ? 'true' : 'false');
   }
@@ -65,10 +69,14 @@ export async function cambiarEstadoProductoService(
 
 export async function getProductosDisponiblesService(
   categoria?: string,
+  tipo?: string,
+  rol?: string,
   token?: string
 ): Promise<ProductoItem[]> {
   const params = new URLSearchParams();
   if (categoria && categoria !== 'Todas') params.append('categoria', categoria);
+  if (tipo && tipo !== 'Todos') params.append('tipo', tipo);
+  if (rol && rol !== 'Todos') params.append('rol', rol);
   return apiClient.get<ProductoItem[]>(
     `${BASE_URL}/disponibles?${params.toString()}`,
     token

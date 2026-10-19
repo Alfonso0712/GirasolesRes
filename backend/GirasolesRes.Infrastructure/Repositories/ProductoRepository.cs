@@ -21,18 +21,24 @@ public class ProductoRepository : IProductoRepository
             .FirstOrDefaultAsync(p => p.Id_Producto == id, cancellationToken);
     }
 
-    public async Task<Producto?> ObtenerPorNombreNormalizadoAsync(string nombreNormalizado, CancellationToken cancellationToken = default)
+    public async Task<Producto?> ObtenerPorNombreNormalizadoAsync(string nombreNormalizado, TipoProducto tipo, CancellationToken cancellationToken = default)
     {
         var norm = nombreNormalizado.Trim().ToLowerInvariant();
         return await _context.Productos
-            .FirstOrDefaultAsync(p => p.Pro_NombreNormalizado == norm, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Pro_NombreNormalizado == norm && p.Pro_Tipo == tipo, cancellationToken);
     }
 
-    public async Task<bool> ExisteNombreAsync(string nombreNormalizado, Guid? excluirId = null, CancellationToken cancellationToken = default)
+    public async Task<bool> ExisteNombreAsync(string nombreNormalizado, TipoProducto tipo, Guid? excluirId = null, CancellationToken cancellationToken = default)
     {
         var norm = nombreNormalizado.Trim().ToLowerInvariant();
         return await _context.Productos
-            .AnyAsync(p => p.Pro_NombreNormalizado == norm && (!excluirId.HasValue || p.Id_Producto != excluirId.Value), cancellationToken);
+            .AnyAsync(p => p.Pro_NombreNormalizado == norm && p.Pro_Tipo == tipo && (!excluirId.HasValue || p.Id_Producto != excluirId.Value), cancellationToken);
+    }
+
+    public async Task<bool> TienePedidosAsync(Guid idProducto, CancellationToken cancellationToken = default)
+    {
+        return await _context.DetallesPedido
+            .AnyAsync(d => d.Id_Producto == idProducto, cancellationToken);
     }
 
     public async Task AgregarAsync(Producto producto, CancellationToken cancellationToken = default)
@@ -49,6 +55,8 @@ public class ProductoRepository : IProductoRepository
     public async Task<(List<Producto> Items, int Total)> ListarProductosAsync(
         string? busqueda,
         CategoriaProducto? categoria,
+        TipoProducto? tipo,
+        RolComponente? rol,
         bool? activo,
         int pagina,
         int tamano,
@@ -61,6 +69,18 @@ public class ProductoRepository : IProductoRepository
         {
             var busquedaNormalizada = Producto.NormalizarTexto(busqueda);
             query = query.Where(p => p.Pro_NombreNormalizado.Contains(busquedaNormalizada));
+        }
+
+        // Filtro por tipo de producto (Carta vs Componente)
+        if (tipo.HasValue)
+        {
+            query = query.Where(p => p.Pro_Tipo == tipo.Value);
+        }
+
+        // Filtro por rol de componente
+        if (rol.HasValue)
+        {
+            query = query.Where(p => p.Pro_Rol == rol.Value);
         }
 
         // Filtro por categoría (RF-11)
@@ -77,9 +97,11 @@ public class ProductoRepository : IProductoRepository
 
         var total = await query.CountAsync(cancellationToken);
 
-        // Orden por categoría y luego por nombre; 10 por página (RF-11 / RNF-11)
+        // Orden por tipo, categoría, rol y luego por nombre
         var items = await query
-            .OrderBy(p => p.Pro_Categoria)
+            .OrderBy(p => p.Pro_Tipo)
+            .ThenBy(p => p.Pro_Categoria)
+            .ThenBy(p => p.Pro_Rol)
             .ThenBy(p => p.Pro_Nombre)
             .Skip((pagina - 1) * tamano)
             .Take(tamano)
@@ -88,9 +110,23 @@ public class ProductoRepository : IProductoRepository
         return (items, total);
     }
 
-    public async Task<List<Producto>> ListarDisponiblesAsync(CategoriaProducto? categoria, CancellationToken cancellationToken = default)
+    public async Task<List<Producto>> ListarDisponiblesAsync(
+        CategoriaProducto? categoria,
+        TipoProducto? tipo = null,
+        RolComponente? rol = null,
+        CancellationToken cancellationToken = default)
     {
         var query = _context.Productos.Where(p => p.Pro_Activo);
+
+        if (tipo.HasValue)
+        {
+            query = query.Where(p => p.Pro_Tipo == tipo.Value);
+        }
+
+        if (rol.HasValue)
+        {
+            query = query.Where(p => p.Pro_Rol == rol.Value);
+        }
 
         if (categoria.HasValue)
         {
@@ -98,7 +134,9 @@ public class ProductoRepository : IProductoRepository
         }
 
         return await query
-            .OrderBy(p => p.Pro_Categoria)
+            .OrderBy(p => p.Pro_Tipo)
+            .ThenBy(p => p.Pro_Categoria)
+            .ThenBy(p => p.Pro_Rol)
             .ThenBy(p => p.Pro_Nombre)
             .ToListAsync(cancellationToken);
     }

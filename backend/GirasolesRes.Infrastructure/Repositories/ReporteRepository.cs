@@ -134,7 +134,7 @@ public class ReporteRepository : IReporteRepository
                 return new ItemPlatoVendidoDto(
                     ProductoId: prod.Id_Producto,
                     Producto: prod.Pro_Nombre,
-                    Categoria: prod.Pro_Categoria.ToString(),
+                    Categoria: prod.Pro_Categoria?.ToString() ?? "Otro",
                     Activo: prod.Pro_Activo,
                     Cantidad: cantidad,
                     Monto: monto

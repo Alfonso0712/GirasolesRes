@@ -17,13 +17,17 @@ public class CrearProductoRequest : IValidatableObject
     [StringLength(50, MinimumLength = 3, ErrorMessage = MensajesCatalogo.MSG_52)]
     public string Nombre { get; set; } = string.Empty;
 
+    [JsonPropertyName("tipo")]
+    public string? Tipo { get; set; } = "Carta";
+
     [JsonPropertyName("categoria")]
-    [Required(ErrorMessage = MensajesCatalogo.MSG_54)]
-    public string Categoria { get; set; } = string.Empty;
+    public string? Categoria { get; set; }
+
+    [JsonPropertyName("rol")]
+    public string? Rol { get; set; }
 
     [JsonPropertyName("precio")]
-    [Range(0.01, 999.99, ErrorMessage = MensajesCatalogo.MSG_56)]
-    public decimal Precio { get; set; }
+    public decimal? Precio { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -37,18 +41,33 @@ public class CrearProductoRequest : IValidatableObject
             yield return new ValidationResult(MensajesCatalogo.MSG_52, new[] { nameof(Nombre) });
         }
 
-        if (string.IsNullOrWhiteSpace(Categoria) || !CategoriaProductoExtensions.TryParseFlexible(Categoria, out _))
+        var tipoStr = string.IsNullOrWhiteSpace(Tipo) ? "Carta" : Tipo;
+        if (!TipoProductoExtensions.TryParseFlexible(tipoStr, out var tipoEnum))
         {
-            yield return new ValidationResult(MensajesCatalogo.MSG_54, new[] { nameof(Categoria) });
+            yield return new ValidationResult(MensajesCatalogo.MSG_213, new[] { nameof(Tipo) });
         }
+        else if (tipoEnum == TipoProducto.Carta)
+        {
+            if (string.IsNullOrWhiteSpace(Categoria) || !CategoriaProductoExtensions.TryParseFlexible(Categoria, out _))
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_54, new[] { nameof(Categoria) });
+            }
 
-        if (Precio <= 0)
-        {
-            yield return new ValidationResult(MensajesCatalogo.MSG_55, new[] { nameof(Precio) });
+            if (!Precio.HasValue || Precio.Value <= 0)
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_55, new[] { nameof(Precio) });
+            }
+            else if (Precio.Value > 999.99m || decimal.Round(Precio.Value, 2) != Precio.Value)
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_56, new[] { nameof(Precio) });
+            }
         }
-        else if (Precio > 999.99m || decimal.Round(Precio, 2) != Precio)
+        else
         {
-            yield return new ValidationResult(MensajesCatalogo.MSG_56, new[] { nameof(Precio) });
+            if (string.IsNullOrWhiteSpace(Rol) || !RolComponenteExtensions.TryParseFlexible(Rol, out _))
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_214, new[] { nameof(Rol) });
+            }
         }
     }
 }
@@ -64,13 +83,17 @@ public class ActualizarProductoRequest : IValidatableObject
     [StringLength(50, MinimumLength = 3, ErrorMessage = MensajesCatalogo.MSG_52)]
     public string Nombre { get; set; } = string.Empty;
 
+    [JsonPropertyName("tipo")]
+    public string? Tipo { get; set; } = "Carta";
+
     [JsonPropertyName("categoria")]
-    [Required(ErrorMessage = MensajesCatalogo.MSG_54)]
-    public string Categoria { get; set; } = string.Empty;
+    public string? Categoria { get; set; }
+
+    [JsonPropertyName("rol")]
+    public string? Rol { get; set; }
 
     [JsonPropertyName("precio")]
-    [Range(0.01, 999.99, ErrorMessage = MensajesCatalogo.MSG_56)]
-    public decimal Precio { get; set; }
+    public decimal? Precio { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -84,18 +107,33 @@ public class ActualizarProductoRequest : IValidatableObject
             yield return new ValidationResult(MensajesCatalogo.MSG_52, new[] { nameof(Nombre) });
         }
 
-        if (string.IsNullOrWhiteSpace(Categoria) || !CategoriaProductoExtensions.TryParseFlexible(Categoria, out _))
+        var tipoStr = string.IsNullOrWhiteSpace(Tipo) ? "Carta" : Tipo;
+        if (!TipoProductoExtensions.TryParseFlexible(tipoStr, out var tipoEnum))
         {
-            yield return new ValidationResult(MensajesCatalogo.MSG_54, new[] { nameof(Categoria) });
+            yield return new ValidationResult(MensajesCatalogo.MSG_213, new[] { nameof(Tipo) });
         }
+        else if (tipoEnum == TipoProducto.Carta)
+        {
+            if (string.IsNullOrWhiteSpace(Categoria) || !CategoriaProductoExtensions.TryParseFlexible(Categoria, out _))
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_54, new[] { nameof(Categoria) });
+            }
 
-        if (Precio <= 0)
-        {
-            yield return new ValidationResult(MensajesCatalogo.MSG_55, new[] { nameof(Precio) });
+            if (!Precio.HasValue || Precio.Value <= 0)
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_55, new[] { nameof(Precio) });
+            }
+            else if (Precio.Value > 999.99m || decimal.Round(Precio.Value, 2) != Precio.Value)
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_56, new[] { nameof(Precio) });
+            }
         }
-        else if (Precio > 999.99m || decimal.Round(Precio, 2) != Precio)
+        else
         {
-            yield return new ValidationResult(MensajesCatalogo.MSG_56, new[] { nameof(Precio) });
+            if (string.IsNullOrWhiteSpace(Rol) || !RolComponenteExtensions.TryParseFlexible(Rol, out _))
+            {
+                yield return new ValidationResult(MensajesCatalogo.MSG_214, new[] { nameof(Rol) });
+            }
         }
     }
 }
@@ -109,8 +147,10 @@ public class ProductoResponseDto
 {
     public Guid Id { get; set; }
     public string Nombre { get; set; } = string.Empty;
-    public string Categoria { get; set; } = string.Empty;
-    public decimal Precio { get; set; }
+    public string Tipo { get; set; } = "Carta";
+    public string? Rol { get; set; }
+    public string? Categoria { get; set; }
+    public decimal? Precio { get; set; }
     public bool Activo { get; set; }
 }
 

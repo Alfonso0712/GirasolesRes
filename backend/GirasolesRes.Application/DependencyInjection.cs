@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IPerfilService, PerfilService>();
         services.AddScoped<IProductoService, ProductoService>();
+        services.AddScoped<IMenuCompletoService, MenuCompletoService>();
         services.AddScoped<IMenuDiaService, MenuDiaService>();
         services.AddScoped<IMesaService, MesaService>();
         services.AddScoped<IPedidoService, PedidoService>();

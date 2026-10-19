@@ -173,6 +173,26 @@ public static class DatabaseSeeder
                 await context.SaveChangesAsync();
                 logger.LogInformation("Sembrado completado: {Count} productos creados.", productos.Count);
             }
+
+            if (!await context.MenusCompletos.AnyAsync())
+            {
+                logger.LogInformation("Sembrando los 3 menús completos predeterminados...");
+
+                var m1 = new MenuCompleto(1, "Desayuno completo", 7.00m, menActivo: true, menIncluye: "Pan");
+                m1.AgregarParte(new MenuCompletoParte(1, "Bebida", new[] { RolComponente.BebidaDesayuno }, 1));
+                m1.AgregarParte(new MenuCompletoParte(1, "Plato", new[] { RolComponente.PlatoDesayuno }, 2));
+
+                var m2 = new MenuCompleto(2, "Almuerzo completo", 8.00m, menActivo: true, menIncluye: "Refresco del día");
+                m2.AgregarParte(new MenuCompletoParte(2, "Sopa o entrada", new[] { RolComponente.Sopa, RolComponente.Entrada }, 1));
+                m2.AgregarParte(new MenuCompletoParte(2, "Segundo", new[] { RolComponente.Segundo }, 2));
+
+                var m3 = new MenuCompleto(3, "Solo segundo", 7.00m, menActivo: true, menIncluye: "Refresco del día");
+                m3.AgregarParte(new MenuCompletoParte(3, "Segundo", new[] { RolComponente.Segundo }, 1));
+
+                await context.MenusCompletos.AddRangeAsync(new[] { m1, m2, m3 });
+                await context.SaveChangesAsync();
+                logger.LogInformation("Sembrado completado: 3 menús completos creados.");
+            }
         }
         catch (Exception ex)
         {

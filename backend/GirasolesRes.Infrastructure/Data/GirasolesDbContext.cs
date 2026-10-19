@@ -1,4 +1,5 @@
 using GirasolesRes.Domain.Entities;
+using GirasolesRes.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace GirasolesRes.Infrastructure.Data;
@@ -15,6 +16,8 @@ public class GirasolesDbContext : DbContext
     public DbSet<Mesa> Mesas => Set<Mesa>();
     public DbSet<AuditoriaMesa> AuditoriasMesa => Set<AuditoriaMesa>();
     public DbSet<Producto> Productos => Set<Producto>();
+    public DbSet<MenuCompleto> MenusCompletos => Set<MenuCompleto>();
+    public DbSet<MenuCompletoParte> MenusCompletosPartes => Set<MenuCompletoParte>();
     public DbSet<MenuDia> MenusDia => Set<MenuDia>();
     public DbSet<MenuDiaPlato> MenuDiaPlatos => Set<MenuDiaPlato>();
     public DbSet<Pedido> Pedidos => Set<Pedido>();
@@ -136,9 +139,11 @@ public class GirasolesDbContext : DbContext
             entity.Property(p => p.Id_Producto).HasColumnName("id_producto");
             entity.Property(p => p.Pro_Nombre).HasColumnName("nom_producto").HasMaxLength(50).IsRequired();
             entity.Property(p => p.Pro_NombreNormalizado).HasColumnName("nom_normalizado").HasMaxLength(50).IsRequired();
-            entity.HasIndex(p => p.Pro_NombreNormalizado).IsUnique();
-            entity.Property(p => p.Pro_Categoria).HasColumnName("cat_producto").IsRequired();
-            entity.Property(p => p.Pro_Precio).HasColumnName("pre_producto").HasColumnType("numeric(8,2)").IsRequired();
+            entity.HasIndex(p => new { p.Pro_NombreNormalizado, p.Pro_Tipo }).IsUnique();
+            entity.Property(p => p.Pro_Tipo).HasColumnName("tip_producto").IsRequired().HasDefaultValue(TipoProducto.Carta);
+            entity.Property(p => p.Pro_Rol).HasColumnName("rol_componente");
+            entity.Property(p => p.Pro_Categoria).HasColumnName("cat_producto").IsRequired(false);
+            entity.Property(p => p.Pro_Precio).HasColumnName("pre_producto").HasColumnType("numeric(8,2)").IsRequired(false);
             entity.Property(p => p.Pro_Activo).HasColumnName("est_producto").IsRequired().HasDefaultValue(true);
             entity.Property(p => p.Pro_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
             entity.Property(p => p.Pro_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
@@ -463,6 +468,44 @@ public class GirasolesDbContext : DbContext
             entity.Property(a => a.Aud_Formato).HasColumnName("for_reporte").HasMaxLength(20).IsRequired();
             entity.Property(a => a.Aud_FechaRegistroUtc).HasColumnName("fec_registro_utc").IsRequired();
             entity.Property(a => a.Aud_DireccionIp).HasColumnName("dir_ip").HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<MenuCompleto>(entity =>
+        {
+            entity.ToTable("menus_completos");
+            entity.HasKey(m => m.Id_MenuCompleto);
+            entity.Property(m => m.Id_MenuCompleto).HasColumnName("id_menu_completo").ValueGeneratedNever();
+            entity.Property(m => m.Men_Nombre).HasColumnName("nom_menu_completo").HasMaxLength(100).IsRequired();
+            entity.Property(m => m.Men_Precio).HasColumnName("pre_menu_completo").HasColumnType("numeric(8,2)").IsRequired();
+            entity.Property(m => m.Men_Activo).HasColumnName("est_menu_completo").IsRequired().HasDefaultValue(true);
+            entity.Property(m => m.Men_Incluye).HasColumnName("det_incluye").HasMaxLength(200);
+            entity.Property(m => m.Men_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+
+            entity.HasMany(m => m.Men_Partes)
+                  .WithOne(p => p.Men_MenuCompleto)
+                  .HasForeignKey(p => p.Id_MenuCompleto)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Navigation(m => m.Men_Partes)
+                  .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        modelBuilder.Entity<MenuCompletoParte>(entity =>
+        {
+            entity.ToTable("menus_completos_partes");
+            entity.HasKey(p => p.Id_Parte);
+            entity.Property(p => p.Id_Parte).HasColumnName("id_parte").ValueGeneratedOnAdd();
+            entity.Property(p => p.Id_MenuCompleto).HasColumnName("id_menu_completo").IsRequired();
+            entity.Property(p => p.Par_Nombre).HasColumnName("nom_parte").HasMaxLength(100).IsRequired();
+            entity.Property(p => p.Par_Orden).HasColumnName("num_orden").IsRequired().HasDefaultValue(1);
+            entity.Property(p => p.Par_RolesPermitidos)
+                  .HasColumnName("roles_permitidos")
+                  .HasMaxLength(100)
+                  .HasConversion(
+                      v => string.Join(",", v.Select(r => (int)r)),
+                      v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => (RolComponente)int.Parse(s)).ToList()
+                  )
+                  .IsRequired();
         });
     }
 }

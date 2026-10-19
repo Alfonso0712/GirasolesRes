@@ -32,6 +32,7 @@ export function useProductsManagement({ session, onLogout }: UseProductsManageme
   const [busqueda, setBusqueda] = useState('');
   const [filtroCategoria, setFiltroCategoria] = useState<string>('Todas');
   const [filtroEstado, setFiltroEstado] = useState<string>('Todos');
+  const [filtroTipo, setFiltroTipo] = useState<string>('Todos');
 
   // Estados de carga y error (H-01 / MSG-67)
   const [cargando, setCargando] = useState(false);
@@ -94,7 +95,8 @@ export function useProductsManagement({ session, onLogout }: UseProductsManageme
         filtroEstado,
         pagina,
         tamano,
-        session.token
+        session.token,
+        filtroTipo
       );
       setProductos(data.items || []);
       setTotal(data.total || 0);
@@ -105,7 +107,7 @@ export function useProductsManagement({ session, onLogout }: UseProductsManageme
     } finally {
       setCargando(false);
     }
-  }, [busqueda, filtroCategoria, filtroEstado, pagina, tamano, session.token, esAdmin, manejarError401]);
+  }, [busqueda, filtroCategoria, filtroEstado, filtroTipo, pagina, tamano, session.token, esAdmin, manejarError401]);
 
   // RV-40: Búsqueda con debounce de 300 ms
   useEffect(() => {
@@ -113,12 +115,13 @@ export function useProductsManagement({ session, onLogout }: UseProductsManageme
       cargarProductos();
     }, 300);
     return () => clearTimeout(timer);
-  }, [busqueda, filtroCategoria, filtroEstado, pagina, cargarProductos]);
+  }, [busqueda, filtroCategoria, filtroEstado, filtroTipo, pagina, cargarProductos]);
 
   const handleQuitarFiltros = () => {
     setBusqueda('');
     setFiltroCategoria('Todas');
     setFiltroEstado('Todos');
+    setFiltroTipo('Todos');
     setPagina(1);
   };
 
@@ -209,6 +212,8 @@ export function useProductsManagement({ session, onLogout }: UseProductsManageme
     setFiltroCategoria,
     filtroEstado,
     setFiltroEstado,
+    filtroTipo,
+    setFiltroTipo,
     cargando,
     errorCarga,
     cargarProductos,

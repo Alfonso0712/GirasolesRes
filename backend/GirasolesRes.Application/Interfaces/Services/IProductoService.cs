@@ -8,7 +8,9 @@ public interface IProductoService
     Task<ApiResponse<PaginacionProductosResponse>> ListarProductosAsync(
         string? busqueda,
         string? categoria,
-        bool? activo,
+        string? tipo = null,
+        string? rol = null,
+        bool? activo = null,
         int pagina = 1,
         int tamano = 10,
         CancellationToken cancellationToken = default);
@@ -37,5 +39,7 @@ public interface IProductoService
 
     Task<ApiResponse<List<ProductoResponseDto>>> ListarDisponiblesAsync(
         string? categoria,
+        string? tipo = null,
+        string? rol = null,
         CancellationToken cancellationToken = default);
 }

@@ -244,5 +244,13 @@ public static class MensajesCatalogo
     public const string MSG_211 = "Abra la caja primero.";
     public const string MSG_212 = "No tiene pedidos listos por recoger.";
     public const string MSG_MENU_NO_DEFINIDO = "No se puede registrar el pedido: el menú del día aún no ha sido definido.";
+
+    // CUS-04 y CUS-04.5: Componentes y Menús Completos
+    public const string MSG_213 = "Seleccione el tipo de producto.";
+    public const string MSG_214 = "Seleccione el rol del componente.";
+    public const string MSG_215 = "Los componentes no llevan precio: se usan dentro de un menú completo.";
+    public const string MSG_216 = "No se puede cambiar el tipo: el producto ya tiene pedidos. Desactívelo y cree uno nuevo.";
+    public const string MSG_217 = "Menú completo actualizado correctamente.";
+    public const string MSG_218 = "¿Desactivar el menú completo {0}? No se podrá pedir hasta activarlo, pero se conservará su historial.";
 }
 

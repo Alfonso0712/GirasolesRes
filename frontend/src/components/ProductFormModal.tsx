@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Loader2, Info, AlertCircle, Utensils } from 'lucide-react';
+import { X, Loader2, Info, AlertCircle, Utensils, Layers, BookOpen } from 'lucide-react';
 import {
   type ProductoItem,
+  type TipoProducto,
+  type RolComponente,
   type CategoriaProducto,
   type CrearProductoData,
   type ActualizarProductoData,
-  CATEGORIAS_PRODUCTO
+  CATEGORIAS_PRODUCTO,
+  ROLES_COMPONENTE
 } from '../types/producto';
 import { normalizeText } from '../utils/normalizeText';
 import type { ApiClientError } from '../services/apiClient';
@@ -27,6 +30,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   // Estados del formulario
   const [nombre, setNombre] = useState('');
+  const [tipo, setTipo] = useState<TipoProducto>('Carta');
+  const [rol, setRol] = useState<RolComponente>('Segundo');
   const [categoria, setCategoria] = useState<CategoriaProducto>('Almuerzo');
   const [precioStr, setPrecioStr] = useState('');
 
@@ -38,6 +43,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   // Referencias para accesibilidad y foco (RV-38 / RNF-13)
   const modalRef = useRef<HTMLDivElement | null>(null);
   const nombreInputRef = useRef<HTMLInputElement | null>(null);
+  const rolSelectRef = useRef<HTMLSelectElement | null>(null);
   const categoriaSelectRef = useRef<HTMLSelectElement | null>(null);
   const precioInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,10 +52,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     if (isOpen) {
       if (producto) {
         setNombre(producto.nombre);
-        setCategoria(producto.categoria);
-        setPrecioStr(producto.precio.toFixed(2));
+        setTipo(producto.tipo || 'Carta');
+        setRol(producto.rol || 'Segundo');
+        setCategoria(producto.categoria || 'Almuerzo');
+        setPrecioStr(producto.precio != null ? producto.precio.toFixed(2) : '');
       } else {
         setNombre('');
+        setTipo('Carta');
+        setRol('Segundo');
         setCategoria('Almuerzo');
         setPrecioStr('');
       }
@@ -104,12 +114,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const precioNumericoActual = parseFloat(precioStr.replace(',', '.')) || 0;
   const precioCambioEnEdicion =
     isEditing &&
+    tipo === 'Carta' &&
     producto &&
+    producto.precio != null &&
     !isNaN(precioNumericoActual) &&
     precioNumericoActual > 0 &&
     precioNumericoActual !== producto.precio;
 
-  // Validación local antes de enviar (RV-33 a RV-38)
+  // Validación local antes de enviar (RV-33 a RV-38, RV-155, RV-156)
   const validarFormulario = (): boolean => {
     const nuevosErrores: Record<string, string> = {};
     const nombreTrim = normalizeText(nombre);
@@ -123,24 +135,34 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       nuevosErrores.nombre = 'El nombre debe tener entre 3 y 50 caracteres.'; // MSG-52
     }
 
-    // RV-35: Categoría obligatoria
-    if (!categoria) {
-      nuevosErrores.categoria = 'Seleccione una categoría.'; // MSG-54
-    }
+    // RV-155: Tipo obligatorio
+    if (!tipo) {
+      nuevosErrores.tipo = 'Seleccione el tipo de producto.'; // MSG-213
+    } else if (tipo === 'Carta') {
+      // RV-35: Categoría obligatoria para carta
+      if (!categoria) {
+        nuevosErrores.categoria = 'Seleccione una categoría.'; // MSG-54
+      }
 
-    // RV-36: Precio obligatorio, > 0 y <= 999.99 con hasta 2 decimales
-    const precioNormalizadoStr = precioStr.trim().replace(',', '.');
-    const regexDecimal = /^\d+(\.\d{1,2})?$/;
+      // RV-36: Precio obligatorio, > 0 y <= 999.99 con hasta 2 decimales
+      const precioNormalizadoStr = precioStr.trim().replace(',', '.');
+      const regexDecimal = /^\d+(\.\d{1,2})?$/;
 
-    if (!precioNormalizadoStr) {
-      nuevosErrores.precio = 'Ingrese el precio.'; // MSG-55
-    } else if (
-      !regexDecimal.test(precioNormalizadoStr) ||
-      parseFloat(precioNormalizadoStr) <= 0 ||
-      parseFloat(precioNormalizadoStr) > 999.99
-    ) {
-      nuevosErrores.precio =
-        'Ingrese un precio válido, mayor a S/ 0.00 y con hasta 2 decimales (ejemplo: 8.00).'; // MSG-56
+      if (!precioNormalizadoStr) {
+        nuevosErrores.precio = 'Ingrese el precio.'; // MSG-55
+      } else if (
+        !regexDecimal.test(precioNormalizadoStr) ||
+        parseFloat(precioNormalizadoStr) <= 0 ||
+        parseFloat(precioNormalizadoStr) > 999.99
+      ) {
+        nuevosErrores.precio =
+          'Ingrese un precio válido, mayor a S/ 0.00 y con hasta 2 decimales (ejemplo: 8.00).'; // MSG-56
+      }
+    } else {
+      // RV-156: Rol obligatorio para componentes de menú
+      if (!rol) {
+        nuevosErrores.rol = 'Seleccione el rol del componente.'; // MSG-214
+      }
     }
 
     setErrores(nuevosErrores);
@@ -150,6 +172,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       nombreInputRef.current?.focus();
     } else if (nuevosErrores.categoria) {
       categoriaSelectRef.current?.focus();
+    } else if (nuevosErrores.rol) {
+      rolSelectRef.current?.focus();
     } else if (nuevosErrores.precio) {
       precioInputRef.current?.focus();
     }
@@ -166,10 +190,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     setGuardando(true);
     setErrorServidor(null);
 
-    const precioFinal = parseFloat(precioStr.trim().replace(',', '.'));
+    const precioFinal =
+      tipo === 'Carta' ? parseFloat(precioStr.trim().replace(',', '.')) : null;
+
     const payload = {
       nombre: normalizeText(nombre),
-      categoria,
+      tipo,
+      categoria: tipo === 'Carta' ? categoria : null,
+      rol: tipo === 'Componente' ? rol : null,
       precio: precioFinal
     };
 
@@ -179,12 +207,13 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       const apiErr = err as ApiClientError;
       if (apiErr?.errors && typeof apiErr.errors === 'object') {
         setErrores(apiErr.errors);
-        // Llevar foco al primer campo con error retornado
         if (apiErr.errors.nombre) nombreInputRef.current?.focus();
-        else if (apiErr.errors.precio) precioInputRef.current?.focus();
+        else if (apiErr.errors.tipo) modalRef.current?.focus();
+        else if (apiErr.errors.rol) rolSelectRef.current?.focus();
         else if (apiErr.errors.categoria) categoriaSelectRef.current?.focus();
+        else if (apiErr.errors.precio) precioInputRef.current?.focus();
       } else {
-        // MSG-53 u otros mensajes devueltos por el backend
+        // MSG-53, MSG-216 u otros mensajes devueltos por el backend
         setErrorServidor(apiErr?.message || 'No se pudo completar la operación. Intente nuevamente.');
       }
     } finally {
@@ -214,12 +243,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 id="modal-title"
                 className="text-lg sm:text-xl font-serif font-bold text-[#482813] leading-tight"
               >
-                {isEditing ? 'Editar Producto' : 'Nuevo Producto'}
+                {isEditing ? 'Editar Producto' : 'Nuevo Producto o Componente'}
               </h2>
               <p className="text-xs text-[#7C6F66]">
                 {isEditing
-                  ? 'Modifique el nombre, categoría o precio del producto (CUS04.3).'
-                  : 'Complete los datos del producto para la carta (CUS04.1).'}
+                  ? 'Modifique el nombre, categoría, rol o precio del ítem.'
+                  : 'Defina un producto independiente de carta o un componente de menú.'}
               </p>
             </div>
           </div>
@@ -234,10 +263,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </button>
         </div>
 
-        {/* Formulario con scroll independiente y 6px scrollbar */}
+        {/* Formulario con scroll independiente */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-            {/* Banner de error general del servidor (ej. MSG-53) */}
+            {/* Banner de error general del servidor (ej. MSG-53, MSG-216) */}
             {errorServidor && (
               <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-rose-700 text-sm">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
@@ -245,13 +274,58 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               </div>
             )}
 
+            {/* Selector de Tipo de Producto (Carta vs Componente) */}
+            <div>
+              <label className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5">
+                Tipo de producto <span className="text-[#D35400]">*</span>
+              </label>
+              <div className="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isEditing) setTipo('Carta');
+                  }}
+                  disabled={isEditing || guardando}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                    tipo === 'Carta'
+                      ? 'bg-white text-[#D35400] shadow-sm border border-neutral-200/60'
+                      : 'text-neutral-600 hover:text-neutral-900'
+                  } ${isEditing ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Producto de carta</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isEditing) setTipo('Componente');
+                  }}
+                  disabled={isEditing || guardando}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                    tipo === 'Componente'
+                      ? 'bg-white text-emerald-700 shadow-sm border border-neutral-200/60'
+                      : 'text-neutral-600 hover:text-neutral-900'
+                  } ${isEditing ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Componente de menú</span>
+                </button>
+              </div>
+              {isEditing && (
+                <p className="mt-1 text-[11px] text-neutral-500 italic">
+                  El tipo no se puede modificar en productos existentes para preservar el historial (MSG-216).
+                </p>
+              )}
+            </div>
+
             {/* Campo 1: Nombre del producto (RV-33, RV-37) */}
             <div>
               <label
                 htmlFor="prod-nombre"
                 className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
               >
-                Nombre del producto <span className="text-[#D35400]">*</span>
+                Nombre {tipo === 'Componente' ? 'del componente' : 'del producto'}{' '}
+                <span className="text-[#D35400]">*</span>
               </label>
               <input
                 id="prod-nombre"
@@ -266,7 +340,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 }}
                 onBlur={() => setNombre(normalizeText(nombre))}
                 maxLength={50}
-                placeholder="Ej. Menú almuerzo, Quaker con leche"
+                placeholder={
+                  tipo === 'Componente'
+                    ? 'Ej. Sopa a la minuta, Papa a la huancaína (Entrada)'
+                    : 'Ej. Lomo saltado, Jarra de chicha morada 1L'
+                }
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden ${
                   errores.nombre
                     ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
@@ -281,101 +359,161 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </p>
               ) : (
                 <p className="mt-1 text-[11px] text-[#7C6F66]">
-                  De 3 a 50 caracteres. Letras, números y signos permitidos (. , - ( )).
+                  De 3 a 50 caracteres. Único dentro de su tipo (RN-139 / RV-157).
                 </p>
               )}
             </div>
 
-            {/* Campo 2: Categoría (RV-35) */}
-            <div>
-              <label
-                htmlFor="prod-categoria"
-                className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
-              >
-                Categoría <span className="text-[#D35400]">*</span>
-              </label>
-              <select
-                id="prod-categoria"
-                ref={categoriaSelectRef}
-                value={categoria}
-                onChange={(e) => {
-                  setCategoria(e.target.value as CategoriaProducto);
-                  if (errores.categoria) {
-                    setErrores((prev) => ({ ...prev, categoria: '' }));
-                  }
-                }}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
-                  errores.categoria
-                    ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                    : 'border-neutral-200 text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
-                }`}
-                disabled={guardando}
-              >
-                {CATEGORIAS_PRODUCTO.map((cat) => (
-                  <option key={cat.valor} value={cat.valor}>
-                    {cat.etiqueta} — ({cat.descripcion})
-                  </option>
-                ))}
-              </select>
-              {errores.categoria && (
-                <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  {errores.categoria}
-                </p>
-              )}
-            </div>
-
-            {/* Campo 3: Precio de Venta (RV-36 / RNF-13) */}
-            <div>
-              <label
-                htmlFor="prod-precio"
-                className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
-              >
-                Precio de Venta (S/) <span className="text-[#D35400]">*</span>
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
-                  S/
-                </span>
-                <input
-                  id="prod-precio"
-                  ref={precioInputRef}
-                  type="text"
-                  inputMode="decimal"
-                  value={precioStr}
-                  onChange={(e) => {
-                    setPrecioStr(e.target.value);
-                    if (errores.precio) {
-                      setErrores((prev) => ({ ...prev, precio: '' }));
-                    }
-                  }}
-                  placeholder="0.00"
-                  className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border text-sm font-sans font-medium transition-all outline-hidden ${
-                    errores.precio
-                      ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                      : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
-                  }`}
-                  disabled={guardando}
-                />
-              </div>
-
-              {errores.precio && (
-                <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  {errores.precio}
-                </p>
-              )}
-
-              {/* RV-42: Mensaje informativo MSG-59 cuando se edita el precio */}
-              {precioCambioEnEdicion && !errores.precio && (
-                <div className="mt-2 p-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl flex items-start gap-2 text-xs text-amber-900 animate-in fade-in duration-200">
-                  <Info className="w-4 h-4 text-[#D35400] shrink-0 mt-0.5" />
-                  <span>
-                    El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian. (MSG-59)
-                  </span>
+            {/* CASO A: Producto de Carta (Categoría + Precio) */}
+            {tipo === 'Carta' && (
+              <>
+                {/* Campo 2: Categoría de Carta (RV-35) */}
+                <div>
+                  <label
+                    htmlFor="prod-categoria"
+                    className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                  >
+                    Categoría de Carta <span className="text-[#D35400]">*</span>
+                  </label>
+                  <select
+                    id="prod-categoria"
+                    ref={categoriaSelectRef}
+                    value={categoria}
+                    onChange={(e) => {
+                      setCategoria(e.target.value as CategoriaProducto);
+                      if (errores.categoria) {
+                        setErrores((prev) => ({ ...prev, categoria: '' }));
+                      }
+                    }}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
+                      errores.categoria
+                        ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
+                        : 'border-neutral-200 text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                    }`}
+                    disabled={guardando}
+                  >
+                    {CATEGORIAS_PRODUCTO.map((cat) => (
+                      <option key={cat.valor} value={cat.valor}>
+                        {cat.etiqueta} — ({cat.descripcion})
+                      </option>
+                    ))}
+                  </select>
+                  {errores.categoria && (
+                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {errores.categoria}
+                    </p>
+                  )}
                 </div>
-              )}
-            </div>
+
+                {/* Campo 3: Precio de Venta (RV-36 / RNF-13) */}
+                <div>
+                  <label
+                    htmlFor="prod-precio"
+                    className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                  >
+                    Precio de Venta (S/) <span className="text-[#D35400]">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
+                      S/
+                    </span>
+                    <input
+                      id="prod-precio"
+                      ref={precioInputRef}
+                      type="text"
+                      inputMode="decimal"
+                      value={precioStr}
+                      onChange={(e) => {
+                        setPrecioStr(e.target.value);
+                        if (errores.precio) {
+                          setErrores((prev) => ({ ...prev, precio: '' }));
+                        }
+                      }}
+                      placeholder="0.00"
+                      className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border text-sm font-sans font-medium transition-all outline-hidden ${
+                        errores.precio
+                          ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
+                          : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                      }`}
+                      disabled={guardando}
+                    />
+                  </div>
+
+                  {errores.precio && (
+                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {errores.precio}
+                    </p>
+                  )}
+
+                  {/* RV-42: Mensaje informativo MSG-59 cuando se edita el precio */}
+                  {precioCambioEnEdicion && !errores.precio && (
+                    <div className="mt-2 p-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl flex items-start gap-2 text-xs text-amber-900 animate-in fade-in duration-200">
+                      <Info className="w-4 h-4 text-[#D35400] shrink-0 mt-0.5" />
+                      <span>
+                        El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian. (MSG-59)
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* CASO B: Componente de Menú (Rol + Aviso sin precio) */}
+            {tipo === 'Componente' && (
+              <>
+                {/* Campo Rol del Componente (RV-156) */}
+                <div>
+                  <label
+                    htmlFor="prod-rol"
+                    className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                  >
+                    Rol del Componente <span className="text-[#D35400]">*</span>
+                  </label>
+                  <select
+                    id="prod-rol"
+                    ref={rolSelectRef}
+                    value={rol}
+                    onChange={(e) => {
+                      setRol(e.target.value as RolComponente);
+                      if (errores.rol) {
+                        setErrores((prev) => ({ ...prev, rol: '' }));
+                      }
+                    }}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
+                      errores.rol
+                        ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
+                        : 'border-neutral-200 text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                    }`}
+                    disabled={guardando}
+                  >
+                    {ROLES_COMPONENTE.map((r) => (
+                      <option key={r.valor} value={r.valor}>
+                        {r.etiqueta} — ({r.descripcion})
+                      </option>
+                    ))}
+                  </select>
+                  {errores.rol && (
+                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {errores.rol}
+                    </p>
+                  )}
+                </div>
+
+                {/* Aviso informativo: Sin precio (MSG-215) */}
+                <div className="p-3.5 bg-emerald-50/80 border border-emerald-200/90 rounded-xl flex items-start gap-2.5 text-xs text-emerald-900">
+                  <Info className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-emerald-950">Sin precio de venta independiente (MSG-215)</p>
+                    <p className="mt-0.5 text-emerald-800 leading-relaxed">
+                      Los componentes no llevan precio: se integran en los menús completos (Desayuno completo, Almuerzo completo o Solo segundo) definidos por la administración.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Pie de modal fijo con botones de acción */}
@@ -400,6 +538,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </>
               ) : isEditing ? (
                 'Guardar cambios'
+              ) : tipo === 'Componente' ? (
+                'Guardar componente'
               ) : (
                 'Guardar producto'
               )}

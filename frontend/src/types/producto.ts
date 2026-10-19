@@ -1,3 +1,54 @@
+export type TipoProducto = 'Carta' | 'Componente';
+
+export type RolComponente =
+  | 'BebidaDesayuno'
+  | 'PlatoDesayuno'
+  | 'Sopa'
+  | 'Entrada'
+  | 'Segundo';
+
+export interface RolComponenteOpcion {
+  valor: RolComponente;
+  etiqueta: string;
+  descripcion: string;
+}
+
+export const ROLES_COMPONENTE: RolComponenteOpcion[] = [
+  {
+    valor: 'BebidaDesayuno',
+    etiqueta: 'Bebida de desayuno',
+    descripcion: 'Café, té, quaker con leche, quinua, jugos surtidos'
+  },
+  {
+    valor: 'PlatoDesayuno',
+    etiqueta: 'Plato de desayuno',
+    descripcion: 'Panes con chicharrón, palta, huevo, salchipollo, etc.'
+  },
+  {
+    valor: 'Sopa',
+    etiqueta: 'Sopa',
+    descripcion: 'Caldo de gallina (entrada), sopa a la minuta, criolla'
+  },
+  {
+    valor: 'Entrada',
+    etiqueta: 'Entrada',
+    descripcion: 'Papa a la huancaína (entrada), ocopa arequipeña'
+  },
+  {
+    valor: 'Segundo',
+    etiqueta: 'Segundo',
+    descripcion: 'Lomo saltado, seco de pollo/res, chaufa, bistec a lo pobre'
+  }
+];
+
+export const ROL_LABELS: Record<string, string> = {
+  BebidaDesayuno: 'Bebida de desayuno',
+  PlatoDesayuno: 'Plato de desayuno',
+  Sopa: 'Sopa',
+  Entrada: 'Entrada',
+  Segundo: 'Segundo'
+};
+
 export type CategoriaProducto =
   | 'Desayuno'
   | 'Almuerzo'
@@ -74,8 +125,10 @@ export const CATEGORIA_BADGE_LABELS: Record<string, string> = {
 export interface ProductoItem {
   id: string;
   nombre: string;
-  categoria: CategoriaProducto;
-  precio: number;
+  tipo: TipoProducto;
+  rol?: RolComponente | null;
+  categoria?: CategoriaProducto | null;
+  precio?: number | null;
   activo: boolean;
 }
 
@@ -86,14 +139,18 @@ export interface PaginacionProductos {
 
 export interface CrearProductoData {
   nombre: string;
-  categoria: CategoriaProducto;
-  precio: number;
+  tipo: TipoProducto;
+  categoria?: CategoriaProducto | null;
+  rol?: RolComponente | null;
+  precio?: number | null;
 }
 
 export interface ActualizarProductoData {
   nombre: string;
-  categoria: CategoriaProducto;
-  precio: number;
+  tipo: TipoProducto;
+  categoria?: CategoriaProducto | null;
+  rol?: RolComponente | null;
+  precio?: number | null;
 }
 
 export interface CambiarEstadoProductoResponse {

@@ -29,6 +29,8 @@ public class ProductosController : ControllerBase
     public async Task<IActionResult> Listar(
         [FromQuery] string? busqueda,
         [FromQuery] string? categoria,
+        [FromQuery] string? tipo,
+        [FromQuery] string? rol,
         [FromQuery] bool? estado,
         [FromQuery] int pagina = 1,
         [FromQuery] int tamano = 10,
@@ -39,6 +41,8 @@ public class ProductosController : ControllerBase
             var resultado = await _productoService.ListarProductosAsync(
                 busqueda,
                 categoria,
+                tipo,
+                rol,
                 estado,
                 pagina <= 0 ? 1 : pagina,
                 tamano <= 0 ? 10 : tamano,
@@ -243,9 +247,11 @@ public class ProductosController : ControllerBase
     [Authorize(Roles = "Administrador,Cajero,Mozo,Cocinero")]
     public async Task<IActionResult> ListarDisponibles(
         [FromQuery] string? categoria,
+        [FromQuery] string? tipo,
+        [FromQuery] string? rol,
         CancellationToken cancellationToken = default)
     {
-        var resultado = await _productoService.ListarDisponiblesAsync(categoria, cancellationToken);
+        var resultado = await _productoService.ListarDisponiblesAsync(categoria, tipo, rol, cancellationToken);
         if (!resultado.Success)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new

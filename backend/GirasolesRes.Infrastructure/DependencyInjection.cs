@@ -30,6 +30,7 @@ public static class DependencyInjection
         services.AddScoped<IMesaRepository, MesaRepository>();
         services.AddScoped<IAuditoriaMesaRepository, AuditoriaMesaRepository>();
         services.AddScoped<IProductoRepository, ProductoRepository>();
+        services.AddScoped<IMenuCompletoRepository, MenuCompletoRepository>();
         services.AddScoped<IMenuDiaRepository, MenuDiaRepository>();
         services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped<IComandaRepository, ComandaRepository>();

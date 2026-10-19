@@ -153,7 +153,7 @@ public class PedidoService : IPedidoService
         foreach (var linea in request.Lineas)
         {
             var prod = productosMap[linea.ProductoId];
-            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio, linea.Observacion);
+            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio.GetValueOrDefault(), linea.Observacion);
         }
 
         // Crear Comanda para cocina
@@ -306,7 +306,7 @@ public class PedidoService : IPedidoService
         foreach (var linea in request.Lineas)
         {
             var prod = productosMap[linea.ProductoId];
-            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio, linea.Observacion);
+            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio.GetValueOrDefault(), linea.Observacion);
         }
 
         // Crear Comanda para cocina con rótulo "Para llevar" o "Para llevar - [Referencia]"
@@ -448,7 +448,7 @@ public class PedidoService : IPedidoService
         foreach (var linea in request.Lineas)
         {
             var prod = productosMap[linea.ProductoId];
-            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio, linea.Observacion);
+            pedido.AgregarOLinea(linea.ProductoId, linea.Cantidad, prod.Pro_Precio.GetValueOrDefault(), linea.Observacion);
             comandaAdicional.AgregarDetalle(linea.ProductoId, prod.Pro_Nombre, linea.Cantidad, linea.Observacion);
         }
 
@@ -506,8 +506,8 @@ public class PedidoService : IPedidoService
                     lista.Add(new ProductoMenuPedidoDto(
                         des.Id_Producto,
                         des.Pro_Nombre,
-                        des.Pro_Categoria.ToString(),
-                        des.Pro_Precio,
+                        des.Pro_Categoria?.ToString() ?? string.Empty,
+                        des.Pro_Precio.GetValueOrDefault(),
                         Agotado: false,
                         Disponible: true
                     ));
@@ -523,8 +523,8 @@ public class PedidoService : IPedidoService
                     lista.Add(new ProductoMenuPedidoDto(
                         prod.Id_Producto,
                         prod.Pro_Nombre,
-                        prod.Pro_Categoria.ToString(),
-                        prod.Pro_Precio,
+                        prod.Pro_Categoria?.ToString() ?? string.Empty,
+                        prod.Pro_Precio.GetValueOrDefault(),
                         Agotado: plato.Mdp_Agotado,
                         Disponible: !plato.Mdp_Agotado
                     ));
@@ -807,7 +807,7 @@ public class PedidoService : IPedidoService
                         throw new PedidoConflictException("plato_agotado", string.Format(MensajesCatalogo.MSG_79, prod.Pro_Nombre));
                     }
                 }
-                precioUnitario = prod.Pro_Precio;
+                precioUnitario = prod.Pro_Precio.GetValueOrDefault();
             }
 
             var nuevaLinea = new DetallePedido(pedido.Id_Pedido, l.ProductoId, l.Cantidad, precioUnitario, l.Observacion?.Trim());
