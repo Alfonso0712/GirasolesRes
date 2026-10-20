@@ -5,7 +5,6 @@ import { Button } from '../components/Button';
 import { FormMessage } from '../components/FormMessage';
 import { loginService } from '../services/authService';
 import { normalizeText } from '../utils/normalizeText';
-import { AuthLayout } from '../layouts/AuthLayout';
 import type { UserSession } from '../types/auth';
 
 interface LoginPageProps {
@@ -17,7 +16,7 @@ interface LoginPageProps {
 export const LoginPage: React.FC<LoginPageProps> = ({
   onSuccess,
   onForgotPasswordClick,
-  initialBanner
+  initialBanner,
 }) => {
   const [formData, setFormData] = useState({
     usuario: '',
@@ -31,7 +30,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
-    const [capsLockActivo, setCapsLockActivo] = useState(false);
+  const [capsLockActivo, setCapsLockActivo] = useState(false);
 
   const usuarioRef = useRef<HTMLInputElement>(null);
   const contrasenaRef = useRef<HTMLInputElement>(null);
@@ -73,7 +72,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
     if (field === 'usuario') {
       if (!val) {
-        newErrors.usuario = 'Campo obligatorio'; // Como en Vega.png
+        newErrors.usuario = 'Campo obligatorio';
       } else if (!/^[a-zA-Z0-9._-]{3,30}$/.test(val)) {
         newErrors.usuario = 'El usuario debe tener entre 3 y 30 caracteres, sin espacios.';
       } else {
@@ -144,8 +143,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       contrasenaRef.current?.focus();
 
       setMessageType('error');
-      // Mostrar mensaje del catálogo o genérico de credenciales
-      setMessage(err.message || 'USUARIO O CONTRASEÑA INCORRECTOS');
+      setMessage(err.message || 'Usuario o contraseña incorrectos.');
     } finally {
       setIsSubmitting(false);
     }
@@ -163,13 +161,72 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   return (
-    <AuthLayout>
-      {/* Encabezado del Formulario */}
-      <div className="mb-3 sm:mb-4 text-left">
-            <p className="text-[#D35400] text-xs font-bold tracking-widest uppercase mb-1">
+    <div className="h-screen max-h-screen w-full flex flex-col lg:flex-row bg-white overflow-hidden select-none">
+      {/* Encabezado superior para pantallas móviles (< lg) */}
+      <header className="lg:hidden bg-[#3A2211] px-5 py-3.5 flex items-center justify-center gap-3 shadow-sm border-b border-[#2C1A0E] shrink-0">
+        <img
+          src="/favicon.png"
+          alt="Isotipo Girasoles"
+          className="w-9 h-9 rounded-full object-cover shrink-0"
+        />
+        <img
+          src="/LOGO_GIRASOLES.png"
+          alt="Girasoles Restaurante"
+          className="h-6 w-auto object-contain"
+        />
+      </header>
+
+      {/* 1. Panel Izquierdo: Branding y Tipografía (60% en pantallas grandes) */}
+      <aside className="hidden lg:flex lg:w-3/5 bg-[#3A2211] text-white p-12 xl:p-16 flex-col justify-between relative overflow-hidden shrink-0 select-none h-full">
+        {/* Cabecera de Logo superior izquierda */}
+        <div className="relative z-10 flex items-center gap-3.5">
+          <img
+            src="/favicon.png"
+            alt="Isotipo Girasoles"
+            className="w-12 h-12 rounded-full object-cover shrink-0 shadow-md"
+          />
+          <img
+            src="/LOGO_GIRASOLES.png"
+            alt="Girasoles Restaurante"
+            className="h-8 w-auto object-contain"
+          />
+        </div>
+
+        {/* Textos Centrales alineados a la izquierda y centrados verticalmente */}
+        <div className="relative z-10 my-auto py-8 max-w-xl text-left">
+          <div className="mb-4">
+            <span className="text-[#D35400] font-bold tracking-widest text-xs uppercase block mb-2">
+              SISTEMA DE RESTAURANTE
+            </span>
+            <div className="w-12 h-0.5 bg-[#D35400] rounded-full" />
+          </div>
+
+          <h1 className="font-brand-serif text-5xl lg:text-6xl text-white leading-tight mb-5 tracking-tight">
+            Gestión simple.<br />
+            Servicio excepcional.
+          </h1>
+
+          <p className="text-white/80 font-sans text-base lg:text-lg max-w-md leading-relaxed">
+            Plataforma integral de punto de venta, gestión de salón, pedidos y control operativo en tiempo real.
+          </p>
+        </div>
+
+        {/* Pie de página inferior sutil */}
+        <footer className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
+          <span>Restaurante Girasoles &copy; {new Date().getFullYear()}</span>
+          <span className="font-medium tracking-wide">Punto de Venta Profesional</span>
+        </footer>
+      </aside>
+
+      {/* 2. Panel Derecho: Formulario Enfocado (40% en pantallas grandes sin scrollbars) */}
+      <main className="w-full lg:w-2/5 bg-white flex flex-col justify-center items-center px-6 sm:px-10 lg:px-12 xl:px-16 py-6 h-full overflow-y-auto lg:overflow-hidden">
+        <div className="w-full max-w-[390px] flex flex-col justify-center my-auto">
+          {/* Encabezado del Formulario */}
+          <div className="mb-3 text-left">
+            <span className="text-[#D35400] text-xs font-bold tracking-widest uppercase block mb-1">
               BIENVENIDO
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] font-brand-serif tracking-tight mb-1 sm:mb-1.5">
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] font-brand-serif tracking-tight mb-1">
               Iniciar sesión
             </h2>
             <p className="text-[#7C6F66] text-xs sm:text-sm">
@@ -177,10 +234,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             </p>
           </div>
 
-          {/* Banner de error / éxito (Vega 1.png) */}
-          <FormMessage type={messageType} message={message} className="p-2.5 mb-3" />
+          {/* Slot reservado para mensajes para prevenir layout shift (salto de scroll vertical) */}
+          <div className="min-h-[46px] mb-2 flex items-center">
+            {message ? (
+              <FormMessage type={messageType} message={message} className="p-2.5 w-full rounded-xl" />
+            ) : (
+              <div className="w-full h-full opacity-0 pointer-events-none select-none" aria-hidden="true" />
+            )}
+          </div>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-3 sm:space-y-3.5">
+          {/* Formulario Principal */}
+          <form onSubmit={handleSubmit} noValidate className="space-y-3">
             {/* Input Usuario */}
             <InputField
               id="usuario"
@@ -226,73 +290,83 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             />
 
             {capsLockActivo && (
-              <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg -mt-1.5 mb-1.5 font-medium">
+              <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl font-medium">
                 Mayúsculas activadas.
               </p>
             )}
 
-            {/* Botón INGRESAR */}
-            <Button type="submit" isSubmitting={isSubmitting} variant="primary">
-              INGRESAR
-            </Button>
+            {/* Botón INGRESAR (Altura mínima 48px para ergonomía táctil) */}
+            <div className="pt-1.5">
+              <Button
+                type="submit"
+                isSubmitting={isSubmitting}
+                variant="primary"
+                size="lg"
+                className="h-12 min-h-[48px] text-sm font-bold tracking-wider uppercase rounded-xl w-full"
+              >
+                INGRESAR
+              </Button>
+            </div>
 
             {/* Enlace Recuperar Contraseña */}
-            <div className="text-center pt-1.5">
+            <div className="text-center pt-1">
               <button
                 type="button"
                 onClick={onForgotPasswordClick}
-                className="text-[#D35400] text-xs sm:text-sm font-bold hover:underline focus:outline-none focus:ring-2 focus:ring-[#D35400] rounded py-1 px-2"
+                className="text-[#D35400] text-xs sm:text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#D35400] rounded py-1 px-2"
               >
                 ¿Olvidó su contraseña?
               </button>
             </div>
           </form>
 
-          {/* Tarjeta de Acceso de Demostración (Figma AuthShell) */}
-          <div className="mt-4 sm:mt-5 border border-dashed border-[#D5CCC3] rounded-2xl p-3 bg-white/70 text-left">
+          {/* Tarjeta de Acceso de Demostración Limpia */}
+          <div className="mt-4 sm:mt-5 border border-dashed border-[#D5CCC3] rounded-2xl p-3 bg-neutral-50/70 text-left">
             <p className="font-bold text-xs text-[#2C1A0E]">Acceso de demostración</p>
-            <p className="text-[11px] text-[#7C6F66] mt-0.5 mb-2">Administrador · sin credenciales</p>
-            
+            <p className="text-[11px] text-[#7C6F66] mt-0.5 mb-2">Seleccione un perfil para probar el acceso rápido</p>
+
             <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#EFEAE5]">
               <button
                 type="button"
                 onClick={() => cargarDemo('admin', 'Password123!')}
-                className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-[#B84600] border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors"
+                className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-[#B84600] border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               >
-                Admin
+                Administrador
               </button>
               <button
                 type="button"
                 onClick={() => cargarDemo('atorres', 'Password123!')}
-                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors"
+                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
               >
                 Cajero
               </button>
               <button
                 type="button"
                 onClick={() => cargarDemo('lperez', 'Password123!')}
-                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors"
+                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
               >
                 Mozo
               </button>
               <button
                 type="button"
                 onClick={() => cargarDemo('msoto', 'Password123!')}
-                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors"
+                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
               >
                 Cocinero
               </button>
               <button
                 type="button"
                 onClick={() => cargarDemo('crojas', 'Password123!')}
-                className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors"
+                className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors cursor-pointer"
                 title="Cuenta de demostración inactiva"
               >
                 Inactivo
               </button>
             </div>
           </div>
-    </AuthLayout>
+        </div>
+      </main>
+    </div>
   );
 };
 

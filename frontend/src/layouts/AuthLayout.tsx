@@ -1,5 +1,4 @@
 import React from 'react';
-import logoImg from '../assets/logo-girasoles.png';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -7,49 +6,69 @@ interface AuthLayoutProps {
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
-    <div className="h-screen max-h-screen w-full flex flex-col md:flex-row bg-[#FAF7F4] overflow-hidden">
-      {/* Panel Izquierdo Figma (AuthShell) */}
-      <div className="hidden md:flex md:w-[48%] lg:w-[45%] bg-[#482813] text-white p-8 lg:p-12 flex-col justify-between relative overflow-hidden shrink-0 select-none h-full">
-        {/* Arcos decorativos concéntricos del fondo */}
-        <div className="absolute -bottom-28 -right-28 w-[380px] h-[380px] rounded-full border-[36px] border-[#5A351D]/35 pointer-events-none" />
-        <div className="absolute -bottom-52 -right-52 w-[520px] h-[520px] rounded-full border-[48px] border-[#5A351D]/20 pointer-events-none" />
+    <div className="h-screen max-h-screen w-full flex flex-col lg:flex-row bg-white overflow-hidden select-none">
+      {/* Encabezado superior para pantallas móviles (< lg) */}
+      <header className="lg:hidden bg-[#3A2211] px-5 py-3.5 flex items-center justify-center gap-3 shadow-sm border-b border-[#2C1A0E] shrink-0">
+        <img
+          src="/favicon.png"
+          alt="Isotipo Girasoles"
+          className="w-9 h-9 rounded-full object-cover shrink-0"
+        />
+        <img
+          src="/LOGO_GIRASOLES.png"
+          alt="Girasoles Restaurante"
+          className="h-6 w-auto object-contain"
+        />
+      </header>
 
-        {/* Logo superior */}
-        <div className="relative z-10">
-          <div className="bg-white p-2 rounded-2xl w-fit shadow-md">
-            <img src={logoImg} alt="Girasoles Restaurante" className="h-14 lg:h-16 w-auto object-contain" />
+      {/* 1. Panel Izquierdo: Branding y Tipografía (60% en pantallas grandes) */}
+      <aside className="hidden lg:flex lg:w-3/5 bg-[#3A2211] text-white p-12 xl:p-16 flex-col justify-between relative overflow-hidden shrink-0 select-none h-full">
+        {/* Cabecera de Logo superior izquierda */}
+        <div className="relative z-10 flex items-center gap-3.5">
+          <img
+            src="/favicon.png"
+            alt="Isotipo Girasoles"
+            className="w-12 h-12 rounded-full object-cover shrink-0 shadow-md"
+          />
+          <img
+            src="/LOGO_GIRASOLES.png"
+            alt="Girasoles Restaurante"
+            className="h-8 w-auto object-contain"
+          />
+        </div>
+
+        {/* Textos Centrales alineados a la izquierda y centrados verticalmente */}
+        <div className="relative z-10 my-auto py-8 max-w-xl text-left">
+          <div className="mb-4">
+            <span className="text-[#D35400] font-bold tracking-widest text-xs uppercase block mb-2">
+              SISTEMA DE RESTAURANTE
+            </span>
+            <div className="w-12 h-0.5 bg-[#D35400] rounded-full" />
           </div>
-        </div>
 
-        {/* Titular central */}
-        <div className="relative z-10 my-auto py-6 lg:py-8">
-          <p className="text-[#E5A358] text-xs font-bold tracking-widest uppercase mb-3">
-            SISTEMA DE RESTAURANTE
-          </p>
-          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-white leading-[1.12] font-brand-serif mb-4">
+          <h1 className="font-brand-serif text-5xl lg:text-6xl text-white leading-tight mb-5 tracking-tight">
             Gestión simple.<br />
-            Servicio<br />
-            excepcional.
+            Servicio excepcional.
           </h1>
-          <p className="text-[#D9C7BC] text-xs lg:text-sm leading-relaxed max-w-sm">
-            Una plataforma segura para que cada integrante del equipo acceda a las herramientas que necesita.
+
+          <p className="text-white/80 font-sans text-base lg:text-lg max-w-md leading-relaxed">
+            Plataforma integral de punto de venta, gestión de salón, pedidos y control operativo en tiempo real.
           </p>
         </div>
 
-        {/* Pie de página inferior */}
-        <div className="relative z-10 pt-2">
-          <p className="text-[#A88B79] text-[11px] font-semibold tracking-wider uppercase">
-            SEGURIDAD Y CONTROL PARA TODO TU EQUIPO
-          </p>
-        </div>
-      </div>
+        {/* Pie de página inferior sutil */}
+        <footer className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
+          <span>Restaurante Girasoles &copy; {new Date().getFullYear()}</span>
+          <span className="font-medium tracking-wide">Punto de Venta Profesional</span>
+        </footer>
+      </aside>
 
-      {/* Panel Derecho: Contenedor del Formulario */}
-      <div className="flex-1 flex items-center justify-center py-4 px-6 sm:px-10 lg:px-14 overflow-y-auto md:overflow-y-hidden h-full">
-        <div className="w-full max-w-[400px] flex flex-col justify-center">
+      {/* 2. Panel Derecho: Formulario Enfocado (40% en pantallas grandes) */}
+      <main className="w-full lg:w-2/5 bg-white flex flex-col justify-center items-center px-6 sm:px-10 lg:px-12 xl:px-16 py-6 h-full overflow-y-auto lg:overflow-hidden">
+        <div className="w-full max-w-[390px] flex flex-col justify-center my-auto">
           {children}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
