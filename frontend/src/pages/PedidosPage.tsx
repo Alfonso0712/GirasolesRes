@@ -18,7 +18,7 @@ import {
   ChefHat,
   CheckCircle2,
   AlertTriangle,
-  RotateCw,
+  RotateCcw, RotateCw,
   Filter,
   Eye,
   Edit2,
@@ -313,11 +313,11 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             type="button"
             onClick={() => cargarPedidos()}
             disabled={cargando}
-            className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 transition-colors flex items-center gap-2 text-xs font-semibold cursor-pointer min-h-[38px] shadow-2xs"
+            className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             aria-label="Refrescar lista de pedidos"
           >
-            <RotateCw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
-            <span>Actualizar</span>
+            <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Actualizar</span>
           </button>
         </div>
       </div>
@@ -417,9 +417,9 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
         </div>
 
         {/* Barra de Filtros Combinables (RV-81) */}
-        <div className="px-3.5 py-2.5 bg-white rounded-2xl border border-neutral-200/80 shadow-xs mb-3 flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-neutral-600">
-            <Filter className="w-4 h-4 text-[#D35400]" />
+        <div className="px-3.5 py-3 sm:p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs mb-3 flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#7C6F66]">
+            <Filter className="w-3.5 h-3.5" />
             <span>Filtros:</span>
           </div>
 
@@ -427,7 +427,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <select
             value={filtroEstado}
             onChange={(e) => setFiltroEstado(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-300 focus:border-[#D35400] focus:outline-none cursor-pointer min-h-[40px]"
+            className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
           >
             <option value="">Todos los estados</option>
             <option value="Pendiente">Pendiente</option>
@@ -441,7 +441,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <select
             value={filtroTipo}
             onChange={(e) => setFiltroTipo(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-300 focus:border-[#D35400] focus:outline-none cursor-pointer min-h-[40px]"
+            className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
           >
             <option value="">Todos los tipos</option>
             <option value="Mesa">Mesa</option>
@@ -452,7 +452,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <select
             value={filtroMesaId}
             onChange={(e) => setFiltroMesaId(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-300 focus:border-[#D35400] focus:outline-none cursor-pointer min-h-[40px]"
+            className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
           >
             <option value="">Todas las mesas</option>
             {mesas.map((m) => (
@@ -479,7 +479,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                 type="date"
                 value={filtroFecha}
                 onChange={(e) => setFiltroFecha(e.target.value)}
-                className="text-xs p-2 rounded-xl border border-neutral-300 focus:border-[#D35400] focus:outline-none cursor-pointer min-h-[40px]"
+                className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
               />
             </div>
           )}
@@ -489,7 +489,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <button
               type="button"
               onClick={handleLimpiarFiltros}
-              className="text-xs font-bold text-[#D35400] hover:text-[#b84500] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-xs font-bold text-[#D35400] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <X className="w-3.5 h-3.5" />
               <span>Quitar filtros</span>
@@ -507,7 +507,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <button
               type="button"
               onClick={() => cargarPedidos()}
-              className="py-1.5 px-3 rounded-xl bg-rose-600 text-white font-semibold text-xs hover:bg-rose-700 transition-colors cursor-pointer"
+              className="py-2 px-4 rounded-xl bg-[#D35400] text-white font-semibold text-xs hover:bg-[#B84600] transition-colors cursor-pointer"
             >
               Reintentar
             </button>

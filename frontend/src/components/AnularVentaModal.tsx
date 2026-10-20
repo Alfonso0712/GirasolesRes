@@ -109,7 +109,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
             onClick={onClose}
             disabled={loading}
             aria-label="Cerrar ventana"
-            className="text-neutral-400 hover:text-neutral-600 p-1.5 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="modal-close-btn"
           >
             <X className="w-5 h-5" />
           </button>

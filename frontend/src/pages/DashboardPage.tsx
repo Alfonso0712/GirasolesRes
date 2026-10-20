@@ -18,7 +18,7 @@ import type {
   BloqueAgotadosCocinero
 } from '../types/inicio';
 import {
-  RefreshCw,
+  RefreshCw, RotateCcw,
   AlertTriangle,
   CheckCircle2,
   Clock,
@@ -128,7 +128,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#482813]">
+            <h1 className="text-2xl font-bold text-[#2C1A0E]">
               Bienvenido/a, {session.nombre}
             </h1>
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
@@ -154,7 +154,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
             </span>
           ) : (
             <span className="text-xs text-neutral-500 font-medium tabular-nums hidden sm:inline">
-              Actualizado hace {segundosDesdeActualizacion} s
+              Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
             </span>
           )}
 
@@ -163,10 +163,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
             onClick={() => refrescarManual()}
             disabled={actualizando}
             aria-label="Actualizar datos del panel"
-            className="p-2 sm:px-3 sm:py-2 bg-white border border-neutral-200/80 rounded-xl text-neutral-700 hover:text-[#D35400] hover:border-[#D35400] text-xs font-semibold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[38px] justify-center"
+            className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${actualizando ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">ACTUALIZAR</span>
+            <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${actualizando ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Actualizar</span>
           </button>
         </div>
       </div>

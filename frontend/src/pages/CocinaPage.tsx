@@ -4,7 +4,7 @@ import {
   Clock,
   Volume2,
   VolumeX,
-  RotateCw,
+  RotateCcw, RotateCw,
   CheckCircle2,
   AlertTriangle,
   UtensilsCrossed,
@@ -372,16 +372,16 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
           {/* Contador y Actualizar Manual */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-neutral-500 font-mono hidden sm:inline">
-              Hace {segundosDesdeActualizacion} s
+              Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
             </span>
             <button
               type="button"
               onClick={() => cargarComandas(false)}
               disabled={cargando}
-              className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
+              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
               title="Actualizar comandas manualmente"
             >
-              <RotateCw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>

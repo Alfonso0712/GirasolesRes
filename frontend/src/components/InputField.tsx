@@ -1,5 +1,4 @@
 import React, { forwardRef, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
 
 export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -37,14 +36,13 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
     rightElement
   ) : isPassword ? (
     <button
-      type="button"
-      tabIndex={0}
-      onClick={() => setShowPassword(!showPassword)}
-      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-      className="p-1.5 text-stone-400 hover:text-[#D35400] transition-colors rounded-lg cursor-pointer"
-    >
-      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-    </button>
+        type="button"
+        tabIndex={0}
+        onClick={() => setShowPassword(!showPassword)}
+        className="text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+      >
+        {showPassword ? 'Ocultar' : 'Mostrar'}
+      </button>
   ) : null;
 
   return (

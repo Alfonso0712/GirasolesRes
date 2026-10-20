@@ -76,7 +76,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
       aria-labelledby="anular-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
@@ -93,7 +93,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="text-neutral-400 hover:text-neutral-700 p-2 rounded-xl hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="modal-close-btn"
             aria-label="Cerrar modal"
           >
             <X className="w-5 h-5" />

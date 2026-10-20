@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Receipt,
+  Filter,
   RotateCcw,
   Search,
   Calendar,
@@ -80,6 +81,35 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     return true;
   });
 
+  const esFiltroRapidoActivo = (tipo: 'hoy' | 'ayer' | 'semana' | 'mes') => {
+    const format = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
+    const hoy = new Date();
+    const hoyStr = format(hoy);
+    if (tipo === 'hoy') return desde === hoyStr && hasta === hoyStr;
+    if (tipo === 'ayer') {
+      const ayer = new Date(hoy);
+      ayer.setDate(ayer.getDate() - 1);
+      const aStr = format(ayer);
+      return desde === aStr && hasta === aStr;
+    }
+    if (tipo === 'semana') {
+      const hace7 = new Date(hoy);
+      hace7.setDate(hace7.getDate() - 7);
+      return desde === format(hace7) && hasta === hoyStr;
+    }
+    if (tipo === 'mes') {
+      const hace30 = new Date(hoy);
+      hace30.setDate(hace30.getDate() - 30);
+      return desde === format(hace30) && hasta === hoyStr;
+    }
+    return false;
+  };
+
   const totalPaginas = Math.max(1, Math.ceil(total / tamano));
   const tieneFiltrosActivos = Boolean(busqueda.trim() || errorFechas || errorBusqueda || filtroTipoComprobante !== 'todos');
 
@@ -117,7 +147,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             onClick={() => cargarVentas()}
             title="Actualizar lista de ventas"
             aria-label="Actualizar lista de ventas"
-            className="p-2 sm:px-3 sm:py-2 text-xs font-medium rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px]"
+            disabled={cargando} className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
           >
             <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualizar</span>
@@ -205,10 +235,13 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
       </div>
 
       {/* 3. Barra de Filtros y Búsqueda (RV-108, RV-109, RV-118) */}
-      <div className="shrink-0 bg-white px-3.5 py-2 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-2">
+      <div className="shrink-0 bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-3">
         {/* Filtro por Tipo de Comprobante */}
-        <div className="flex flex-wrap items-center gap-1.5 pb-2 border-b border-neutral-100">
-          <span className="text-xs font-semibold text-[#7C6F66] mr-1">Comprobante:</span>
+        <div className="flex flex-wrap items-center gap-1.5 pb-2.5 border-b border-neutral-100">
+          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
+            <Filter className="w-3.5 h-3.5" />
+            Comprobante:
+          </span>
           {(['todos', 'ticket', 'boleta', 'factura'] as const).map((tipo) => {
             const activo = filtroTipoComprobante === tipo;
             const labels: Record<string, string> = {
@@ -304,21 +337,33 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               <button
                 type="button"
                 onClick={() => setFiltroRapido('hoy')}
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700 transition-colors cursor-pointer"
+                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                  esFiltroRapidoActivo('hoy')
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
+                }`}
               >
                 Hoy
               </button>
               <button
                 type="button"
                 onClick={() => setFiltroRapido('ayer')}
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700 transition-colors cursor-pointer"
+                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                  esFiltroRapidoActivo('ayer')
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
+                }`}
               >
                 Ayer
               </button>
               <button
                 type="button"
                 onClick={() => setFiltroRapido('semana')}
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700 transition-colors cursor-pointer"
+                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                  esFiltroRapidoActivo('semana')
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
+                }`}
               >
                 7 días
               </button>
@@ -326,7 +371,11 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 <button
                   type="button"
                   onClick={() => setFiltroRapido('mes')}
-                  className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700 transition-colors cursor-pointer hidden sm:inline-block"
+                  className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer hidden sm:inline-block min-h-[38px] ${
+                    esFiltroRapidoActivo('mes')
+                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
+                  }`}
                 >
                   30 días
                 </button>
@@ -557,38 +606,40 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               <span className="font-semibold text-neutral-800">{total}</span> ventas registradas
             </span>
 
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                disabled={pagina <= 1}
-                onClick={() => setPagina(pagina - 1)}
-                className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
-                  pagina <= 1
-                    ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
-                    : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
-                }`}
-                title="Página anterior"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              <span className="px-2 text-xs font-semibold text-neutral-700 tabular-nums">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-neutral-700 tabular-nums">
                 Página {pagina} de {totalPaginas}
               </span>
-
-              <button
-                type="button"
-                disabled={pagina >= totalPaginas}
-                onClick={() => setPagina(pagina + 1)}
-                className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
-                  pagina >= totalPaginas
-                    ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
-                    : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
-                }`}
-                title="Página siguiente"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  disabled={pagina <= 1}
+                  onClick={() => setPagina(pagina - 1)}
+                  className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
+                    pagina <= 1
+                      ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
+                      : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
+                  }`}
+                  title="Página anterior"
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  disabled={pagina >= totalPaginas}
+                  onClick={() => setPagina(pagina + 1)}
+                  className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
+                    pagina >= totalPaginas
+                      ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
+                      : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
+                  }`}
+                  title="Página siguiente"
+                  aria-label="Página siguiente"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}

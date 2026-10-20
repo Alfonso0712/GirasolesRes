@@ -41,7 +41,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"
@@ -51,7 +51,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors"
+          className="absolute right-4 top-4 modal-close-btn" aria-label="Cerrar modal"
         >
           <X className="w-4 h-4" />
         </button>

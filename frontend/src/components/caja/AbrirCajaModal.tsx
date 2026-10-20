@@ -182,23 +182,23 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="abrir-caja-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transition-all animate-in zoom-in-95 duration-200"
+        className="bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transition-all animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado */}
-        <div className="bg-gradient-to-r from-[#482813] to-[#5C341A] px-6 py-4 flex items-center justify-between text-white border-b border-[#3D2110]">
+        <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#D35400] flex items-center justify-center text-white shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center border border-amber-200/80 shadow-xs">
               <DollarSign className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#F39C12]">
-                GESTIÓN DE CAJA
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
+                Gestión de Caja
               </p>
-              <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-white">
+              <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
                 Apertura de Caja
               </h2>
             </div>
@@ -207,7 +207,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-11 h-11 rounded-lg text-amber-200/70 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+              className="modal-close-btn"
               aria-label="Cerrar ventana"
             >
               <X className="w-5 h-5" />
@@ -216,7 +216,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
         </div>
 
         {/* Cuerpo */}
-        <div className="p-6 text-[#482813]">
+        <div className="p-6 text-[#2C1A0E]">
           {errorServidor && (
             <div className="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-red-700 animate-in fade-in duration-200">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
@@ -230,13 +230,13 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
           {!pasoConfirmacion ? (
             /* Paso 1: Ingreso de monto inicial */
             <form onSubmit={handleAvanzarConfirmacion} className="space-y-4">
-              <p className="text-sm text-stone-600">
+              <p className="text-sm text-neutral-600">
                 Ingrese el sencillo o fondo inicial en efectivo con el que iniciará el turno para habilitar el cobro de pedidos.
               </p>
 
               {sugerenciaInicial !== null && sugerenciaInicial !== undefined && sugerenciaInicial >= 0 && (
-                <div className="p-3 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl flex items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2 text-stone-600">
+                <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-neutral-600">
                     <HelpCircle className="w-4 h-4 text-[#D35400] shrink-0" />
                     <span>Sugerido del último cierre:</span>
                   </div>
@@ -254,11 +254,11 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               )}
 
               <div>
-                <label htmlFor="monto-inicial" className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+                <label htmlFor="monto-inicial" className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
                   Monto Inicial (S/) <span className="text-red-600">*</span>
                 </label>
                 <div className="relative rounded-xl shadow-2xs">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-500 font-bold">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-bold">
                     S/
                   </div>
                   <input
@@ -274,10 +274,10 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                       if (errorValidacion) setErrorValidacion(null);
                     }}
                     placeholder="0.00"
-                    className={`block w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-lg font-bold tabular-nums text-[#482813] focus:outline-hidden focus:ring-2 ${
+                    className={`block w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-lg font-bold tabular-nums text-[#2C1A0E] focus:outline-hidden focus:ring-2 ${
                       errorValidacion
                         ? 'border-red-500 focus:ring-red-500 bg-red-50/50'
-                        : 'border-[#E6D7C3] focus:border-[#D35400] focus:ring-[#D35400]/20'
+                        : 'border-neutral-200 focus:border-[#D35400] focus:ring-[#D35400]/20'
                     }`}
                   />
                 </div>
@@ -287,7 +287,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                     {errorValidacion}
                   </p>
                 )}
-                <p className="text-[11px] text-stone-500 mt-1">
+                <p className="text-[11px] text-neutral-500 mt-1">
                   Permitido: S/ 0.00 a S/ 99,999.99 con hasta 2 decimales.
                 </p>
               </div>
@@ -314,13 +314,13 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2.5 text-sm font-semibold text-stone-700 bg-white border border-stone-300 rounded-xl hover:bg-stone-50 transition-colors cursor-pointer min-h-[44px]"
+                  className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B94600] rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
                 >
                   Continuar
                 </button>
@@ -334,12 +334,12 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                 <div className="text-sm">
                   <p className="font-bold text-amber-900">Confirmación de Apertura</p>
                   <p className="text-amber-800 mt-1">
-                    ¿Abrir la caja con <strong className="font-extrabold text-[#482813] tabular-nums">S/ {montoNumerico.toFixed(2)}</strong>? Podrá empezar a registrar cobros.
+                    ¿Abrir la caja con <strong className="font-extrabold text-[#2C1A0E] tabular-nums">S/ {montoNumerico.toFixed(2)}</strong>? Podrá empezar a registrar cobros.
                   </p>
                 </div>
               </div>
 
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-neutral-500">
                 Al confirmar, se habilitará inmediatamente el cobro de pedidos en el salón y pedidos para llevar.
               </p>
 
@@ -349,7 +349,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                   type="button"
                   disabled={procesando}
                   onClick={() => setPasoConfirmacion(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-stone-700 bg-white border border-stone-300 rounded-xl hover:bg-stone-50 disabled:opacity-50 transition-colors cursor-pointer min-h-[44px]"
+                  className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-colors cursor-pointer min-h-[44px]"
                 >
                   Cancelar
                 </button>
@@ -357,7 +357,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                   type="button"
                   disabled={procesando}
                   onClick={handleConfirmarApertura}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#2E7D32] hover:bg-[#256628] disabled:bg-stone-400 rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#2E7D32] hover:bg-[#256628] disabled:bg-neutral-400 rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
                 >
                   {procesando ? (
                     <>

@@ -155,9 +155,9 @@ export const MesasPage: React.FC<MesasPageProps> = ({
 
         {/* Sincronización y Botón Primario */}
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <div className="flex items-center gap-1.5 text-xs text-[#7C6F66]">
-            <span className="hidden sm:inline font-mono">
-              Actualizado hace {segundosTranscurridos} s
+          <div className="flex items-center gap-3 text-xs text-neutral-500">
+            <span className="hidden sm:inline tabular-nums">
+              Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
             </span>
             <button
               type="button"
@@ -165,9 +165,10 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               disabled={refrescando}
               title="Actualizar mesas ahora"
               aria-label="Actualizar mesas ahora"
-              className="w-8 h-8 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer disabled:opacity-60"
+              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             >
-              <RotateCcw className={`w-3.5 h-3.5 ${refrescando ? 'animate-spin text-[#D35400]' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${refrescando ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>
 
@@ -209,7 +210,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               <p className="text-xs text-amber-800 mt-0.5">
                 {esAdmin
                   ? 'Defina el menú diario para que el personal pueda registrar comandas de salón y para llevar.'
-                  : 'Solicite a la administradora que publique el menú de hoy para comenzar a tomar pedidos.'}
+                  : 'Solicite a la administración que publique el menú de hoy para comenzar a tomar pedidos.'}
               </p>
             </div>
           </div>
@@ -226,7 +227,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
       )}
 
       {/* 2. Barra de Filtros Fija (shrink-0) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-2.5 bg-white px-3.5 py-2 rounded-xl border border-neutral-200/80 shadow-2xs">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" />
@@ -245,7 +246,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
                 key={estado}
                 type="button"
                 onClick={() => setFiltroEstado(estado)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] ${
                   activo
                     ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
                     : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'

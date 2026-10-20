@@ -82,7 +82,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
       aria-labelledby="detalle-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
         {/* Cabecera */}
         <div className="flex items-start justify-between pb-4 border-b border-neutral-100">
           <div>

@@ -446,7 +446,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 <button
                   type="button"
                   onClick={cargarProductos}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Reintentar</span>
@@ -852,7 +852,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                             {icono}
                           </div>
                           <div>
-                            <h3 className="font-sans font-bold text-base sm:text-lg lg:text-xl text-[#482813] leading-snug break-words">
+                            <h3 className="font-sans font-bold text-base sm:text-lg lg:text-xl text-[#2C1A0E] leading-snug break-words">
                               {m.nombre}
                             </h3>
                             <span className="text-[11px] text-neutral-500 font-medium">
@@ -987,7 +987,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               <button
                 type="button"
                 onClick={() => setModalPrecioOpen(false)}
-                className="text-neutral-400 hover:text-neutral-700 p-1 rounded-lg"
+                className="modal-close-btn" aria-label="Cerrar modal"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1081,7 +1081,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               {menuParaEstado.activo ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
             </div>
 
-            <h3 className="font-sans font-bold text-lg text-neutral-900 mb-2">
+            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-2">
               {menuParaEstado.activo ? '¿Desactivar menú completo?' : '¿Activar menú completo?'}
             </h3>
 

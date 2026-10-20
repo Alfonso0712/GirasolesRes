@@ -163,7 +163,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
         aria-labelledby="modificar-title"
         className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
       >
-        <div className="bg-white rounded-3xl p-5 sm:p-7 max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
+        <div className="bg-white rounded-2xl p-5 sm:p-7 max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
             <div>
@@ -184,7 +184,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
             <button
               type="button"
               onClick={handleCerrar}
-              className="text-neutral-400 hover:text-neutral-700 p-2 rounded-xl hover:bg-neutral-100 transition-colors cursor-pointer"
+              className="modal-close-btn"
               aria-label="Cerrar modal de modificación"
             >
               <X className="w-5 h-5" />

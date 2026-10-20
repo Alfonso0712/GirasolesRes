@@ -50,6 +50,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         return 'Gestión de Pedidos';
       case 'cocina':
         return 'Cocina (KDS)';
+      case 'reportes':
+        return 'Reportes';
+      case 'pedido-mesa':
+        return 'Tomar Pedido';
       default:
         return 'Inicio';
     }

@@ -158,23 +158,23 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
       role="dialog"
       aria-modal="true"
       aria-labelledby="contador-title"
-      className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado */}
-        <div className="bg-gradient-to-r from-[#482813] to-[#5C341A] px-6 py-4 flex items-center justify-between text-white border-b border-[#3D2110]">
+        <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#D35400] flex items-center justify-center text-white shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] border border-amber-200/80 flex items-center justify-center shadow-xs">
               <Coins className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#F39C12]">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
                 Herramienta de Arqueo
               </p>
-              <h2 id="contador-title" className="font-sans text-xl font-bold text-white">
+              <h2 id="contador-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
                 Contador de Billetes y Monedas
               </h2>
             </div>
@@ -182,7 +182,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
           <button
             type="button"
             onClick={onClose}
-            className="w-11 h-11 rounded-lg text-amber-200/70 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            className="modal-close-btn"
             aria-label="Cerrar modal"
           >
             <X className="w-5 h-5" />
@@ -190,16 +190,16 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
         </div>
 
         {/* Contenido scrolleable */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-[#482813]">
-          <p className="text-sm text-stone-600">
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-[#2C1A0E]">
+          <p className="text-sm text-neutral-600">
             Ingrese la cantidad de unidades por cada denominación. El total se suma en tiempo real y no se guarda el desglose individual.
           </p>
 
           {/* Sección Billetes */}
           <div>
-            <div className="flex items-center gap-2 mb-3 pb-1 border-b border-stone-200">
+            <div className="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200">
               <Banknote className="w-4 h-4 text-[#D35400]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-stone-700">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-700">
                 Billetes (S/)
               </h3>
             </div>
@@ -213,14 +213,14 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                 return (
                   <div
                     key={b.id}
-                    className="p-3 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl flex items-center justify-between gap-3 focus-within:border-[#D35400] transition-colors"
+                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-[#D35400] transition-colors"
                   >
                     <div className="w-20">
-                      <span className="font-bold text-sm text-[#482813]">{b.etiqueta}</span>
+                      <span className="font-bold text-sm text-[#2C1A0E]">{b.etiqueta}</span>
                     </div>
                     <div className="flex-1 flex flex-col items-end">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-stone-500">Cant:</span>
+                        <span className="text-xs text-neutral-500">Cant:</span>
                         <input
                           type="number"
                           inputMode="numeric"
@@ -234,11 +234,11 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                           className={`w-20 text-right px-2 py-1 bg-white border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
                             err
                               ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                              : 'border-stone-300 focus:ring-[#D35400]'
+                              : 'border-neutral-200 focus:ring-[#D35400]'
                           }`}
                         />
                       </div>
-                      <span className="text-xs font-semibold text-stone-500 tabular-nums mt-0.5">
+                      <span className="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5">
                         = S/ {subtotal.toFixed(2)}
                       </span>
                       {err && <span className="text-[10px] text-red-600 mt-0.5">{err}</span>}
@@ -251,9 +251,9 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
 
           {/* Sección Monedas */}
           <div>
-            <div className="flex items-center gap-2 mb-3 pb-1 border-b border-stone-200">
+            <div className="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200">
               <Coins className="w-4 h-4 text-[#D35400]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-stone-700">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-700">
                 Monedas (S/)
               </h3>
             </div>
@@ -267,14 +267,14 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                 return (
                   <div
                     key={m.id}
-                    className="p-3 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl flex items-center justify-between gap-3 focus-within:border-[#D35400] transition-colors"
+                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-[#D35400] transition-colors"
                   >
                     <div className="w-20">
-                      <span className="font-bold text-sm text-[#482813]">{m.etiqueta}</span>
+                      <span className="font-bold text-sm text-[#2C1A0E]">{m.etiqueta}</span>
                     </div>
                     <div className="flex-1 flex flex-col items-end">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-stone-500">Cant:</span>
+                        <span className="text-xs text-neutral-500">Cant:</span>
                         <input
                           type="number"
                           inputMode="numeric"
@@ -288,11 +288,11 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                           className={`w-20 text-right px-2 py-1 bg-white border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
                             err
                               ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                              : 'border-stone-300 focus:ring-[#D35400]'
+                              : 'border-neutral-200 focus:ring-[#D35400]'
                           }`}
                         />
                       </div>
-                      <span className="text-xs font-semibold text-stone-500 tabular-nums mt-0.5">
+                      <span className="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5">
                         = S/ {subtotal.toFixed(2)}
                       </span>
                       {err && <span className="text-[10px] text-red-600 mt-0.5">{err}</span>}
@@ -305,21 +305,21 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
         </div>
 
         {/* Barra de Total y Acciones */}
-        <div className="bg-[#F5EBE1] border-t border-[#E6D7C3] p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
             <button
               type="button"
               onClick={handleLimpiar}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white border border-stone-300 rounded-xl hover:bg-stone-50 transition-colors cursor-pointer min-h-[44px]"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Limpiar
             </button>
             <div className="text-right sm:text-left">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-stone-500 block">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-500 block">
                 Total Contado
               </span>
-              <span className="font-sans text-2xl font-black text-[#482813] tabular-nums whitespace-nowrap">
+              <span className="font-sans text-2xl font-black text-[#2C1A0E] tabular-nums whitespace-nowrap">
                 S/ {totalCalculado.toFixed(2)}
               </span>
             </div>
@@ -329,7 +329,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-stone-700 bg-white border border-stone-300 rounded-xl hover:bg-stone-50 transition-colors cursor-pointer min-h-[44px]"
+              className="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
             >
               Cancelar
             </button>
@@ -337,7 +337,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               type="button"
               disabled={hayErrores}
               onClick={handleConfirmar}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B94600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
             >
               <Check className="w-4 h-4" />
               USAR ESTE TOTAL

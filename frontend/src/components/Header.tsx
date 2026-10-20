@@ -74,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {session.nombre}
                 </span>
                 <span className="text-xs text-neutral-500 leading-tight">
-                  {session.rol === 'Administrador' ? 'Administradora' : session.rol}
+                  {session.rol}
                 </span>
               </div>
             </div>

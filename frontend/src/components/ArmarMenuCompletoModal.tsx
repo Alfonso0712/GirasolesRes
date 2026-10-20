@@ -101,7 +101,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer shrink-0"
+            className="modal-close-btn shrink-0"
             aria-label="Cerrar modal"
           >
             <X className="w-5 h-5" />

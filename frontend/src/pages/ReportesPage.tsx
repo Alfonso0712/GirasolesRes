@@ -75,7 +75,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
       <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#482813]">
+            <h1 className="text-2xl font-bold text-[#2C1A0E]">
               Reportes del Restaurante
             </h1>
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
@@ -148,7 +148,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
       <div className="shrink-0 bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col gap-3">
         {/* Atajos Rápidos de Rango */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-bold text-neutral-500 uppercase tracking-wide mr-1 flex items-center gap-1">
+          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
             <Calendar className="w-3.5 h-3.5 text-neutral-400" /> Atajos:
           </span>
           {atajos.map((a) => (
@@ -158,7 +158,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               onClick={() => aplicarAtajo(a.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 atajoActivo === a.id
-                  ? 'bg-amber-100 text-[#B84600] font-semibold border border-amber-300/80 shadow-2xs'
+                  ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
                   : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60'
               }`}
             >

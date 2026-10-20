@@ -16,7 +16,7 @@ import {
   ChefHat,
   Save,
   RefreshCw
-} from 'lucide-react';
+, Search, X } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { CandidatoMenu } from '../types/menuDia';
 import {
@@ -613,14 +613,27 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               )}
 
               {/* FILTROS Y BÚSQUEDA */}
-              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-neutral-50 p-3 rounded-xl border border-neutral-200">
-                <input
-                  type="text"
-                  placeholder="Buscar plato o componente…"
-                  value={busquedaDisp}
-                  onChange={(e) => setBusquedaDisp(e.target.value)}
-                  className="w-full sm:w-72 px-3 py-2 text-xs bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D35400]"
-                />
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Buscar plato o componente…"
+                    value={busquedaDisp}
+                    onChange={(e) => setBusquedaDisp(e.target.value)}
+                    className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400]"
+                  />
+                  {busquedaDisp && (
+                    <button
+                      type="button"
+                      onClick={() => setBusquedaDisp('')}
+                      aria-label="Limpiar búsqueda"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 p-0.5 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
 
                 <div className="flex gap-1.5 overflow-x-auto w-full sm:w-auto">
                   {(['Todos', 'Componente', 'Carta', 'Agotados'] as const).map((tipo) => (
@@ -630,8 +643,8 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                       onClick={() => setFiltroTipoDisp(tipo)}
                       className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                         filtroTipoDisp === tipo
-                          ? 'bg-neutral-900 text-white'
-                          : 'bg-white text-neutral-700 hover:bg-neutral-200 border border-neutral-200'
+                          ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
+                          : 'bg-white text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E] border border-neutral-200'
                       }`}
                     >
                       {tipo}

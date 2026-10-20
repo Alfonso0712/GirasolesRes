@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, AlertCircle } from 'lucide-react';
+import { X, AlertCircle  } from 'lucide-react';
 import type { UsuarioItem, CrearUsuarioData, ActualizarUsuarioData, RolUsuario } from '../types/usuario';
 
 interface UserFormModalProps {
@@ -23,6 +23,8 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
   const [rol, setRol] = useState<RolUsuario>('Mozo');
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
+  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [guardando, setGuardando] = useState(false);
@@ -233,7 +235,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         ref={modalRef}
         role="dialog"
@@ -402,22 +404,31 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   <span className="text-rose-500">*</span>
                 )}
               </label>
-              <input
-                ref={contrasenaInputRef}
-                type="password"
-                value={contrasena}
-                maxLength={64}
-                onChange={(e) => {
-                  setContrasena(e.target.value);
-                  if (errores.contrasena) setErrores({ ...errores, contrasena: '' });
-                }}
-                placeholder="Mínimo 8 caracteres"
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
-                  errores.contrasena
-                    ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
-                }`}
-              />
+              <div className="relative">
+                <input
+                  ref={contrasenaInputRef}
+                  type={mostrarContrasena ? 'text' : 'password'}
+                  value={contrasena}
+                  maxLength={64}
+                  onChange={(e) => {
+                    setContrasena(e.target.value);
+                    if (errores.contrasena) setErrores({ ...errores, contrasena: '' });
+                  }}
+                  placeholder="Mínimo 8 caracteres"
+                  className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
+                    errores.contrasena
+                      ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
+                      : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                >
+                  {mostrarContrasena ? 'Ocultar' : 'Mostrar'}
+                </button>
+              </div>
               {errores.contrasena && (
                 <p className="text-xs text-rose-600 mt-1 font-medium">{errores.contrasena}</p>
               )}
@@ -428,23 +439,33 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 Confirmar contraseña{' '}
                 {(!isEdit || contrasena) && <span className="text-rose-500">*</span>}
               </label>
-              <input
-                ref={confirmarContrasenaInputRef}
-                type="password"
-                value={confirmarContrasena}
-                maxLength={64}
-                onChange={(e) => {
-                  setConfirmarContrasena(e.target.value);
-                  if (errores.confirmarContrasena) setErrores({ ...errores, confirmarContrasena: '' });
-                }}
-                placeholder="Repita la contraseña"
-                disabled={isEdit && !contrasena}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
-                  errores.confirmarContrasena
-                    ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
-                } ${isEdit && !contrasena ? 'bg-neutral-100 cursor-not-allowed' : ''}`}
-              />
+              <div className="relative">
+                <input
+                  ref={confirmarContrasenaInputRef}
+                  type={mostrarConfirmar ? 'text' : 'password'}
+                  value={confirmarContrasena}
+                  maxLength={64}
+                  onChange={(e) => {
+                    setConfirmarContrasena(e.target.value);
+                    if (errores.confirmarContrasena) setErrores({ ...errores, confirmarContrasena: '' });
+                  }}
+                  placeholder="Repita la contraseña"
+                  disabled={isEdit && !contrasena}
+                  className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
+                    errores.confirmarContrasena
+                      ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
+                      : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                  } ${isEdit && !contrasena ? 'bg-neutral-100 cursor-not-allowed' : ''}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
+                  disabled={isEdit && !contrasena}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
+                </button>
+              </div>
               {errores.confirmarContrasena && (
                 <p className="text-xs text-rose-600 mt-1 font-medium">{errores.confirmarContrasena}</p>
               )}

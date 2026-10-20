@@ -84,7 +84,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   // Flujo alterno E-33: Usuario con movimientos (RN-11 / MSG-34)
   if (errorMovimientos) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
         <div
           ref={modalRef}
           role="dialog"
@@ -174,7 +174,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   }[tipo];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         ref={modalRef}
         role="dialog"

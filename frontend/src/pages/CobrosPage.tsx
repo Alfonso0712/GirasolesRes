@@ -13,6 +13,7 @@ import {
   Check,
   CreditCard,
   Lock,
+  X,
 } from 'lucide-react';
 import { useCobrosManagement } from '../hooks/useCobrosManagement';
 import { AbrirCajaModal } from '../components/caja/AbrirCajaModal';
@@ -196,9 +197,9 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
         {/* Sincronización y Botones de Acción */}
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <div className="flex items-center gap-1.5 text-xs text-[#7C6F66]">
-            <span className="hidden sm:inline font-mono">
-              Actualizado hace {segundosTranscurridos} s
+          <div className="flex items-center gap-3 text-xs text-neutral-500">
+            <span className="hidden sm:inline tabular-nums">
+              Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
             </span>
             <button
               type="button"
@@ -206,9 +207,10 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
               disabled={cargando}
               title="Actualizar pedidos ahora"
               aria-label="Actualizar pedidos ahora"
-              className="w-8 h-8 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer disabled:opacity-60"
+              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             >
-              <RotateCcw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-[#D35400]' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>
 
@@ -265,7 +267,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
       {/* 2. Tarjetas KPI / Resumen Rápido (shrink-0) */}
       <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
+        <div className="p-3.5 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
             <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
               Por Cobrar
@@ -309,8 +311,31 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
       </div>
 
       {/* 3. Barra de Filtros Fija (shrink-0) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-2.5 bg-white px-3.5 py-2 rounded-xl border border-neutral-200/80 shadow-2xs">
-        <div className="flex items-center gap-1.5">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
+        {/* Input de Búsqueda */}
+        <div className="relative w-full sm:w-64">
+          <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar mesa o n.º de pedido..."
+            className="w-full pl-8 pr-8 py-2 rounded-xl border border-neutral-200 text-xs text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-colors min-h-[38px]"
+          />
+          {busqueda && (
+            <button
+              type="button"
+              onClick={() => setBusqueda('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 text-xs font-bold px-1 cursor-pointer"
+              aria-label="Limpiar búsqueda"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Píldoras de Estado */}
+        <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" />
             Estado:
@@ -329,7 +354,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                 key={tipo}
                 type="button"
                 onClick={() => setFiltroTipo(tipo)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[44px] ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] ${
                   activo
                     ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
                     : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'
@@ -339,28 +364,6 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
               </button>
             );
           })}
-        </div>
-
-        {/* Input de Búsqueda */}
-        <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar mesa o n.º de pedido..."
-            className="w-full pl-8 pr-7 py-2 rounded-lg border border-neutral-200 text-xs text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-[#D35400] focus:border-[#D35400] transition-colors"
-          />
-          {busqueda && (
-            <button
-              type="button"
-              onClick={() => setBusqueda('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 text-xs font-bold px-1 cursor-pointer"
-              aria-label="Limpiar búsqueda"
-            >
-              ×
-            </button>
-          )}
         </div>
       </div>
 

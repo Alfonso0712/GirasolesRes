@@ -31,7 +31,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
-  const [capsLockActivo, setCapsLockActivo] = useState(false);
+    const [capsLockActivo, setCapsLockActivo] = useState(false);
 
   const usuarioRef = useRef<HTMLInputElement>(null);
   const contrasenaRef = useRef<HTMLInputElement>(null);
@@ -218,7 +218,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   type="button"
                   tabIndex={0}
                   onClick={() => setMostrarContrasena(!mostrarContrasena)}
-                  className="text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors"
+                  className="text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   {mostrarContrasena ? 'Ocultar' : 'Mostrar'}
                 </button>

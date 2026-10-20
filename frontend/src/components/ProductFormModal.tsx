@@ -257,7 +257,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             onClick={onClose}
             disabled={guardando}
             aria-label="Cerrar ventana"
-            className="p-2 text-neutral-400 hover:text-neutral-700 rounded-xl hover:bg-neutral-100 transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="modal-close-btn"
           >
             <X className="w-5 h-5" />
           </button>

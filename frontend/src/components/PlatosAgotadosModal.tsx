@@ -72,7 +72,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
       aria-labelledby="platos-agotados-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-neutral-200 flex flex-col max-h-[85vh]">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-neutral-200 flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
           <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-neutral-400 hover:text-neutral-700 rounded-xl hover:bg-neutral-100 transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="modal-close-btn"
             aria-label="Cerrar modal"
           >
             <X className="w-5 h-5" />

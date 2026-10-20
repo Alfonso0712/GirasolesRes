@@ -11,6 +11,8 @@ import {
   ShieldAlert,
   Loader2,
   Calendar,
+  Filter,
+  X,
 } from 'lucide-react';
 import { cajaService } from '../services/cajaService';
 import { CierreDetalleModal } from '../components/caja/CierreDetalleModal';
@@ -99,6 +101,16 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
     [hoyLimaStr]
   );
 
+  const esRangoActivo = (diasAtras: number) => {
+    if (diasAtras === 0) return desde === hoyLimaStr && hasta === hoyLimaStr;
+    if (diasAtras === 1) {
+      const ayer = restarDiasLimaStr(1);
+      return desde === ayer && hasta === ayer;
+    }
+    const fDesde = restarDiasLimaStr(diasAtras);
+    return desde === fDesde && hasta === hoyLimaStr;
+  };
+
   const aplicarFiltroRapido = (diasAtras: number) => {
     const fDesde =
       diasAtras === 0 ? hoyLimaStr : diasAtras === 1 ? restarDiasLimaStr(1) : restarDiasLimaStr(diasAtras);
@@ -161,10 +173,10 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   // Guard de rol estricto in-situ (RN-106, E-319): Solo Administrador
   if (session.rol !== 'Administrador') {
     return (
-      <div className="p-8 text-center bg-[#FFFDF9] border border-red-200 rounded-2xl shadow-sm space-y-3 animate-fade-in text-[#482813] max-w-2xl mx-auto my-8">
+      <div className="p-8 text-center bg-[#FFFDF9] border border-red-200 rounded-2xl shadow-sm space-y-3 animate-fade-in text-[#2C1A0E] max-w-2xl mx-auto my-8">
         <ShieldAlert className="w-12 h-12 text-red-600 mx-auto" />
         <h2 className="text-lg font-bold text-red-800">Acceso restringido (RN-106 / E-319)</h2>
-        <p className="text-sm text-stone-600">
+        <p className="text-sm text-neutral-600">
           MSG-39: No tiene permisos para acceder al historial de cierres. Esta vista es exclusiva para el rol Administrador.
         </p>
       </div>
@@ -211,20 +223,20 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           type="button"
           onClick={() => cargarCierres()}
           disabled={cargando}
-          className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 transition-colors flex items-center gap-2 text-xs font-semibold cursor-pointer min-h-[38px] shadow-2xs shrink-0"
+          className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60 shrink-0"
         >
           <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
-          <span>Actualizar</span>
+          <span className="hidden sm:inline">Actualizar</span>
         </button>
       </div>
 
       {/* Barra de Filtros de Fecha (RV-130) */}
-      <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl px-3.5 py-2.5 shadow-sm space-y-2">
+      <div className="bg-white border border-neutral-200/80 rounded-2xl p-3.5 sm:p-4 shadow-2xs space-y-3">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              <label htmlFor="filtro-desde" className="text-xs font-bold text-stone-600 flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-stone-400" />
+              <label htmlFor="filtro-desde" className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-neutral-400" />
                 Desde:
               </label>
               <input
@@ -236,13 +248,13 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   setDesde(e.target.value);
                   setPagina(1);
                 }}
-                className="px-3 py-1.5 text-xs bg-white border border-[#E6D7C3] rounded-xl font-semibold text-[#482813] focus:outline-none focus:ring-2 focus:ring-[#D35400] min-h-[40px]"
+                className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px]"
               />
             </div>
 
             <div className="flex items-center gap-2">
-              <label htmlFor="filtro-hasta" className="text-xs font-bold text-stone-600 flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-stone-400" />
+              <label htmlFor="filtro-hasta" className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-neutral-400" />
                 Hasta:
               </label>
               <input
@@ -254,7 +266,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   setHasta(e.target.value);
                   setPagina(1);
                 }}
-                className="px-3 py-1.5 text-xs bg-white border border-[#E6D7C3] rounded-xl font-semibold text-[#482813] focus:outline-none focus:ring-2 focus:ring-[#D35400] min-h-[40px]"
+                className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px]"
               />
             </div>
 
@@ -262,41 +274,61 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
               <button
                 type="button"
                 onClick={limpiarFiltros}
-                className="px-3 py-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-[#FAF6F0] border border-[#E6D7C3] rounded-xl cursor-pointer min-h-[44px] transition-colors"
+                className="text-xs font-bold text-[#D35400] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
               >
-                Limpiar filtro
+                <X className="w-3.5 h-3.5" />
+                <span>Quitar filtros</span>
               </button>
             )}
           </div>
 
           {/* Chips de Selección Rápida */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-stone-500">Rango rápido:</span>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
+              <Filter className="w-3.5 h-3.5" />
+              Rango rápido:
+            </span>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(0)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                esRangoActivo(0)
+                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+              }`}
             >
               Hoy
             </button>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(1)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                esRangoActivo(1)
+                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+              }`}
             >
               Ayer
             </button>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(7)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                esRangoActivo(7)
+                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+              }`}
             >
               7 días
             </button>
             <button
               type="button"
               onClick={() => aplicarFiltroRapido(30)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FAF6F0] hover:bg-[#F5EBE1] border border-[#E6D7C3] text-stone-700 transition-colors cursor-pointer min-h-[44px]"
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
+                esRangoActivo(30)
+                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+              }`}
             >
               30 días
             </button>
@@ -313,9 +345,9 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
       </div>
 
       {/* Tabla Principal de Cierres (RV-130, RV-131, E-313..E-321) */}
-      <div className="bg-[#FFFDF9] border border-[#E6D7C3] rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-[#FFFDF9] border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
         {cargando ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3 text-stone-500">
+          <div className="py-20 flex flex-col items-center justify-center gap-3 text-neutral-500">
             <Loader2 className="w-8 h-8 text-[#D35400] animate-spin" />
             <p className="text-sm font-semibold">Cargando cierres de caja…</p>
           </div>
@@ -325,19 +357,19 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
             <p className="text-sm font-bold text-red-800">
               No se pudo cargar el historial de cierres. Intente nuevamente.
             </p>
-            <p className="text-xs text-stone-500">{errorCarga}</p>
+            <p className="text-xs text-neutral-500">{errorCarga}</p>
             <button
               type="button"
               onClick={() => cargarCierres()}
-              className="px-4 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B94600] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[44px]"
+              className="px-4 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B94600] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[38px]"
             >
               Reintentar
             </button>
           </div>
         ) : cierres.length === 0 ? (
-          <div className="py-20 text-center space-y-3 text-stone-500">
+          <div className="py-20 text-center space-y-3 text-neutral-500">
             <FileText className="w-12 h-12 mx-auto text-stone-300" />
-            <p className="text-sm font-bold text-stone-700">
+            <p className="text-sm font-bold text-neutral-700">
               {desde || hasta
                 ? 'No se encontraron cierres de caja con ese criterio. Pruebe con otro rango de fechas.'
                 : 'Aún no hay cierres de caja registrados.'}
@@ -379,7 +411,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   return (
                     <tr
                       key={cajaId}
-                      className={`hover:bg-[#FAF6F0]/60 transition-colors border-b border-[#F0EBE6] ${
+                      className={`hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6] ${
                         abierta ? 'bg-emerald-50/40 font-medium' : ''
                       }`}
                     >
@@ -391,7 +423,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                               Abierta
                             </span>
-                            <p className="text-xs text-stone-500">
+                            <p className="text-xs text-neutral-500">
                               Desde{' '}
                               {c.fechaAperturaLocal?.split(' ')[1] ||
                                 new Date(c.fechaApertura).toLocaleTimeString('es-PE', {
@@ -406,7 +438,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               {c.fechaAperturaLocal?.split(' ')[0] ||
                                 new Date(c.fechaApertura).toLocaleDateString('es-PE')}
                             </p>
-                            <p className="text-xs text-stone-500">
+                            <p className="text-xs text-neutral-500">
                               {c.fechaAperturaLocal?.split(' ')[1] ||
                                 new Date(c.fechaApertura).toLocaleTimeString('es-PE', {
                                   hour: '2-digit',
@@ -431,7 +463,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       </td>
 
                       {/* Monto Inicial */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-stone-600 tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-neutral-600 tabular-nums">
                         S/ {(c.montoInicial ?? 0).toFixed(2)}
                       </td>
 
@@ -453,7 +485,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       {/* Contado */}
                       <td className="px-4 py-3 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums">
                         {abierta ? (
-                          <span className="text-stone-400 font-normal">—</span>
+                          <span className="text-neutral-400 font-normal">—</span>
                         ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
                           <span className="tabular-nums font-semibold">{`S/ ${Number(c.efectivoContado).toFixed(2)}`}</span>
                         ) : (
@@ -464,9 +496,9 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       {/* Diferencia / Cuadre (RV-131, E-314) */}
                       <td className="px-4 py-3 text-right tabular-nums">
                         {abierta ? (
-                          <span className="text-stone-400 font-normal">—</span>
+                          <span className="text-neutral-400 font-normal">—</span>
                         ) : diferenciaNum === null ? (
-                          <span className="text-stone-400">—</span>
+                          <span className="text-neutral-400">—</span>
                         ) : diferenciaNum === 0 ? (
                           <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
                             Cuadra · S/ 0.00
@@ -506,7 +538,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               setCajaIdSeleccionada(cajaId);
                               setDetalleModalOpen(true);
                             }}
-                            className="p-2 text-stone-600 hover:text-[#D35400] hover:bg-[#FAF6F0] rounded-lg transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                            className="p-2 text-neutral-600 hover:text-[#D35400] hover:bg-neutral-50 rounded-lg transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                             title="Ver detalle del turno de caja"
                             aria-label={`Ver detalle del cierre ${cajaId}`}
                           >
@@ -518,7 +550,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               type="button"
                               onClick={() => handleDescargarPdf(cajaId)}
                               disabled={descargandoPdfId === cajaId}
-                              className="p-2 text-stone-600 hover:text-stone-900 hover:bg-[#FAF6F0] disabled:opacity-40 rounded-lg transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
+                              className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 disabled:opacity-40 rounded-lg transition-colors cursor-pointer min-h-[38px] min-w-[44px] flex items-center justify-center"
                               title="Descargar comprobante de cierre PDF"
                               aria-label={`Descargar PDF del cierre ${cajaId}`}
                             >
@@ -532,7 +564,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                             <button
                               type="button"
                               disabled
-                              className="p-2 text-stone-300 cursor-not-allowed min-h-[44px] min-w-[44px] flex items-center justify-center"
+                              className="p-2 text-stone-300 cursor-not-allowed min-h-[38px] min-w-[44px] flex items-center justify-center"
                               title="No disponible mientras la caja esté abierta"
                               aria-label="PDF no disponible para caja abierta"
                             >
@@ -551,32 +583,35 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
 
         {/* Paginación (RN-110, RV-131) */}
         {totalPaginas > 1 && (
-          <div className="bg-[#FAF6F0] px-4 py-3 border-t border-[#E6D7C3] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <span className="text-stone-600 font-medium">
-              Mostrando {cierres.length} de {totalItems} registros (20 por página)
+          <div className="bg-white px-6 py-3.5 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
+            <span className="text-neutral-500 font-medium">
+              Mostrando <span className="font-semibold text-neutral-700">{cierres.length}</span> de <span className="font-semibold text-neutral-700">{totalItems}</span> registros
             </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={pagina <= 1 || cargando}
-                onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                className="p-2 border border-stone-300 rounded-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
-                aria-label="Página anterior"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="font-bold tabular-nums px-2">
-                Pág. {pagina} de {totalPaginas}
+            <div className="flex items-center gap-3">
+              <span className="text-neutral-500">
+                Página <span className="font-semibold text-neutral-700">{pagina}</span> de{' '}
+                <span className="font-semibold text-neutral-700">{totalPaginas}</span>
               </span>
-              <button
-                type="button"
-                disabled={pagina >= totalPaginas || cargando}
-                onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                className="p-2 border border-stone-300 rounded-lg hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
-                aria-label="Página siguiente"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  disabled={pagina <= 1 || cargando}
+                  onClick={() => setPagina((p) => Math.max(1, p - 1))}
+                  className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center cursor-pointer shadow-2xs"
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  disabled={pagina >= totalPaginas || cargando}
+                  onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+                  className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center cursor-pointer shadow-2xs"
+                  aria-label="Página siguiente"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}

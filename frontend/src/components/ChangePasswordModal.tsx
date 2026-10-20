@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Eye, EyeOff, KeyRound, AlertCircle } from 'lucide-react';
+import { X, KeyRound, AlertCircle } from 'lucide-react';
 import { cambiarContrasenaPropiaService } from '../services/authService';
 
 interface ChangePasswordModalProps {
@@ -148,7 +148,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"
@@ -173,7 +173,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="modal-close-btn" aria-label="Cerrar modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -213,10 +213,9 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMostrarActual(!mostrarActual)}
-                title={mostrarActual ? 'Ocultar contraseña' : 'Ver contraseña'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
               >
-                {mostrarActual ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {mostrarActual ? 'Ocultar' : 'Mostrar'}
               </button>
             </div>
             {errores.contrasenaActual && (
@@ -247,10 +246,9 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMostrarNueva(!mostrarNueva)}
-                title={mostrarNueva ? 'Ocultar contraseña' : 'Ver contraseña'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
               >
-                {mostrarNueva ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {mostrarNueva ? 'Ocultar' : 'Mostrar'}
               </button>
             </div>
             {errores.nuevaContrasena && (
@@ -281,10 +279,9 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
-                title={mostrarConfirmar ? 'Ocultar contraseña' : 'Ver contraseña'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
               >
-                {mostrarConfirmar ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
               </button>
             </div>
             {errores.confirmarContrasena && (

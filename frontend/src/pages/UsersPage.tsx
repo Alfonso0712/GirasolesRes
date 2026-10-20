@@ -233,7 +233,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
             <button
               type="button"
               onClick={cargarUsuarios}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reintentar</span>
