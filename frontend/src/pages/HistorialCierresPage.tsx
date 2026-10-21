@@ -20,7 +20,7 @@ import {
   TableHead,
   TableBody,
 } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { HistorialCierresItemDto, HistorialCierresPaginadoDto } from '../types/caja';
 import type { UserSession } from '../types/auth';
 
@@ -220,11 +220,10 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
 
   return (
     <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+      <PageContainer>
         {/* 1. Encabezado Unificado del Módulo */}
         <PageHeader
           title="Historial de Cierres"
-          breadcrumb={['Caja y Cobros', 'Historial de Cierres']}
           subtitle="Auditoría de turnos, arqueos, cuadraturas de efectivo, sobrantes, faltantes y ajustes posteriores."
           count={totalItems}
           countLabel="cierres registrados"
@@ -557,7 +556,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           }}
           token={session.token}
         />
-      </div>
+      </PageContainer>
     </div>
   );
 };

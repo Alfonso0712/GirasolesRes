@@ -1,21 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Home,
-  LayoutGrid,
-  ReceiptText,
-  ChefHat,
-  DollarSign,
-  BadgeDollarSign,
-  Lock,
-  CalendarCheck,
-  UtensilsCrossed,
-  Users,
-  BarChart3,
   ChevronDown,
   ShieldCheck,
   X
 } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
+import { NAVIGATION_GROUPS, type NavigationItem } from '../../config/navigationConfig';
 import logoGirasoles from '../../assets/LOGO_GIRASOLES.png';
 
 interface SidebarProps {
@@ -29,19 +20,6 @@ interface SidebarProps {
   cajaEstado?: string;
 }
 
-interface NavigationItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  roles: string[];
-  badge?: () => React.ReactNode;
-}
-
-interface NavigationGroup {
-  id: string;
-  title: string;
-  items: NavigationItem[];
-}
 
 export const Sidebar: React.FC<SidebarProps> = ({
   session,
@@ -72,120 +50,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onCloseMobile?.();
   };
 
-  // Configuración de los 4 grupos desplegables según la arquitectura de información gastronómica
-  const gruposConfig: NavigationGroup[] = useMemo(
-    () => [
-      {
-        id: 'salon-pedidos',
-        title: 'Salón y Pedidos',
-        items: [
-          {
-            id: 'mesas',
-            label: 'Mesas y Salón',
-            icon: LayoutGrid,
-            roles: ['Administrador', 'Mozo', 'Cajero'],
-          },
-          {
-            id: 'pedidos',
-            label: 'Gestión de Pedidos',
-            icon: ReceiptText,
-            roles: ['Administrador', 'Mozo', 'Cajero'],
-            badge: () =>
-              pedidosListosCount !== undefined && pedidosListosCount > 0 ? (
-                <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
-                  {pedidosListosCount}
-                </span>
-              ) : null,
-          },
-          {
-            id: 'cocina',
-            label: 'Cocina (KDS)',
-            icon: ChefHat,
-            roles: ['Administrador', 'Cocinero'],
-          },
-        ],
-      },
-      {
-        id: 'caja-ventas',
-        title: 'Caja y Ventas',
-        items: [
-          {
-            id: 'caja',
-            label: 'Caja y Cobros',
-            icon: DollarSign,
-            roles: ['Administrador', 'Cajero'],
-            badge: () =>
-              cajaEstado ? (
-                <span
-                  className={`px-1.5 py-0.5 text-xs font-bold rounded-full shrink-0 ${
-                    cajaEstado === 'abierta'
-                      ? 'bg-emerald-500 text-white'
-                      : cajaEstado === 'anteriorSinCerrar'
-                      ? 'bg-rose-500 text-white animate-pulse'
-                      : 'bg-stone-600 text-amber-200'
-                  }`}
-                >
-                  {cajaEstado === 'abierta'
-                    ? 'Abierta'
-                    : cajaEstado === 'anteriorSinCerrar'
-                    ? 'Cierre pend.'
-                    : 'Cerrada'}
-                </span>
-              ) : null,
-          },
-          {
-            id: 'ventas',
-            label: 'Historial de Ventas',
-            icon: BadgeDollarSign,
-            roles: ['Administrador', 'Cajero'],
-          },
-          {
-            id: 'historial-cierres',
-            label: 'Historial de Cierres',
-            icon: Lock,
-            roles: ['Administrador'],
-          },
-        ],
-      },
-      {
-        id: 'carta-menu',
-        title: 'Carta y Menú',
-        items: [
-          {
-            id: 'menu-dia',
-            label: 'Menú del día',
-            icon: CalendarCheck,
-            roles: ['Administrador', 'Cocinero'],
-          },
-          {
-            id: 'productos',
-            label: 'Productos',
-            icon: UtensilsCrossed,
-            roles: ['Administrador'],
-          },
-        ],
-      },
-      {
-        id: 'administracion',
-        title: 'Administración',
-        items: [
-          {
-            id: 'usuarios',
-            label: 'Usuarios',
-            icon: Users,
-            roles: ['Administrador'],
-          },
-          {
-            id: 'reportes',
-            label: 'Reportes',
-            icon: BarChart3,
-            roles: ['Administrador'],
-          },
-        ],
-      },
-    ],
-    [pedidosListosCount, cajaEstado]
-  );
+  // Helper para renderizar badges dinámicos sobre ítems de navegación
+  const renderItemBadge = (itemId: string) => {
+    if (itemId === 'pedidos' && pedidosListosCount !== undefined && pedidosListosCount > 0) {
+      return (
+        <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
+          {pedidosListosCount}
+        </span>
+      );
+    }
+    if (itemId === 'caja' && cajaEstado) {
+      return (
+        <span
+          className={`px-1.5 py-0.5 text-xs font-bold rounded-full shrink-0 ${
+            cajaEstado === 'abierta'
+              ? 'bg-emerald-500 text-white'
+              : cajaEstado === 'anteriorSinCerrar'
+              ? 'bg-rose-500 text-white animate-pulse'
+              : 'bg-stone-600 text-amber-200'
+          }`}
+        >
+          {cajaEstado === 'abierta'
+            ? 'Abierta'
+            : cajaEstado === 'anteriorSinCerrar'
+            ? 'Cierre pend.'
+            : 'Cerrada'}
+        </span>
+      );
+    }
+    return null;
+  };
+
+  const gruposConfig = NAVIGATION_GROUPS;
 
   // Filtrar grupos e ítems según el rol del usuario (Heurística 8 de Nielsen)
   const gruposVisibles = useMemo(() => {
@@ -198,17 +94,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, [gruposConfig, rol]);
 
   // Determina si un elemento o ruta secundaria (ej: pedidos-mesa, pedidos-llevar) activa la opción de Mesas
-  const isItemActive = (itemId: string, activePage: string) => {
-    if (activePage === itemId) return true;
-    if (
-      itemId === 'mesas' &&
-      (activePage === 'pedidos-mesa' ||
-        activePage === 'pedidos-llevar' ||
-        activePage === 'pedido-mesa' ||
-        activePage === 'pedido-llevar')
-    ) {
-      return true;
-    }
+  const isItemActive = (item: NavigationItem, activePage: string) => {
+    if (activePage === item.id) return true;
+    if (item.matchPaths && item.matchPaths.includes(activePage)) return true;
     return false;
   };
 
@@ -231,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       'carta-menu': false,
       'administracion': false,
     };
-    const activeGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i.id, paginaActiva)));
+    const activeGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i, paginaActiva)));
     if (activeGroup) {
       initial[activeGroup.id] = true;
     }
@@ -241,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Auto-apertura inteligente cuando cambia la ruta activa
   useEffect(() => {
     if (!paginaActiva || paginaActiva === 'inicio') return;
-    const parentGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i.id, paginaActiva)));
+    const parentGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i, paginaActiva)));
     if (parentGroup) {
       setGruposAbiertos((prev) => ({
         ...prev,
@@ -314,7 +202,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* 4 Secciones Jerárquicas Desplegables (Acordeón) */}
           {gruposVisibles.map((grupo) => {
             const isOpen = Boolean(gruposAbiertos[grupo.id]);
-            const tieneItemActivo = grupo.items.some((i) => isItemActive(i.id, paginaActiva));
+            const tieneItemActivo = grupo.items.some((i) => isItemActive(i, paginaActiva));
 
             return (
               <div key={grupo.id} className="pt-1.5 first:pt-0">
@@ -362,7 +250,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <div className="pl-3 border-l border-white/10 ml-3.5 space-y-1 mt-1 mb-2 animate-in fade-in duration-150">
                     {grupo.items.map((item) => {
                       const Icon = item.icon;
-                      const esActivo = isItemActive(item.id, paginaActiva);
+                      const esActivo = isItemActive(item, paginaActiva);
                       return (
                         <button
                           key={item.id}
@@ -378,7 +266,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             <Icon className="w-4 h-4 xl:w-4.5 xl:h-4.5 shrink-0" />
                             <span className="truncate">{item.label}</span>
                           </div>
-                          {item.badge?.()}
+                          {renderItemBadge(item.id)}
                         </button>
                       );
                     })}

@@ -19,7 +19,7 @@ import {
   IconActionButton,
   TablePagination,
 } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 import { obtenerIniciales } from '../utils/avatar';
 import { useUsersManagement } from '../hooks/useUsersManagement';
 
@@ -108,7 +108,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
 
   return (
     <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+      <PageContainer>
         {/* Banner de Éxito */}
         {avisoExito && (
           <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-2xs animate-in fade-in slide-in-from-top-2">
@@ -146,7 +146,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         {/* 1. Encabezado Unificado */}
         <PageHeader
           title="Usuarios"
-          breadcrumb={['Administración', 'Usuarios']}
           subtitle="Administre el personal, sus roles y los accesos al sistema."
           count={total}
           countLabel="usuarios registrados"
@@ -494,7 +493,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
             setConfirmErrorMovimientos(false);
           }}
         />
-      </div>
+      </PageContainer>
     </div>
   );
 };

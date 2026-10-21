@@ -37,7 +37,7 @@ import { useProductsManagement } from '../hooks/useProductsManagement';
 import { ProductFormModal } from '../components/productos';
 import { ProductConfirmModal } from '../components/productos';
 import { StatusBadge, IconActionButton, TablePagination } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 
 export interface ProductsPageProps {
   session: UserSession;
@@ -249,7 +249,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
   return (
     <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+      <PageContainer>
       {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
       {avisoExito && (
         <div
@@ -295,7 +295,6 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Carta y Menús"
-        breadcrumb={['Carta y Menú', 'Productos y Menús']}
         subtitle="Administre productos de carta, componentes y los menús completos del restaurante."
         count={total}
         countLabel="ítems registrados"
@@ -1065,7 +1064,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           </div>
         </div>
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

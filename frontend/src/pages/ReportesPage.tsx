@@ -20,7 +20,7 @@ import { useReportesManagement } from '../hooks/useReportesManagement';
 import type { UserSession } from '../types/auth';
 import type { TipoAtajoFecha, CriterioOrdenPlatos } from '../types/reporte';
 import { CATEGORIA_LABELS, CATEGORIA_BADGE_LABELS } from '../types/producto';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 
 interface ReportesPageProps {
   session: UserSession;
@@ -71,11 +71,10 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813] select-none">
+      <PageContainer className="select-none">
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Reportes"
-        breadcrumb={['Administración', 'Reportes']}
         subtitle="Consulte el volumen de platos vendidos y el balance general de ventas en el período."
         actions={
           <div className="flex items-center gap-2 shrink-0">
@@ -810,7 +809,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           </button>
         </div>
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

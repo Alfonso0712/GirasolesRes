@@ -28,7 +28,7 @@ import {
   AgotadoItemCard
 } from '../components/menu-dia';
 import { DiscardChangesModal, StatusBadge } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 
 export interface MenuDiaPageProps {
   session: UserSession;
@@ -205,11 +205,10 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className={`w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 ${esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar ? 'pb-28' : 'pb-8'} flex flex-col gap-4 text-[#482813]`}>
+      <PageContainer className={esAdmin && tabActiva !== "disponibilidad" && tieneCambiosSinGuardar ? "pb-28" : "pb-8"}>
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Menú del Día"
-        breadcrumb={['Carta y Menú', 'Menú del Día']}
         subtitle="Planificación diaria de opciones, menús completos, carta y disponibilidad del servicio."
         badge={
           <div className="flex items-center gap-2">
@@ -629,7 +628,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           )}
         </>
       )}
-      </div>
+      </PageContainer>
 
       {/* BARRA INFERIOR FIJA (STICKY FOOTER): SOLO SE MUESTRA CUANDO HAY CAMBIOS SIN GUARDAR Y FUERA DE DISPONIBILIDAD */}
       {esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar && (

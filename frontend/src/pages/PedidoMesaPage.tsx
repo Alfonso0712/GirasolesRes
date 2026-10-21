@@ -23,7 +23,7 @@ import {
 } from '../components/pedidos';
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
 import { Button } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -136,11 +136,10 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10">
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Pedido de Mesa"
-        breadcrumb={['Salón', 'Pedido de Mesa']}
         subtitle="Seleccione la mesa y los productos de la carta para generar la comanda a cocina."
         badge={
           <div className="flex items-center gap-2">
@@ -971,7 +970,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           onVerMesas={onVolverAMesas}
         />
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

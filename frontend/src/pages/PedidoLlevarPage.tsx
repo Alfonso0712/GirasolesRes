@@ -24,7 +24,7 @@ import {
 } from '../components/pedidos';
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
 import { Button } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -120,11 +120,10 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10">
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Pedido para Llevar"
-        breadcrumb={['Operaciones', 'Pedido para Llevar']}
         subtitle="Registre el pedido para llevar del cliente y envíe la comanda a cocina."
         badge={
           <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
@@ -885,7 +884,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           if (onVolver) onVolver();
         }}
       />
-      </div>
+      </PageContainer>
     </div>
   );
 };

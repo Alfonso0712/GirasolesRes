@@ -17,7 +17,7 @@ import { menuDiaService } from '../services/menuDiaService';
 import { MesaCard } from '../components/mesas';
 import { MesaFormModal } from '../components/mesas';
 import { MesaConfirmModal } from '../components/mesas';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 
 interface MesasPageProps {
   session: UserSession;
@@ -121,11 +121,10 @@ export const MesasPage: React.FC<MesasPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+      <PageContainer>
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Mesas"
-        breadcrumb={['Salón', 'Mesas']}
         subtitle="Supervise la disponibilidad del salón y asigne mesas en tiempo real."
         badge={
           <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
@@ -486,7 +485,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
           </button>
         </div>
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

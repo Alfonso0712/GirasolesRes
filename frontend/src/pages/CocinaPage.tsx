@@ -12,7 +12,7 @@ import {
 import { comandaService } from '../services/comandaService';
 import { PlatosAgotadosModal } from '../components/menu-dia';
 import { ComandaCard, CocinaResumenBar } from '../components/cocina';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { ComandaKdsItem, ResumenProducto } from '../types/comanda';
 
@@ -291,7 +291,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 bg-[#FAF7F4] text-neutral-900 select-none">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10 bg-[#FAF7F4] text-neutral-900 select-none">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div
@@ -318,7 +318,6 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Cocina (KDS)"
-        breadcrumb={['Cocina', 'Comandas']}
         subtitle="Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real."
         count={resumen.reduce((acc, r) => acc + r.cantidad, 0)}
         countLabel="porciones por preparar"
@@ -534,7 +533,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
         onClose={() => setAbrirModalPlatosAgotados(false)}
         token={session.token}
       />
-      </div>
+      </PageContainer>
     </div>
   );
 };

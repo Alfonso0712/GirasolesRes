@@ -32,7 +32,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { StatusBadge, IconActionButton } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 
 interface PedidosPageProps {
   session: UserSession;
@@ -293,11 +293,10 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+      <PageContainer>
         {/* 1. Encabezado Unificado */}
         <PageHeader
           title="Pedidos"
-          breadcrumb={['Operaciones', 'Pedidos']}
           subtitle="Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar."
           badge={
             <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
@@ -816,8 +815,8 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             </button>
           </div>
         )}
-      </div>
-      </div>
+        </div>
+      </PageContainer>
     </div>
   );
 };

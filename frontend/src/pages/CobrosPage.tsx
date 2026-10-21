@@ -21,7 +21,7 @@ import { CerrarCajaModal } from '../components/caja';
 import { CajaStatusBanner } from '../components/caja';
 import { CobroModal, TicketComprobanteModal, CobroPedidoCard } from '../components/cobros';
 import { StatusBadge } from '../components/ui';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 
 interface CobrosPageProps {
@@ -158,11 +158,10 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   return (
     <div className="h-full flex flex-col overflow-hidden w-full">
       <div className="flex-1 overflow-y-auto min-h-0 w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813] select-none">
+        <PageContainer className="select-none">
       {/* 1. Encabezado Unificado */}
       <PageHeader
         title="Cobro de Pedidos"
-        breadcrumb={['Caja y Cobros', 'Cobro de Pedidos']}
         subtitle="Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real."
         count={totalPedidos}
         countLabel="pedidos por cobrar"
@@ -586,7 +585,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
           </button>
         </div>
       )}
-        </div>
+        </PageContainer>
       </div>
     </div>
   );

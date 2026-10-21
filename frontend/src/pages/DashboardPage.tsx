@@ -13,7 +13,7 @@ import {
   WifiOff,
   AlertCircle
 } from 'lucide-react';
-import { PageHeader } from '../components/layout';
+import { PageHeader, PageContainer } from '../components/layout';
 
 export interface DashboardPageProps {
   session: UserSession;
@@ -99,11 +99,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+      <PageContainer>
         {/* 1. Encabezado Unificado */}
         <PageHeader
           title={`Bienvenido/a, ${session.nombre}`}
-          breadcrumb={['Inicio', 'Panel Principal']}
           subtitle="Resumen operativo y métricas principales según su rol de trabajo."
           badge={
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
@@ -171,7 +170,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
             renderBloqueError={renderBloqueError}
           />
         )}
-      </div>
+      </PageContainer>
     </div>
   );
 };
