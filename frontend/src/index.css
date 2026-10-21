@@ -2,6 +2,8 @@
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text-nav: 0.9375rem;
+  --text-nav-sm: 0.8125rem;
 }
 
 @layer base {

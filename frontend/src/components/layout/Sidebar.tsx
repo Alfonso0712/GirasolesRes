@@ -301,7 +301,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={() => handleNavigate('inicio')}
-            className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-[15px] font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 ${
+            className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 ${
               paginaActiva === 'inicio'
                 ? 'bg-[#D35400] text-white shadow-md font-semibold'
                 : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
@@ -323,7 +323,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   type="button"
                   aria-expanded={isOpen}
                   onClick={() => toggleGrupo(grupo.id)}
-                  className="w-full text-xs xl:text-[13px] font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                  className="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="truncate">{grupo.title}</span>

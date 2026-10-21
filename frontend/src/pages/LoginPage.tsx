@@ -217,7 +217,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <div className="w-12 h-0.5 bg-[#D35400] rounded-full" />
           </div>
 
-          <h1 className="font-bold text-[50px] lg:text-[60px] text-white leading-tight mb-5 tracking-tight">
+          <h1 className="font-bold text-5xl lg:text-6xl text-white leading-tight mb-5 tracking-tight">
             GIRASOLESRES.<br />
           </h1>
 
