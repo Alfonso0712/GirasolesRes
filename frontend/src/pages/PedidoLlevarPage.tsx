@@ -334,7 +334,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                                   <h4 className="font-bold text-sm sm:text-base text-[#2C1A0E] font-sans break-words line-clamp-2 leading-snug" title={mc.nombre}>
                                     {mc.nombre}
                                   </h4>
-                                  <span className="font-extrabold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap ml-1">
+                                  <span className="font-bold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap ml-1">
                                     S/ {mc.precio.toFixed(2)}
                                   </span>
                                 </div>
@@ -475,7 +475,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
-                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                      <span className="font-bold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {linea.subtotal.toFixed(2)}
                       </span>
                     </div>
@@ -547,7 +547,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           >
                             <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
                           </button>
-                          <span className="w-7 text-center text-xs font-extrabold text-[#2C1A0E] tabular-nums select-none">
+                          <span className="w-7 text-center text-xs font-bold text-[#2C1A0E] tabular-nums select-none">
                             {linea.cantidad}
                           </span>
                           <button
@@ -598,7 +598,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                   </span>
                 )}
               </div>
-              <span className="text-xl font-extrabold text-[#2C1A0E] tabular-nums">
+              <span className="text-xl font-bold text-[#2C1A0E] tabular-nums">
                 S/ {totalCalculado.toFixed(2)}
               </span>
             </div>
@@ -647,7 +647,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               {referencia.trim() || 'Para llevar'}
             </span>
           </div>
-          <div className="text-base font-extrabold text-[#2C1A0E] tabular-nums">
+          <div className="text-base font-bold text-[#2C1A0E] tabular-nums">
             Total S/ {totalCalculado.toFixed(2)}
           </div>
         </div>
@@ -723,7 +723,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
-                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                      <span className="font-bold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {linea.subtotal.toFixed(2)}
                       </span>
                     </div>
@@ -788,7 +788,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           >
                             <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
                           </button>
-                          <span className="w-7 text-center text-xs font-extrabold text-[#2C1A0E] tabular-nums select-none">
+                          <span className="w-7 text-center text-xs font-bold text-[#2C1A0E] tabular-nums select-none">
                             {linea.cantidad}
                           </span>
                           <button
@@ -821,7 +821,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
             <div className="p-4 border-t border-neutral-200/80 bg-[#FAF7F4] shrink-0 flex justify-between items-center">
               <div>
                 <span className="text-xs text-[#7C6F66] block">Total Pedido:</span>
-                <span className="font-extrabold text-base text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                <span className="font-bold text-base text-[#2C1A0E] tabular-nums whitespace-nowrap">
                   S/ {totalCalculado.toFixed(2)}
                 </span>
               </div>

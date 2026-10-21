@@ -44,7 +44,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             {nombre}
           </h4>
           {esAgotado && (
-            <span className="shrink-0 px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-2xs">
+            <span className="shrink-0 px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-2xs">
               Agotado
             </span>
           )}

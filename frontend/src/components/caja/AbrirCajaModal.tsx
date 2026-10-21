@@ -334,7 +334,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                 <div className="text-sm">
                   <p className="font-bold text-amber-900">Confirmación de Apertura</p>
                   <p className="text-amber-800 mt-1">
-                    ¿Abrir la caja con <strong className="font-extrabold text-[#2C1A0E] tabular-nums">S/ {montoNumerico.toFixed(2)}</strong>? Podrá empezar a registrar cobros.
+                    ¿Abrir la caja con <strong className="font-bold text-[#2C1A0E] tabular-nums">S/ {montoNumerico.toFixed(2)}</strong>? Podrá empezar a registrar cobros.
                   </p>
                 </div>
               </div>

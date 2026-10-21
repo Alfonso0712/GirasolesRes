@@ -374,7 +374,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                                   <h4 className="font-bold text-sm sm:text-base text-[#2C1A0E] font-sans break-words line-clamp-2 leading-snug" title={mc.nombre}>
                                     {mc.nombre}
                                   </h4>
-                                  <span className="font-extrabold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap ml-1">
+                                  <span className="font-bold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap ml-1">
                                     S/ {mc.precio.toFixed(2)}
                                   </span>
                                 </div>
@@ -528,7 +528,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
-                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                      <span className="font-bold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {linea.subtotal.toFixed(2)}
                       </span>
                     </div>
@@ -601,7 +601,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           >
                             <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
                           </button>
-                          <span className="w-7 text-center text-xs font-extrabold text-[#2C1A0E] tabular-nums select-none">
+                          <span className="w-7 text-center text-xs font-bold text-[#2C1A0E] tabular-nums select-none">
                             {linea.cantidad}
                           </span>
                           <button
@@ -665,7 +665,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                   <span className="tabular-nums">S/ {pedidoExistente.total.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-base font-extrabold text-[#2C1A0E] pt-1 border-t border-neutral-200">
+              <div className="flex justify-between text-base font-bold text-[#2C1A0E] pt-1 border-t border-neutral-200">
                 <span>Total a Cobrar</span>
                 <span className="text-emerald-700 tabular-nums">
                   S/ {totalGeneralConExistente.toFixed(2)}
@@ -717,7 +717,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               {mesaSeleccionada?.nombre || 'Sin mesa'}
             </span>
           </div>
-          <div className="text-base font-extrabold text-[#2C1A0E] tabular-nums">
+          <div className="text-base font-bold text-[#2C1A0E] tabular-nums">
             Total S/ {totalGeneralConExistente.toFixed(2)}
           </div>
         </div>
@@ -793,7 +793,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
-                      <span className="font-extrabold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                      <span className="font-bold text-xs sm:text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {linea.subtotal.toFixed(2)}
                       </span>
                     </div>
@@ -861,7 +861,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           >
                             <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
                           </button>
-                          <span className="w-7 text-center text-xs font-extrabold text-[#2C1A0E] tabular-nums select-none">
+                          <span className="w-7 text-center text-xs font-bold text-[#2C1A0E] tabular-nums select-none">
                             {linea.cantidad}
                           </span>
                           <button
@@ -916,7 +916,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               <div className="flex justify-between items-center pt-1">
                 <div>
                   <span className="text-xs text-[#7C6F66] block">Total Pedido:</span>
-                  <span className="font-extrabold text-base text-[#2C1A0E] tabular-nums">
+                  <span className="font-bold text-base text-[#2C1A0E] tabular-nums">
                     S/ {totalCalculado.toFixed(2)}
                   </span>
                 </div>

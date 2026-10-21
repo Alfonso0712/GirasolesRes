@@ -355,7 +355,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <p className="text-xs font-bold uppercase tracking-wider">
                     Diferencia
                   </p>
-                  <p className="text-base font-black tabular-nums mt-0.5">
+                  <p className="text-base font-bold tabular-nums mt-0.5">
                     {resultadoCierre.diferencia === 0
                       ? 'Cuadra'
                       : <span className="tabular-nums">{`${resultadoCierre.diferencia > 0 ? '+' : ''}S/ ${resultadoCierre.diferencia.toFixed(2)}`}</span>}
@@ -523,10 +523,10 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     </div>
 
                     <div className="p-3 bg-amber-50/70 border border-amber-300 rounded-xl col-span-2 sm:col-span-1">
-                      <span className="text-xs font-black uppercase tracking-wider text-amber-800 block">
+                      <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block">
                         Efectivo Esperado
                       </span>
-                      <span className="text-lg font-black text-[#D35400] tabular-nums mt-0.5 block">
+                      <span className="text-lg font-bold text-[#D35400] tabular-nums mt-0.5 block">
                         S/ {resumen.efectivoEsperado.toFixed(2)}
                       </span>
                       <span className="text-xs text-neutral-500 block">
@@ -620,7 +620,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         </p>
                       </div>
                     </div>
-                    <span className="font-black text-lg tabular-nums shrink-0">
+                    <span className="font-bold text-lg tabular-nums shrink-0">
                       {diferenciaCalculada === 0
                         ? 'Cuadra'
                         : `${diferenciaCalculada > 0 ? '+' : '-'}S/ ${Math.abs(
@@ -729,7 +729,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <div className="flex justify-between pt-1 border-t border-neutral-200">
                     <span className="font-bold">Diferencia:</span>
                     <span
-                      className={`font-black tabular-nums ${
+                      className={`font-bold tabular-nums ${
                         diferenciaCalculada === 0
                           ? 'text-green-700'
                           : diferenciaCalculada! > 0

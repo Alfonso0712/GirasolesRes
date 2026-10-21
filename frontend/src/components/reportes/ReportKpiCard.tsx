@@ -40,7 +40,7 @@ export const ReportKpiCard: React.FC<ReportKpiCardProps> = ({
       </div>
 
       <div className="mt-1">
-        <span className="text-2xl sm:text-3xl font-extrabold font-sans tabular-nums text-[#2C1A0E]">
+        <span className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-[#2C1A0E]">
           {value}
         </span>
         {subvalue && (

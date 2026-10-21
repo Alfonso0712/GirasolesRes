@@ -319,7 +319,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               <span className="text-xs uppercase font-bold tracking-wider text-neutral-500 block">
                 Total Contado
               </span>
-              <span className="font-sans text-2xl font-black text-[#2C1A0E] tabular-nums whitespace-nowrap">
+              <span className="font-sans text-2xl font-bold text-[#2C1A0E] tabular-nums whitespace-nowrap">
                 S/ {totalCalculado.toFixed(2)}
               </span>
             </div>

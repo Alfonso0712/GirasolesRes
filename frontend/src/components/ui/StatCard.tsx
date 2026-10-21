@@ -50,7 +50,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       </div>
 
       <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="text-2xl sm:text-3xl font-extrabold text-[#2C1A0E] font-sans tabular-nums">
+        <span className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] font-sans tabular-nums">
           {value}
         </span>
         {badge && (

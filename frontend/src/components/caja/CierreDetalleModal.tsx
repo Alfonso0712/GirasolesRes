@@ -388,7 +388,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     {/* Badge de Estado de Cuadre */}
                     <div className="pt-2 border-t border-neutral-200">
                       <div
-                        className={`p-2.5 rounded-lg border text-center font-black text-xs tracking-wider uppercase tabular-nums ${
+                        className={`p-2.5 rounded-lg border text-center font-bold text-xs tracking-wider uppercase tabular-nums ${
                           esAbierta
                             ? 'bg-stone-50 border-neutral-200 text-neutral-500'
                             : diferenciaNum === null

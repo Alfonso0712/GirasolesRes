@@ -526,7 +526,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
           <button
             type="button"
             onClick={handleDeshacer}
-            className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md transition-all cursor-pointer shrink-0 min-h-[44px]"
+            className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer shrink-0 min-h-[44px]"
           >
             <Undo2 className="w-4 h-4 stroke-[2.5]" />
             <span>DESHACER</span>

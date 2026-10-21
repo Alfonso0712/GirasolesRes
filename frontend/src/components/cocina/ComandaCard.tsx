@@ -38,13 +38,13 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
         <div>
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-2xl sm:text-3xl font-extrabold text-neutral-900 font-sans tabular-nums">
+              <span className="text-2xl sm:text-3xl font-bold text-neutral-900 font-sans tabular-nums">
                 N.º {c.pedidoNumero}
               </span>
 
               {/* Etiquetas especiales */}
               {esNueva && (
-                <span className="px-2.5 py-0.5 rounded-lg text-xs font-black bg-emerald-600 text-white uppercase tracking-wider animate-bounce">
+                <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-600 text-white uppercase tracking-wider animate-bounce">
                   NUEVA
                 </span>
               )}
@@ -54,7 +54,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
                 </span>
               )}
               {c.esDemora && (
-                <span className="px-2.5 py-0.5 rounded-lg text-xs font-black bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   Demora
                 </span>
@@ -85,7 +85,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
           <ul className="space-y-2.5 mb-2">
             {c.lineas.map((l, idx) => (
               <li key={idx} className="flex items-start gap-3 text-neutral-900">
-                <span className="w-7 h-7 rounded-lg bg-neutral-900 text-white font-extrabold text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                <span className="w-7 h-7 rounded-lg bg-neutral-900 text-white font-bold text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                   {l.cantidad}
                 </span>
                 <div className="flex-1">
@@ -141,7 +141,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
       <div>
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-2xl sm:text-3xl font-extrabold text-blue-950 font-sans tabular-nums">
+            <span className="text-2xl sm:text-3xl font-bold text-blue-950 font-sans tabular-nums">
               N.º {c.pedidoNumero}
             </span>
 
@@ -156,7 +156,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
               </span>
             )}
             {c.esDemora && (
-              <span className="px-2.5 py-0.5 rounded-lg text-xs font-black bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
+              <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 Demora
               </span>
@@ -187,7 +187,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
         <ul className="space-y-2.5 mb-2">
           {c.lineas.map((l, idx) => (
             <li key={idx} className="flex items-start gap-3 text-neutral-900">
-              <span className="w-7 h-7 rounded-lg bg-blue-900 text-white font-extrabold text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+              <span className="w-7 h-7 rounded-lg bg-blue-900 text-white font-bold text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                 {l.cantidad}
               </span>
               <div className="flex-1">

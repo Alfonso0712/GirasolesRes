@@ -56,7 +56,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
               <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
                 Pedido
               </span>
-              <span className="text-lg font-extrabold text-[#D35400] tabular-nums">
+              <span className="text-lg font-bold text-[#D35400] tabular-nums">
                 #{numeroPedido}
               </span>
             </div>
@@ -67,7 +67,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
               <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
                 Total
               </span>
-              <span className="text-lg font-extrabold text-emerald-700 tabular-nums">
+              <span className="text-lg font-bold text-emerald-700 tabular-nums">
                 S/ {total.toFixed(2)}
               </span>
             </div>
