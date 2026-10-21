@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   FileText,
   RotateCcw,
@@ -386,7 +386,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[980px] text-left border-collapse">
               <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] text-xs uppercase font-semibold tracking-wider border-b border-[#E5E0DB]">
                 <tr>
                   <th scope="col" className="px-4 py-3">Estado / Turno</th>
@@ -458,32 +458,32 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       </td>
 
                       {/* Cajero */}
-                      <td className="px-4 py-3 font-semibold text-sm text-[#2C1A0E]">
+                      <td className="px-4 py-3 font-semibold text-sm text-[#2C1A0E] whitespace-nowrap">
                         {c.cajero || c.cajeroApertura || 'Cajero'}
                       </td>
 
                       {/* Monto Inicial */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-neutral-600 tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-neutral-600 tabular-nums whitespace-nowrap">
                         S/ {(c.montoInicial ?? 0).toFixed(2)}
                       </td>
 
                       {/* Efectivo */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-[#2C1A0E] tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         S/ {(c.ventasEfectivo ?? c.efectivo ?? 0).toFixed(2)}
                       </td>
 
                       {/* Yape */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-purple-900 tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-sm text-purple-900 tabular-nums whitespace-nowrap">
                         S/ {(c.ventasYape ?? c.yape ?? 0).toFixed(2)}
                       </td>
 
                       {/* Total Ventas */}
-                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#D35400] tabular-nums">
+                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#D35400] tabular-nums whitespace-nowrap">
                         S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
                       </td>
 
                       {/* Contado */}
-                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums">
+                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
                         {abierta ? (
                           <span className="text-neutral-500 font-normal">—</span>
                         ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
@@ -494,21 +494,21 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       </td>
 
                       {/* Diferencia / Cuadre (RV-131, E-314) */}
-                      <td className="px-4 py-3 text-right tabular-nums">
+                      <td className="px-4 py-3 text-right tabular-nums whitespace-nowrap">
                         {abierta ? (
                           <span className="text-neutral-500 font-normal">—</span>
                         ) : diferenciaNum === null ? (
                           <span className="text-neutral-500">—</span>
                         ) : diferenciaNum === 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums whitespace-nowrap">
                             Cuadra · S/ 0.00
                           </span>
                         ) : diferenciaNum > 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 tabular-nums">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 tabular-nums whitespace-nowrap">
                             + S/ {diferenciaNum.toFixed(2)}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300 tabular-nums">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300 tabular-nums whitespace-nowrap">
                             - S/ {Math.abs(diferenciaNum).toFixed(2)}
                           </span>
                         )}
