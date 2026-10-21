@@ -463,7 +463,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
               <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-amber-500 animate-ping" />
-                  <h2 className="text-lg font-bold text-neutral-800 uppercase tracking-wide">
+                  <h2 className="text-lg font-bold font-sans text-neutral-800 uppercase tracking-wide">
                     Pendientes
                   </h2>
                 </div>
@@ -608,7 +608,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
               <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-blue-600 animate-pulse" />
-                  <h2 className="text-lg font-bold text-neutral-800 uppercase tracking-wide">
+                  <h2 className="text-lg font-bold font-sans text-neutral-800 uppercase tracking-wide">
                     En Preparación
                   </h2>
                 </div>
