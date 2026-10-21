@@ -335,50 +335,52 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             </div>
           </form>
 
-          {/* Tarjeta de Acceso de Demostración Limpia */}
-          <div className="mt-4 sm:mt-5 border border-dashed border-[#D5CCC3] rounded-2xl p-3 bg-neutral-50/70 text-left">
-            <p className="font-bold text-xs text-[#2C1A0E]">Acceso de demostración</p>
-            <p className="text-xs text-[#7C6F66] mt-0.5 mb-2">Seleccione un perfil para probar el acceso rápido</p>
+          {/* Tarjeta de Acceso de Demostración Limpia (Solo en entorno de desarrollo) */}
+          {import.meta.env.DEV && (
+            <div className="mt-4 sm:mt-5 border border-dashed border-[#D5CCC3] rounded-2xl p-3 bg-neutral-50/70 text-left">
+              <p className="font-bold text-xs text-[#2C1A0E]">Acceso de demostración</p>
+              <p className="text-xs text-[#7C6F66] mt-0.5 mb-2">Seleccione un perfil para probar el acceso rápido</p>
 
-            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#EFEAE5]">
-              <button
-                type="button"
-                onClick={() => cargarDemo('admin', 'Password123!')}
-                className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-[#B84600] border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Administrador
-              </button>
-              <button
-                type="button"
-                onClick={() => cargarDemo('atorres', 'Password123!')}
-                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
-              >
-                Cajero
-              </button>
-              <button
-                type="button"
-                onClick={() => cargarDemo('lperez', 'Password123!')}
-                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
-              >
-                Mozo
-              </button>
-              <button
-                type="button"
-                onClick={() => cargarDemo('msoto', 'Password123!')}
-                className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
-              >
-                Cocinero
-              </button>
-              <button
-                type="button"
-                onClick={() => cargarDemo('crojas', 'Password123!')}
-                className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors cursor-pointer"
-                title="Cuenta de demostración inactiva"
-              >
-                Inactivo
-              </button>
+              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#EFEAE5]">
+                <button
+                  type="button"
+                  onClick={() => cargarDemo('admin', 'Password123!')}
+                  className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-[#B84600] border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  Administrador
+                </button>
+                <button
+                  type="button"
+                  onClick={() => cargarDemo('atorres', 'Password123!')}
+                  className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                >
+                  Cajero
+                </button>
+                <button
+                  type="button"
+                  onClick={() => cargarDemo('lperez', 'Password123!')}
+                  className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                >
+                  Mozo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => cargarDemo('msoto', 'Password123!')}
+                  className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                >
+                  Cocinero
+                </button>
+                <button
+                  type="button"
+                  onClick={() => cargarDemo('crojas', 'Password123!')}
+                  className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                  title="Cuenta de demostración inactiva"
+                >
+                  Inactivo
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>
