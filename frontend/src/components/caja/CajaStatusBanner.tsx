@@ -75,7 +75,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-200 text-rose-800">
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-200 text-rose-800 shrink-0 whitespace-nowrap">
                 Bloqueo Operativo: Caja anterior sin cerrar
               </span>
               <h3 className="font-sans font-bold text-base sm:text-lg text-rose-900">
@@ -198,7 +198,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-200 text-amber-800">
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-200 text-amber-800 shrink-0 whitespace-nowrap">
               Caja Inactiva
             </span>
             <h4 className="font-bold text-sm sm:text-base text-[#482813]">
