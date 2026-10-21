@@ -21,6 +21,9 @@ import {
   StatusBadge,
   IconActionButton,
   TablePagination,
+  DataTable,
+  TableHead,
+  TableBody,
 } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
@@ -360,70 +363,36 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           )}
         </div>
 
-        {/* 4. Tabla de Ventas */}
-        <div className="w-full bg-white rounded-2xl border border-neutral-200/90 shadow-2xs flex flex-col overflow-hidden">
-          {cargando ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-2.5 text-neutral-500 py-16">
-              <span className="w-8 h-8 border-3 border-[#C74E00]/20 border-t-[#C74E00] rounded-full animate-spin" />
-              <p className="text-xs font-medium tracking-wide">Cargando ventas…</p>
-            </div>
-          ) : errorCarga ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3 border border-rose-200">
-                <AlertCircle className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-semibold text-rose-900 mb-1">{errorCarga}</p>
-              <p className="text-xs text-neutral-500 mb-4">Verifique su conexión o intente nuevamente.</p>
-              <button
-                type="button"
-                onClick={() => cargarVentas()}
-                className="px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B84500] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[40px]"
-              >
-                Reintentar
-              </button>
-            </div>
-          ) : ventasFiltradas.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-neutral-500">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mb-3 border border-amber-200">
-                <Receipt className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-[#2C1A0E] mb-1">
-                {tieneFiltrosActivos
-                  ? 'No se encontraron ventas con ese criterio.'
-                  : 'Todavía no hay ventas registradas.'}
-              </p>
-              <p className="text-xs text-neutral-500 max-w-sm mb-4">
-                {tieneFiltrosActivos
-                  ? 'Pruebe con otra fecha, tipo o número de comprobante.'
-                  : 'Las ventas cobradas en caja se listarán automáticamente aquí.'}
-              </p>
-              {tieneFiltrosActivos && (
-                <button
-                  type="button"
-                  onClick={limpiarFiltros}
-                  className="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition-colors cursor-pointer min-h-[40px]"
-                >
-                  Quitar filtros
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="w-full overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[900px]">
-                <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] uppercase font-semibold text-xs border-b border-[#E5E0DB]">
-                  <tr>
-                    <th className="py-3.5 px-4">Comprobante</th>
-                    <th className="py-3.5 px-4">Fecha y hora</th>
-                    <th className="py-3.5 px-4">Pedido</th>
-                    <th className="py-3.5 px-4">Destino</th>
-                    <th className="py-3.5 px-4">Método</th>
-                    <th className="py-3.5 px-4 text-right">Total</th>
-                    <th className="py-3.5 px-4 w-36">Cajero(a)</th>
-                    <th className="py-3.5 px-4 text-center">Estado</th>
-                    <th className="py-3.5 px-4 text-center">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#F0EBE6] text-sm">
+        {/* 4. Tabla de Ventas con DataTable */}
+        <DataTable
+          loading={cargando}
+          error={errorCarga}
+          onRetry={() => cargarVentas()}
+          isEmpty={ventasFiltradas.length === 0}
+          emptyTitle="No se encontraron ventas"
+          emptyMessage={
+            tieneFiltrosActivos
+              ? 'No hay registros que coincidan con los filtros aplicados. Pruebe con otra fecha, tipo o número de comprobante.'
+              : 'Aún no se han registrado ventas en el sistema.'
+          }
+          emptyActionLabel={tieneFiltrosActivos ? 'Quitar filtros' : undefined}
+          onEmptyAction={tieneFiltrosActivos ? limpiarFiltros : undefined}
+          minWidth="min-w-[900px]"
+        >
+          <TableHead>
+            <tr>
+              <th scope="col" className="py-3.5 px-4">Comprobante</th>
+              <th scope="col" className="py-3.5 px-4">Fecha y hora</th>
+              <th scope="col" className="py-3.5 px-4">Pedido</th>
+              <th scope="col" className="py-3.5 px-4">Destino</th>
+              <th scope="col" className="py-3.5 px-4">Método</th>
+              <th scope="col" className="py-3.5 px-4 text-right">Total</th>
+              <th scope="col" className="py-3.5 px-4 w-36">Cajero(a)</th>
+              <th scope="col" className="py-3.5 px-4 text-center">Estado</th>
+              <th scope="col" className="py-3.5 px-4 text-center">Acciones</th>
+            </tr>
+          </TableHead>
+          <TableBody>
                   {ventasFiltradas.map((v) => {
                     const esAnulada = v.estado === 'Anulada';
                     return (
@@ -540,21 +509,18 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                       </tr>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-          )}
+          </TableBody>
+        </DataTable>
 
-          {/* 5. Paginación Unificada */}
-          <TablePagination
-            currentPage={pagina}
-            totalPages={totalPaginas}
-            totalItems={total}
-            itemsPerPage={tamano}
-            entityName="ventas"
-            onPageChange={setPagina}
-          />
-        </div>
+        {/* 5. Paginación Unificada */}
+        <TablePagination
+          currentPage={pagina}
+          totalPages={totalPaginas}
+          totalItems={total}
+          itemsPerPage={tamano}
+          entityName="ventas"
+          onPageChange={setPagina}
+        />
 
         {/* Modal CUS12.1: Detalle de Venta */}
         <VentaDetalleModal

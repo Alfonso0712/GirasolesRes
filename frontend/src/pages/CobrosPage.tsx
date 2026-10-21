@@ -19,8 +19,8 @@ import { useCobrosManagement } from '../hooks/useCobrosManagement';
 import { AbrirCajaModal } from '../components/caja';
 import { CerrarCajaModal } from '../components/caja';
 import { CajaStatusBanner } from '../components/caja';
-import { CobroModal, TicketComprobanteModal, CobroPedidoCard } from '../components/cobros';
-import { StatusBadge } from '../components/ui';
+import { CobroModal, TicketComprobanteModal } from '../components/cobros';
+import { StatusBadge, DataTable, TableHead, TableBody } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 
@@ -347,62 +347,33 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
         </div>
       </div>
 
-      {/* 4. Contenedor de Datos: Fluye con el scroll principal */}
-      <div className="w-full bg-white border border-neutral-200/80 rounded-2xl shadow-2xs overflow-hidden">
-        {cargando ? (
-          <div className="p-12 text-center">
-            <RotateCcw className="w-8 h-8 text-[#B84500] animate-spin mx-auto mb-3" />
-            <p className="text-sm font-semibold text-neutral-600">
-              Cargando pedidos pendientes de cobro...
-            </p>
-          </div>
-        ) : errorCarga ? (
-          <div className="p-8 text-center max-w-md mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-3">
-              <AlertCircle className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-neutral-800 mb-1">Error al cargar datos</h3>
-            <p className="text-xs text-neutral-500 mb-4">{errorCarga}</p>
-            <button
-              type="button"
-              onClick={() => cargarDatos(false)}
-              className="px-4 py-2 bg-[#C74E00] text-white rounded-xl text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer min-h-[44px]"
-            >
-              Reintentar
-            </button>
-          </div>
-        ) : pedidos.length === 0 ? (
-          <div className="p-12 text-center max-w-sm mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200/60">
-              <CheckCircle2 className="w-7 h-7" />
-            </div>
-            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
-              No hay pedidos pendientes de cobro
-            </h3>
-            <p className="text-xs text-neutral-500">
-              {cajaCerrada
-                ? 'Abra la caja para consultar y registrar cobros.'
-                : busqueda
-                ? 'No se encontraron pedidos con ese criterio de búsqueda.'
-                : 'Todos los pedidos tomados han sido cobrados o no registran consumos activos.'}
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Tabla Desktop (>= lg) */}
-            <div className="hidden lg:block">
-              <table className="w-full text-left border-collapse">
-                <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
-                  <tr>
-                    <th className="py-3 px-4">N.º Pedido</th>
-                    <th className="py-3 px-4">Destino</th>
-                    <th className="py-3 px-4">Hora</th>
-                    <th className="py-3 px-4">Estado Cocina</th>
-                    <th className="py-3 px-4 text-right">Total a Cobrar</th>
-                    <th className="py-3 px-4 text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#F0EBE6] text-sm">
+      {/* 4. Contenedor de Datos con DataTable */}
+      <DataTable
+        loading={cargando}
+        error={errorCarga}
+        onRetry={() => cargarDatos(false)}
+        isEmpty={pedidos.length === 0}
+        emptyTitle="No hay pedidos pendientes de cobro"
+        emptyMessage={
+          cajaCerrada
+            ? 'Abra la caja para consultar y registrar cobros.'
+            : busqueda
+            ? 'No se encontraron pedidos con ese criterio de búsqueda.'
+            : 'Todos los pedidos tomados han sido cobrados o no registran consumos activos.'
+        }
+        minWidth="min-w-[850px]"
+      >
+        <TableHead>
+          <tr>
+            <th scope="col" className="py-3 px-4">N.º Pedido</th>
+            <th scope="col" className="py-3 px-4">Destino</th>
+            <th scope="col" className="py-3 px-4">Hora</th>
+            <th scope="col" className="py-3 px-4">Estado Cocina</th>
+            <th scope="col" className="py-3 px-4 text-right">Total a Cobrar</th>
+            <th scope="col" className="py-3 px-4 text-center">Acción</th>
+          </tr>
+        </TableHead>
+        <TableBody>
                   {pedidos.map((p) => {
                     const esMesa = p.tipo.toLowerCase() === 'mesa';
 
@@ -491,22 +462,8 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                       </tr>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Tarjetas Móviles (< lg) */}
-            <div className="lg:hidden p-3 space-y-3">
-              {pedidos.map((p) => (
-                <CobroPedidoCard
-                  key={p.pedidoId}
-                  pedido={p}
-                  onCobrar={handleIniciarCobro}
-                />
-              ))}            </div>
-          </>
-        )}
-      </div>
+        </TableBody>
+      </DataTable>
 
       {/* Modales */}
       <AbrirCajaModal
