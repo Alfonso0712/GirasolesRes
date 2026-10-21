@@ -72,7 +72,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           } ${renderRightElement ? 'pr-12' : 'pr-4'} ${
             error
               ? 'border-red-500 bg-white focus:border-red-500 focus:ring-2 focus:ring-red-200'
-              : 'border-[#E5E0DB] bg-white focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20'
+              : 'border-[#E5E0DB] bg-white focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20'
           }`}
           aria-invalid={!!error}
           aria-describedby={error ? `${inputId}-error` : undefined}

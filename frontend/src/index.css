@@ -145,7 +145,7 @@
   transition-duration: 150ms;
 }
 .input-filter-standard:focus {
-  border-color: #D35400;
+  border-color: #C74E00;
   box-shadow: 0 0 0 2px #FDE68A;
 }
 
@@ -166,8 +166,8 @@
   transition-property: color, background-color;
   transition-duration: 150ms;
   cursor: pointer;
-  min-height: 38px;
-  min-width: 38px;
+  min-height: 40px;
+  min-width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
