@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock, CheckCircle2 } from 'lucide-react';
-import { InputField } from '../components/InputField';
-import { Button } from '../components/Button';
-import { FormMessage } from '../components/FormMessage';
+import { InputField } from '../components/ui';
+import { Button } from '../components/ui';
+import { FormMessage } from '../components/ui';
 import { forgotPasswordService, resetPasswordService } from '../services/authService';
 import { normalizeText } from '../utils/normalizeText';
 import { AuthLayout } from '../layouts/AuthLayout';
@@ -235,3 +235,4 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 };
 
 export default ForgotPasswordPage;
+

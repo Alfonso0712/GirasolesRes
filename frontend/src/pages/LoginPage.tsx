@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Lock, User } from 'lucide-react';
-import { InputField } from '../components/InputField';
-import { Button } from '../components/Button';
-import { FormMessage } from '../components/FormMessage';
+import { InputField } from '../components/ui';
+import { Button } from '../components/ui';
+import { FormMessage } from '../components/ui';
 import { loginService } from '../services/authService';
 import { normalizeText } from '../utils/normalizeText';
 import type { UserSession } from '../types/auth';
@@ -386,3 +386,4 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 };
 
 export default LoginPage;
+

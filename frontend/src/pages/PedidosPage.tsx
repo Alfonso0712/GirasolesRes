@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { DetallePedidoModal } from '../components/DetallePedidoModal';
-import { ModificarPedidoModal } from '../components/ModificarPedidoModal';
-import { AnularPedidoModal } from '../components/AnularPedidoModal';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { DetallePedidoModal } from '../components/pedidos';
+import { ModificarPedidoModal } from '../components/pedidos';
+import { AnularPedidoModal } from '../components/pedidos';
 import { pedidoService } from '../services/pedidoService';
 import { getMesasService } from '../services/mesaService';
 import type { UserSession } from '../types/auth';
@@ -851,3 +851,4 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
 };
 
 export default PedidosPage;
+

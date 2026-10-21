@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   Receipt,
   Filter,
@@ -19,8 +19,8 @@ import {
   Utensils
 } from 'lucide-react';
 import { useVentasManagement } from '../hooks/useVentasManagement';
-import { VentaDetalleModal } from '../components/VentaDetalleModal';
-import { AnularVentaModal } from '../components/AnularVentaModal';
+import { VentaDetalleModal } from '../components/ventas';
+import { AnularVentaModal } from '../components/ventas';
 import type { UserSession } from '../types/auth';
 
 interface VentasPageProps {
@@ -705,3 +705,4 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     </div>
   );
 };
+

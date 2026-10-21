@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { UsersPage } from './UsersPage';
 import { MesasPage } from './MesasPage';
@@ -13,10 +13,10 @@ import { VentasPage } from './VentasPage';
 import { HistorialCierresPage } from './HistorialCierresPage';
 import { ReportesPage } from './ReportesPage';
 import { DashboardPage } from './DashboardPage';
-import { LogoutModal } from '../components/LogoutModal';
-import { InactivityModal } from '../components/InactivityModal';
-import { ChangePasswordModal } from '../components/ChangePasswordModal';
-import { AvisoComandaModal } from '../components/AvisoComandaModal';
+import { LogoutModal } from '../components/layout';
+import { InactivityModal } from '../components/layout';
+import { ChangePasswordModal } from '../components/usuarios';
+import { AvisoComandaModal } from '../components/cocina';
 import { logoutService, renovarTokenService } from '../services/authService';
 import { pedidoService } from '../services/pedidoService';
 import { cajaService } from '../services/cajaService';
@@ -506,3 +506,4 @@ export const HomePage: React.FC<HomePageProps> = ({
 };
 
 export default HomePage;
+

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+﻿import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Plus,
@@ -36,8 +36,8 @@ import {
   cambiarEstadoMenuCompletoService
 } from '../services/menuCompletoService';
 import { useProductsManagement } from '../hooks/useProductsManagement';
-import { ProductFormModal } from '../components/ProductFormModal';
-import { ProductConfirmModal } from '../components/ProductConfirmModal';
+import { ProductFormModal } from '../components/productos';
+import { ProductConfirmModal } from '../components/productos';
 
 export interface ProductsPageProps {
   session: UserSession;
@@ -1124,3 +1124,4 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 };
 
 export default ProductsPage;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   FileText,
   RotateCcw,
@@ -15,7 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { cajaService } from '../services/cajaService';
-import { CierreDetalleModal } from '../components/caja/CierreDetalleModal';
+import { CierreDetalleModal } from '../components/caja';
 import type { HistorialCierresItemDto, HistorialCierresPaginadoDto } from '../types/caja';
 import type { UserSession } from '../types/auth';
 
@@ -631,3 +631,4 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
     </div>
   );
 };
+

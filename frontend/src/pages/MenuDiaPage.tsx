@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   UtensilsCrossed,
   Coffee,
@@ -9,8 +9,6 @@ import {
   Calendar,
   Sparkles,
   CupSoda,
-  CheckSquare,
-  Square,
   Soup,
   Salad,
   ChefHat,
@@ -18,13 +16,18 @@ import {
   RefreshCw
 , Search, X } from 'lucide-react';
 import type { UserSession } from '../types/auth';
-import type { CandidatoMenu } from '../types/menuDia';
 import {
   useMenuDiaManagement,
   type ItemDisponibilidad
 } from '../hooks/useMenuDiaManagement';
-import { MenuDisponibilidadConfirmModal } from '../components/MenuDisponibilidadConfirmModal';
-import { DiscardChangesModal } from '../components/DiscardChangesModal';
+import {
+  MenuDisponibilidadConfirmModal,
+  SeccionComponentesRol,
+  CardMenuCompletoDia,
+  SeccionCartaCategoria,
+  AgotadoItemCard
+} from '../components/menu-dia';
+import { DiscardChangesModal } from '../components/ui';
 
 export interface MenuDiaPageProps {
   session: UserSession;
@@ -660,61 +663,15 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {itemsDispFiltrados.map((item) => {
-                    const esResaltado = platoResaltadoId === item.productoId;
-                    return (
-                      <div
-                        key={item.productoId}
-                        className={`p-4 rounded-2xl border bg-white flex flex-col justify-between min-h-[140px] transition-all ${
-                          item.agotado
-                            ? 'border-neutral-300 bg-neutral-50/70 opacity-80'
-                            : 'border-neutral-200 hover:border-neutral-300 shadow-2xs'
-                        } ${esResaltado ? 'ring-2 ring-[#D35400]' : ''}`}
-                      >
-                        <div className="flex flex-col items-start gap-1.5 mb-2">
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                              item.tipo === 'Componente'
-                                ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                                : 'bg-blue-100 text-blue-800 border border-blue-200'
-                            }`}
-                          >
-                            {formatearBadgeClasificacion(item)}
-                          </span>
-                          <h4 className="font-semibold text-sm sm:text-base text-neutral-900 leading-snug break-words w-full">
-                            {item.nombre}
-                          </h4>
-                        </div>
-
-                        <div className="mt-auto pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
-                          <span
-                            className={`inline-flex items-center gap-1.5 text-xs font-bold ${
-                              item.agotado ? 'text-rose-700' : 'text-emerald-700'
-                            }`}
-                          >
-                            <span
-                              className={`w-2 h-2 rounded-full ${
-                                item.agotado ? 'bg-rose-500' : 'bg-emerald-500'
-                              }`}
-                            />
-                            {item.agotado ? 'Agotado' : 'Disponible'}
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={() => handleAbrirDisponibilidadModal(item)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer min-h-[38px] ${
-                              item.agotado
-                                ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs'
-                                : 'bg-neutral-100 hover:bg-rose-50 text-neutral-800 hover:text-rose-700 border border-neutral-200'
-                            }`}
-                          >
-                            {item.agotado ? 'Habilitar' : 'Marcar agotado'}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {itemsDispFiltrados.map((item) => (
+                    <AgotadoItemCard
+                      key={item.productoId}
+                      item={item}
+                      esResaltado={platoResaltadoId === item.productoId}
+                      onToggleDisponibilidad={handleAbrirDisponibilidadModal}
+                      formatearBadgeClasificacion={formatearBadgeClasificacion}
+                    />
+                  ))}
                 </div>
               )}
             </div>
@@ -803,286 +760,3 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   );
 };
 
-/* COMPONENTE AUXILIAR: SECCIÓN DE COMPONENTES POR ROL */
-interface SeccionComponentesRolProps {
-  titulo: string;
-  icon: React.ComponentType<{ className?: string }>;
-  items: CandidatoMenu[];
-  seleccionados: Set<string>;
-  onToggle: (id: string) => void;
-  onSelectAll: (ids: string[]) => void;
-  onDeselectAll: (ids: string[]) => void;
-}
-
-const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
-  titulo,
-  icon: Icon,
-  items,
-  seleccionados,
-  onToggle,
-  onSelectAll,
-  onDeselectAll
-}) => {
-  const ids = items.map((i) => i.id);
-  const seleccionadosCount = items.filter((i) => seleccionados.has(i.id)).length;
-  const todosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
-
-  return (
-    <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
-      <div className="px-5 xl:px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-xl bg-orange-100 text-[#D35400] flex items-center justify-center shrink-0">
-            <Icon className="w-5 h-5 xl:w-6 xl:h-6" />
-          </div>
-          <div>
-            <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base xl:text-lg">
-              {titulo}
-            </h3>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 self-end sm:self-center">
-          <span className="text-xs sm:text-sm xl:text-base font-semibold text-neutral-600 mr-1 sm:mr-2">
-            {seleccionadosCount} de {items.length}
-          </span>
-          <button
-            type="button"
-            onClick={() =>
-              todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
-            }
-            className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs sm:text-sm xl:text-base font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-xl transition-colors cursor-pointer"
-          >
-            {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
-          </button>
-        </div>
-      </div>
-
-      <div className="p-4 sm:p-5 xl:p-6">
-        {items.length === 0 ? (
-          <p className="text-xs sm:text-sm text-neutral-400 italic">
-            No hay componentes registrados con este rol. Regístrelos en Carta y Menú &gt; Productos.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-            {items.map((item) => {
-              const estaSeleccionado = seleccionados.has(item.id);
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => onToggle(item.id)}
-                  aria-pressed={estaSeleccionado}
-                  className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer min-h-[56px] ${
-                    estaSeleccionado
-                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs ring-1 ring-[#D35400]'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="shrink-0">
-                      {estaSeleccionado ? (
-                        <CheckSquare className="w-5 h-5 text-[#D35400]" />
-                      ) : (
-                        <Square className="w-5 h-5 text-neutral-400" />
-                      )}
-                    </div>
-                    <span className="text-sm font-semibold text-[#2C1A0E] leading-snug break-words">
-                      {item.nombre}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-/* COMPONENTE AUXILIAR: TARJETA DE MENÚ COMPLETO (CUS04.5 / RV-161) */
-interface CardMenuCompletoDiaProps {
-  id: number;
-  nombre: string;
-  precio: number;
-  incluye: string;
-  habilitado: boolean;
-  onToggle: () => void;
-  partes: {
-    nombre: string;
-    opciones: string[];
-  }[];
-}
-
-const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
-  nombre,
-  precio,
-  incluye,
-  habilitado,
-  onToggle,
-  partes
-}) => {
-  // Comprobar si cada parte tiene opciones seleccionadas (RV-161)
-  const partesConFalta = partes.filter((p) => p.opciones.length === 0);
-  const cumpleRV161 = partesConFalta.length === 0;
-
-  return (
-    <div
-      className={`rounded-2xl border p-5 xl:p-6 flex flex-col justify-between transition-all ${
-        habilitado
-          ? 'bg-white border-[#D35400] shadow-sm'
-          : 'bg-neutral-50/80 border-neutral-200 opacity-80'
-      }`}
-    >
-      <div>
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div>
-            <h3 className="font-sans font-bold text-neutral-900 text-base xl:text-lg">
-              {nombre}
-            </h3>
-            <span className="text-lg xl:text-xl font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
-              S/ {precio.toFixed(2)}
-            </span>
-          </div>
-
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={habilitado}
-              onChange={onToggle}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D35400]"></div>
-          </label>
-        </div>
-
-        <p className="text-xs text-neutral-500 mb-4">
-          Incluye: <strong>{incluye}</strong>
-        </p>
-
-        {/* RESUMEN DE PARTES Y OPCIONES */}
-        <div className="space-y-3 pt-3 border-t border-neutral-100">
-          {partes.map((p) => (
-            <div key={p.nombre} className="text-xs">
-              <span className="font-bold text-neutral-700 block mb-1">
-                Parte: {p.nombre}
-              </span>
-              {p.opciones.length === 0 ? (
-                <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md inline-block">
-                  Falta elegir opciones
-                </span>
-              ) : (
-                <span className="text-[11px] text-neutral-600 block line-clamp-2">
-                  {p.opciones.length} opción(es): {p.opciones.join(', ')}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {habilitado && !cumpleRV161 && (
-        <div className="mt-4 p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-[11px] flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-          <span>
-            {nombre} necesita al menos una opción en &quot;
-            {partesConFalta[0]?.nombre}&quot;. Seleccione opciones o quite el menú de hoy.
-          </span>
-        </div>
-      )}
-    </div>
-  );
-};
-
-/* COMPONENTE AUXILIAR: SECCIÓN DE PRODUCTOS DE CARTA POR CATEGORÍA */
-interface SeccionCartaCategoriaProps {
-  categoriaNombre: string;
-  items: CandidatoMenu[];
-  seleccionados: Set<string>;
-  onToggle: (id: string) => void;
-  onSelectAll: (ids: string[]) => void;
-  onDeselectAll: (ids: string[]) => void;
-}
-
-const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
-  categoriaNombre,
-  items,
-  seleccionados,
-  onToggle,
-  onSelectAll,
-  onDeselectAll
-}) => {
-  const ids = items.map((i) => i.id);
-  const seleccionadosCount = items.filter((i) => seleccionados.has(i.id)).length;
-  const todosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
-
-  return (
-    <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
-      <div className="px-5 xl:px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h3 className="font-sans font-bold text-neutral-900 text-sm sm:text-base xl:text-lg">
-            Categoría: {categoriaNombre}
-          </h3>
-        </div>
-
-        <div className="flex items-center gap-2 self-end sm:self-center">
-          <span className="text-xs sm:text-sm xl:text-base font-semibold text-neutral-600 mr-1 sm:mr-2">
-            {seleccionadosCount} de {items.length}
-          </span>
-          <button
-            type="button"
-            onClick={() =>
-              todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
-            }
-            className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs sm:text-sm xl:text-base font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-xl transition-colors cursor-pointer"
-          >
-            {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
-          </button>
-        </div>
-      </div>
-
-      <div className="p-4 sm:p-5 xl:p-6">
-        {items.length === 0 ? (
-          <p className="text-xs sm:text-sm text-neutral-400 italic">
-            No hay productos registrados en esta categoría de carta.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-            {items.map((item) => {
-              const estaSeleccionado = seleccionados.has(item.id);
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => onToggle(item.id)}
-                  aria-pressed={estaSeleccionado}
-                  className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer min-h-[56px] ${
-                    estaSeleccionado
-                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs ring-1 ring-[#D35400]'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="shrink-0">
-                      {estaSeleccionado ? (
-                        <CheckSquare className="w-5 h-5 text-[#D35400]" />
-                      ) : (
-                        <Square className="w-5 h-5 text-neutral-400" />
-                      )}
-                    </div>
-                    <span className="text-sm font-semibold text-[#2C1A0E] leading-snug break-words">
-                      {item.nombre}
-                    </span>
-                  </div>
-                  <span className="text-sm font-bold tabular-nums whitespace-nowrap shrink-0 pl-2 text-neutral-700">
-                    S/ {item.precio?.toFixed(2) ?? '0.00'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};

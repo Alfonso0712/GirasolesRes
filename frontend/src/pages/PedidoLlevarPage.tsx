@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   ShoppingBag,
   Plus,
@@ -16,11 +16,14 @@ import {
   Copy
 } from 'lucide-react';
 import { usePedidoLlevarManagement } from '../hooks/usePedidoLlevarManagement';
-import { NotaObservacionModal } from '../components/NotaObservacionModal';
-import { PedidoDescartarModal } from '../components/PedidoDescartarModal';
-import { PedidoLlevarConfirmacionModal } from '../components/PedidoLlevarConfirmacionModal';
-import { ArmarMenuCompletoModal } from '../components/ArmarMenuCompletoModal';
-import { Button } from '../components/Button';
+import {
+  NotaObservacionModal,
+  PedidoDescartarModal,
+  PedidoLlevarConfirmacionModal,
+  MenuItemSelectableCard
+} from '../components/pedidos';
+import { ArmarMenuCompletoModal } from '../components/menu-dia';
+import { Button } from '../components/ui';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -388,75 +391,17 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                   const cantidadEnBorrador = enBorrador.reduce((s, l) => s + l.cantidad, 0);
 
                   return (
-                    <div
+                    <MenuItemSelectableCard
                       key={prod.id}
-                      className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between relative ${
-                        prod.agotado
-                          ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-400 select-none opacity-65'
-                          : cantidadEnBorrador > 0
-                          ? 'bg-amber-50/40 border-[#D35400] shadow-xs'
-                          : 'bg-white border-neutral-200 hover:border-neutral-300 hover:shadow-xs'
-                      }`}
-                    >
-                      {/* Insignia de Cantidad seleccionada */}
-                      {cantidadEnBorrador > 0 && !prod.agotado && (
-                        <span className="absolute -top-2 -right-2 bg-[#D35400] text-white text-[11px] font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-xs tabular-nums">
-                          {cantidadEnBorrador}
-                        </span>
-                      )}
-
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-[#2C1A0E] leading-snug break-words">
-                            {prod.nombre}
-                          </h4>
-                          {prod.agotado && (
-                            <span className="shrink-0 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-2xs">
-                              Agotado
-                            </span>
-                          )}
-                        </div>
-                        <span className="block text-xs sm:text-sm text-[#7C6F66] mt-0.5">
-                          {prod.categoria}
-                        </span>
-                      </div>
-
-                      <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between gap-2">
-                        <span className="whitespace-nowrap font-bold tabular-nums text-base xl:text-lg text-neutral-800">
-                          S/ {prod.precio.toFixed(2)}
-                        </span>
-
-                        <div className="flex items-center gap-1.5">
-                          {cantidadEnBorrador > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => disminuirProducto(prod.id)}
-                              className="w-10 h-10 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer active:scale-95"
-                              aria-label={`Disminuir ${prod.nombre}`}
-                              title="Disminuir cantidad"
-                            >
-                              <Minus className="w-4 h-4 stroke-[2.5]" />
-                            </button>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() => agregarProducto(prod)}
-                            disabled={prod.agotado}
-                            aria-disabled={prod.agotado}
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-                              prod.agotado
-                                ? 'bg-neutral-200 text-neutral-400 border border-neutral-300 cursor-not-allowed opacity-60'
-                                : 'bg-[#D35400] hover:bg-[#B84600] text-white shadow-xs cursor-pointer active:scale-95'
-                            }`}
-                            aria-label={`Agregar ${prod.nombre}`}
-                            title={prod.agotado ? 'Plato agotado - No disponible' : 'Agregar plato al pedido'}
-                          >
-                            <Plus className="w-5 h-5 stroke-[2.5]" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                      id={prod.id}
+                      nombre={prod.nombre}
+                      categoria={prod.categoria}
+                      precio={prod.precio}
+                      cantEnBorrador={cantidadEnBorrador}
+                      esAgotado={prod.agotado}
+                      onAgregar={() => agregarProducto(prod)}
+                      onDisminuir={() => disminuirProducto(prod.id)}
+                    />
                   );
                 })}
               </div>
@@ -950,3 +895,4 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
 };
 
 export default PedidoLlevarPage;
+

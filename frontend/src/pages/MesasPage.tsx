@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   Plus,
   RotateCcw,
@@ -14,9 +14,9 @@ import type { UserSession } from '../types/auth';
 import type { MesaItem, FiltroEstadoMesa } from '../types/mesa';
 import { useMesasManagement } from '../hooks/useMesasManagement';
 import { menuDiaService } from '../services/menuDiaService';
-import { MesaCard } from '../components/MesaCard';
-import { MesaFormModal } from '../components/MesaFormModal';
-import { MesaConfirmModal } from '../components/MesaConfirmModal';
+import { MesaCard } from '../components/mesas';
+import { MesaFormModal } from '../components/mesas';
+import { MesaConfirmModal } from '../components/mesas';
 
 interface MesasPageProps {
   session: UserSession;
@@ -496,3 +496,4 @@ export const MesasPage: React.FC<MesasPageProps> = ({
     </div>
   );
 };
+

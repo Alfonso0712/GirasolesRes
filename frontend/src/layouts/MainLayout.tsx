@@ -1,6 +1,6 @@
-import React from 'react';
-import { Sidebar } from '../components/Sidebar';
-import { Header } from '../components/Header';
+﻿import React from 'react';
+import { Sidebar } from '../components/layout';
+import { Header } from '../components/layout';
 import type { UserSession } from '../types/auth';
 
 interface MainLayoutProps {
@@ -96,3 +96,4 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 };
 
 export default MainLayout;
+

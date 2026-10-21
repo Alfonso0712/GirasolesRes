@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   Search,
   Plus,
@@ -15,11 +15,11 @@ import {
   Trash2
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
-import { UserFormModal } from '../components/UserFormModal';
-import { ConfirmModal } from '../components/ConfirmModal';
+import { UserFormModal } from '../components/usuarios';
+import { ConfirmModal } from '../components/ui';
 import { obtenerIniciales } from '../utils/avatar';
 import { useUsersManagement } from '../hooks/useUsersManagement';
-import { StatusBadge } from '../components/StatusBadge';
+import { StatusBadge } from '../components/ui';
 
 export interface UsersPageProps {
   session: UserSession;
@@ -699,3 +699,4 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
 };
 
 export default UsersPage;
+

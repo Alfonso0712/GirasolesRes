@@ -49,7 +49,7 @@ Plataforma web transaccional integral diseñada para optimizar el ciclo operativ
 
 ## 2. Arquitectura del Sistema
 
-El proyecto implementa una arquitectura cliente-servidor desacoplada siguiendo los principios de **Clean Architecture** en el backend y **Layered Architecture** en el frontend:
+El proyecto implementa una arquitectura cliente-servidor desacoplada siguiendo los principios de **Clean Architecture** en el backend y **Arquitectura Basada en Componentes (Component-Based Architecture)** en el frontend:
 
 ```text
 GirasolesRes/
@@ -58,6 +58,7 @@ GirasolesRes/
 ├── GirasolesRes.sln            # Solución .NET estándar
 ├── GirasolesRes.slnx           # Solución moderna de Visual Studio 2022
 ├── CHANGELOG.md                # Historial de cambios y entregas (SemVer)
+├── AGENTS.md                   # Reglas y gobernanza de arquitectura y desarrollo
 ├── docs/                       # Documentación técnica formal
 │   ├── DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.md
 │   ├── DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.docx
@@ -73,10 +74,13 @@ GirasolesRes/
 │   └── GirasolesRes.API/             # 16 Controladores REST, Middleware, Swagger
 ├── frontend/                   # Frontend React 19 + TypeScript + Vite + Tailwind 4
 │   ├── src/
-│   │   ├── components/         # Componentes presentacionales atómicos y modales
+│   │   ├── components/         # Arquitectura Basada en Componentes
+│   │   │   ├── ui/             # Componentes base reutilizables (Button, Modal, StatCard, Badge...)
+│   │   │   ├── layout/         # Componentes estructurales (Header, Sidebar, PageHeader...)
+│   │   │   └── <dominio>/      # Bloques de dominio (mesas/, cocina/, caja/, pedidos/, cobros/...)
 │   │   ├── layouts/            # Layouts base (MainLayout, AuthLayout 60/40)
-│   │   ├── pages/              # Vistas contenedoras por módulo funcional
-│   │   ├── services/           # Cliente HTTP centralizado (apiClient.ts) y APIs
+│   │   ├── pages/              # Vistas contenedoras / orquestadores de páginas
+│   │   ├── services/           # Cliente HTTP centralizado (apiClient.ts) y APIs tipadas
 │   │   ├── hooks/              # Custom hooks de lógica de negocio desacoplada
 │   │   ├── types/              # Contratos tipados en TypeScript
 │   │   └── utils/              # Utilidades puras de moneda y fechas

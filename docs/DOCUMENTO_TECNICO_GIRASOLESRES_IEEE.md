@@ -39,7 +39,7 @@
   - [2.5 Alcance y Módulos Funcionales del Sistema](#25-alcance-y-módulos-funcionales-del-sistema)
 - [3. Arquitectura del Sistema](#3-arquitectura-del-sistema)
   - [3.1 Backend – Clean Architecture](#31-backend--clean-architecture)
-  - [3.2 Frontend – Layered Frontend Architecture y Diseño Centrado en el Usuario (UI/UX)](#32-frontend--layered-frontend-architecture-y-diseño-centrado-en-el-usuario-uiux)
+  - [3.2 Frontend – Arquitectura Basada en Componentes (Component-Based Architecture) y Diseño Centrado en el Usuario (UI/UX)](#32-frontend--arquitectura-basada-en-componentes-component-based-architecture-y-diseño-centrado-en-el-usuario-uiux)
   - [3.3 Comunicación entre Componentes](#33-comunicación-entre-componentes)
 - [4. Stack Tecnológico](#4-stack-tecnológico)
   - [4.1 Backend](#41-backend)
@@ -74,7 +74,7 @@ El alcance del presente documento comprende la especificación arquitectónica y
 - **Fiabilidad y Tolerancia a Fallos:** Robustez transaccional respaldada por transacciones ACID en base de datos PostgreSQL y una suite de pruebas automatizadas formuladas bajo el estándar **ISO/IEC/IEEE 29119** [11].
 - **Eficiencia de Desempeño:** Tiempos de respuesta de sub-segundo en APIs REST y renderizado ultrarrápido en el cliente mediante empaquetado optimizado con Vite y React 19 [9], [10].
 - **Seguridad:** Autenticación robusta basada en tokens criptográficos JWT Bearer y derivación de credenciales mediante PBKDF2 con HMAC-SHA256 bajo 100,000 iteraciones [4], [9].
-- **Mantenibilidad:** Separación estricta de responsabilidades mediante *Clean Architecture* en el backend [4] y *Layered Frontend Architecture* en el cliente web [10].
+- **Mantenibilidad:** Separación estricta de responsabilidades mediante *Clean Architecture* en el backend [4] y *Arquitectura Basada en Componentes (Component-Based Architecture)* en el cliente web [10].
 
 ---
 
@@ -228,33 +228,35 @@ A continuación se insertan los marcadores correspondientes a las evidencias de 
 
 ---
 
-### 3.2 Frontend – Layered Frontend Architecture y Diseño Centrado en el Usuario (UI/UX)
+### 3.2 Frontend – Arquitectura Basada en Componentes (Component-Based Architecture) y Diseño Centrado en el Usuario (UI/UX)
 
-#### 3.2.1 Layered Frontend Architecture sobre React 19 y TypeScript
-El cliente web de *GirasolesRes* fue desarrollado adoptando una **Arquitectura Modular por Capas de Responsabilidad Técnica** (*Layered Frontend Architecture*), sobre el ecosistema compuesto por **React 19.2.8**, **TypeScript 6.0.2**, **Vite 8.3.0** y el framework de estilos de última generación **Tailwind CSS 4.3.3** (integrado mediante el compilador nativo `@tailwindcss/vite`) [10].
+#### 3.2.1 Arquitectura Basada en Componentes sobre React 19 y TypeScript
+El cliente web de *GirasolesRes* fue desarrollado adoptando una **Arquitectura Basada en Componentes** (*Component-Based Architecture*) modular y jerárquica, sobre el ecosistema compuesto por **React 19.2.8**, **TypeScript 6.0.2**, **Vite 8.3.0** y el framework de estilos de última generación **Tailwind CSS 4.3.3** (integrado mediante el compilador nativo `@tailwindcss/vite`) [10].
 
-Esta arquitectura técnica aplica el principio de separación de intereses en el cliente, estructurando el código de `frontend/src/` en capas homogéneas que desacoplan completamente la renderización visual de la gestión del estado y las llamadas a la red [10]. La aplicación implementa el patrón **Container-Presentational**, articulado a través de **Custom Hooks** que encapsulan el ciclo de vida de los datos, y un cliente HTTP base centralizado (`services/apiClient.ts`) que gestiona de manera transparente las cabeceras HTTP, la inyección de tokens Bearer y la traducción de códigos de error [10].
+Esta arquitectura técnica aplica el principio de separación de intereses en el cliente, estructurando el código de `frontend/src/` en componentes presentacionales desacoplados, organizados en componentes base de interfaz (`components/ui/`), componentes estructurales de marco (`components/layout/`) y componentes de dominio gastronómico por contexto delimitado (`components/<dominio>/` tales como `mesas/`, `menu-dia/`, `pedidos/`, `cocina/`, `caja/`, `cobros/`, `ventas/`, `productos/`, `usuarios/`, `reportes/` y `dashboard/`). Las páginas (`pages/*.tsx`) actúan estrictamente como orquestadores o contenedores (*Container / Presentational Pattern*), articulados a través de **Custom Hooks** (`hooks/`) que encapsulan el ciclo de vida de los datos y la lógica asíncrona, y un cliente HTTP base centralizado (`services/apiClient.ts`) con servicios fuertemente tipados (`services/`) [10].
 
-> `[INSERTAR CAPTURA AQUÍ: Árbol de carpetas de frontend/src/ mostrando la estructura por capas técnicas]`  
-> **Fig. 3.6.** Estructura modular del frontend organizada por capas de responsabilidad técnica en `frontend/src/`.
+> `[INSERTAR CAPTURA AQUÍ: Árbol de carpetas de frontend/src/components/ mostrando la estructura jerárquica por dominio y UI base]`  
+> **Fig. 3.6.** Estructura modular del frontend organizada bajo Arquitectura Basada en Componentes en `frontend/src/`.
 
-A continuación, la Tabla 3.2 describe la responsabilidad asignada a cada carpeta de la arquitectura frontend:
+A continuación, la Tabla 3.2 describe la responsabilidad asignada a cada carpeta y submódulo de la arquitectura frontend:
 
 ---
 
 **TABLA 3.2**  
-**RESPONSABILIDAD DE CADA CARPETA EN `frontend/src/`**
+**RESPONSABILIDAD MODULAR EN `frontend/src/` (ARQUITECTURA BASADA EN COMPONENTES)**
 
-| Carpeta | Capa Frontend | Responsabilidad Técnica y Contenido |
+| Carpeta / Módulo | Capa / Rol Frontend | Responsabilidad Técnica y Contenido |
 | :--- | :--- | :--- |
-| `assets/` | Recursos Estáticos | Contiene recursos gráficos y multimedia locales del proyecto (logotipos, iconos vectoriales). |
-| `components/` | Componentes Presentacionales | Bloques visuales modulares y reutilizables de UI (formularios, inputs atómicos, botones ergonómicos, alertas dinámicas `FormMessage`, modales de confirmación `LogoutModal`, `InactivityModal`, `AvisoComandaModal`). Su renderizado depende exclusivamente de propiedades (*props*), careciendo de acoplamiento a servicios de red directos. |
-| `hooks/` | Lógica de Estado y Comportamiento | *Custom Hooks* de React que encapsulan la lógica de interacción, consumo de APIs, suscripciones a temporizadores y transformaciones de estado local, aislando a las vistas de la complejidad asíncrona. |
-| `layouts/` | Plantillas Estructurales | Layouts base que definen la estructura geométrica de la aplicación (`AuthLayout.tsx` para vistas no autenticadas con distribución 60/40; `MainLayout.tsx` con navegación lateral persistente, header contextual y control de roles). |
-| `pages/` | Vistas Contenedoras (*Pages*) | Componentes de página de nivel superior correspondientes a cada módulo funcional (`LoginPage`, `MesasPage`, `PedidoMesaPage`, `CocinaPage`, `CobrosPage`, `HistorialCierresPage`, etc.). Orquestan la composición de componentes y la interacción con los servicios. |
-| `services/` | Capa de Acceso a Datos y Red | Módulos de infraestructura HTTP tipados (`apiClient.ts`, `authService.ts`, `pedidoService.ts`, `cobroService.ts`, `cajaService.ts`, etc.). Encapsulan las llamadas REST hacia la API, adjuntan credenciales JWT y normalizan las respuestas y excepciones del backend. |
-| `types/` | Contratos de Tipado TypeScript | Definiciones de tipos, interfaces y enums de TypeScript (`auth.ts`, `pedido.ts`, `caja.ts`, `comprobante.ts`, `producto.ts`, etc.) que replican fielmente los contratos de DTOs del backend, asegurando consistencia estricta en tiempo de compilación. |
-| `utils/` | Utilidades y Funciones Puras | Funciones utilitarias transversales sin efectos secundarios (formateo monetario en Soles peruanos con `Intl.NumberFormat`, conversión de fechas locales, validadores de formatos de cadenas). |
+| `components/ui/` | UI Reutilizable Base | Componentes atómicos de diseño puro (`Button`, `ActionButton`, `InputField`, `FormMessage`, `StatusBadge`, `StatCard`, `EmptyState`, `FilterBar`, `ModalWrapper`, `ConfirmModal`, `DiscardChangesModal`). No poseen acoplamiento con la lógica de negocio ni llamadas directas de red. |
+| `components/layout/` | Estructura y Navegación | Componentes de marco global (`Header`, `Sidebar`, `PageHeader`, `PageContainer`, `InactivityModal`, `LogoutModal`) que definen la coherencia visual y navegación de la aplicación. |
+| `components/<dominio>/` | Componentes de Dominio | Bloques visuales específicos de cada contexto gastronómico (`mesas/`, `menu-dia/`, `pedidos/`, `cocina/`, `caja/`, `cobros/`, `ventas/`, `productos/`, `usuarios/`, `reportes/`, `dashboard/`). Implementan tarjetas, vistas de rol y modales de operación (`ComandaCard`, `MesaCard`, `ArmarMenuCompletoModal`, `CobroModal`, `DashboardAdminView`, etc.). |
+| `pages/` | Vistas Contenedoras (*Containers*) | Orquestadores de página (`LoginPage`, `MesasPage`, `PedidoMesaPage`, `CocinaPage`, `CobrosPage`, `DashboardPage`, etc.). Coordinan la inyección de datos desde los *custom hooks* y servicios, delegando toda la representación visual a los componentes de dominio y UI base. |
+| `hooks/` | Lógica de Estado y Comportamiento | *Custom Hooks* de React que encapsulan la lógica de interacción, consumo de APIs, suscripciones a temporizadores e intervalos de refresco (cocina en tiempo real), aislando a las vistas de la complejidad asíncrona. |
+| `services/` | Capa de Acceso a Datos y Red | Módulos de infraestructura HTTP tipados (`apiClient.ts`, `authService.ts`, `pedidoService.ts`, `cobroService.ts`, `cajaService.ts`, etc.) basados en `fetch` nativo con inyección automática de tokens JWT. |
+| `layouts/` | Plantillas Estructurales | Layouts envolventes (`AuthLayout.tsx` para vistas no autenticadas con distribución 60/40; `MainLayout.tsx` con navegación lateral persistente, header contextual y control de roles). |
+| `types/` | Contratos de Tipado TypeScript | Definiciones de tipos, interfaces y enums de TypeScript que replican los DTOs del backend, asegurando consistencia estricta en tiempo de compilación. |
+| `utils/` | Utilidades y Funciones Puras | Funciones utilitarias transversales sin efectos secundarios (formateo monetario en Soles peruanos con `Intl.NumberFormat`, conversión de fechas locales, validadores). |
+| `assets/` | Recursos Estáticos | Logotipos institucionales, iconos vectoriales y material gráfico estático. |
 
 ---
 
@@ -445,8 +447,9 @@ La Tabla 4.4 sintetiza los patrones de diseño aplicados en la arquitectura del 
 
 | Patrón de Diseño | Clasificación | Implementación Concreta en el Código de GirasolesRes |
 | :--- | :--- | :--- |
-| **Container / Presentational** | Arquitectónico UI | Separación entre componentes contenedores inteligentes (`pages/*.tsx`) que manejan el estado y llamadas asíncronas, y componentes visuales puros (`components/*.tsx` como `Button`, `InputField`, `FormMessage`) que solo reciben propiedades y renderizan interfaz de usuario [10]. |
-| **Custom Hooks Pattern** | Comportamiento / Lógica Reutilizable | Encapsulamiento de lógica de negocio, manejo de temporizadores de inactividad, peticiones de red y subscripciones en funciones con prefijo `use*` (`usePedidos`, `useCocina`, `useCaja`), permitiendo reutilizar comportamiento sin duplicar código en vistas [10]. |
+| **Component-Based Architecture** | Arquitectónico Frontend | Modularización jerárquica de la interfaz en unidades independientes y reutilizables agrupadas por dominios de negocio (`mesas/`, `cocina/`, `caja/`, `pedidos/`, `menu-dia/`, `cobros/`, `ventas/`, `productos/`, `usuarios/`, `reportes/`, `dashboard/`) y componentes transversales (`ui/`, `layout/`) [10]. |
+| **Container / Presentational** | Arquitectónico UI | Separación rigurosa entre vistas orquestadoras inteligentes (`pages/*.tsx`) que coordinan estados y lógica asíncrona, y componentes visuales puros (`components/ui/` y `components/<dominio>/` como `MesaCard`, `ComandaCard`, `Button`, `InputField`) que solo reciben propiedades y emiten eventos [10]. |
+| **Custom Hooks Pattern** | Comportamiento / Lógica Reutilizable | Encapsulamiento de lógica de negocio, temporizadores de inactividad, intervalos de sondeo y peticiones de red en funciones con prefijo `use*` (`usePedidos`, `useCocina`, `useCaja`), reutilizando comportamiento sin duplicar código en las vistas [10]. |
 | **State-Driven Navigation & Session Provider** | Comportamiento / Enrutamiento | Gestión centralizada de la navegación mediante estados reactivos en `App.tsx` y `HomePage.tsx`. Controla la renderización condicional de vistas según la sesión activa y el rol del usuario, asegurando que perfiles no autorizados sean redirigidos automáticamente [10]. |
 | **Component Composition Pattern** | Creacional / Modularidad | Construcción de interfaces complejas mediante la composición de componentes atómicos más pequeños envueltos en layouts estructurales (`MainLayout`, `AuthLayout`), maximizando la reutilización y consistencia de estilos [10]. |
 
