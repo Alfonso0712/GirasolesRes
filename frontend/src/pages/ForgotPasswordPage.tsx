@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock, CheckCircle2 } from 'lucide-react';
-import { InputField } from '../components/ui';
-import { Button } from '../components/ui';
-import { FormMessage } from '../components/ui';
+import { InputField, Button, FormMessage } from '../components/ui';
 import { forgotPasswordService, resetPasswordService } from '../services/authService';
 import { normalizeText } from '../utils/normalizeText';
 import { AuthLayout } from '../layouts/AuthLayout';
@@ -92,147 +90,186 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
   return (
     <AuthLayout>
-      {/* Volver al inicio de sesión (Vega 1.png) */}
-      <button
-        type="button"
-        onClick={onBackToLogin}
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#482813] hover:text-[#B84500] mb-4 sm:mb-6 transition-colors"
-      >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Volver al inicio de sesión
-          </button>
+      {/* Botón Volver con altura reservada para match exacto con LoginPage */}
+      <div className="h-8 mb-4 sm:mb-6 flex items-center">
+        <button
+          type="button"
+          onClick={onBackToLogin}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#482813] hover:text-[#B84500] transition-colors cursor-pointer py-1 px-1.5 -ml-1.5 rounded-lg"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Volver al inicio de sesión</span>
+        </button>
+      </div>
 
-          <p className="text-[#B84500] text-xs font-bold tracking-widest uppercase mb-1">
-            RECUPERACIÓN SEGURA
+      {/* Indicador de paso (Paso X de 3) y subtítulo */}
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[#B84500] text-xs font-bold tracking-widest uppercase">
+          RECUPERACIÓN SEGURA
+        </span>
+        <span className="text-xs font-medium text-[#7C6F66] tabular-nums">
+          {paso === 'solicitar' ? 'Paso 1 de 3' : paso === 'restablecer' ? 'Paso 2 de 3' : 'Paso 3 de 3'}
+        </span>
+      </div>
+
+      {paso === 'solicitar' && (
+        <>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
+            Recuperar contraseña
+          </h2>
+          <p className="text-[#7C6F66] text-xs sm:text-sm mb-4">
+            Le enviaremos un código de verificación de 6 dígitos a su correo electrónico registrado.
           </p>
 
-          {paso === 'solicitar' && (
-            <>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] tracking-tight mb-2">
-                Recuperar contraseña
-              </h2>
-              <p className="text-[#7C6F66] text-sm mb-6">
-                Le enviaremos un código de verificación al correo registrado.
-              </p>
+          <div className="min-h-[46px] mb-2 flex items-center">
+            {message ? (
+              <FormMessage type={messageType} message={message} className="p-2.5 w-full rounded-xl" />
+            ) : (
+              <div className="w-full h-full opacity-0 pointer-events-none select-none" aria-hidden="true" />
+            )}
+          </div>
 
-              <FormMessage type={messageType} message={message} />
+          <form onSubmit={handleSolicitarCodigo} noValidate className="space-y-4">
+            <InputField
+              id="correo"
+              name="correo"
+              label="Correo electrónico"
+              type="email"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="nombre@correo.com"
+              required
+              error={errors.correo}
+              leftIcon={<Mail className="w-4 h-4" />}
+            />
 
-              <form onSubmit={handleSolicitarCodigo} noValidate className="space-y-4">
-                <InputField
-                  id="correo"
-                  name="correo"
-                  label="Correo electrónico"
-                  type="email"
-                  value={correo}
-                  onChange={(e) => setCorreo(e.target.value)}
-                  disabled={isSubmitting}
-                  placeholder="nombre@correo.com"
-                  required
-                  error={errors.correo}
-                  leftIcon={<Mail className="w-4 h-4" />}
-                />
+            <Button
+              type="submit"
+              isSubmitting={isSubmitting}
+              variant="primary"
+              size="lg"
+              className="h-12 min-h-[48px] text-sm font-bold tracking-wider uppercase rounded-xl w-full"
+            >
+              ENVIAR CÓDIGO
+            </Button>
+          </form>
+        </>
+      )}
 
-                <Button type="submit" isSubmitting={isSubmitting} variant="primary">
-                  ENVIAR CÓDIGO
-                </Button>
-              </form>
-            </>
-          )}
+      {paso === 'restablecer' && (
+        <>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
+            Nueva contraseña
+          </h2>
 
-          {paso === 'restablecer' && (
-            <>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] tracking-tight mb-2">
-                Recuperar contraseña
-              </h2>
+          {/* Banner informativo de envío de código */}
+          <div className="bg-[#FEF9EE] border border-[#FCE8B3] rounded-xl p-3 text-xs text-[#7A4B13] font-medium mb-3">
+            Código enviado a <span className="font-bold">{correo}</span>
+          </div>
 
-              {/* Banner informativo de envío de código (Vega 2.png) */}
-              <div className="bg-[#FEF9EE] border border-[#FCE8B3] rounded-xl p-3.5 text-xs text-[#7A4B13] font-medium mb-6">
-                Código enviado a <span className="font-bold">{correo}</span>
-              </div>
+          <div className="min-h-[46px] mb-2 flex items-center">
+            {message ? (
+              <FormMessage type={messageType} message={message} className="p-2.5 w-full rounded-xl" />
+            ) : (
+              <div className="w-full h-full opacity-0 pointer-events-none select-none" aria-hidden="true" />
+            )}
+          </div>
 
-              <FormMessage type={messageType} message={message} />
+          <form onSubmit={handleRestablecerPassword} noValidate className="space-y-3">
+            <InputField
+              id="codigo"
+              name="codigo"
+              label="Código de verificación"
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ''))}
+              disabled={isSubmitting}
+              placeholder="000000"
+              maxLength={6}
+              required
+              error={errors.codigo}
+              className="tabular-nums tracking-widest text-base font-bold"
+            />
 
-              <form onSubmit={handleRestablecerPassword} noValidate className="space-y-4">
-                <InputField
-                  id="codigo"
-                  name="codigo"
-                  label="Código de verificación"
-                  value={codigo}
-                  onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ''))}
-                  disabled={isSubmitting}
-                  placeholder="000 000"
-                  maxLength={6}
-                  required
-                  error={errors.codigo}
-                  className="tabular-nums tracking-widest text-base"
-                />
+            <InputField
+              id="nuevaPass"
+              name="nuevaPass"
+              label="Nueva contraseña"
+              type={mostrarPass ? 'text' : 'password'}
+              value={nuevaContrasena}
+              onChange={(e) => setNuevaContrasena(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="Mínimo 8 caracteres"
+              required
+              error={errors.nuevaPass}
+              leftIcon={<Lock className="w-4 h-4" />}
+              rightElement={
+                <button
+                  type="button"
+                  onClick={() => setMostrarPass(!mostrarPass)}
+                  className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                >
+                  {mostrarPass ? 'Ocultar' : 'Mostrar'}
+                </button>
+              }
+            />
 
-                <InputField
-                  id="nuevaPass"
-                  name="nuevaPass"
-                  label="Nueva contraseña"
-                  type={mostrarPass ? 'text' : 'password'}
-                  value={nuevaContrasena}
-                  onChange={(e) => setNuevaContrasena(e.target.value)}
-                  disabled={isSubmitting}
-                  placeholder="Mínimo 8 caracteres"
-                  required
-                  error={errors.nuevaPass}
-                  leftIcon={<Lock className="w-4 h-4" />}
-                  rightElement={
-                    <button
-                      type="button"
-                      onClick={() => setMostrarPass(!mostrarPass)}
-                      className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded"
-                    >
-                      {mostrarPass ? 'Ocultar' : 'Mostrar'}
-                    </button>
-                  }
-                />
+            <InputField
+              id="confirmarPass"
+              name="confirmarPass"
+              label="Confirmar contraseña"
+              type={mostrarPass ? 'text' : 'password'}
+              value={confirmarContrasena}
+              onChange={(e) => setConfirmarContrasena(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="Repita la contraseña"
+              required
+              error={errors.confirmarPass}
+              leftIcon={<Lock className="w-4 h-4" />}
+            />
 
-                <InputField
-                  id="confirmarPass"
-                  name="confirmarPass"
-                  label="Confirmar contraseña"
-                  type={mostrarPass ? 'text' : 'password'}
-                  value={confirmarContrasena}
-                  onChange={(e) => setConfirmarContrasena(e.target.value)}
-                  disabled={isSubmitting}
-                  placeholder="Repita la contraseña"
-                  required
-                  error={errors.confirmarPass}
-                  leftIcon={<Lock className="w-4 h-4" />}
-                />
-
-                <Button type="submit" isSubmitting={isSubmitting} variant="primary">
-                  GUARDAR
-                </Button>
-              </form>
-            </>
-          )}
-
-          {paso === 'exito' && (
-            <div className="text-left py-4 animate-in fade-in">
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] tracking-tight mb-4">
-                Contraseña actualizada
-              </h2>
-
-              <div className="w-12 h-12 bg-emerald-100/70 border border-emerald-300 text-emerald-700 rounded-full flex items-center justify-center my-6">
-                <CheckCircle2 className="w-7 h-7" />
-              </div>
-
-              <p className="text-[#7C6F66] text-sm leading-relaxed mb-8">
-                Su contraseña se actualizó correctamente. Ya puede ingresar con sus nuevas credenciales.
-              </p>
-
-              <Button type="button" onClick={onBackToLogin} variant="primary">
-                VOLVER AL LOGIN
+            <div className="pt-2">
+              <Button
+                type="submit"
+                isSubmitting={isSubmitting}
+                variant="primary"
+                size="lg"
+                className="h-12 min-h-[48px] text-sm font-bold tracking-wider uppercase rounded-xl w-full"
+              >
+                GUARDAR CONTRASEÑA
               </Button>
             </div>
-          )}
+          </form>
+        </>
+      )}
+
+      {paso === 'exito' && (
+        <div className="text-left py-2 animate-in fade-in">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-2">
+            Contraseña actualizada
+          </h2>
+
+          <div className="w-12 h-12 bg-emerald-100/70 border border-emerald-300 text-emerald-700 rounded-full flex items-center justify-center my-4">
+            <CheckCircle2 className="w-7 h-7" />
+          </div>
+
+          <p className="text-[#7C6F66] text-xs sm:text-sm leading-relaxed mb-6">
+            Su contraseña se actualizó correctamente. Ya puede ingresar con sus nuevas credenciales.
+          </p>
+
+          <Button
+            type="button"
+            onClick={onBackToLogin}
+            variant="primary"
+            size="lg"
+            className="h-12 min-h-[48px] text-sm font-bold tracking-wider uppercase rounded-xl w-full"
+          >
+            INICIAR SESIÓN
+          </Button>
+        </div>
+      )}
     </AuthLayout>
   );
 };
 
 export default ForgotPasswordPage;
-
