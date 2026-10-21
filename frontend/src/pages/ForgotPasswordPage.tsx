@@ -91,7 +91,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
   return (
     <AuthLayout>
       {/* Botón Volver con altura reservada para match exacto con LoginPage */}
-      <div className="h-8 mb-4 sm:mb-6 flex items-center">
+      <div className="h-[clamp(0.5rem,1.5vh,1.5rem)] mb-[clamp(0.25rem,1vh,0.75rem)] flex items-center">
         <button
           type="button"
           onClick={onBackToLogin}
@@ -117,19 +117,19 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
           <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
             Recuperar contraseña
           </h2>
-          <p className="text-[#7C6F66] text-xs sm:text-sm mb-4">
+          <p className="text-[#7C6F66] text-xs sm:text-sm mb-3">
             Le enviaremos un código de verificación de 6 dígitos a su correo electrónico registrado.
           </p>
 
-          <div className="min-h-[46px] mb-2 flex items-center">
+          <div className="min-h-[clamp(2rem,3.5vh,2.75rem)] mb-[clamp(0.25rem,1vh,0.5rem)] flex items-center">
             {message ? (
-              <FormMessage type={messageType} message={message} className="p-2.5 w-full rounded-xl" />
+              <FormMessage type={messageType} message={message} className="p-2 w-full rounded-xl" />
             ) : (
               <div className="w-full h-full opacity-0 pointer-events-none select-none" aria-hidden="true" />
             )}
           </div>
 
-          <form onSubmit={handleSolicitarCodigo} noValidate className="space-y-4">
+          <form onSubmit={handleSolicitarCodigo} noValidate className="space-y-[clamp(0.25rem,0.8vh,0.5rem)]">
             <InputField
               id="correo"
               name="correo"

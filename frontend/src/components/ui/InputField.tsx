@@ -46,8 +46,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   ) : null;
 
   return (
-    <div className={`mb-4 text-left ${className}`}>
-      <label htmlFor={inputId} className="block text-xs sm:text-sm font-semibold text-[#2C1A0E] mb-1.5">
+    <div className={`mb-1 sm:mb-1.5 text-left ${className}`}>
+      <label htmlFor={inputId} className="block text-xs sm:text-sm font-semibold text-[#2C1A0E] mb-1">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -86,11 +86,14 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
         )}
       </div>
 
-      {error && (
-        <p id={`${inputId}-error`} className="text-red-500 text-xs mt-1.5 font-medium">
-          {error}
-        </p>
-      )}
+      {/* Slot de error de altura fija para prevenir saltos de layout en el formulario */}
+      <div className="min-h-[1.25rem] mt-1">
+        {error && (
+          <p id={`${inputId}-error`} className="text-red-500 text-xs font-medium leading-tight">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 });

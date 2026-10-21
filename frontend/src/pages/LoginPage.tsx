@@ -162,10 +162,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   return (
     <AuthLayout>
       {/* Posición reservada para alinear exactamente con el enlace Volver de ForgotPasswordPage */}
-      <div className="h-8 mb-4 sm:mb-6 pointer-events-none" aria-hidden="true" />
+      <div className="h-[clamp(0.5rem,1.5vh,1.5rem)] mb-[clamp(0.25rem,1vh,0.75rem)] pointer-events-none" aria-hidden="true" />
 
       {/* Encabezado del Formulario */}
-      <div className="mb-3 text-left">
+      <div className="mb-[clamp(0.5rem,1.5vh,1rem)] text-left">
         <span className="text-[#B84500] text-xs font-bold tracking-widest uppercase block mb-1">
           BIENVENIDO
         </span>
@@ -178,16 +178,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Slot reservado para mensajes para prevenir layout shift (salto de scroll vertical) */}
-      <div className="min-h-[46px] mb-2 flex items-center">
+      <div className="min-h-[clamp(2rem,3.5vh,2.75rem)] mb-[clamp(0.25rem,1vh,0.5rem)] flex items-center">
         {message ? (
-          <FormMessage type={messageType} message={message} className="p-2.5 w-full rounded-xl" />
+          <FormMessage type={messageType} message={message} className="p-2 w-full rounded-xl" />
         ) : (
           <div className="w-full h-full opacity-0 pointer-events-none select-none" aria-hidden="true" />
         )}
       </div>
 
       {/* Formulario Principal */}
-      <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <form onSubmit={handleSubmit} noValidate className="space-y-[clamp(0.25rem,0.8vh,0.5rem)]">
         {/* Input Usuario */}
         <InputField
           id="usuario"
@@ -233,13 +233,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         />
 
         {capsLockActivo && (
-          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl font-medium">
+          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl font-medium">
             Mayúsculas activadas.
           </p>
         )}
 
         {/* Botón INGRESAR (Altura mínima 48px para ergonomía táctil) */}
-        <div className="pt-1.5">
+        <div className="pt-1">
           <Button
             type="submit"
             isSubmitting={isSubmitting}
@@ -265,11 +265,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
       {/* Tarjeta de Acceso de Demostración Limpia (Solo en entorno de desarrollo) */}
       {import.meta.env.DEV && (
-        <div className="mt-4 sm:mt-5 border border-dashed border-[#D5CCC3] rounded-2xl p-3 bg-neutral-50/70 text-left">
+        <div className="mt-[clamp(0.5rem,1.5vh,1rem)] border border-dashed border-[#D5CCC3] rounded-2xl p-[clamp(0.5rem,1.2vh,0.75rem)] bg-neutral-50/70 text-left">
           <p className="font-bold text-xs text-[#2C1A0E]">Acceso de demostración</p>
-          <p className="text-xs text-[#7C6F66] mt-0.5 mb-2">Seleccione un perfil para probar el acceso rápido</p>
+          <p className="text-xs text-[#7C6F66] mt-0.5 mb-1.5">Seleccione un perfil para probar el acceso rápido</p>
 
-          <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#EFEAE5]">
+          <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-[#EFEAE5]">
             <button
               type="button"
               onClick={() => cargarDemo('admin', 'Password123!')}
