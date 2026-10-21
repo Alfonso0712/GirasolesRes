@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Lock, User } from 'lucide-react';
 import { InputField } from '../components/ui';
 import { Button } from '../components/ui';
@@ -217,7 +217,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <div className="w-12 h-0.5 bg-[#D35400] rounded-full" />
           </div>
 
-          <h1 className="font-brand-serif text-[50px] lg:text-[60px] text-white leading-tight mb-5 tracking-tight">
+          <h1 className="font-bold text-[50px] lg:text-[60px] text-white leading-tight mb-5 tracking-tight">
             GIRASOLESRES.<br />
           </h1>
 
@@ -241,7 +241,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <span className="text-[#D35400] text-xs font-bold tracking-widest uppercase block mb-1">
               BIENVENIDO
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] font-brand-serif tracking-tight mb-1">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
               Iniciar sesión
             </h2>
             <p className="text-[#7C6F66] text-xs sm:text-sm">

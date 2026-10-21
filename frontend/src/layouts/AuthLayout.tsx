@@ -63,7 +63,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             <div className="w-12 h-0.5 bg-[#F39C12] rounded-full shadow-sm" />
           </div>
 
-          <h1 className="font-brand-serif text-5xl lg:text-6xl text-white leading-tight mb-5 tracking-tight drop-shadow-lg">
+          <h1 className="font-bold text-5xl lg:text-6xl text-white leading-tight mb-5 tracking-tight drop-shadow-lg">
             Gestión simple.<br />
             Servicio excepcional.
           </h1>

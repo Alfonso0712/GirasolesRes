@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock, CheckCircle2 } from 'lucide-react';
 import { InputField } from '../components/ui';
 import { Button } from '../components/ui';
@@ -108,7 +108,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
           {paso === 'solicitar' && (
             <>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] font-brand-serif tracking-tight mb-2">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] tracking-tight mb-2">
                 Recuperar contraseña
               </h2>
               <p className="text-[#7C6F66] text-sm mb-6">
@@ -141,7 +141,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
           {paso === 'restablecer' && (
             <>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] font-brand-serif tracking-tight mb-2">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] tracking-tight mb-2">
                 Recuperar contraseña
               </h2>
 
@@ -213,7 +213,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
           {paso === 'exito' && (
             <div className="text-left py-4 animate-in fade-in">
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] font-brand-serif tracking-tight mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#2C1A0E] tracking-tight mb-4">
                 Contraseña actualizada
               </h2>
 
