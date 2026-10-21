@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: girasoles-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password123!
+      POSTGRES_DB: girasoles_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - girasoles_postgres_data:/var/lib/postgresql/data
+      - ./database/init_girasoles_db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d girasoles_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  girasoles_postgres_data:
