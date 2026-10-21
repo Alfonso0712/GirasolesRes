@@ -20,6 +20,7 @@ import { useReportesManagement } from '../hooks/useReportesManagement';
 import type { UserSession } from '../types/auth';
 import type { TipoAtajoFecha, CriterioOrdenPlatos } from '../types/reporte';
 import { CATEGORIA_LABELS, CATEGORIA_BADGE_LABELS } from '../types/producto';
+import { PageHeader } from '../components/layout';
 
 interface ReportesPageProps {
   session: UserSession;
@@ -70,50 +71,38 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Reportes del Restaurante
-            </h1>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              Exportación y métricas
-            </span>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813] select-none">
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Reportes"
+        breadcrumb={['Administración', 'Reportes']}
+        subtitle="Consulte el volumen de platos vendidos y el balance general de ventas en el período."
+        actions={
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => descargar('pdf')}
+              disabled={cargando || descargando !== null || Boolean(errorRango)}
+              className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[40px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Descargar reporte en formato PDF (A4)"
+            >
+              <FileText className="w-4 h-4 text-[#B84500]" />
+              <span>{descargando === 'pdf' ? 'Preparando archivo…' : 'Descargar PDF'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => descargar('csv')}
+              disabled={cargando || descargando !== null || Boolean(errorRango)}
+              className="px-3.5 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[40px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Descargar reporte en formato Excel (CSV UTF-8)"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-700" />
+              <span>{descargando === 'csv' ? 'Preparando archivo…' : 'Descargar Excel'}</span>
+            </button>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Consulte el volumen de platos vendidos y el balance general de ventas en el período.
-          </p>
-        </div>
-
-        {/* Acciones de Exportación (Desktop / Tablet) */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => descargar('pdf')}
-            disabled={cargando || descargando !== null || Boolean(errorRango)}
-            className="w-auto px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Descargar reporte en formato PDF (A4)"
-            aria-label="Descargar PDF"
-          >
-            <FileText className="w-4 h-4 text-[#B84500]" />
-            <span>{descargando === 'pdf' ? 'Preparando archivo…' : 'Descargar PDF'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => descargar('csv')}
-            disabled={cargando || descargando !== null || Boolean(errorRango)}
-            className="w-auto px-3.5 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Descargar reporte en formato Excel (CSV UTF-8)"
-            aria-label="Descargar Excel"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-700" />
-            <span>{descargando === 'csv' ? 'Preparando archivo…' : 'Descargar Excel'}</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Pestañas de Navegación del CUS14 (Platos vendidos primero por ser Must, Ventas segundo) */}
       <div className="shrink-0 flex items-center gap-2 border-b border-neutral-200/80 pb-1">

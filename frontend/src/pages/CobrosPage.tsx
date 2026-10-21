@@ -20,6 +20,8 @@ import { AbrirCajaModal } from '../components/caja';
 import { CerrarCajaModal } from '../components/caja';
 import { CajaStatusBanner } from '../components/caja';
 import { CobroModal, TicketComprobanteModal, CobroPedidoCard } from '../components/cobros';
+import { StatusBadge } from '../components/ui';
+import { PageHeader } from '../components/layout';
 import type { UserSession } from '../types/auth';
 
 interface CobrosPageProps {
@@ -156,101 +158,81 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   return (
     <div className="h-full flex flex-col overflow-hidden w-full">
       <div className="flex-1 overflow-y-auto min-h-0 w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Cobro de Pedidos
-            </h1>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813] select-none">
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Cobro de Pedidos"
+        breadcrumb={['Caja y Cobros', 'Cobro de Pedidos']}
+        subtitle="Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real."
+        count={totalPedidos}
+        countLabel="pedidos por cobrar"
+        badge={
+          cajaEstado?.estaAbierta ? (
+            <StatusBadge status="Abierta" label={`Caja abierta · ${cajaEstado.cajeroNombre || session.nombre}`} intent="success" />
+          ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
+            <StatusBadge status="Anterior sin cerrar" label="Caja anterior sin cerrar" intent="danger" />
+          ) : (
+            <StatusBadge status="Cerrada" label="Caja cerrada" intent="neutral" />
+          )
+        }
+        actions={
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-3 text-xs text-neutral-500">
+              <span className="hidden sm:inline tabular-nums">
+                Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
+              </span>
+              <button
+                type="button"
+                onClick={() => cargarDatos(false)}
+                disabled={cargando}
+                title="Actualizar pedidos ahora"
+                aria-label="Actualizar pedidos ahora"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+              >
+                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+                <span>Actualizar</span>
+              </button>
+            </div>
 
-            {/* Resumen de estado de caja integrado en pastilla */}
-            {cajaEstado?.estaAbierta ? (
-              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Caja abierta · {cajaEstado.cajeroNombre || session.nombre}
-                </span>
-              </div>
-            ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
-              <div className="px-3.5 py-1 bg-rose-50 rounded-full border border-rose-200 text-xs font-semibold text-rose-800 flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-rose-700">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                  Caja anterior sin cerrar
-                </span>
-              </div>
-            ) : (
-              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-[#B84600]">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  Caja cerrada
-                </span>
-              </div>
+            {session.rol === 'Cajero' && (
+              <>
+                {cajaEstado?.estadoOperativo === 'abierta' && (
+                  <button
+                    type="button"
+                    onClick={() => setCerrarCajaModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                  >
+                    <Lock className="w-4 h-4" />
+                    <span>Cerrar caja</span>
+                  </button>
+                )}
+
+                {cajaEstado?.estadoOperativo === 'anteriorSinCerrar' && (
+                  <button
+                    type="button"
+                    onClick={() => setCerrarCajaModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-rose-700 hover:bg-rose-800 text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                  >
+                    <Lock className="w-4 h-4" />
+                    <span>Cerrar caja anterior</span>
+                  </button>
+                )}
+
+                {cajaEstado?.estadoOperativo === 'sinCaja' && (
+                  <button
+                    type="button"
+                    onClick={() => setAbrirCajaModalOpen(true)}
+                    className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                  >
+                    <DollarSign className="w-4 h-4" />
+                    <span>Abrir caja</span>
+                  </button>
+                )}
+              </>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real.
-          </p>
-        </div>
-
-        {/* Sincronización y Botones de Acción */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <div className="flex items-center gap-3 text-xs text-neutral-500">
-            <span className="hidden sm:inline tabular-nums">
-              Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
-            </span>
-            <button
-              type="button"
-              onClick={() => cargarDatos(false)}
-              disabled={cargando}
-              title="Actualizar pedidos ahora"
-              aria-label="Actualizar pedidos ahora"
-              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-            >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Actualizar</span>
-            </button>
-          </div>
-
-          {session.rol === 'Cajero' && (
-            <>
-              {cajaEstado?.estadoOperativo === 'abierta' && (
-                <button
-                  type="button"
-                  onClick={() => setCerrarCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#C0392B] hover:bg-[#962D22] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span>Cerrar caja</span>
-                </button>
-              )}
-
-              {cajaEstado?.estadoOperativo === 'anteriorSinCerrar' && (
-                <button
-                  type="button"
-                  onClick={() => setCerrarCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#C0392B] hover:bg-[#962D22] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span>Cerrar caja anterior</span>
-                </button>
-              )}
-
-              {cajaEstado?.estadoOperativo === 'sinCaja' && (
-                <button
-                  type="button"
-                  onClick={() => setAbrirCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <DollarSign className="w-4 h-4" />
-                  <span>Abrir caja</span>
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+        }
+      />
 
       {/* Banner de Estado de Caja (CUS 13.1 / CUS 13.2 / MSG-166, MSG-168) */}
       <CajaStatusBanner

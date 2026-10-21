@@ -23,6 +23,7 @@ import {
 } from '../components/pedidos';
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
 import { Button } from '../components/ui';
+import { PageHeader } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -136,13 +137,13 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Pedido de Mesa
-            </h1>
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Pedido de Mesa"
+        breadcrumb={['Salón', 'Pedido de Mesa']}
+        subtitle="Seleccione la mesa y los productos de la carta para generar la comanda a cocina."
+        badge={
+          <div className="flex items-center gap-2">
             {mesaSeleccionada && (
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
                 {mesaSeleccionada.nombre}
@@ -152,35 +153,32 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               {modo === 'ampliacion' ? 'Ampliación' : 'Nuevo pedido'}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Seleccione la mesa y los productos de la carta para generar la comanda a cocina.
-          </p>
-        </div>
+        }
+        actions={
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={solicitarDescarte}
+              disabled={lineasBorrador.length === 0}
+              className="text-xs px-3.5 py-2 min-h-[40px]"
+            >
+              <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+              Limpiar borrador
+            </Button>
 
-        {/* Acciones de cabecera */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={solicitarDescarte}
-            disabled={lineasBorrador.length === 0}
-            className="text-xs px-3 py-2 min-h-[38px]"
-          >
-            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-            Limpiar Borrador
-          </Button>
-
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onVolverAMesas}
-            className="text-xs px-3 py-2 min-h-[38px]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-            Volver a Mesas
-          </Button>
-        </div>
-      </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onVolverAMesas}
+              className="text-xs px-3.5 py-2 min-h-[40px]"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Volver a mesas
+            </Button>
+          </div>
+        }
+      />
 
       {/* Alerta de Error General si existiera */}
       {errorGeneral && (

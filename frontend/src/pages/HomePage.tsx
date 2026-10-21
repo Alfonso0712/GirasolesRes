@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { UsersPage } from './UsersPage';
 import { MesasPage } from './MesasPage';
@@ -379,7 +379,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Acceso Restringido
             </h2>
             <p className="text-neutral-600 max-w-md mx-auto text-sm">
-              No tiene permiso para acceder al Historial de Cierres de Caja (RN-106, E-319). Este módulo está restringido exclusivamente para el rol Administrador.
+              No tiene permiso para acceder al Historial de Cierres. Este módulo está reservado exclusivamente para el rol Administrador.
             </p>
             <button
               type="button"

@@ -135,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           },
           {
             id: 'ventas',
-            label: 'Gestión de Ventas',
+            label: 'Historial de Ventas',
             icon: BadgeDollarSign,
             roles: ['Administrador', 'Cajero'],
           },

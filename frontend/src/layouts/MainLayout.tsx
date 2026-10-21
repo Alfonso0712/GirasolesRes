@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Sidebar } from '../components/layout';
 import { Header } from '../components/layout';
 import type { UserSession } from '../types/auth';
@@ -37,9 +37,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       case 'caja':
         return 'Caja y Cobros';
       case 'ventas':
-        return 'Gestión de Ventas';
+        return 'Historial de Ventas';
       case 'historial-cierres':
-        return 'Historial de Cierres de Caja';
+        return 'Historial de Cierres';
       case 'mesas':
         return 'Mesas y Salón';
       case 'pedidos-mesa':

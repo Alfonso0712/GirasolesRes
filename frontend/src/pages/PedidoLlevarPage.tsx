@@ -24,6 +24,7 @@ import {
 } from '../components/pedidos';
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
 import { Button } from '../components/ui';
+import { PageHeader } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -120,48 +121,43 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Pedido para Llevar
-            </h1>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              Para llevar
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registre el pedido para llevar del cliente y envíe la comanda a cocina.
-          </p>
-        </div>
-
-        {/* Acciones de cabecera */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setModalDescartarOpen(true)}
-            disabled={lineasBorrador.length === 0}
-            className="text-xs px-3 py-2 min-h-[38px]"
-          >
-            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-            Limpiar Borrador
-          </Button>
-
-          {onVolver && (
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Pedido para Llevar"
+        breadcrumb={['Operaciones', 'Pedido para Llevar']}
+        subtitle="Registre el pedido para llevar del cliente y envíe la comanda a cocina."
+        badge={
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+            Para llevar
+          </span>
+        }
+        actions={
+          <div className="flex items-center gap-2 shrink-0">
             <Button
               type="button"
               variant="secondary"
-              onClick={onVolver}
-              className="text-xs px-3 py-2 min-h-[38px]"
+              onClick={() => setModalDescartarOpen(true)}
+              disabled={lineasBorrador.length === 0}
+              className="text-xs px-3.5 py-2 min-h-[40px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-              Volver a Mesas
+              <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+              Limpiar borrador
             </Button>
-          )}
-        </div>
-      </div>
+
+            {onVolver && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={onVolver}
+                className="text-xs px-3.5 py-2 min-h-[40px]"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                Volver a mesas
+              </Button>
+            )}
+          </div>
+        }
+      />
 
       {/* Alerta de Error General si existiera */}
       {errorGeneral && (

@@ -31,6 +31,8 @@ import {
   Utensils,
   DollarSign
 } from 'lucide-react';
+import { StatusBadge, IconActionButton } from '../components/ui';
+import { PageHeader } from '../components/layout';
 
 interface PedidosPageProps {
   session: UserSession;
@@ -290,37 +292,31 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Superior */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Pedidos
-            </h1>
+    <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+        {/* 1. Encabezado Unificado */}
+        <PageHeader
+          title="Pedidos"
+          breadcrumb={['Operaciones', 'Pedidos']}
+          subtitle="Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar."
+          badge={
             <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => cargarPedidos()}
-            disabled={cargando}
-            className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-            aria-label="Refrescar lista de pedidos"
-          >
-            <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Actualizar</span>
-          </button>
-        </div>
-      </div>
+          }
+          actions={
+            <button
+              type="button"
+              onClick={() => cargarPedidos()}
+              disabled={cargando}
+              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60 shrink-0"
+              aria-label="Refrescar lista de pedidos"
+            >
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+              <span>Actualizar</span>
+            </button>
+          }
+        />
 
       {/* Contenedor sin confinamiento artificial */}
       <div className="w-full">
@@ -610,70 +606,46 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             )}
                           </div>
                         </td>
-                        <td className="py-3 px-4">
-                          {renderBadgeEstado(p.estado)}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <StatusBadge status={p.estado} />
                         </td>
                         <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-[#2C1A0E]">
                           S/ {p.total.toFixed(2)}
                         </td>
                         <td className="py-3 px-4">
-                          <div className="flex items-center justify-center gap-1.5">
-                            {/* Ver Detalle: Estilo Neutro Blanco */}
-                            <button
-                              type="button"
+                          <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
+                            <IconActionButton
+                              icon={Eye}
+                              label="Ver detalle del pedido"
                               onClick={() => handleVerDetalle(p.id)}
-                              className="w-8 h-8 xl:w-9 xl:h-9 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
-                              title="Ver detalle del pedido"
-                              aria-label={`Ver detalle pedido #${p.numero}`}
-                            >
-                              <Eye className="w-4 h-4 text-neutral-600" />
-                            </button>
+                            />
 
-                            {/* Modificar: Estilo Neutro Blanco */}
-                            <button
-                              type="button"
-                              onClick={() => handleAbrirModificar(p.id)}
+                            <IconActionButton
+                              icon={Edit2}
+                              label="Modificar pedido"
                               disabled={!p.puedeModificar}
-                              className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
-                                p.puedeModificar
-                                  ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-neutral-900 cursor-pointer'
-                                  : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
-                              }`}
-                              title={p.motivoDeshabilitado || 'Modificar pedido'}
-                              aria-label={`Modificar pedido #${p.numero}`}
-                            >
-                              <Edit2 className="w-4 h-4 text-neutral-600" />
-                            </button>
+                              disabledReason={p.motivoDeshabilitado || 'Modificar pedido'}
+                              onClick={() => handleAbrirModificar(p.id)}
+                            />
 
-                            {/* Anular: Acción Destructiva Rojo/Rose */}
-                            <button
-                              type="button"
-                              onClick={() => handleAbrirAnular(p)}
+                            <IconActionButton
+                              icon={Trash2}
+                              label="Anular pedido"
+                              variant="danger"
                               disabled={!p.puedeAnular}
-                              className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
-                                p.puedeAnular
-                                  ? 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
-                                  : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
-                              }`}
-                              title={p.motivoDeshabilitado || 'Anular pedido'}
-                              aria-label={`Anular pedido #${p.numero}`}
-                            >
-                              <Trash2 className="w-4 h-4 text-rose-600" />
-                            </button>
+                              disabledReason={p.motivoDeshabilitado || 'Anular pedido'}
+                              onClick={() => handleAbrirAnular(p)}
+                            />
 
-                            {/* Cobrar en Caja: Rol Cajero / Admin */}
                             {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
                               !esAnulado &&
                               p.estado.toLowerCase() !== 'pagado' && (
-                                <button
-                                  type="button"
+                                <IconActionButton
+                                  icon={DollarSign}
+                                  label="Cobrar pedido en caja"
+                                  variant="warning"
                                   onClick={() => onNavigateToCobro?.(p.id)}
-                                  className="w-8 h-8 rounded-lg border border-transparent bg-[#C74E00] hover:bg-[#B84600] text-white shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
-                                  title="Cobrar pedido en caja"
-                                  aria-label={`Cobrar pedido #${p.numero}`}
-                                >
-                                  <DollarSign className="w-4 h-4" />
-                                </button>
+                                />
                               )}
                           </div>
                         </td>

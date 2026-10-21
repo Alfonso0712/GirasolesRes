@@ -13,6 +13,7 @@ import {
   WifiOff,
   AlertCircle
 } from 'lucide-react';
+import { PageHeader } from '../components/layout';
 
 export interface DashboardPageProps {
   session: UserSession;
@@ -98,53 +99,48 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
 
   return (
     <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-        {/* Encabezado Editorial */}
-        <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-          <div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-[#2C1A0E]">
-                Bienvenido/a, {session.nombre}
-              </h1>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-                {session.rol}
-              </span>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+        {/* 1. Encabezado Unificado */}
+        <PageHeader
+          title={`Bienvenido/a, ${session.nombre}`}
+          breadcrumb={['Inicio', 'Panel Principal']}
+          subtitle="Resumen operativo y métricas principales según su rol de trabajo."
+          badge={
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+              {session.rol}
+            </span>
+          }
+          actions={
+            <div className="flex items-center gap-3 shrink-0">
+              {sinConexion ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                  <WifiOff className="w-3.5 h-3.5 text-amber-600" />
+                  Sin conexión
+                </span>
+              ) : actualizando ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#B84500]" />
+                  Actualizando...
+                </span>
+              ) : (
+                <span className="text-xs text-neutral-500 font-medium tabular-nums hidden sm:inline">
+                  Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
+                </span>
+              )}
+
+              <button
+                type="button"
+                onClick={() => refrescarManual()}
+                disabled={actualizando}
+                aria-label="Actualizar datos del panel"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+              >
+                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${actualizando ? 'animate-spin' : ''}`} />
+                <span>Actualizar</span>
+              </button>
             </div>
-            <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-              Resumen operativo y métricas principales según su rol de trabajo.
-            </p>
-          </div>
-
-          {/* Indicador discreto de actualización y botón manual */}
-          <div className="flex items-center gap-2 shrink-0">
-            {sinConexion ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                <WifiOff className="w-3.5 h-3.5 text-amber-600" />
-                Sin conexión, datos de hace {segundosDesdeActualizacion} s
-              </span>
-            ) : actualizando ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#B84500]" />
-                Actualizando...
-              </span>
-            ) : (
-              <span className="text-xs text-neutral-500 font-medium tabular-nums hidden sm:inline">
-                Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
-              </span>
-            )}
-
-            <button
-              type="button"
-              onClick={() => refrescarManual()}
-              disabled={actualizando}
-              aria-label="Actualizar datos del panel"
-              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-            >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${actualizando ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Actualizar</span>
-            </button>
-          </div>
-        </div>
+          }
+        />
 
         {/* RENDERIZADO MODULAR COMPUESTO SEGÚN ROL */}
         {session.rol === 'Administrador' && (

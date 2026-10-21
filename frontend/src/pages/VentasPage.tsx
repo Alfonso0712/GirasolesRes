@@ -6,21 +6,23 @@ import {
   Search,
   Calendar,
   Eye,
-  Ban,
-  CheckCircle2,
   DollarSign,
   Smartphone,
-  ChevronLeft,
-  ChevronRight,
   AlertCircle,
   Check,
-  X,
   ShoppingBag,
-  Utensils
+  Utensils,
+  Ban,
 } from 'lucide-react';
 import { useVentasManagement } from '../hooks/useVentasManagement';
 import { VentaDetalleModal } from '../components/ventas';
 import { AnularVentaModal } from '../components/ventas';
+import {
+  StatusBadge,
+  IconActionButton,
+  TablePagination,
+} from '../components/ui';
+import { PageHeader } from '../components/layout';
 import type { UserSession } from '../types/auth';
 
 interface VentasPageProps {
@@ -39,7 +41,6 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     resumen,
     cargando,
     errorCarga,
-    segundosTranscurridos,
     busqueda,
     setBusqueda,
     errorBusqueda,
@@ -69,7 +70,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     handleDescargarComprobante,
     avisoExito,
     avisoError,
-    setAvisoError
+    setAvisoError,
   } = useVentasManagement({ token: session.token, esAdmin, esCajero });
 
   const ventasFiltradas = ventas.filter((v) => {
@@ -111,598 +112,510 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
   };
 
   const totalPaginas = Math.max(1, Math.ceil(total / tamano));
-  const tieneFiltrosActivos = Boolean(busqueda.trim() || errorFechas || errorBusqueda || filtroTipoComprobante !== 'todos');
+  const tieneFiltrosActivos = Boolean(busqueda.trim() || errorFechas || errorBusqueda || filtroTipoComprobante !== 'todos' || desde || hasta);
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Historial de Ventas
-            </h1>
-
-            {/* Pastilla de estado de rol idéntica a Mesas y Cobros */}
-            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-              <span className="inline-flex items-center gap-1.5 text-neutral-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Consultas y comprobantes · {session.rol}
-              </span>
-            </div>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registro histórico de ventas, consulta de comprobantes, reimpresión de copias y anulación autorizada.
-          </p>
-        </div>
-
-        {/* Contador RNF y Botón Actualizar */}
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
-            Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
-          </span>
-          <button
-            type="button"
-            onClick={() => cargarVentas()}
-            title="Actualizar lista de ventas"
-            aria-label="Actualizar lista de ventas"
-            disabled={cargando} className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-          >
-            <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Actualizar</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Tarjetas de Resumen KPI (RV-110, RN-100) */}
-      <div className="shrink-0 grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* KPI 1: Ventas Vigentes */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 p-3.5 shadow-2xs flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center shrink-0 border border-amber-200">
-            <Receipt className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
-              VENTAS VIGENTES
-            </span>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="font-sans font-bold text-2xl text-[#2C1A0E] tabular-nums">
-                {resumen.vigentes}
-              </span>
-              <span className="text-xs text-neutral-500 font-medium">ventas</span>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 2: Total Vigente (Recaudado) */}
-        <div className="bg-emerald-50/60 rounded-2xl border border-emerald-200/80 p-3.5 shadow-2xs flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0 border border-emerald-300">
-            <DollarSign className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">
-              TOTAL VIGENTE
-            </span>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="text-xs font-semibold text-emerald-800">S/</span>
-              <span className="font-sans font-bold text-2xl text-emerald-900 tabular-nums">
-                {resumen.totalVigente.toFixed(2)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 3: Desglose Efectivo vs Yape */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 p-3.5 shadow-2xs flex items-center justify-between gap-2">
-          <div className="flex-1 border-r border-neutral-100 pr-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-              <DollarSign className="w-3 h-3 text-emerald-700" />
-              <span>EFECTIVO</span>
-            </span>
-            <span className="font-sans font-bold text-base sm:text-lg text-[#2C1A0E] tabular-nums block mt-0.5">
-              S/ {resumen.efectivo.toFixed(2)}
-            </span>
-          </div>
-          <div className="flex-1 pl-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-purple-700 block flex items-center gap-1">
-              <Smartphone className="w-3 h-3 text-purple-600" />
-              <span>YAPE</span>
-            </span>
-            <span className="font-sans font-bold text-base sm:text-lg text-purple-900 tabular-nums block mt-0.5">
-              S/ {resumen.yape.toFixed(2)}
-            </span>
-          </div>
-        </div>
-
-        {/* KPI 4: Ventas Anuladas */}
-        <div className="bg-neutral-50/80 rounded-2xl border border-neutral-200/80 p-3.5 shadow-2xs flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-neutral-200/70 text-neutral-500 flex items-center justify-center shrink-0 border border-neutral-300">
-            <Ban className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
-              ANULADAS (NO SUMAN)
-            </span>
-            <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="font-sans font-bold text-2xl text-neutral-600 tabular-nums">
-                {resumen.anuladas}
-              </span>
-              <span className="text-xs text-neutral-500 font-medium">anuladas</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Barra de Filtros y Búsqueda (RV-108, RV-109, RV-118) */}
-      <div className="shrink-0 bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-3">
-        {/* Filtro por Tipo de Comprobante */}
-        <div className="flex flex-wrap items-center gap-1.5 pb-2.5 border-b border-neutral-100">
-          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
-            <Filter className="w-3.5 h-3.5" />
-            Comprobante:
-          </span>
-          {(['todos', 'ticket', 'boleta', 'factura'] as const).map((tipo) => {
-            const activo = filtroTipoComprobante === tipo;
-            const labels: Record<string, string> = {
-              todos: 'Todos',
-              ticket: 'Tickets (T001)',
-              boleta: 'Boletas (B001)',
-              factura: 'Facturas (F001)',
-            };
-            return (
-              <button
-                key={tipo}
-                type="button"
-                onClick={() => setFiltroTipoComprobante(tipo)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[30px] ${
-                  activo
-                    ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
-                    : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'
-                }`}
-              >
-                {labels[tipo]}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Campo Buscar Comprobante, DNI, RUC o Cliente */}
-          <div className="flex-1 min-w-[260px]">
-            <div className="relative">
-              <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={busqueda}
-                maxLength={50}
-                onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar por comprobante (T001, B001, F001), DNI, RUC o cliente..."
-                className={`w-full pl-9 pr-8 py-2 text-xs rounded-xl border bg-white focus:outline-none focus:ring-2 transition-all ${
-                  errorBusqueda
-                    ? 'border-rose-400 focus:ring-rose-200 text-rose-900'
-                    : 'border-neutral-200 focus:border-[#D35400] focus:ring-amber-200'
-                }`}
-              />
-              {busqueda && (
-                <button
-                  type="button"
-                  onClick={() => setBusqueda('')}
-                  aria-label="Limpiar búsqueda"
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-600 p-0.5 cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-            {errorBusqueda && (
-              <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                <span>{errorBusqueda}</span>
-              </p>
-            )}
-          </div>
-
-          {/* Filtros de Fecha (Desde - Hasta) */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-neutral-600">
-              <Calendar className="w-3.5 h-3.5 text-neutral-500" />
-              <span className="font-semibold text-xs">Desde:</span>
-              <input
-                type="date"
-                value={desde}
-                onChange={(e) => {
-                  setDesde(e.target.value);
-                  setPagina(1);
-                }}
-                className="px-2 py-1.5 text-xs rounded-lg border border-neutral-200 bg-white focus:outline-none focus:border-[#D35400]"
-              />
-            </div>
-
-            <div className="flex items-center gap-1.5 text-xs text-neutral-600">
-              <span className="font-semibold text-xs">Hasta:</span>
-              <input
-                type="date"
-                value={hasta}
-                onChange={(e) => {
-                  setHasta(e.target.value);
-                  setPagina(1);
-                }}
-                className="px-2 py-1.5 text-xs rounded-lg border border-neutral-200 bg-white focus:outline-none focus:border-[#D35400]"
-              />
-            </div>
-
-            {/* Accesos rápidos de fecha */}
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setFiltroRapido('hoy')}
-                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                  esFiltroRapidoActivo('hoy')
-                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                    : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
-                }`}
-              >
-                Hoy
-              </button>
-              <button
-                type="button"
-                onClick={() => setFiltroRapido('ayer')}
-                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                  esFiltroRapidoActivo('ayer')
-                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                    : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
-                }`}
-              >
-                Ayer
-              </button>
-              <button
-                type="button"
-                onClick={() => setFiltroRapido('semana')}
-                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                  esFiltroRapidoActivo('semana')
-                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                    : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
-                }`}
-              >
-                7 días
-              </button>
-              {esAdmin && (
-                <button
-                  type="button"
-                  onClick={() => setFiltroRapido('mes')}
-                  className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer hidden sm:inline-block min-h-[38px] ${
-                    esFiltroRapidoActivo('mes')
-                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                      : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
-                  }`}
-                >
-                  30 días
-                </button>
-              )}
-            </div>
-
-            {/* Quitar filtros */}
-            {tieneFiltrosActivos && (
-              <button
-                type="button"
-                onClick={limpiarFiltros}
-                className="px-2.5 py-1.5 text-xs font-semibold text-[#B84500] hover:text-[#B84600] hover:bg-amber-50 rounded-lg transition-colors cursor-pointer ml-auto sm:ml-0"
-              >
-                Quitar filtros
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Mensaje de error de rango de fechas (MSG-157, MSG-158, MSG-159) */}
-        {errorFechas && (
-          <p className="text-xs text-rose-600 font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-            <span>{errorFechas}</span>
-          </p>
-        )}
-      </div>
-
-      {/* 4. Lista / Tabla de Ventas: Fluye con el scroll principal */}
-      <div className="w-full bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col overflow-hidden">
-        {cargando ? (
-          <div className="flex-1 flex flex-col items-center justify-center gap-2.5 text-neutral-500 py-16">
-            <span className="w-8 h-8 border-3 border-[#D35400]/20 border-t-[#D35400] rounded-full animate-spin" />
-            <p className="text-xs font-medium tracking-wide">Cargando ventas…</p>
-          </div>
-        ) : errorCarga ? (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3 border border-rose-200">
-              <AlertCircle className="w-6 h-6" />
-            </div>
-            <p className="text-sm font-semibold text-rose-900 mb-1">{errorCarga}</p>
-            <p className="text-xs text-neutral-500 mb-4">Verifique su conexión o intente nuevamente.</p>
+    <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4 text-[#482813]">
+        {/* 1. Encabezado Fijo del Módulo */}
+        <PageHeader
+          title="Historial de Ventas"
+          breadcrumb={['Caja y Cobros', 'Historial de Ventas']}
+          subtitle="Auditoría de tickets, boletas, facturas emitidas y anulaciones con recálculo automático."
+          count={total}
+          countLabel="ventas registradas"
+          actions={
             <button
               type="button"
               onClick={() => cargarVentas()}
-              className="px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow-xs transition-colors cursor-pointer"
+              disabled={cargando}
+              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
             >
-              Reintentar
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+              <span>Actualizar</span>
             </button>
-          </div>
-        ) : ventasFiltradas.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-neutral-500">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mb-3 border border-amber-200">
-              <Receipt className="w-6 h-6" />
+          }
+        />
+
+        {/* 2. Tarjetas de Resumen KPI */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* KPI 1: Ventas Vigentes */}
+          <div className="bg-white rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center shrink-0 border border-amber-200">
+              <Receipt className="w-5 h-5" />
             </div>
-            <p className="text-sm font-bold text-[#2C1A0E] mb-1">
-              {tieneFiltrosActivos
-                ? 'No se encontraron ventas con ese criterio.'
-                : 'Todavía no hay ventas registradas hoy.'}
-            </p>
-            <p className="text-xs text-neutral-500 max-w-sm mb-4">
-              {tieneFiltrosActivos
-                ? 'Pruebe con otra fecha, tipo o número de comprobante.'
-                : 'Las ventas cobradas en caja se listarán automáticamente aquí.'}
-            </p>
-            {tieneFiltrosActivos && (
-              <button
-                type="button"
-                onClick={limpiarFiltros}
-                className="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition-colors cursor-pointer"
-              >
-                Quitar filtros
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="w-full overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] uppercase font-semibold text-xs border-b border-[#E5E0DB]">
-                <tr>
-                  <th className="py-3 px-4">Comprobante</th>
-                  <th className="py-3 px-4">Fecha y Hora</th>
-                  <th className="py-3 px-4">Pedido</th>
-                  <th className="py-3 px-4">Destino</th>
-                  <th className="py-3 px-4">Método</th>
-                  <th className="py-3 px-4 text-right">Total</th>
-                  <th className="py-3 px-4 w-36">Cajero(a)</th>
-                  <th className="py-3 px-4 text-center">Estado</th>
-                  <th className="py-3 px-4 text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F0EBE6] text-sm">
-                {ventasFiltradas.map((v) => {
-                  const esAnulada = v.estado === 'Anulada';
-                  return (
-                    <tr
-                      key={v.ventaId}
-                      className={`transition-colors border-b border-[#F0EBE6] hover:bg-neutral-50/70 ${
-                        esAnulada ? 'bg-neutral-50/60 opacity-65 text-neutral-500' : 'bg-white text-neutral-800'
-                      }`}
-                    >
-                      {/* Comprobante */}
-                      <td className="py-3 px-4">
-                        <div className="flex flex-col gap-0.5 items-start">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className={`px-1.5 py-0.5 text-xs font-semibold rounded uppercase tracking-wider ${
-                                v.comprobante.startsWith('F')
-                                  ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
-                                  : v.comprobante.startsWith('B')
-                                  ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                                  : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                              }`}
-                            >
-                              {v.comprobante.startsWith('F') ? 'Factura' : v.comprobante.startsWith('B') ? 'Boleta' : 'Ticket'}
-                            </span>
-                            <span className={`tabular-nums font-semibold text-sm ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
-                              {v.comprobante}
-                            </span>
-                          </div>
-                          {(v.clienteDocumento || v.clienteNombre) && (
-                            <span className="text-xs text-stone-500 truncate max-w-[170px]" title={`${v.clienteDocumento ? v.clienteDocumento + ' - ' : ''}${v.clienteNombre || ''}`}>
-                              {v.clienteDocumento ? `${v.clienteDocumento} · ` : ''}{v.clienteNombre || ''}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Fecha y Hora */}
-                      <td className="py-3 px-4 tabular-nums text-xs text-stone-600 whitespace-nowrap">
-                        {v.fechaHoraFormateada}
-                      </td>
-
-                      {/* Pedido N.º */}
-                      <td className="py-3 px-4 tabular-nums font-semibold text-sm text-[#2C1A0E]">
-                        #{v.pedidoNumero}
-                      </td>
-
-                      {/* Destino (Mesa o Llevar) */}
-                      <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2C1A0E]">
-                          {v.tipo === 'Para Llevar' ? (
-                            <>
-                              <ShoppingBag className="w-3.5 h-3.5 text-orange-600 shrink-0" />
-                              <span className="truncate max-w-[120px]" title={v.referencia || 'Para Llevar'}>
-                                {v.referencia ? `Llevar (${v.referencia})` : 'Para Llevar'}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <Utensils className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                              <span>{v.mesa || 'Salón'}</span>
-                            </>
-                          )}
-                        </span>
-                      </td>
-
-                      {/* Método de Pago */}
-                      <td className="py-3 px-4">
-                        <span
-                          className={`px-2.5 py-1 text-xs font-medium rounded-lg inline-flex items-center gap-1 border ${
-                            v.metodo === 'Efectivo'
-                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                              : 'bg-purple-50 text-purple-800 border-purple-200'
-                          }`}
-                        >
-                          {v.metodo === 'Efectivo' ? (
-                            <DollarSign className="w-3 h-3 text-emerald-700" />
-                          ) : (
-                            <Smartphone className="w-3 h-3 text-purple-700" />
-                          )}
-                          <span>{v.metodo}</span>
-                        </span>
-                      </td>
-
-                      {/* Total */}
-                      <td className="py-3 px-4 text-right tabular-nums font-semibold text-sm whitespace-nowrap">
-                        <span className={esAnulada ? 'line-through text-neutral-500' : 'text-[#2C1A0E]'}>
-                          S/ {v.total.toFixed(2)}
-                        </span>
-                      </td>
-
-                      {/* Cajero */}
-                      <td className="py-3 px-4 text-sm font-medium text-[#2C1A0E] truncate max-w-36 w-36" title={v.cajero}>
-                        {v.cajero}
-                      </td>
-
-                      {/* Estado */}
-                      <td className="py-3 px-4 text-center">
-                        <span
-                          className={`px-2.5 py-1 text-xs font-medium rounded-lg border inline-flex items-center gap-1 shadow-2xs ${
-                            esAnulada
-                              ? 'bg-neutral-200/70 text-neutral-600 border-neutral-300'
-                              : 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                          }`}
-                        >
-                          {esAnulada ? <Ban className="w-3 h-3" /> : <CheckCircle2 className="w-3 h-3 text-emerald-700" />}
-                          <span>{v.estado}</span>
-                        </span>
-                      </td>
-
-                      {/* Acción Ver Detalle */}
-                      <td className="py-3 px-4 text-center">
-                        <button
-                          type="button"
-                          onClick={() => handleVerDetalle(v.ventaId)}
-                          title={`Ver detalle de venta ${v.comprobante}`}
-                          aria-label={`Ver detalle de venta ${v.comprobante}`}
-                          className="h-8 px-2.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs inline-flex items-center gap-1.5 transition-colors cursor-pointer text-xs font-semibold"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-[#B84500]" />
-                          <span>Detalle</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* 5. Barra de Paginación inferior (20 en 20) */}
-        {!cargando && ventasFiltradas.length > 0 && (
-          <div className="shrink-0 px-4 py-2.5 border-t border-neutral-200/80 bg-neutral-50/70 flex items-center justify-between gap-3 text-xs text-neutral-600">
-            <span className="tabular-nums">
-              Mostrando <span className="font-semibold text-neutral-800">{ventasFiltradas.length}</span> de{' '}
-              <span className="font-semibold text-neutral-800">{total}</span> ventas registradas
-            </span>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-neutral-700 tabular-nums">
-                Página {pagina} de {totalPaginas}
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
+                Ventas vigentes
               </span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  disabled={pagina <= 1}
-                  onClick={() => setPagina(pagina - 1)}
-                  className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
-                    pagina <= 1
-                      ? 'border-neutral-200 bg-neutral-100 text-neutral-500 cursor-not-allowed opacity-60'
-                      : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
-                  }`}
-                  title="Página anterior"
-                  aria-label="Página anterior"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  disabled={pagina >= totalPaginas}
-                  onClick={() => setPagina(pagina + 1)}
-                  className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
-                    pagina >= totalPaginas
-                      ? 'border-neutral-200 bg-neutral-100 text-neutral-500 cursor-not-allowed opacity-60'
-                      : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
-                  }`}
-                  title="Página siguiente"
-                  aria-label="Página siguiente"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="font-sans font-bold text-2xl text-[#2C1A0E] tabular-nums">
+                  {resumen.vigentes}
+                </span>
+                <span className="text-xs text-neutral-500 font-medium">ventas</span>
               </div>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Modal CUS12.1: Detalle de Venta */}
-      <VentaDetalleModal
-        isOpen={detalleModalOpen}
-        onClose={() => setDetalleModalOpen(false)}
-        venta={ventaSeleccionada}
-        loading={cargandoDetalle}
-        esAdmin={esAdmin}
-        onAbrirAnular={() => setAnularModalOpen(true)}
-        onDescargarTicket={handleDescargarComprobante}
-        descargandoTicket={descargandoTicket}
-      />
-
-      {/* Modal CUS12.2 / Vista 12.3: Diálogo de Anulación */}
-      <AnularVentaModal
-        isOpen={anularModalOpen}
-        onClose={() => setAnularModalOpen(false)}
-        venta={ventaSeleccionada}
-        onConfirmar={handleConfirmarAnulacion}
-        loading={procesandoAnulacion}
-      />
-
-      {/* Aviso Flotante Toast de Éxito (4 segundos, MSG-162) */}
-      {avisoExito && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-        >
-          <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 shrink-0">
-            <Check className="w-4 h-4 stroke-[3]" />
+          {/* KPI 2: Total Vigente (Recaudado) */}
+          <div className="bg-emerald-50/50 rounded-2xl border border-emerald-200/80 p-4 shadow-2xs flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0 border border-emerald-300">
+              <DollarSign className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">
+                Total vigente
+              </span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-xs font-semibold text-emerald-800">S/</span>
+                <span className="font-sans font-bold text-2xl text-emerald-950 tabular-nums">
+                  {resumen.totalVigente.toFixed(2)}
+                </span>
+              </div>
+            </div>
           </div>
-          <span className="text-xs font-semibold tracking-wide">{avisoExito}</span>
+
+          {/* KPI 3: Desglose Efectivo vs Yape */}
+          <div className="bg-white rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center justify-between gap-2">
+            <div className="flex-1 border-r border-neutral-100 pr-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Efectivo</span>
+              </span>
+              <span className="font-sans font-bold text-base sm:text-lg text-[#2C1A0E] tabular-nums block mt-0.5">
+                S/ {resumen.efectivo.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex-1 pl-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 block flex items-center gap-1">
+                <Smartphone className="w-3.5 h-3.5 text-purple-600" />
+                <span>Yape</span>
+              </span>
+              <span className="font-sans font-bold text-base sm:text-lg text-purple-900 tabular-nums block mt-0.5">
+                S/ {resumen.yape.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* KPI 4: Ventas Anuladas */}
+          <div className="bg-neutral-50/80 rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-neutral-200/70 text-neutral-600 flex items-center justify-center shrink-0 border border-neutral-300">
+              <Ban className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
+                Anuladas (no suman)
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-0.5">
+                <span className="font-sans font-bold text-2xl text-neutral-700 tabular-nums">
+                  {resumen.anuladas}
+                </span>
+                <span className="text-xs text-neutral-500 font-medium">anuladas</span>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
 
-      {/* Aviso Flotante Toast de Error */}
-      {avisoError && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 bg-rose-950 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-rose-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-        >
-          <div className="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-300 shrink-0">
-            <AlertCircle className="w-4 h-4" />
+        {/* 3. Barra de Filtros y Búsqueda */}
+        <div className="bg-white p-4 rounded-2xl border border-neutral-200/90 shadow-2xs space-y-3">
+          {/* Filtro por Tipo de Comprobante */}
+          <div className="flex flex-wrap items-center gap-1.5 pb-2.5 border-b border-neutral-100">
+            <span className="text-xs font-semibold text-neutral-600 flex items-center gap-1 mr-1 select-none">
+              <Filter className="w-3.5 h-3.5" />
+              Comprobante:
+            </span>
+            {(['todos', 'ticket', 'boleta', 'factura'] as const).map((tipo) => {
+              const activo = filtroTipoComprobante === tipo;
+              const labels: Record<string, string> = {
+                todos: 'Todos',
+                ticket: 'Tickets',
+                boleta: 'Boletas',
+                factura: 'Facturas',
+              };
+              return (
+                <button
+                  key={tipo}
+                  type="button"
+                  onClick={() => setFiltroTipoComprobante(tipo)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] ${
+                    activo
+                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200'
+                  }`}
+                >
+                  {labels[tipo]}
+                </button>
+              );
+            })}
           </div>
-          <span className="text-xs font-semibold tracking-wide">{avisoError}</span>
-          <button
-            type="button"
-            onClick={() => setAvisoError(null)}
-            className="ml-2 text-rose-300 hover:text-white text-base leading-none p-1 cursor-pointer"
-            aria-label="Cerrar aviso"
+
+          {/* Búsqueda y Fechas */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="relative flex-1 min-w-[200px] max-w-md">
+              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Buscar por comprobante, cliente o RUC..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-neutral-50/50 hover:bg-white focus:bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px] transition-all"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label htmlFor="filtro-desde-v" className="text-xs font-semibold text-neutral-600 flex items-center gap-1 select-none">
+                  <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                  Desde:
+                </label>
+                <input
+                  id="filtro-desde-v"
+                  type="date"
+                  value={desde}
+                  onChange={(e) => setDesde(e.target.value)}
+                  className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px]"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label htmlFor="filtro-hasta-v" className="text-xs font-semibold text-neutral-600 flex items-center gap-1 select-none">
+                  <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                  Hasta:
+                </label>
+                <input
+                  id="filtro-hasta-v"
+                  type="date"
+                  value={hasta}
+                  onChange={(e) => setHasta(e.target.value)}
+                  className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px]"
+                />
+              </div>
+
+              {/* Chips rápidos */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setFiltroRapido('hoy')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                    esFiltroRapidoActivo('hoy')
+                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                  }`}
+                >
+                  Hoy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroRapido('ayer')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                    esFiltroRapidoActivo('ayer')
+                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                  }`}
+                >
+                  Ayer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroRapido('semana')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                    esFiltroRapidoActivo('semana')
+                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                  }`}
+                >
+                  7 días
+                </button>
+                {esAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => setFiltroRapido('mes')}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                      esFiltroRapidoActivo('mes')
+                        ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                        : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                    }`}
+                  >
+                    30 días
+                  </button>
+                )}
+              </div>
+
+              {tieneFiltrosActivos && (
+                <button
+                  type="button"
+                  onClick={limpiarFiltros}
+                  className="px-2.5 py-1.5 text-xs font-semibold text-[#B84500] hover:text-[#C74E00] hover:bg-amber-50 rounded-xl transition-colors cursor-pointer ml-auto sm:ml-0"
+                >
+                  Quitar filtros
+                </button>
+              )}
+            </div>
+          </div>
+
+          {errorFechas && (
+            <p className="text-xs text-rose-600 font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errorFechas}</span>
+            </p>
+          )}
+        </div>
+
+        {/* 4. Tabla de Ventas */}
+        <div className="w-full bg-white rounded-2xl border border-neutral-200/90 shadow-2xs flex flex-col overflow-hidden">
+          {cargando ? (
+            <div className="flex-1 flex flex-col items-center justify-center gap-2.5 text-neutral-500 py-16">
+              <span className="w-8 h-8 border-3 border-[#C74E00]/20 border-t-[#C74E00] rounded-full animate-spin" />
+              <p className="text-xs font-medium tracking-wide">Cargando ventas…</p>
+            </div>
+          ) : errorCarga ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3 border border-rose-200">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-semibold text-rose-900 mb-1">{errorCarga}</p>
+              <p className="text-xs text-neutral-500 mb-4">Verifique su conexión o intente nuevamente.</p>
+              <button
+                type="button"
+                onClick={() => cargarVentas()}
+                className="px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B84500] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[40px]"
+              >
+                Reintentar
+              </button>
+            </div>
+          ) : ventasFiltradas.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-neutral-500">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mb-3 border border-amber-200">
+                <Receipt className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-bold text-[#2C1A0E] mb-1">
+                {tieneFiltrosActivos
+                  ? 'No se encontraron ventas con ese criterio.'
+                  : 'Todavía no hay ventas registradas.'}
+              </p>
+              <p className="text-xs text-neutral-500 max-w-sm mb-4">
+                {tieneFiltrosActivos
+                  ? 'Pruebe con otra fecha, tipo o número de comprobante.'
+                  : 'Las ventas cobradas en caja se listarán automáticamente aquí.'}
+              </p>
+              {tieneFiltrosActivos && (
+                <button
+                  type="button"
+                  onClick={limpiarFiltros}
+                  className="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition-colors cursor-pointer min-h-[40px]"
+                >
+                  Quitar filtros
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="w-full overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[900px]">
+                <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] uppercase font-semibold text-xs border-b border-[#E5E0DB]">
+                  <tr>
+                    <th className="py-3.5 px-4">Comprobante</th>
+                    <th className="py-3.5 px-4">Fecha y hora</th>
+                    <th className="py-3.5 px-4">Pedido</th>
+                    <th className="py-3.5 px-4">Destino</th>
+                    <th className="py-3.5 px-4">Método</th>
+                    <th className="py-3.5 px-4 text-right">Total</th>
+                    <th className="py-3.5 px-4 w-36">Cajero(a)</th>
+                    <th className="py-3.5 px-4 text-center">Estado</th>
+                    <th className="py-3.5 px-4 text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0EBE6] text-sm">
+                  {ventasFiltradas.map((v) => {
+                    const esAnulada = v.estado === 'Anulada';
+                    return (
+                      <tr
+                        key={v.ventaId}
+                        className={`transition-colors border-b border-[#F0EBE6] ${
+                          esAnulada
+                            ? 'bg-stone-50 hover:bg-stone-100/70 text-stone-700'
+                            : 'hover:bg-neutral-50/70 bg-white text-neutral-800'
+                        }`}
+                      >
+                        {/* Comprobante */}
+                        <td className="py-3 px-4">
+                          <div className="flex flex-col gap-0.5 items-start">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className={`px-1.5 py-0.5 text-xs font-semibold rounded uppercase tracking-wider ${
+                                  v.comprobante.startsWith('F')
+                                    ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                                    : v.comprobante.startsWith('B')
+                                    ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                                    : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
+                                }`}
+                              >
+                                {v.comprobante.startsWith('F') ? 'Factura' : v.comprobante.startsWith('B') ? 'Boleta' : 'Ticket'}
+                              </span>
+                              <span className={`tabular-nums font-semibold text-sm ${esAnulada ? 'text-stone-700' : 'text-[#2C1A0E]'}`}>
+                                {v.comprobante}
+                              </span>
+                            </div>
+                            {(v.clienteDocumento || v.clienteNombre) && (
+                              <span className="text-xs text-stone-500 truncate max-w-[170px]" title={`${v.clienteDocumento ? v.clienteDocumento + ' - ' : ''}${v.clienteNombre || ''}`}>
+                                {v.clienteDocumento ? `${v.clienteDocumento} · ` : ''}{v.clienteNombre || ''}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Fecha y Hora */}
+                        <td className="py-3 px-4 tabular-nums text-xs text-stone-600 whitespace-nowrap">
+                          {v.fechaHoraFormateada}
+                        </td>
+
+                        {/* Pedido N.º */}
+                        <td className="py-3 px-4 tabular-nums font-semibold text-sm text-[#2C1A0E]">
+                          #{v.pedidoNumero}
+                        </td>
+
+                        {/* Destino (Mesa o Llevar) */}
+                        <td className="py-3 px-4">
+                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2C1A0E]">
+                            {v.tipo === 'Para Llevar' ? (
+                              <>
+                                <ShoppingBag className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                                <span className="truncate max-w-[120px]" title={v.referencia || 'Para Llevar'}>
+                                  {v.referencia ? `Llevar (${v.referencia})` : 'Para Llevar'}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <Utensils className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                                <span>{v.mesa || 'Salón'}</span>
+                              </>
+                            )}
+                          </span>
+                        </td>
+
+                        {/* Método de Pago */}
+                        <td className="py-3 px-4">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-medium rounded-lg inline-flex items-center gap-1 border ${
+                              v.metodo === 'Efectivo'
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                : 'bg-purple-50 text-purple-800 border-purple-200'
+                            }`}
+                          >
+                            {v.metodo === 'Efectivo' ? (
+                              <DollarSign className="w-3 h-3 text-emerald-700" />
+                            ) : (
+                              <Smartphone className="w-3 h-3 text-purple-700" />
+                            )}
+                            <span>{v.metodo}</span>
+                          </span>
+                        </td>
+
+                        {/* Total con alto contraste WCAG AA */}
+                        <td className="py-3 px-4 text-right tabular-nums font-semibold text-sm whitespace-nowrap">
+                          <span className={esAnulada ? 'text-stone-700 font-semibold' : 'text-[#2C1A0E]'}>
+                            S/ {v.total.toFixed(2)}
+                          </span>
+                        </td>
+
+                        {/* Cajero */}
+                        <td className="py-3 px-4 text-sm font-medium text-[#2C1A0E] truncate max-w-36 w-36" title={v.cajero}>
+                          {v.cajero}
+                        </td>
+
+                        {/* Estado con StatusBadge */}
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          <StatusBadge
+                            status={v.estado}
+                            intent={esAnulada ? 'danger' : 'success'}
+                          />
+                        </td>
+
+                        {/* Acción Ver Detalle con IconActionButton */}
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          <IconActionButton
+                            icon={Eye}
+                            label="Ver detalle de la venta"
+                            onClick={() => handleVerDetalle(v.ventaId)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* 5. Paginación Unificada */}
+          <TablePagination
+            currentPage={pagina}
+            totalPages={totalPaginas}
+            totalItems={total}
+            itemsPerPage={tamano}
+            entityName="ventas"
+            onPageChange={setPagina}
+          />
+        </div>
+
+        {/* Modal CUS12.1: Detalle de Venta */}
+        <VentaDetalleModal
+          isOpen={detalleModalOpen}
+          onClose={() => setDetalleModalOpen(false)}
+          venta={ventaSeleccionada}
+          loading={cargandoDetalle}
+          esAdmin={esAdmin}
+          onAbrirAnular={() => setAnularModalOpen(true)}
+          onDescargarTicket={handleDescargarComprobante}
+          descargandoTicket={descargandoTicket}
+        />
+
+        {/* Modal CUS12.2 / Vista 12.3: Diálogo de Anulación */}
+        <AnularVentaModal
+          isOpen={anularModalOpen}
+          onClose={() => setAnularModalOpen(false)}
+          venta={ventaSeleccionada}
+          onConfirmar={handleConfirmarAnulacion}
+          loading={procesandoAnulacion}
+        />
+
+        {/* Aviso Flotante Toast de Éxito */}
+        {avisoExito && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
           >
-            ×
-          </button>
-        </div>
-      )}
+            <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 shrink-0">
+              <Check className="w-4 h-4 stroke-[3]" />
+            </div>
+            <span className="text-xs font-semibold tracking-wide">{avisoExito}</span>
+          </div>
+        )}
+
+        {/* Aviso Flotante Toast de Error */}
+        {avisoError && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="fixed bottom-6 right-6 z-50 bg-rose-950 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-rose-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
+          >
+            <div className="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-300 shrink-0">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-semibold tracking-wide">{avisoError}</span>
+            <button
+              type="button"
+              onClick={() => setAvisoError(null)}
+              className="ml-2 text-rose-300 hover:text-white text-base leading-none p-1 cursor-pointer"
+              aria-label="Cerrar aviso"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
+export default VentasPage;
