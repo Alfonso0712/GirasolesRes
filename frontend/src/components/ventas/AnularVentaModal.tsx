@@ -96,7 +96,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-rose-600">
+              <p className="text-xs font-bold uppercase tracking-wider text-rose-600">
                 ACCIÓN IRREVERSIBLE
               </p>
               <h2 id="titulo-anular-venta" className="text-xl font-sans font-bold text-[#2C1A0E]">
@@ -168,7 +168,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
               <label htmlFor="motivo-anulacion" className="text-xs font-semibold text-[#482813]">
                 Motivo de anulación <span className="text-rose-600">*</span>
               </label>
-              <span className={`text-[11px] tabular-nums ${motivo.length > 100 || (motivo.length > 0 && motivo.length < 5) ? 'text-rose-600 font-bold' : 'text-neutral-400'}`}>
+              <span className={`text-xs tabular-nums ${motivo.length > 100 || (motivo.length > 0 && motivo.length < 5) ? 'text-rose-600 font-bold' : 'text-neutral-400'}`}>
                 {motivo.length}/100
               </span>
             </div>
@@ -189,7 +189,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
               }`}
             />
             {errorLocal && (
-              <p className="text-[11px] text-rose-600 font-medium mt-1 flex items-center gap-1">
+              <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 <span>{errorLocal}</span>
               </p>

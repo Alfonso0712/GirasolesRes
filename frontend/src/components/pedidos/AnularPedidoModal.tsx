@@ -139,7 +139,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
                     : 'border-neutral-300 focus:border-[#D35400] focus:ring-amber-100'
                 }`}
               />
-              <div className="flex justify-between items-center text-[11px] text-neutral-400 mt-1 px-1">
+              <div className="flex justify-between items-center text-xs text-neutral-400 mt-1 px-1">
                 <span>{motivo.trim().length}/100 caracteres (mín. 5)</span>
                 {errorValidacion && (
                   <span className="text-rose-600 font-medium">{errorValidacion}</span>

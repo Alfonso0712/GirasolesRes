@@ -81,7 +81,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
       <p className="text-xs font-semibold text-rose-800 mb-1">
         No se pudo cargar este bloque
       </p>
-      <p className="text-[11px] text-rose-600 mb-3">
+      <p className="text-xs text-rose-600 mb-3">
         Intente nuevamente sin afectar el resto del panel.
       </p>
       <button

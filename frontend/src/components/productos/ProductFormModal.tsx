@@ -312,7 +312,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </button>
               </div>
               {isEditing && (
-                <p className="mt-1 text-[11px] text-neutral-500 italic">
+                <p className="mt-1 text-xs text-neutral-500 italic">
                   El tipo no se puede modificar en productos existentes para preservar el historial.
                 </p>
               )}
@@ -358,7 +358,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   {errores.nombre}
                 </p>
               ) : (
-                <p className="mt-1 text-[11px] text-[#7C6F66]">
+                <p className="mt-1 text-xs text-[#7C6F66]">
                   De 3 a 50 caracteres.
                 </p>
               )}

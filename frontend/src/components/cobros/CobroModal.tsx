@@ -252,7 +252,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#D35400] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#D35400] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                 Cobro en Caja
               </span>
               <span className="text-xs text-neutral-400">·</span>
@@ -294,7 +294,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 S/ {total.toFixed(2)}
               </div>
               {tipoComprobante !== 'Ticket' && (
-                <div className="text-[11px] text-neutral-600 mt-0.5 font-medium">
+                <div className="text-xs text-neutral-600 mt-0.5 font-medium">
                   Op. Gravada: S/ {(total / 1.18).toFixed(2)} · IGV (18%): S/ {(total - total / 1.18).toFixed(2)}
                 </div>
               )}
@@ -344,7 +344,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 }`}
               >
                 <div className="font-bold">Ticket</div>
-                <div className="text-[10px] opacity-75 font-normal">Sin validez fiscal</div>
+                <div className="text-xs opacity-75 font-normal">Sin validez fiscal</div>
               </button>
 
               <button
@@ -357,7 +357,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 }`}
               >
                 <div className="font-bold">Boleta</div>
-                <div className="text-[10px] opacity-75 font-normal">Persona Natural</div>
+                <div className="text-xs opacity-75 font-normal">Persona Natural</div>
               </button>
 
               <button
@@ -370,7 +370,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 }`}
               >
                 <div className="font-bold">Factura</div>
-                <div className="text-[10px] opacity-75 font-normal">Con RUC (Empresa)</div>
+                <div className="text-xs opacity-75 font-normal">Con RUC (Empresa)</div>
               </button>
             </div>
           </div>
@@ -408,7 +408,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               </div>
 
               {esExigidoDocumentoPorMonto && (
-                <div className="p-2 bg-amber-50 border border-amber-200 text-amber-800 text-[11px] rounded-lg flex items-center gap-1.5">
+                <div className="p-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg flex items-center gap-1.5">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-700" />
                   <span>Por normativa SUNAT, ventas mayores o iguales a S/ 700.00 requieren DNI o RUC.</span>
                 </div>
@@ -604,7 +604,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
 
               {/* Botones de sugerencia rápida */}
               <div className="space-y-1.5">
-                <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                   Acceso rápido:
                 </span>
                 <div className="flex flex-wrap gap-2">

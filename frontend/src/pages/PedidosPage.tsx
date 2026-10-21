@@ -604,7 +604,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                           <div className="flex items-center gap-1.5">
                             <span>{p.registradoPor}</span>
                             {p.esMio && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-semibold text-[10px]">
+                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-semibold text-xs">
                                 Mío
                               </span>
                             )}
@@ -710,7 +710,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                           {p.tipo === 'Mesa' ? (p.mesa || 'Mesa') : 'Para llevar'}
                         </span>
                         {p.esMio && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-bold text-[10px]">
+                          <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-bold text-xs">
                             Mío
                           </span>
                         )}

@@ -280,7 +280,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               <Lock className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
                 Gestión de Caja
               </p>
               <h2 id="cerrar-caja-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
@@ -320,7 +320,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               {/* Tarjetas de Balance Final */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                  <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                     Monto Inicial
                   </p>
                   <p className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5">
@@ -328,7 +328,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   </p>
                 </div>
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                  <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                     Efectivo Esperado
                   </p>
                   <p className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5">
@@ -336,7 +336,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   </p>
                 </div>
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                  <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                     Efectivo Contado
                   </p>
                   <p className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5">
@@ -352,7 +352,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       : 'bg-red-50 border-red-200 text-red-800'
                   }`}
                 >
-                  <p className="text-[10px] font-bold uppercase tracking-wider">
+                  <p className="text-xs font-bold uppercase tracking-wider">
                     Diferencia
                   </p>
                   <p className="text-base font-black tabular-nums mt-0.5">
@@ -483,53 +483,53 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 block">
+                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
                         Monto Inicial
                       </span>
                       <span className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5 block">
                         S/ {resumen.montoInicial.toFixed(2)}
                       </span>
-                      <span className="text-[9px] text-stone-400 block">Fondo turno</span>
+                      <span className="text-xs text-stone-400 block">Fondo turno</span>
                     </div>
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
                         <Banknote className="w-3 h-3 text-[#D35400]" /> Ventas Efectivo
                       </span>
                       <span className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5 block">
                         S/ {resumen.ventasEfectivo.toFixed(2)}
                       </span>
-                      <span className="text-[9px] text-stone-400 block">Gaveta física</span>
+                      <span className="text-xs text-stone-400 block">Gaveta física</span>
                     </div>
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
                         <CreditCard className="w-3 h-3 text-purple-600" /> Ventas Yape / QR
                       </span>
                       <span className="text-base font-bold text-purple-900 tabular-nums mt-0.5 block">
                         S/ {resumen.ventasYape.toFixed(2)}
                       </span>
-                      <span className="text-[9px] text-stone-400 block">Cuenta digital</span>
+                      <span className="text-xs text-stone-400 block">Cuenta digital</span>
                     </div>
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
                         <DollarSign className="w-3 h-3 text-emerald-600" /> Total Ventas
                       </span>
                       <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
                         S/ {resumen.totalVentas.toFixed(2)}
                       </span>
-                      <span className="text-[9px] text-stone-400 block">Efectivo + Yape</span>
+                      <span className="text-xs text-stone-400 block">Efectivo + Yape</span>
                     </div>
 
                     <div className="p-3 bg-amber-50/70 border border-amber-300 rounded-xl col-span-2 sm:col-span-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 block">
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-800 block">
                         Efectivo Esperado
                       </span>
                       <span className="text-lg font-black text-[#D35400] tabular-nums mt-0.5 block">
                         S/ {resumen.efectivoEsperado.toFixed(2)}
                       </span>
-                      <span className="text-[9px] text-neutral-500 block">
+                      <span className="text-xs text-neutral-500 block">
                         (Inicial + Efectivo)
                       </span>
                     </div>
@@ -547,7 +547,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     >
                       Efectivo Contado en Gaveta (S/) <span className="text-red-600">*</span>
                     </label>
-                    <p className="text-[11px] text-neutral-500">
+                    <p className="text-xs text-neutral-500">
                       Cuente el dinero físico o use el contador de billetes y monedas.
                     </p>
                   </div>
@@ -615,7 +615,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                             <span className="tabular-nums">{`Faltante de S/ ${Math.abs(diferenciaCalculada).toFixed(2)}. Se recomienda indicar una observación.`}</span> // MSG-178
                           )}
                         </p>
-                        <p className="text-[11px] opacity-80 tabular-nums">
+                        <p className="text-xs opacity-80 tabular-nums">
                           Esperado: <span className="tabular-nums">S/ {resumen?.efectivoEsperado.toFixed(2)}</span> | Contado: <span className="tabular-nums">S/ {contadoNumerico?.toFixed(2)}</span>
                         </p>
                       </div>
@@ -640,7 +640,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       Observación {diferenciaCalculada !== null && diferenciaCalculada !== 0 && '(Recomendada)'}
                     </label>
                     <span
-                      className={`text-[10px] tabular-nums font-semibold ${
+                      className={`text-xs tabular-nums font-semibold ${
                         observacion.length > 200 ? 'text-red-600 font-bold' : 'text-stone-400'
                       }`}
                     >
@@ -658,7 +658,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     className="block w-full px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs text-[#2C1A0E] focus:outline-hidden focus:ring-1 focus:ring-[#D35400] focus:border-[#D35400] disabled:bg-stone-100"
                   />
                   {observacion.length > 200 && (
-                    <p className="text-[10px] text-red-600 font-bold mt-1">
+                    <p className="text-xs text-red-600 font-bold mt-1">
                       La observación no puede superar los 200 caracteres.
                     </p>
                   )}

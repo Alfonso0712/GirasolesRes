@@ -268,7 +268,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
       <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-3.5 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
+            <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Por Cobrar
             </span>
             <span className="text-xl font-bold font-sans tabular-nums text-[#2C1A0E]">
@@ -282,7 +282,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
         <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
+            <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Listos en Cocina
             </span>
             <span className="text-xl font-bold font-sans tabular-nums text-[#2C1A0E]">
@@ -296,7 +296,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
         <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
+            <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Monto Pendiente
             </span>
             <span className="text-xl font-bold font-sans tabular-nums text-[#D35400]">

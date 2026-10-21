@@ -33,7 +33,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
     >
       {/* Insignia de Cantidad seleccionada */}
       {cantEnBorrador > 0 && !esAgotado && (
-        <span className="absolute -top-2 -right-2 bg-[#D35400] text-white text-[11px] font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-xs tabular-nums">
+        <span className="absolute -top-2 -right-2 bg-[#D35400] text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-xs tabular-nums">
           {cantEnBorrador}
         </span>
       )}
@@ -44,7 +44,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             {nombre}
           </h4>
           {esAgotado && (
-            <span className="shrink-0 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-2xs">
+            <span className="shrink-0 px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 shadow-2xs">
               Agotado
             </span>
           )}

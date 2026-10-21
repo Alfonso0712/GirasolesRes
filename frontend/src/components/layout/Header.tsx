@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-neutral-200 p-2 z-50 animate-in fade-in slide-in-from-top-1">
               <div className="px-3 py-2 border-b border-neutral-100 mb-1">
                 <p className="text-xs font-bold text-neutral-900 truncate">{session?.nombre}</p>
-                <p className="text-[11px] text-neutral-500">{session?.rol}</p>
+                <p className="text-xs text-neutral-500">{session?.rol}</p>
               </div>
 
               {esAdmin && onCambiarPassword && (

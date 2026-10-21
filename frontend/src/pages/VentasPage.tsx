@@ -163,7 +163,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             <Receipt className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block">
               VENTAS VIGENTES
             </span>
             <div className="flex items-baseline gap-1 mt-0.5">
@@ -181,7 +181,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             <DollarSign className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">
               TOTAL VIGENTE
             </span>
             <div className="flex items-baseline gap-1 mt-0.5">
@@ -196,7 +196,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
         {/* KPI 3: Desglose Efectivo vs Yape */}
         <div className="bg-white rounded-2xl border border-neutral-200/80 p-3.5 shadow-2xs flex items-center justify-between gap-2">
           <div className="flex-1 border-r border-neutral-100 pr-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block flex items-center gap-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block flex items-center gap-1">
               <DollarSign className="w-3 h-3 text-emerald-700" />
               <span>EFECTIVO</span>
             </span>
@@ -205,7 +205,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             </span>
           </div>
           <div className="flex-1 pl-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 block flex items-center gap-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-purple-700 block flex items-center gap-1">
               <Smartphone className="w-3 h-3 text-purple-600" />
               <span>YAPE</span>
             </span>
@@ -221,7 +221,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             <Ban className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block">
               ANULADAS (NO SUMAN)
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
@@ -296,7 +296,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               )}
             </div>
             {errorBusqueda && (
-              <p className="text-[11px] text-rose-600 font-medium mt-1 flex items-center gap-1">
+              <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 <span>{errorBusqueda}</span>
               </p>
@@ -307,7 +307,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1.5 text-xs text-neutral-600">
               <Calendar className="w-3.5 h-3.5 text-neutral-400" />
-              <span className="font-semibold text-[11px]">Desde:</span>
+              <span className="font-semibold text-xs">Desde:</span>
               <input
                 type="date"
                 value={desde}
@@ -320,7 +320,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-neutral-600">
-              <span className="font-semibold text-[11px]">Hasta:</span>
+              <span className="font-semibold text-xs">Hasta:</span>
               <input
                 type="date"
                 value={hasta}
@@ -397,7 +397,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
 
         {/* Mensaje de error de rango de fechas (MSG-157, MSG-158, MSG-159) */}
         {errorFechas && (
-          <p className="text-[11px] text-rose-600 font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
+          <p className="text-xs text-rose-600 font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
             <AlertCircle className="w-3.5 h-3.5 shrink-0" />
             <span>{errorFechas}</span>
           </p>

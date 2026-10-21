@@ -71,7 +71,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
                 <Clock className="w-4 h-4" />
                 <span>{c.minutosEspera} min</span>
               </div>
-              <span className="text-[11px] text-neutral-400">Llegó: {c.horaLlegada}</span>
+              <span className="text-xs text-neutral-400">Llegó: {c.horaLlegada}</span>
             </div>
           </div>
 
@@ -173,7 +173,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
               <Clock className="w-4 h-4" />
               <span>{c.minutosEspera} min</span>
             </div>
-            <span className="text-[11px] text-neutral-400">Llegó: {c.horaLlegada}</span>
+            <span className="text-xs text-neutral-400">Llegó: {c.horaLlegada}</span>
           </div>
         </div>
 

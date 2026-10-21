@@ -75,7 +75,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-200 text-rose-800">
+              <span className="px-2 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wider bg-rose-200 text-rose-800">
                 Bloqueo Operativo: Caja anterior sin cerrar
               </span>
               <h3 className="font-sans font-bold text-base sm:text-lg text-rose-900">
@@ -85,7 +85,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
             <p className="text-xs sm:text-sm text-rose-800 mt-1 font-medium">
               {textoMensaje}
             </p>
-            <p className="text-[11px] text-rose-600 mt-0.5">
+            <p className="text-xs text-rose-600 mt-0.5">
               No es posible aperturar un nuevo turno ni cobrar pedidos hasta que la jornada previa sea conciliada y cerrada.
             </p>
           </div>
@@ -149,17 +149,17 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           {resumen && (
             <div className="flex items-center gap-3 text-xs bg-white/80 px-3.5 py-2 rounded-xl border border-emerald-200 shadow-2xs tabular-nums">
               <div>
-                <span className="text-neutral-500 block text-[10px] uppercase font-bold">Ventas ({resumen.cantidadVentas})</span>
+                <span className="text-neutral-500 block text-xs uppercase font-bold">Ventas ({resumen.cantidadVentas})</span>
                 <span className="font-extrabold text-[#482813]">S/ {resumen.totalVentas.toFixed(2)}</span>
               </div>
               <div className="h-6 w-px bg-neutral-200" />
               <div>
-                <span className="text-neutral-500 block text-[10px] uppercase font-bold">Efectivo</span>
+                <span className="text-neutral-500 block text-xs uppercase font-bold">Efectivo</span>
                 <span className="font-bold text-neutral-700">S/ {resumen.totalEfectivo.toFixed(2)}</span>
               </div>
               <div className="h-6 w-px bg-neutral-200" />
               <div>
-                <span className="text-neutral-500 block text-[10px] uppercase font-bold">Yape</span>
+                <span className="text-neutral-500 block text-xs uppercase font-bold">Yape</span>
                 <span className="font-bold text-neutral-700">S/ {resumen.totalYape.toFixed(2)}</span>
               </div>
             </div>
@@ -198,7 +198,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-200 text-amber-800">
+            <span className="px-2 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-200 text-amber-800">
               Caja Inactiva
             </span>
             <h4 className="font-bold text-sm sm:text-base text-[#482813]">

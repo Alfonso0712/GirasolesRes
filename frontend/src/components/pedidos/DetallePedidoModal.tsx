@@ -197,12 +197,12 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                         Comanda N.º {c.numero}
                       </span>
                       {c.esAdicional && (
-                        <span className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-bold text-xs">
                           Adicional
                         </span>
                       )}
                       {c.modificada && (
-                        <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-xs">
                           Modificada
                         </span>
                       )}

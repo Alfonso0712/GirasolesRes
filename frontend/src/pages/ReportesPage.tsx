@@ -312,7 +312,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 </div>
 
                 <div className="text-right sm:self-auto shrink-0 pl-12 sm:pl-0">
-                  <span className="text-[11px] text-neutral-500 font-sans block">Total Platos / Ventas</span>
+                  <span className="text-xs text-neutral-500 font-sans block">Total Platos / Ventas</span>
                   <span className="font-sans font-bold tabular-nums text-sm text-[#2C1A0E]">
                     S/ {reportePlatos.totalMonto.toFixed(2)}
                   </span>
@@ -329,7 +329,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-[#2C1A0E] tabular-nums mt-1">
                   {reportePlatos ? reportePlatos.totalPlatos : '0'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Suma de raciones servidas</span>
+                <span className="text-xs text-neutral-400 mt-1">Suma de raciones servidas</span>
               </div>
 
               <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
@@ -339,7 +339,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-[#D35400] tabular-nums mt-1">
                   S/ {reportePlatos ? reportePlatos.totalMonto.toFixed(2) : '0.00'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Calculado por precio en comanda</span>
+                <span className="text-xs text-neutral-400 mt-1">Calculado por precio en comanda</span>
               </div>
 
               <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
@@ -349,7 +349,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-neutral-800 tabular-nums mt-1">
                   S/ {reportePlatos ? reportePlatos.totalVentas.toFixed(2) : '0.00'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Ventas vigentes del período</span>
+                <span className="text-xs text-neutral-400 mt-1">Ventas vigentes del período</span>
               </div>
             </div>
 
@@ -369,7 +369,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                         <span className="text-xs font-bold text-[#482813] block">
                           {CATEGORIA_LABELS[sub.categoria] || sub.categoria}
                         </span>
-                        <span className="text-[11px] text-neutral-500">
+                        <span className="text-xs text-neutral-500">
                           {sub.cantidad} {sub.cantidad === 1 ? 'plato' : 'platos'}
                         </span>
                       </div>
@@ -412,7 +412,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                       key={d.fecha}
                       className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/80 text-center"
                     >
-                      <span className="text-[11px] font-medium text-neutral-500 block">{d.fecha}</span>
+                      <span className="text-xs font-medium text-neutral-500 block">{d.fecha}</span>
                       <span className="text-base font-bold text-[#2C1A0E] font-sans tabular-nums block mt-0.5">
                         {d.cantidad} un.
                       </span>
@@ -509,7 +509,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                             {item.producto}
                           </h4>
                           {!item.activo && (
-                            <span className="text-[10px] text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200 inline-block mt-0.5">
+                            <span className="text-xs text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200 inline-block mt-0.5">
                               (inactivo)
                             </span>
                           )}
@@ -593,7 +593,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-[#D35400] tabular-nums mt-2">
                   S/ {reporteVentas ? reporteVentas.total.toFixed(2) : '0.00'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Ingresos brutos vigentes</span>
+                <span className="text-xs text-neutral-400 mt-1">Ingresos brutos vigentes</span>
               </div>
 
               <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
@@ -608,7 +608,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-emerald-700 tabular-nums mt-2">
                   S/ {reporteVentas ? reporteVentas.efectivo.toFixed(2) : '0.00'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Cobros en caja física</span>
+                <span className="text-xs text-neutral-400 mt-1">Cobros en caja física</span>
               </div>
 
               <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
@@ -623,7 +623,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-purple-700 tabular-nums mt-2">
                   S/ {reporteVentas ? reporteVentas.yape.toFixed(2) : '0.00'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Billeteras electrónicas</span>
+                <span className="text-xs text-neutral-400 mt-1">Billeteras electrónicas</span>
               </div>
 
               <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
@@ -638,7 +638,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-[#2C1A0E] tabular-nums mt-2">
                   {reporteVentas ? reporteVentas.nVentas : '0'}
                 </span>
-                <span className="text-[11px] text-neutral-400 mt-1">Comprobantes vigentes</span>
+                <span className="text-xs text-neutral-400 mt-1">Comprobantes vigentes</span>
               </div>
             </div>
 

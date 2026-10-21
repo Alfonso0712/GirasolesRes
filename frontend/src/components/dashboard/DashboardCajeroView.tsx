@@ -94,7 +94,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
               <span>COBRAR PEDIDO</span>
             </button>
             {!cajaAbierta && (
-              <span className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-[11px] px-2.5 py-1 rounded-md shadow-md whitespace-nowrap z-20">
+              <span className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-xs px-2.5 py-1 rounded-md shadow-md whitespace-nowrap z-20">
                 Abra la caja primero
               </span>
             )}

@@ -459,7 +459,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                     <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
                     <span className="font-semibold text-neutral-700">Cargando productos…</span>
                   </div>
-                  <span className="text-[11px] text-neutral-400 font-medium">Actualizando lista</span>
+                  <span className="text-xs text-neutral-400 font-medium">Actualizando lista</span>
                 </div>
                 <div className="p-4 space-y-3">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -683,7 +683,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                             <div>
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                                  className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                                     esComponente
                                       ? 'bg-emerald-100 text-emerald-800'
                                       : 'bg-neutral-100 text-neutral-800'
@@ -855,7 +855,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                             <h3 className="font-sans font-bold text-base sm:text-lg lg:text-xl text-[#2C1A0E] leading-snug break-words">
                               {m.nombre}
                             </h3>
-                            <span className="text-[11px] text-neutral-500 font-medium">
+                            <span className="text-xs text-neutral-500 font-medium">
                               Fórmula #{m.id}
                             </span>
                           </div>
@@ -895,7 +895,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
                       {/* Desglose de Partes que lo componen */}
                       <div className="mt-4 space-y-2">
-                        <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                        <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
                           Componentes requeridos ({m.partes.length})
                         </p>
                         <div className="space-y-1.5">
@@ -905,12 +905,12 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                               className="flex items-center justify-between text-xs p-2 rounded-lg bg-neutral-50/80 border border-neutral-100 text-neutral-700"
                             >
                               <span className="font-semibold flex items-center gap-1.5">
-                                <span className="w-4 h-4 rounded-full bg-neutral-200 text-neutral-700 flex items-center justify-center text-[10px]">
+                                <span className="w-4 h-4 rounded-full bg-neutral-200 text-neutral-700 flex items-center justify-center text-xs">
                                   {p.orden}
                                 </span>
                                 {p.nombre}
                               </span>
-                              <span className="text-[11px] text-neutral-500 tabular-nums">
+                              <span className="text-xs text-neutral-500 tabular-nums">
                                 {p.rolesPermitidos.map((r) => ROL_LABELS[r] || r).join(' o ')}
                               </span>
                             </div>
@@ -1031,7 +1031,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 {errorPrecio && (
                   <p className="mt-1 text-xs text-rose-600 font-medium">{errorPrecio}</p>
                 )}
-                <p className="mt-1 text-[11px] text-neutral-500">
+                <p className="mt-1 text-xs text-neutral-500">
                   Mayor a S/ 0.00 y no superior a S/ 999.99.
                 </p>
               </div>

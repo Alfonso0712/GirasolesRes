@@ -195,7 +195,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               <DollarSign className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
                 Gestión de Caja
               </p>
               <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
@@ -287,7 +287,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                     {errorValidacion}
                   </p>
                 )}
-                <p className="text-[11px] text-neutral-500 mt-1">
+                <p className="text-xs text-neutral-500 mt-1">
                   Permitido: S/ 0.00 a S/ 99,999.99 con hasta 2 decimales.
                 </p>
               </div>

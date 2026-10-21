@@ -66,12 +66,12 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#D35400]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
                   DETALLE DE VENTA
                 </span>
                 {venta && (
                   <span
-                    className={`px-2 py-0.5 text-[11px] font-bold rounded-md border flex items-center gap-1 ${
+                    className={`px-2 py-0.5 text-xs font-bold rounded-md border flex items-center gap-1 ${
                       esAnulada
                         ? 'bg-rose-50 text-rose-700 border-rose-200'
                         : 'bg-emerald-50 text-emerald-800 border-emerald-200'
@@ -117,7 +117,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                     <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
                     <span>Esta venta fue ANULADA y no suma en los totales ni cierre de caja.</span>
                   </div>
-                  <div className="pl-6 text-[11px] text-rose-950 space-y-0.5">
+                  <div className="pl-6 text-xs text-rose-950 space-y-0.5">
                     <p><strong>Motivo:</strong> {venta.motivoAnulacion || 'Sin motivo especificado'}</p>
                     <p><strong>Anulado por:</strong> {venta.usuarioAnulacion || 'Administrador'} · {venta.fechaHoraAnulacionFormateada || 'Fecha no registrada'}</p>
                     <p><strong>Destino del pedido:</strong> {venta.destinoPedido === 'porCobrar' ? 'Devuelto a pendiente de cobro en caja' : 'Pedido anulado permanentemente'}</p>
@@ -128,26 +128,26 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               {/* Tarjeta de Datos Generales */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-neutral-50/70 rounded-xl border border-neutral-200/70 text-xs">
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-neutral-400 block">Fecha y Hora</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Fecha y Hora</span>
                   <span className="font-semibold text-neutral-800 tabular-nums">{venta.fechaHoraFormateada}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-neutral-400 block">Pedido N.º</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Pedido N.º</span>
                   <span className="font-semibold text-neutral-800 tabular-nums">#{venta.pedidoNumero}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-neutral-400 block">Destino</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Destino</span>
                   <span className="font-semibold text-neutral-800">
                     {venta.tipo} {venta.mesa ? `· ${venta.mesa}` : ''}
                   </span>
                   {venta.referencia && (
-                    <span className="text-[10px] text-neutral-500 block truncate" title={venta.referencia}>
+                    <span className="text-xs text-neutral-500 block truncate" title={venta.referencia}>
                       Ref: {venta.referencia}
                     </span>
                   )}
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-neutral-400 block">Cajero(a)</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Cajero(a)</span>
                   <span className="font-semibold text-neutral-800">{venta.cajero}</span>
                 </div>
               </div>
@@ -156,14 +156,14 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               {(venta.numDocReceptor || venta.razonSocialReceptor) && (
                 <div className="p-3.5 bg-blue-50/50 rounded-xl border border-blue-200/80 text-xs space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800">
+                    <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
                       Datos del Receptor Fiscal ({venta.tipoDocReceptor || (venta.numDocReceptor?.length === 11 ? 'RUC' : 'DNI')})
                     </span>
-                    <span className="px-2 py-0.2 bg-blue-100 text-blue-800 text-[10px] font-bold rounded-md">
+                    <span className="px-2 py-0.2 bg-blue-100 text-blue-800 text-xs font-bold rounded-md">
                       {venta.comprobante.startsWith('F') ? 'Factura' : venta.comprobante.startsWith('B') ? 'Boleta' : 'Comprobante'}
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-neutral-800">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs text-neutral-800">
                     <div>
                       <span className="text-neutral-500 font-medium">N.º Documento: </span>
                       <span className="tabular-nums font-bold text-neutral-900">{venta.numDocReceptor}</span>
@@ -174,7 +174,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                     </div>
                   </div>
                   {venta.direccionReceptor && (
-                    <div className="pt-1 text-[11px] text-neutral-700">
+                    <div className="pt-1 text-xs text-neutral-700">
                       <span className="text-neutral-500 font-medium">Dirección Fiscal: </span>
                       <span>{venta.direccionReceptor}</span>
                     </div>
@@ -233,7 +233,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               {/* Desglose Fiscal y de Pago */}
               <div className="p-3.5 bg-amber-50/30 rounded-xl border border-amber-200/60 text-xs space-y-3">
                 {/* Desglose Tributario */}
-                <div className="space-y-1 pb-2 border-b border-amber-200/50 text-[11px]">
+                <div className="space-y-1 pb-2 border-b border-amber-200/50 text-xs">
                   <div className="flex items-center justify-between text-neutral-600">
                     <span>Op. Gravada (Base imponible):</span>
                     <span className="tabular-nums font-semibold text-neutral-800">
@@ -255,7 +255,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 </div>
 
                 {/* Métodos de Pago */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-600">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-neutral-600">
                   <div>
                     <span className="text-neutral-400 block uppercase font-medium">Método de Pago</span>
                     <span className="font-bold text-[#2C1A0E] flex items-center gap-1 mt-0.5">

@@ -130,7 +130,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-base">{plato.nombre}</span>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                        className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                           plato.agotado
                             ? 'bg-rose-200 text-rose-900'
                             : 'bg-emerald-100 text-emerald-800'

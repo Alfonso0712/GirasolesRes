@@ -171,7 +171,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               <Coins className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#D35400]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
                 Herramienta de Arqueo
               </p>
               <h2 id="contador-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
@@ -241,7 +241,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                       <span className="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5">
                         = S/ {subtotal.toFixed(2)}
                       </span>
-                      {err && <span className="text-[10px] text-red-600 mt-0.5">{err}</span>}
+                      {err && <span className="text-xs text-red-600 mt-0.5">{err}</span>}
                     </div>
                   </div>
                 );
@@ -295,7 +295,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                       <span className="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5">
                         = S/ {subtotal.toFixed(2)}
                       </span>
-                      {err && <span className="text-[10px] text-red-600 mt-0.5">{err}</span>}
+                      {err && <span className="text-xs text-red-600 mt-0.5">{err}</span>}
                     </div>
                   </div>
                 );
@@ -316,7 +316,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               Limpiar
             </button>
             <div className="text-right sm:text-left">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-500 block">
+              <span className="text-xs uppercase font-bold tracking-wider text-neutral-500 block">
                 Total Contado
               </span>
               <span className="font-sans text-2xl font-black text-[#2C1A0E] tabular-nums whitespace-nowrap">

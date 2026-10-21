@@ -24,7 +24,7 @@ export const AgotadoItemCard: React.FC<AgotadoItemCardProps> = ({
     >
       <div className="flex flex-col items-start gap-1.5 mb-2">
         <span
-          className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+          className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
             item.tipo === 'Componente'
               ? 'bg-purple-100 text-purple-800 border border-purple-200'
               : 'bg-blue-100 text-blue-800 border border-blue-200'

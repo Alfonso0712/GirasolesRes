@@ -347,7 +347,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                                   {mc.partes.map((p) => (
                                     <span
                                       key={p.id}
-                                      className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium font-sans"
+                                      className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium font-sans"
                                     >
                                       {p.nombre}
                                     </span>
@@ -358,7 +358,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                               <div className="pt-2 border-t border-neutral-100 mt-1 flex items-center justify-between gap-2">
                                 {!mc.disponible ? (
                                   <span
-                                    className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200 w-full text-center font-sans"
+                                    className="text-xs font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200 w-full text-center font-sans"
                                     title={mc.motivoNoDisponible || undefined}
                                   >
                                     No disponible hoy
@@ -421,7 +421,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 <h3 className="font-sans font-bold text-base text-[#2C1A0E]">
                   Pedido para Llevar
                 </h3>
-                <p className="text-[11px] text-[#7C6F66]">
+                <p className="text-xs text-[#7C6F66]">
                   {lineasBorrador.length} ítems • {cantidadTotalProductos} platos
                 </p>
               </div>
@@ -442,7 +442,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 <p className="text-xs font-medium text-neutral-500">
                   No hay productos en el pedido para llevar
                 </p>
-                <p className="text-[11px] text-neutral-400 mt-1 max-w-[200px]">
+                <p className="text-xs text-neutral-400 mt-1 max-w-[200px]">
                   Toque el botón + de cualquier producto de la carta para agregarlo a la comanda.
                 </p>
               </div>
@@ -466,12 +466,12 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           {linea.nombre}
                         </span>
                         {linea.elecciones && linea.elecciones.length > 0 && (
-                          <span className="text-[11px] text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
+                          <span className="text-xs text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
                             {linea.elecciones.map((e) => e.productoNombre).join(' + ')}
                             {linea.incluye ? ` (incluye ${linea.incluye})` : ''}
                           </span>
                         )}
-                        <span className="text-[11px] text-[#7C6F66] tabular-nums whitespace-nowrap">
+                        <span className="text-xs text-[#7C6F66] tabular-nums whitespace-nowrap">
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
@@ -482,7 +482,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
 
                     {/* Alerta si el plato se agotó en cocina (409 Conflict) */}
                     {tieneError && (
-                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-[11px] text-rose-800 font-semibold flex items-center gap-1.5">
+                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-xs text-rose-800 font-semibold flex items-center gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                         <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
@@ -495,7 +495,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                         <button
                           type="button"
                           onClick={() => abrirModalNota(linea)}
-                          className="text-[#D35400] font-bold text-[11px] hover:underline shrink-0 cursor-pointer"
+                          className="text-[#D35400] font-bold text-xs hover:underline shrink-0 cursor-pointer"
                           title="Editar nota del plato"
                         >
                           Editar
@@ -593,7 +593,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               <div>
                 <span className="text-xs text-[#7C6F66] block">Total a Pagar</span>
                 {referencia.trim() && (
-                  <span className="text-[11px] font-semibold text-[#D35400] block truncate max-w-[140px]">
+                  <span className="text-xs font-semibold text-[#D35400] block truncate max-w-[140px]">
                     Cliente: {referencia.trim()}
                   </span>
                 )}
@@ -714,12 +714,12 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           {linea.nombre}
                         </span>
                         {linea.elecciones && linea.elecciones.length > 0 && (
-                          <span className="text-[11px] text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
+                          <span className="text-xs text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
                             {linea.elecciones.map((e) => e.productoNombre).join(' + ')}
                             {linea.incluye ? ` (incluye ${linea.incluye})` : ''}
                           </span>
                         )}
-                        <span className="text-[11px] text-[#7C6F66] tabular-nums whitespace-nowrap">
+                        <span className="text-xs text-[#7C6F66] tabular-nums whitespace-nowrap">
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
@@ -729,7 +729,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                     </div>
 
                     {tieneError && (
-                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-[11px] text-rose-800 font-semibold flex items-center gap-1.5">
+                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-xs text-rose-800 font-semibold flex items-center gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                         <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
@@ -741,7 +741,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                         <button
                           type="button"
                           onClick={() => abrirModalNota(linea)}
-                          className="text-[#D35400] font-bold text-[11px] hover:underline shrink-0 cursor-pointer"
+                          className="text-[#D35400] font-bold text-xs hover:underline shrink-0 cursor-pointer"
                         >
                           Editar
                         </button>

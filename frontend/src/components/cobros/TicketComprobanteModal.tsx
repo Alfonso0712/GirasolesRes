@@ -44,7 +44,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
               >
                 Comprobante Emitido
               </h2>
-              <p className="text-[11px] text-neutral-500 font-mono">
+              <p className="text-xs text-neutral-500 font-mono">
                 {comprobante.numeroFormateado}
               </p>
             </div>
@@ -67,17 +67,17 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
               <h3 className="font-bold text-sm text-neutral-900 tracking-wider">
                 RESTAURANTE GIRASOLES
               </h3>
-              <p className="text-[11px] text-neutral-500">RUC: 20481234567</p>
-              <p className="text-[11px] text-neutral-500">Av. Principal 123 - Ayacucho</p>
+              <p className="text-xs text-neutral-500">RUC: 20481234567</p>
+              <p className="text-xs text-neutral-500">Av. Principal 123 - Ayacucho</p>
               {comprobante.esCopia && (
-                <div className="mt-1 inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-[10px] font-bold">
+                <div className="mt-1 inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-xs font-bold">
                   *** COPIA ***
                 </div>
               )}
             </div>
 
             {/* Metadatos */}
-            <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-0.5 text-[11px]">
+            <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-0.5 text-xs">
               <div className="text-center font-bold text-xs text-[#D35400] pb-1">
                 {comprobante.tipoComprobante === 'Factura'
                   ? 'FACTURA ELECTRÓNICA'
@@ -110,7 +110,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                 </div>
               )}
               {comprobante.direccionReceptor && (
-                <div className="flex justify-between text-[10px]">
+                <div className="flex justify-between text-xs">
                   <span className="text-neutral-500">DIR:</span>
                   <span className="text-right max-w-[200px] truncate">{comprobante.direccionReceptor}</span>
                 </div>
@@ -135,7 +135,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
 
             {/* Tabla de Productos */}
             <div className="py-2.5 border-b border-dashed border-neutral-300">
-              <div className="flex justify-between text-[10px] font-bold text-neutral-500 pb-1 border-b border-neutral-200 mb-1.5">
+              <div className="flex justify-between text-xs font-bold text-neutral-500 pb-1 border-b border-neutral-200 mb-1.5">
                 <span className="w-8">CANT</span>
                 <span className="flex-1 px-1">DESCRIPCIÓN</span>
                 <span className="w-12 text-right">P.U.</span>
@@ -144,19 +144,19 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
               <div className="space-y-1">
                 {comprobante.lineas.map((l, idx) => (
                   <div key={idx}>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-xs">
                       <span className="w-8 font-semibold">{l.cantidad}</span>
                       <span className="flex-1 px-1 truncate font-medium">{l.productoNombre}</span>
                       <span className="w-12 text-right">{l.precioUnitario.toFixed(2)}</span>
                       <span className="w-14 text-right font-semibold">{l.subtotal.toFixed(2)}</span>
                     </div>
                     {l.elecciones && (
-                      <div className="text-[10px] text-neutral-500 pl-8 italic">
+                      <div className="text-xs text-neutral-500 pl-8 italic">
                         {l.elecciones}{l.incluye ? ` (incluye ${l.incluye})` : ''}
                       </div>
                     )}
                     {l.observacion && (
-                      <div className="text-[10px] text-neutral-500 pl-8 italic">
+                      <div className="text-xs text-neutral-500 pl-8 italic">
                         * {l.observacion}
                       </div>
                     )}
@@ -169,11 +169,11 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-1 text-xs">
               {(comprobante.tipoComprobante === 'Boleta' || comprobante.tipoComprobante === 'Factura') && (
                 <>
-                  <div className="flex justify-between text-[11px] text-neutral-600">
+                  <div className="flex justify-between text-xs text-neutral-600">
                     <span>OP. GRAVADA:</span>
                     <span>S/ {(comprobante.opGravada ?? (comprobante.total / 1.18)).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-[11px] text-neutral-600">
+                  <div className="flex justify-between text-xs text-neutral-600">
                     <span>I.G.V. (18%):</span>
                     <span>S/ {(comprobante.igv ?? (comprobante.total - comprobante.total / 1.18)).toFixed(2)}</span>
                   </div>
@@ -183,24 +183,24 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                 <span>TOTAL A PAGAR:</span>
                 <span>S/ {comprobante.total.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-[11px] text-neutral-600">
+              <div className="flex justify-between text-xs text-neutral-600">
                 <span>MÉTODO DE PAGO:</span>
                 <span className="font-semibold">{comprobante.metodoPago}</span>
               </div>
               {comprobante.metodoPago === 'Efectivo' && comprobante.montoRecibido != null && (
                 <>
-                  <div className="flex justify-between text-[11px] text-neutral-500">
+                  <div className="flex justify-between text-xs text-neutral-500">
                     <span>MONTO RECIBIDO:</span>
                     <span>S/ {comprobante.montoRecibido.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-[11px] text-emerald-700 font-bold">
+                  <div className="flex justify-between text-xs text-emerald-700 font-bold">
                     <span>VUELTO ENTREGADO:</span>
                     <span>S/ {(comprobante.vuelto ?? 0).toFixed(2)}</span>
                   </div>
                 </>
               )}
               {comprobante.metodoPago === 'Yape' && comprobante.yapeReferencia && (
-                <div className="flex justify-between text-[11px] text-neutral-600">
+                <div className="flex justify-between text-xs text-neutral-600">
                   <span>REF. YAPE:</span>
                   <span className="font-mono">{comprobante.yapeReferencia}</span>
                 </div>
@@ -208,7 +208,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             </div>
 
             {/* Pie de ticket */}
-            <div className="pt-3 text-center text-[10px] text-neutral-500 space-y-1">
+            <div className="pt-3 text-center text-xs text-neutral-500 space-y-1">
               <p className="font-semibold uppercase">{comprobante.leyenda}</p>
               <p className="font-medium">¡Gracias por su preferencia!</p>
             </div>

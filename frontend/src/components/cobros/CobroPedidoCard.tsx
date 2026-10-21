@@ -56,7 +56,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
 
       <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
         <div>
-          <span className="text-[10px] text-neutral-400 font-bold uppercase block">
+          <span className="text-xs text-neutral-400 font-bold uppercase block">
             Total
           </span>
           <span className="text-lg font-bold font-sans tabular-nums text-[#D35400]">

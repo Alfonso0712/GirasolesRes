@@ -338,7 +338,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           {/* Tarjeta de Acceso de Demostración Limpia */}
           <div className="mt-4 sm:mt-5 border border-dashed border-[#D5CCC3] rounded-2xl p-3 bg-neutral-50/70 text-left">
             <p className="font-bold text-xs text-[#2C1A0E]">Acceso de demostración</p>
-            <p className="text-[11px] text-[#7C6F66] mt-0.5 mb-2">Seleccione un perfil para probar el acceso rápido</p>
+            <p className="text-xs text-[#7C6F66] mt-0.5 mb-2">Seleccione un perfil para probar el acceso rápido</p>
 
             <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#EFEAE5]">
               <button

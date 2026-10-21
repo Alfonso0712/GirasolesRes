@@ -247,7 +247,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                 <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
                 <span className="font-semibold text-neutral-700">Cargando usuarios…</span>
               </div>
-              <span className="text-[11px] text-neutral-400 font-medium">Actualizando lista</span>
+              <span className="text-xs text-neutral-400 font-medium">Actualizando lista</span>
             </div>
 
             <div className="w-full overflow-x-auto">

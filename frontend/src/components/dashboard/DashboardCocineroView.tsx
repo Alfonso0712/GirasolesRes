@@ -155,7 +155,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
                     {agotados.platos.map((plato, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-md text-[11px] font-semibold"
+                        className="px-2 py-0.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-md text-xs font-semibold"
                       >
                         {plato}
                       </span>

@@ -87,7 +87,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                       </div>
                       <div>
                         <p className="text-sm font-semibold">{alerta.texto}</p>
-                        <p className="text-[11px] opacity-75 mt-0.5">
+                        <p className="text-xs opacity-75 mt-0.5">
                           Prioridad {alerta.prioridad} · Requiere gestión del administrador
                         </p>
                       </div>
@@ -160,7 +160,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                     <span>Yape / Digital:</span>
                     <span className="font-semibold tabular-nums">S/ {(ventasHoy?.yape ?? 0).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between pt-1 border-t border-neutral-100 text-[11px] text-neutral-500">
+                  <div className="flex justify-between pt-1 border-t border-neutral-100 text-xs text-neutral-500">
                     <span>Total ventas:</span>
                     <span className="font-medium">{ventasHoy?.nVentas ?? 0}</span>
                   </div>
@@ -312,7 +312,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 {platosHoy.principales.slice(0, 5).map((plato, idx) => (
                   <div key={idx} className="flex items-center justify-between text-xs gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-[11px] shrink-0 ${
+                      <span className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-xs shrink-0 ${
                         idx === 0 ? 'bg-amber-100 text-amber-900' : 'bg-neutral-100 text-neutral-600'
                       }`}>
                         {idx + 1}
@@ -357,7 +357,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   onClick={() => onNavigate('pedidos', { estado: 'pendiente' })}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-amber-400 hover:bg-amber-50/50 transition-all text-left cursor-pointer group"
                 >
-                  <span className="text-[11px] font-medium text-neutral-500 block">Pendientes</span>
+                  <span className="text-xs font-medium text-neutral-500 block">Pendientes</span>
                   <span className="text-lg font-bold tabular-nums text-amber-700">
                     {pedidos?.pendiente ?? 0}
                   </span>
@@ -369,7 +369,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   onClick={() => onNavigate('pedidos', { estado: 'en_preparacion' })}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-orange-400 hover:bg-orange-50/50 transition-all text-left cursor-pointer group"
                 >
-                  <span className="text-[11px] font-medium text-neutral-500 block">En Cocina</span>
+                  <span className="text-xs font-medium text-neutral-500 block">En Cocina</span>
                   <span className="text-lg font-bold tabular-nums text-[#D35400]">
                     {pedidos?.enPreparacion ?? 0}
                   </span>
@@ -381,7 +381,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   onClick={() => onNavigate('pedidos', { estado: 'listo' })}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-blue-400 hover:bg-blue-50/50 transition-all text-left cursor-pointer group"
                 >
-                  <span className="text-[11px] font-medium text-neutral-500 block">Listos</span>
+                  <span className="text-xs font-medium text-neutral-500 block">Listos</span>
                   <span className="text-lg font-bold tabular-nums text-blue-700">
                     {pedidos?.listo ?? 0}
                   </span>
@@ -393,7 +393,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   onClick={() => onNavigate('cobros')}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-purple-400 hover:bg-purple-50/50 transition-all text-left cursor-pointer group"
                 >
-                  <span className="text-[11px] font-medium text-neutral-500 block">Por Cobrar</span>
+                  <span className="text-xs font-medium text-neutral-500 block">Por Cobrar</span>
                   <span className="text-lg font-bold tabular-nums text-purple-700">
                     {pedidos?.porCobrar ?? 0}
                   </span>
@@ -405,7 +405,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   onClick={() => onNavigate('pedidos', { estado: 'pagado' })}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all text-left cursor-pointer group"
                 >
-                  <span className="text-[11px] font-medium text-neutral-500 block">Pagados</span>
+                  <span className="text-xs font-medium text-neutral-500 block">Pagados</span>
                   <span className="text-lg font-bold tabular-nums text-neutral-700">
                     {pedidos?.pagado ?? 0}
                   </span>
@@ -417,7 +417,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   onClick={() => onNavigate('pedidos', { estado: 'anulado' })}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-rose-400 hover:bg-rose-50/50 transition-all text-left cursor-pointer group"
                 >
-                  <span className="text-[11px] font-medium text-neutral-500 block">Anulados</span>
+                  <span className="text-xs font-medium text-neutral-500 block">Anulados</span>
                   <span className="text-lg font-bold tabular-nums text-rose-700">
                     {pedidos?.anulado ?? 0}
                   </span>
@@ -446,7 +446,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Estado de Caja
                 </span>
-                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                   caja?.estado === 'Abierta'
                     ? 'bg-emerald-100 text-emerald-800'
                     : caja?.estado === 'Anterior sin cerrar'
@@ -483,7 +483,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Menú de Hoy
                 </span>
-                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                   menu?.definido ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                 }`}>
                   {menu?.definido ? 'Definido' : 'Sin definir'}
@@ -510,7 +510,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   Último Cierre de Caja
                 </span>
                 {ultimoCierre?.resultado && (
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                     ultimoCierre.resultado === 'Cuadra'
                       ? 'bg-emerald-100 text-emerald-800'
                       : ultimoCierre.resultado === 'Sobrante'

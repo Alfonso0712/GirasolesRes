@@ -387,7 +387,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                                   {mc.partes.map((p) => (
                                     <span
                                       key={p.id}
-                                      className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium font-sans"
+                                      className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 font-medium font-sans"
                                     >
                                       {p.nombre}
                                     </span>
@@ -398,7 +398,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                               <div className="pt-2 border-t border-neutral-100 mt-1 flex items-center justify-between gap-2">
                                 {!mc.disponible ? (
                                   <span
-                                    className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200 w-full text-center font-sans"
+                                    className="text-xs font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200 w-full text-center font-sans"
                                     title={mc.motivoNoDisponible || undefined}
                                   >
                                     No disponible hoy
@@ -495,7 +495,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                 <p className="text-xs font-medium text-neutral-500">
                   No hay productos en el pedido
                 </p>
-                <p className="text-[11px] text-neutral-400 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   Toque el botón + de cualquier producto del catálogo para agregarlo.
                 </p>
               </div>
@@ -519,12 +519,12 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           {linea.nombre}
                         </span>
                         {linea.elecciones && linea.elecciones.length > 0 && (
-                          <span className="text-[11px] text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
+                          <span className="text-xs text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
                             {linea.elecciones.map((e) => e.productoNombre).join(' + ')}
                             {linea.incluye ? ` (incluye ${linea.incluye})` : ''}
                           </span>
                         )}
-                        <span className="text-[11px] text-[#7C6F66] tabular-nums whitespace-nowrap">
+                        <span className="text-xs text-[#7C6F66] tabular-nums whitespace-nowrap">
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
@@ -535,7 +535,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
                     {/* Alerta de plato agotado en vivo */}
                     {tieneError && (
-                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-[11px] text-rose-800 font-semibold flex items-center gap-1.5">
+                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-xs text-rose-800 font-semibold flex items-center gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                         <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
@@ -548,7 +548,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         <button
                           type="button"
                           onClick={() => abrirModalNota(linea)}
-                          className="text-[#D35400] font-bold text-[11px] hover:underline shrink-0 cursor-pointer"
+                          className="text-[#D35400] font-bold text-xs hover:underline shrink-0 cursor-pointer"
                           title="Editar nota del plato"
                         >
                           Editar
@@ -639,7 +639,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             {/* Notas generales del pedido (opcional, máx 100 caracteres - RN-35 / RV-67) */}
             {modo === 'nuevo' && (
               <div>
-                <label htmlFor="notas-pedido-desktop" className="block text-[11px] font-semibold text-[#7C6F66] mb-1">
+                <label htmlFor="notas-pedido-desktop" className="block text-xs font-semibold text-[#7C6F66] mb-1">
                   Notas generales del pedido (opcional):
                 </label>
                 <input
@@ -784,12 +784,12 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                           {linea.nombre}
                         </span>
                         {linea.elecciones && linea.elecciones.length > 0 && (
-                          <span className="text-[11px] text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
+                          <span className="text-xs text-[#7C6F66] italic block mt-0.5 font-sans line-clamp-2">
                             {linea.elecciones.map((e) => e.productoNombre).join(' + ')}
                             {linea.incluye ? ` (incluye ${linea.incluye})` : ''}
                           </span>
                         )}
-                        <span className="text-[11px] text-[#7C6F66] tabular-nums whitespace-nowrap">
+                        <span className="text-xs text-[#7C6F66] tabular-nums whitespace-nowrap">
                           {linea.cantidad} × S/ {linea.precioUnitario.toFixed(2)}
                         </span>
                       </div>
@@ -800,7 +800,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
                     {/* Alerta de plato agotado */}
                     {tieneError && (
-                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-[11px] text-rose-800 font-semibold flex items-center gap-1.5">
+                      <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-xs text-rose-800 font-semibold flex items-center gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                         <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
@@ -813,7 +813,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         <button
                           type="button"
                           onClick={() => abrirModalNota(linea)}
-                          className="text-[#D35400] font-bold text-[11px] hover:underline shrink-0 cursor-pointer"
+                          className="text-[#D35400] font-bold text-xs hover:underline shrink-0 cursor-pointer"
                         >
                           Editar
                         </button>
@@ -894,7 +894,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             <div className="p-4 border-t border-neutral-200/80 bg-[#FAF7F4] shrink-0 space-y-3">
               {modo === 'nuevo' && (
                 <div>
-                  <label htmlFor="notas-pedido-movil" className="block text-[11px] font-semibold text-[#7C6F66] mb-1">
+                  <label htmlFor="notas-pedido-movil" className="block text-xs font-semibold text-[#7C6F66] mb-1">
                     Notas generales del pedido (opcional):
                   </label>
                   <input
@@ -906,7 +906,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                     placeholder="Ej: Servir todo junto, sin cubiertos..."
                     className="w-full px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-lg text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-colors"
                   />
-                  <div className="flex justify-between items-center text-[10px] text-neutral-400 mt-0.5">
+                  <div className="flex justify-between items-center text-xs text-neutral-400 mt-0.5">
                     <span>Anotaciones para cocina/salón</span>
                     <span className="tabular-nums">{notas.length}/100</span>
                   </div>

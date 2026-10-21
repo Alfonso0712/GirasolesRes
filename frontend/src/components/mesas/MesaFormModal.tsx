@@ -228,7 +228,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
                   <span>{errorNombre}</span>
                 </p>
               ) : (
-                <p className="mt-1 text-[11px] text-[#7C6F66]">
+                <p className="mt-1 text-xs text-[#7C6F66]">
                   De 1 a 20 caracteres (letras, números, espacios, tildes, guion y punto).
                 </p>
               )}

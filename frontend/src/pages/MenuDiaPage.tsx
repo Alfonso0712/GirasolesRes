@@ -594,11 +594,11 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                             {mc.nombre}
                           </span>
                           {mc.disponible ? (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
                               Disponible
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-200 text-amber-900">
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-200 text-amber-900">
                               No disponible hoy
                             </span>
                           )}
@@ -692,7 +692,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     <p className="text-xs sm:text-sm font-bold text-neutral-900">
                       Tiene cambios pendientes sin publicar
                     </p>
-                    <p className="text-[11px] sm:text-xs text-neutral-500 hidden sm:block">
+                    <p className="text-xs sm:text-xs text-neutral-500 hidden sm:block">
                       Haga clic en Guardar para actualizar las opciones y menús disponibles hoy.
                     </p>
                   </div>

@@ -334,7 +334,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                     </div>
 
                     {prod.agotado ? (
-                      <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">
                         Agotado
                       </span>
                     ) : (
