@@ -373,7 +373,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     type="button"
                     onClick={handleDescargarPdf}
                     disabled={descargandoPdf}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B94600] disabled:bg-neutral-400 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B94600] disabled:bg-neutral-400 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
                   >
                     <Download className="w-4 h-4" />
                     {descargandoPdf ? 'DESCARGANDO...' : 'DESCARGAR PDF'}
@@ -457,7 +457,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                                 onClose();
                                 onCobrarPedido(p.pedidoId);
                               }}
-                              className="px-3 py-1.5 rounded-lg bg-[#D35400] hover:bg-[#B94600] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                              className="px-3 py-1.5 rounded-lg bg-[#C74E00] hover:bg-[#B94600] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px]"
                             >
                               Cobrar
                             </button>
@@ -785,7 +785,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
             >
               Volver a Caja
             </button>

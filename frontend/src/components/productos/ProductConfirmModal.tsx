@@ -143,7 +143,7 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
             disabled={procesando}
             className={`px-5 py-2.5 rounded-xl text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed min-h-[44px] ${
               esDesactivar
-                ? 'bg-[#D35400] hover:bg-[#B84600]'
+                ? 'bg-[#C74E00] hover:bg-[#B84600]'
                 : 'bg-emerald-600 hover:bg-emerald-700'
             }`}
           >

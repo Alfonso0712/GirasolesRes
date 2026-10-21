@@ -507,7 +507,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <button
               type="button"
               onClick={() => cargarPedidos()}
-              className="py-2 px-4 rounded-xl bg-[#D35400] text-white font-semibold text-xs hover:bg-[#B84600] transition-colors cursor-pointer"
+              className="py-2 px-4 rounded-xl bg-[#C74E00] text-white font-semibold text-xs hover:bg-[#B84600] transition-colors cursor-pointer"
             >
               Reintentar
             </button>
@@ -539,7 +539,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               <button
                 type="button"
                 onClick={handleLimpiarFiltros}
-                className="mt-4 py-2 px-4 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#b84500] cursor-pointer"
+                className="mt-4 py-2 px-4 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#b84500] cursor-pointer"
               >
                 Quitar filtros
               </button>
@@ -668,7 +668,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => onNavigateToCobro?.(p.id)}
-                                  className="w-8 h-8 rounded-lg border border-transparent bg-[#D35400] hover:bg-[#B84600] text-white shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+                                  className="w-8 h-8 rounded-lg border border-transparent bg-[#C74E00] hover:bg-[#B84600] text-white shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
                                   title="Cobrar pedido en caja"
                                   aria-label={`Cobrar pedido #${p.numero}`}
                                 >
@@ -774,7 +774,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                           <button
                             type="button"
                             onClick={() => onNavigateToCobro?.(p.id)}
-                            className="py-2.5 px-3 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs cursor-pointer"
+                            className="py-2.5 px-3 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs cursor-pointer"
                             title="Cobrar pedido en caja"
                           >
                             <DollarSign className="w-4 h-4" />

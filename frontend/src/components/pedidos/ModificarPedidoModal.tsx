@@ -341,7 +341,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleAgregarProducto(prod)}
-                        className="py-1 px-3 rounded-lg bg-amber-500/10 text-[#D35400] hover:bg-[#D35400] hover:text-white font-semibold flex items-center gap-1 transition-all cursor-pointer min-h-[36px]"
+                        className="py-1 px-3 rounded-lg bg-amber-500/10 text-[#D35400] hover:bg-[#C74E00] hover:text-white font-semibold flex items-center gap-1 transition-all cursor-pointer min-h-[36px]"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Agregar</span>
@@ -367,7 +367,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               type="button"
               onClick={handleGuardar}
               disabled={loading || lineas.length === 0}
-              className="py-3 px-6 rounded-xl bg-[#D35400] text-white font-semibold text-xs hover:bg-[#b84500] transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
+              className="py-3 px-6 rounded-xl bg-[#C74E00] text-white font-semibold text-xs hover:bg-[#b84500] transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
             >
               {loading ? 'Guardando…' : 'Guardar Cambios'}
             </button>

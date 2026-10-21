@@ -337,7 +337,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               type="button"
               disabled={hayErrores}
               onClick={handleConfirmar}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
             >
               <Check className="w-4 h-4" />
               USAR ESTE TOTAL

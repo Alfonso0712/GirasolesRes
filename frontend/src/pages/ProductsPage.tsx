@@ -313,7 +313,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             ref={nuevoBtnRef}
             type="button"
             onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[38px]"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[38px]"
           >
             <Plus className="w-4 h-4" />
             <span>Nuevo producto o componente</span>
@@ -446,7 +446,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 <button
                   type="button"
                   onClick={cargarProductos}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Reintentar</span>
@@ -1048,7 +1048,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 <button
                   type="submit"
                   disabled={guardandoPrecio}
-                  className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+                  className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
                 >
                   {guardandoPrecio ? (
                     <>
@@ -1105,7 +1105,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 onClick={handleConfirmarEstadoMenu}
                 disabled={guardandoEstadoMenu}
                 className={`px-4 py-2.5 rounded-xl text-white text-xs font-semibold shadow-sm transition-all cursor-pointer ${
-                  menuParaEstado.activo ? 'bg-[#D35400] hover:bg-[#B84600]' : 'bg-emerald-600 hover:bg-emerald-700'
+                  menuParaEstado.activo ? 'bg-[#C74E00] hover:bg-[#B84600]' : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               >
                 {guardandoEstadoMenu

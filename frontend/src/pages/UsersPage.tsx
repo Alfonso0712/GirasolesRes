@@ -161,7 +161,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         <button
           type="button"
           onClick={handleAbrirNuevo}
-          className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[38px]"
+          className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[38px]"
         >
           <Plus className="w-4 h-4" />
           <span>Nuevo usuario</span>
@@ -233,7 +233,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
             <button
               type="button"
               onClick={cargarUsuarios}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reintentar</span>

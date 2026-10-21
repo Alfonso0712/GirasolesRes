@@ -684,7 +684,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                 lineasBorrador.some((l) => l.agotado)
               }
               onClick={() => registrarPedido(onVolverAMesas)}
-              className="w-full min-h-[44px] py-3 text-sm font-bold bg-[#D35400] hover:bg-[#B84600] text-white shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full min-h-[44px] py-3 text-sm font-bold bg-[#C74E00] hover:bg-[#B84600] text-white shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {registrando ? (
                 <>
@@ -733,7 +733,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             lineasBorrador.some((l) => l.agotado)
           }
           onClick={() => registrarPedido(onVolverAMesas)}
-          className="min-h-[44px] px-5 py-2.5 text-xs font-bold bg-[#D35400] hover:bg-[#B84600] text-white shadow-md shrink-0 flex items-center gap-1.5"
+          className="min-h-[44px] px-5 py-2.5 text-xs font-bold bg-[#C74E00] hover:bg-[#B84600] text-white shadow-md shrink-0 flex items-center gap-1.5"
         >
           {registrando ? (
             <span>Enviando…</span>

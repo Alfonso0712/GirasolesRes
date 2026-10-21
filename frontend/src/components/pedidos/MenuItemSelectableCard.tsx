@@ -81,7 +81,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
               esAgotado
                 ? 'bg-neutral-200 text-neutral-500 border border-neutral-300 cursor-not-allowed opacity-60'
-                : 'bg-[#D35400] hover:bg-[#B84600] text-white shadow-xs cursor-pointer active:scale-95'
+                : 'bg-[#C74E00] hover:bg-[#B84600] text-white shadow-xs cursor-pointer active:scale-95'
             }`}
             aria-label={`Agregar ${nombre}`}
             title={esAgotado ? 'Plato agotado - No disponible' : 'Agregar plato al pedido'}

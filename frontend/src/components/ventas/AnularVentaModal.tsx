@@ -152,7 +152,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                   }}
                   className={`px-2.5 py-1 text-xs rounded-lg border transition-all cursor-pointer ${
                     motivo === m
-                      ? 'bg-[#D35400] text-white border-[#D35400] font-semibold'
+                      ? 'bg-[#C74E00] text-white border-[#D35400] font-semibold'
                       : 'bg-white border-neutral-200 text-neutral-700 hover:border-amber-400 hover:bg-amber-50/50'
                   }`}
                 >

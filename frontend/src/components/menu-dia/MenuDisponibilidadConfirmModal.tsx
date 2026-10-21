@@ -121,7 +121,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
             disabled={procesando}
             className={`px-5 py-2.5 rounded-xl text-white text-sm font-semibold shadow-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer min-h-[44px] ${
               esAgotar
-                ? 'bg-[#D35400] hover:bg-[#B84600]'
+                ? 'bg-[#C74E00] hover:bg-[#B84600]'
                 : 'bg-emerald-600 hover:bg-emerald-700'
             }`}
           >

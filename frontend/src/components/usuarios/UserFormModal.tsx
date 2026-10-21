@@ -486,7 +486,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           <button
             type="submit"
             disabled={guardando}
-            className={`px-6 py-2.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-6 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
               guardando ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >

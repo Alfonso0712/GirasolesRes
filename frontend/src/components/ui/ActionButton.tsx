@@ -25,7 +25,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   };
 
   const variantClasses = {
-    primary: 'bg-[#D35400] text-white hover:bg-[#b84600] border-transparent shadow-xs',
+    primary: 'bg-[#C74E00] text-white hover:bg-[#b84600] border-transparent shadow-xs',
     secondary: 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200 border shadow-2xs',
     danger: 'bg-rose-50 text-rose-700 hover:bg-rose-100 border-rose-200 border',
     ghost: 'bg-transparent text-neutral-600 hover:bg-neutral-100 border-transparent',

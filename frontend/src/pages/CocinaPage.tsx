@@ -403,7 +403,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
             <button
               type="button"
               onClick={() => cargarComandas(false)}
-              className="mt-4 px-6 py-2.5 rounded-xl bg-[#D35400] text-white font-semibold text-sm hover:bg-[#b84600] transition-colors cursor-pointer"
+              className="mt-4 px-6 py-2.5 rounded-xl bg-[#C74E00] text-white font-semibold text-sm hover:bg-[#b84600] transition-colors cursor-pointer"
             >
               Reintentar
             </button>

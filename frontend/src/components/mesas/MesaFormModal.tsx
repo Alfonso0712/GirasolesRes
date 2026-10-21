@@ -258,7 +258,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
             <button
               type="submit"
               disabled={guardando}
-              className="px-5 py-2.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer min-h-[40px] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer min-h-[40px] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {guardando ? (
                 <>

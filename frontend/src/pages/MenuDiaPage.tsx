@@ -680,7 +680,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                 type="button"
                 onClick={handleGuardarMenu}
                 disabled={guardando}
-                className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
+                className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
               >
                 {guardando ? (
                   <>

@@ -421,7 +421,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             <button
               type="button"
               onClick={() => cargarVentas()}
-              className="px-4 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-xs transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow-xs transition-colors cursor-pointer"
             >
               Reintentar
             </button>

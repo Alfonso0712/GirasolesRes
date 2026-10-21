@@ -97,7 +97,7 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
             type="button"
             variant="primary"
             onClick={onNuevoPedido}
-            className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-[#D35400] hover:bg-[#B84600] text-white"
+            className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-[#C74E00] hover:bg-[#B84600] text-white"
           >
             <Plus className="w-4 h-4" />
             Nuevo Pedido

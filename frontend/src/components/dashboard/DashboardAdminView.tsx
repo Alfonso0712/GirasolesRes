@@ -98,7 +98,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                       className={`self-end sm:self-auto px-3.5 py-1.5 rounded-lg font-bold text-xs shadow-xs transition-colors cursor-pointer min-h-[36px] flex items-center gap-1.5 shrink-0 ${
                         esCaja
                           ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                          : 'bg-[#D35400] hover:bg-[#b84500] text-white'
+                          : 'bg-[#C74E00] hover:bg-[#b84500] text-white'
                       }`}
                     >
                       <span>Resolver</span>

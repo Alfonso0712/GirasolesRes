@@ -241,7 +241,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setAbrirCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                  className="px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
                 >
                   <DollarSign className="w-4 h-4" />
                   <span>Abrir caja</span>
@@ -385,7 +385,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
             <button
               type="button"
               onClick={() => cargarDatos(false)}
-              className="px-4 py-2 bg-[#D35400] text-white rounded-xl text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer min-h-[44px]"
+              className="px-4 py-2 bg-[#C74E00] text-white rounded-xl text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer min-h-[44px]"
             >
               Reintentar
             </button>
@@ -489,7 +489,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                               onClick={() => handleIniciarCobro(p)}
                               title={`Cobrar pedido #${p.numero}`}
                               aria-label={`Cobrar pedido #${p.numero}`}
-                              className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
+                              className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
                             >
                               <DollarSign className="w-4 h-4" />
                               <span>Cobrar</span>

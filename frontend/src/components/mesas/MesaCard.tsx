@@ -187,7 +187,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                 className={`w-full min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap ${
                   esInactiva
                     ? 'bg-neutral-100 border border-neutral-200 text-neutral-500 cursor-not-allowed opacity-60'
-                    : 'bg-[#D35400] hover:bg-[#B84600] text-white border border-transparent cursor-pointer'
+                    : 'bg-[#C74E00] hover:bg-[#B84600] text-white border border-transparent cursor-pointer'
                 }`}
               >
                 <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
@@ -205,7 +205,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   }}
                   title={`Ver/ampliar pedido en ${mesa.nombre}`}
                   aria-label={`Pedido ${mesa.nombre}`}
-                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap bg-[#D35400] hover:bg-[#B84600] text-white cursor-pointer"
+                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap bg-[#C74E00] hover:bg-[#B84600] text-white cursor-pointer"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
                   <span className="whitespace-nowrap font-bold">Pedido</span>
@@ -245,7 +245,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   e.stopPropagation();
                   onAccionRol?.(mesa, 'REGISTRAR PEDIDO');
                 }}
-                className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-[#D35400] hover:bg-[#B84600] text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-[#C74E00] hover:bg-[#B84600] text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Registrar pedido</span>

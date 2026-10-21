@@ -65,7 +65,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('caja')}
-            className="px-4 py-2 bg-[#D35400] hover:bg-[#b84500] text-white rounded-xl text-xs font-bold cursor-pointer shrink-0"
+            className="px-4 py-2 bg-[#C74E00] hover:bg-[#b84500] text-white rounded-xl text-xs font-bold cursor-pointer shrink-0"
           >
             Abrir Caja Ahora
           </button>
@@ -86,7 +86,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
               onClick={() => onNavigate('cobros')}
               className={`w-full p-4 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all min-h-[48px] ${
                 cajaAbierta
-                  ? 'bg-[#D35400] text-white shadow-md hover:bg-[#b84500] cursor-pointer'
+                  ? 'bg-[#C74E00] text-white shadow-md hover:bg-[#b84500] cursor-pointer'
                   : 'bg-neutral-100 text-neutral-500 border border-neutral-200 cursor-not-allowed'
               }`}
             >

@@ -68,7 +68,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
           <button
             type="button"
             onClick={() => onCobrar(p)}
-            className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+            className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
           >
             <DollarSign className="w-4 h-4" />
             <span>Cobrar pedido</span>

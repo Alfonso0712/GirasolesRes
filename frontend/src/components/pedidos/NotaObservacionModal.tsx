@@ -141,7 +141,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
             <Button
               type="submit"
               variant="primary"
-              className="bg-[#D35400] hover:bg-[#B84600] text-white font-medium"
+              className="bg-[#C74E00] hover:bg-[#B84600] text-white font-medium"
             >
               <Check className="w-4 h-4 mr-1.5 inline" />
               Guardar Nota

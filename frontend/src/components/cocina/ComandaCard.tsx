@@ -110,7 +110,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
           type="button"
           onClick={() => onAccionPrincipal(c)}
           disabled={estaProcesando}
-          className="w-full min-h-[56px] h-14 rounded-2xl bg-[#D35400] hover:bg-[#b84600] active:scale-[0.99] text-white font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50"
+          className="w-full min-h-[56px] h-14 rounded-2xl bg-[#C74E00] hover:bg-[#b84600] active:scale-[0.99] text-white font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50"
           title={`Iniciar preparación del pedido N.º ${c.pedidoNumero}`}
         >
           {estaProcesando ? (

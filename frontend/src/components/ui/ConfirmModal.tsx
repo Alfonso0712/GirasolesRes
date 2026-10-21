@@ -128,7 +128,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 type="button"
                 onClick={onDesactivarDirecto}
                 disabled={loading}
-                className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 bg-[#D35400] hover:bg-[#B84600] text-white cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 bg-[#C74E00] hover:bg-[#B84600] text-white cursor-pointer"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

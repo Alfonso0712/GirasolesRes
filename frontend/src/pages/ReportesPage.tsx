@@ -122,7 +122,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           onClick={() => cambiarTab('platos')}
           className={`px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
             tabActiva === 'platos'
-              ? 'bg-[#D35400] text-white shadow-xs'
+              ? 'bg-[#C74E00] text-white shadow-xs'
               : 'bg-white border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
           }`}
         >
@@ -135,7 +135,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           onClick={() => cambiarTab('ventas')}
           className={`px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
             tabActiva === 'ventas'
-              ? 'bg-[#D35400] text-white shadow-xs'
+              ? 'bg-[#C74E00] text-white shadow-xs'
               : 'bg-white border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
           }`}
         >
@@ -222,7 +222,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
             type="button"
             onClick={() => consultar()}
             disabled={cargando || Boolean(errorRango)}
-            className="px-5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-xs shadow-xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs shadow-xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {cargando ? (
               <>
@@ -564,7 +564,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   <button
                     type="button"
                     onClick={() => aplicarAtajo('ultimos7')}
-                    className="px-3 py-1.5 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#B84600] cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] cursor-pointer"
                   >
                     Ver últimos 7 días
                   </button>
@@ -789,7 +789,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   <button
                     type="button"
                     onClick={() => aplicarAtajo('ultimos7')}
-                    className="px-3 py-1.5 rounded-xl bg-[#D35400] text-white text-xs font-semibold hover:bg-[#B84600] cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] cursor-pointer"
                   >
                     Ver últimos 7 días
                   </button>

@@ -535,7 +535,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               type="button"
               onClick={handleDescargarPdf}
               disabled={cargando || !detalle || descargandoPdf || esAbierta}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B84600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B84600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
               title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
             >
               {descargandoPdf ? (

@@ -303,7 +303,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => handleNavigate('inicio')}
             className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 ${
               paginaActiva === 'inicio'
-                ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                ? 'bg-[#C74E00] text-white shadow-md font-semibold'
                 : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
             }`}
           >
@@ -370,7 +370,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => handleNavigate(item.id)}
                           className={`w-full text-left px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
                             esActivo
-                              ? 'bg-[#D35400] text-white shadow-md font-semibold'
+                              ? 'bg-[#C74E00] text-white shadow-md font-semibold'
                               : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
                           }`}
                         >

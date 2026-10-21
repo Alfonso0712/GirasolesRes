@@ -63,7 +63,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
         <button
           type="button"
           onClick={() => refrescarManual()}
-          className="px-5 py-2.5 bg-[#D35400] text-white rounded-xl font-semibold text-sm shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer flex items-center gap-2"
+          className="px-5 py-2.5 bg-[#C74E00] text-white rounded-xl font-semibold text-sm shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Reintentar

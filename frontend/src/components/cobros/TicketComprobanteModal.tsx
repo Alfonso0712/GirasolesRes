@@ -239,7 +239,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
             >
               Cerrar
             </button>

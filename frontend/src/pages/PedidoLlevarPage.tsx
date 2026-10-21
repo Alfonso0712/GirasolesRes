@@ -614,7 +614,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 lineasBorrador.some((l) => l.agotado)
               }
               onClick={registrarPedidoLlevar}
-              className="w-full min-h-[48px] text-xs font-bold bg-[#D35400] hover:bg-[#B84600] text-white shadow-md flex items-center justify-center gap-2"
+              className="w-full min-h-[48px] text-xs font-bold bg-[#C74E00] hover:bg-[#B84600] text-white shadow-md flex items-center justify-center gap-2"
             >
               {registrando ? (
                 <>
@@ -663,7 +663,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
             lineasBorrador.some((l) => l.agotado)
           }
           onClick={registrarPedidoLlevar}
-          className="min-h-[44px] px-5 py-2.5 text-xs font-bold bg-[#D35400] hover:bg-[#B84600] text-white shadow-md shrink-0 flex items-center gap-1.5"
+          className="min-h-[44px] px-5 py-2.5 text-xs font-bold bg-[#C74E00] hover:bg-[#B84600] text-white shadow-md shrink-0 flex items-center gap-1.5"
         >
           {registrando ? (
             <span>Enviando…</span>

@@ -320,7 +320,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
                 >
                   Continuar
                 </button>

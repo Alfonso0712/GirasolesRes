@@ -218,7 +218,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
               disabled={!esCompleto}
               className={`px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm ${
                 esCompleto
-                  ? 'bg-[#D35400] hover:bg-[#B94600] text-white cursor-pointer'
+                  ? 'bg-[#C74E00] hover:bg-[#B94600] text-white cursor-pointer'
                   : 'bg-neutral-200 text-neutral-500 cursor-not-allowed border border-neutral-300'
               }`}
             >

@@ -352,7 +352,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 onClick={() => setTipoComprobante('Boleta')}
                 className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
                   tipoComprobante === 'Boleta'
-                    ? 'bg-[#D35400] text-white border-[#D35400] shadow-2xs'
+                    ? 'bg-[#C74E00] text-white border-[#D35400] shadow-2xs'
                     : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
@@ -727,7 +727,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 canSubmit
                   ? tipoComprobante === 'Factura'
                     ? 'bg-[#1E3A8A] hover:bg-[#1E40AF] cursor-pointer'
-                    : 'bg-[#D35400] hover:bg-[#B84600] cursor-pointer'
+                    : 'bg-[#C74E00] hover:bg-[#B84600] cursor-pointer'
                   : 'bg-neutral-300 text-neutral-500 cursor-not-allowed opacity-70'
               }`}
             >

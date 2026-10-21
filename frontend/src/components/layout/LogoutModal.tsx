@@ -83,7 +83,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`flex-1 py-2.5 px-4 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`flex-1 py-2.5 px-4 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
               loading ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >

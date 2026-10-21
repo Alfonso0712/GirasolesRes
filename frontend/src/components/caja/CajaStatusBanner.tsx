@@ -216,7 +216,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           type="button"
           onClick={onAbrirCaja}
           disabled={loading}
-          className="px-5 py-2.5 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer shrink-0 min-h-[44px] flex items-center justify-center gap-2 active:scale-[0.98]"
+          className="px-5 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer shrink-0 min-h-[44px] flex items-center justify-center gap-2 active:scale-[0.98]"
         >
           <DollarSign className="w-4 h-4" />
           <span>ABRIR CAJA</span>

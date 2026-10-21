@@ -187,7 +187,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             <button
               type="button"
               onClick={handleAbrirCrear}
-              className="px-3.5 py-2 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
+              className="px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
             >
               <Plus className="w-4 h-4" />
               <span>Nueva mesa</span>
@@ -218,7 +218,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             <button
               type="button"
               onClick={onNavigateToMenuDia}
-              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-[#D35400] hover:bg-[#B84600] text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs self-start sm:self-auto"
+              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs self-start sm:self-auto"
             >
               Definir Menú
             </button>
@@ -337,7 +337,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               <button
                 type="button"
                 onClick={() => cargarMesas(false)}
-                className="px-4 py-2 rounded-xl bg-[#D35400] text-white text-xs font-semibold shadow-2xs hover:bg-[#B84600] transition-colors cursor-pointer flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-[#C74E00] text-white text-xs font-semibold shadow-2xs hover:bg-[#B84600] transition-colors cursor-pointer flex items-center gap-2"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>Reintentar</span>
@@ -361,7 +361,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
                 <button
                   type="button"
                   onClick={handleAbrirCrear}
-                  className="px-4 py-2.5 rounded-xl bg-[#D35400] text-white text-xs font-semibold shadow-2xs hover:bg-[#B84600] transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl bg-[#C74E00] text-white text-xs font-semibold shadow-2xs hover:bg-[#B84600] transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Nueva mesa</span>
@@ -449,7 +449,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             <button
               type="button"
               onClick={() => setModalAccionRol({ abierto: false, mesa: null, accion: '' })}
-              className="w-full py-2.5 bg-[#D35400] text-white text-xs font-semibold rounded-xl hover:bg-[#B84600] transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#C74E00] text-white text-xs font-semibold rounded-xl hover:bg-[#B84600] transition-colors cursor-pointer"
             >
               Entendido
             </button>

@@ -100,7 +100,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
               type="button"
               variant="primary"
               onClick={onNuevoPedido}
-              className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-[#D35400] hover:bg-[#B84600] text-white font-semibold"
+              className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold"
             >
               <Plus className="w-4 h-4" />
               NUEVO PEDIDO

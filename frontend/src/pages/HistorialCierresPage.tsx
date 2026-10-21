@@ -361,7 +361,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
             <button
               type="button"
               onClick={() => cargarCierres()}
-              className="px-4 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B94600] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[38px]"
+              className="px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B94600] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[38px]"
             >
               Reintentar
             </button>

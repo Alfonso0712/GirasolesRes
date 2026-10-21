@@ -89,7 +89,7 @@ export const InactivityModal: React.FC<InactivityModalProps> = ({
           type="button"
           onClick={handleContinueClick}
           disabled={renovando}
-          className={`w-full py-2.5 px-4 rounded-xl bg-[#D35400] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`w-full py-2.5 px-4 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
             renovando ? 'opacity-70 cursor-not-allowed' : ''
           }`}
         >
