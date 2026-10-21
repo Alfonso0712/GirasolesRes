@@ -11,6 +11,25 @@ jobs:
     name: Backend Build & Tests (.NET 8)
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Password123!
+          POSTGRES_DB: girasoles_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_CONNECTION_STRING: "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=Password123!"
+      MIGRATE_CUS13_SQL_PATH: "${{ github.workspace }}/database/migrate_cus13.sql"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,6 +46,10 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', 'GirasolesRes.sln') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+
+      - name: Initialize PostgreSQL Database
+        run: |
+          docker run --rm --network host -v ${{ github.workspace }}/database:/db postgres:18-alpine sh -c "PGPASSWORD=Password123! psql -h localhost -p 5432 -U postgres -d girasoles_db -f /db/init_girasoles_db.sql"
 
       - name: Restore dependencies
         run: dotnet restore GirasolesRes.sln
