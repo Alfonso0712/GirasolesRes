@@ -107,11 +107,11 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
         {/* Metadatos */}
         <div className="grid grid-cols-2 gap-3 py-3 text-xs text-neutral-600 bg-neutral-50/70 px-4 rounded-xl my-4">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-neutral-400" />
+            <Clock className="w-4 h-4 text-neutral-500" />
             <span>Hora de registro: <strong>{pedido.hora}</strong></span>
           </div>
           <div className="flex items-center gap-2">
-            <User className="w-4 h-4 text-neutral-400" />
+            <User className="w-4 h-4 text-neutral-500" />
             <span>Registrado por: <strong>{pedido.registradoPor}</strong></span>
           </div>
         </div>

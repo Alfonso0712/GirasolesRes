@@ -87,7 +87,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
               className={`w-full p-4 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all min-h-[48px] ${
                 cajaAbierta
                   ? 'bg-[#D35400] text-white shadow-md hover:bg-[#b84500] cursor-pointer'
-                  : 'bg-neutral-100 text-neutral-400 border border-neutral-200 cursor-not-allowed'
+                  : 'bg-neutral-100 text-neutral-500 border border-neutral-200 cursor-not-allowed'
               }`}
             >
               <DollarSign className="w-5 h-5" />

@@ -474,7 +474,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           {/* Filtro Fecha: Solo Administrador (RN-63) */}
           {session.rol === 'Administrador' && (
             <div className="flex items-center gap-1.5 ml-auto">
-              <Calendar className="w-4 h-4 text-neutral-400" />
+              <Calendar className="w-4 h-4 text-neutral-500" />
               <input
                 type="date"
                 value={filtroFecha}
@@ -637,7 +637,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
                                 p.puedeModificar
                                   ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-neutral-900 cursor-pointer'
-                                  : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
+                                  : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
                               }`}
                               title={p.motivoDeshabilitado || 'Modificar pedido'}
                               aria-label={`Modificar pedido #${p.numero}`}
@@ -653,7 +653,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
                                 p.puedeAnular
                                   ? 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
-                                  : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
+                                  : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
                               }`}
                               title={p.motivoDeshabilitado || 'Anular pedido'}
                               aria-label={`Anular pedido #${p.numero}`}
@@ -744,7 +744,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs ${
                           p.puedeModificar
                             ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 cursor-pointer'
-                            : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
+                            : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
                         }`}
                         title={p.motivoDeshabilitado || 'Modificar'}
                       >
@@ -759,7 +759,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs ${
                           p.puedeAnular
                             ? 'border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 cursor-pointer'
-                            : 'border-neutral-200 bg-neutral-100 text-neutral-400 opacity-60 cursor-not-allowed'
+                            : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
                         }`}
                         title={p.motivoDeshabilitado || 'Anular'}
                       >
@@ -837,7 +837,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <button
               type="button"
               onClick={() => setToastMensaje(null)}
-              className="ml-3 text-neutral-400 hover:text-white text-base leading-none p-1 cursor-pointer"
+              className="ml-3 text-neutral-500 hover:text-white text-base leading-none p-1 cursor-pointer"
               aria-label="Cerrar notificación"
             >
               ×

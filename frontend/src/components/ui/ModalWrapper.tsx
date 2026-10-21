@@ -80,7 +80,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar modal"
-                className="modal-close-btn text-neutral-400 hover:text-neutral-700 p-1 rounded-lg transition-colors cursor-pointer"
+                className="modal-close-btn text-neutral-500 hover:text-neutral-700 p-1 rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

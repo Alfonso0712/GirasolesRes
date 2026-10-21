@@ -213,7 +213,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               Menú del Día
             </h1>
             <span className="text-xs text-neutral-600 font-medium capitalize flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-neutral-200 shadow-2xs">
-              <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+              <Calendar className="w-3.5 h-3.5 text-neutral-500" />
               {fechaHoyFormateada}
             </span>
             {menu?.definido ? (
@@ -618,7 +618,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               {/* FILTROS Y BÚSQUEDA */}
               <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
                 <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     placeholder="Buscar plato o componente…"
@@ -631,7 +631,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                       type="button"
                       onClick={() => setBusquedaDisp('')}
                       aria-label="Limpiar búsqueda"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 p-0.5 cursor-pointer"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-600 p-0.5 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -658,7 +658,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 
               {/* LISTA / TABLA DE ÍTEMS EN SERVICIO */}
               {itemsDispFiltrados.length === 0 ? (
-                <div className="py-12 text-center text-neutral-400 text-sm">
+                <div className="py-12 text-center text-neutral-500 text-sm">
                   No se encontraron ítems en el menú con ese criterio.
                 </div>
               ) : (

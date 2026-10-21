@@ -360,7 +360,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
               </>
             ) : (
               <>
-                <VolumeX className="w-4 h-4 text-neutral-400" />
+                <VolumeX className="w-4 h-4 text-neutral-500" />
                 <span>Sonido: OFF</span>
               </>
             )}
@@ -392,7 +392,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       {/* Contenido Principal: Zonas "Pendientes" y "En preparación" (RV-85) */}
       <div className="w-full">
         {cargando && comandas.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-neutral-400 gap-3">
+          <div className="h-full flex flex-col items-center justify-center text-neutral-500 gap-3">
             <RotateCw className="w-8 h-8 animate-spin text-[#D35400]" />
             <span className="text-base font-semibold">Cargando comandas de cocina…</span>
           </div>
@@ -449,7 +449,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
               </div>
 
               {comandasPendientes.length === 0 ? (
-                <div className="p-8 text-center bg-white/60 rounded-3xl border border-neutral-200 text-neutral-400 text-sm">
+                <div className="p-8 text-center bg-white/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
                   No hay comandas en espera de preparación.
                 </div>
               ) : (
@@ -490,7 +490,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
               </div>
 
               {comandasEnPreparacion.length === 0 ? (
-                <div className="p-8 text-center bg-white/60 rounded-3xl border border-neutral-200 text-neutral-400 text-sm">
+                <div className="p-8 text-center bg-white/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
                   No hay comandas en preparación en este momento.
                 </div>
               ) : (
@@ -517,7 +517,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
         >
           <div className="flex-1">
             <p className="text-sm font-semibold">{avisoDeshacer.mensaje}</p>
-            <p className="text-xs text-neutral-400 mt-0.5">
+            <p className="text-xs text-neutral-500 mt-0.5">
               Puede corregir esta acción en los próximos{' '}
               <strong className="text-amber-400">{avisoDeshacer.segundosRestantes} s</strong>
             </p>

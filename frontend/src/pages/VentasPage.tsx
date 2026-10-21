@@ -163,7 +163,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             <Receipt className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
               VENTAS VIGENTES
             </span>
             <div className="flex items-baseline gap-1 mt-0.5">
@@ -196,7 +196,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
         {/* KPI 3: Desglose Efectivo vs Yape */}
         <div className="bg-white rounded-2xl border border-neutral-200/80 p-3.5 shadow-2xs flex items-center justify-between gap-2">
           <div className="flex-1 border-r border-neutral-100 pr-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block flex items-center gap-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
               <DollarSign className="w-3 h-3 text-emerald-700" />
               <span>EFECTIVO</span>
             </span>
@@ -221,14 +221,14 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             <Ban className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
               ANULADAS (NO SUMAN)
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="font-sans font-bold text-2xl text-neutral-600 tabular-nums">
                 {resumen.anuladas}
               </span>
-              <span className="text-xs text-neutral-400 font-medium">anuladas</span>
+              <span className="text-xs text-neutral-500 font-medium">anuladas</span>
             </div>
           </div>
         </div>
@@ -271,7 +271,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           {/* Campo Buscar Comprobante, DNI, RUC o Cliente */}
           <div className="flex-1 min-w-[260px]">
             <div className="relative">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={busqueda}
@@ -289,7 +289,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   type="button"
                   onClick={() => setBusqueda('')}
                   aria-label="Limpiar búsqueda"
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 p-0.5 cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-600 p-0.5 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -306,7 +306,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           {/* Filtros de Fecha (Desde - Hasta) */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1.5 text-xs text-neutral-600">
-              <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+              <Calendar className="w-3.5 h-3.5 text-neutral-500" />
               <span className="font-semibold text-xs">Desde:</span>
               <input
                 type="date"
@@ -436,7 +436,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 ? 'No se encontraron ventas con ese criterio.'
                 : 'Todavía no hay ventas registradas hoy.'}
             </p>
-            <p className="text-xs text-neutral-400 max-w-sm mb-4">
+            <p className="text-xs text-neutral-500 max-w-sm mb-4">
               {tieneFiltrosActivos
                 ? 'Pruebe con otra fecha, tipo o número de comprobante.'
                 : 'Las ventas cobradas en caja se listarán automáticamente aquí.'}
@@ -553,7 +553,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
 
                       {/* Total */}
                       <td className="py-3 px-4 text-right tabular-nums font-semibold text-sm whitespace-nowrap">
-                        <span className={esAnulada ? 'line-through text-neutral-400' : 'text-[#2C1A0E]'}>
+                        <span className={esAnulada ? 'line-through text-neutral-500' : 'text-[#2C1A0E]'}>
                           S/ {v.total.toFixed(2)}
                         </span>
                       </td>
@@ -617,7 +617,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   onClick={() => setPagina(pagina - 1)}
                   className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
                     pagina <= 1
-                      ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
+                      ? 'border-neutral-200 bg-neutral-100 text-neutral-500 cursor-not-allowed opacity-60'
                       : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
                   }`}
                   title="Página anterior"
@@ -631,7 +631,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   onClick={() => setPagina(pagina + 1)}
                   className={`p-1.5 rounded-lg border shadow-2xs transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center ${
                     pagina >= totalPaginas
-                      ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed opacity-60'
+                      ? 'border-neutral-200 bg-neutral-100 text-neutral-500 cursor-not-allowed opacity-60'
                       : 'border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-700 cursor-pointer'
                   }`}
                   title="Página siguiente"

@@ -65,7 +65,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       </div>
 
       {subtitle && (
-        <span className="text-xs text-neutral-400 mt-1 font-medium">
+        <span className="text-xs text-neutral-500 mt-1 font-medium">
           {subtitle}
         </span>
       )}

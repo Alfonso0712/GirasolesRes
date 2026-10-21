@@ -298,13 +298,13 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 <UtensilsCrossed className="w-4 h-4 text-[#D35400]" />
                 <span>Top Platos Vendidos de Hoy</span>
               </h3>
-              <span className="text-xs font-semibold text-neutral-400">Ranking</span>
+              <span className="text-xs font-semibold text-neutral-500">Ranking</span>
             </div>
 
             {platosHoyRes?.estado === 'error' ? (
               renderBloqueError('platosHoy')
             ) : !platosHoy?.principales || platosHoy.principales.length === 0 ? (
-              <div className="py-8 text-center text-xs text-neutral-400">
+              <div className="py-8 text-center text-xs text-neutral-500">
                 Aún no hay platos despachados el día de hoy.
               </div>
             ) : (
@@ -344,7 +344,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 <ClipboardList className="w-4 h-4 text-blue-600" />
                 <span>Estado de Pedidos</span>
               </h3>
-              <span className="text-xs font-semibold text-neutral-400">Operación</span>
+              <span className="text-xs font-semibold text-neutral-500">Operación</span>
             </div>
 
             {pedidosRes?.estado === 'error' ? (

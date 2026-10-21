@@ -60,7 +60,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 shrink-0">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
-              esAnulada ? 'bg-neutral-100 text-neutral-400 border-neutral-200' : 'bg-amber-50 text-[#D35400] border-amber-200'
+              esAnulada ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-amber-50 text-[#D35400] border-amber-200'
             }`}>
               <Receipt className="w-5 h-5" />
             </div>
@@ -128,15 +128,15 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               {/* Tarjeta de Datos Generales */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-neutral-50/70 rounded-xl border border-neutral-200/70 text-xs">
                 <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Fecha y Hora</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Fecha y Hora</span>
                   <span className="font-semibold text-neutral-800 tabular-nums">{venta.fechaHoraFormateada}</span>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Pedido N.º</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Pedido N.º</span>
                   <span className="font-semibold text-neutral-800 tabular-nums">#{venta.pedidoNumero}</span>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Destino</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Destino</span>
                   <span className="font-semibold text-neutral-800">
                     {venta.tipo} {venta.mesa ? `· ${venta.mesa}` : ''}
                   </span>
@@ -147,7 +147,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   )}
                 </div>
                 <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-400 block">Cajero(a)</span>
+                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Cajero(a)</span>
                   <span className="font-semibold text-neutral-800">{venta.cajero}</span>
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 {/* Métodos de Pago */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-neutral-600">
                   <div>
-                    <span className="text-neutral-400 block uppercase font-medium">Método de Pago</span>
+                    <span className="text-neutral-500 block uppercase font-medium">Método de Pago</span>
                     <span className="font-bold text-[#2C1A0E] flex items-center gap-1 mt-0.5">
                       {venta.metodo === 'Efectivo' ? (
                         <>
@@ -275,13 +275,13 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   {venta.metodo === 'Efectivo' ? (
                     <>
                       <div>
-                        <span className="text-neutral-400 block uppercase font-medium">Monto Recibido</span>
+                        <span className="text-neutral-500 block uppercase font-medium">Monto Recibido</span>
                         <span className="font-semibold text-neutral-800 tabular-nums">
                           S/ {(venta.montoRecibido ?? venta.total).toFixed(2)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-neutral-400 block uppercase font-medium">Vuelto Entregado</span>
+                        <span className="text-neutral-500 block uppercase font-medium">Vuelto Entregado</span>
                         <span className="font-semibold text-neutral-800 tabular-nums">
                           S/ {(venta.vuelto ?? 0).toFixed(2)}
                         </span>
@@ -289,7 +289,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                     </>
                   ) : (
                     <div>
-                      <span className="text-neutral-400 block uppercase font-medium">Ref. Yape</span>
+                      <span className="text-neutral-500 block uppercase font-medium">Ref. Yape</span>
                       <span className="font-semibold text-neutral-800 tabular-nums">
                         {venta.yapeReferencia || 'No registrada'}
                       </span>

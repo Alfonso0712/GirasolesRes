@@ -99,7 +99,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
               : 'Podrá pedirse nuevamente en la toma de pedidos.'}
           </p>
 
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-500">
             Presione <strong>Enter</strong> para confirmar o <strong>Esc</strong> para cancelar.
           </p>
         </div>

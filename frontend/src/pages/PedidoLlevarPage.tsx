@@ -187,19 +187,19 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           <div className="shrink-0 flex flex-col sm:flex-row gap-3 mb-4">
             {/* Buscador */}
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 placeholder="Buscar plato o bebida..."
-                className="w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-xl border border-neutral-200 text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-all"
+                className="w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-xl border border-neutral-200 text-[#2C1A0E] placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-all"
               />
               {busqueda && (
                 <button
                   type="button"
                   onClick={() => setBusqueda('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-sm"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 text-sm"
                 >
                   ×
                 </button>
@@ -208,7 +208,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
 
             {/* Campo Referencia del Cliente integrado (en la misma posición del selector de mesa) */}
             <div className="w-full sm:w-72 shrink-0 relative">
-              <User className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <User className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 id="referencia-cliente"
                 type="text"
@@ -216,7 +216,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 onChange={(e) => handleCambioReferencia(e.target.value)}
                 maxLength={30}
                 placeholder="Referencia cliente (opcional)..."
-                className={`w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-xl border bg-white text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 transition-all ${
+                className={`w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-xl border bg-white text-[#2C1A0E] placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 transition-all ${
                   errorReferencia
                     ? 'border-rose-400 focus:ring-rose-200 bg-rose-50/40 text-rose-900'
                     : 'border-neutral-200 focus:ring-[#D35400]/20 focus:border-[#D35400]'
@@ -281,12 +281,12 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 )}
               </div>
             ) : catalogoFiltrado.length === 0 && (categoriaActiva !== 'Menús Completos' && menusCompletos.length === 0) ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8 text-neutral-400">
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 text-neutral-500">
                 <Utensils className="w-12 h-12 stroke-[1.5] mb-3 text-neutral-300" />
                 <p className="text-sm font-semibold text-neutral-600">
                   No hay productos disponibles en esta sección
                 </p>
-                <p className="text-xs text-neutral-400 mt-1 max-w-sm">
+                <p className="text-xs text-neutral-500 mt-1 max-w-sm">
                   {busqueda
                     ? 'No se encontraron platos que coincidan con la búsqueda.'
                     : 'Avise a la administración para habilitar productos en la carta o menú del día.'}
@@ -318,7 +318,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                               key={mc.id}
                               className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between relative ${
                                 !mc.disponible
-                                  ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-400 select-none opacity-75'
+                                  ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-500 select-none opacity-75'
                                   : cantEnBorrador > 0
                                   ? 'bg-amber-50/50 border-[#D35400] shadow-xs'
                                   : 'bg-white border-neutral-200 hover:border-neutral-300 hover:shadow-xs'
@@ -442,7 +442,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                 <p className="text-xs font-medium text-neutral-500">
                   No hay productos en el pedido para llevar
                 </p>
-                <p className="text-xs text-neutral-400 mt-1 max-w-[200px]">
+                <p className="text-xs text-neutral-500 mt-1 max-w-[200px]">
                   Toque el botón + de cualquier producto de la carta para agregarlo a la comanda.
                 </p>
               </div>
@@ -566,7 +566,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                         <button
                           type="button"
                           onClick={() => quitarLineaByIndex(index)}
-                          className="w-7 h-7 rounded-lg border border-neutral-200 bg-white text-neutral-400 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                          className="w-7 h-7 rounded-lg border border-neutral-200 bg-white text-neutral-500 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                           title="Quitar línea del pedido"
                           aria-label="Quitar línea"
                         >
@@ -690,7 +690,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               <button
                 type="button"
                 onClick={() => setDrawerMovilAbierto(false)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 text-lg cursor-pointer"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-500 hover:text-neutral-700 text-lg cursor-pointer"
               >
                 ×
               </button>

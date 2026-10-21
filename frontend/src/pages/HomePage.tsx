@@ -494,7 +494,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <button
             type="button"
             onClick={() => setToastMensaje(null)}
-            className="ml-3 text-neutral-400 hover:text-white text-base leading-none p-1 cursor-pointer"
+            className="ml-3 text-neutral-500 hover:text-white text-base leading-none p-1 cursor-pointer"
             aria-label="Cerrar notificación"
           >
             ×

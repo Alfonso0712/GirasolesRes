@@ -279,7 +279,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               />
             </span>
             <span className="flex items-center gap-1 text-[#7C6F66]">
-              {mostrarInactivas ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+              {mostrarInactivas ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-500" />}
               Mostrar inactivas
             </span>
           </label>

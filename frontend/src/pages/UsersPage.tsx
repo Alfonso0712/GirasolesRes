@@ -172,7 +172,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
       <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
         {/* Search Input with Debounce 300ms (RV-22) */}
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={busqueda}
@@ -247,7 +247,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                 <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
                 <span className="font-semibold text-neutral-700">Cargando usuarios…</span>
               </div>
-              <span className="text-xs text-neutral-400 font-medium">Actualizando lista</span>
+              <span className="text-xs text-neutral-500 font-medium">Actualizando lista</span>
             </div>
 
             <div className="w-full overflow-x-auto">
@@ -459,7 +459,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                                 }
                                 className={`w-8 h-8 inline-flex items-center justify-center rounded-lg border transition-colors shadow-2xs ${
                                   esPropiaCuenta
-                                    ? 'bg-neutral-100 border-neutral-200 text-neutral-400 opacity-60 cursor-not-allowed'
+                                    ? 'bg-neutral-100 border-neutral-200 text-neutral-500 opacity-60 cursor-not-allowed'
                                     : 'border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#B84600] cursor-pointer'
                                 }`}
                               >
@@ -494,7 +494,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                               }
                               className={`w-8 h-8 inline-flex items-center justify-center rounded-lg border transition-colors shadow-2xs ${
                                 esPropiaCuenta
-                                  ? 'bg-neutral-100 border-neutral-200 text-neutral-400 opacity-60 cursor-not-allowed'
+                                  ? 'bg-neutral-100 border-neutral-200 text-neutral-500 opacity-60 cursor-not-allowed'
                                   : 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
                               }`}
                             >
@@ -576,7 +576,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                             }
                             className={`h-8 min-h-[38px] px-3 rounded-lg border text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-2xs ${
                               esPropiaCuenta
-                                ? 'bg-neutral-100 border-neutral-200 text-neutral-400 opacity-60 cursor-not-allowed'
+                                ? 'bg-neutral-100 border-neutral-200 text-neutral-500 opacity-60 cursor-not-allowed'
                                 : 'border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#B84600] cursor-pointer'
                             }`}
                           >
@@ -613,7 +613,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                           }
                           className={`h-8 min-h-[38px] px-3 rounded-lg border text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-2xs ${
                             esPropiaCuenta
-                              ? 'bg-neutral-100 border-neutral-200 text-neutral-400 opacity-60 cursor-not-allowed'
+                              ? 'bg-neutral-100 border-neutral-200 text-neutral-500 opacity-60 cursor-not-allowed'
                               : 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
                           }`}
                         >

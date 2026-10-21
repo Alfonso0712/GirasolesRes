@@ -215,7 +215,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
                   errorNombre
                     ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:ring-2 focus:ring-rose-200'
                     : 'border-neutral-200 focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20 text-[#2C1A0E]'
-                } ${guardando ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed' : ''}`}
+                } ${guardando ? 'bg-neutral-100 text-neutral-500 cursor-not-allowed' : ''}`}
               />
 
               {/* RV-54: Error visible junto al campo */}

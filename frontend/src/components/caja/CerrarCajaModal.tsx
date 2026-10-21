@@ -489,7 +489,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       <span className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5 block">
                         S/ {resumen.montoInicial.toFixed(2)}
                       </span>
-                      <span className="text-xs text-stone-400 block">Fondo turno</span>
+                      <span className="text-xs text-stone-500 block">Fondo turno</span>
                     </div>
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
@@ -499,7 +499,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       <span className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5 block">
                         S/ {resumen.ventasEfectivo.toFixed(2)}
                       </span>
-                      <span className="text-xs text-stone-400 block">Gaveta física</span>
+                      <span className="text-xs text-stone-500 block">Gaveta física</span>
                     </div>
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
@@ -509,7 +509,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       <span className="text-base font-bold text-purple-900 tabular-nums mt-0.5 block">
                         S/ {resumen.ventasYape.toFixed(2)}
                       </span>
-                      <span className="text-xs text-stone-400 block">Cuenta digital</span>
+                      <span className="text-xs text-stone-500 block">Cuenta digital</span>
                     </div>
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
@@ -519,7 +519,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
                         S/ {resumen.totalVentas.toFixed(2)}
                       </span>
-                      <span className="text-xs text-stone-400 block">Efectivo + Yape</span>
+                      <span className="text-xs text-stone-500 block">Efectivo + Yape</span>
                     </div>
 
                     <div className="p-3 bg-amber-50/70 border border-amber-300 rounded-xl col-span-2 sm:col-span-1">
@@ -641,7 +641,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     </label>
                     <span
                       className={`text-xs tabular-nums font-semibold ${
-                        observacion.length > 200 ? 'text-red-600 font-bold' : 'text-stone-400'
+                        observacion.length > 200 ? 'text-red-600 font-bold' : 'text-stone-500'
                       }`}
                     >
                       {observacion.length}/200

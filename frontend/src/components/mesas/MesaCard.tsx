@@ -42,7 +42,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
   let IconoEstado = CheckCircle2;
 
   if (esInactiva) {
-    estiloCard = 'bg-neutral-100/70 border-neutral-200/80 text-neutral-400 opacity-80';
+    estiloCard = 'bg-neutral-100/70 border-neutral-200/80 text-neutral-500 opacity-80';
     badgeColor = 'bg-neutral-200/60 text-neutral-500 border-neutral-300';
     IconoEstado = PowerOff;
   } else if (esLibre) {
@@ -146,7 +146,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                 !mesa.activa
                   ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 cursor-pointer'
                   : esOcupada
-                  ? 'bg-neutral-100 border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60'
+                  ? 'bg-neutral-100 border-neutral-200 text-neutral-500 cursor-not-allowed opacity-60'
                   : 'bg-amber-50 hover:bg-amber-100 text-[#B84600] border-amber-200 cursor-pointer'
               }`}
             >
@@ -186,7 +186,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                 aria-label={`Pedido ${mesa.nombre}`}
                 className={`w-full min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap ${
                   esInactiva
-                    ? 'bg-neutral-100 border border-neutral-200 text-neutral-400 cursor-not-allowed opacity-60'
+                    ? 'bg-neutral-100 border border-neutral-200 text-neutral-500 cursor-not-allowed opacity-60'
                     : 'bg-[#D35400] hover:bg-[#B84600] text-white border border-transparent cursor-pointer'
                 }`}
               >
@@ -228,7 +228,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
             )}
 
             {esInactiva && (
-              <div className="w-full h-8 flex items-center justify-center text-xs text-neutral-400 font-medium">
+              <div className="w-full h-8 flex items-center justify-center text-xs text-neutral-500 font-medium">
                 Mesa inactiva
               </div>
             )}
@@ -282,7 +282,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                 <span>Cobrar mesa</span>
               </button>
             ) : (
-              <div className="w-full py-2 text-center text-xs text-neutral-400 font-medium">
+              <div className="w-full py-2 text-center text-xs text-neutral-500 font-medium">
                 Sin consumo activo
               </div>
             )}

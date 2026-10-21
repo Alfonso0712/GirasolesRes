@@ -236,7 +236,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <label htmlFor="filtro-desde" className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                <Calendar className="w-3.5 h-3.5 text-neutral-500" />
                 Desde:
               </label>
               <input
@@ -254,7 +254,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
 
             <div className="flex items-center gap-2">
               <label htmlFor="filtro-hasta" className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                <Calendar className="w-3.5 h-3.5 text-neutral-500" />
                 Hasta:
               </label>
               <input
@@ -485,7 +485,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       {/* Contado */}
                       <td className="px-4 py-3 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums">
                         {abierta ? (
-                          <span className="text-neutral-400 font-normal">—</span>
+                          <span className="text-neutral-500 font-normal">—</span>
                         ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
                           <span className="tabular-nums font-semibold">{`S/ ${Number(c.efectivoContado).toFixed(2)}`}</span>
                         ) : (
@@ -496,9 +496,9 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       {/* Diferencia / Cuadre (RV-131, E-314) */}
                       <td className="px-4 py-3 text-right tabular-nums">
                         {abierta ? (
-                          <span className="text-neutral-400 font-normal">—</span>
+                          <span className="text-neutral-500 font-normal">—</span>
                         ) : diferenciaNum === null ? (
-                          <span className="text-neutral-400">—</span>
+                          <span className="text-neutral-500">—</span>
                         ) : diferenciaNum === 0 ? (
                           <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
                             Cuadra · S/ 0.00

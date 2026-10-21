@@ -107,7 +107,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
               />
               <div className="flex justify-between items-center mt-1 text-xs">
                 <span className="text-[#7C6F66]">Opcional</span>
-                <span className={`tabular-nums ${nota.length >= 95 ? 'text-rose-600 font-bold' : 'text-neutral-400'}`}>
+                <span className={`tabular-nums ${nota.length >= 95 ? 'text-rose-600 font-bold' : 'text-neutral-500'}`}>
                   {nota.length} / 100
                 </span>
               </div>

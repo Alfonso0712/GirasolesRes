@@ -197,7 +197,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
                 placeholder="Ej. Sin ensalada, bien caliente..."
                 className="w-full px-3 py-2 text-xs sm:text-sm border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#D35400] focus:border-[#D35400] font-sans"
               />
-              <span className="text-xs text-neutral-400 mt-1 block text-right font-sans tabular-nums">
+              <span className="text-xs text-neutral-500 mt-1 block text-right font-sans tabular-nums">
                 {observacion.length}/100
               </span>
             </div>
@@ -219,7 +219,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
               className={`px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm ${
                 esCompleto
                   ? 'bg-[#D35400] hover:bg-[#B94600] text-white cursor-pointer'
-                  : 'bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300'
+                  : 'bg-neutral-200 text-neutral-500 cursor-not-allowed border border-neutral-300'
               }`}
             >
               <span className="font-sans whitespace-nowrap">

@@ -255,7 +255,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-[#D35400] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                 Cobro en Caja
               </span>
-              <span className="text-xs text-neutral-400">·</span>
+              <span className="text-xs text-neutral-500">·</span>
               <span className="text-xs text-neutral-500 tabular-nums">
                 Hora: {pedido.hora}
               </span>
@@ -583,7 +583,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   Monto Recibido del Cliente (S/) <span className="text-[#D35400]">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold text-neutral-400">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold text-neutral-500">
                     S/
                   </span>
                   <input
@@ -623,7 +623,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                       onClick={() => handleQuickAmount(b)}
                       className={`px-3 py-1.5 rounded-lg border text-xs font-semibold font-sans tabular-nums transition-colors cursor-pointer ${
                         b < total
-                          ? 'border-neutral-100 bg-neutral-100/50 text-neutral-400 cursor-not-allowed'
+                          ? 'border-neutral-100 bg-neutral-100/50 text-neutral-500 cursor-not-allowed'
                           : 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs'
                       }`}
                     >

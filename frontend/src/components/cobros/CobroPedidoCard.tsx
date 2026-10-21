@@ -56,7 +56,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
 
       <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
         <div>
-          <span className="text-xs text-neutral-400 font-bold uppercase block">
+          <span className="text-xs text-neutral-500 font-bold uppercase block">
             Total
           </span>
           <span className="text-lg font-bold font-sans tabular-nums text-[#D35400]">
@@ -78,9 +78,9 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
             type="button"
             disabled
             title="Esperando que cocina termine la preparación"
-            className="px-3.5 py-2 rounded-xl bg-neutral-100 text-neutral-400 border border-neutral-200 text-xs font-semibold flex items-center gap-1.5 cursor-not-allowed min-h-[44px]"
+            className="px-3.5 py-2 rounded-xl bg-neutral-100 text-neutral-500 border border-neutral-200 text-xs font-semibold flex items-center gap-1.5 cursor-not-allowed min-h-[44px]"
           >
-            <ChefHat className="w-4 h-4 text-neutral-400" />
+            <ChefHat className="w-4 h-4 text-neutral-500" />
             <span>Esperando a cocina</span>
           </button>
         )}

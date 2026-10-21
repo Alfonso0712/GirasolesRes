@@ -264,7 +264,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     {detalle.fechaAperturaLocal || formatLimaFecha(detalle.fechaApertura)}
                   </p>
                   <p className="text-neutral-600 flex items-center gap-1">
-                    <User className="w-3 h-3 text-stone-400" />
+                    <User className="w-3 h-3 text-stone-500" />
                     Cajero(a): <strong>{detalle.cajeroApertura || 'Cajero'}</strong>
                   </p>
                   <p className="text-neutral-500 text-xs">
@@ -283,7 +283,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                         : 'Turno en curso (Abierta)')}
                   </p>
                   <p className="text-neutral-600 flex items-center gap-1">
-                    <User className="w-3 h-3 text-stone-400" />
+                    <User className="w-3 h-3 text-stone-500" />
                     Cerrado por: <strong>{detalle.cajeroCierre || '—'}</strong>
                   </p>
                   <p className="text-neutral-500 text-xs">
@@ -313,7 +313,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
                     <div className="flex justify-between items-center text-neutral-600">
                       <span className="flex items-center gap-1">
-                        <Banknote className="w-3.5 h-3.5 text-stone-400" />
+                        <Banknote className="w-3.5 h-3.5 text-stone-500" />
                         Ventas en Efectivo:
                       </span>
                       <span className="font-bold text-[#2C1A0E] tabular-nums">
@@ -361,7 +361,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                       <span>Efectivo Físico Contado:</span>
                       <span className="font-bold text-stone-900 tabular-nums">
                         {esAbierta ? (
-                          <span className="text-stone-400 font-normal">—</span>
+                          <span className="text-stone-500 font-normal">—</span>
                         ) : detalle.efectivoContado !== null && detalle.efectivoContado !== undefined ? (
                           <span className="tabular-nums">S/ {Number(detalle.efectivoContado).toFixed(2)}</span>
                         ) : (
@@ -374,7 +374,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                       <span>Diferencia de Cuadre:</span>
                       <span className="font-bold tabular-nums">
                         {esAbierta ? (
-                          <span className="text-stone-400 font-normal">—</span>
+                          <span className="text-stone-500 font-normal">—</span>
                         ) : diferenciaNum === null ? (
                           '—'
                         ) : diferenciaNum === 0 ? (

@@ -206,14 +206,14 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Líneas del Pedido ({lineas.length})
                 </span>
-                <span className="text-xs text-neutral-400 tabular-nums">
+                <span className="text-xs text-neutral-500 tabular-nums">
                   Límite 1 a 20 por ítem
                 </span>
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
                 {lineas.length === 0 ? (
-                  <div className="p-8 text-center text-xs text-neutral-400">
+                  <div className="p-8 text-center text-xs text-neutral-500">
                     No quedan productos en el pedido. Para quitar todos, debe anular el pedido.
                   </div>
                 ) : (
@@ -225,7 +225,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="font-semibold text-sm text-neutral-900">{l.nombre}</div>
-                          <div className="text-xs text-neutral-400 tabular-nums">
+                          <div className="text-xs text-neutral-500 tabular-nums">
                             S/ {l.precioUnitario.toFixed(2)} c/u
                           </div>
                         </div>
@@ -322,7 +322,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                     key={prod.id}
                     className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition-colors ${
                       prod.agotado
-                        ? 'border-neutral-200 bg-neutral-100/70 text-neutral-400'
+                        ? 'border-neutral-200 bg-neutral-100/70 text-neutral-500'
                         : 'border-neutral-200 hover:border-amber-300 hover:bg-amber-50/30'
                     }`}
                   >

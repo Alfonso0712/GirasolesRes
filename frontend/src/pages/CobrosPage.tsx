@@ -313,19 +313,19 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
       <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
         {/* Input de Búsqueda */}
         <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar mesa o n.º de pedido..."
-            className="w-full pl-8 pr-8 py-2 rounded-xl border border-neutral-200 text-xs text-[#2C1A0E] placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-colors min-h-[38px]"
+            className="w-full pl-8 pr-8 py-2 rounded-xl border border-neutral-200 text-xs text-[#2C1A0E] placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-colors min-h-[38px]"
           />
           {busqueda && (
             <button
               type="button"
               onClick={() => setBusqueda('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 text-xs font-bold px-1 cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-600 text-xs font-bold px-1 cursor-pointer"
               aria-label="Limpiar búsqueda"
             >
               <X className="w-3.5 h-3.5" />
@@ -500,9 +500,9 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                               disabled
                               title="Esperando que cocina termine la preparación"
                               aria-label={`Pedido #${p.numero} en cocina - esperando a cocina`}
-                              className="px-3.5 py-2 rounded-xl bg-neutral-100 text-neutral-400 border border-neutral-200 text-xs font-semibold flex items-center gap-1.5 cursor-not-allowed mx-auto min-h-[44px]"
+                              className="px-3.5 py-2 rounded-xl bg-neutral-100 text-neutral-500 border border-neutral-200 text-xs font-semibold flex items-center gap-1.5 cursor-not-allowed mx-auto min-h-[44px]"
                             >
-                              <ChefHat className="w-4 h-4 text-neutral-400" />
+                              <ChefHat className="w-4 h-4 text-neutral-500" />
                               <span>Esperando a cocina</span>
                             </button>
                           )}

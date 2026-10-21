@@ -50,7 +50,7 @@ export const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
 
       <div className="p-4 sm:p-5 xl:p-6">
         {items.length === 0 ? (
-          <p className="text-xs sm:text-sm text-neutral-400 italic">
+          <p className="text-xs sm:text-sm text-neutral-500 italic">
             No hay productos registrados en esta categoría de carta.
           </p>
         ) : (
@@ -74,7 +74,7 @@ export const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                       {estaSeleccionado ? (
                         <CheckSquare className="w-5 h-5 text-[#D35400]" />
                       ) : (
-                        <Square className="w-5 h-5 text-neutral-400" />
+                        <Square className="w-5 h-5 text-neutral-500" />
                       )}
                     </div>
                     <span className="text-sm font-semibold text-[#2C1A0E] leading-snug break-words">

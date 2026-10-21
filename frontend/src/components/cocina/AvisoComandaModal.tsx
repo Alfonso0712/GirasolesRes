@@ -42,7 +42,7 @@ export const AvisoComandaModal: React.FC<AvisoComandaModalProps> = ({
           <p className="text-neutral-600">
             Destino: <span className="font-bold text-[#D35400]">{destino}</span>
           </p>
-          <p className="text-xs text-neutral-400 mt-2">
+          <p className="text-xs text-neutral-500 mt-2">
             Hora de despacho en cocina: {aviso.hora}
           </p>
         </div>

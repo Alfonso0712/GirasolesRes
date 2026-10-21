@@ -25,7 +25,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
     <div
       className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between relative ${
         esAgotado
-          ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-400 select-none opacity-65'
+          ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-500 select-none opacity-65'
           : cantEnBorrador > 0
           ? 'bg-amber-50/40 border-[#D35400] shadow-xs'
           : 'bg-white border-neutral-200 hover:border-neutral-300 hover:shadow-xs'
@@ -80,7 +80,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             aria-disabled={esAgotado}
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
               esAgotado
-                ? 'bg-neutral-200 text-neutral-400 border border-neutral-300 cursor-not-allowed opacity-60'
+                ? 'bg-neutral-200 text-neutral-500 border border-neutral-300 cursor-not-allowed opacity-60'
                 : 'bg-[#D35400] hover:bg-[#B84600] text-white shadow-xs cursor-pointer active:scale-95'
             }`}
             aria-label={`Agregar ${nombre}`}

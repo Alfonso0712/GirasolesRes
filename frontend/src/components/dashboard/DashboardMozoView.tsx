@@ -53,7 +53,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
         </div>
       ) : (
         <div className="p-3.5 bg-neutral-50 border border-neutral-200/80 rounded-xl text-neutral-600 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-neutral-400 shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-neutral-500 shrink-0" />
           <span>No tiene pedidos listos por recoger.</span>
         </div>
       )}

@@ -365,7 +365,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={busqueda}
@@ -459,7 +459,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                     <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
                     <span className="font-semibold text-neutral-700">Cargando productos…</span>
                   </div>
-                  <span className="text-xs text-neutral-400 font-medium">Actualizando lista</span>
+                  <span className="text-xs text-neutral-500 font-medium">Actualizando lista</span>
                 </div>
                 <div className="p-4 space-y-3">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -593,7 +593,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                     S/ {prod.precio.toFixed(2)}
                                   </span>
                                 ) : (
-                                  <span className="text-xs text-stone-400 italic">
+                                  <span className="text-xs text-stone-500 italic">
                                     En menú completo
                                   </span>
                                 )}
@@ -720,7 +720,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                   S/ {prod.precio.toFixed(2)}
                                 </strong>
                               ) : (
-                                <span className="text-xs text-neutral-400 italic">
+                                <span className="text-xs text-neutral-500 italic">
                                   En menú completo
                                 </span>
                               )}
@@ -895,7 +895,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
                       {/* Desglose de Partes que lo componen */}
                       <div className="mt-4 space-y-2">
-                        <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+                        <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                           Componentes requeridos ({m.partes.length})
                         </p>
                         <div className="space-y-1.5">
@@ -997,7 +997,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               <div>
                 <p className="text-xs text-neutral-500 font-medium">Menú completo:</p>
                 <p className="font-bold text-sm text-neutral-900">{menuParaPrecio.nombre}</p>
-                <p className="text-xs text-neutral-400 mt-0.5">
+                <p className="text-xs text-neutral-500 mt-0.5">
                   Precio anterior: S/ {menuParaPrecio.precio.toFixed(2)}
                 </p>
               </div>

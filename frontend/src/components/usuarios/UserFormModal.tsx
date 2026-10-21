@@ -368,7 +368,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               {rol === 'Administrador' ? (
                 <span className="text-rose-500">* (obligatorio para Administrador)</span>
               ) : (
-                <span className="text-neutral-400 font-normal">(opcional)</span>
+                <span className="text-neutral-500 font-normal">(opcional)</span>
               )}
             </label>
             <input
@@ -399,7 +399,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               <label className="block text-xs font-semibold text-neutral-700 mb-1">
                 {isEdit ? 'Nueva contraseña' : 'Contraseña'}{' '}
                 {isEdit ? (
-                  <span className="text-neutral-400 font-normal">(dejar vacía para no cambiar)</span>
+                  <span className="text-neutral-500 font-normal">(dejar vacía para no cambiar)</span>
                 ) : (
                   <span className="text-rose-500">*</span>
                 )}

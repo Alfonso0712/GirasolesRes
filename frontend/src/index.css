@@ -44,6 +44,10 @@
   h1, h2, h3 {
     font-family: var(--font-sans);
   }
+
+  input::placeholder, textarea::placeholder {
+    color: #71717A;
+  }
 }
 
 /* Clases Utilitarias Estandarizadas para Componentes del Sistema */
@@ -78,7 +82,7 @@
 .table-cell-sub {
   font-size: 0.75rem;
   font-weight: 400;
-  color: #78716C;
+  color: #706A65;
   line-height: 1rem;
 }
 

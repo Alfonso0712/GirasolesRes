@@ -101,7 +101,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
         {/* Content */}
         <div className="flex-1 overflow-y-auto py-4 space-y-2.5 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full">
           {cargando ? (
-            <div className="py-12 flex flex-col items-center justify-center text-neutral-400 gap-3">
+            <div className="py-12 flex flex-col items-center justify-center text-neutral-500 gap-3">
               <RefreshCw className="w-6 h-6 animate-spin text-[#D35400]" />
               <span className="text-sm">Cargando platos del día…</span>
             </div>
@@ -139,7 +139,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
                         {plato.agotado ? 'Agotado' : 'Disponible'}
                       </span>
                     </div>
-                    <span className="text-xs text-neutral-400 capitalize">
+                    <span className="text-xs text-neutral-500 capitalize">
                       Categoría: {plato.categoria}
                     </span>
                   </div>
