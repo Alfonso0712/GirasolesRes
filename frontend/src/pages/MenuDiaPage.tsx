@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   UtensilsCrossed,
   Coffee,
@@ -232,47 +232,6 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
             Planificación diaria de opciones, menús completos, carta y disponibilidad del servicio.
           </p>
         </div>
-
-        {/* CONTROLES ADMINISTRADOR */}
-        {esAdmin && tabActiva !== 'disponibilidad' && (
-          <div className="flex items-center gap-3 flex-wrap">
-            {tieneCambiosSinGuardar && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-200 animate-pulse">
-                Cambios sin guardar
-              </span>
-            )}
-
-            {tieneCambiosSinGuardar && (
-              <button
-                type="button"
-                onClick={() => setDiscardModalOpen(true)}
-                disabled={guardando}
-                className="px-4 py-2 text-xs font-bold text-neutral-600 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
-              >
-                Descartar cambios
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={handleGuardarMenu}
-              disabled={guardando}
-              className="px-5 py-2 text-xs font-bold text-white bg-[#D35400] hover:bg-[#B84600] rounded-xl shadow-xs transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
-            >
-              {guardando ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Guardando…</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>GUARDAR MENÚ DEL DÍA</span>
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* AVISOS DE VALIDACIÓN Y RETROALIMENTACIÓN */}
