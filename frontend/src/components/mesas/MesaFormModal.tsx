@@ -189,12 +189,17 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
             <div>
-              <label
-                htmlFor="campo-nombre-mesa"
-                className="block text-xs font-semibold text-[#2C1A0E] mb-1.5"
-              >
-                Número o nombre de la mesa <span className="text-[#B84500]">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="campo-nombre-mesa"
+                  className="block text-sm font-medium text-[#2C1A0E]"
+                >
+                  Número o nombre de la mesa <span className="text-[#B84500]">*</span>
+                </label>
+                <span className="text-xs text-[#7C6F66] tabular-nums">
+                  {nombre.length}/20
+                </span>
+              </div>
 
               <input
                 id="campo-nombre-mesa"
@@ -214,7 +219,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-none ${
                   errorNombre
                     ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:ring-2 focus:ring-rose-200'
-                    : 'border-neutral-200 focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20 text-[#2C1A0E]'
+                    : 'border-neutral-200 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200 text-[#2C1A0E]'
                 } ${guardando ? 'bg-neutral-100 text-neutral-500 cursor-not-allowed' : ''}`}
               />
 

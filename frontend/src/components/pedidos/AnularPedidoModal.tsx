@@ -84,7 +84,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
             </div>
             <div>
               <h3 id="anular-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
-                Anular Pedido N.º {pedido.numero}
+                Anular pedido N.º {pedido.numero}
               </h3>
               <p className="text-xs text-neutral-500">{destino}</p>
             </div>
@@ -136,7 +136,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
                 className={`w-full p-3 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                   errorValidacion
                     ? 'border-rose-400 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#D35400] focus:ring-amber-100'
+                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               <div className="flex justify-between items-center text-xs text-neutral-500 mt-1 px-1">
@@ -194,7 +194,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
                 disabled={loading}
                 className="flex-1 py-3 px-4 rounded-xl bg-rose-600 text-white font-semibold text-sm hover:bg-rose-700 transition-colors shadow-sm cursor-pointer disabled:opacity-50 min-h-[44px]"
               >
-                {loading ? 'Anulando…' : 'Anular Pedido'}
+                {loading ? 'Anulando…' : 'Anular pedido'}
               </button>
             </div>
           </div>

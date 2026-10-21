@@ -119,7 +119,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
               return (
                 <div key={parte.id || idx} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold uppercase tracking-wide text-[#2C1A0E] flex items-center gap-1.5 font-sans">
+                    <label className="text-sm font-medium text-[#2C1A0E] flex items-center gap-1.5 font-sans">
                       <span className="w-4 h-4 rounded-full bg-neutral-100 text-[#7C6F66] text-xs flex items-center justify-center font-bold">
                         {idx + 1}
                       </span>
@@ -158,7 +158,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
                               agotada
                                 ? 'bg-neutral-50 border-neutral-200 opacity-60 cursor-not-allowed'
                                 : seleccionada
-                                ? 'bg-amber-50/70 border-[#D35400] ring-1 ring-[#D35400] text-[#2C1A0E]'
+                                ? 'bg-amber-50/70 border-[#C74E00] ring-1 ring-[#C74E00] text-[#2C1A0E]'
                                 : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50 text-[#2C1A0E]'
                             }`}
                           >
@@ -170,7 +170,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
                                 Agotado
                               </span>
                             ) : seleccionada ? (
-                              <span className="w-4 h-4 rounded-full bg-[#D35400] text-white flex items-center justify-center shrink-0 ml-1">
+                              <span className="w-4 h-4 rounded-full bg-[#C74E00] text-white flex items-center justify-center shrink-0 ml-1">
                                 <Check className="w-2.5 h-2.5" />
                               </span>
                             ) : null}
@@ -185,7 +185,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
 
             {/* Observación opcional */}
             <div className="pt-2 border-t border-neutral-100">
-              <label htmlFor="obs-menu-input" className="block text-xs font-semibold text-[#2C1A0E] mb-1 font-sans">
+              <label htmlFor="obs-menu-input" className="block text-sm font-medium text-[#2C1A0E] mb-1.5 font-sans">
                 Nota u observación especial (opcional)
               </label>
               <input
@@ -195,7 +195,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
                 value={observacion}
                 onChange={(e) => setObservacion(e.target.value)}
                 placeholder="Ej. Sin ensalada, bien caliente..."
-                className="w-full px-3 py-2 text-xs sm:text-sm border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#D35400] focus:border-[#D35400] font-sans"
+                className="w-full px-3 py-2 text-xs sm:text-sm border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-2 focus:ring-amber-200 focus:border-[#C74E00] font-sans"
               />
               <span className="text-xs text-neutral-500 mt-1 block text-right font-sans tabular-nums">
                 {observacion.length}/100

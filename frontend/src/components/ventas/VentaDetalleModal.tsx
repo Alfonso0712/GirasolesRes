@@ -101,7 +101,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
           {loading ? (
             <div className="py-12 flex flex-col items-center justify-center gap-2 text-neutral-500">
-              <span className="w-6 h-6 border-2 border-[#D35400]/20 border-t-[#D35400] rounded-full animate-spin" />
+              <span className="w-6 h-6 border-2 border-[#C74E00]/20 border-t-[#C74E00] rounded-full animate-spin" />
               <p className="text-xs">Cargando información de la venta…</p>
             </div>
           ) : !venta ? (
@@ -312,7 +312,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               className="px-3 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-[#B84500]" />
-              <span>{descargandoTicket ? 'Descargando PDF...' : 'Descargar PDF (Copia)'}</span>
+              <span>{descargandoTicket ? 'Descargando PDF...' : 'Descargar PDF (copia)'}</span>
             </button>
           </div>
 
@@ -325,7 +325,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 className="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Ban className="w-3.5 h-3.5" />
-                <span>Anular Venta</span>
+                <span>Anular venta</span>
               </button>
             )}
 

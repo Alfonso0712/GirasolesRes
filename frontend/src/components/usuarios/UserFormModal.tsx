@@ -279,9 +279,14 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           <div className="flex-1 overflow-y-auto min-h-0 pr-1.5 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
             {/* Nombre Completo */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Nombre completo <span className="text-rose-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-medium text-[#2C1A0E]">
+                  Nombre completo <span className="text-rose-500">*</span>
+                </label>
+                <span className="text-xs text-neutral-500 tabular-nums">
+                  {nombre.length}/60
+                </span>
+              </div>
             <input
               ref={nombreInputRef}
               type="text"
@@ -296,7 +301,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                 errores.nombre
                   ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                  : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                  : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
               }`}
             />
             {errores.nombre && (
@@ -307,9 +312,14 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Usuario */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Nombre de usuario <span className="text-rose-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-medium text-[#2C1A0E]">
+                  Nombre de usuario <span className="text-rose-500">*</span>
+                </label>
+                <span className="text-xs text-neutral-500 tabular-nums">
+                  {usuario.length}/30
+                </span>
+              </div>
               <input
                 ref={usuarioInputRef}
                 type="text"
@@ -324,7 +334,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                   errores.usuario
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               {errores.usuario && (
@@ -334,7 +344,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
 
             {/* Rol */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
                 Rol en el restaurante <span className="text-rose-500">*</span>
               </label>
               <select
@@ -347,7 +357,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors bg-white ${
                   errores.rol
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                 }`}
               >
                 <option value="Administrador">Administrador</option>
@@ -385,7 +395,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                 errores.correo
                   ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                  : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                  : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
               }`}
             />
             {errores.correo && (
@@ -418,7 +428,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                     errores.contrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                      : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                   }`}
                 />
                 <button
@@ -435,7 +445,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
                 Confirmar contraseña{' '}
                 {(!isEdit || contrasena) && <span className="text-rose-500">*</span>}
               </label>
@@ -454,7 +464,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                     errores.confirmarContrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-neutral-300 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                      : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                   } ${isEdit && !contrasena ? 'bg-neutral-100 cursor-not-allowed' : ''}`}
                 />
                 <button

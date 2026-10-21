@@ -276,7 +276,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
             {/* Selector de Tipo de Producto (Carta vs Componente) */}
             <div>
-              <label className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5">
+              <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
                 Tipo de producto <span className="text-[#B84500]">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80">
@@ -320,13 +320,18 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
             {/* Campo 1: Nombre del producto (RV-33, RV-37) */}
             <div>
-              <label
-                htmlFor="prod-nombre"
-                className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
-              >
-                Nombre {tipo === 'Componente' ? 'del componente' : 'del producto'}{' '}
-                <span className="text-[#B84500]">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="prod-nombre"
+                  className="block text-sm font-medium text-[#2C1A0E]"
+                >
+                  Nombre {tipo === 'Componente' ? 'del componente' : 'del producto'}{' '}
+                  <span className="text-[#B84500]">*</span>
+                </label>
+                <span className="text-xs text-[#7C6F66] tabular-nums">
+                  {nombre.length}/50
+                </span>
+              </div>
               <input
                 id="prod-nombre"
                 ref={nombreInputRef}
@@ -348,7 +353,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden ${
                   errores.nombre
                     ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                    : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                 }`}
                 disabled={guardando}
               />
@@ -371,9 +376,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-categoria"
-                    className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                    className="block text-sm font-medium text-[#2C1A0E] mb-1.5"
                   >
-                    Categoría de Carta <span className="text-[#B84500]">*</span>
+                    Categoría de carta <span className="text-[#B84500]">*</span>
                   </label>
                   <select
                     id="prod-categoria"
@@ -388,16 +393,21 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
                       errores.categoria
                         ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                        : 'border-neutral-200 text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                        : 'border-neutral-200 text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                     }`}
                     disabled={guardando}
                   >
                     {CATEGORIAS_PRODUCTO.map((cat) => (
                       <option key={cat.valor} value={cat.valor}>
-                        {cat.etiqueta} — ({cat.descripcion})
+                        {cat.etiqueta}
                       </option>
                     ))}
                   </select>
+                  {CATEGORIAS_PRODUCTO.find((c) => c.valor === categoria)?.descripcion && !errores.categoria && (
+                    <p className="mt-1 text-xs text-[#7C6F66]">
+                      {CATEGORIAS_PRODUCTO.find((c) => c.valor === categoria)?.descripcion}
+                    </p>
+                  )}
                   {errores.categoria && (
                     <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
@@ -410,9 +420,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-precio"
-                    className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                    className="block text-sm font-medium text-[#2C1A0E] mb-1.5"
                   >
-                    Precio de Venta (S/) <span className="text-[#B84500]">*</span>
+                    Precio de venta (S/) <span className="text-[#B84500]">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
@@ -434,7 +444,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border text-sm font-sans font-medium transition-all outline-hidden ${
                         errores.precio
                           ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                          : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                          : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                       }`}
                       disabled={guardando}
                     />
@@ -467,9 +477,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-rol"
-                    className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                    className="block text-sm font-medium text-[#2C1A0E] mb-1.5"
                   >
-                    Rol del Componente <span className="text-[#B84500]">*</span>
+                    Rol del componente <span className="text-[#B84500]">*</span>
                   </label>
                   <select
                     id="prod-rol"
@@ -484,16 +494,21 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
                       errores.rol
                         ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                        : 'border-neutral-200 text-neutral-900 focus:border-[#D35400] focus:ring-2 focus:ring-amber-200'
+                        : 'border-neutral-200 text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
                     }`}
                     disabled={guardando}
                   >
                     {ROLES_COMPONENTE.map((r) => (
                       <option key={r.valor} value={r.valor}>
-                        {r.etiqueta} — ({r.descripcion})
+                        {r.etiqueta}
                       </option>
                     ))}
                   </select>
+                  {ROLES_COMPONENTE.find((r) => r.valor === rol)?.descripcion && !errores.rol && (
+                    <p className="mt-1 text-xs text-[#7C6F66]">
+                      {ROLES_COMPONENTE.find((r) => r.valor === rol)?.descripcion}
+                    </p>
+                  )}
                   {errores.rol && (
                     <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />

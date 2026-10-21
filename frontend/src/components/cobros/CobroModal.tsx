@@ -352,7 +352,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 onClick={() => setTipoComprobante('Boleta')}
                 className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
                   tipoComprobante === 'Boleta'
-                    ? 'bg-[#C74E00] text-white border-[#D35400] shadow-2xs'
+                    ? 'bg-[#C74E00] text-white border-[#C74E00] shadow-2xs'
                     : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
@@ -427,7 +427,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                         value={numDoc}
                         onChange={(e) => setNumDoc(e.target.value.replace(/\D/g, ''))}
                         placeholder="Ej. 44444444"
-                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-sm tabular-nums"
+                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] text-sm tabular-nums"
                       />
                       <button
                         type="button"
@@ -450,7 +450,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                       value={razonSocial}
                       onChange={(e) => setRazonSocial(e.target.value)}
                       placeholder="Nombres y Apellidos"
-                      className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-sm bg-white"
+                      className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] text-sm bg-white"
                     />
                   </div>
 
@@ -596,7 +596,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                     onChange={(e) => setMontoRecibidoStr(e.target.value)}
                     autoFocus
                     disabled={loading}
-                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20 text-[#2C1A0E] text-xl font-bold font-sans tabular-nums"
+                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 text-[#2C1A0E] text-xl font-bold font-sans tabular-nums"
                     placeholder="0.00"
                   />
                 </div>
@@ -703,7 +703,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   onChange={(e) => setYapeReferencia(e.target.value)}
                   disabled={loading}
                   placeholder="Ej. 128492"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-neutral-900 text-sm tabular-nums"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] text-neutral-900 text-sm tabular-nums"
                 />
               </div>
             </div>
