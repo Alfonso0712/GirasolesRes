@@ -33,7 +33,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
     >
       {/* Insignia de Cantidad seleccionada */}
       {cantEnBorrador > 0 && !esAgotado && (
-        <span className="absolute -top-2 -right-2 bg-[#D35400] text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-xs tabular-nums">
+        <span className="absolute -top-2 -right-2 bg-[#D35400] text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-xs tabular-nums">
           {cantEnBorrador}
         </span>
       )}
