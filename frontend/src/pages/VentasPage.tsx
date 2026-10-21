@@ -503,6 +503,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                           <IconActionButton
                             icon={Eye}
                             label="Ver detalle de la venta"
+                            variant="view"
                             onClick={() => handleVerDetalle(v.ventaId)}
                           />
                         </td>

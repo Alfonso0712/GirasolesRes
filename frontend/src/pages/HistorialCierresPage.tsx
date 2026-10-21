@@ -515,6 +515,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       <IconActionButton
                         icon={Eye}
                         label="Ver detalle del cierre"
+                        variant="view"
                         onClick={() => {
                           setCajaIdSeleccionada(cajaId);
                           setDetalleModalOpen(true);
@@ -523,7 +524,8 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
 
                       <IconActionButton
                         icon={Download}
-                        label="Descargar comprobante PDF"
+                        label="Descargar acta de cierre"
+                        variant="download"
                         disabled={abierta || descargandoPdfId === cajaId}
                         disabledReason={abierta ? 'No disponible mientras la caja esté abierta' : 'Descargando...'}
                         onClick={() => handleDescargarPdf(cajaId)}

@@ -311,6 +311,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                               <IconActionButton
                                 icon={Edit2}
                                 label="Editar usuario"
+                                variant="edit"
                                 onClick={(e) => handleAbrirEditar(u, e)}
                               />
 
@@ -319,7 +320,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                                 <IconActionButton
                                   icon={PowerOff}
                                   label="Desactivar usuario"
-                                  variant="warning"
+                                  variant="deactivate"
                                   disabled={esPropiaCuenta}
                                   disabledReason="No puede desactivar su propia cuenta"
                                   onClick={(e) => handleAbrirConfirmacion(u, 'desactivar', e)}
@@ -328,7 +329,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                                 <IconActionButton
                                   icon={Power}
                                   label="Activar usuario"
-                                  variant="success"
+                                  variant="activate"
                                   onClick={(e) => handleAbrirConfirmacion(u, 'activar', e)}
                                 />
                               )}
@@ -337,7 +338,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                               <IconActionButton
                                 icon={Trash2}
                                 label="Eliminar usuario"
-                                variant="danger"
+                                variant="delete"
                                 disabled={esPropiaCuenta}
                                 disabledReason="No puede eliminar su propia cuenta"
                                 onClick={(e) => handleAbrirConfirmacion(u, 'eliminar', e)}

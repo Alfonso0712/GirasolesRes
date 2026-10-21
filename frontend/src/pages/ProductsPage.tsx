@@ -542,6 +542,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                   <IconActionButton
                                     icon={Edit2}
                                     label="Editar producto o componente"
+                                    variant="edit"
                                     onClick={(e) => handleAbrirEditar(prod, e.currentTarget)}
                                   />
 
@@ -549,7 +550,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                     <IconActionButton
                                       icon={PowerOff}
                                       label="Desactivar producto"
-                                      variant="warning"
+                                      variant="deactivate"
                                       onClick={(e) =>
                                         handleAbrirConfirmacion(
                                           prod,
@@ -562,7 +563,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                     <IconActionButton
                                       icon={Power}
                                       label="Activar producto"
-                                      variant="success"
+                                      variant="activate"
                                       onClick={(e) =>
                                         handleAbrirConfirmacion(
                                           prod,

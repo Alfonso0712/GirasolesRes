@@ -532,24 +532,17 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             <IconActionButton
                               icon={Eye}
                               label="Ver detalle del pedido"
+                              variant="view"
                               onClick={() => handleVerDetalle(p.id)}
                             />
 
                             <IconActionButton
                               icon={Edit2}
                               label="Modificar pedido"
+                              variant="edit"
                               disabled={!p.puedeModificar}
                               disabledReason={p.motivoDeshabilitado || 'Modificar pedido'}
                               onClick={() => handleAbrirModificar(p.id)}
-                            />
-
-                            <IconActionButton
-                              icon={Trash2}
-                              label="Anular pedido"
-                              variant="danger"
-                              disabled={!p.puedeAnular}
-                              disabledReason={p.motivoDeshabilitado || 'Anular pedido'}
-                              onClick={() => handleAbrirAnular(p)}
                             />
 
                             {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
@@ -558,10 +551,19 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                                 <IconActionButton
                                   icon={DollarSign}
                                   label="Cobrar pedido en caja"
-                                  variant="warning"
+                                  variant="activate"
                                   onClick={() => onNavigateToCobro?.(p.id)}
                                 />
                               )}
+
+                            <IconActionButton
+                              icon={Trash2}
+                              label="Anular pedido"
+                              variant="delete"
+                              disabled={!p.puedeAnular}
+                              disabledReason={p.motivoDeshabilitado || 'Anular pedido'}
+                              onClick={() => handleAbrirAnular(p)}
+                            />
                           </div>
                         </td>
                       </tr>
