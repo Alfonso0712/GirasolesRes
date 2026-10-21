@@ -164,7 +164,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
                   maxLength={6}
                   required
                   error={errors.codigo}
-                  className="font-mono tracking-widest text-base"
+                  className="tabular-nums tracking-widest text-base"
                 />
 
                 <InputField

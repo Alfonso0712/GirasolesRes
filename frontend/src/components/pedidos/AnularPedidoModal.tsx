@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import type { PedidoItemDto } from '../../types/pedido';
 
@@ -173,7 +173,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
               <p className="text-xs text-rose-800 leading-relaxed">
                 No se podrá deshacer y quedará registrado con su motivo:
               </p>
-              <p className="mt-2 text-xs font-mono bg-white/80 p-2.5 rounded-lg border border-rose-200 text-neutral-800 italic">
+              <p className="mt-2 text-xs tabular-nums bg-white/80 p-2.5 rounded-lg border border-rose-200 text-neutral-800 italic">
                 "{motivo.trim()}"
               </p>
             </div>

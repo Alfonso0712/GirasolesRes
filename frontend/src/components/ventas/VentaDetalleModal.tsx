@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Receipt,
   X,
@@ -166,7 +166,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-neutral-800">
                     <div>
                       <span className="text-neutral-500 font-medium">N.º Documento: </span>
-                      <span className="font-mono font-bold text-neutral-900">{venta.numDocReceptor}</span>
+                      <span className="tabular-nums font-bold text-neutral-900">{venta.numDocReceptor}</span>
                     </div>
                     <div>
                       <span className="text-neutral-500 font-medium">Nombre / Razón Social: </span>
@@ -236,13 +236,13 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 <div className="space-y-1 pb-2 border-b border-amber-200/50 text-[11px]">
                   <div className="flex items-center justify-between text-neutral-600">
                     <span>Op. Gravada (Base imponible):</span>
-                    <span className="font-mono tabular-nums font-semibold text-neutral-800">
+                    <span className="tabular-nums font-semibold text-neutral-800">
                       S/ {(venta.opGravada ?? Number((venta.total / 1.18).toFixed(2))).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-neutral-600">
                     <span>I.G.V. (18%):</span>
-                    <span className="font-mono tabular-nums font-semibold text-neutral-800">
+                    <span className="tabular-nums font-semibold text-neutral-800">
                       S/ {(venta.igv ?? Number((venta.total - (venta.total / 1.18)).toFixed(2))).toFixed(2)}
                     </span>
                   </div>
@@ -290,7 +290,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   ) : (
                     <div>
                       <span className="text-neutral-400 block uppercase font-medium">Ref. Yape</span>
-                      <span className="font-semibold text-neutral-800 font-mono">
+                      <span className="font-semibold text-neutral-800 tabular-nums">
                         {venta.yapeReferencia || 'No registrada'}
                       </span>
                     </div>

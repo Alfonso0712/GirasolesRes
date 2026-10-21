@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Trash2, AlertCircle } from 'lucide-react';
 import type { DetallePedidoCompletoDto, ProductoMenuPedido, LineaBorrador, ModificarPedidoRequest } from '../../types/pedido';
 
@@ -206,7 +206,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Líneas del Pedido ({lineas.length})
                 </span>
-                <span className="text-xs text-neutral-400 font-mono">
+                <span className="text-xs text-neutral-400 tabular-nums">
                   Límite 1 a 20 por ítem
                 </span>
               </div>
@@ -225,7 +225,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="font-semibold text-sm text-neutral-900">{l.nombre}</div>
-                          <div className="text-xs text-neutral-400 font-mono">
+                          <div className="text-xs text-neutral-400 tabular-nums">
                             S/ {l.precioUnitario.toFixed(2)} c/u
                           </div>
                         </div>
@@ -282,7 +282,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               {/* Total al pie de columna */}
               <div className="pt-3 border-t border-neutral-200 flex justify-between items-center mt-2">
                 <span className="text-xs font-semibold text-neutral-600">Nuevo Total:</span>
-                <span className="text-xl font-bold font-mono text-[#D35400]">
+                <span className="text-xl font-bold tabular-nums text-[#D35400]">
                   S/ {totalCalculado.toFixed(2)}
                 </span>
               </div>
@@ -328,7 +328,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                   >
                     <div>
                       <div className="font-semibold text-neutral-900">{prod.nombre}</div>
-                      <div className="text-neutral-500 font-mono">
+                      <div className="text-neutral-500 tabular-nums">
                         S/ {prod.precio.toFixed(2)} · {prod.categoria}
                       </div>
                     </div>

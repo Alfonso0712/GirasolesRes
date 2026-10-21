@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Plus,
@@ -334,7 +334,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         >
           <BookOpen className="w-4 h-4" />
           <span>Productos y Componentes</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-600 font-mono">
+          <span className="px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-600 tabular-nums">
             {total}
           </span>
         </button>
@@ -716,7 +716,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
                             <div className="text-sm">
                               {prod.precio != null ? (
-                                <strong className="text-base font-mono text-[#D35400]">
+                                <strong className="text-base tabular-nums text-[#D35400]">
                                   S/ {prod.precio.toFixed(2)}
                                 </strong>
                               ) : (
@@ -910,7 +910,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 </span>
                                 {p.nombre}
                               </span>
-                              <span className="text-[11px] text-neutral-500 font-mono">
+                              <span className="text-[11px] text-neutral-500 tabular-nums">
                                 {p.rolesPermitidos.map((r) => ROL_LABELS[r] || r).join(' o ')}
                               </span>
                             </div>

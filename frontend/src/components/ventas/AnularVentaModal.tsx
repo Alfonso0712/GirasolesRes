@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   AlertTriangle,
   X,
@@ -168,7 +168,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
               <label htmlFor="motivo-anulacion" className="text-xs font-semibold text-[#482813]">
                 Motivo de anulación <span className="text-rose-600">*</span>
               </label>
-              <span className={`text-[11px] tabular-nums font-mono ${motivo.length > 100 || (motivo.length > 0 && motivo.length < 5) ? 'text-rose-600 font-bold' : 'text-neutral-400'}`}>
+              <span className={`text-[11px] tabular-nums ${motivo.length > 100 || (motivo.length > 0 && motivo.length < 5) ? 'text-rose-600 font-bold' : 'text-neutral-400'}`}>
                 {motivo.length}/100
               </span>
             </div>

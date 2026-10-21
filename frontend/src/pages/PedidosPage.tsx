@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DetallePedidoModal } from '../components/pedidos';
 import { ModificarPedidoModal } from '../components/pedidos';
 import { AnularPedidoModal } from '../components/pedidos';
@@ -299,7 +299,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <h1 className="text-2xl font-bold text-[#2C1A0E]">
               Pedidos
             </h1>
-            <span className="text-xs text-neutral-500 font-mono hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
+            <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
           </div>
@@ -577,7 +577,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             : 'hover:bg-neutral-50/60'
                         } ${esListo ? 'ring-1 ring-emerald-300' : ''}`}
                       >
-                        <td className="py-3 px-4 font-semibold font-mono text-sm text-[#2C1A0E]">
+                        <td className="py-3 px-4 font-semibold tabular-nums text-sm text-[#2C1A0E]">
                           #{p.numero}
                         </td>
                         <td className="py-3 px-4">
@@ -597,7 +597,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             </span>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-stone-600 text-xs font-mono">
+                        <td className="py-3 px-4 text-stone-600 text-xs tabular-nums">
                           {p.hora}
                         </td>
                         <td className="py-3 px-4 text-stone-700 text-xs">
@@ -613,7 +613,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         <td className="py-3 px-4">
                           {renderBadgeEstado(p.estado)}
                         </td>
-                        <td className="py-3 px-4 text-right font-mono font-semibold tabular-nums text-sm text-[#2C1A0E]">
+                        <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-[#2C1A0E]">
                           S/ {p.total.toFixed(2)}
                         </td>
                         <td className="py-3 px-4">
@@ -703,7 +703,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold font-mono text-base text-neutral-900">
+                        <span className="font-bold tabular-nums text-base text-neutral-900">
                           #{p.numero}
                         </span>
                         <span className="font-semibold text-sm text-[#D35400]">
@@ -721,7 +721,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                     <div className="flex justify-between items-center text-xs text-neutral-500 my-2">
                       <span>Hora: <strong className="text-neutral-700">{p.hora}</strong></span>
                       <span>Por: <strong className="text-neutral-700">{p.registradoPor}</strong></span>
-                      <span className="text-base font-bold font-mono text-neutral-900">
+                      <span className="text-base font-bold tabular-nums text-neutral-900">
                         S/ {p.total.toFixed(2)}
                       </span>
                     </div>

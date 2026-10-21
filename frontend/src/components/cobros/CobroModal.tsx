@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DollarSign,
   Smartphone,
@@ -256,7 +256,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 Cobro en Caja
               </span>
               <span className="text-xs text-neutral-400">·</span>
-              <span className="text-xs text-neutral-500 font-mono">
+              <span className="text-xs text-neutral-500 tabular-nums">
                 Hora: {pedido.hora}
               </span>
             </div>
@@ -427,7 +427,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                         value={numDoc}
                         onChange={(e) => setNumDoc(e.target.value.replace(/\D/g, ''))}
                         placeholder="Ej. 44444444"
-                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-sm font-mono"
+                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-sm tabular-nums"
                       />
                       <button
                         type="button"
@@ -484,7 +484,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                     value={numDoc}
                     onChange={(e) => setNumDoc(e.target.value.replace(/\D/g, ''))}
                     placeholder="Ej. 20131312955"
-                    className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-sm font-mono"
+                    className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-sm tabular-nums"
                   />
                   <button
                     type="button"
@@ -703,7 +703,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   onChange={(e) => setYapeReferencia(e.target.value)}
                   disabled={loading}
                   placeholder="Ej. 128492"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-neutral-900 text-sm font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#D35400] text-neutral-900 text-sm tabular-nums"
                 />
               </div>
             </div>

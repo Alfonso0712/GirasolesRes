@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { X, Clock, User, AlertCircle, ChefHat, CheckCircle2, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 import type { DetallePedidoCompletoDto } from '../../types/pedido';
 
@@ -158,10 +158,10 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                           </div>
                         )}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-stone-600 font-mono text-xs tabular-nums">
+                      <td className="py-2.5 px-3 text-right text-stone-600 text-xs tabular-nums">
                         S/ {linea.precioUnitario.toFixed(2)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-[#2C1A0E] font-mono text-sm tabular-nums">
+                      <td className="py-2.5 px-3 text-right font-semibold text-[#2C1A0E] text-sm tabular-nums">
                         S/ {linea.subtotal.toFixed(2)}
                       </td>
                     </tr>
@@ -173,7 +173,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
             {/* Total general */}
             <div className="flex justify-between items-center mt-3 px-2">
               <span className="text-sm font-semibold text-neutral-600">Total del Pedido:</span>
-              <span className="text-xl font-bold font-mono text-[#D35400]">
+              <span className="text-xl font-bold tabular-nums text-[#D35400]">
                 S/ {pedido.total.toFixed(2)}
               </span>
             </div>

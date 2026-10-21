@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   Receipt,
   Filter,
@@ -492,7 +492,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                             >
                               {v.comprobante.startsWith('F') ? 'Factura' : v.comprobante.startsWith('B') ? 'Boleta' : 'Ticket'}
                             </span>
-                            <span className={`font-mono font-semibold text-sm ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
+                            <span className={`tabular-nums font-semibold text-sm ${esAnulada ? 'text-neutral-500 line-through' : 'text-[#2C1A0E]'}`}>
                               {v.comprobante}
                             </span>
                           </div>

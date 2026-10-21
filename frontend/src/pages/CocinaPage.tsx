@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Volume2,
   VolumeX,
@@ -368,7 +368,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
 
           {/* Contador y Actualizar Manual */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-neutral-500 font-mono hidden sm:inline">
+            <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
               Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
             </span>
             <button

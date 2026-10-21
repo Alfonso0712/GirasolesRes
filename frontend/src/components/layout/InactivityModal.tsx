@@ -78,7 +78,7 @@ export const InactivityModal: React.FC<InactivityModalProps> = ({
         </h3>
 
         <p className="text-sm text-neutral-600 mb-2 leading-relaxed">
-          Su sesión vencerá en <strong className="text-amber-700 font-bold font-mono">{tiempoFormateado}</strong> por inactividad.
+          Su sesión vencerá en <strong className="text-amber-700 font-bold tabular-nums">{tiempoFormateado}</strong> por inactividad.
         </p>
         <p className="text-xs text-neutral-500 mb-6">
           ¿Desea continuar trabajando en el sistema?
