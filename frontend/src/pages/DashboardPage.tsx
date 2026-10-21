@@ -35,7 +35,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   if (cargandoInicial) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#D35400] mb-4 animate-pulse">
+        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#B84500] mb-4 animate-pulse">
           <RefreshCw className="w-6 h-6 animate-spin" />
         </div>
         <h2 className="text-xl font-bold font-sans text-neutral-800 mb-1">
@@ -124,7 +124,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
               </span>
             ) : actualizando ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#D35400]" />
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#B84500]" />
                 Actualizando...
               </span>
             ) : (
@@ -140,7 +140,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
               aria-label="Actualizar datos del panel"
               className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${actualizando ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${actualizando ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>

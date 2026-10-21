@@ -167,7 +167,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               aria-label="Actualizar mesas ahora"
               className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${refrescando ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${refrescando ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>
@@ -176,7 +176,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             <button
               type="button"
               onClick={onNavigateToPedidoLlevar}
-              className="px-3.5 py-2 rounded-xl bg-white border-2 border-[#D35400] text-[#D35400] hover:bg-orange-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
+              className="px-3.5 py-2 rounded-xl bg-white border-2 border-[#D35400] text-[#B84500] hover:bg-orange-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
             >
               <ShoppingBag className="w-4 h-4 shrink-0" />
               <span>Pedido para llevar</span>
@@ -200,7 +200,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
       {!menuDefinido && (
         <div className="shrink-0 p-3.5 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-100 text-[#D35400] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-amber-100 text-[#B84500] flex items-center justify-center shrink-0">
               <AlertCircle className="w-4 h-4" />
             </div>
             <div>
@@ -296,7 +296,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
           <button
             type="button"
             onClick={() => cargarMesas(false)}
-            className="text-xs font-semibold text-[#D35400] hover:underline cursor-pointer"
+            className="text-xs font-semibold text-[#B84500] hover:underline cursor-pointer"
           >
             Reintentar
           </button>
@@ -346,7 +346,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
           ) : todasLasMesas.length === 0 ? (
             /* Estado: Sin mesas registradas (MSG-91 / MSG-92) */
             <div className="py-12 flex flex-col items-center justify-center p-8 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-4 border border-amber-200">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mb-4 border border-amber-200">
                 <Utensils className="w-8 h-8" />
               </div>
               <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
@@ -436,7 +436,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
         >
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border border-neutral-200/80 animate-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200">
               <Utensils className="w-6 h-6" />
             </div>
             <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">

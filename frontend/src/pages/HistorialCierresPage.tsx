@@ -225,7 +225,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           disabled={cargando}
           className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60 shrink-0"
         >
-          <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+          <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
           <span className="hidden sm:inline">Actualizar</span>
         </button>
       </div>
@@ -274,7 +274,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
               <button
                 type="button"
                 onClick={limpiarFiltros}
-                className="text-xs font-bold text-[#D35400] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
+                className="text-xs font-bold text-[#B84500] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Quitar filtros</span>
@@ -348,7 +348,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
       <div className="bg-[#FFFDF9] border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
         {cargando ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3 text-neutral-500">
-            <Loader2 className="w-8 h-8 text-[#D35400] animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#B84500] animate-spin" />
             <p className="text-sm font-semibold">Cargando cierres de caja…</p>
           </div>
         ) : errorCarga ? (
@@ -378,7 +378,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
               <button
                 type="button"
                 onClick={limpiarFiltros}
-                className="px-4 py-1.5 text-xs font-semibold text-[#D35400] hover:underline cursor-pointer"
+                className="px-4 py-1.5 text-xs font-semibold text-[#B84500] hover:underline cursor-pointer"
               >
                 Ver todos los cierres
               </button>
@@ -478,7 +478,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                       </td>
 
                       {/* Total Ventas */}
-                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#D35400] tabular-nums whitespace-nowrap">
+                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#B84500] tabular-nums whitespace-nowrap">
                         S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
                       </td>
 
@@ -538,7 +538,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               setCajaIdSeleccionada(cajaId);
                               setDetalleModalOpen(true);
                             }}
-                            className="p-2 text-neutral-600 hover:text-[#D35400] hover:bg-neutral-50 rounded-lg transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                            className="p-2 text-neutral-600 hover:text-[#B84500] hover:bg-neutral-50 rounded-lg transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                             title="Ver detalle del turno de caja"
                             aria-label={`Ver detalle del cierre ${cajaId}`}
                           >
@@ -555,7 +555,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                               aria-label={`Descargar PDF del cierre ${cajaId}`}
                             >
                               {descargandoPdfId === cajaId ? (
-                                <Loader2 className="w-4 h-4 animate-spin text-[#D35400]" />
+                                <Loader2 className="w-4 h-4 animate-spin text-[#B84500]" />
                               ) : (
                                 <Download className="w-4 h-4" />
                               )}

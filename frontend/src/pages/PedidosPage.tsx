@@ -316,7 +316,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             aria-label="Refrescar lista de pedidos"
           >
-            <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+            <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualizar</span>
           </button>
         </div>
@@ -466,7 +466,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               type="checkbox"
               checked={filtroSoloMios}
               onChange={(e) => setFiltroSoloMios(e.target.checked)}
-              className="w-4 h-4 rounded text-[#D35400] focus:ring-[#D35400] border-neutral-300 cursor-pointer"
+              className="w-4 h-4 rounded text-[#B84500] focus:ring-[#D35400] border-neutral-300 cursor-pointer"
             />
             <span>Solo mis pedidos</span>
           </label>
@@ -489,7 +489,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <button
               type="button"
               onClick={handleLimpiarFiltros}
-              className="text-xs font-bold text-[#D35400] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-xs font-bold text-[#B84500] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <X className="w-3.5 h-3.5" />
               <span>Quitar filtros</span>
@@ -517,12 +517,12 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
         {/* Lista de Pedidos */}
         {cargando ? (
           <div className="p-12 text-center">
-            <RotateCw className="w-8 h-8 text-[#D35400] animate-spin mx-auto mb-3" />
+            <RotateCw className="w-8 h-8 text-[#B84500] animate-spin mx-auto mb-3" />
             <p className="text-sm font-semibold text-neutral-600">Cargando pedidos…</p>
           </div>
         ) : pedidos.length === 0 ? (
           <div className="p-12 text-center bg-white rounded-3xl border border-neutral-200/80">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-4">
               <Utensils className="w-7 h-7" />
             </div>
             <h4 className="text-base font-bold text-neutral-800 font-sans mb-1">
@@ -583,7 +583,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             {p.tipo === 'Mesa' ? (
-                              <Utensils className="w-4 h-4 text-[#D35400]" />
+                              <Utensils className="w-4 h-4 text-[#B84500]" />
                             ) : (
                               <ShoppingBag className="w-4 h-4 text-orange-600" />
                             )}
@@ -604,7 +604,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                           <div className="flex items-center gap-1.5">
                             <span>{p.registradoPor}</span>
                             {p.esMio && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-semibold text-xs">
+                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#B84500] font-semibold text-xs">
                                 Mío
                               </span>
                             )}
@@ -706,11 +706,11 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         <span className="font-bold tabular-nums text-base text-neutral-900">
                           #{p.numero}
                         </span>
-                        <span className="font-semibold text-sm text-[#D35400]">
+                        <span className="font-semibold text-sm text-[#B84500]">
                           {p.tipo === 'Mesa' ? (p.mesa || 'Mesa') : 'Para llevar'}
                         </span>
                         {p.esMio && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#D35400] font-bold text-xs">
+                          <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#B84500] font-bold text-xs">
                             Mío
                           </span>
                         )}

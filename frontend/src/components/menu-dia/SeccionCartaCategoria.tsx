@@ -65,14 +65,14 @@ export const SeccionCartaCategoria: React.FC<SeccionCartaCategoriaProps> = ({
                   aria-pressed={estaSeleccionado}
                   className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer min-h-[56px] ${
                     estaSeleccionado
-                      ? 'border-[#D35400] bg-orange-50/50 text-[#D35400] shadow-xs ring-1 ring-[#D35400]'
+                      ? 'border-[#D35400] bg-orange-50/50 text-[#B84500] shadow-xs ring-1 ring-[#D35400]'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="shrink-0">
                       {estaSeleccionado ? (
-                        <CheckSquare className="w-5 h-5 text-[#D35400]" />
+                        <CheckSquare className="w-5 h-5 text-[#B84500]" />
                       ) : (
                         <Square className="w-5 h-5 text-neutral-500" />
                       )}

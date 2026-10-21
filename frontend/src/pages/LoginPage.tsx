@@ -211,7 +211,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         {/* Textos Centrales alineados a la izquierda y centrados verticalmente */}
         <div className="relative z-10 my-auto py-8 max-w-xl text-left">
           <div className="mb-4">
-            <span className="text-[#D35400] font-bold tracking-widest text-xs uppercase block mb-2">
+            <span className="text-[#B84500] font-bold tracking-widest text-xs uppercase block mb-2">
               BIENVENIDOS A:
             </span>
             <div className="w-12 h-0.5 bg-[#D35400] rounded-full" />
@@ -238,7 +238,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         <div className="w-full max-w-[390px] flex flex-col justify-center my-auto">
           {/* Encabezado del Formulario */}
           <div className="mb-3 text-left">
-            <span className="text-[#D35400] text-xs font-bold tracking-widest uppercase block mb-1">
+            <span className="text-[#B84500] text-xs font-bold tracking-widest uppercase block mb-1">
               BIENVENIDO
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
@@ -297,7 +297,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   type="button"
                   tabIndex={0}
                   onClick={() => setMostrarContrasena(!mostrarContrasena)}
-                  className="text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                  className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   {mostrarContrasena ? 'Ocultar' : 'Mostrar'}
                 </button>
@@ -328,7 +328,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <button
                 type="button"
                 onClick={onForgotPasswordClick}
-                className="text-[#D35400] text-xs sm:text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#D35400] rounded py-1 px-2"
+                className="text-[#B84500] text-xs sm:text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#D35400] rounded py-1 px-2"
               >
                 ¿Olvidó su contraseña?
               </button>

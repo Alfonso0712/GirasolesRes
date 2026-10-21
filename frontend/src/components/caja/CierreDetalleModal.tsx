@@ -200,11 +200,11 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] border border-amber-200/80 flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] border border-amber-200/80 flex items-center justify-center shadow-xs">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
                 Historial de Caja
               </p>
               <h2 id="detalle-cierre-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
@@ -227,7 +227,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-5 flex-1 text-[#2C1A0E]">
           {cargando ? (
             <div className="py-16 flex flex-col items-center justify-center gap-3 text-neutral-500">
-              <Loader2 className="w-8 h-8 text-[#D35400] animate-spin" />
+              <Loader2 className="w-8 h-8 text-[#B84500] animate-spin" />
               <p className="text-sm font-semibold">Cargando detalle del cierre…</p>
             </div>
           ) : error ? (
@@ -258,7 +258,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
                 <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 sm:pr-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#D35400]" /> Apertura del Turno
+                    <Calendar className="w-3.5 h-3.5 text-[#B84500]" /> Apertura del Turno
                   </span>
                   <p className="font-bold text-stone-900 text-sm mt-0.5">
                     {detalle.fechaAperturaLocal || formatLimaFecha(detalle.fechaApertura)}
@@ -274,7 +274,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
                 <div className="space-y-1.5 pt-1 sm:pt-0 sm:pl-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#D35400]" /> Cierre y Cuadre
+                    <Clock className="w-3.5 h-3.5 text-[#B84500]" /> Cierre y Cuadre
                   </span>
                   <p className="font-bold text-stone-900 text-sm mt-0.5">
                     {detalle.fechaCierreLocal ||
@@ -298,7 +298,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 <div className="p-4 bg-white border border-neutral-200 rounded-xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
                     <h3 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E] flex items-center gap-1.5">
-                      <DollarSign className="w-4 h-4 text-[#D35400]" />
+                      <DollarSign className="w-4 h-4 text-[#B84500]" />
                       Flujo de Ventas del Turno
                     </h3>
                   </div>
@@ -333,7 +333,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
                     <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
                       <span className="text-[#2C1A0E]">TOTAL VENTAS FACTURADAS:</span>
-                      <span className="text-[#D35400] text-base tabular-nums">
+                      <span className="text-[#B84500] text-base tabular-nums">
                         S/ {(detalle.totalVentas ?? 0).toFixed(2)}
                       </span>
                     </div>
@@ -344,7 +344,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 <div className="p-4 bg-white border border-neutral-200 rounded-xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
                     <h3 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E] flex items-center gap-1.5">
-                      <Banknote className="w-4 h-4 text-[#D35400]" />
+                      <Banknote className="w-4 h-4 text-[#B84500]" />
                       Arqueo y Cuadratura de Efectivo
                     </h3>
                   </div>
@@ -429,7 +429,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white break-inside-avoid shadow-xs">
                 <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Utensils className="w-4 h-4 text-[#D35400]" />
+                    <Utensils className="w-4 h-4 text-[#B84500]" />
                     <h4 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E]">
                       Consolidado de Platos y Productos Vendidos
                     </h4>
@@ -468,7 +468,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                           <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
                             {detalle.platosVendidos.reduce((acc, p) => acc + p.cantidad, 0)}
                           </td>
-                          <td className="px-4 py-2.5 text-right text-[#D35400] tabular-nums font-bold text-sm">
+                          <td className="px-4 py-2.5 text-right text-[#B84500] tabular-nums font-bold text-sm">
                             S/ {detalle.platosVendidos.reduce((acc, p) => acc + (p.total ?? 0), 0).toFixed(2)}
                           </td>
                         </tr>

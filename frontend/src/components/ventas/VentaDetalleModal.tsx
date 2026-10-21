@@ -60,13 +60,13 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 shrink-0">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
-              esAnulada ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-amber-50 text-[#D35400] border-amber-200'
+              esAnulada ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-amber-50 text-[#B84500] border-amber-200'
             }`}>
               <Receipt className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
                   DETALLE DE VENTA
                 </span>
                 {venta && (
@@ -185,7 +185,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               {/* Tabla de Consumo (Líneas) */}
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#482813] mb-2 flex items-center gap-1.5">
-                  <Utensils className="w-3.5 h-3.5 text-[#D35400]" />
+                  <Utensils className="w-3.5 h-3.5 text-[#B84500]" />
                   <span>Platos y Bebidas Consumidos</span>
                 </h3>
                 <div className="border border-neutral-200 rounded-xl overflow-hidden shadow-2xs">
@@ -248,7 +248,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   </div>
                   <div className="flex items-center justify-between text-sm pt-1 border-t border-amber-200/30">
                     <span className="font-bold text-[#482813]">TOTAL COBRADO:</span>
-                    <span className="font-sans font-bold text-lg text-[#D35400] tabular-nums whitespace-nowrap">
+                    <span className="font-sans font-bold text-lg text-[#B84500] tabular-nums whitespace-nowrap">
                       S/ {venta.total.toFixed(2)}
                     </span>
                   </div>
@@ -311,7 +311,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               onClick={() => venta && onDescargarTicket(venta.ventaId, true)}
               className="px-3 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-[#D35400]" />
+              <Download className="w-3.5 h-3.5 text-[#B84500]" />
               <span>{descargandoTicket ? 'Descargando PDF...' : 'Descargar PDF (Copia)'}</span>
             </button>
           </div>

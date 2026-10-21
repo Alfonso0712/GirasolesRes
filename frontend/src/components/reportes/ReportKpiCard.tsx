@@ -33,7 +33,7 @@ export const ReportKpiCard: React.FC<ReportKpiCardProps> = ({
           {label}
         </span>
         {Icon && (
-          <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200 flex items-center justify-center text-[#D35400] shadow-2xs shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200 flex items-center justify-center text-[#B84500] shadow-2xs shrink-0">
             <Icon className="w-4 h-4" />
           </div>
         )}

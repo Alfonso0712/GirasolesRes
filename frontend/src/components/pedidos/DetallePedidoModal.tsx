@@ -92,7 +92,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
               </h3>
               {renderBadgeEstado(pedido.estado)}
             </div>
-            <p className="text-sm font-semibold text-[#D35400] mt-0.5">{destino}</p>
+            <p className="text-sm font-semibold text-[#B84500] mt-0.5">{destino}</p>
           </div>
           <button
             type="button"
@@ -153,7 +153,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                       <td className="py-2.5 px-3">
                         <div className="font-semibold text-sm text-[#2C1A0E]">{linea.nombre}</div>
                         {linea.observacion && (
-                          <div className="text-xs text-[#D35400] italic mt-0.5">
+                          <div className="text-xs text-[#B84500] italic mt-0.5">
                             Nota: {linea.observacion}
                           </div>
                         )}
@@ -173,7 +173,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
             {/* Total general */}
             <div className="flex justify-between items-center mt-3 px-2">
               <span className="text-sm font-semibold text-neutral-600">Total del Pedido:</span>
-              <span className="text-xl font-bold tabular-nums text-[#D35400]">
+              <span className="text-xl font-bold tabular-nums text-[#B84500]">
                 S/ {pedido.total.toFixed(2)}
               </span>
             </div>
@@ -233,7 +233,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                   onClose();
                   onAbrirModificar(pedido.id);
                 }}
-                className="py-2.5 px-4 rounded-xl border border-[#D35400] text-[#D35400] font-semibold text-xs hover:bg-amber-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]"
+                className="py-2.5 px-4 rounded-xl border border-[#D35400] text-[#B84500] font-semibold text-xs hover:bg-amber-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 <span>Modificar</span>

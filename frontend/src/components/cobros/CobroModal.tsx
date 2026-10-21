@@ -252,7 +252,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#D35400] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#B84500] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                 Cobro en Caja
               </span>
               <span className="text-xs text-neutral-500">·</span>
@@ -290,7 +290,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                 Total a Cobrar
               </span>
-              <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-[#D35400] tracking-tight">
+              <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-[#B84500] tracking-tight">
                 S/ {total.toFixed(2)}
               </div>
               {tipoComprobante !== 'Ticket' && (
@@ -580,7 +580,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   htmlFor="monto-recibido-input"
                   className="block text-xs font-semibold text-[#2C1A0E] mb-1.5"
                 >
-                  Monto Recibido del Cliente (S/) <span className="text-[#D35400]">*</span>
+                  Monto Recibido del Cliente (S/) <span className="text-[#B84500]">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold text-neutral-500">

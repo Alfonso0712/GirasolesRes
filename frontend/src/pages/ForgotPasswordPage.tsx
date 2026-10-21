@@ -96,13 +96,13 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
       <button
         type="button"
         onClick={onBackToLogin}
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#482813] hover:text-[#D35400] mb-4 sm:mb-6 transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#482813] hover:text-[#B84500] mb-4 sm:mb-6 transition-colors"
       >
             <ArrowLeft className="w-3.5 h-3.5" />
             Volver al inicio de sesión
           </button>
 
-          <p className="text-[#D35400] text-xs font-bold tracking-widest uppercase mb-1">
+          <p className="text-[#B84500] text-xs font-bold tracking-widest uppercase mb-1">
             RECUPERACIÓN SEGURA
           </p>
 
@@ -183,7 +183,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
                     <button
                       type="button"
                       onClick={() => setMostrarPass(!mostrarPass)}
-                      className="text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded"
+                      className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded"
                     >
                       {mostrarPass ? 'Ocultar' : 'Mostrar'}
                     </button>

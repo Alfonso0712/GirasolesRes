@@ -333,7 +333,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         ) : usuarios.length === 0 ? (
           /* Sin Resultados (MSG-36) */
           <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto">
               <FilterX className="w-6 h-6" />
             </div>
             <div>
@@ -397,7 +397,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                         {/* Nombre con Badge de iniciales */}
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#D35400] font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#B84500] font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                               {obtenerIniciales(u.nombre)}
                             </div>
                             <span className="font-semibold text-[#2C1A0E] text-sm break-words">
@@ -524,7 +524,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                        <div className="w-10 h-10 rounded-lg bg-[#FFF3E0] text-[#B84500] font-bold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                           {obtenerIniciales(u.nombre)}
                         </div>
                         <div>

@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="hidden md:flex items-center gap-6">
           {session && (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
+              <div className="w-9 h-9 rounded-lg bg-[#FFF3E0] text-[#B84500] font-bold text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
                 {obtenerIniciales(session.nombre)}
               </div>
               <div className="flex flex-col">
@@ -119,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({
             aria-expanded={menuMovilAbierto}
             aria-label="Menú de perfil de usuario"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#D35400] font-bold text-xs flex items-center justify-center border border-amber-200/60">
+            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#B84500] font-bold text-xs flex items-center justify-center border border-amber-200/60">
               {obtenerIniciales(session?.nombre)}
             </div>
             <ChevronDown className="w-4 h-4 text-neutral-500" />

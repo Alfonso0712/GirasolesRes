@@ -216,11 +216,11 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                   checked={destinoPedido === 'porCobrar'}
                   disabled={loading}
                   onChange={() => setDestinoPedido('porCobrar')}
-                  className="mt-0.5 text-[#D35400] focus:ring-[#D35400]"
+                  className="mt-0.5 text-[#B84500] focus:ring-[#D35400]"
                 />
                 <div className="text-xs">
                   <span className="font-bold text-[#2C1A0E] flex items-center gap-1.5">
-                    <RotateCcw className="w-3.5 h-3.5 text-[#D35400]" />
+                    <RotateCcw className="w-3.5 h-3.5 text-[#B84500]" />
                     Dejar el pedido por cobrar (Recomendado)
                   </span>
                   <p className="text-neutral-500 mt-0.5 leading-normal">

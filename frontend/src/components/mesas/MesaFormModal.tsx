@@ -193,7 +193,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
                 htmlFor="campo-nombre-mesa"
                 className="block text-xs font-semibold text-[#2C1A0E] mb-1.5"
               >
-                Número o nombre de la mesa <span className="text-[#D35400]">*</span>
+                Número o nombre de la mesa <span className="text-[#B84500]">*</span>
               </label>
 
               <input

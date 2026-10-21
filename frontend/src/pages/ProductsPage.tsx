@@ -328,7 +328,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           onClick={() => setPestañaActiva('catalogo')}
           className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
             pestañaActiva === 'catalogo'
-              ? 'border-[#D35400] text-[#D35400]'
+              ? 'border-[#D35400] text-[#B84500]'
               : 'border-transparent text-neutral-500 hover:text-neutral-900'
           }`}
         >
@@ -344,7 +344,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           onClick={() => setPestañaActiva('menus_completos')}
           className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
             pestañaActiva === 'menus_completos'
-              ? 'border-[#D35400] text-[#D35400]'
+              ? 'border-[#D35400] text-[#B84500]'
               : 'border-transparent text-neutral-500 hover:text-neutral-900'
           }`}
         >
@@ -469,7 +469,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               </div>
             ) : productos.length === 0 ? (
               <div className="p-12 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-full bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto">
                   <FilterX className="w-6 h-6" />
                 </div>
                 <div>
@@ -542,7 +542,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                                       esComponente
                                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                        : 'bg-amber-50 text-[#D35400] border border-amber-200'
+                                        : 'bg-amber-50 text-[#B84500] border border-amber-200'
                                     }`}
                                   >
                                     {esComponente ? (
@@ -716,7 +716,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
                             <div className="text-sm">
                               {prod.precio != null ? (
-                                <strong className="text-base tabular-nums text-[#D35400]">
+                                <strong className="text-base tabular-nums text-[#B84500]">
                                   S/ {prod.precio.toFixed(2)}
                                 </strong>
                               ) : (
@@ -746,7 +746,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 }
                                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 border ${
                                   prod.activo
-                                    ? 'border-amber-200 bg-amber-50 text-[#D35400]'
+                                    ? 'border-amber-200 bg-amber-50 text-[#B84500]'
                                     : 'border-emerald-200 bg-emerald-50 text-emerald-700'
                                 }`}
                               >
@@ -878,8 +878,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           Precio actual
                         </span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xs font-bold text-[#D35400]">S/</span>
-                          <span className="text-2xl font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
+                          <span className="text-xs font-bold text-[#B84500]">S/</span>
+                          <span className="text-2xl font-sans font-bold tabular-nums whitespace-nowrap text-[#B84500]">
                             {m.precio.toFixed(2)}
                           </span>
                         </div>
@@ -926,7 +926,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                         onClick={() => handleAbrirModalPrecio(m)}
                         className="flex-1 py-2 px-3 rounded-xl bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-50 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:border-[#D35400]"
                       >
-                        <DollarSign className="w-3.5 h-3.5 text-[#D35400]" />
+                        <DollarSign className="w-3.5 h-3.5 text-[#B84500]" />
                         <span>Modificar precio</span>
                       </button>
 
@@ -935,7 +935,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                         onClick={() => handleAbrirModalEstadoMenu(m)}
                         className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                           m.activo
-                            ? 'bg-amber-50 text-[#D35400] border-amber-200 hover:bg-amber-100'
+                            ? 'bg-amber-50 text-[#B84500] border-amber-200 hover:bg-amber-100'
                             : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                         }`}
                       >
@@ -977,7 +977,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#B84500] flex items-center justify-center">
                   <DollarSign className="w-4 h-4" />
                 </div>
                 <h3 className="font-sans font-bold text-base text-[#482813]">
@@ -1007,7 +1007,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   htmlFor="nuevo-precio-menu"
                   className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
                 >
-                  Nuevo Precio (S/) <span className="text-[#D35400]">*</span>
+                  Nuevo Precio (S/) <span className="text-[#B84500]">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
@@ -1075,7 +1075,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 text-center">
             <div
               className={`w-12 h-12 rounded-full mx-auto flex items-center justify-center mb-4 ${
-                menuParaEstado.activo ? 'bg-amber-50 text-[#D35400]' : 'bg-emerald-50 text-emerald-700'
+                menuParaEstado.activo ? 'bg-amber-50 text-[#B84500]' : 'bg-emerald-50 text-emerald-700'
               }`}
             >
               {menuParaEstado.activo ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}

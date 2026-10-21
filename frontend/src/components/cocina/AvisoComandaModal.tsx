@@ -27,7 +27,7 @@ export const AvisoComandaModal: React.FC<AvisoComandaModalProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-amber-200 text-center relative animate-in zoom-in-95 duration-200">
-        <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-[#D35400] flex items-center justify-center mx-auto mb-4 animate-bounce">
+        <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-[#B84500] flex items-center justify-center mx-auto mb-4 animate-bounce">
           <BellRing className="w-8 h-8" />
         </div>
 
@@ -40,7 +40,7 @@ export const AvisoComandaModal: React.FC<AvisoComandaModalProps> = ({
             Pedido N.º {aviso.numero}
           </p>
           <p className="text-neutral-600">
-            Destino: <span className="font-bold text-[#D35400]">{destino}</span>
+            Destino: <span className="font-bold text-[#B84500]">{destino}</span>
           </p>
           <p className="text-xs text-neutral-500 mt-2">
             Hora de despacho en cocina: {aviso.hora}

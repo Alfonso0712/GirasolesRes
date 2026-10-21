@@ -191,11 +191,11 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center border border-amber-200/80 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center border border-amber-200/80 shadow-xs">
               <DollarSign className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
                 Gestión de Caja
               </p>
               <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
@@ -237,7 +237,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               {sugerenciaInicial !== null && sugerenciaInicial !== undefined && sugerenciaInicial >= 0 && (
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2 text-neutral-600">
-                    <HelpCircle className="w-4 h-4 text-[#D35400] shrink-0" />
+                    <HelpCircle className="w-4 h-4 text-[#B84500] shrink-0" />
                     <span>Sugerido del último cierre:</span>
                   </div>
                   <button
@@ -246,7 +246,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                       setMontoInput(sugerenciaInicial.toFixed(2));
                       setErrorValidacion(null);
                     }}
-                    className="font-bold text-[#D35400] hover:underline cursor-pointer tabular-nums"
+                    className="font-bold text-[#B84500] hover:underline cursor-pointer tabular-nums"
                   >
                     <span className="tabular-nums">S/ {sugerenciaInicial.toFixed(2)}</span> (Usar)
                   </button>

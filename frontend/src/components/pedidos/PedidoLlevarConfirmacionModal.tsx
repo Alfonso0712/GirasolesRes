@@ -37,7 +37,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
         </div>
 
         {/* Título y Mensaje de Éxito (MSG-110 / RV-74) */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-[#D35400] text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-[#B84500] text-xs font-bold uppercase tracking-wider mb-2">
           <ShoppingBag className="w-3.5 h-3.5" />
           <span>Para Llevar</span>
         </div>
@@ -56,7 +56,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
               <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
                 Pedido
               </span>
-              <span className="text-lg font-bold text-[#D35400] tabular-nums">
+              <span className="text-lg font-bold text-[#B84500] tabular-nums">
                 #{numeroPedido}
               </span>
             </div>

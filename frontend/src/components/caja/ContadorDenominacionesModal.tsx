@@ -167,11 +167,11 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] border border-amber-200/80 flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] border border-amber-200/80 flex items-center justify-center shadow-xs">
               <Coins className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
                 Herramienta de Arqueo
               </p>
               <h2 id="contador-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
@@ -198,7 +198,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
           {/* Sección Billetes */}
           <div>
             <div className="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200">
-              <Banknote className="w-4 h-4 text-[#D35400]" />
+              <Banknote className="w-4 h-4 text-[#B84500]" />
               <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-700">
                 Billetes (S/)
               </h3>
@@ -252,7 +252,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
           {/* Sección Monedas */}
           <div>
             <div className="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200">
-              <Coins className="w-4 h-4 text-[#D35400]" />
+              <Coins className="w-4 h-4 text-[#B84500]" />
               <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-700">
                 Monedas (S/)
               </h3>

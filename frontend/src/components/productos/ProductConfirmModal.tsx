@@ -91,7 +91,7 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
             }`}
           >
             {esDesactivar ? (
-              <PowerOff className="w-6 h-6 text-[#D35400]" />
+              <PowerOff className="w-6 h-6 text-[#B84500]" />
             ) : (
               <Power className="w-6 h-6 text-emerald-600" />
             )}
@@ -116,7 +116,7 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
             {/* Advertencia si forma parte del menú vigente de hoy */}
             {esDesactivar && formaParteDelMenuHoy && (
               <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2 text-xs text-amber-900">
-                <AlertTriangle className="w-4 h-4 text-[#D35400] shrink-0 mt-0.5" />
+                <AlertTriangle className="w-4 h-4 text-[#B84500] shrink-0 mt-0.5" />
                 <span>
                   {producto.nombre} forma parte del menú de hoy. Al desactivarlo se retirará del menú.
                 </span>

@@ -73,9 +73,9 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('menu-dia')}
-            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#D35400] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#B84500] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <Utensils className="w-5 h-5 text-[#D35400]" />
+            <Utensils className="w-5 h-5 text-[#B84500]" />
             <span>MARCAR PLATOS AGOTADOS / MENÚ</span>
           </button>
         </div>
@@ -122,7 +122,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Abrir pantalla de cocina</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -168,7 +168,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
                 </p>
               )}
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Gestionar disponibilidad</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>

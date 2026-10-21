@@ -424,7 +424,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setMostrarContrasena(!mostrarContrasena)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   {mostrarContrasena ? 'Ocultar' : 'Mostrar'}
                 </button>
@@ -461,7 +461,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   type="button"
                   onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
                   disabled={isEdit && !contrasena}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
                 </button>

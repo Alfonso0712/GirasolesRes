@@ -78,7 +78,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
 
             {/* Metadatos */}
             <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-0.5 text-xs">
-              <div className="text-center font-bold text-xs text-[#D35400] pb-1">
+              <div className="text-center font-bold text-xs text-[#B84500] pb-1">
                 {comprobante.tipoComprobante === 'Factura'
                   ? 'FACTURA ELECTRÓNICA'
                   : comprobante.tipoComprobante === 'Boleta'

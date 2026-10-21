@@ -56,7 +56,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
           <X className="w-4 h-4" />
         </button>
 
-        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-4 border border-amber-200/50 shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-4 border border-amber-200/50 shadow-xs">
           <LogOut className="w-6 h-6" />
         </div>
 

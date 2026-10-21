@@ -208,7 +208,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
               aria-label="Actualizar pedidos ahora"
               className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>
@@ -275,7 +275,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
               {totalPedidos} {totalPedidos === 1 ? 'pedido' : 'pedidos'}
             </span>
           </div>
-          <div className="w-9 h-9 rounded-lg bg-orange-50 text-[#D35400] flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-orange-50 text-[#B84500] flex items-center justify-center">
             <Receipt className="w-4 h-4" />
           </div>
         </div>
@@ -299,11 +299,11 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
             <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Monto Pendiente
             </span>
-            <span className="text-xl font-bold font-sans tabular-nums text-[#D35400]">
+            <span className="text-xl font-bold font-sans tabular-nums text-[#B84500]">
               S/ {totalPorCobrar.toFixed(2)}
             </span>
           </div>
-          <div className="w-9 h-9 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-amber-50 text-[#B84500] flex items-center justify-center">
             <CreditCard className="w-4 h-4" />
           </div>
         </div>
@@ -370,7 +370,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
       <div className="w-full bg-white border border-neutral-200/80 rounded-2xl shadow-2xs overflow-hidden">
         {cargando ? (
           <div className="p-12 text-center">
-            <RotateCcw className="w-8 h-8 text-[#D35400] animate-spin mx-auto mb-3" />
+            <RotateCcw className="w-8 h-8 text-[#B84500] animate-spin mx-auto mb-3" />
             <p className="text-sm font-semibold text-neutral-600">
               Cargando pedidos pendientes de cobro...
             </p>
@@ -392,7 +392,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
           </div>
         ) : pedidos.length === 0 ? (
           <div className="p-12 text-center max-w-sm mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200/60">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200/60">
               <CheckCircle2 className="w-7 h-7" />
             </div>
             <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
@@ -441,9 +441,9 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             {esMesa ? (
-                              <Utensils className="w-4 h-4 text-[#D35400]" />
+                              <Utensils className="w-4 h-4 text-[#B84500]" />
                             ) : (
-                              <ShoppingBag className="w-4 h-4 text-[#D35400]" />
+                              <ShoppingBag className="w-4 h-4 text-[#B84500]" />
                             )}
                             <span className="font-semibold text-sm text-[#2C1A0E]">
                               {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
@@ -477,7 +477,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                         </td>
 
                         {/* Total a Cobrar */}
-                        <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#D35400]">
+                        <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#B84500]">
                           S/ {p.total.toFixed(2)}
                         </td>
 

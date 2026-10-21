@@ -46,7 +46,7 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-neutral-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-150">
         <div className="p-6">
           <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#D35400] border border-amber-200 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#B84500] border border-amber-200 flex items-center justify-center shrink-0">
               <AlertCircle className="w-6 h-6" />
             </div>
 

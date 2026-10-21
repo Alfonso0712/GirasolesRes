@@ -76,7 +76,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center">
               <UtensilsCrossed className="w-5 h-5" />
             </div>
             <div>
@@ -102,7 +102,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
         <div className="flex-1 overflow-y-auto py-4 space-y-2.5 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full">
           {cargando ? (
             <div className="py-12 flex flex-col items-center justify-center text-neutral-500 gap-3">
-              <RefreshCw className="w-6 h-6 animate-spin text-[#D35400]" />
+              <RefreshCw className="w-6 h-6 animate-spin text-[#B84500]" />
               <span className="text-sm">Cargando platos del día…</span>
             </div>
           ) : error ? (

@@ -66,7 +66,7 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
             <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
               Pedido
             </span>
-            <span className="text-base font-bold text-[#D35400] tabular-nums">
+            <span className="text-base font-bold text-[#B84500] tabular-nums">
               #{numeroPedido}
             </span>
           </div>

@@ -158,7 +158,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center border border-amber-200/50">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center border border-amber-200/50">
               <KeyRound className="w-5 h-5" />
             </div>
             <div>
@@ -213,7 +213,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMostrarActual(!mostrarActual)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
               >
                 {mostrarActual ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -246,7 +246,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMostrarNueva(!mostrarNueva)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
               >
                 {mostrarNueva ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -279,7 +279,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
               >
                 {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
               </button>

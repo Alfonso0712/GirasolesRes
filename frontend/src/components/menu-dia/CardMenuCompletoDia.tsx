@@ -40,7 +40,7 @@ export const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
             <h3 className="font-sans font-bold text-neutral-900 text-base xl:text-lg">
               {nombre}
             </h3>
-            <span className="text-lg xl:text-xl font-sans font-bold tabular-nums whitespace-nowrap text-[#D35400]">
+            <span className="text-lg xl:text-xl font-sans font-bold tabular-nums whitespace-nowrap text-[#B84500]">
               S/ {precio.toFixed(2)}
             </span>
           </div>

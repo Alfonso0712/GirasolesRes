@@ -76,9 +76,9 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('mesas')}
-            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#D35400] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#B84500] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <LayoutGrid className="w-5 h-5 text-[#D35400]" />
+            <LayoutGrid className="w-5 h-5 text-[#B84500]" />
             <span>VER MESAS Y SALÓN</span>
           </button>
         </div>
@@ -110,7 +110,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
                 Ocupadas: <strong className="text-rose-700 tabular-nums">{mesas?.ocupadas ?? 0}</strong> mesas
               </p>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ir al mapa de mesas</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -141,7 +141,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
                 Pedidos tomados por usted en preparación o pendientes.
               </p>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver mis pedidos</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -172,7 +172,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
                 Platos listos en cocina esperando ser servidos.
               </p>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver pedidos listos</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>

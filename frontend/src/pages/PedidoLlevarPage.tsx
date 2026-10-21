@@ -108,7 +108,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   if (cargando) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#FDFBF9] animate-in fade-in duration-200">
-        <div className="w-12 h-12 rounded-2xl bg-amber-100 text-[#D35400] flex items-center justify-center animate-spin mb-4">
+        <div className="w-12 h-12 rounded-2xl bg-amber-100 text-[#B84500] flex items-center justify-center animate-spin mb-4">
           <ShoppingBag className="w-6 h-6" />
         </div>
         <p className="font-sans font-bold text-lg text-[#2C1A0E]">Cargando carta para llevar…</p>
@@ -247,7 +247,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
             {!menuDefinido ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8 max-w-lg mx-auto">
-                <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto border border-amber-200 mb-4 shadow-2xs">
+                <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto border border-amber-200 mb-4 shadow-2xs">
                   <UtensilsCrossed className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-sans font-bold text-[#2C1A0E] mb-2">
@@ -299,7 +299,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                   (categoriaActiva === 'Todas' || categoriaActiva === 'Menús Completos') &&
                   (!busqueda || menusCompletos.some((m) => m.nombre.toLowerCase().includes(busqueda.toLowerCase()))) && (
                   <div>
-                    <h3 className="text-xs uppercase font-bold tracking-wider text-[#D35400] mb-2.5 flex items-center gap-2 font-sans">
+                    <h3 className="text-xs uppercase font-bold tracking-wider text-[#B84500] mb-2.5 flex items-center gap-2 font-sans">
                       <Utensils className="w-3.5 h-3.5" />
                       <span>Menús Completos de Hoy</span>
                       <div className="h-px bg-amber-200 flex-1" />
@@ -334,7 +334,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                                   <h4 className="font-bold text-sm sm:text-base text-[#2C1A0E] font-sans break-words line-clamp-2 leading-snug" title={mc.nombre}>
                                     {mc.nombre}
                                   </h4>
-                                  <span className="font-bold text-sm text-[#D35400] font-sans tabular-nums whitespace-nowrap ml-1">
+                                  <span className="font-bold text-sm text-[#B84500] font-sans tabular-nums whitespace-nowrap ml-1">
                                     S/ {mc.precio.toFixed(2)}
                                   </span>
                                 </div>
@@ -370,7 +370,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                                       setMenuParaArmar(mc);
                                       setModalArmarOpen(true);
                                     }}
-                                    className="w-full py-1.5 px-3 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#D35400] border border-amber-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer font-sans"
+                                    className="w-full py-1.5 px-3 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#B84500] border border-amber-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer font-sans"
                                   >
                                     <Plus className="w-3.5 h-3.5" />
                                     <span>Armar menú</span>
@@ -416,7 +416,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           {/* Cabecera del Ticket */}
           <div className="p-4 border-b border-neutral-200/80 bg-[#FAF7F4] shrink-0 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-[#D35400]" />
+              <ShoppingBag className="w-5 h-5 text-[#B84500]" />
               <div>
                 <h3 className="font-sans font-bold text-base text-[#2C1A0E]">
                   Pedido para Llevar
@@ -495,7 +495,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                         <button
                           type="button"
                           onClick={() => abrirModalNota(linea)}
-                          className="text-[#D35400] font-bold text-xs hover:underline shrink-0 cursor-pointer"
+                          className="text-[#B84500] font-bold text-xs hover:underline shrink-0 cursor-pointer"
                           title="Editar nota del plato"
                         >
                           Editar
@@ -513,7 +513,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border shadow-2xs ${
                             linea.observacion
                               ? 'bg-amber-100/80 border-amber-300 text-amber-900 hover:bg-amber-200'
-                              : 'bg-white border-amber-300/80 text-[#D35400] hover:bg-amber-50 hover:border-[#D35400]'
+                              : 'bg-white border-amber-300/80 text-[#B84500] hover:bg-amber-50 hover:border-[#D35400]'
                           }`}
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
@@ -527,7 +527,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                             onClick={() => repetirLinea(index)}
                             disabled={linea.cantidad >= 20}
                             title="Repetir esta misma combinación de menú completo"
-                            className="px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-[#D35400] border border-amber-200 flex items-center gap-1 transition-colors cursor-pointer shadow-2xs font-sans disabled:opacity-40"
+                            className="px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-[#B84500] border border-amber-200 flex items-center gap-1 transition-colors cursor-pointer shadow-2xs font-sans disabled:opacity-40"
                           >
                             <Copy className="w-3 h-3" />
                             <span>Repetir</span>
@@ -593,7 +593,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               <div>
                 <span className="text-xs text-[#7C6F66] block">Total a Pagar</span>
                 {referencia.trim() && (
-                  <span className="text-xs font-semibold text-[#D35400] block truncate max-w-[140px]">
+                  <span className="text-xs font-semibold text-[#B84500] block truncate max-w-[140px]">
                     Cliente: {referencia.trim()}
                   </span>
                 )}
@@ -639,7 +639,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           className="flex-1 min-w-0 cursor-pointer"
         >
           <div className="flex items-center gap-1.5 truncate">
-            <span className="text-xs font-bold text-[#D35400]">
+            <span className="text-xs font-bold text-[#B84500]">
               {cantidadTotalProductos} productos
             </span>
             <span className="text-neutral-300">•</span>
@@ -682,7 +682,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           <div className="bg-white rounded-t-2xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-[#FAF7F4]">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[#D35400]" />
+                <ShoppingBag className="w-5 h-5 text-[#B84500]" />
                 <h3 className="font-sans font-bold text-base text-[#2C1A0E]">
                   Detalle del Pedido ({lineasBorrador.length})
                 </h3>
@@ -741,7 +741,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                         <button
                           type="button"
                           onClick={() => abrirModalNota(linea)}
-                          className="text-[#D35400] font-bold text-xs hover:underline shrink-0 cursor-pointer"
+                          className="text-[#B84500] font-bold text-xs hover:underline shrink-0 cursor-pointer"
                         >
                           Editar
                         </button>
@@ -756,7 +756,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                           className={`min-h-[36px] px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border shadow-2xs ${
                             linea.observacion
                               ? 'bg-amber-100/80 border-amber-300 text-amber-900'
-                              : 'bg-white border-amber-300/80 text-[#D35400]'
+                              : 'bg-white border-amber-300/80 text-[#B84500]'
                           }`}
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
@@ -770,7 +770,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                             onClick={() => repetirLinea(idx)}
                             disabled={linea.cantidad >= 20}
                             title="Repetir esta misma combinación de menú completo"
-                            className="min-h-[36px] px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-[#D35400] border border-amber-200 flex items-center gap-1 transition-colors cursor-pointer shadow-2xs font-sans disabled:opacity-40"
+                            className="min-h-[36px] px-2 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-[#B84500] border border-amber-200 flex items-center gap-1 transition-colors cursor-pointer shadow-2xs font-sans disabled:opacity-40"
                           >
                             <Copy className="w-3 h-3" />
                             <span>Repetir</span>

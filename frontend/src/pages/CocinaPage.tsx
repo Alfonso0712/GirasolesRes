@@ -338,7 +338,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
             className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B84600] text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[38px]"
             title="Abrir disponibilidad de platos del menú"
           >
-            <UtensilsCrossed className="w-4 h-4 text-[#D35400]" />
+            <UtensilsCrossed className="w-4 h-4 text-[#B84500]" />
             <span>Platos agotados</span>
           </button>
 
@@ -378,7 +378,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
               className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
               title="Actualizar comandas manualmente"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
           </div>
@@ -393,7 +393,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
       <div className="w-full">
         {cargando && comandas.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-neutral-500 gap-3">
-            <RotateCw className="w-8 h-8 animate-spin text-[#D35400]" />
+            <RotateCw className="w-8 h-8 animate-spin text-[#B84500]" />
             <span className="text-base font-semibold">Cargando comandas de cocina…</span>
           </div>
         ) : errorCarga && comandas.length === 0 ? (

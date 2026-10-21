@@ -149,7 +149,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
             aria-label="Actualizar lista de ventas"
             disabled={cargando} className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
           >
-            <RotateCcw className={`w-3.5 h-3.5 text-[#D35400] ${cargando ? 'animate-spin' : ''}`} />
+            <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualizar</span>
           </button>
         </div>
@@ -159,7 +159,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
       <div className="shrink-0 grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* KPI 1: Ventas Vigentes */}
         <div className="bg-white rounded-2xl border border-neutral-200/80 p-3.5 shadow-2xs flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center shrink-0 border border-amber-200">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center shrink-0 border border-amber-200">
             <Receipt className="w-5 h-5" />
           </div>
           <div>
@@ -387,7 +387,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               <button
                 type="button"
                 onClick={limpiarFiltros}
-                className="px-2.5 py-1.5 text-xs font-semibold text-[#D35400] hover:text-[#B84600] hover:bg-amber-50 rounded-lg transition-colors cursor-pointer ml-auto sm:ml-0"
+                className="px-2.5 py-1.5 text-xs font-semibold text-[#B84500] hover:text-[#B84600] hover:bg-amber-50 rounded-lg transition-colors cursor-pointer ml-auto sm:ml-0"
               >
                 Quitar filtros
               </button>
@@ -428,7 +428,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           </div>
         ) : ventasFiltradas.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-neutral-500">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mb-3 border border-amber-200">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mb-3 border border-amber-200">
               <Receipt className="w-6 h-6" />
             </div>
             <p className="text-sm font-bold text-[#2C1A0E] mb-1">
@@ -586,7 +586,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                           aria-label={`Ver detalle de venta ${v.comprobante}`}
                           className="h-8 px-2.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs inline-flex items-center gap-1.5 transition-colors cursor-pointer text-xs font-semibold"
                         >
-                          <Eye className="w-3.5 h-3.5 text-[#D35400]" />
+                          <Eye className="w-3.5 h-3.5 text-[#B84500]" />
                           <span>Detalle</span>
                         </button>
                       </td>

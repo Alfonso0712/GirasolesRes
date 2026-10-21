@@ -39,7 +39,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
       type="button"
       tabIndex={0}
       onClick={() => setShowPassword(!showPassword)}
-      className="text-xs font-bold text-[#D35400] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+      className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
     >
       {showPassword ? 'Ocultar' : 'Mostrar'}
     </button>

@@ -282,7 +282,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               {/* Total al pie de columna */}
               <div className="pt-3 border-t border-neutral-200 flex justify-between items-center mt-2">
                 <span className="text-xs font-semibold text-neutral-600">Nuevo Total:</span>
-                <span className="text-xl font-bold tabular-nums text-[#D35400]">
+                <span className="text-xl font-bold tabular-nums text-[#B84500]">
                   S/ {totalCalculado.toFixed(2)}
                 </span>
               </div>
@@ -341,7 +341,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleAgregarProducto(prod)}
-                        className="py-1 px-3 rounded-lg bg-amber-500/10 text-[#D35400] hover:bg-[#C74E00] hover:text-white font-semibold flex items-center gap-1 transition-all cursor-pointer min-h-[36px]"
+                        className="py-1 px-3 rounded-lg bg-amber-500/10 text-[#B84500] hover:bg-[#C74E00] hover:text-white font-semibold flex items-center gap-1 transition-all cursor-pointer min-h-[36px]"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Agregar</span>

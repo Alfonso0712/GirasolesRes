@@ -97,7 +97,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
             title="Descargar reporte en formato PDF (A4)"
             aria-label="Descargar PDF"
           >
-            <FileText className="w-4 h-4 text-[#D35400]" />
+            <FileText className="w-4 h-4 text-[#B84500]" />
             <span>{descargando === 'pdf' ? 'Preparando archivo…' : 'Descargar PDF'}</span>
           </button>
 
@@ -336,7 +336,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                   Monto Total de Platos
                 </span>
-                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#D35400] tabular-nums mt-1">
+                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#B84500] tabular-nums mt-1">
                   S/ {reportePlatos ? reportePlatos.totalMonto.toFixed(2) : '0.00'}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Calculado por precio en comanda</span>
@@ -373,7 +373,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                           {sub.cantidad} {sub.cantidad === 1 ? 'plato' : 'platos'}
                         </span>
                       </div>
-                      <span className="font-sans font-bold text-sm text-[#D35400] tabular-nums">
+                      <span className="font-sans font-bold text-sm text-[#B84500] tabular-nums">
                         S/ {sub.monto.toFixed(2)}
                       </span>
                     </div>
@@ -387,7 +387,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               <div className="bg-white p-4 rounded-2xl border border-amber-200 shadow-2xs">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#D35400]">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
                       Desglose Diario del Plato
                     </p>
                     <p className="text-sm font-semibold text-[#2C1A0E] mt-0.5">
@@ -490,7 +490,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                           <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#2C1A0E]">
                             {item.cantidad}
                           </td>
-                          <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#D35400]">
+                          <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#B84500]">
                             S/ {item.monto.toFixed(2)}
                           </td>
                         </tr>
@@ -531,7 +531,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                         </div>
                         <div className="text-right">
                           <span className="text-neutral-500 block">Total generado:</span>
-                          <span className="font-sans font-bold text-sm text-[#D35400] tabular-nums">
+                          <span className="font-sans font-bold text-sm text-[#B84500] tabular-nums">
                             S/ {item.monto.toFixed(2)}
                           </span>
                         </div>
@@ -543,7 +543,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
             ) : (
               /* Estado Vacío de Platos Vendidos (MSG-193) */
               <div className="bg-white rounded-2xl border border-neutral-200/80 p-8 text-center shadow-2xs">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200">
                   <UtensilsCrossed className="w-6 h-6" />
                 </div>
                 <h3 className="font-sans font-bold text-base text-[#2C1A0E] mb-1">
@@ -586,11 +586,11 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                     Total General
                   </span>
-                  <div className="w-7 h-7 rounded-lg bg-amber-50 text-[#D35400] flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-amber-50 text-[#B84500] flex items-center justify-center">
                     <TrendingUp className="w-4 h-4" />
                   </div>
                 </div>
-                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#D35400] tabular-nums mt-2">
+                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#B84500] tabular-nums mt-2">
                   S/ {reporteVentas ? reporteVentas.total.toFixed(2) : '0.00'}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Ingresos brutos vigentes</span>
@@ -689,7 +689,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                           <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-purple-700">
                             S/ {d.yape.toFixed(2)}
                           </td>
-                          <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-[#D35400]">
+                          <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-[#B84500]">
                             S/ {d.total.toFixed(2)}
                           </td>
                           <td className="py-3 px-4 text-center">
@@ -744,7 +744,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                         </div>
                         <div className="text-right">
                           <span className="text-neutral-500 block">Total del Día:</span>
-                          <span className="font-bold text-sm text-[#D35400] font-sans tabular-nums">
+                          <span className="font-bold text-sm text-[#B84500] font-sans tabular-nums">
                             S/ {d.total.toFixed(2)}
                           </span>
                         </div>
@@ -768,7 +768,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
             ) : (
               /* Estado Vacío de Ventas (MSG-192) */
               <div className="bg-white rounded-2xl border border-neutral-200/80 p-8 text-center shadow-2xs">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#D35400] flex items-center justify-center mx-auto mb-3 border border-amber-200">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200">
                   <Receipt className="w-6 h-6" />
                 </div>
                 <h3 className="font-sans font-bold text-base text-[#2C1A0E] mb-1">

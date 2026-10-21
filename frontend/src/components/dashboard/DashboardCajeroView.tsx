@@ -104,9 +104,9 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('pedidos-llevar')}
-            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#D35400] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#B84500] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <ShoppingBag className="w-5 h-5 text-[#D35400]" />
+            <ShoppingBag className="w-5 h-5 text-[#B84500]" />
             <span>PEDIDO PARA LLEVAR</span>
           </button>
 
@@ -114,7 +114,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('caja')}
-            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#D35400] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#B84500] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
             <DollarSign className="w-5 h-5 text-neutral-600" />
             <span>GESTIONAR TURNO DE CAJA</span>
@@ -124,7 +124,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('ventas')}
-            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#D35400] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#B84500] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
             <Receipt className="w-5 h-5 text-neutral-600" />
             <span>HISTORIAL DE COMPROBANTES</span>
@@ -206,7 +206,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
                 </p>
               )}
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ir a módulo de Cobros</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -237,7 +237,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
                 Listos para ser entregados o cobrados inmediatamente.
               </p>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver pedidos listos</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>

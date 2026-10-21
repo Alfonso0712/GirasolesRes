@@ -62,7 +62,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
             <div
               className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${
                 esAgotar
-                  ? 'bg-amber-50 text-[#D35400] border-amber-200'
+                  ? 'bg-amber-50 text-[#B84500] border-amber-200'
                   : 'bg-emerald-50 text-emerald-600 border-emerald-200'
               }`}
             >

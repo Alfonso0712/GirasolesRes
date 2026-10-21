@@ -76,18 +76,18 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
         {/* Encabezado fijo */}
         <div className="shrink-0 p-4 sm:p-5 border-b border-neutral-100 flex justify-between items-start bg-[#FAF7F4]">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center shrink-0 mt-0.5">
               <Utensils className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-bold tracking-wider text-[#D35400] uppercase font-sans">
+              <span className="text-xs font-bold tracking-wider text-[#B84500] uppercase font-sans">
                 Armar menú completo
               </span>
               <h2 id="modal-armar-menu-title" className="text-lg sm:text-xl font-bold font-sans text-[#2C1A0E] leading-tight">
                 {menu.nombre}
               </h2>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm font-bold text-[#D35400] font-sans tabular-nums whitespace-nowrap">
+                <span className="text-sm font-bold text-[#B84500] font-sans tabular-nums whitespace-nowrap">
                   S/ {menu.precio.toFixed(2)}
                 </span>
                 {menu.incluye && (

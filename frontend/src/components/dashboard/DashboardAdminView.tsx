@@ -139,7 +139,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Ventas de Hoy
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center group-hover:scale-105 transition-transform">
                   <DollarSign className="w-4 h-4" />
                 </div>
               </div>
@@ -167,7 +167,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 </div>
               )}
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver reporte de hoy</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -187,7 +187,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Platos Vendidos Hoy
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#D35400] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#B84500] flex items-center justify-center group-hover:scale-105 transition-transform">
                   <UtensilsCrossed className="w-4 h-4" />
                 </div>
               </div>
@@ -200,7 +200,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   : 'Sin platos servidos aún hoy.'}
               </p>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver detalle de platos</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -242,7 +242,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Gestionar pedidos</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -280,7 +280,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#D35400] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver salón de mesas</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -295,7 +295,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-neutral-100">
               <h3 className="font-sans font-bold text-neutral-800 text-sm flex items-center gap-2">
-                <UtensilsCrossed className="w-4 h-4 text-[#D35400]" />
+                <UtensilsCrossed className="w-4 h-4 text-[#B84500]" />
                 <span>Top Platos Vendidos de Hoy</span>
               </h3>
               <span className="text-xs font-semibold text-neutral-500">Ranking</span>
@@ -332,7 +332,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
 
           <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
             <span>Visualice el acumulado en Reportes</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#D35400]" />
+            <ArrowRight className="w-3.5 h-3.5 text-[#B84500]" />
           </div>
         </div>
 
@@ -370,7 +370,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   className="p-3 rounded-xl border border-neutral-200 hover:border-orange-400 hover:bg-orange-50/50 transition-all text-left cursor-pointer group"
                 >
                   <span className="text-xs font-medium text-neutral-500 block">En Cocina</span>
-                  <span className="text-lg font-bold tabular-nums text-[#D35400]">
+                  <span className="text-lg font-bold tabular-nums text-[#B84500]">
                     {pedidos?.enPreparacion ?? 0}
                   </span>
                 </button>
@@ -428,7 +428,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
 
           <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
             <span>Gestión completa en Pedidos</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#D35400]" />
+            <ArrowRight className="w-3.5 h-3.5 text-[#B84500]" />
           </div>
         </div>
 
@@ -576,7 +576,7 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
               onClick={() => onNavigate(act.pagina)}
               className="p-3 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/70 hover:border-[#D35400] rounded-xl text-left transition-all cursor-pointer group flex items-center gap-3 min-h-[44px]"
             >
-              <div className="w-8 h-8 rounded-lg bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 group-hover:text-[#D35400] group-hover:border-[#D35400] shrink-0 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 group-hover:text-[#B84500] group-hover:border-[#D35400] shrink-0 transition-colors">
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold text-neutral-700 group-hover:text-neutral-900 leading-tight">

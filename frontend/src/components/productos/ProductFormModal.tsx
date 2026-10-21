@@ -235,7 +235,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         {/* Encabezado fijo con marca visual */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-gradient-to-r from-amber-50/50 to-transparent">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF7F4] border border-amber-900/10 flex items-center justify-center text-[#D35400]">
+            <div className="w-10 h-10 rounded-xl bg-[#FAF7F4] border border-amber-900/10 flex items-center justify-center text-[#B84500]">
               <Utensils className="w-5 h-5" />
             </div>
             <div>
@@ -277,7 +277,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             {/* Selector de Tipo de Producto (Carta vs Componente) */}
             <div>
               <label className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5">
-                Tipo de producto <span className="text-[#D35400]">*</span>
+                Tipo de producto <span className="text-[#B84500]">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80">
                 <button
@@ -288,7 +288,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   disabled={isEditing || guardando}
                   className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
                     tipo === 'Carta'
-                      ? 'bg-white text-[#D35400] shadow-sm border border-neutral-200/60'
+                      ? 'bg-white text-[#B84500] shadow-sm border border-neutral-200/60'
                       : 'text-neutral-600 hover:text-neutral-900'
                   } ${isEditing ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
@@ -325,7 +325,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
               >
                 Nombre {tipo === 'Componente' ? 'del componente' : 'del producto'}{' '}
-                <span className="text-[#D35400]">*</span>
+                <span className="text-[#B84500]">*</span>
               </label>
               <input
                 id="prod-nombre"
@@ -373,7 +373,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     htmlFor="prod-categoria"
                     className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
                   >
-                    Categoría de Carta <span className="text-[#D35400]">*</span>
+                    Categoría de Carta <span className="text-[#B84500]">*</span>
                   </label>
                   <select
                     id="prod-categoria"
@@ -412,7 +412,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     htmlFor="prod-precio"
                     className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
                   >
-                    Precio de Venta (S/) <span className="text-[#D35400]">*</span>
+                    Precio de Venta (S/) <span className="text-[#B84500]">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
@@ -450,7 +450,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   {/* Mensaje informativo cuando se edita el precio */}
                   {precioCambioEnEdicion && !errores.precio && (
                     <div className="mt-2 p-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl flex items-start gap-2 text-xs text-amber-900 animate-in fade-in duration-200">
-                      <Info className="w-4 h-4 text-[#D35400] shrink-0 mt-0.5" />
+                      <Info className="w-4 h-4 text-[#B84500] shrink-0 mt-0.5" />
                       <span>
                         El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian.
                       </span>
@@ -469,7 +469,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     htmlFor="prod-rol"
                     className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
                   >
-                    Rol del Componente <span className="text-[#D35400]">*</span>
+                    Rol del Componente <span className="text-[#B84500]">*</span>
                   </label>
                   <select
                     id="prod-rol"

@@ -67,7 +67,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
         {/* Encabezado fijo */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-[#FAF7F4]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D35400] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center">
               <MessageSquare className="w-5 h-5" />
             </div>
             <div>
@@ -124,7 +124,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
                     key={frase}
                     type="button"
                     onClick={() => agregarNotaRapida(frase)}
-                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-neutral-100 hover:bg-amber-50 hover:text-[#D35400] text-neutral-700 border border-neutral-200 transition-colors cursor-pointer"
+                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-neutral-100 hover:bg-amber-50 hover:text-[#B84500] text-neutral-700 border border-neutral-200 transition-colors cursor-pointer"
                   >
                     + {frase}
                   </button>

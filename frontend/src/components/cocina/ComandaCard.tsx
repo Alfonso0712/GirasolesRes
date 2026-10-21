@@ -77,7 +77,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
 
           {/* Subtítulo: Destino y Mozo */}
           <div className="text-sm text-neutral-600 mb-3 pb-3 border-b border-neutral-100 flex items-center justify-between">
-            <span className="font-bold text-[#D35400] text-base">{destino}</span>
+            <span className="font-bold text-[#B84500] text-base">{destino}</span>
             <span className="text-xs text-neutral-500">Por: {c.registradoPor}</span>
           </div>
 

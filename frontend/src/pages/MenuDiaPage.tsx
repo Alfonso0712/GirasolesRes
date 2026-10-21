@@ -274,13 +274,13 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               onClick={() => setTabActiva('opciones')}
               className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'opciones'
-                  ? 'border-[#D35400] text-[#D35400]'
+                  ? 'border-[#D35400] text-[#B84500]'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
               <Sparkles className="w-4 h-4" />
               <span>Opciones del día</span>
-              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-[#D35400] font-bold">
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-[#B84500] font-bold">
                 {opcionesSeleccionadas.size}
               </span>
             </button>
@@ -290,7 +290,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               onClick={() => setTabActiva('menus')}
               className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'menus'
-                  ? 'border-[#D35400] text-[#D35400]'
+                  ? 'border-[#D35400] text-[#B84500]'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
@@ -306,7 +306,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               onClick={() => setTabActiva('carta')}
               className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'carta'
-                  ? 'border-[#D35400] text-[#D35400]'
+                  ? 'border-[#D35400] text-[#B84500]'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >

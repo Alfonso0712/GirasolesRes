@@ -23,9 +23,9 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {esMesa ? (
-            <Utensils className="w-4 h-4 text-[#D35400]" />
+            <Utensils className="w-4 h-4 text-[#B84500]" />
           ) : (
-            <ShoppingBag className="w-4 h-4 text-[#D35400]" />
+            <ShoppingBag className="w-4 h-4 text-[#B84500]" />
           )}
           <span className="font-bold text-neutral-900">
             {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
@@ -59,7 +59,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
           <span className="text-xs text-neutral-500 font-bold uppercase block">
             Total
           </span>
-          <span className="text-lg font-bold font-sans tabular-nums text-[#D35400]">
+          <span className="text-lg font-bold font-sans tabular-nums text-[#B84500]">
             S/ {p.total.toFixed(2)}
           </span>
         </div>
