@@ -462,7 +462,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   <th className="py-3 px-4">Destino</th>
                   <th className="py-3 px-4">Método</th>
                   <th className="py-3 px-4 text-right">Total</th>
-                  <th className="py-3 px-4">Cajero(a)</th>
+                  <th className="py-3 px-4 w-36">Cajero(a)</th>
                   <th className="py-3 px-4 text-center">Estado</th>
                   <th className="py-3 px-4 text-center">Acción</th>
                 </tr>
@@ -559,7 +559,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                       </td>
 
                       {/* Cajero */}
-                      <td className="py-3 px-4 text-sm font-medium text-[#2C1A0E] truncate max-w-[110px]" title={v.cajero}>
+                      <td className="py-3 px-4 text-sm font-medium text-[#2C1A0E] truncate max-w-36 w-36" title={v.cajero}>
                         {v.cajero}
                       </td>
 
