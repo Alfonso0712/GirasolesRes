@@ -481,7 +481,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
                       <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
                         Monto Inicial
