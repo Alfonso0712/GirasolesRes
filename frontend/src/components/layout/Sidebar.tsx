@@ -117,7 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             badge: () =>
               cajaEstado ? (
                 <span
-                  className={`px-2 py-0.5 text-xs font-bold rounded-full uppercase tracking-wider ${
+                  className={`px-1.5 py-0.5 text-xs font-bold rounded-full shrink-0 ${
                     cajaEstado === 'abierta'
                       ? 'bg-emerald-500 text-white'
                       : cajaEstado === 'anteriorSinCerrar'
@@ -368,7 +368,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           key={item.id}
                           type="button"
                           onClick={() => handleNavigate(item.id)}
-                          className={`w-full text-left px-3 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
+                          className={`w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
                             esActivo
                               ? 'bg-[#C74E00] text-white shadow-md font-semibold'
                               : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
