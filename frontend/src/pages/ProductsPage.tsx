@@ -4,10 +4,6 @@ import {
   Plus,
   AlertCircle,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  FilterX,
-  RotateCcw,
   ShieldAlert,
   Edit2,
   PowerOff,
@@ -25,7 +21,6 @@ import {
 import type { UserSession } from '../types/auth';
 import {
   CATEGORIAS_PRODUCTO,
-  CATEGORIA_LABELS,
   CATEGORIA_BADGE_LABELS,
   ROL_LABELS
 } from '../types/producto';
@@ -38,6 +33,8 @@ import {
 import { useProductsManagement } from '../hooks/useProductsManagement';
 import { ProductFormModal } from '../components/productos';
 import { ProductConfirmModal } from '../components/productos';
+import { StatusBadge, IconActionButton, TablePagination, DataTable, TableHead, TableBody } from '../components/ui';
+import { PageHeader, PageContainer } from '../components/layout';
 
 export interface ProductsPageProps {
   session: UserSession;
@@ -248,8 +245,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     filtroTipo !== 'Todos';
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
+    <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
+      <PageContainer>
       {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
       {avisoExito && (
         <div
@@ -292,34 +289,26 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         </div>
       )}
 
-      {/* Encabezado Superior ESTÁTICO Y FIJO */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Carta y Menús
-            </h1>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              {total} items registrados
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Administre productos de carta, componentes y los menús completos del restaurante.
-          </p>
-        </div>
-
-        {pestañaActiva === 'catalogo' && (
-          <button
-            ref={nuevoBtnRef}
-            type="button"
-            onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[38px]"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nuevo producto o componente</span>
-          </button>
-        )}
-      </div>
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Carta y Menús"
+        subtitle="Administre productos de carta, componentes y los menús completos del restaurante."
+        count={total}
+        countLabel="ítems registrados"
+        actions={
+          pestañaActiva === 'catalogo' && (
+            <button
+              ref={nuevoBtnRef}
+              type="button"
+              onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nuevo producto</span>
+            </button>
+          )
+        }
+      />
 
       {/* Navegación por pestañas (Tabs): Catálogo vs Menús Completos */}
       <div className="shrink-0 border-b border-neutral-200 flex items-center gap-2 sm:gap-4">
@@ -437,92 +426,33 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             </div>
           </div>
 
-          {/* Contenedor de la Tabla */}
-          <div className="w-full bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-            {errorCarga ? (
-              <div className="p-8 text-center space-y-4">
-                <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
-                <p className="text-sm font-medium text-neutral-700">{errorCarga}</p>
-                <button
-                  type="button"
-                  onClick={cargarProductos}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reintentar</span>
-                </button>
-              </div>
-            ) : cargando ? (
-              <div className="w-full">
-                <div className="px-6 py-2.5 bg-amber-50/60 border-b border-amber-100/80 flex items-center justify-between text-xs text-neutral-600">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3.5 h-3.5 border-2 border-[#D35400] border-t-transparent rounded-full animate-spin" />
-                    <span className="font-semibold text-neutral-700">Cargando productos…</span>
-                  </div>
-                  <span className="text-xs text-neutral-500 font-medium">Actualizando lista</span>
-                </div>
-                <div className="p-4 space-y-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="h-12 bg-neutral-100 rounded-xl animate-pulse" />
-                  ))}
-                </div>
-              </div>
-            ) : productos.length === 0 ? (
-              <div className="p-12 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto">
-                  <FilterX className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-neutral-800">
-                    {hayFiltrosActivos
-                      ? 'No se encontraron productos o componentes con ese criterio.'
-                      : 'No hay productos ni componentes registrados.'}
-                  </p>
-                  <p className="text-xs text-neutral-500 mt-1">
-                    {hayFiltrosActivos
-                      ? 'Pruebe con otro nombre o quite los filtros aplicados.'
-                      : 'Haga clic en "Nuevo producto o componente" para crear el primero.'}
-                  </p>
-                </div>
-                {hayFiltrosActivos && (
-                  <button
-                    type="button"
-                    onClick={handleQuitarFiltros}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-neutral-300 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
-                  >
-                    <span>Quitar filtros</span>
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <div className="w-full overflow-x-auto">
-                  {/* Vista Escritorio (>= lg) */}
-                  <div className="hidden lg:block">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-[#E5E0DB] bg-[#FAF7F4] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider">
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
-                            PRODUCTO / COMPONENTE
-                          </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
-                            TIPO
-                          </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
-                            ROL / CATEGORÍA
-                          </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 text-right border-b border-[#E5E0DB]">
-                            PRECIO
-                          </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 border-b border-[#E5E0DB]">
-                            ESTADO
-                          </th>
-                          <th className="sticky top-0 bg-[#FAF7F4] z-10 py-3 px-4 text-right border-b border-[#E5E0DB]">
-                            ACCIONES
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#F0EBE6] text-sm">
+          {/* Contenedor de la Tabla con DataTable */}
+          <DataTable
+            loading={cargando}
+            error={errorCarga}
+            onRetry={cargarProductos}
+            isEmpty={productos.length === 0}
+            emptyTitle="No se encontraron productos o componentes"
+            emptyMessage={
+              hayFiltrosActivos
+                ? 'No hay registros que coincidan con los filtros aplicados. Pruebe con otro nombre o quite los filtros.'
+                : 'Aún no se han registrado productos ni componentes en el sistema.'
+            }
+            emptyActionLabel={hayFiltrosActivos ? 'Quitar filtros' : undefined}
+            onEmptyAction={hayFiltrosActivos ? handleQuitarFiltros : undefined}
+            minWidth="min-w-[800px]"
+          >
+            <TableHead>
+              <tr>
+                <th scope="col" className="py-3 px-4">PRODUCTO / COMPONENTE</th>
+                <th scope="col" className="py-3 px-4">TIPO</th>
+                <th scope="col" className="py-3 px-4">ROL / CATEGORÍA</th>
+                <th scope="col" className="py-3 px-4 text-right">PRECIO</th>
+                <th scope="col" className="py-3 px-4">ESTADO</th>
+                <th scope="col" className="py-3 px-4 text-right">ACCIONES</th>
+              </tr>
+            </TableHead>
+            <TableBody>
                         {productos.map((prod) => {
                           const estaResaltado = prod.id === productoResaltadoId;
                           const esComponente = prod.tipo === 'Componente';
@@ -599,38 +529,28 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                 )}
                               </td>
 
-                              <td className="py-3 px-4">
-                                <span
-                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                                    prod.activo
-                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                      : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
-                                  }`}
-                                >
-                                  <span
-                                    className={`w-1.5 h-1.5 rounded-full ${
-                                      prod.activo ? 'bg-emerald-600' : 'bg-neutral-400'
-                                    }`}
-                                  />
-                                  <span>{prod.activo ? 'Activo' : 'Inactivo'}</span>
-                                </span>
+                              <td className="py-3 px-4 whitespace-nowrap">
+                                <StatusBadge
+                                  status={prod.activo}
+                                  activeLabel="Activo"
+                                  inactiveLabel="Inactivo"
+                                />
                               </td>
 
-                              <td className="py-3 px-4 text-right">
-                                <div className="inline-flex items-center justify-end gap-1.5">
-                                  <button
-                                    type="button"
+                              <td className="py-3 px-4 text-center whitespace-nowrap">
+                                <div className="inline-flex items-center justify-center gap-1.5">
+                                  <IconActionButton
+                                    icon={Edit2}
+                                    label="Editar producto o componente"
+                                    variant="edit"
                                     onClick={(e) => handleAbrirEditar(prod, e.currentTarget)}
-                                    title="Editar producto o componente"
-                                    aria-label="Editar producto o componente"
-                                    className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 transition-colors shadow-2xs cursor-pointer"
-                                  >
-                                    <Edit2 className="w-4 h-4" />
-                                  </button>
+                                  />
 
                                   {prod.activo ? (
-                                    <button
-                                      type="button"
+                                    <IconActionButton
+                                      icon={PowerOff}
+                                      label="Desactivar producto"
+                                      variant="deactivate"
                                       onClick={(e) =>
                                         handleAbrirConfirmacion(
                                           prod,
@@ -638,15 +558,12 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                           e.currentTarget
                                         )
                                       }
-                                      title="Desactivar"
-                                      aria-label="Desactivar"
-                                      className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-[#B84600] transition-colors shadow-2xs cursor-pointer"
-                                    >
-                                      <PowerOff className="w-4 h-4" />
-                                    </button>
+                                    />
                                   ) : (
-                                    <button
-                                      type="button"
+                                    <IconActionButton
+                                      icon={Power}
+                                      label="Activar producto"
+                                      variant="activate"
                                       onClick={(e) =>
                                         handleAbrirConfirmacion(
                                           prod,
@@ -654,151 +571,25 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                           e.currentTarget
                                         )
                                       }
-                                      title="Activar"
-                                      aria-label="Activar"
-                                      className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors shadow-2xs cursor-pointer"
-                                    >
-                                      <Power className="w-4 h-4" />
-                                    </button>
+                                    />
                                   )}
                                 </div>
                               </td>
                             </tr>
                           );
                         })}
-                      </tbody>
-                    </table>
-                  </div>
+            </TableBody>
+          </DataTable>
 
-                  {/* Vista Móvil (< lg) */}
-                  <div className="lg:hidden p-4 space-y-3">
-                    {productos.map((prod) => {
-                      const esComponente = prod.tipo === 'Componente';
-                      return (
-                        <div
-                          key={prod.id}
-                          className="p-4 bg-white rounded-2xl border border-neutral-200/90 shadow-2xs space-y-3"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                                    esComponente
-                                      ? 'bg-emerald-100 text-emerald-800'
-                                      : 'bg-neutral-100 text-neutral-800'
-                                  }`}
-                                >
-                                  {esComponente ? 'Componente' : 'Carta'}
-                                </span>
-                              </div>
-                              <h4 className="font-sans font-bold text-base text-neutral-900 mt-1">
-                                {prod.nombre}
-                              </h4>
-                              <p className="text-xs text-neutral-500 mt-0.5">
-                                {esComponente
-                                  ? `Rol: ${ROL_LABELS[prod.rol || ''] || prod.rol || 'Segundo'}`
-                                  : `Categoría: ${CATEGORIA_LABELS[prod.categoria || ''] || prod.categoria}`}
-                              </p>
-                            </div>
-
-                            <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                prod.activo
-                                  ? 'bg-emerald-50 text-emerald-700'
-                                  : 'bg-neutral-100 text-neutral-500'
-                              }`}
-                            >
-                              {prod.activo ? 'Activo' : 'Inactivo'}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-                            <div className="text-sm">
-                              {prod.precio != null ? (
-                                <strong className="text-base tabular-nums text-[#B84500]">
-                                  S/ {prod.precio.toFixed(2)}
-                                </strong>
-                              ) : (
-                                <span className="text-xs text-neutral-500 italic">
-                                  En menú completo
-                                </span>
-                              )}
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={(e) => handleAbrirEditar(prod, e.currentTarget)}
-                                className="px-3 py-1.5 rounded-xl border border-neutral-200 text-xs font-semibold hover:bg-neutral-50 flex items-center gap-1"
-                              >
-                                <Edit2 className="w-3.5 h-3.5" />
-                                <span>Editar</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) =>
-                                  handleAbrirConfirmacion(
-                                    prod,
-                                    prod.activo ? 'desactivar' : 'activar',
-                                    e.currentTarget
-                                  )
-                                }
-                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 border ${
-                                  prod.activo
-                                    ? 'border-amber-200 bg-amber-50 text-[#B84500]'
-                                    : 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                                }`}
-                              >
-                                {prod.activo ? 'Desactivar' : 'Activar'}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Paginación */}
-                <div className="shrink-0 px-6 py-3.5 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500 bg-white">
-                  <p>
-                    Mostrando{' '}
-                    <span className="font-semibold text-neutral-700">{productos.length}</span> de{' '}
-                    <span className="font-semibold text-neutral-700">{total}</span> ítems
-                  </p>
-
-                  <div className="flex items-center gap-3">
-                    <span>
-                      Página <span className="font-semibold text-neutral-700">{pagina}</span> de{' '}
-                      <span className="font-semibold text-neutral-700">{totalPaginas}</span>
-                    </span>
-
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                        disabled={pagina <= 1}
-                        aria-label="Página anterior"
-                        className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer min-h-[38px] min-w-[38px] inline-flex items-center justify-center"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                        disabled={pagina >= totalPaginas}
-                        aria-label="Página siguiente"
-                        className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer min-h-[38px] min-w-[38px] inline-flex items-center justify-center"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          {/* Paginación Unificada */}
+          <TablePagination
+            currentPage={pagina}
+            totalPages={totalPaginas}
+            totalItems={total}
+            itemsPerPage={tamano}
+            entityName="ítems"
+            onPageChange={setPagina}
+          />
         </>
       )}
 
@@ -1118,7 +909,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           </div>
         </div>
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

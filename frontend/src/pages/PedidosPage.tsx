@@ -18,19 +18,20 @@ import {
   ChefHat,
   CheckCircle2,
   AlertTriangle,
-  RotateCcw, RotateCw,
+  RotateCcw,
   Filter,
   Eye,
   Edit2,
   Trash2,
   Calendar,
-  AlertCircle,
   X,
   Check,
   ShoppingBag,
   Utensils,
   DollarSign
 } from 'lucide-react';
+import { StatusBadge, IconActionButton, DataTable, TableHead, TableBody } from '../components/ui';
+import { PageHeader, PageContainer } from '../components/layout';
 
 interface PedidosPageProps {
   session: UserSession;
@@ -243,84 +244,31 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
     }
   };
 
-  const renderBadgeEstado = (estado: string) => {
-    switch (estado.toLowerCase()) {
-      case 'pendiente':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300">
-            <Clock className="w-3.5 h-3.5" />
-            Pendiente
-          </span>
-        );
-      case 'enpreparacion':
-      case 'en preparación':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300">
-            <ChefHat className="w-3.5 h-3.5" />
-            En preparación
-          </span>
-        );
-      case 'listo':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            Listo
-          </span>
-        );
-      case 'pagado':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-neutral-100 text-neutral-700 border border-neutral-300">
-            Pagado
-          </span>
-        );
-      case 'anulado':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">
-            <AlertTriangle className="w-3.5 h-3.5" />
-            Anulado
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-neutral-100 text-neutral-700">
-            {estado}
-          </span>
-        );
-    }
-  };
-
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Superior */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Pedidos
-            </h1>
+    <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
+      <PageContainer>
+        {/* 1. Encabezado Unificado */}
+        <PageHeader
+          title="Pedidos"
+          subtitle="Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar."
+          badge={
             <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => cargarPedidos()}
-            disabled={cargando}
-            className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-            aria-label="Refrescar lista de pedidos"
-          >
-            <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Actualizar</span>
-          </button>
-        </div>
-      </div>
+          }
+          actions={
+            <button
+              type="button"
+              onClick={() => cargarPedidos()}
+              disabled={cargando}
+              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60 shrink-0"
+              aria-label="Refrescar lista de pedidos"
+            >
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+              <span>Actualizar</span>
+            </button>
+          }
+        />
 
       {/* Contenedor sin confinamiento artificial */}
       <div className="w-full">
@@ -497,71 +445,34 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           )}
         </div>
 
-        {/* Mensaje de error de carga */}
-        {errorCarga && (
-          <div className="p-4 mb-6 bg-rose-50 border border-rose-200 text-rose-800 text-sm rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
-              <span>{errorCarga}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => cargarPedidos()}
-              className="py-2 px-4 rounded-xl bg-[#C74E00] text-white font-semibold text-xs hover:bg-[#B84600] transition-colors cursor-pointer"
-            >
-              Reintentar
-            </button>
-          </div>
-        )}
-
-        {/* Lista de Pedidos */}
-        {cargando ? (
-          <div className="p-12 text-center">
-            <RotateCw className="w-8 h-8 text-[#B84500] animate-spin mx-auto mb-3" />
-            <p className="text-sm font-semibold text-neutral-600">Cargando pedidos…</p>
-          </div>
-        ) : pedidos.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-3xl border border-neutral-200/80">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-4">
-              <Utensils className="w-7 h-7" />
-            </div>
-            <h4 className="text-base font-bold text-neutral-800 font-sans mb-1">
-              {hayFiltrosActivos
-                ? 'No se encontraron pedidos con ese criterio.'
-                : 'Todavía no hay pedidos hoy.'}
-            </h4>
-            <p className="text-xs text-neutral-500 max-w-sm mx-auto">
-              {hayFiltrosActivos
-                ? 'Pruebe con otro filtro o restablezca la búsqueda.'
-                : 'Los pedidos tomados en mesa o para llevar aparecerán aquí en vivo.'}
-            </p>
-            {hayFiltrosActivos && (
-              <button
-                type="button"
-                onClick={handleLimpiarFiltros}
-                className="mt-4 py-2 px-4 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#b84500] cursor-pointer"
-              >
-                Quitar filtros
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {/* Vista Desktop: Tabla */}
-            <div className="hidden md:block bg-white border border-neutral-200/80 rounded-2xl overflow-hidden shadow-xs">
-              <table className="w-full text-left border-collapse">
-                <thead className="bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
-                  <tr>
-                    <th className="py-3 px-4">N.º</th>
-                    <th className="py-3 px-4">Destino</th>
-                    <th className="py-3 px-4">Hora</th>
-                    <th className="py-3 px-4">Registrado por</th>
-                    <th className="py-3 px-4">Estado</th>
-                    <th className="py-3 px-4 text-right">Total</th>
-                    <th className="py-3 px-4 text-center">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#F0EBE6] text-sm">
+        {/* Lista de Pedidos con DataTable */}
+        <DataTable
+          loading={cargando}
+          error={errorCarga}
+          onRetry={() => cargarPedidos()}
+          isEmpty={pedidos.length === 0}
+          emptyTitle="No se encontraron pedidos"
+          emptyMessage={
+            hayFiltrosActivos
+              ? 'No hay pedidos que coincidan con los filtros aplicados. Pruebe con otro filtro o restablezca la búsqueda.'
+              : 'Todavía no hay pedidos hoy.'
+          }
+          emptyActionLabel={hayFiltrosActivos ? 'Quitar filtros' : undefined}
+          onEmptyAction={hayFiltrosActivos ? handleLimpiarFiltros : undefined}
+          minWidth="min-w-[850px]"
+        >
+          <TableHead>
+            <tr>
+              <th scope="col" className="py-3 px-4">N.º</th>
+              <th scope="col" className="py-3 px-4">Destino</th>
+              <th scope="col" className="py-3 px-4">Hora</th>
+              <th scope="col" className="py-3 px-4">Registrado por</th>
+              <th scope="col" className="py-3 px-4">Estado</th>
+              <th scope="col" className="py-3 px-4 text-right">Total</th>
+              <th scope="col" className="py-3 px-4 text-center">Acciones</th>
+            </tr>
+          </TableHead>
+          <TableBody>
                   {pedidos.map((p) => {
                     const esAnulado = p.estado.toLowerCase() === 'anulado';
                     const esListo = p.estado.toLowerCase() === 'listo';
@@ -610,184 +521,56 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             )}
                           </div>
                         </td>
-                        <td className="py-3 px-4">
-                          {renderBadgeEstado(p.estado)}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <StatusBadge status={p.estado} />
                         </td>
                         <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-[#2C1A0E]">
                           S/ {p.total.toFixed(2)}
                         </td>
                         <td className="py-3 px-4">
-                          <div className="flex items-center justify-center gap-1.5">
-                            {/* Ver Detalle: Estilo Neutro Blanco */}
-                            <button
-                              type="button"
+                          <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
+                            <IconActionButton
+                              icon={Eye}
+                              label="Ver detalle del pedido"
+                              variant="view"
                               onClick={() => handleVerDetalle(p.id)}
-                              className="w-8 h-8 xl:w-9 xl:h-9 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
-                              title="Ver detalle del pedido"
-                              aria-label={`Ver detalle pedido #${p.numero}`}
-                            >
-                              <Eye className="w-4 h-4 text-neutral-600" />
-                            </button>
+                            />
 
-                            {/* Modificar: Estilo Neutro Blanco */}
-                            <button
-                              type="button"
-                              onClick={() => handleAbrirModificar(p.id)}
+                            <IconActionButton
+                              icon={Edit2}
+                              label="Modificar pedido"
+                              variant="edit"
                               disabled={!p.puedeModificar}
-                              className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
-                                p.puedeModificar
-                                  ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 hover:text-neutral-900 cursor-pointer'
-                                  : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
-                              }`}
-                              title={p.motivoDeshabilitado || 'Modificar pedido'}
-                              aria-label={`Modificar pedido #${p.numero}`}
-                            >
-                              <Edit2 className="w-4 h-4 text-neutral-600" />
-                            </button>
+                              disabledReason={p.motivoDeshabilitado || 'Modificar pedido'}
+                              onClick={() => handleAbrirModificar(p.id)}
+                            />
 
-                            {/* Anular: Acción Destructiva Rojo/Rose */}
-                            <button
-                              type="button"
-                              onClick={() => handleAbrirAnular(p)}
-                              disabled={!p.puedeAnular}
-                              className={`w-8 h-8 xl:w-9 xl:h-9 rounded-lg border shadow-2xs inline-flex items-center justify-center transition-colors ${
-                                p.puedeAnular
-                                  ? 'border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer'
-                                  : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
-                              }`}
-                              title={p.motivoDeshabilitado || 'Anular pedido'}
-                              aria-label={`Anular pedido #${p.numero}`}
-                            >
-                              <Trash2 className="w-4 h-4 text-rose-600" />
-                            </button>
-
-                            {/* Cobrar en Caja: Rol Cajero / Admin */}
                             {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
                               !esAnulado &&
                               p.estado.toLowerCase() !== 'pagado' && (
-                                <button
-                                  type="button"
+                                <IconActionButton
+                                  icon={DollarSign}
+                                  label="Cobrar pedido en caja"
+                                  variant="activate"
                                   onClick={() => onNavigateToCobro?.(p.id)}
-                                  className="w-8 h-8 rounded-lg border border-transparent bg-[#C74E00] hover:bg-[#B84600] text-white shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
-                                  title="Cobrar pedido en caja"
-                                  aria-label={`Cobrar pedido #${p.numero}`}
-                                >
-                                  <DollarSign className="w-4 h-4" />
-                                </button>
+                                />
                               )}
+
+                            <IconActionButton
+                              icon={Trash2}
+                              label="Anular pedido"
+                              variant="delete"
+                              disabled={!p.puedeAnular}
+                              disabledReason={p.motivoDeshabilitado || 'Anular pedido'}
+                              onClick={() => handleAbrirAnular(p)}
+                            />
                           </div>
                         </td>
                       </tr>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Vista Móvil: Tarjetas (RNF-28: Controles de al menos 44 px) */}
-            <div className="md:hidden space-y-3">
-              {pedidos.map((p) => {
-                const esAnulado = p.estado.toLowerCase() === 'anulado';
-                const esListo = p.estado.toLowerCase() === 'listo';
-
-                return (
-                  <div
-                    key={p.id}
-                    className={`p-4 bg-white rounded-2xl border transition-all ${
-                      esAnulado
-                        ? 'opacity-65 border-neutral-200 bg-neutral-50/70'
-                        : p.esMio
-                        ? 'border-amber-300 bg-amber-50/15 shadow-xs'
-                        : 'border-neutral-200 shadow-xs'
-                    } ${esListo ? 'ring-2 ring-emerald-400' : ''}`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold tabular-nums text-base text-neutral-900">
-                          #{p.numero}
-                        </span>
-                        <span className="font-semibold text-sm text-[#B84500]">
-                          {p.tipo === 'Mesa' ? (p.mesa || 'Mesa') : 'Para llevar'}
-                        </span>
-                        {p.esMio && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#B84500] font-bold text-xs">
-                            Mío
-                          </span>
-                        )}
-                      </div>
-                      {renderBadgeEstado(p.estado)}
-                    </div>
-
-                    <div className="flex justify-between items-center text-xs text-neutral-500 my-2">
-                      <span>Hora: <strong className="text-neutral-700">{p.hora}</strong></span>
-                      <span>Por: <strong className="text-neutral-700">{p.registradoPor}</strong></span>
-                      <span className="text-base font-bold tabular-nums text-neutral-900">
-                        S/ {p.total.toFixed(2)}
-                      </span>
-                    </div>
-
-                    {/* Botones móviles de 44 px */}
-                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-neutral-100 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => handleVerDetalle(p.id)}
-                        className="py-2.5 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-neutral-50 min-h-[44px] cursor-pointer shadow-2xs"
-                      >
-                        <Eye className="w-4 h-4 text-neutral-600" />
-                        <span>Detalle</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleAbrirModificar(p.id)}
-                        disabled={!p.puedeModificar}
-                        className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs ${
-                          p.puedeModificar
-                            ? 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 cursor-pointer'
-                            : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
-                        }`}
-                        title={p.motivoDeshabilitado || 'Modificar'}
-                      >
-                        <Edit2 className="w-4 h-4 text-neutral-600" />
-                        <span>Editar</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleAbrirAnular(p)}
-                        disabled={!p.puedeAnular}
-                        className={`py-2.5 rounded-xl border font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs ${
-                          p.puedeAnular
-                            ? 'border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 cursor-pointer'
-                            : 'border-neutral-200 bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
-                        }`}
-                        title={p.motivoDeshabilitado || 'Anular'}
-                      >
-                        <Trash2 className="w-4 h-4 text-rose-600" />
-                        <span>Anular</span>
-                      </button>
-
-                      {/* Cobrar en Móvil */}
-                      {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
-                        !esAnulado &&
-                        p.estado.toLowerCase() !== 'pagado' && (
-                          <button
-                            type="button"
-                            onClick={() => onNavigateToCobro?.(p.id)}
-                            className="py-2.5 px-3 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs flex items-center justify-center gap-1.5 min-h-[44px] transition-colors shadow-2xs cursor-pointer"
-                            title="Cobrar pedido en caja"
-                          >
-                            <DollarSign className="w-4 h-4" />
-                            <span>Cobrar</span>
-                          </button>
-                        )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+          </TableBody>
+        </DataTable>
 
         {/* Modal de Detalle (Vista 9.2) */}
         <DetallePedidoModal
@@ -844,8 +627,8 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             </button>
           </div>
         )}
-      </div>
-      </div>
+        </div>
+      </PageContainer>
     </div>
   );
 };

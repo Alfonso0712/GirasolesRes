@@ -1,8 +1,23 @@
 import React from 'react';
+import {
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Clock,
+  Ban,
+  Lock,
+  Flame,
+  type LucideIcon,
+} from 'lucide-react';
+
+export type StatusIntent = 'success' | 'danger' | 'warning' | 'neutral';
 
 export interface StatusBadgeProps {
   status: boolean | string;
-  variant?: 'dot' | 'pill' | 'fixed';
+  intent?: StatusIntent;
+  variant?: string;
+  icon?: LucideIcon;
+  label?: string;
   className?: string;
   activeLabel?: string;
   inactiveLabel?: string;
@@ -10,113 +25,113 @@ export interface StatusBadgeProps {
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
-  variant = 'dot',
+  intent,
+  icon: CustomIcon,
+  label: customLabel,
   className = '',
   activeLabel = 'Activo',
   inactiveLabel = 'Inactivo',
 }) => {
   const isBoolean = typeof status === 'boolean';
-  const label = isBoolean ? (status ? activeLabel : inactiveLabel) : status;
-  const normalized = String(label).trim().toLowerCase();
+  const rawText = isBoolean ? (status ? activeLabel : inactiveLabel) : String(status);
+  const displayLabel = customLabel || rawText;
+  const normalized = rawText.trim().toLowerCase();
 
-  const isPositive =
-    normalized === 'activo' ||
-    normalized === 'libre' ||
-    normalized === 'abierta' ||
-    normalized === 'listo' ||
-    normalized === 'entregado' ||
-    normalized === 'cuadra' ||
-    normalized === 'emitido' ||
-    normalized === 'pagado';
+  // Automatic intent resolution if not explicitly provided
+  let resolvedIntent: StatusIntent = intent || 'neutral';
 
-  const isWarning =
-    normalized === 'ocupada' ||
-    normalized === 'ocupado' ||
-    normalized === 'pendiente' ||
-    normalized === 'en preparacion' ||
-    normalized === 'en preparación' ||
-    normalized === 'sobrante' ||
-    normalized === 'en curso';
-
-  const isNegative =
-    normalized === 'inactivo' ||
-    normalized === 'bloqueado' ||
-    normalized === 'desactivado' ||
-    normalized === 'cerrada' ||
-    normalized === 'cancelado' ||
-    normalized === 'faltante' ||
-    normalized === 'anulado' ||
-    normalized === 'anterior sin cerrar';
-
-  // Variant: Dot indicator (ideal for tables matching UsersApp standard)
-  if (variant === 'dot') {
-    const dotColor = isPositive
-      ? 'bg-emerald-500'
-      : isWarning
-      ? 'bg-amber-500'
-      : isNegative
-      ? 'bg-rose-500'
-      : 'bg-neutral-400';
-
-    const textColor = isPositive
-      ? 'text-emerald-700'
-      : isWarning
-      ? 'text-amber-700'
-      : isNegative
-      ? 'text-rose-700'
-      : 'text-neutral-500';
-
-    return (
-      <div className={`inline-flex items-center gap-2 ${className}`}>
-        <span className={`w-2 h-2 rounded-full ${dotColor}`} aria-hidden="true" />
-        <span className={`text-xs font-semibold ${textColor}`}>
-          {label}
-        </span>
-      </div>
-    );
-  }
-
-  // Variant: Fixed size pill (w-28 h-7) for strict tabular alignments
-  if (variant === 'fixed') {
-    let colorClasses = 'bg-stone-50 text-stone-600 border-stone-200';
-    if (isPositive) {
-      colorClasses = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-    } else if (isWarning) {
-      colorClasses = 'bg-amber-50 text-amber-800 border-amber-300';
-    } else if (isNegative) {
-      colorClasses = 'bg-rose-50 text-rose-800 border-rose-200';
+  if (!intent) {
+    if (
+      normalized === 'activo' ||
+      normalized === 'activa' ||
+      normalized === 'vigente' ||
+      normalized === 'libre' ||
+      normalized === 'abierta' ||
+      normalized === 'listo' ||
+      normalized === 'lista' ||
+      normalized === 'entregado' ||
+      normalized === 'cuadra' ||
+      normalized === 'pagado' ||
+      normalized === 'emitido' ||
+      normalized === 'true'
+    ) {
+      resolvedIntent = 'success';
+    } else if (
+      normalized === 'inactivo' ||
+      normalized === 'inactiva' ||
+      normalized === 'anulada' ||
+      normalized === 'anulado' ||
+      normalized === 'bloqueado' ||
+      normalized === 'desactivado' ||
+      normalized === 'faltante' ||
+      normalized === 'cancelado' ||
+      normalized === 'agotado' ||
+      normalized === 'anterior sin cerrar' ||
+      normalized === 'false'
+    ) {
+      resolvedIntent = 'danger';
+    } else if (
+      normalized === 'con ajustes' ||
+      normalized === 'sobrante' ||
+      normalized === 'en preparacion' ||
+      normalized === 'en preparación' ||
+      normalized === 'en curso' ||
+      normalized === 'pendiente' ||
+      normalized === 'ocupada' ||
+      normalized === 'ocupado' ||
+      normalized === 'reservada' ||
+      normalized === 'reservado'
+    ) {
+      resolvedIntent = 'warning';
+    } else {
+      resolvedIntent = 'neutral';
     }
-
-    return (
-      <span
-        className={`w-28 h-7 inline-flex items-center justify-center rounded-lg text-xs font-semibold border ${colorClasses} text-center shadow-2xs ${className}`}
-      >
-        {label}
-      </span>
-    );
   }
 
-  // Variant: Standard rounded-full pill (Cards & Banners)
-  let pillClasses = 'bg-stone-50 text-stone-700 border-stone-200';
-  let dotClasses = 'bg-stone-400';
+  // Resolve default Lucide icon according to semantic meaning
+  let IconComponent: LucideIcon = CustomIcon || CheckCircle2;
 
-  if (isPositive) {
-    pillClasses = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-    dotClasses = 'bg-emerald-500';
-  } else if (isWarning) {
-    pillClasses = 'bg-amber-50 text-amber-800 border-amber-200';
-    dotClasses = 'bg-amber-500';
-  } else if (isNegative) {
-    pillClasses = 'bg-rose-50 text-rose-800 border-rose-200';
-    dotClasses = 'bg-rose-500';
+  if (!CustomIcon) {
+    if (resolvedIntent === 'success') {
+      IconComponent = CheckCircle2;
+    } else if (resolvedIntent === 'danger') {
+      IconComponent = normalized === 'anulada' || normalized === 'anulado' || normalized === 'cancelado'
+        ? Ban
+        : XCircle;
+    } else if (resolvedIntent === 'warning') {
+      if (normalized === 'en preparacion' || normalized === 'en preparación') {
+        IconComponent = Flame;
+      } else if (normalized === 'pendiente' || normalized === 'en curso') {
+        IconComponent = Clock;
+      } else {
+        IconComponent = AlertTriangle;
+      }
+    } else {
+      IconComponent = normalized === 'cerrada' || normalized === 'cerrado' ? Lock : Clock;
+    }
   }
+
+  // Styles with strict WCAG AA contrast (ratio >= 4.5:1 against respective tinted backgrounds)
+  const intentStyles = {
+    success: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+    danger: 'bg-rose-50 text-rose-800 border-rose-300',
+    warning: 'bg-amber-50 text-amber-900 border-amber-300',
+    neutral: 'bg-stone-100 text-stone-700 border-stone-300',
+  };
+
+  const iconStyles = {
+    success: 'text-emerald-700',
+    danger: 'text-rose-700',
+    warning: 'text-amber-700',
+    neutral: 'text-stone-600',
+  };
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${pillClasses} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-2xs whitespace-nowrap transition-colors ${intentStyles[resolvedIntent]} ${className}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${dotClasses}`} aria-hidden="true" />
-      {label}
+      <IconComponent className={`w-3.5 h-3.5 shrink-0 ${iconStyles[resolvedIntent]}`} aria-hidden="true" />
+      <span>{displayLabel}</span>
     </span>
   );
 };

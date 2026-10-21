@@ -26,7 +26,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             value={searchValue ?? ''}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20 outline-none transition-all"
+            className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-neutral-200 bg-neutral-50/50 focus:bg-white focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 outline-none transition-all"
           />
           {searchValue && (
             <button

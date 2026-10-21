@@ -13,13 +13,14 @@ import {
   Smartphone,
   Utensils,
   Receipt,
-  Check,
-  UtensilsCrossed
+  Check
 } from 'lucide-react';
 import { useReportesManagement } from '../hooks/useReportesManagement';
 import type { UserSession } from '../types/auth';
 import type { TipoAtajoFecha, CriterioOrdenPlatos } from '../types/reporte';
 import { CATEGORIA_LABELS, CATEGORIA_BADGE_LABELS } from '../types/producto';
+import { PageHeader, PageContainer } from '../components/layout';
+import { DataTable, TableHead, TableBody } from '../components/ui';
 
 interface ReportesPageProps {
   session: UserSession;
@@ -69,51 +70,38 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Reportes del Restaurante
-            </h1>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              Exportación y métricas
-            </span>
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
+      <PageContainer className="select-none">
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Reportes"
+        subtitle="Consulte el volumen de platos vendidos y el balance general de ventas en el período."
+        actions={
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => descargar('pdf')}
+              disabled={cargando || descargando !== null || Boolean(errorRango)}
+              className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[40px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Descargar reporte en formato PDF (A4)"
+            >
+              <FileText className="w-4 h-4 text-[#B84500]" />
+              <span>{descargando === 'pdf' ? 'Preparando archivo…' : 'Descargar PDF'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => descargar('csv')}
+              disabled={cargando || descargando !== null || Boolean(errorRango)}
+              className="px-3.5 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[40px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Descargar reporte en formato Excel (CSV UTF-8)"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-700" />
+              <span>{descargando === 'csv' ? 'Preparando archivo…' : 'Descargar Excel'}</span>
+            </button>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Consulte el volumen de platos vendidos y el balance general de ventas en el período.
-          </p>
-        </div>
-
-        {/* Acciones de Exportación (Desktop / Tablet) */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => descargar('pdf')}
-            disabled={cargando || descargando !== null || Boolean(errorRango)}
-            className="w-auto px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Descargar reporte en formato PDF (A4)"
-            aria-label="Descargar PDF"
-          >
-            <FileText className="w-4 h-4 text-[#B84500]" />
-            <span>{descargando === 'pdf' ? 'Preparando archivo…' : 'Descargar PDF'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => descargar('csv')}
-            disabled={cargando || descargando !== null || Boolean(errorRango)}
-            className="w-auto px-3.5 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Descargar reporte en formato Excel (CSV UTF-8)"
-            aria-label="Descargar Excel"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-700" />
-            <span>{descargando === 'csv' ? 'Preparando archivo…' : 'Descargar Excel'}</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Pestañas de Navegación del CUS14 (Platos vendidos primero por ser Must, Ventas segundo) */}
       <div className="shrink-0 flex items-center gap-2 border-b border-neutral-200/80 pb-1">
@@ -442,135 +430,62 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               </div>
             </div>
 
-            {/* Tabla de Platos Vendidos (Desktop) & Tarjetas (Móvil) */}
-            {platosOrdenados.length > 0 ? (
-              <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-2xs">
-                {/* Desktop Data Grid */}
-                <div className="hidden lg:block overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider sticky top-0 z-10">
-                        <th className="py-3 px-4">Producto</th>
-                        <th className="py-3 px-4">Categoría</th>
-                        <th className="py-3 px-4 text-center">Estado</th>
-                        <th className="py-3 px-4 text-right">Cantidad Vendida</th>
-                        <th className="py-3 px-4 text-right">Monto Total</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#F0EBE6] text-sm text-neutral-700">
-                      {platosOrdenados.map((item) => (
-                        <tr key={item.productoId} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
-                          <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">
-                            <span>{item.producto}</span>
-                            {!item.activo && (
-                              <span className="ml-2 text-xs font-medium text-neutral-500 bg-neutral-100 border border-neutral-200 rounded px-1.5 py-0.5">
-                                inactivo
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4">
-                            <span
-                              className="inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border shadow-2xs bg-neutral-50 text-neutral-700 border-neutral-200"
-                              title={CATEGORIA_LABELS[item.categoria] || item.categoria}
-                            >
-                              {CATEGORIA_BADGE_LABELS[item.categoria] || item.categoria}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <span
-                              className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border shadow-2xs ${
-                                item.activo
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                    : 'bg-neutral-100 text-neutral-500 border-neutral-200'
-                              }`}
-                            >
-                              {item.activo ? 'Activo' : 'Desactivado'}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#2C1A0E]">
-                            {item.cantidad}
-                          </td>
-                          <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#B84500]">
-                            S/ {item.monto.toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile / Tablet Cards */}
-                <div className="lg:hidden divide-y divide-neutral-100">
-                  {platosOrdenados.map((item) => (
-                    <div key={item.productoId} className="p-4 flex flex-col gap-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h4 className="font-sans font-bold text-base text-[#2C1A0E]">
-                            {item.producto}
-                          </h4>
-                          {!item.activo && (
-                            <span className="text-xs text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200 inline-block mt-0.5">
-                              (inactivo)
-                            </span>
-                          )}
-                        </div>
-                        <span
-                          className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-neutral-100 text-neutral-700 border border-neutral-200"
-                          title={CATEGORIA_LABELS[item.categoria] || item.categoria}
-                        >
-                          {CATEGORIA_BADGE_LABELS[item.categoria] || item.categoria}
+            {/* Tabla de Platos Vendidos con DataTable */}
+            <DataTable
+              isEmpty={platosOrdenados.length === 0}
+              emptyTitle="No hay datos de platos vendidos"
+              emptyMessage="No se registraron ventas de platos para el período seleccionado."
+              minWidth="min-w-[650px]"
+            >
+              <TableHead>
+                <tr>
+                  <th scope="col" className="py-3 px-4">Producto</th>
+                  <th scope="col" className="py-3 px-4">Categoría</th>
+                  <th scope="col" className="py-3 px-4 text-center">Estado</th>
+                  <th scope="col" className="py-3 px-4 text-right">Cantidad Vendida</th>
+                  <th scope="col" className="py-3 px-4 text-right">Monto Total</th>
+                </tr>
+              </TableHead>
+              <TableBody>
+                {platosOrdenados.map((item) => (
+                  <tr key={item.productoId} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
+                    <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">
+                      <span>{item.producto}</span>
+                      {!item.activo && (
+                        <span className="ml-2 text-xs font-medium text-neutral-500 bg-neutral-100 border border-neutral-200 rounded px-1.5 py-0.5">
+                          inactivo
                         </span>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-neutral-100 text-xs">
-                        <div>
-                          <span className="text-neutral-500 block">Cantidad vendida:</span>
-                          <span className="font-sans font-bold text-sm text-[#2C1A0E] tabular-nums">
-                            {item.cantidad} un.
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-neutral-500 block">Total generado:</span>
-                          <span className="font-sans font-bold text-sm text-[#B84500] tabular-nums">
-                            S/ {item.monto.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              /* Estado Vacío de Platos Vendidos (MSG-193) */
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-8 text-center shadow-2xs">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200">
-                  <UtensilsCrossed className="w-6 h-6" />
-                </div>
-                <h3 className="font-sans font-bold text-base text-[#2C1A0E] mb-1">
-                  No hay platos vendidos en el período
-                </h3>
-                <p className="text-xs text-neutral-500 max-w-md mx-auto mb-4">
-                  No se encontraron ventas para las fechas seleccionadas o el producto indicado.
-                  Pruebe con otras fechas o con otro producto.
-                </p>
-                <div className="flex justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => aplicarAtajo('ayer')}
-                    className="px-3 py-1.5 rounded-xl border border-neutral-200 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 cursor-pointer"
-                  >
-                    Ver ventas de ayer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => aplicarAtajo('ultimos7')}
-                    className="px-3 py-1.5 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] cursor-pointer"
-                  >
-                    Ver últimos 7 días
-                  </button>
-                </div>
-              </div>
-            )}
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className="inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border shadow-2xs bg-neutral-50 text-neutral-700 border-neutral-200"
+                        title={CATEGORIA_LABELS[item.categoria] || item.categoria}
+                      >
+                        {CATEGORIA_BADGE_LABELS[item.categoria] || item.categoria}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <span
+                        className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border shadow-2xs ${
+                          item.activo
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : 'bg-neutral-100 text-neutral-500 border-neutral-200'
+                        }`}
+                      >
+                        {item.activo ? 'Activo' : 'Desactivado'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#2C1A0E]">
+                      {item.cantidad}
+                    </td>
+                    <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#B84500]">
+                      S/ {item.monto.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </TableBody>
+            </DataTable>
           </>
         )}
 
@@ -661,141 +576,60 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               </span>
             </div>
 
-            {reporteVentas && reporteVentas.porDia.length > 0 ? (
-              <div className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-2xs">
-                {/* Desktop Grid */}
-                <div className="hidden lg:block overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs font-semibold text-[#7C6F66] uppercase tracking-wider sticky top-0 z-10">
-                        <th className="py-3 px-4">Fecha</th>
-                        <th className="py-3 px-4 text-center">N.° Ventas</th>
-                        <th className="py-3 px-4 text-right">Efectivo</th>
-                        <th className="py-3 px-4 text-right">Yape</th>
-                        <th className="py-3 px-4 text-right">Total Día</th>
-                        <th className="py-3 px-4 text-center">Estado / Cierre</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#F0EBE6] text-sm text-neutral-700">
-                      {reporteVentas.porDia.map((d) => (
-                        <tr key={d.fecha} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
-                          <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">{d.fecha}</td>
-                          <td className="py-3 px-4 text-center font-sans font-medium text-sm tabular-nums">
-                            {d.nVentas}
-                          </td>
-                          <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-emerald-700">
-                            S/ {d.efectivo.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-purple-700">
-                            S/ {d.yape.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-[#B84500]">
-                            S/ {d.total.toFixed(2)}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            {d.conAjustes ? (
-                              <button
-                                type="button"
-                                onClick={onNavigateToCierres}
-                                title="Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres."
-                                className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-[#B84600] border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
-                              >
-                                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                                <span>Con ajustes</span>
-                              </button>
-                            ) : (
-                              <span className="inline-flex items-center justify-center rounded-lg text-xs font-medium px-2.5 py-1 bg-neutral-50 text-neutral-600 border border-neutral-200">
-                                Normal
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile / Tablet Cards */}
-                <div className="lg:hidden divide-y divide-neutral-100">
-                  {reporteVentas.porDia.map((d) => (
-                    <div key={d.fecha} className="p-4 flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-sans font-bold text-sm text-[#2C1A0E]">{d.fecha}</span>
-                        {d.conAjustes ? (
-                          <span
-                            onClick={onNavigateToCierres}
-                            className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-amber-50 text-[#B84600] border border-amber-200 inline-flex items-center gap-1 cursor-pointer"
-                          >
-                            <AlertTriangle className="w-3 h-3" /> Con ajustes
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 text-xs text-neutral-500 bg-neutral-50 rounded border border-neutral-200">
-                            Normal
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-                        <div>
-                          <span className="text-neutral-500 block">Ventas:</span>
-                          <span className="font-bold text-neutral-800 font-sans tabular-nums">
-                            {d.nVentas} comprobantes
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-neutral-500 block">Total del Día:</span>
-                          <span className="font-bold text-sm text-[#B84500] font-sans tabular-nums">
-                            S/ {d.total.toFixed(2)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-neutral-500 block">Efectivo:</span>
-                          <span className="font-bold text-emerald-700 font-sans tabular-nums">
-                            S/ {d.efectivo.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-neutral-500 block">Yape:</span>
-                          <span className="font-bold text-purple-700 font-sans tabular-nums">
-                            S/ {d.yape.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              /* Estado Vacío de Ventas (MSG-192) */
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-8 text-center shadow-2xs">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200">
-                  <Receipt className="w-6 h-6" />
-                </div>
-                <h3 className="font-sans font-bold text-base text-[#2C1A0E] mb-1">
-                  No hay ventas en el rango seleccionado
-                </h3>
-                <p className="text-xs text-neutral-500 max-w-md mx-auto mb-4">
-                  No se encontraron comprobantes vigentes emitidos en las fechas indicadas.
-                  Pruebe con otras fechas.
-                </p>
-                <div className="flex justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => aplicarAtajo('ayer')}
-                    className="px-3 py-1.5 rounded-xl border border-neutral-200 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 cursor-pointer"
-                  >
-                    Ver ventas de ayer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => aplicarAtajo('ultimos7')}
-                    className="px-3 py-1.5 rounded-xl bg-[#C74E00] text-white text-xs font-semibold hover:bg-[#B84600] cursor-pointer"
-                  >
-                    Ver últimos 7 días
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Tabla Detalle de Ventas por Día con DataTable */}
+            <DataTable
+              isEmpty={!reporteVentas || reporteVentas.porDia.length === 0}
+              emptyTitle="No hay datos de ventas por día"
+              emptyMessage="No se registraron ventas para las fechas seleccionadas."
+              minWidth="min-w-[700px]"
+            >
+              <TableHead>
+                <tr>
+                  <th scope="col" className="py-3 px-4">Fecha</th>
+                  <th scope="col" className="py-3 px-4 text-center">N.° Ventas</th>
+                  <th scope="col" className="py-3 px-4 text-right">Efectivo</th>
+                  <th scope="col" className="py-3 px-4 text-right">Yape</th>
+                  <th scope="col" className="py-3 px-4 text-right">Total Día</th>
+                  <th scope="col" className="py-3 px-4 text-center">Estado / Cierre</th>
+                </tr>
+              </TableHead>
+              <TableBody>
+                {reporteVentas?.porDia.map((d) => (
+                  <tr key={d.fecha} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
+                    <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">{d.fecha}</td>
+                    <td className="py-3 px-4 text-center font-sans font-medium text-sm tabular-nums">
+                      {d.nVentas}
+                    </td>
+                    <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-emerald-700">
+                      S/ {d.efectivo.toFixed(2)}
+                    </td>
+                    <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-purple-700">
+                      S/ {d.yape.toFixed(2)}
+                    </td>
+                    <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-[#B84500]">
+                      S/ {d.total.toFixed(2)}
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {d.conAjustes ? (
+                        <button
+                          type="button"
+                          onClick={onNavigateToCierres}
+                          title="Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres."
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-[#B84600] border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
+                        >
+                          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <span>Con ajustes</span>
+                        </button>
+                      ) : (
+                        <span className="inline-flex items-center justify-center rounded-lg text-xs font-medium px-2.5 py-1 bg-neutral-50 text-neutral-600 border border-neutral-200">
+                          Normal
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </TableBody>
+            </DataTable>
           </>
         )}
       </div>
@@ -821,7 +655,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           </button>
         </div>
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

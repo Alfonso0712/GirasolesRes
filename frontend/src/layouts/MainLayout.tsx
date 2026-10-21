@@ -1,7 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { Sidebar } from '../components/layout';
 import { Header } from '../components/layout';
 import type { UserSession } from '../types/auth';
+import { resolveBreadcrumbs } from '../config/navigationConfig';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -25,39 +26,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   cajaEstado,
 }) => {
   const [sidebarAbierto, setSidebarAbierto] = React.useState(false);
-
-  const getTituloPagina = (p?: string) => {
-    switch (p) {
-      case 'usuarios':
-        return 'Usuarios';
-      case 'productos':
-        return 'Productos';
-      case 'menu-dia':
-        return 'Menú del día';
-      case 'caja':
-        return 'Caja y Cobros';
-      case 'ventas':
-        return 'Gestión de Ventas';
-      case 'historial-cierres':
-        return 'Historial de Cierres de Caja';
-      case 'mesas':
-        return 'Mesas y Salón';
-      case 'pedidos-mesa':
-        return 'Tomar Pedido';
-      case 'pedidos-llevar':
-        return 'Pedido para Llevar';
-      case 'pedidos':
-        return 'Gestión de Pedidos';
-      case 'cocina':
-        return 'Cocina (KDS)';
-      case 'reportes':
-        return 'Reportes';
-      case 'pedido-mesa':
-        return 'Tomar Pedido';
-      default:
-        return 'Inicio';
-    }
-  };
+  const breadcrumbs = resolveBreadcrumbs(paginaActiva);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAF7F4]">
@@ -77,14 +46,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           session={session}
           onLogout={onLogout}
           onCambiarPassword={onCambiarPassword}
-          breadcrumbSection={
-            session?.rol === 'Cocinero'
-              ? 'Cocina'
-              : session?.rol === 'Mozo'
-              ? 'Salón y Comandas'
-              : 'Administración'
-          }
-          breadcrumbPage={getTituloPagina(paginaActiva)}
+          breadcrumbSection={breadcrumbs.section}
+          breadcrumbPage={breadcrumbs.page}
           onToggleSidebar={() => setSidebarAbierto((prev) => !prev)}
         />
         <main className="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -96,4 +59,3 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 };
 
 export default MainLayout;
-

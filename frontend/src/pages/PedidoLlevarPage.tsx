@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   ShoppingBag,
   Plus,
@@ -24,6 +24,7 @@ import {
 } from '../components/pedidos';
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
 import { Button } from '../components/ui';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -118,50 +119,44 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Pedido para Llevar
-            </h1>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              Para llevar
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registre el pedido para llevar del cliente y envíe la comanda a cocina.
-          </p>
-        </div>
-
-        {/* Acciones de cabecera */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setModalDescartarOpen(true)}
-            disabled={lineasBorrador.length === 0}
-            className="text-xs px-3 py-2 min-h-[38px]"
-          >
-            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-            Limpiar Borrador
-          </Button>
-
-          {onVolver && (
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10">
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Pedido para Llevar"
+        subtitle="Registre el pedido para llevar del cliente y envíe la comanda a cocina."
+        badge={
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+            Para llevar
+          </span>
+        }
+        actions={
+          <div className="flex items-center gap-2 shrink-0">
             <Button
               type="button"
               variant="secondary"
-              onClick={onVolver}
-              className="text-xs px-3 py-2 min-h-[38px]"
+              onClick={() => setModalDescartarOpen(true)}
+              disabled={lineasBorrador.length === 0}
+              className="text-xs px-3.5 py-2 min-h-[40px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-              Volver a Mesas
+              <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+              Limpiar borrador
             </Button>
-          )}
-        </div>
-      </div>
+
+            {onVolver && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={onVolver}
+                className="text-xs px-3.5 py-2 min-h-[40px]"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                Volver a mesas
+              </Button>
+            )}
+          </div>
+        }
+      />
 
       {/* Alerta de Error General si existiera */}
       {errorGeneral && (
@@ -226,7 +221,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           </div>
 
           {/* Pastillas de Categorías */}
-          <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scroll-thin">
             {categorias.map((cat) => (
               <button
                 key={cat}
@@ -244,7 +239,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           </div>
 
           {/* Grilla con Scroll Interno Confinado */}
-          <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1 scroll-thin">
             {!menuDefinido ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8 max-w-lg mx-auto">
                 <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto border border-amber-200 mb-4 shadow-2xs">
@@ -433,7 +428,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           </div>
 
           {/* Lista de Líneas en Borrador */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 scroll-thin">
             {lineasBorrador.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center p-4 text-center">
                 <div className="w-12 h-12 rounded-2xl bg-[#FAF7F4] border border-neutral-200 flex items-center justify-center text-neutral-300 mb-3">
@@ -696,7 +691,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 scroll-thin">
               {lineasBorrador.map((linea, idx) => {
                 const tieneError = Boolean(erroresLineas[linea.productoId || ''] || linea.agotado);
                 return (
@@ -889,7 +884,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           if (onVolver) onVolver();
         }}
       />
-      </div>
+      </PageContainer>
     </div>
   );
 };

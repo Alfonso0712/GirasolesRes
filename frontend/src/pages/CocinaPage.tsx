@@ -12,6 +12,7 @@ import {
 import { comandaService } from '../services/comandaService';
 import { PlatosAgotadosModal } from '../components/menu-dia';
 import { ComandaCard, CocinaResumenBar } from '../components/cocina';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { ComandaKdsItem, ResumenProducto } from '../types/comanda';
 
@@ -289,8 +290,8 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
   const comandasEnPreparacion = comandas.filter((c) => c.estado === 'EnPreparacion');
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 bg-[#FAF7F4] text-neutral-900 select-none">
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10 bg-[#FAF7F4] text-neutral-900 select-none">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div
@@ -314,76 +315,68 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
         </div>
       )}
 
-      {/* Encabezado Editorial Limpio */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Cocina en Vivo (KDS)
-            </h1>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-              Por preparar: {resumen.reduce((acc, r) => acc + r.cantidad, 0)}
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2.5 flex-wrap shrink-0">
-          {/* Botón PLATOS AGOTADOS */}
-          <button
-            type="button"
-            onClick={() => setAbrirModalPlatosAgotados(true)}
-            className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B84600] text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[38px]"
-            title="Abrir disponibilidad de platos del menú"
-          >
-            <UtensilsCrossed className="w-4 h-4 text-[#B84500]" />
-            <span>Platos agotados</span>
-          </button>
-
-          {/* Botón SONIDO */}
-          <button
-            type="button"
-            onClick={toggleSonido}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer min-h-[38px] shadow-2xs ${
-              sonidoActivado
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
-            }`}
-            title="Activar o desactivar sonido de nueva comanda"
-          >
-            {sonidoActivado ? (
-              <>
-                <Volume2 className="w-4 h-4 text-emerald-600" />
-                <span>Sonido: ON</span>
-              </>
-            ) : (
-              <>
-                <VolumeX className="w-4 h-4 text-neutral-500" />
-                <span>Sonido: OFF</span>
-              </>
-            )}
-          </button>
-
-          {/* Contador y Actualizar Manual */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
-              Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
-            </span>
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Cocina (KDS)"
+        subtitle="Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real."
+        count={resumen.reduce((acc, r) => acc + r.cantidad, 0)}
+        countLabel="porciones por preparar"
+        actions={
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            {/* Botón PLATOS AGOTADOS */}
             <button
               type="button"
-              onClick={() => cargarComandas(false)}
-              disabled={cargando}
-              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-              title="Actualizar comandas manualmente"
+              onClick={() => setAbrirModalPlatosAgotados(true)}
+              className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B84500] text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[40px]"
+              title="Abrir disponibilidad de platos del menú"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Actualizar</span>
+              <UtensilsCrossed className="w-4 h-4 text-[#B84500]" />
+              <span>Platos agotados</span>
             </button>
+
+            {/* Botón SONIDO */}
+            <button
+              type="button"
+              onClick={toggleSonido}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer min-h-[40px] shadow-2xs ${
+                sonidoActivado
+                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                  : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              }`}
+              title="Activar o desactivar sonido de nueva comanda"
+            >
+              {sonidoActivado ? (
+                <>
+                  <Volume2 className="w-4 h-4 text-emerald-600" />
+                  <span>Sonido: ON</span>
+                </>
+              ) : (
+                <>
+                  <VolumeX className="w-4 h-4 text-neutral-500" />
+                  <span>Sonido: OFF</span>
+                </>
+              )}
+            </button>
+
+            {/* Contador y Actualizar Manual */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
+                Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
+              </span>
+              <button
+                type="button"
+                onClick={() => cargarComandas(false)}
+                disabled={cargando}
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+                title="Actualizar comandas manualmente"
+              >
+                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+                <span>Actualizar</span>
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
       {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
@@ -540,7 +533,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
         onClose={() => setAbrirModalPlatosAgotados(false)}
         token={session.token}
       />
-      </div>
+      </PageContainer>
     </div>
   );
 };

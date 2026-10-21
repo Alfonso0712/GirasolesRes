@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   DollarSign,
   Receipt,
@@ -19,7 +19,9 @@ import { useCobrosManagement } from '../hooks/useCobrosManagement';
 import { AbrirCajaModal } from '../components/caja';
 import { CerrarCajaModal } from '../components/caja';
 import { CajaStatusBanner } from '../components/caja';
-import { CobroModal, TicketComprobanteModal, CobroPedidoCard } from '../components/cobros';
+import { CobroModal, TicketComprobanteModal } from '../components/cobros';
+import { StatusBadge, DataTable, TableHead, TableBody } from '../components/ui';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 
 interface CobrosPageProps {
@@ -155,102 +157,81 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden w-full">
-      <div className="flex-1 overflow-y-auto min-h-0 w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 select-none">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Cobro de Pedidos
-            </h1>
+      <div className="flex-1 overflow-y-auto min-h-0 w-full scroll-thin">
+        <PageContainer className="select-none">
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Cobro de Pedidos"
+        subtitle="Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real."
+        count={totalPedidos}
+        countLabel="pedidos por cobrar"
+        badge={
+          cajaEstado?.estaAbierta ? (
+            <StatusBadge status="Abierta" label={`Caja abierta · ${cajaEstado.cajeroNombre || session.nombre}`} intent="success" />
+          ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
+            <StatusBadge status="Anterior sin cerrar" label="Caja anterior sin cerrar" intent="danger" />
+          ) : (
+            <StatusBadge status="Cerrada" label="Caja cerrada" intent="neutral" />
+          )
+        }
+        actions={
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-3 text-xs text-neutral-500">
+              <span className="hidden sm:inline tabular-nums">
+                Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
+              </span>
+              <button
+                type="button"
+                onClick={() => cargarDatos(false)}
+                disabled={cargando}
+                title="Actualizar pedidos ahora"
+                aria-label="Actualizar pedidos ahora"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+              >
+                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+                <span>Actualizar</span>
+              </button>
+            </div>
 
-            {/* Resumen de estado de caja integrado en pastilla */}
-            {cajaEstado?.estaAbierta ? (
-              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Caja abierta · {cajaEstado.cajeroNombre || session.nombre}
-                </span>
-              </div>
-            ) : cajaEstado?.estadoOperativo === 'anteriorSinCerrar' ? (
-              <div className="px-3.5 py-1 bg-rose-50 rounded-full border border-rose-200 text-xs font-semibold text-rose-800 flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-rose-700">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                  Caja anterior sin cerrar
-                </span>
-              </div>
-            ) : (
-              <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-                <span className="inline-flex items-center gap-1.5 text-[#B84600]">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  Caja cerrada
-                </span>
-              </div>
+            {session.rol === 'Cajero' && (
+              <>
+                {cajaEstado?.estadoOperativo === 'abierta' && (
+                  <button
+                    type="button"
+                    onClick={() => setCerrarCajaModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                  >
+                    <Lock className="w-4 h-4" />
+                    <span>Cerrar caja</span>
+                  </button>
+                )}
+
+                {cajaEstado?.estadoOperativo === 'anteriorSinCerrar' && (
+                  <button
+                    type="button"
+                    onClick={() => setCerrarCajaModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-rose-700 hover:bg-rose-800 text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                  >
+                    <Lock className="w-4 h-4" />
+                    <span>Cerrar caja anterior</span>
+                  </button>
+                )}
+
+                {cajaEstado?.estadoOperativo === 'sinCaja' && (
+                  <button
+                    type="button"
+                    onClick={() => setAbrirCajaModalOpen(true)}
+                    className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                  >
+                    <DollarSign className="w-4 h-4" />
+                    <span>Abrir caja</span>
+                  </button>
+                )}
+              </>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real.
-          </p>
-        </div>
-
-        {/* Sincronización y Botones de Acción */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <div className="flex items-center gap-3 text-xs text-neutral-500">
-            <span className="hidden sm:inline tabular-nums">
-              Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
-            </span>
-            <button
-              type="button"
-              onClick={() => cargarDatos(false)}
-              disabled={cargando}
-              title="Actualizar pedidos ahora"
-              aria-label="Actualizar pedidos ahora"
-              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-            >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Actualizar</span>
-            </button>
-          </div>
-
-          {session.rol === 'Cajero' && (
-            <>
-              {cajaEstado?.estadoOperativo === 'abierta' && (
-                <button
-                  type="button"
-                  onClick={() => setCerrarCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#C0392B] hover:bg-[#962D22] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span>Cerrar caja</span>
-                </button>
-              )}
-
-              {cajaEstado?.estadoOperativo === 'anteriorSinCerrar' && (
-                <button
-                  type="button"
-                  onClick={() => setCerrarCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#C0392B] hover:bg-[#962D22] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span>Cerrar caja anterior</span>
-                </button>
-              )}
-
-              {cajaEstado?.estadoOperativo === 'sinCaja' && (
-                <button
-                  type="button"
-                  onClick={() => setAbrirCajaModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
-                >
-                  <DollarSign className="w-4 h-4" />
-                  <span>Abrir caja</span>
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+        }
+      />
 
       {/* Banner de Estado de Caja (CUS 13.1 / CUS 13.2 / MSG-166, MSG-168) */}
       <CajaStatusBanner
@@ -366,62 +347,33 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
         </div>
       </div>
 
-      {/* 4. Contenedor de Datos: Fluye con el scroll principal */}
-      <div className="w-full bg-white border border-neutral-200/80 rounded-2xl shadow-2xs overflow-hidden">
-        {cargando ? (
-          <div className="p-12 text-center">
-            <RotateCcw className="w-8 h-8 text-[#B84500] animate-spin mx-auto mb-3" />
-            <p className="text-sm font-semibold text-neutral-600">
-              Cargando pedidos pendientes de cobro...
-            </p>
-          </div>
-        ) : errorCarga ? (
-          <div className="p-8 text-center max-w-md mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-3">
-              <AlertCircle className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-neutral-800 mb-1">Error al cargar datos</h3>
-            <p className="text-xs text-neutral-500 mb-4">{errorCarga}</p>
-            <button
-              type="button"
-              onClick={() => cargarDatos(false)}
-              className="px-4 py-2 bg-[#C74E00] text-white rounded-xl text-xs font-semibold hover:bg-[#B84600] transition-colors cursor-pointer min-h-[44px]"
-            >
-              Reintentar
-            </button>
-          </div>
-        ) : pedidos.length === 0 ? (
-          <div className="p-12 text-center max-w-sm mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200/60">
-              <CheckCircle2 className="w-7 h-7" />
-            </div>
-            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-1">
-              No hay pedidos pendientes de cobro
-            </h3>
-            <p className="text-xs text-neutral-500">
-              {cajaCerrada
-                ? 'Abra la caja para consultar y registrar cobros.'
-                : busqueda
-                ? 'No se encontraron pedidos con ese criterio de búsqueda.'
-                : 'Todos los pedidos tomados han sido cobrados o no registran consumos activos.'}
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Tabla Desktop (>= lg) */}
-            <div className="hidden lg:block">
-              <table className="w-full text-left border-collapse">
-                <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
-                  <tr>
-                    <th className="py-3 px-4">N.º Pedido</th>
-                    <th className="py-3 px-4">Destino</th>
-                    <th className="py-3 px-4">Hora</th>
-                    <th className="py-3 px-4">Estado Cocina</th>
-                    <th className="py-3 px-4 text-right">Total a Cobrar</th>
-                    <th className="py-3 px-4 text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#F0EBE6] text-sm">
+      {/* 4. Contenedor de Datos con DataTable */}
+      <DataTable
+        loading={cargando}
+        error={errorCarga}
+        onRetry={() => cargarDatos(false)}
+        isEmpty={pedidos.length === 0}
+        emptyTitle="No hay pedidos pendientes de cobro"
+        emptyMessage={
+          cajaCerrada
+            ? 'Abra la caja para consultar y registrar cobros.'
+            : busqueda
+            ? 'No se encontraron pedidos con ese criterio de búsqueda.'
+            : 'Todos los pedidos tomados han sido cobrados o no registran consumos activos.'
+        }
+        minWidth="min-w-[850px]"
+      >
+        <TableHead>
+          <tr>
+            <th scope="col" className="py-3 px-4">N.º Pedido</th>
+            <th scope="col" className="py-3 px-4">Destino</th>
+            <th scope="col" className="py-3 px-4">Hora</th>
+            <th scope="col" className="py-3 px-4">Estado Cocina</th>
+            <th scope="col" className="py-3 px-4 text-right">Total a Cobrar</th>
+            <th scope="col" className="py-3 px-4 text-center">Acción</th>
+          </tr>
+        </TableHead>
+        <TableBody>
                   {pedidos.map((p) => {
                     const esMesa = p.tipo.toLowerCase() === 'mesa';
 
@@ -510,22 +462,8 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                       </tr>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Tarjetas Móviles (< lg) */}
-            <div className="lg:hidden p-3 space-y-3">
-              {pedidos.map((p) => (
-                <CobroPedidoCard
-                  key={p.pedidoId}
-                  pedido={p}
-                  onCobrar={handleIniciarCobro}
-                />
-              ))}            </div>
-          </>
-        )}
-      </div>
+        </TableBody>
+      </DataTable>
 
       {/* Modales */}
       <AbrirCajaModal
@@ -604,7 +542,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
           </button>
         </div>
       )}
-        </div>
+        </PageContainer>
       </div>
     </div>
   );

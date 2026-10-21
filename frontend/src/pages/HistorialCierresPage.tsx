@@ -1,21 +1,26 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  FileText,
   RotateCcw,
   Download,
   Eye,
   AlertCircle,
-  AlertTriangle,
-  ChevronLeft,
-  ChevronRight,
   ShieldAlert,
-  Loader2,
   Calendar,
   Filter,
   X,
+  User,
 } from 'lucide-react';
 import { cajaService } from '../services/cajaService';
 import { CierreDetalleModal } from '../components/caja';
+import {
+  StatusBadge,
+  IconActionButton,
+  TablePagination,
+  DataTable,
+  TableHead,
+  TableBody,
+} from '../components/ui';
+import { PageHeader, PageContainer } from '../components/layout';
 import type { HistorialCierresItemDto, HistorialCierresPaginadoDto } from '../types/caja';
 import type { UserSession } from '../types/auth';
 
@@ -71,18 +76,21 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [descargandoPdfId, setDescargandoPdfId] = useState<string | null>(null);
 
+  // Filtro de búsqueda por cajero (client-side)
+  const [busquedaCajero, setBusquedaCajero] = useState<string>('');
+
   // Filtros de fecha (Lima calendar dates)
   const [desde, setDesde] = useState<string>('');
   const [hasta, setHasta] = useState<string>('');
   const [errorFechas, setErrorFechas] = useState<string | null>(null);
 
-  // Modal de Detalle (Vista 13.4)
+  // Modal de Detalle
   const [detalleModalOpen, setDetalleModalOpen] = useState<boolean>(false);
   const [cajaIdSeleccionada, setCajaIdSeleccionada] = useState<string | null>(null);
 
   const hoyLimaStr = useMemo(() => getFechaActualLimaStr(), []);
 
-  // Validación defensiva de fechas (RV-130, MSG-188)
+  // Validación defensiva de fechas
   const validarRangoFechas = useCallback(
     (fDesde: string, fHasta: string): string | null => {
       const msg188 =
@@ -125,6 +133,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   const limpiarFiltros = () => {
     setDesde('');
     setHasta('');
+    setBusquedaCajero('');
     setErrorFechas(null);
     setPagina(1);
   };
@@ -151,7 +160,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           desde: desde || undefined,
           hasta: hasta || undefined,
           pagina,
-          tamano: 20, // RN-110, RV-131: 20 registros por página
+          tamano: 20,
         },
         session.token
       );
@@ -170,14 +179,24 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
     cargarCierres();
   }, [cargarCierres]);
 
-  // Guard de rol estricto in-situ (RN-106, E-319): Solo Administrador
+  // Filtrado de cajero en memoria para búsqueda instantánea
+  const cierresFiltrados = useMemo(() => {
+    if (!busquedaCajero.trim()) return cierres;
+    const term = busquedaCajero.trim().toLowerCase();
+    return cierres.filter((c) => {
+      const cajeroStr = (c.cajero || c.cajeroApertura || '').toLowerCase();
+      return cajeroStr.includes(term);
+    });
+  }, [cierres, busquedaCajero]);
+
+  // Control de rol estricto in-situ: Solo Administrador
   if (session.rol !== 'Administrador') {
     return (
-      <div className="p-8 text-center bg-[#FFFDF9] border border-red-200 rounded-2xl shadow-sm space-y-3 animate-fade-in text-[#2C1A0E] max-w-2xl mx-auto my-8">
-        <ShieldAlert className="w-12 h-12 text-red-600 mx-auto" />
-        <h2 className="text-lg font-bold text-red-800">Acceso restringido (RN-106 / E-319)</h2>
+      <div className="p-8 text-center bg-white border border-rose-200 rounded-2xl shadow-xs space-y-3 text-[#2C1A0E] max-w-2xl mx-auto my-8">
+        <ShieldAlert className="w-12 h-12 text-rose-600 mx-auto" />
+        <h2 className="text-lg font-bold text-rose-900">Acceso restringido</h2>
         <p className="text-sm text-neutral-600">
-          MSG-39: No tiene permisos para acceder al historial de cierres. Esta vista es exclusiva para el rol Administrador.
+          Esta vista es exclusiva para el personal con rol Administrador. Si necesita consultar información de cierres, comuníquese con administración.
         </p>
       </div>
     );
@@ -191,444 +210,357 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
         (cajaService as any).descargarPdfCierre || cajaService.descargarCierrePdf;
       await downloadFn.call(cajaService, cajaId, session.token);
     } catch (err: any) {
-      alert(err.message || 'Error al descargar el PDF de cierre.');
+      alert(err.message || 'Error al descargar el comprobante de cierre PDF.');
     } finally {
       setDescargandoPdfId(null);
     }
   };
 
+  const tieneFiltrosActivos = Boolean(desde || hasta || busquedaCajero.trim());
+
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3 text-[#482813] animate-fade-in">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Historial de Cierres de Caja
-            </h1>
-            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-              <span className="inline-flex items-center gap-1.5 text-neutral-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Auditoría · Solo Administrador
-              </span>
-            </div>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Auditoría de turnos, arqueos, cuadraturas de efectivo, sobrantes, faltantes y ajustes posteriores.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => cargarCierres()}
-          disabled={cargando}
-          className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60 shrink-0"
-        >
-          <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline">Actualizar</span>
-        </button>
-      </div>
-
-      {/* Barra de Filtros de Fecha (RV-130) */}
-      <div className="bg-white border border-neutral-200/80 rounded-2xl p-3.5 sm:p-4 shadow-2xs space-y-3">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <label htmlFor="filtro-desde" className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-neutral-500" />
-                Desde:
-              </label>
-              <input
-                id="filtro-desde"
-                type="date"
-                max={hoyLimaStr}
-                value={desde}
-                onChange={(e) => {
-                  setDesde(e.target.value);
-                  setPagina(1);
-                }}
-                className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px]"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label htmlFor="filtro-hasta" className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-neutral-500" />
-                Hasta:
-              </label>
-              <input
-                id="filtro-hasta"
-                type="date"
-                max={hoyLimaStr}
-                value={hasta}
-                onChange={(e) => {
-                  setHasta(e.target.value);
-                  setPagina(1);
-                }}
-                className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px]"
-              />
-            </div>
-
-            {(desde || hasta) && (
-              <button
-                type="button"
-                onClick={limpiarFiltros}
-                className="text-xs font-bold text-[#B84500] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>Quitar filtros</span>
-              </button>
-            )}
-          </div>
-
-          {/* Chips de Selección Rápida */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
-              <Filter className="w-3.5 h-3.5" />
-              Rango rápido:
-            </span>
-            <button
-              type="button"
-              onClick={() => aplicarFiltroRapido(0)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                esRangoActivo(0)
-                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
-              }`}
-            >
-              Hoy
-            </button>
-            <button
-              type="button"
-              onClick={() => aplicarFiltroRapido(1)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                esRangoActivo(1)
-                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
-              }`}
-            >
-              Ayer
-            </button>
-            <button
-              type="button"
-              onClick={() => aplicarFiltroRapido(7)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                esRangoActivo(7)
-                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
-              }`}
-            >
-              7 días
-            </button>
-            <button
-              type="button"
-              onClick={() => aplicarFiltroRapido(30)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer min-h-[38px] ${
-                esRangoActivo(30)
-                  ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
-              }`}
-            >
-              30 días
-            </button>
-          </div>
-        </div>
-
-        {/* Alerta de Error en Rango de Fechas (MSG-188) */}
-        {errorFechas && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-center gap-2 animate-fade-in">
-            <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-            <span>{errorFechas}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Tabla Principal de Cierres (RV-130, RV-131, E-313..E-321) */}
-      <div className="bg-[#FFFDF9] border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
-        {cargando ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3 text-neutral-500">
-            <Loader2 className="w-8 h-8 text-[#B84500] animate-spin" />
-            <p className="text-sm font-semibold">Cargando cierres de caja…</p>
-          </div>
-        ) : errorCarga ? (
-          <div className="p-12 text-center space-y-3">
-            <AlertCircle className="w-10 h-10 text-red-500 mx-auto" />
-            <p className="text-sm font-bold text-red-800">
-              No se pudo cargar el historial de cierres. Intente nuevamente.
-            </p>
-            <p className="text-xs text-neutral-500">{errorCarga}</p>
+    <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
+      <PageContainer>
+        {/* 1. Encabezado Unificado del Módulo */}
+        <PageHeader
+          title="Historial de Cierres"
+          subtitle="Auditoría de turnos, arqueos, cuadraturas de efectivo, sobrantes, faltantes y ajustes posteriores."
+          count={totalItems}
+          countLabel="cierres registrados"
+          actions={
             <button
               type="button"
               onClick={() => cargarCierres()}
-              className="px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B94600] rounded-xl shadow-xs transition-colors cursor-pointer min-h-[38px]"
+              disabled={cargando}
+              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60 shrink-0"
             >
-              Reintentar
+              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+              <span>Actualizar</span>
             </button>
-          </div>
-        ) : cierres.length === 0 ? (
-          <div className="py-20 text-center space-y-3 text-neutral-500">
-            <FileText className="w-12 h-12 mx-auto text-stone-300" />
-            <p className="text-sm font-bold text-neutral-700">
-              {desde || hasta
-                ? 'No se encontraron cierres de caja con ese criterio. Pruebe con otro rango de fechas.'
-                : 'Aún no hay cierres de caja registrados.'}
-            </p>
-            {(desde || hasta) && (
+          }
+        />
+
+        {/* 2. Barra de Filtros Unificada */}
+        <div className="bg-white border border-neutral-200/90 rounded-2xl p-4 shadow-2xs space-y-3">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Búsqueda por Cajero */}
+              <div className="relative min-w-[200px] flex-1 sm:flex-initial">
+                <User className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Buscar cajero(a)..."
+                  value={busquedaCajero}
+                  onChange={(e) => setBusquedaCajero(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-neutral-50/50 hover:bg-white focus:bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px] transition-all"
+                />
+              </div>
+
+              {/* Fecha Desde */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="filtro-desde" className="text-xs font-semibold text-neutral-600 flex items-center gap-1 select-none">
+                  <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                  Desde:
+                </label>
+                <input
+                  id="filtro-desde"
+                  type="date"
+                  max={hoyLimaStr}
+                  value={desde}
+                  onChange={(e) => {
+                    setDesde(e.target.value);
+                    setPagina(1);
+                  }}
+                  className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px]"
+                />
+              </div>
+
+              {/* Fecha Hasta */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="filtro-hasta" className="text-xs font-semibold text-neutral-600 flex items-center gap-1 select-none">
+                  <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                  Hasta:
+                </label>
+                <input
+                  id="filtro-hasta"
+                  type="date"
+                  max={hoyLimaStr}
+                  value={hasta}
+                  onChange={(e) => {
+                    setHasta(e.target.value);
+                    setPagina(1);
+                  }}
+                  className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px]"
+                />
+              </div>
+
+              {tieneFiltrosActivos && (
+                <button
+                  type="button"
+                  onClick={limpiarFiltros}
+                  className="text-xs font-semibold text-[#B84500] hover:text-[#C74E00] p-2 rounded-xl hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Limpiar</span>
+                </button>
+              )}
+            </div>
+
+            {/* Chips de Selección Rápida */}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs font-semibold text-neutral-500 flex items-center gap-1 mr-1 select-none">
+                <Filter className="w-3.5 h-3.5" />
+                Rango rápido:
+              </span>
               <button
                 type="button"
-                onClick={limpiarFiltros}
-                className="px-4 py-1.5 text-xs font-semibold text-[#B84500] hover:underline cursor-pointer"
+                onClick={() => aplicarFiltroRapido(0)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                  esRangoActivo(0)
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                }`}
               >
-                Ver todos los cierres
+                Hoy
               </button>
-            )}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px] text-left border-collapse">
-              <thead className="sticky top-0 z-10 bg-[#FAF7F4] text-[#7C6F66] text-xs uppercase font-semibold tracking-wider border-b border-[#E5E0DB]">
-                <tr>
-                  <th scope="col" className="px-4 py-3">Estado / Turno</th>
-                  <th scope="col" className="px-4 py-3">Cajero(a)</th>
-                  <th scope="col" className="px-4 py-3 text-right">Monto Inicial</th>
-                  <th scope="col" className="px-4 py-3 text-right">Efectivo</th>
-                  <th scope="col" className="px-4 py-3 text-right">Yape</th>
-                  <th scope="col" className="px-4 py-3 text-right">Total Ventas</th>
-                  <th scope="col" className="px-4 py-3 text-right">Contado</th>
-                  <th scope="col" className="px-4 py-3 text-right">Diferencia</th>
-                  <th scope="col" className="px-4 py-3 text-center">Ajustes</th>
-                  <th scope="col" className="px-4 py-3 text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F0EBE6] text-sm">
-                {cierres.map((c) => {
-                  const abierta = esCajaAbierta(c);
-                  const diferenciaNum =
-                    c.diferencia !== null && c.diferencia !== undefined ? Number(c.diferencia) : null;
-                  const cajaId = c.cajaId || c.id || c.cierreId || '';
-
-                  return (
-                    <tr
-                      key={cajaId}
-                      className={`hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6] ${
-                        abierta ? 'bg-emerald-50/40 font-medium' : ''
-                      }`}
-                    >
-                      {/* Estado / Turno */}
-                      <td className="px-4 py-3">
-                        {abierta ? (
-                          <div className="space-y-1">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                              Abierta
-                            </span>
-                            <p className="text-xs text-neutral-500">
-                              Desde{' '}
-                              {c.fechaAperturaLocal?.split(' ')[1] ||
-                                new Date(c.fechaApertura).toLocaleTimeString('es-PE', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                            </p>
-                          </div>
-                        ) : (
-                          <div>
-                            <p className="font-semibold text-sm text-[#2C1A0E]">
-                              {c.fechaAperturaLocal?.split(' ')[0] ||
-                                new Date(c.fechaApertura).toLocaleDateString('es-PE')}
-                            </p>
-                            <p className="text-xs text-neutral-500">
-                              {c.fechaAperturaLocal?.split(' ')[1] ||
-                                new Date(c.fechaApertura).toLocaleTimeString('es-PE', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}{' '}
-                              -{' '}
-                              {c.fechaCierreLocal?.split(' ')[1] ||
-                                (c.fechaCierre
-                                  ? new Date(c.fechaCierre).toLocaleTimeString('es-PE', {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    })
-                                  : '—')}
-                            </p>
-                          </div>
-                        )}
-                      </td>
-
-                      {/* Cajero */}
-                      <td className="px-4 py-3 font-semibold text-sm text-[#2C1A0E] whitespace-nowrap">
-                        {c.cajero || c.cajeroApertura || 'Cajero'}
-                      </td>
-
-                      {/* Monto Inicial */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-neutral-600 tabular-nums whitespace-nowrap">
-                        S/ {(c.montoInicial ?? 0).toFixed(2)}
-                      </td>
-
-                      {/* Efectivo */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
-                        S/ {(c.ventasEfectivo ?? c.efectivo ?? 0).toFixed(2)}
-                      </td>
-
-                      {/* Yape */}
-                      <td className="px-4 py-3 text-right font-medium text-sm text-purple-900 tabular-nums whitespace-nowrap">
-                        S/ {(c.ventasYape ?? c.yape ?? 0).toFixed(2)}
-                      </td>
-
-                      {/* Total Ventas */}
-                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#B84500] tabular-nums whitespace-nowrap">
-                        S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
-                      </td>
-
-                      {/* Contado */}
-                      <td className="px-4 py-3 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
-                        {abierta ? (
-                          <span className="text-neutral-500 font-normal">—</span>
-                        ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
-                          <span className="tabular-nums font-semibold">{`S/ ${Number(c.efectivoContado).toFixed(2)}`}</span>
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-
-                      {/* Diferencia / Cuadre (RV-131, E-314) */}
-                      <td className="px-4 py-3 text-right tabular-nums whitespace-nowrap">
-                        {abierta ? (
-                          <span className="text-neutral-500 font-normal">—</span>
-                        ) : diferenciaNum === null ? (
-                          <span className="text-neutral-500">—</span>
-                        ) : diferenciaNum === 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums whitespace-nowrap">
-                            Cuadra · S/ 0.00
-                          </span>
-                        ) : diferenciaNum > 0 ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 tabular-nums whitespace-nowrap">
-                            + S/ {diferenciaNum.toFixed(2)}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300 tabular-nums whitespace-nowrap">
-                            - S/ {Math.abs(diferenciaNum).toFixed(2)}
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Badge Con Ajustes (RN-113, RV-131) */}
-                      <td className="px-4 py-3 text-center">
-                        {c.conAjustes || c.tieneAjustesPosteriores ? (
-                          <span
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-300"
-                            title="Contiene ventas anuladas después del cierre sin alterar el arqueo histórico"
-                          >
-                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                            Con ajustes
-                          </span>
-                        ) : (
-                          <span className="text-stone-300">—</span>
-                        )}
-                      </td>
-
-                      {/* Acciones */}
-                      <td className="px-4 py-3 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCajaIdSeleccionada(cajaId);
-                              setDetalleModalOpen(true);
-                            }}
-                            className="p-2 text-neutral-600 hover:text-[#B84500] hover:bg-neutral-50 rounded-lg transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
-                            title="Ver detalle del turno de caja"
-                            aria-label={`Ver detalle del cierre ${cajaId}`}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-
-                          {!abierta ? (
-                            <button
-                              type="button"
-                              onClick={() => handleDescargarPdf(cajaId)}
-                              disabled={descargandoPdfId === cajaId}
-                              className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 disabled:opacity-40 rounded-lg transition-colors cursor-pointer min-h-[38px] min-w-[44px] flex items-center justify-center"
-                              title="Descargar comprobante de cierre PDF"
-                              aria-label={`Descargar PDF del cierre ${cajaId}`}
-                            >
-                              {descargandoPdfId === cajaId ? (
-                                <Loader2 className="w-4 h-4 animate-spin text-[#B84500]" />
-                              ) : (
-                                <Download className="w-4 h-4" />
-                              )}
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              disabled
-                              className="p-2 text-stone-300 cursor-not-allowed min-h-[38px] min-w-[44px] flex items-center justify-center"
-                              title="No disponible mientras la caja esté abierta"
-                              aria-label="PDF no disponible para caja abierta"
-                            >
-                              <Download className="w-4 h-4 opacity-40" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Paginación (RN-110, RV-131) */}
-        {totalPaginas > 1 && (
-          <div className="bg-white px-6 py-3.5 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
-            <span className="text-neutral-500 font-medium">
-              Mostrando <span className="font-semibold text-neutral-700">{cierres.length}</span> de <span className="font-semibold text-neutral-700">{totalItems}</span> registros
-            </span>
-            <div className="flex items-center gap-3">
-              <span className="text-neutral-500">
-                Página <span className="font-semibold text-neutral-700">{pagina}</span> de{' '}
-                <span className="font-semibold text-neutral-700">{totalPaginas}</span>
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  disabled={pagina <= 1 || cargando}
-                  onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                  className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center cursor-pointer shadow-2xs"
-                  aria-label="Página anterior"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  disabled={pagina >= totalPaginas || cargando}
-                  onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                  className="p-1.5 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[38px] min-w-[38px] inline-flex items-center justify-center cursor-pointer shadow-2xs"
-                  aria-label="Página siguiente"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => aplicarFiltroRapido(1)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                  esRangoActivo(1)
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                }`}
+              >
+                Ayer
+              </button>
+              <button
+                type="button"
+                onClick={() => aplicarFiltroRapido(7)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                  esRangoActivo(7)
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                }`}
+              >
+                7 días
+              </button>
+              <button
+                type="button"
+                onClick={() => aplicarFiltroRapido(30)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                  esRangoActivo(30)
+                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                    : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
+                }`}
+              >
+                30 días
+              </button>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Modal Detalle (Vista 13.4) */}
-      <CierreDetalleModal
-        cajaId={cajaIdSeleccionada}
-        isOpen={detalleModalOpen}
-        onClose={() => {
-          setDetalleModalOpen(false);
-          setCajaIdSeleccionada(null);
-        }}
-        token={session.token}
-      />
-      </div>
+          {/* Alerta de Error en Rango de Fechas */}
+          {errorFechas && (
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-semibold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+              <span>{errorFechas}</span>
+            </div>
+          )}
+        </div>
+
+        {/* 3. Tabla Principal de Cierres con DataTable y TablePagination */}
+        <DataTable
+          loading={cargando}
+          error={errorCarga}
+          onRetry={cargarCierres}
+          isEmpty={cierresFiltrados.length === 0}
+          emptyTitle="No se encontraron cierres de caja"
+          emptyMessage={
+            tieneFiltrosActivos
+              ? 'No hay registros que coincidan con los filtros aplicados. Intente ajustar el rango de fechas o el cajero.'
+              : 'Aún no se han registrado turnos o cierres de caja en el sistema.'
+          }
+          emptyActionLabel={tieneFiltrosActivos ? 'Ver todos los cierres' : undefined}
+          onEmptyAction={tieneFiltrosActivos ? limpiarFiltros : undefined}
+          minWidth="min-w-[980px]"
+        >
+          <TableHead>
+            <tr>
+              <th scope="col" className="px-4 py-3.5">Turno</th>
+              <th scope="col" className="px-4 py-3.5">Cajero(a)</th>
+              <th scope="col" className="px-4 py-3.5 text-right">Monto inicial</th>
+              <th scope="col" className="px-4 py-3.5 text-right">Efectivo</th>
+              <th scope="col" className="px-4 py-3.5 text-right">Yape</th>
+              <th scope="col" className="px-4 py-3.5 text-right">Total ventas</th>
+              <th scope="col" className="px-4 py-3.5 text-right">Contado</th>
+              <th scope="col" className="px-4 py-3.5 text-right">Diferencia</th>
+              <th scope="col" className="px-4 py-3.5 text-center">Estado</th>
+              <th scope="col" className="px-4 py-3.5 text-center">Acciones</th>
+            </tr>
+          </TableHead>
+
+          <TableBody>
+            {cierresFiltrados.map((c) => {
+              const abierta = esCajaAbierta(c);
+              const diferenciaNum =
+                c.diferencia !== null && c.diferencia !== undefined ? Number(c.diferencia) : null;
+              const cajaId = c.cajaId || c.id || c.cierreId || '';
+              const fechaAperturaStr =
+                c.fechaAperturaLocal ||
+                (c.fechaApertura
+                  ? new Date(c.fechaApertura).toLocaleString('es-PE', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : '—');
+              const fechaCierreStr =
+                c.fechaCierreLocal ||
+                (c.fechaCierre
+                  ? new Date(c.fechaCierre).toLocaleString('es-PE', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : null);
+
+              return (
+                <tr
+                  key={cajaId}
+                  className={`hover:bg-neutral-50/70 transition-colors border-b border-[#F0EBE6] ${
+                    abierta ? 'bg-emerald-50/30' : ''
+                  }`}
+                >
+                  {/* Turno en dos líneas: Apertura y Cierre */}
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-xs text-[#2C1A0E] whitespace-nowrap">
+                        Apertura: {fechaAperturaStr}
+                      </span>
+                      <span className="text-xs text-neutral-500 whitespace-nowrap mt-0.5">
+                        {abierta ? 'En curso' : `Cierre: ${fechaCierreStr || '—'}`}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Cajero */}
+                  <td className="px-4 py-3 font-semibold text-sm text-[#2C1A0E] whitespace-nowrap">
+                    {c.cajero || c.cajeroApertura || 'Cajero'}
+                  </td>
+
+                  {/* Monto Inicial */}
+                  <td className="px-4 py-3 text-right font-medium text-sm text-neutral-700 tabular-nums whitespace-nowrap">
+                    S/ {(c.montoInicial ?? 0).toFixed(2)}
+                  </td>
+
+                  {/* Efectivo */}
+                  <td className="px-4 py-3 text-right font-medium text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                    S/ {(c.ventasEfectivo ?? c.efectivo ?? 0).toFixed(2)}
+                  </td>
+
+                  {/* Yape */}
+                  <td className="px-4 py-3 text-right font-medium text-sm text-purple-900 tabular-nums whitespace-nowrap">
+                    S/ {(c.ventasYape ?? c.yape ?? 0).toFixed(2)}
+                  </td>
+
+                  {/* Total Ventas */}
+                  <td className="px-4 py-3 text-right font-semibold text-sm text-[#B84500] tabular-nums whitespace-nowrap">
+                    S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
+                  </td>
+
+                  {/* Contado */}
+                  <td className="px-4 py-3 text-right font-medium text-sm text-[#2C1A0E] tabular-nums whitespace-nowrap">
+                    {abierta ? (
+                      <span className="text-neutral-400 font-normal">—</span>
+                    ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
+                      <span className="tabular-nums font-semibold">{`S/ ${Number(c.efectivoContado).toFixed(2)}`}</span>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+
+                  {/* Diferencia / Cuadre con StatusBadge */}
+                  <td className="px-4 py-3 text-right tabular-nums whitespace-nowrap">
+                    {abierta ? (
+                      <span className="text-neutral-400 font-normal">—</span>
+                    ) : diferenciaNum === null ? (
+                      <span className="text-neutral-400">—</span>
+                    ) : diferenciaNum === 0 ? (
+                      <StatusBadge status="Cuadra" label="Cuadra · S/ 0.00" intent="success" />
+                    ) : diferenciaNum > 0 ? (
+                      <StatusBadge status="Sobrante" label={`+ S/ ${diferenciaNum.toFixed(2)}`} intent="warning" />
+                    ) : (
+                      <StatusBadge status="Faltante" label={`- S/ ${Math.abs(diferenciaNum).toFixed(2)}`} intent="danger" />
+                    )}
+                  </td>
+
+                  {/* Estado con StatusBadge */}
+                  <td className="px-4 py-3 text-center whitespace-nowrap">
+                    {abierta ? (
+                      <StatusBadge status="Abierta" intent="success" />
+                    ) : c.conAjustes || c.tieneAjustesPosteriores ? (
+                      <StatusBadge status="Con ajustes" intent="warning" />
+                    ) : (
+                      <StatusBadge status="Cerrada" intent="neutral" />
+                    )}
+                  </td>
+
+                  {/* Acciones con IconActionButton */}
+                  <td className="px-4 py-3 text-center whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <IconActionButton
+                        icon={Eye}
+                        label="Ver detalle del cierre"
+                        variant="view"
+                        onClick={() => {
+                          setCajaIdSeleccionada(cajaId);
+                          setDetalleModalOpen(true);
+                        }}
+                      />
+
+                      <IconActionButton
+                        icon={Download}
+                        label="Descargar acta de cierre"
+                        variant="download"
+                        disabled={abierta || descargandoPdfId === cajaId}
+                        disabledReason={abierta ? 'No disponible mientras la caja esté abierta' : 'Descargando...'}
+                        onClick={() => handleDescargarPdf(cajaId)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </TableBody>
+        </DataTable>
+
+        {/* Paginación Unificada */}
+        <TablePagination
+          currentPage={pagina}
+          totalPages={totalPaginas}
+          totalItems={totalItems}
+          itemsPerPage={20}
+          entityName="cierres"
+          onPageChange={setPagina}
+        />
+
+        {/* Modal Detalle (Vista 13.4) */}
+        <CierreDetalleModal
+          cajaId={cajaIdSeleccionada}
+          isOpen={detalleModalOpen}
+          onClose={() => {
+            setDetalleModalOpen(false);
+            setCajaIdSeleccionada(null);
+          }}
+          token={session.token}
+        />
+      </PageContainer>
     </div>
   );
 };
 
+export default HistorialCierresPage;

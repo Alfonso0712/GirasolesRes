@@ -245,10 +245,10 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                   <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <span className="font-bold text-sm text-amber-900 block">
-                      Cierre con ajustes posteriores (RN-113)
+                      Turno con ventas anuladas después del cierre
                     </span>
                     <p className="text-amber-800 leading-relaxed">
-                      Una o más ventas correspondientes a este turno fueron anuladas con posterioridad al cierre de caja; el arqueo y balance histórico original permanecen estrictamente inmutables; las ventas anuladas se detallan en la sección de auditoría al final.
+                      Se registraron anulaciones posteriores en este turno. El arqueo original de caja se conserva para auditoría y las ventas anuladas se detallan a continuación.
                     </p>
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     </div>
 
                     <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
-                      <span className="text-[#2C1A0E]">TOTAL VENTAS FACTURADAS:</span>
+                      <span className="text-[#2C1A0E]">Total de ventas facturadas:</span>
                       <span className="text-[#B84500] text-base tabular-nums">
                         S/ {(detalle.totalVentas ?? 0).toFixed(2)}
                       </span>
@@ -419,7 +419,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               {detalle.observacion && detalle.observacion.trim().length > 0 && (
                 <div className="p-3.5 bg-stone-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block mb-1">
-                    Observación Registrada al Cierre de Caja
+                    Observación del cierre
                   </span>
                   <p className="text-neutral-800 italic font-medium">"{detalle.observacion.trim()}"</p>
                 </div>
@@ -440,13 +440,13 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 </div>
 
                 {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
-                  <div className="max-h-48 overflow-y-auto">
+                  <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                      <thead className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs uppercase font-semibold text-[#7C6F66] tracking-wider sticky top-0">
+                      <thead className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs uppercase font-semibold text-[#7C6F66] tracking-wider">
                         <tr>
                           <th className="px-4 py-2.5">Plato / Producto</th>
                           <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
-                          <th className="px-4 py-2.5 text-right w-28 tabular-nums">Subtotal (S/)</th>
+                          <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#F0EBE6] text-sm">
@@ -482,21 +482,21 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 )}
               </div>
 
-              {/* Sección 5: Ventas Anuladas Posteriores al Cierre (RN-113) */}
+              {/* Sección 5: Ventas anuladas después del cierre */}
               {tieneAjustes && detalle.ajustesPosteriores && detalle.ajustesPosteriores.length > 0 && (
                 <div className="border border-amber-200 bg-amber-50/40 rounded-xl overflow-hidden break-inside-avoid">
                   <div className="bg-amber-100/70 px-4 py-2.5 border-b border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <span className="font-bold text-xs uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
                       <AlertTriangle className="w-3.5 h-3.5 text-amber-700" />
-                      Ventas Anuladas Posteriores al Cierre ({detalle.ajustesPosteriores.length})
+                      Ventas anuladas después del cierre ({detalle.ajustesPosteriores.length})
                     </span>
                     <span className="text-xs text-amber-800 font-semibold">
-                      Inmutabilidad garantizada
+                      Arqueo original protegido
                     </span>
                   </div>
 
                   <div className="p-3 bg-amber-100/30 border-b border-amber-200/60 text-xs text-amber-900 leading-normal">
-                    <strong>Nota de Auditoría per RN-113:</strong> El balance de arqueo original permanece inalterado. Estas anulaciones ocurrieron después de cerrarse el turno para regularizar pedidos.
+                    <strong>Nota de auditoría:</strong> El arqueo y balance original de la caja no se modifican. Estas ventas fueron anuladas después de cerrar el turno.
                   </div>
 
                   <div className="divide-y divide-amber-200/60 text-xs">
@@ -530,27 +530,15 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
         {/* Footer con Botones de Acción */}
         <div className="no-print bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleDescargarPdf}
-              disabled={cargando || !detalle || descargandoPdf || esAbierta}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B84600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
-              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
-            >
-              {descargandoPdf ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  GENERANDO PDF...
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  DESCARGAR PDF
-                </>
-              )}
-            </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+          >
+            Cerrar
+          </button>
 
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handlePrint}
@@ -561,15 +549,27 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               <Printer className="w-4 h-4" />
               Imprimir
             </button>
-          </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-xs font-bold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-          >
-            Cerrar
-          </button>
+            <button
+              type="button"
+              onClick={handleDescargarPdf}
+              disabled={cargando || !detalle || descargandoPdf || esAbierta}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#C74E00] hover:bg-[#B84600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
+            >
+              {descargandoPdf ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Generando PDF…
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Descargar comprobante PDF
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

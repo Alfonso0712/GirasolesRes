@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Plus,
   RotateCcw,
@@ -17,6 +17,7 @@ import { menuDiaService } from '../services/menuDiaService';
 import { MesaCard } from '../components/mesas';
 import { MesaFormModal } from '../components/mesas';
 import { MesaConfirmModal } from '../components/mesas';
+import { PageHeader, PageContainer } from '../components/layout';
 
 interface MesasPageProps {
   session: UserSession;
@@ -119,82 +120,74 @@ export const MesasPage: React.FC<MesasPageProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 pt-2 sm:pt-2.5 pb-8 flex flex-col gap-2.5 sm:gap-3">
-      {/* 1. Encabezado Fijo del Módulo */}
-      <div className="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
-        <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#2C1A0E]">
-              Mesas
-            </h1>
-
-            {/* Resumen "Libres X · Ocupadas Y" integrado en pastilla */}
-            <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
-              <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                Libres {resumen.libres}
-              </span>
-              <span className="text-neutral-300">·</span>
-              <span className="inline-flex items-center gap-1.5 text-[#B84600]">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                Ocupadas {resumen.ocupadas}
-              </span>
-              {esAdmin && mostrarInactivas && (
-                <>
-                  <span className="text-neutral-300">·</span>
-                  <span className="text-neutral-500">Inactivas {resumen.inactivas}</span>
-                </>
-              )}
-            </div>
-          </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Supervise la disponibilidad del salón y asigne mesas en tiempo real.
-          </p>
-        </div>
-
-        {/* Sincronización y Botón Primario */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <div className="flex items-center gap-3 text-xs text-neutral-500">
-            <span className="hidden sm:inline tabular-nums">
-              Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
+      <PageContainer>
+      {/* 1. Encabezado Unificado */}
+      <PageHeader
+        title="Mesas"
+        subtitle="Supervise la disponibilidad del salón y asigne mesas en tiempo real."
+        badge={
+          <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-[#2C1A0E] flex items-center gap-2 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 text-emerald-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              Libres {resumen.libres}
             </span>
-            <button
-              type="button"
-              onClick={() => cargarMesas(false)}
-              disabled={refrescando}
-              title="Actualizar mesas ahora"
-              aria-label="Actualizar mesas ahora"
-              className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[38px] disabled:opacity-60"
-            >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${refrescando ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Actualizar</span>
-            </button>
+            <span className="text-neutral-300">·</span>
+            <span className="inline-flex items-center gap-1.5 text-[#B84600]">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              Ocupadas {resumen.ocupadas}
+            </span>
+            {esAdmin && mostrarInactivas && (
+              <>
+                <span className="text-neutral-300">·</span>
+                <span className="text-neutral-500">Inactivas {resumen.inactivas}</span>
+              </>
+            )}
           </div>
+        }
+        actions={
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-3 text-xs text-neutral-500">
+              <span className="hidden sm:inline tabular-nums">
+                Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
+              </span>
+              <button
+                type="button"
+                onClick={() => cargarMesas(false)}
+                disabled={refrescando}
+                title="Actualizar mesas ahora"
+                aria-label="Actualizar mesas ahora"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+              >
+                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${refrescando ? 'animate-spin' : ''}`} />
+                <span>Actualizar</span>
+              </button>
+            </div>
 
-          {(esAdmin || esCajero) && onNavigateToPedidoLlevar && (
-            <button
-              type="button"
-              onClick={onNavigateToPedidoLlevar}
-              className="px-3.5 py-2 rounded-xl bg-white border-2 border-[#D35400] text-[#B84500] hover:bg-orange-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
-            >
-              <ShoppingBag className="w-4 h-4 shrink-0" />
-              <span>Pedido para llevar</span>
-            </button>
-          )}
+            {(esAdmin || esCajero) && onNavigateToPedidoLlevar && (
+              <button
+                type="button"
+                onClick={onNavigateToPedidoLlevar}
+                className="px-3.5 py-2 rounded-xl bg-white border border-[#C74E00] text-[#B84500] hover:bg-orange-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+              >
+                <ShoppingBag className="w-4 h-4 text-[#B84500]" />
+                <span>Pedido para llevar</span>
+              </button>
+            )}
 
-          {esAdmin && (
-            <button
-              type="button"
-              onClick={handleAbrirCrear}
-              className="px-3.5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[38px]"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Nueva mesa</span>
-            </button>
-          )}
-        </div>
-      </div>
+            {esAdmin && (
+              <button
+                type="button"
+                onClick={handleAbrirCrear}
+                className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white text-xs font-semibold flex items-center gap-2 shadow-2xs hover:shadow transition-all cursor-pointer min-h-[40px]"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Nueva mesa</span>
+              </button>
+            )}
+          </div>
+        }
+      />
 
       {/* Banner preventivo: Menú del día no definido aún (MSG-204 / Nielsen 5) */}
       {!menuDefinido && (
@@ -492,7 +485,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
           </button>
         </div>
       )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

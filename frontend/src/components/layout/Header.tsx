@@ -8,7 +8,7 @@ interface HeaderProps {
   session?: UserSession | null;
   onLogout?: () => void;
   onCambiarPassword?: () => void;
-  breadcrumbSection?: string;
+  breadcrumbSection?: string | null;
   breadcrumbPage?: string;
   onToggleSidebar?: () => void;
 }
@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   session,
   onLogout,
   onCambiarPassword,
-  breadcrumbSection = 'Administración',
+  breadcrumbSection = null,
   breadcrumbPage = 'Usuarios',
   onToggleSidebar
 }) => {
@@ -53,9 +53,13 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-neutral-500 font-medium">
-          <span className="hidden sm:inline">{breadcrumbSection}</span>
-          <span className="hidden sm:inline text-neutral-500">/</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-neutral-500 font-medium select-none">
+          {breadcrumbSection && (
+            <>
+              <span className="hidden sm:inline">{breadcrumbSection}</span>
+              <span className="hidden sm:inline text-neutral-400">/</span>
+            </>
+          )}
           <span className="text-neutral-800 font-semibold">{breadcrumbPage}</span>
         </div>
       </div>

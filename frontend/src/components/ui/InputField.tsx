@@ -46,8 +46,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   ) : null;
 
   return (
-    <div className={`mb-4 text-left ${className}`}>
-      <label htmlFor={inputId} className="block text-xs sm:text-sm font-semibold text-[#2C1A0E] mb-1.5">
+    <div className={`mb-1 sm:mb-1.5 text-left ${className}`}>
+      <label htmlFor={inputId} className="block text-xs sm:text-sm font-semibold text-[#2C1A0E] mb-1">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -72,7 +72,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           } ${renderRightElement ? 'pr-12' : 'pr-4'} ${
             error
               ? 'border-red-500 bg-white focus:border-red-500 focus:ring-2 focus:ring-red-200'
-              : 'border-[#E5E0DB] bg-white focus:border-[#D35400] focus:ring-2 focus:ring-[#D35400]/20'
+              : 'border-[#E5E0DB] bg-white focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20'
           }`}
           aria-invalid={!!error}
           aria-describedby={error ? `${inputId}-error` : undefined}
@@ -86,11 +86,14 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
         )}
       </div>
 
-      {error && (
-        <p id={`${inputId}-error`} className="text-red-500 text-xs mt-1.5 font-medium">
-          {error}
-        </p>
-      )}
+      {/* Slot de error de altura fija para prevenir saltos de layout en el formulario */}
+      <div className="min-h-[1.25rem] mt-1">
+        {error && (
+          <p id={`${inputId}-error`} className="text-red-500 text-xs font-medium leading-tight">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 });

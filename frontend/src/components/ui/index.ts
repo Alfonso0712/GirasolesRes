@@ -1,5 +1,6 @@
 export * from './Button';
 export * from './ActionButton';
+export * from './IconActionButton';
 export * from './InputField';
 export * from './FormMessage';
 export * from './StatusBadge';
@@ -9,3 +10,7 @@ export * from './StatCard';
 export * from './FilterBar';
 export * from './ConfirmModal';
 export * from './DiscardChangesModal';
+export * from './TablePagination';
+export * from './DataTable';
+export * from './Select';
+export * from './Tooltip';
