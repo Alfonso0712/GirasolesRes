@@ -12,7 +12,7 @@ import {
   cambiarEstadoUsuarioService,
   eliminarUsuarioService
 } from '../services/usuarioService';
-import type { TipoConfirmacion } from '../components/ConfirmModal';
+import type { TipoConfirmacion } from '../components/ui';
 
 interface UseUsersManagementProps {
   session: UserSession;
