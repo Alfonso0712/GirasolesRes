@@ -8,7 +8,7 @@ export interface CocinaResumenBarProps {
 
 export const CocinaResumenBar: React.FC<CocinaResumenBarProps> = ({ resumen }) => {
   return (
-    <section className="bg-white border-b border-amber-900/15 py-2 px-3.5 sm:px-6 shadow-2xs shrink-0 flex items-center gap-3 overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-amber-300">
+    <section className="bg-white border-b border-amber-900/15 py-2 px-3.5 sm:px-6 shadow-2xs shrink-0 flex items-center gap-3 overflow-x-auto scroll-thin">
       <div className="flex items-center gap-1.5 text-xs font-bold text-amber-950 uppercase tracking-wide shrink-0">
         <Flame className="w-4 h-4 text-[#B84500]" />
         <span>Por preparar:</span>

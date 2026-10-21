@@ -440,13 +440,13 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 </div>
 
                 {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
-                  <div className="max-h-48 overflow-y-auto">
+                  <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                      <thead className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs uppercase font-semibold text-[#7C6F66] tracking-wider sticky top-0">
+                      <thead className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs uppercase font-semibold text-[#7C6F66] tracking-wider">
                         <tr>
                           <th className="px-4 py-2.5">Plato / Producto</th>
                           <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
-                          <th className="px-4 py-2.5 text-right w-28 tabular-nums">Subtotal (S/)</th>
+                          <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#F0EBE6] text-sm">

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Loader2, Info, AlertCircle, Utensils, Layers, BookOpen } from 'lucide-react';
 import {
   type ProductoItem,
@@ -265,7 +265,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
         {/* Formulario con scroll independiente */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
-          <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0 scroll-thin">
             {/* Banner de error general del servidor (ej. MSG-53, MSG-216) */}
             {errorServidor && (
               <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-rose-700 text-sm">

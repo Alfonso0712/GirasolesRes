@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   ShoppingBag,
   Plus,
@@ -119,7 +119,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10">
       {/* 1. Encabezado Unificado */}
       <PageHeader
@@ -221,7 +221,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           </div>
 
           {/* Pastillas de Categorías */}
-          <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scroll-thin">
             {categorias.map((cat) => (
               <button
                 key={cat}
@@ -239,7 +239,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           </div>
 
           {/* Grilla con Scroll Interno Confinado */}
-          <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1 scroll-thin">
             {!menuDefinido ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8 max-w-lg mx-auto">
                 <div className="w-16 h-16 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto border border-amber-200 mb-4 shadow-2xs">
@@ -428,7 +428,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           </div>
 
           {/* Lista de Líneas en Borrador */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 scroll-thin">
             {lineasBorrador.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center p-4 text-center">
                 <div className="w-12 h-12 rounded-2xl bg-[#FAF7F4] border border-neutral-200 flex items-center justify-center text-neutral-300 mb-3">
@@ -691,7 +691,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 scroll-thin">
               {lineasBorrador.map((linea, idx) => {
                 const tieneError = Boolean(erroresLineas[linea.productoId || ''] || linea.agotado);
                 return (

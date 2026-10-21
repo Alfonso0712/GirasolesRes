@@ -132,14 +132,14 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
         ) : (
           <div
             onClick={() => onNavigate('reportes')}
-            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#D35400] transition-all cursor-pointer group flex flex-col justify-between"
+            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#C74E00] transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Ventas de Hoy
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center group-hover:bg-amber-100 transition-colors">
                   <DollarSign className="w-4 h-4" />
                 </div>
               </div>
@@ -169,7 +169,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
             </div>
             <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver reporte de hoy</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ChevronRight className="w-4 h-4 group-hover:text-[#C74E00] transition-colors" />
             </div>
           </div>
         )}
@@ -180,14 +180,14 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
         ) : (
           <div
             onClick={() => onNavigate('reportes')}
-            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#D35400] transition-all cursor-pointer group flex flex-col justify-between"
+            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#C74E00] transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Platos Vendidos Hoy
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#B84500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#B84500] flex items-center justify-center group-hover:bg-orange-100 transition-colors">
                   <UtensilsCrossed className="w-4 h-4" />
                 </div>
               </div>
@@ -202,7 +202,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
             </div>
             <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver detalle de platos</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ChevronRight className="w-4 h-4 group-hover:text-[#C74E00] transition-colors" />
             </div>
           </div>
         )}
@@ -213,14 +213,14 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
         ) : (
           <div
             onClick={() => onNavigate('pedidos')}
-            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#D35400] transition-all cursor-pointer group flex flex-col justify-between"
+            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#C74E00] transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Pedidos de Hoy
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                   <ClipboardList className="w-4 h-4" />
                 </div>
               </div>
@@ -244,7 +244,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
             </div>
             <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Gestionar pedidos</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ChevronRight className="w-4 h-4 group-hover:text-[#C74E00] transition-colors" />
             </div>
           </div>
         )}
@@ -255,14 +255,14 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
         ) : (
           <div
             onClick={() => onNavigate('mesas')}
-            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#D35400] transition-all cursor-pointer group flex flex-col justify-between"
+            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-[#C74E00] transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                   Mesas y Salón
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
                   <Utensils className="w-4 h-4" />
                 </div>
               </div>
@@ -282,7 +282,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
             </div>
             <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
               <span>Ver salón de mesas</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ChevronRight className="w-4 h-4 group-hover:text-[#C74E00] transition-colors" />
             </div>
           </div>
         )}
@@ -440,7 +440,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
           ) : (
             <div
               onClick={() => onNavigate('caja')}
-              className="p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#D35400] transition-all cursor-pointer group"
+              className="p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#C74E00] transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
@@ -477,7 +477,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
           ) : (
             <div
               onClick={() => onNavigate('menu-dia')}
-              className="p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#D35400] transition-all cursor-pointer group"
+              className="p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#C74E00] transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
@@ -503,7 +503,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
           ) : (
             <div
               onClick={() => onNavigate('historial-cierres')}
-              className="p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#D35400] transition-all cursor-pointer group"
+              className="p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#C74E00] transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
@@ -574,9 +574,9 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
               key={idx}
               type="button"
               onClick={() => onNavigate(act.pagina)}
-              className="p-3 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/70 hover:border-[#D35400] rounded-xl text-left transition-all cursor-pointer group flex items-center gap-3 min-h-[44px]"
+              className="p-3 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/70 hover:border-[#C74E00] rounded-xl text-left transition-all cursor-pointer group flex items-center gap-3 min-h-[44px]"
             >
-              <div className="w-8 h-8 rounded-lg bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 group-hover:text-[#B84500] group-hover:border-[#D35400] shrink-0 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 group-hover:text-[#B84500] group-hover:border-[#C74E00] shrink-0 transition-colors">
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold text-neutral-700 group-hover:text-neutral-900 leading-tight">

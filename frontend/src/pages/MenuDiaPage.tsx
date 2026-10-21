@@ -204,7 +204,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto w-full relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+    <div className="flex-1 overflow-y-auto w-full relative scroll-thin">
       <PageContainer className={esAdmin && tabActiva !== "disponibilidad" && tieneCambiosSinGuardar ? "pb-28" : "pb-8"}>
       {/* 1. Encabezado Unificado */}
       <PageHeader

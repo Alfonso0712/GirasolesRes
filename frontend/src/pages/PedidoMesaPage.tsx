@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Utensils,
   UtensilsCrossed,
@@ -135,7 +135,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   });
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10">
       {/* 1. Encabezado Unificado */}
       <PageHeader
@@ -250,7 +250,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           </div>
 
           {/* Pastillas de Categorías */}
-          <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scroll-thin">
             {categorias.map((cat) => (
               <button
                 key={cat}
@@ -268,7 +268,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           </div>
 
           {/* Grilla con Scroll Interno Confinado */}
-          <div className="flex-1 overflow-y-auto min-h-0 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1 scroll-thin">
             {cargando ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -485,7 +485,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           </div>
 
           {/* Lista de Líneas con Scroll Confinado */}
-          <div className="flex-1 overflow-y-auto p-4 min-h-0 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto p-4 min-h-0 space-y-3 scroll-thin">
             {lineasBorrador.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 text-neutral-500">
                 <ShoppingBag className="w-10 h-10 stroke-[1.5] text-neutral-300 mb-2" />

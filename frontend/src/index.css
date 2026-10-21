@@ -188,3 +188,51 @@
   background-color: rgba(249, 250, 251, 0.8);
 }
 
+
+/* Scrollbars globales accesibles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8A8179 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #8A8179;
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #78716C;
+}
+
+/* Utilidad scroll-thin (w-1.5 h-1.5) */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #8A8179 transparent;
+}
+
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb {
+  background-color: #8A8179;
+  border-radius: 9999px;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #78716C;
+}

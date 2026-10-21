@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, AlertCircle  } from 'lucide-react';
 import type { UsuarioItem, CrearUsuarioData, ActualizarUsuarioData, RolUsuario } from '../../types/usuario';
 
@@ -276,7 +276,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
         {/* Form (flex-1 flex flex-col min-h-0) */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {/* Scrollable Fields Container */}
-          <div className="flex-1 overflow-y-auto min-h-0 pr-1.5 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1.5 space-y-4 scroll-thin">
             {/* Nombre Completo */}
             <div>
               <div className="flex items-center justify-between mb-1.5">

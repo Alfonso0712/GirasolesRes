@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   DollarSign,
   Receipt,
@@ -157,7 +157,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden w-full">
-      <div className="flex-1 overflow-y-auto min-h-0 w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+      <div className="flex-1 overflow-y-auto min-h-0 w-full scroll-thin">
         <PageContainer className="select-none">
       {/* 1. Encabezado Unificado */}
       <PageHeader

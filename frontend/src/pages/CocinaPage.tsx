@@ -290,7 +290,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
   const comandasEnPreparacion = comandas.filter((c) => c.estado === 'EnPreparacion');
 
   return (
-    <div className="flex-1 overflow-y-auto w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400 [&::-webkit-scrollbar-track]:bg-transparent">
+    <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10 bg-[#FAF7F4] text-neutral-900 select-none">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
