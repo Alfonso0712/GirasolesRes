@@ -446,16 +446,18 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
                   No hay comandas en espera de preparación.
                 </div>
               ) : (
-                comandasPendientes.map((c) => (
-                  <ComandaCard
-                    key={c.id}
-                    comanda={c}
-                    esNueva={Boolean(comandasNuevas[c.id])}
-                    estaProcesando={Boolean(procesandoIds[c.id])}
-                    tipoZona="pendiente"
-                    onAccionPrincipal={handleIniciarPreparacion}
-                  />
-                ))
+                <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3.5">
+                  {comandasPendientes.map((c) => (
+                    <ComandaCard
+                      key={c.id}
+                      comanda={c}
+                      esNueva={Boolean(comandasNuevas[c.id])}
+                      estaProcesando={Boolean(procesandoIds[c.id])}
+                      tipoZona="pendiente"
+                      onAccionPrincipal={handleIniciarPreparacion}
+                    />
+                  ))}
+                </div>
               )}
             </section>
             {/* ZONA 2: EN PREPARACIÓN */}
@@ -487,15 +489,17 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => 
                   No hay comandas en preparación en este momento.
                 </div>
               ) : (
-                comandasEnPreparacion.map((c) => (
-                  <ComandaCard
-                    key={c.id}
-                    comanda={c}
-                    estaProcesando={Boolean(procesandoIds[c.id])}
-                    tipoZona="en_preparacion"
-                    onAccionPrincipal={handleMarcarComoLista}
-                  />
-                ))
+                <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3.5">
+                  {comandasEnPreparacion.map((c) => (
+                    <ComandaCard
+                      key={c.id}
+                      comanda={c}
+                      estaProcesando={Boolean(procesandoIds[c.id])}
+                      tipoZona="en_preparacion"
+                      onAccionPrincipal={handleMarcarComoLista}
+                    />
+                  ))}
+                </div>
               )}            </section>
           </div>
         )}

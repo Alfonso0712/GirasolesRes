@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict h4dc0lCWW0at14aGzwZyndLRbCycudY056YS2DR0dd7z8TJZRayP61yw9T7CzGz
+\restrict euYVMnvqNqsqqoNd0U66DNbx6HdBgtTEdVMVm3uLkIYAEpBCHigdhgLiDqAztKm
 
 -- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.6
@@ -863,6 +863,7 @@ d874ce8a-3727-4344-800f-57d3075375ff	atorres	CIERRE_SESION	atorres	Cierre de ses
 6a883648-0ef0-4c0f-a0e7-2973de4e6302	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-20 18:53:14.730296-05	::1
 fcb75a24-969b-48a5-89e3-5c6bdf34eb1f	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-20 18:55:58.156654-05	::1
 c75f5752-c6ae-4ad6-882a-2104d47f3c22	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-20 19:04:21.121684-05	::1
+ae0e5238-bc7f-411f-9eb9-1a4ddf079a3e	admin	CIERRE_SESION	admin	Cierre de sesión motivo: manual	2026-10-21 19:31:06.096229-05	::1
 \.
 
 
@@ -1506,6 +1507,8 @@ d92d03fb-41fe-4ad4-947e-cd083ddff9fa	atorres	2026-10-20 18:37:38.72115-05	t	Ingr
 b42b93af-6f0f-4b6f-a8aa-38ce9879f702	crojas	2026-10-20 18:55:04.397219-05	f	Cuenta desactivada	::1
 829497c3-cc37-4e32-ab0b-0f07f684268a	admin	2026-10-20 18:55:10.060192-05	t	Ingreso exitoso	::1
 8dc9c4a1-50c5-4e62-afe9-e2ef37d1e185	admin	2026-10-20 19:01:56.939403-05	t	Ingreso exitoso	::1
+ae133dcc-9c4c-43b8-97ab-211a9eae56ce	admin	2026-10-21 19:26:32.140283-05	t	Ingreso exitoso	::1
+34adf4e0-6e41-476d-9d7f-0f813667e214	admin	2026-10-21 20:05:02.225398-05	t	Ingreso exitoso	::1
 \.
 
 
@@ -1633,6 +1636,7 @@ cb6dc0e0-2c65-4fa1-b009-cadb09bc322b	3ccff8c4-60b2-43f9-9137-49208d286964	atorre
 fea34793-abbe-48cf-898a-d08f03aab6ce	dba6c9c6-a983-406f-80ec-2896fae0b908	admin	2026-10-20 19:22:10-05	2026-10-20 18:53:14.726406-05	MANUAL
 31f6b81a-76f8-4d41-8b35-4adfc855624e	6c4dcde4-c09e-4f18-8aa9-24444039b01f	admin	2026-10-20 19:25:10-05	2026-10-20 18:55:58.155488-05	MANUAL
 fd82eabf-0170-4f99-9a20-61e01d40aabe	d5ebafe5-8d68-4487-83ae-7227ed588c62	admin	2026-10-20 19:31:56-05	2026-10-20 19:04:21.119077-05	MANUAL
+0c27dbd8-f486-4c1e-9a4e-c7d317eb1ea8	738e0532-428b-44b5-ab60-fdfcc7b7c58f	admin	2026-10-21 19:56:32-05	2026-10-21 19:31:06.058803-05	MANUAL
 \.
 
 
@@ -1644,7 +1648,7 @@ COPY public.usuarios (id_usuario, nom_usuario, nom_completo, cor_usuario, has_us
 6010e97d-9fbb-4df6-b51f-ebd34b6d9433	crojas	Carlos Rojas (Inactivo)	crojas@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	3	f	0	\N	2026-10-16 10:55:25.222549-05	\N
 757dee14-699f-470d-a65b-6ae01a46d5ac	dramos	Diego Ramos	dramos.nuevo@girasoles.com	100000.uwBgvjThaWU59T48FLoDtA==.RNQ0hHFQ8QPq2Hj/1sQh9j6/9/2cFNGDRnIMqo3/X/k=	3	t	0	\N	2026-10-16 17:46:13.949806-05	2026-10-17 11:03:53.373788-05
 920ba4f1-d552-4c76-b1c0-087b3b75770c	atorres	Ana Torres	atorres@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	2	t	0	\N	2026-10-16 10:55:25.222546-05	2026-10-20 18:37:38.719732-05
-05c84bab-bb5e-479f-8a19-f309b7fde947	admin	Administradora General	admin@girasoles.com	100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=	1	t	0	\N	2026-10-16 10:55:25.22248-05	2026-10-20 19:01:56.932754-05
+05c84bab-bb5e-479f-8a19-f309b7fde947	admin	Administradora General	admin@girasoles.com	100000.GUgXNk6jusz9ZqECzj039A==.oK8dwnfLNIiH5SnNIqPUGhkN65JeZAh/5wOHWVIZ0a4=	1	t	0	\N	2026-10-16 10:55:25.22248-05	2026-10-21 20:05:02.214467-05
 fdfbc247-2349-4bab-9d92-cc595b7a34d8	lperez	Luis Pérez	lperez@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	3	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-20 18:33:19.945535-05
 89d58dff-4e1b-414c-8bf9-d59d098ec29f	msoto	María Soto A	msoto@girasoles.com	100000.osJuAs2gM4bBVq2C+vxRwQ==.zG/wiHDtZssoRvB3atxuGciNknbazMjt+oGZpd7JZS8=	4	t	0	\N	2026-10-16 10:55:25.222548-05	2026-10-20 18:37:29.898787-05
 \.
@@ -2360,5 +2364,5 @@ ALTER TABLE ONLY public.menus_completos_partes
 -- PostgreSQL database dump complete
 --
 
-\unrestrict h4dc0lCWW0at14aGzwZyndLRbCycudY056YS2DR0dd7z8TJZRayP61yw9T7CzGz
+\unrestrict euYVMnvqNqsqqoNd0U66DNbx6HdBgtTEdVMVm3uLkIYAEpBCHigdhgLiDqAztKm
 
