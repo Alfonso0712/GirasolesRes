@@ -4,34 +4,42 @@
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --text-nav: 0.9375rem;
   --text-nav-sm: 0.8125rem;
+
+  --color-primary: #C74E00;
+  --color-primary-hover: #B84600;
+  --color-brand-dark: #482813;
+  --color-brand-surface: #5A351D;
+  --color-canvas: #FAF7F4;
+  --color-surface: #FFFFFF;
+
+  --color-ink: #2C1A0E;
+  --color-ink-fill: #2C1A0E;
+  --color-ink-muted: #7C6F66;
+  --color-ink-faint: #A89F96;
+  --color-accent: #B84500;
+  --color-line: #E5E0DB;
+  --color-line-soft: #F0EBE6;
+  --color-sidebar: #482813;
+
+  --color-text-main: var(--color-ink);
+  --color-text-muted: var(--color-ink-muted);
+
+  /* Semántica */
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FDE68A;
+  --color-danger: #E11D48;
+  --color-danger-bg: #FFF1F2;
+  --color-danger-border: #FECDD3;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+  --color-info-border: #BFDBFE;
 }
 
 @layer base {
-  :root {
-    --color-primary: #C74E00;
-    --color-primary-hover: #B84600;
-    --color-brand-dark: #482813;
-    --color-brand-surface: #5A351D;
-    --color-text-main: #2C1A0E;
-    --color-text-muted: #7C6F66;
-    --color-canvas: #FAF7F4;
-    --color-surface: #FFFFFF;
-    
-    /* Semántica */
-    --color-success: #059669;
-    --color-success-bg: #ECFDF5;
-    --color-success-border: #A7F3D0;
-    --color-warning: #D97706;
-    --color-warning-bg: #FFFBEB;
-    --color-warning-border: #FDE68A;
-    --color-danger: #E11D48;
-    --color-danger-bg: #FFF1F2;
-    --color-danger-border: #FECDD3;
-    --color-info: #2563EB;
-    --color-info-bg: #EFF6FF;
-    --color-info-border: #BFDBFE;
-  }
-
   body {
     font-family: var(--font-sans);
     color: #2C1A0E;
