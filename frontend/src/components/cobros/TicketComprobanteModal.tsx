@@ -30,7 +30,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
       aria-labelledby="modal-ticket-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-neutral-200/80 overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] animate-in zoom-in-95 duration-200">
+      <div className="force-light bg-white rounded-2xl max-w-md w-full shadow-2xl border border-neutral-200/80 overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="shrink-0 p-4 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/70">
           <div className="flex items-center gap-2.5">
