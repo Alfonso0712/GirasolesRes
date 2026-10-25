@@ -64,7 +64,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('cocina')}
-            className="p-4 bg-primary text-white hover:bg-primary rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
             <ChefHat className="w-5 h-5" />
             <span>PANTALLA DE COMANDAS (KDS)</span>

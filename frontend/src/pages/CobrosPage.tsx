@@ -221,7 +221,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setAbrirCajaModalOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-primary hover:bg-primary text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                    className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
                   >
                     <DollarSign className="w-4 h-4" />
                     <span>Abrir caja</span>

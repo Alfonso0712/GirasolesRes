@@ -67,7 +67,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('pedido-mesa')}
-            className="p-4 bg-primary text-white hover:bg-primary rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
             <UtensilsCrossed className="w-5 h-5" />
             <span>NUEVO PEDIDO DE MESA</span>

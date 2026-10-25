@@ -367,7 +367,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               type="button"
               onClick={handleGuardar}
               disabled={loading || lineas.length === 0}
-              className="py-3 px-6 rounded-xl bg-primary text-white font-semibold text-xs hover:bg-primary transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
+              className="py-3 px-6 rounded-xl bg-primary text-white font-semibold text-xs hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
             >
               {loading ? 'Guardando…' : 'Guardar Cambios'}
             </button>

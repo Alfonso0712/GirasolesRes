@@ -200,7 +200,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               <button
                 type="button"
                 onClick={handleAbrirCrear}
-                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary text-white text-xs font-semibold flex items-center gap-2 shadow-2xs hover:shadow transition-all cursor-pointer min-h-[40px]"
+                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-2 shadow-2xs hover:shadow transition-all cursor-pointer min-h-[40px]"
               >
                 <Plus className="w-4 h-4" />
                 <span>Nueva mesa</span>

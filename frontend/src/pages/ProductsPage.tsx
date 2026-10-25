@@ -301,7 +301,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               ref={nuevoBtnRef}
               type="button"
               onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo producto</span>

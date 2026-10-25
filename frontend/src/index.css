@@ -7,7 +7,7 @@
   --text-nav-sm: 0.8125rem;
 
   --color-primary: #C74E00;
-  --color-primary-hover: #B84600;
+  --color-primary-hover: #9A3A00;
   --color-brand-dark: #482813;
   --color-brand-surface: #5A351D;
   --color-canvas: #FAF7F4;
@@ -117,7 +117,7 @@
     --color-line-strong: #7A7270;
     --color-accent: #E8B49A;
     --color-primary: #9E5A3C;
-    --color-primary-hover: #8A4B2E;
+    --color-primary-hover: #733D25;
     --color-brand-tint: #3A2A22;
     --color-sidebar-line: rgb(255 255 255 / 0.08);
     --color-fill-strong: #3A3634;
@@ -295,7 +295,7 @@
     --color-line-strong: #E5E0DB;
     --color-accent: #B84500;
     --color-primary: #C74E00;
-    --color-primary-hover: #B84600;
+    --color-primary-hover: #9A3A00;
     --color-brand-tint: #FFF3E0;
     --color-sidebar-line: rgb(120 53 15 / 0.4);
     --color-fill-strong: #171717;
