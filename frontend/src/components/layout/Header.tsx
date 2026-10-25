@@ -1,8 +1,9 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { KeyRound, LogOut, ChevronDown, Menu } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 
 import { obtenerIniciales } from '../../utils/avatar';
+import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
   session?: UserSession | null;
@@ -89,6 +90,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {/* RN-16: Solo el Administrador puede cambiar su contraseña desde la barra superior */}
             {esAdmin && onCambiarPassword && (
               <button
@@ -136,6 +138,8 @@ export const Header: React.FC<HeaderProps> = ({
                 <p className="text-xs font-bold text-neutral-900 truncate">{session?.nombre}</p>
                 <p className="text-xs text-neutral-500">{session?.rol}</p>
               </div>
+
+              <ThemeToggle inMobileMenu onAction={() => setMenuMovilAbierto(false)} />
 
               {esAdmin && onCambiarPassword && (
                 <button
