@@ -382,20 +382,20 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           }
           emptyActionLabel={tieneFiltrosActivos ? 'Ver todos los cierres' : undefined}
           onEmptyAction={tieneFiltrosActivos ? limpiarFiltros : undefined}
-          minWidth="min-w-[980px]"
+          minWidth="min-w-[900px]"
         >
           <TableHead>
             <tr>
-              <th scope="col" className="px-4 py-3.5">Turno</th>
-              <th scope="col" className="px-4 py-3.5">Cajero(a)</th>
-              <th scope="col" className="px-4 py-3.5 text-right">Monto inicial</th>
-              <th scope="col" className="px-4 py-3.5 text-right">Efectivo</th>
-              <th scope="col" className="px-4 py-3.5 text-right">Yape</th>
-              <th scope="col" className="px-4 py-3.5 text-right">Total ventas</th>
-              <th scope="col" className="px-4 py-3.5 text-right">Contado</th>
-              <th scope="col" className="px-4 py-3.5 text-right">Diferencia</th>
-              <th scope="col" className="px-4 py-3.5 text-center">Estado</th>
-              <th scope="col" className="px-4 py-3.5 text-center">Acciones</th>
+              <th scope="col" className="px-3 py-3.5">Turno</th>
+              <th scope="col" className="px-3 py-3.5">Cajero(a)</th>
+              <th scope="col" className="px-3 py-3.5 text-right">Monto inicial</th>
+              <th scope="col" className="px-3 py-3.5 text-right">Efectivo</th>
+              <th scope="col" className="px-3 py-3.5 text-right">Yape</th>
+              <th scope="col" className="px-3 py-3.5 text-right">Total ventas</th>
+              <th scope="col" className="px-3 py-3.5 text-right">Contado</th>
+              <th scope="col" className="px-3 py-3.5 text-right">Diferencia</th>
+              <th scope="col" className="px-3 py-3.5 text-center">Estado</th>
+              <th scope="col" className="px-3 py-3.5 text-center">Acciones</th>
             </tr>
           </TableHead>
 
@@ -436,7 +436,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   }`}
                 >
                   {/* Turno en dos líneas: Apertura y Cierre */}
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-3">
                     <div className="flex flex-col">
                       <span className="font-semibold text-xs text-ink whitespace-nowrap">
                         Apertura: {fechaAperturaStr}
@@ -448,32 +448,32 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   </td>
 
                   {/* Cajero */}
-                  <td className="px-4 py-3 font-semibold text-sm text-ink whitespace-nowrap">
+                  <td className="px-3 py-3 font-semibold text-sm text-ink whitespace-nowrap">
                     {c.cajero || c.cajeroApertura || 'Cajero'}
                   </td>
 
                   {/* Monto Inicial */}
-                  <td className="px-4 py-3 text-right font-medium text-sm text-neutral-700 tabular-nums whitespace-nowrap">
+                  <td className="px-3 py-3 text-right font-medium text-sm text-neutral-700 tabular-nums whitespace-nowrap">
                     S/ {(c.montoInicial ?? 0).toFixed(2)}
                   </td>
 
                   {/* Efectivo */}
-                  <td className="px-4 py-3 text-right font-medium text-sm text-ink tabular-nums whitespace-nowrap">
+                  <td className="px-3 py-3 text-right font-medium text-sm text-ink tabular-nums whitespace-nowrap">
                     S/ {(c.ventasEfectivo ?? c.efectivo ?? 0).toFixed(2)}
                   </td>
 
                   {/* Yape */}
-                  <td className="px-4 py-3 text-right font-medium text-sm text-purple-900 tabular-nums whitespace-nowrap">
+                  <td className="px-3 py-3 text-right font-medium text-sm text-purple-900 tabular-nums whitespace-nowrap">
                     S/ {(c.ventasYape ?? c.yape ?? 0).toFixed(2)}
                   </td>
 
                   {/* Total Ventas */}
-                  <td className="px-4 py-3 text-right font-semibold text-sm text-accent tabular-nums whitespace-nowrap">
+                  <td className="px-3 py-3 text-right font-semibold text-sm text-accent tabular-nums whitespace-nowrap">
                     S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
                   </td>
 
                   {/* Contado */}
-                  <td className="px-4 py-3 text-right font-medium text-sm text-ink tabular-nums whitespace-nowrap">
+                  <td className="px-3 py-3 text-right font-medium text-sm text-ink tabular-nums whitespace-nowrap">
                     {abierta ? (
                       <span className="text-neutral-400 font-normal">—</span>
                     ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
@@ -484,7 +484,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   </td>
 
                   {/* Diferencia / Cuadre con StatusBadge */}
-                  <td className="px-4 py-3 text-right tabular-nums whitespace-nowrap">
+                  <td className="px-3 py-3 text-right tabular-nums whitespace-nowrap">
                     {abierta ? (
                       <span className="text-neutral-400 font-normal">—</span>
                     ) : diferenciaNum === null ? (
@@ -499,7 +499,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   </td>
 
                   {/* Estado con StatusBadge */}
-                  <td className="px-4 py-3 text-center whitespace-nowrap">
+                  <td className="px-3 py-3 text-center whitespace-nowrap">
                     {abierta ? (
                       <StatusBadge status="Abierta" intent="success" />
                     ) : c.conAjustes || c.tieneAjustesPosteriores ? (
@@ -510,7 +510,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                   </td>
 
                   {/* Acciones con IconActionButton */}
-                  <td className="px-4 py-3 text-center whitespace-nowrap">
+                  <td className="px-3 py-3 text-center whitespace-nowrap">
                     <div className="flex items-center justify-center gap-1.5">
                       <IconActionButton
                         icon={Eye}
