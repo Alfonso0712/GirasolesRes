@@ -26,6 +26,11 @@
     <ProjectReference Include="..\..\backend\GirasolesRes.Domain\GirasolesRes.Domain.csproj" />
     <ProjectReference Include="..\..\backend\GirasolesRes.Application\GirasolesRes.Application.csproj" />
     <ProjectReference Include="..\..\backend\GirasolesRes.Infrastructure\GirasolesRes.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\backend\GirasolesRes.API\GirasolesRes.API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

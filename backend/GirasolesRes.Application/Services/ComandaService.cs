@@ -70,7 +70,7 @@ public class ComandaService : IComandaService
                 Modificada = c.Cmd_Modificada,
                 RegistradoPor = c.Cmd_Pedido?.Ped_Usuario?.Usu_Nombre ?? "Sistema",
                 MinutosEspera = minutosEspera,
-                EsDemora = minutosEspera >= 15, // RV-91: Demora a partir de 15 minutos
+                EsDemora = minutosEspera >= RestauranteConstantes.MinutosDemoraCocina, // RV-91: Demora a partir de 15 minutos
                 Lineas = c.Cmd_Detalles.Select(d =>
                 {
                     var nombreCompleto = !string.IsNullOrWhiteSpace(d.Dtc_Elecciones)

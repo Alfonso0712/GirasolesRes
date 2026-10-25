@@ -185,7 +185,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               </button>
             </div>
 
-            {(esAdmin || esCajero) && onNavigateToPedidoLlevar && (
+            {esCajero && onNavigateToPedidoLlevar && (
               <button
                 type="button"
                 onClick={onNavigateToPedidoLlevar}

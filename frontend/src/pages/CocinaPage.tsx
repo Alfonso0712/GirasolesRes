@@ -40,8 +40,11 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         if (nuevoToken && onUpdateSession) {
           onUpdateSession({ ...session, token: nuevoToken });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.warn('Error al renovar token periódico de cocina:', err);
+        if ((err?.status === 401 || err?.message?.toLowerCase().includes('sesión expiró') || err?.message?.toLowerCase().includes('vencida')) && onLogout) {
+          onLogout();
+        }
       }
     }, INTERVALO_MS);
 

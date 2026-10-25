@@ -328,7 +328,7 @@ public class InicioService : IInicioService
 
         // 3. Comandas con más de 15 minutos de espera (MSG-205, Prioridad 3)
         var comandas = await _comandaService.ListarComandasAsync("pendiente,enPreparacion");
-        var demoraCount = comandas.Items.Count(c => c.MinutosEspera >= 15);
+        var demoraCount = comandas.Items.Count(c => c.MinutosEspera >= RestauranteConstantes.MinutosDemoraCocina);
         if (demoraCount > 0)
         {
             alertas.Add(new AlertaInicioDto(
