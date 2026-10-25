@@ -128,7 +128,8 @@ public class AuthService : IAuthService
             Token = token,
             Rol = usuario.Usu_Rol.ToString(),
             Nombre = usuario.Usu_Nombre,
-            Usuario = usuario.Usu_Usuario
+            Usuario = usuario.Usu_Usuario,
+            Tema = usuario.Usu_Tema
         };
 
         return ApiResponse<LoginResponse>.Exitoso(responseData, MensajesCatalogo.MSG_08);
