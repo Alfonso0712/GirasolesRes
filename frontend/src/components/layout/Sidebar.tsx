@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               ? 'bg-emerald-500 text-white'
               : cajaEstado === 'anteriorSinCerrar'
               ? 'bg-rose-500 text-white animate-pulse'
-              : 'bg-stone-600 text-amber-200'
+              : 'bg-[#57534E] text-[#FDE68A]'
           }`}
         >
           {cajaEstado === 'abierta'
@@ -176,7 +176,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               type="button"
               onClick={onCloseMobile}
               aria-label="Cerrar menú"
-              className="lg:hidden p-2 text-amber-200/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
+              className="lg:hidden p-2 text-[#FDE68A]/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
             >
               <X className="w-5 h-5" />
             </button>
@@ -192,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 ${
               paginaActiva === 'inicio'
                 ? 'bg-primary text-white shadow-md font-semibold'
-                : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+                : 'text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white'
             }`}
           >
             <Home className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
@@ -232,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             ? 'bg-emerald-400'
                             : cajaEstado === 'anteriorSinCerrar'
                             ? 'bg-rose-400 animate-pulse'
-                            : 'bg-stone-400'
+                            : 'bg-[#A8A29E]'
                         }`}
                         title={`Caja: ${cajaEstado}`}
                       />
@@ -259,7 +259,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           className={`w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
                             esActivo
                               ? 'bg-primary text-white shadow-md font-semibold'
-                              : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+                              : 'text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white'
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
@@ -282,7 +282,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-white tracking-wide">Acceso protegido</p>
-            <p className="text-xs text-amber-200/70">Sesión segura y activa</p>
+            <p className="text-xs text-[#FDE68A]/70">Sesión segura y activa</p>
           </div>
         </div>
       </aside>

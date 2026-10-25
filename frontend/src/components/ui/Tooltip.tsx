@@ -246,7 +246,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
               visibility: isPositioned ? 'visible' : 'hidden',
               opacity: isPositioned ? 1 : 0,
             }}
-            className={`z-50 pointer-events-none px-2.5 py-1 text-xs font-medium text-white bg-fill-strong/95 backdrop-blur-xs rounded-md shadow-lg border border-neutral-700/60 max-w-xs break-words transition-opacity duration-150 motion-reduce:transition-none ${className}`}
+            className={`z-50 pointer-events-none px-2.5 py-1 text-xs font-medium text-white bg-fill-strong/95 backdrop-blur-xs rounded-md shadow-lg border border-[#404040]/60 max-w-xs break-words transition-opacity duration-150 motion-reduce:transition-none ${className}`}
           >
             {content}
           </div>,
