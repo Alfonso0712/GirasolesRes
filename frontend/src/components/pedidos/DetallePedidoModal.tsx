@@ -80,7 +80,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="detalle-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
         {/* Cabecera */}
@@ -119,7 +119,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
         {/* Motivo de anulación si aplica */}
         {pedido.estado.toLowerCase() === 'anulado' && pedido.motivoAnulacion && (
           <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
             <div>
               <span className="font-bold">Motivo de anulación: </span>
               <span>{pedido.motivoAnulacion}</span>

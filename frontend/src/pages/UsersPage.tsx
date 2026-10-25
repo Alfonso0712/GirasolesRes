@@ -81,9 +81,9 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
       case 'Cajero':
         return 'bg-emerald-50 text-emerald-900 border-emerald-200/90';
       case 'Mozo':
-        return 'bg-sky-50 text-sky-900 border-sky-200/90';
+        return 'bg-role-mozo-bg text-role-mozo-text border-role-mozo-border';
       case 'Cocinero':
-        return 'bg-orange-50 text-orange-900 border-orange-200/90';
+        return 'bg-role-cocinero-bg text-role-cocinero-text border-role-cocinero-border';
       default:
         return 'bg-neutral-100 text-neutral-700 border-neutral-200';
     }
@@ -92,7 +92,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
   if (!esAdmin) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+        <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
           <ShieldAlert className="w-8 h-8" />
         </div>
         <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
@@ -115,7 +115,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         {avisoExito && (
           <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-800 text-sm shadow-2xs animate-in fade-in slide-in-from-top-2">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
               <span className="font-semibold">{avisoExito}</span>
             </div>
             <button
@@ -132,7 +132,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         {avisoError && (
           <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between text-rose-800 text-sm shadow-2xs animate-in fade-in slide-in-from-top-2">
             <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+              <AlertCircle className="w-5 h-5 text-danger shrink-0" />
               <span className="font-semibold">{avisoError}</span>
             </div>
             <button
@@ -270,7 +270,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                           {/* Nombre */}
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-accent font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                              <div className="w-8 h-8 rounded-lg bg-brand-tint text-accent font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                                 {obtenerIniciales(u.nombre)}
                               </div>
                               <span className="font-semibold text-ink text-sm break-words">

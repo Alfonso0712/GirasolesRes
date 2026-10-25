@@ -41,7 +41,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
       {hayCajaAnterior ? (
         <div className="p-4 bg-rose-50 border border-rose-300 rounded-2xl flex items-center justify-between gap-4 text-rose-900 shadow-xs">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-danger shrink-0" />
             <span className="text-sm font-semibold">
               Hay una caja de un día anterior sin cerrar. Ciérrela antes de abrir una nueva o cobrar.
             </span>
@@ -57,7 +57,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
       ) : !cajaAbierta ? (
         <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl flex items-center justify-between gap-4 text-amber-900 shadow-xs">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
             <span className="text-sm font-semibold">
               Todavía no hay caja abierta. Ábrala para empezar a cobrar.
             </span>
@@ -94,7 +94,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
               <span>COBRAR PEDIDO</span>
             </button>
             {!cajaAbierta && (
-              <span className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-xs px-2.5 py-1 rounded-md shadow-md whitespace-nowrap z-20">
+              <span className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-fill-strong text-white text-xs px-2.5 py-1 rounded-md shadow-md whitespace-nowrap z-20">
                 Abra la caja primero
               </span>
             )}

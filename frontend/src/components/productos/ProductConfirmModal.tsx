@@ -73,7 +73,7 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-modal-title"
@@ -93,7 +93,7 @@ export const ProductConfirmModal: React.FC<ProductConfirmModalProps> = ({
             {esDesactivar ? (
               <PowerOff className="w-6 h-6 text-accent" />
             ) : (
-              <Power className="w-6 h-6 text-emerald-600" />
+              <Power className="w-6 h-6 text-success" />
             )}
           </div>
 

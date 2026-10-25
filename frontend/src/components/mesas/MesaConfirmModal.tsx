@@ -77,7 +77,7 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-mesa-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
@@ -89,7 +89,7 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
                 estaBloqueadaPorOcupada
-                  ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                  ? 'bg-rose-50 text-danger border border-rose-200'
                   : esDesactivar
                   ? 'bg-amber-50 text-accent border border-amber-200'
                   : 'bg-emerald-50 text-emerald-700 border border-emerald-200'

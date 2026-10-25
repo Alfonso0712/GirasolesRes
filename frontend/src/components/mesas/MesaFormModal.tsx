@@ -157,7 +157,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-mesa-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
@@ -227,7 +227,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
               {errorNombre ? (
                 <p
                   id="error-nombre-mesa"
-                  className="mt-1.5 text-xs text-rose-600 flex items-center gap-1 font-medium animate-in fade-in duration-150"
+                  className="mt-1.5 text-xs text-danger flex items-center gap-1 font-medium animate-in fade-in duration-150"
                 >
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   <span>{errorNombre}</span>

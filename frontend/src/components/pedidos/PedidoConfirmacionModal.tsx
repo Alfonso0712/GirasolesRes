@@ -37,10 +37,10 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-exito-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 p-6 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 animate-in zoom-in-75 duration-300">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-success flex items-center justify-center mx-auto mb-4 animate-in zoom-in-75 duration-300">
           <CheckCircle2 className="w-10 h-10" />
         </div>
 

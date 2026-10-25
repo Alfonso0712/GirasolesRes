@@ -51,7 +51,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
       role="dialog"
       aria-modal="true"
       aria-labelledby="disponibilidad-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
@@ -63,7 +63,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
               className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${
                 esAgotar
                   ? 'bg-amber-50 text-accent border-amber-200'
-                  : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                  : 'bg-emerald-50 text-success border-emerald-200'
               }`}
             >
               {esAgotar ? (

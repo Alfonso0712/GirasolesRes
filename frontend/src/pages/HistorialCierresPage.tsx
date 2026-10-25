@@ -193,7 +193,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
   if (session.rol !== 'Administrador') {
     return (
       <div className="p-8 text-center bg-surface border border-rose-200 rounded-2xl shadow-xs space-y-3 text-ink max-w-2xl mx-auto my-8">
-        <ShieldAlert className="w-12 h-12 text-rose-600 mx-auto" />
+        <ShieldAlert className="w-12 h-12 text-danger mx-auto" />
         <h2 className="text-lg font-bold text-rose-900">Acceso restringido</h2>
         <p className="text-sm text-neutral-600">
           Esta vista es exclusiva para el personal con rol Administrador. Si necesita consultar información de cierres, comuníquese con administración.
@@ -362,7 +362,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           {/* Alerta de Error en Rango de Fechas */}
           {errorFechas && (
             <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-semibold flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+              <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
               <span>{errorFechas}</span>
             </div>
           )}

@@ -235,7 +235,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         ref={modalRef}
         role="dialog"
@@ -268,7 +268,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
         {/* Global Error Banner (shrink-0) */}
         {errorServidor && (
           <div className="shrink-0 mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-rose-800 text-xs">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-danger shrink-0" />
             <span>{errorServidor}</span>
           </div>
         )}
@@ -305,7 +305,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               }`}
             />
             {errores.nombre && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.nombre}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.nombre}</p>
             )}
           </div>
 
@@ -338,7 +338,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 }`}
               />
               {errores.usuario && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.usuario}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.usuario}</p>
               )}
             </div>
 
@@ -366,7 +366,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 <option value="Cocinero">Cocinero</option>
               </select>
               {errores.rol && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.rol}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.rol}</p>
               )}
             </div>
           </div>
@@ -399,7 +399,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               }`}
             />
             {errores.correo && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.correo}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.correo}</p>
             )}
           </div>
 
@@ -440,7 +440,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 </button>
               </div>
               {errores.contrasena && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.contrasena}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.contrasena}</p>
               )}
             </div>
 
@@ -477,7 +477,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 </button>
               </div>
               {errores.confirmarContrasena && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.confirmarContrasena}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.confirmarContrasena}</p>
               )}
             </div>
           </div>

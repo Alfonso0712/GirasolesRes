@@ -223,7 +223,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
@@ -269,7 +269,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             {/* Banner de error general del servidor (ej. MSG-53, MSG-216) */}
             {errorServidor && (
               <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-rose-700 text-sm">
-                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-danger" />
                 <span>{errorServidor}</span>
               </div>
             )}
@@ -358,7 +358,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 disabled={guardando}
               />
               {errores.nombre ? (
-                <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errores.nombre}
                 </p>
@@ -409,7 +409,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </p>
                   )}
                   {errores.categoria && (
-                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {errores.categoria}
                     </p>
@@ -451,7 +451,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   </div>
 
                   {errores.precio && (
-                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {errores.precio}
                     </p>
@@ -510,7 +510,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </p>
                   )}
                   {errores.rol && (
-                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {errores.rol}
                     </p>

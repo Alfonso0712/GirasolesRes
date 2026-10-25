@@ -199,7 +199,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setCerrarCajaModalOpen(true)}
-                    className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                    className="px-3.5 py-2 rounded-xl bg-fill-strong hover:bg-fill-strong-soft text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
                   >
                     <Lock className="w-4 h-4" />
                     <span>Cerrar caja</span>

@@ -85,7 +85,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
             <p className="text-xs sm:text-sm text-rose-800 mt-1 font-medium">
               {textoMensaje}
             </p>
-            <p className="text-xs text-rose-600 mt-0.5">
+            <p className="text-xs text-danger mt-0.5">
               No es posible aperturar un nuevo turno ni cobrar pedidos hasta que la jornada previa sea conciliada y cerrada.
             </p>
           </div>

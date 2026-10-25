@@ -369,7 +369,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
             >
               {sonidoActivado ? (
                 <>
-                  <Volume2 className="w-4 h-4 text-emerald-600" />
+                  <Volume2 className="w-4 h-4 text-success" />
                   <span>Sonido: ON</span>
                 </>
               ) : (
@@ -426,7 +426,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         ) : comandas.length === 0 ? (
           /* Estado sin comandas (MSG-124 / Sección 7) */
           <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-surface/70 rounded-3xl border border-dashed border-amber-300 my-auto">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 shadow-xs">
+            <div className="w-20 h-20 rounded-3xl bg-emerald-50 text-success flex items-center justify-center mb-4 shadow-xs">
               <CheckCircle2 className="w-10 h-10" />
             </div>
             <h2 className="text-2xl font-bold font-sans text-neutral-800 mb-1">
@@ -532,7 +532,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-neutral-900/95 text-white px-5 sm:px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 sm:gap-6 border border-neutral-700 animate-in slide-in-from-bottom-4 duration-200 max-w-lg w-[90%]"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-fill-strong/95 text-white px-5 sm:px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 sm:gap-6 border border-neutral-700 animate-in slide-in-from-bottom-4 duration-200 max-w-lg w-[90%]"
         >
           <div className="flex-1">
             <p className="text-sm font-semibold">{avisoDeshacer.mensaje}</p>

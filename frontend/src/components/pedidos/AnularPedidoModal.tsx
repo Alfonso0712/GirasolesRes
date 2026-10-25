@@ -74,12 +74,12 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="anular-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 text-danger flex items-center justify-center">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
@@ -142,7 +142,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
               <div className="flex justify-between items-center text-xs text-neutral-500 mt-1 px-1">
                 <span>{motivo.trim().length}/100 caracteres (mín. 5)</span>
                 {errorValidacion && (
-                  <span className="text-rose-600 font-medium">{errorValidacion}</span>
+                  <span className="text-danger font-medium">{errorValidacion}</span>
                 )}
               </div>
             </div>

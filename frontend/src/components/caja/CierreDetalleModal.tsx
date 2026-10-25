@@ -156,7 +156,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="detalle-cierre-title"
-      className="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      className="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
     >
       <style>{`
         @media print {
@@ -242,7 +242,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               {/* Alerta de Ajustes Posteriores por Anulación */}
               {tieneAjustes && (
                 <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fade-in break-inside-avoid">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <span className="font-bold text-sm text-amber-900 block">
                       Turno con ventas anuladas después del cierre

@@ -111,7 +111,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
           </div>
         ) : (
           <div className="p-3.5 sm:p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-center gap-3 text-emerald-800 text-sm shadow-xs">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
             <div className="flex-1">
               <span className="font-semibold">Todo en orden:</span> no hay alertas por atender en este momento.
             </div>
@@ -341,7 +341,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-neutral-100">
               <h3 className="font-sans font-bold text-neutral-800 text-sm flex items-center gap-2">
-                <ClipboardList className="w-4 h-4 text-blue-600" />
+                <ClipboardList className="w-4 h-4 text-info" />
                 <span>Estado de Pedidos</span>
               </h3>
               <span className="text-xs font-semibold text-neutral-500">Operación</span>

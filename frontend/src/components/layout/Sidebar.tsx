@@ -150,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Backdrop Overlay */}
       {isOpenMobile && (
         <div
-          className="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 z-40 bg-fill-strong/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
           onClick={onCloseMobile}
           aria-hidden="true"
         />
@@ -163,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }`}
       >
         {/* Bloque 1: Cabecera Fija con Logo y botón cerrar móvil (shrink-0) */}
-        <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-amber-900/40 mb-2">
+        <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-sidebar-line mb-2">
           <div className="flex-1 flex items-center py-1">
             <img
               src={logoGirasoles}
@@ -278,7 +278,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Bloque 3: Pie Fijo de "Acceso protegido" (shrink-0) */}
-        <div className="shrink-0 pt-3 xl:pt-3.5 border-t border-amber-900/40 flex items-center gap-3 mt-1">
+        <div className="shrink-0 pt-3 xl:pt-3.5 border-t border-sidebar-line flex items-center gap-3 mt-1">
           <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-white tracking-wide">Acceso protegido</p>

@@ -35,7 +35,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
       {tieneDemora && (
         <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl flex items-center justify-between gap-4 text-amber-900 shadow-xs animate-pulse">
           <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-amber-600 shrink-0" />
+            <Clock className="w-6 h-6 text-warning shrink-0" />
             <div>
               <p className="text-sm font-bold">
                 Atención: hay comandas con más de 15 minutos de espera ({comandas?.masAntiguaMinutos} min).

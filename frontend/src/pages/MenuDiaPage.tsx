@@ -102,7 +102,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   if (!tienePermiso) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+        <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
           <ShieldAlert className="w-8 h-8" />
         </div>
         <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
@@ -231,7 +231,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           role="alert"
           className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3"
         >
-          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5" />
+          <AlertCircle className="w-5 h-5 shrink-0 text-danger mt-0.5" />
           <div className="flex-1 font-medium">{errorValidacionGuardar}</div>
         </div>
       )}
@@ -241,7 +241,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           role="status"
           className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3 animate-in fade-in"
         >
-          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-success" />
           <span className="font-medium">{avisoExito}</span>
         </div>
       )}
@@ -251,7 +251,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           role="alert"
           className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3"
         >
-          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
+          <AlertCircle className="w-5 h-5 shrink-0 text-danger" />
           <span className="font-medium">{avisoError}</span>
         </div>
       )}
@@ -488,7 +488,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     onClick={() => setCatCartaActiva(cat.id)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                       catCartaActiva === cat.id
-                        ? 'bg-neutral-900 text-white'
+                        ? 'bg-fill-strong text-white'
                         : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                     }`}
                   >
@@ -649,7 +649,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
                   <span>El menú actual está publicado y guardado.</span>
                 </div>
               )}

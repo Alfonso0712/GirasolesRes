@@ -148,7 +148,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"
@@ -182,7 +182,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         {/* Global Error Banner */}
         {errorServidor && (
           <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-rose-800 text-xs">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-danger shrink-0" />
             <span>{errorServidor}</span>
           </div>
         )}
@@ -219,7 +219,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               </button>
             </div>
             {errores.contrasenaActual && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.contrasenaActual}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.contrasenaActual}</p>
             )}
           </div>
 
@@ -252,7 +252,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               </button>
             </div>
             {errores.nuevaContrasena && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.nuevaContrasena}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.nuevaContrasena}</p>
             )}
           </div>
 
@@ -285,7 +285,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               </button>
             </div>
             {errores.confirmarContrasena && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.confirmarContrasena}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.confirmarContrasena}</p>
             )}
           </div>
 

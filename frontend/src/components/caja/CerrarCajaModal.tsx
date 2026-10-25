@@ -267,7 +267,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="cerrar-caja-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
@@ -514,7 +514,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
                       <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <DollarSign className="w-3 h-3 text-emerald-600" /> Total Ventas
+                        <DollarSign className="w-3 h-3 text-success" /> Total Ventas
                       </span>
                       <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
                         S/ {resumen.totalVentas.toFixed(2)}
@@ -601,7 +601,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       ) : (
                         <AlertTriangle
                           className={`w-5 h-5 shrink-0 ${
-                            diferenciaCalculada > 0 ? 'text-amber-600' : 'text-red-600'
+                            diferenciaCalculada > 0 ? 'text-warning' : 'text-red-600'
                           }`}
                         />
                       )}
@@ -698,7 +698,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
           {/* Diálogo Modal de Confirmación MSG-180 (RV-127 / E-306) */}
           {pasoConfirmacion && (
-            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
               <div
                 ref={confirmDialogRef}
                 className="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-ink space-y-4 animate-in zoom-in-95 duration-200"

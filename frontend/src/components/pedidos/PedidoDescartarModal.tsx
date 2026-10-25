@@ -29,7 +29,7 @@ export const PedidoDescartarModal: React.FC<PedidoDescartarModalProps> = ({
       aria-modal="true"
       aria-labelledby="modal-descartar-title"
       aria-describedby="modal-descartar-desc"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose();
       }}
@@ -38,7 +38,7 @@ export const PedidoDescartarModal: React.FC<PedidoDescartarModalProps> = ({
         <div className="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-canvas">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
+              <AlertTriangle className="w-5 h-5 text-warning" />
             </div>
             <div>
               <h2 id="modal-descartar-title" className="text-xl font-sans font-bold text-ink">

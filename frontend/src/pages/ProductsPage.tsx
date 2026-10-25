@@ -225,7 +225,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     return (
       <div className="flex-1 flex items-center justify-center p-6 bg-neutral-50/50">
         <div className="max-w-md w-full bg-surface rounded-2xl border border-rose-200 p-8 text-center shadow-lg">
-          <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 rounded-full bg-rose-50 text-danger flex items-center justify-center mx-auto mb-4">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <h2 className="text-xl font-bold text-neutral-900 mb-2">Acceso Restringido</h2>
@@ -255,7 +255,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-emerald-800 text-sm shadow-xs animate-in fade-in duration-200"
         >
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
             <span className="font-medium">{avisoExito}</span>
           </div>
           <button
@@ -276,7 +276,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           className="shrink-0 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between gap-3 text-rose-800 text-sm shadow-xs animate-in fade-in duration-200"
         >
           <div className="flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            <AlertCircle className="w-5 h-5 text-danger shrink-0" />
             <span className="font-medium">{avisoError}</span>
           </div>
           <button
@@ -605,7 +605,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               <button
                 type="button"
                 onClick={cargarMenusCompletos}
-                className="mt-3 px-4 py-2 bg-neutral-900 text-white rounded-xl text-xs font-semibold"
+                className="mt-3 px-4 py-2 bg-fill-strong text-white rounded-xl text-xs font-semibold"
               >
                 Reintentar
               </button>
@@ -679,7 +679,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                       {/* Incluye adicional */}
                       {m.incluye && (
                         <div className="mt-3 flex items-center gap-1.5 text-xs text-emerald-800 bg-emerald-50/70 border border-emerald-200/60 px-3 py-1.5 rounded-lg font-medium">
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <Sparkles className="w-3.5 h-3.5 text-success shrink-0" />
                           <span>Incluye: {m.incluye}</span>
                         </div>
                       )}
@@ -761,7 +761,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {/* Modal para Modificar Precio de Menú Completo (CUS04.5 / RV-160) */}
       {modalPrecioOpen && menuParaPrecio && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >
@@ -820,7 +820,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   />
                 </div>
                 {errorPrecio && (
-                  <p className="mt-1 text-xs text-rose-600 font-medium">{errorPrecio}</p>
+                  <p className="mt-1 text-xs text-danger font-medium">{errorPrecio}</p>
                 )}
                 <p className="mt-1 text-xs text-neutral-500">
                   Mayor a S/ 0.00 y no superior a S/ 999.99.
@@ -859,7 +859,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {/* Modal para Confirmar Cambio de Estado de Menú Completo (MSG-218) */}
       {modalEstadoMenuOpen && menuParaEstado && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >

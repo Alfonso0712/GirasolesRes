@@ -84,7 +84,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   // Flujo alterno E-33: Usuario con movimientos (RN-11 / MSG-34)
   if (errorMovimientos) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
         <div
           ref={modalRef}
           role="dialog"
@@ -102,7 +102,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </button>
 
           <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4 shadow-xs">
-            <AlertTriangle className="w-7 h-7 text-amber-600" />
+            <AlertTriangle className="w-7 h-7 text-warning" />
           </div>
 
           <h3 id="confirm-title" className="text-xl font-sans font-bold text-ink mb-2">
@@ -152,7 +152,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       subtitulo: 'No podrá iniciar sesión, pero se conservará su historial.',
       botonTexto: 'Desactivar',
       botonClase: 'bg-amber-600 hover:bg-amber-700 text-white',
-      icono: <Power className="w-6 h-6 text-amber-600" />,
+      icono: <Power className="w-6 h-6 text-warning" />,
       iconoBg: 'bg-amber-50'
     },
     activar: {
@@ -160,7 +160,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       subtitulo: 'Podrá iniciar sesión nuevamente.',
       botonTexto: 'Activar',
       botonClase: 'bg-emerald-600 hover:bg-emerald-700 text-white',
-      icono: <CheckCircle className="w-6 h-6 text-emerald-600" />,
+      icono: <CheckCircle className="w-6 h-6 text-success" />,
       iconoBg: 'bg-emerald-50'
     },
     eliminar: {
@@ -168,13 +168,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       subtitulo: 'Esta acción no se puede deshacer.',
       botonTexto: 'Eliminar usuario',
       botonClase: 'bg-rose-600 hover:bg-rose-700 text-white',
-      icono: <Trash2 className="w-6 h-6 text-rose-600" />,
+      icono: <Trash2 className="w-6 h-6 text-danger" />,
       iconoBg: 'bg-rose-50'
     }
   }[tipo];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         ref={modalRef}
         role="dialog"

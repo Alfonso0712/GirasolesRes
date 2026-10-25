@@ -24,7 +24,7 @@ export const AvisoComandaModal: React.FC<AvisoComandaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="aviso-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-amber-200 text-center relative animate-in zoom-in-95 duration-200">
         <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-accent flex items-center justify-center mx-auto mb-4 animate-bounce">

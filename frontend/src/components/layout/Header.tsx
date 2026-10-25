@@ -70,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="hidden md:flex items-center gap-6">
           {session && (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#FFF3E0] text-accent font-bold text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
+              <div className="w-9 h-9 rounded-lg bg-brand-tint text-accent font-bold text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
                 {obtenerIniciales(session.nombre)}
               </div>
               <div className="flex flex-col">
@@ -105,9 +105,9 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={onLogout}
-                className="flex items-center gap-1.5 text-xs font-semibold text-neutral-600 hover:text-rose-600 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-semibold text-neutral-600 hover:text-danger transition-colors cursor-pointer"
               >
-                <LogOut className="w-3.5 h-3.5 text-neutral-500 hover:text-rose-600" />
+                <LogOut className="w-3.5 h-3.5 text-neutral-500 hover:text-danger" />
                 <span>Cerrar sesión</span>
               </button>
             )}
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
             aria-expanded={menuMovilAbierto}
             aria-label="Menú de perfil de usuario"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-accent font-bold text-xs flex items-center justify-center border border-amber-200/60">
+            <div className="w-8 h-8 rounded-lg bg-brand-tint text-accent font-bold text-xs flex items-center justify-center border border-amber-200/60">
               {obtenerIniciales(session?.nombre)}
             </div>
             <ChevronDown className="w-4 h-4 text-neutral-500" />
@@ -158,9 +158,9 @@ export const Header: React.FC<HeaderProps> = ({
                     setMenuMovilAbierto(false);
                     onLogout();
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2.5 min-h-[44px]"
+                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium text-danger hover:bg-rose-50 flex items-center gap-2.5 min-h-[44px]"
                 >
-                  <LogOut className="w-4 h-4 text-rose-600" />
+                  <LogOut className="w-4 h-4 text-danger" />
                   <span>Cerrar sesión</span>
                 </button>
               )}

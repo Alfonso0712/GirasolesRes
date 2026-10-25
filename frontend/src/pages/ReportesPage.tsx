@@ -228,7 +228,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           {/* Aviso de Filtros Cambiados (RV-141 / MSG-196) */}
           {filtrosCambiados && !cargando && !errorRango && (
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium animate-in fade-in">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-warning shrink-0" />
               <span>Los filtros cambiaron. Pulse CONSULTAR para actualizar el reporte.</span>
             </div>
           )}
@@ -236,7 +236,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
         {/* Error de validación de fechas (MSG-190, MSG-191) */}
         {errorRango && (
-          <p className="text-xs text-rose-600 font-semibold flex items-center gap-1.5">
+          <p className="text-xs text-danger font-semibold flex items-center gap-1.5">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorRango}</span>
           </p>
@@ -247,7 +247,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
       {errorCarga && (
         <div className="shrink-0 p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between gap-3 text-rose-800 text-xs">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-danger shrink-0" />
             <span>{errorCarga}</span>
           </div>
           <button
@@ -560,7 +560,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
             {/* Aviso Informativo de Ventas Anuladas (RV-135 / RN-117 / MSG-199) */}
             {reporteVentas && reporteVentas.anuladas.cantidad > 0 && (
               <div className="p-3.5 bg-rose-50/80 border border-rose-200/80 rounded-2xl flex items-center gap-2.5 text-xs text-rose-800 shadow-2xs">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-danger shrink-0" />
                 <span>
                   <strong>Ventas Anuladas:</strong> Incluye {reporteVentas.anuladas.cantidad} venta(s)
                   anulada(s) por S/ {reporteVentas.anuladas.monto.toFixed(2)} que no se suman a los
@@ -617,7 +617,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                           title="Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres."
                           className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-accent border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
                         >
-                          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <AlertTriangle className="w-3.5 h-3.5 text-warning shrink-0" />
                           <span>Con ajustes</span>
                         </button>
                       ) : (

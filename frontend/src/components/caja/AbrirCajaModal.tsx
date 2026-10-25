@@ -182,7 +182,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="abrir-caja-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
@@ -330,7 +330,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
             /* Paso 2: Diálogo de Confirmación MSG-172 con Foco Inicial en Cancelar (RV-127) */
             <div className="space-y-4">
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-                <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <ShieldAlert className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                 <div className="text-sm">
                   <p className="font-bold text-amber-900">Confirmación de Apertura</p>
                   <p className="text-amber-800 mt-1">

@@ -158,7 +158,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
       role="dialog"
       aria-modal="true"
       aria-labelledby="contador-title"
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}

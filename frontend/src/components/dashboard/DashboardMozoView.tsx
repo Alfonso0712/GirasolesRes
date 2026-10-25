@@ -37,7 +37,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
       {misListos && misListos.cantidad > 0 ? (
         <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center justify-between gap-4 text-emerald-900 shadow-xs animate-pulse">
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-6 h-6 text-success shrink-0" />
             <div>
               <p className="text-sm font-bold">¡Tiene {misListos.cantidad} pedido(s) listos en cocina!</p>
               <p className="text-xs text-emerald-700">Por favor, acérquese a recogerlos para servir a los comensales.</p>

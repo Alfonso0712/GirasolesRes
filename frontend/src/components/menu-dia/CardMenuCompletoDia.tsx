@@ -68,7 +68,7 @@ export const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
                 Parte: {p.nombre}
               </span>
               {p.opciones.length === 0 ? (
-                <span className="text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md inline-block">
+                <span className="text-xs font-semibold text-danger bg-rose-50 px-2 py-0.5 rounded-md inline-block">
                   Falta elegir opciones
                 </span>
               ) : (
@@ -83,7 +83,7 @@ export const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
 
       {habilitado && !cumpleRV161 && (
         <div className="mt-4 p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
           <span>
             {nombre} necesita al menos una opción en &quot;
             {partesConFalta[0]?.nombre}&quot;. Seleccione opciones o quite el menú de hoy.

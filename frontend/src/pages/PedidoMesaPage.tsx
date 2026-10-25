@@ -186,7 +186,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
       {errorGeneral && (
         <div className="shrink-0 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between text-rose-700 text-xs sm:text-sm animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+            <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
             <span>{errorGeneral}</span>
           </div>
           <button
@@ -536,7 +536,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                     {/* Alerta de plato agotado en vivo */}
                     {tieneError && (
                       <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-xs text-rose-800 font-semibold flex items-center gap-1.5">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-danger" />
                         <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
                     )}
@@ -620,7 +620,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         <button
                           type="button"
                           onClick={() => quitarLineaByIndex(index)}
-                          className="w-7 h-7 rounded-lg border border-neutral-200 bg-surface text-neutral-500 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                          className="w-7 h-7 rounded-lg border border-neutral-200 bg-surface text-neutral-500 hover:text-danger hover:bg-rose-50 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                           title="Quitar línea del pedido"
                           aria-label="Quitar línea"
                         >
@@ -746,7 +746,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
 
       {/* MODAL / DRAWER MÓVIL PARA VER Y EDITAR LÍNEAS DEL PEDIDO */}
       {drawerMovilAbierto && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-xs flex flex-col justify-end animate-in fade-in duration-200">
+        <div className="lg:hidden fixed inset-0 z-50 bg-fill-strong/60 backdrop-blur-xs flex flex-col justify-end animate-in fade-in duration-200">
           <div className="bg-surface rounded-t-2xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-canvas">
               <div className="flex items-center gap-2">
@@ -799,7 +799,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                     {/* Alerta de plato agotado */}
                     {tieneError && (
                       <div className="mt-1.5 p-1.5 rounded-lg bg-rose-100/80 border border-rose-200 text-xs text-rose-800 font-semibold flex items-center gap-1.5">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-danger" />
                         <span>{erroresLineas[linea.productoId || ''] || 'Plato marcado como agotado.'}</span>
                       </div>
                     )}
@@ -876,7 +876,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                         <button
                           type="button"
                           onClick={() => quitarLineaByIndex(idx)}
-                          className="min-h-[36px] min-w-[36px] rounded-lg border border-neutral-200 bg-surface text-rose-600 hover:bg-rose-50 flex items-center justify-center active:scale-95"
+                          className="min-h-[36px] min-w-[36px] rounded-lg border border-neutral-200 bg-surface text-danger hover:bg-rose-50 flex items-center justify-center active:scale-95"
                           title="Quitar línea del pedido"
                           aria-label="Quitar línea"
                         >

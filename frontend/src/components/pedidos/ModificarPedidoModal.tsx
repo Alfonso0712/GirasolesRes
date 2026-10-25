@@ -161,7 +161,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modificar-title"
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       >
         <div className="bg-surface rounded-2xl p-5 sm:p-7 max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
           {/* Header */}
@@ -193,7 +193,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
 
           {errorValidacion && (
             <div className="mt-3 p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+              <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
               <span>{errorValidacion}</span>
             </div>
           )}
@@ -334,7 +334,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                     </div>
 
                     {prod.agotado ? (
-                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-bold text-danger bg-rose-50 px-2 py-0.5 rounded-md">
                         Agotado
                       </span>
                     ) : (
@@ -380,7 +380,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-150"
+          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-150"
         >
           <div className="bg-surface rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-amber-200 text-center animate-in zoom-in-95 duration-150">
             <h4 className="font-bold text-ink text-base mb-2 font-sans">

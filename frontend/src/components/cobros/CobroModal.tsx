@@ -245,7 +245,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-cobro-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl max-w-lg w-full shadow-2xl border border-neutral-200/80 overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] animate-in zoom-in-95 duration-200">
         {/* Header */}
@@ -641,14 +641,14 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   </span>
                   <div
                     className={`text-xl font-bold font-sans tabular-nums tracking-tight ${
-                      montoRecibido < total ? 'text-rose-600' : 'text-emerald-700'
+                      montoRecibido < total ? 'text-danger' : 'text-emerald-700'
                     }`}
                   >
                     S/ {vuelto.toFixed(2)}
                   </div>
                 </div>
                 {montoRecibido < total && (
-                  <span className="text-xs text-rose-600 font-semibold">
+                  <span className="text-xs text-danger font-semibold">
                     Faltan S/ {faltante.toFixed(2)}
                   </span>
                 )}

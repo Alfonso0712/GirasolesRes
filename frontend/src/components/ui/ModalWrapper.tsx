@@ -112,11 +112,11 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       role="dialog"
       aria-modal="true"
       aria-label={title || 'Ventana emergente'}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className={`w-full ${maxWidthClasses[maxWidth]} bg-surface rounded-2xl sm:rounded-3xl shadow-2xl border border-neutral-200/90 flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden animate-in zoom-in-95 duration-150 ${className}`}
+        className={`w-full ${maxWidthClasses[maxWidth]} bg-surface-raised rounded-2xl sm:rounded-3xl shadow-2xl border border-neutral-200/90 flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden animate-in zoom-in-95 duration-150 ${className}`}
       >
         {(title || showCloseButton) && (
           <header className="px-5 py-4 sm:px-6 sm:py-5 border-b border-line flex items-center justify-between shrink-0 bg-surface">

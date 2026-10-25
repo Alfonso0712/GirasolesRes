@@ -70,7 +70,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="platos-agotados-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-neutral-200 flex flex-col max-h-[85vh]">
         {/* Header */}
@@ -174,7 +174,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-neutral-800 text-white text-sm font-semibold hover:bg-neutral-900 transition-colors cursor-pointer min-h-[44px]"
+            className="px-6 py-2.5 rounded-xl bg-fill-strong-soft text-white text-sm font-semibold hover:bg-fill-strong transition-colors cursor-pointer min-h-[44px]"
           >
             Listo, volver a cocina
           </button>

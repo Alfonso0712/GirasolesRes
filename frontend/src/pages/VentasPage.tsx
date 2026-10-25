@@ -356,7 +356,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           </div>
 
           {errorFechas && (
-            <p className="text-xs text-rose-600 font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
+            <p className="text-xs text-danger font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{errorFechas}</span>
             </p>
@@ -453,7 +453,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                               </>
                             ) : (
                               <>
-                                <Utensils className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                                <Utensils className="w-3.5 h-3.5 text-info shrink-0" />
                                 <span>{v.mesa || 'Salón'}</span>
                               </>
                             )}

@@ -137,7 +137,7 @@ export const Select: React.FC<SelectProps> = ({
           htmlFor={selectId}
           className="block text-xs sm:text-sm font-semibold text-ink mb-1.5"
         >
-          {label} {required && <span className="text-rose-600">*</span>}
+          {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
 
@@ -162,7 +162,7 @@ export const Select: React.FC<SelectProps> = ({
           } ${
             error
               ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-500 focus:ring-rose-200'
-              : 'border-neutral-200 bg-surface text-neutral-800 hover:border-neutral-300 focus:border-accent focus:ring-accent/20'
+              : 'border-line-strong bg-surface text-neutral-800 hover:border-neutral-300 focus:border-accent focus:ring-accent/20'
           } ${disabled ? 'opacity-50 cursor-not-allowed bg-neutral-100 text-neutral-400' : ''} ${selectClassName}`}
         >
           {leftIcon && (
@@ -243,7 +243,7 @@ export const Select: React.FC<SelectProps> = ({
       )}
 
       {error && (
-        <p className="text-xs text-rose-600 mt-1 font-medium">{error}</p>
+        <p className="text-xs text-danger mt-1 font-medium">{error}</p>
       )}
     </div>
   );

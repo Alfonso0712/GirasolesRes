@@ -67,7 +67,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-armar-menu-title"
-      className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose();
       }}

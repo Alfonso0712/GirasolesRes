@@ -53,7 +53,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="titulo-detalle-venta"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div className="bg-surface rounded-2xl max-w-2xl w-full p-6 text-neutral-800 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
         {/* Encabezado */}
@@ -114,7 +114,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               {esAnulada && (
                 <div className="p-4 bg-rose-50/80 rounded-xl border border-rose-200/90 text-xs text-rose-900 space-y-1.5">
                   <div className="flex items-center gap-2 font-bold text-rose-800">
-                    <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <AlertTriangle className="w-4 h-4 text-danger shrink-0" />
                     <span>Esta venta fue ANULADA y no suma en los totales ni cierre de caja.</span>
                   </div>
                   <div className="pl-6 text-xs text-rose-950 space-y-0.5">

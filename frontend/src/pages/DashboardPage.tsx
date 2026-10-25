@@ -52,7 +52,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   if (errorGeneral && !data) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mb-4">
+        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-danger mb-4">
           <AlertCircle className="w-7 h-7" />
         </div>
         <h2 className="text-xl font-bold font-sans text-neutral-800 mb-2">
@@ -78,11 +78,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   // Helper para renderizar error específico por bloque (RV-149, RNF-55)
   const renderBloqueError = (nombreBloque: string) => (
     <div className="p-4 bg-rose-50/70 border border-rose-200 rounded-2xl text-center">
-      <AlertCircle className="w-6 h-6 text-rose-600 mx-auto mb-2" />
+      <AlertCircle className="w-6 h-6 text-danger mx-auto mb-2" />
       <p className="text-xs font-semibold text-rose-800 mb-1">
         No se pudo cargar este bloque
       </p>
-      <p className="text-xs text-rose-600 mb-3">
+      <p className="text-xs text-danger mb-3">
         Intente nuevamente sin afectar el resto del panel.
       </p>
       <button
@@ -113,7 +113,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
             <div className="flex items-center gap-3 shrink-0">
               {sinConexion ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                  <WifiOff className="w-3.5 h-3.5 text-amber-600" />
+                  <WifiOff className="w-3.5 h-3.5 text-warning" />
                   Sin conexión
                 </span>
               ) : actualizando ? (

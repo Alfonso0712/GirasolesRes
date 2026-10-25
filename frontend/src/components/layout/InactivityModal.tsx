@@ -61,14 +61,14 @@ export const InactivityModal: React.FC<InactivityModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="inactivity-title"
         className="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-amber-200 text-center relative"
       >
-        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 border border-amber-200/60 shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-warning flex items-center justify-center mx-auto mb-4 border border-amber-200/60 shadow-xs">
           <Clock className="w-7 h-7 animate-pulse" />
         </div>
 
