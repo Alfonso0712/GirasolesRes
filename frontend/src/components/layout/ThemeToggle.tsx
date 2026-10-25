@@ -1,6 +1,7 @@
 import React from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { useTheme } from '../../hooks/useTheme';
+import { useTheme, type Theme } from '../../hooks/useTheme';
+import { actualizarTema } from '../../services/perfilService';
 
 export interface ThemeToggleProps {
   inMobileMenu?: boolean;
@@ -8,14 +9,24 @@ export interface ThemeToggleProps {
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({ inMobileMenu = false, onAction }) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const isDark = theme === 'dark';
   const label = isDark ? 'Activar modo claro' : 'Activar modo oscuro';
   const textLabel = isDark ? 'Modo claro' : 'Modo oscuro';
 
   const handleClick = () => {
-    toggleTheme();
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
     onAction?.();
+
+    // Guardar en backend sin await bloqueante
+    try {
+      actualizarTema(next).catch(() => {
+        // En caso de fallo de red, 400 o 5xx, no revertir el tema visible
+      });
+    } catch {
+      // Ignorar errores síncronos
+    }
   };
 
   if (inMobileMenu) {
