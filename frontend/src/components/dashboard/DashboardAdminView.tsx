@@ -275,7 +275,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   <span className="font-semibold tabular-nums text-rose-700">{mesas?.ocupadas ?? 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Capacidad total:</span>
+                  <span>Total mesas:</span>
                   <span className="font-semibold tabular-nums">{(mesas?.libres ?? 0) + (mesas?.ocupadas ?? 0)}</span>
                 </div>
               </div>

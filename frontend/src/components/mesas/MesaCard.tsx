@@ -65,11 +65,12 @@ export const MesaCard: React.FC<MesaCardProps> = ({
 
     if (esMozo) {
       if (esLibre) onAccionRol?.(mesa, 'REGISTRAR PEDIDO');
-      else if (esOcupada) onAccionRol?.(mesa, 'AGREGAR PRODUCTOS');
+      else if (esOcupada) onAccionRol?.(mesa, 'OPCIONES_MESA_OCUPADA');
     } else if (esCajero && esOcupada) {
       onAccionRol?.(mesa, 'COBRAR');
     } else if (esAdmin) {
-      onEditar?.(mesa);
+      if (esOcupada) onAccionRol?.(mesa, 'OPCIONES_MESA_OCUPADA');
+      else onEditar?.(mesa);
     }
   };
 

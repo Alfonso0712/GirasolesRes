@@ -12,15 +12,19 @@ import type {
   AgregarLineasResultDto
 } from '../types/pedido';
 
+import { getMenusCompletosService } from '../services/menuCompletoService';
+
 interface UsePedidoMesaManagementProps {
   token: string;
   mesaIdInicial?: string | null;
+  modoInicial?: 'nuevo' | 'ampliacion';
   onLogout: (banner?: { type: 'success' | 'error' | 'info' | 'warning'; message: string }) => void;
 }
 
 export function usePedidoMesaManagement({
   token,
   mesaIdInicial,
+  modoInicial,
   onLogout,
 }: UsePedidoMesaManagementProps) {
   const [cargando, setCargando] = useState(true);
@@ -84,35 +88,71 @@ export function usePedidoMesaManagement({
     setErrorGeneral(null);
 
     try {
-      const [prods, mesas, menuHoy] = await Promise.all([
+      const [prods, mesas, menuHoy, menusCompletosActivos] = await Promise.all([
         pedidoService.obtenerCatalogoPedido(token),
         getMesasService({ estado: 'libre' }, token),
-        menuDiaService.obtenerMenuHoy(token).catch(() => null)
+        menuDiaService.obtenerMenuHoy(token).catch(() => null),
+        getMenusCompletosService(true, token).catch(() => [])
       ]);
 
-      const esDefinido = menuHoy ? menuHoy.definido : prods.length > 0;
-      setMenuDefinido(esDefinido);
+      setMenuDefinido(true); // RN-142: Sin menú del día definido no se bloquean ventas
       setCatalogo(prods);
       setMesasLibres(mesas);
 
-      if (menuHoy?.menusCompletos) {
+      if (menuHoy?.menusCompletos && menuHoy.menusCompletos.length > 0) {
         setMenusCompletos(menuHoy.menusCompletos);
+      } else if (menusCompletosActivos && menusCompletosActivos.length > 0) {
+        setMenusCompletos(menusCompletosActivos.map(m => ({
+          id: m.id,
+          nombre: m.nombre,
+          precio: m.precio,
+          incluye: m.incluye ?? null,
+          disponible: true,
+          motivoNoDisponible: null,
+          partes: m.partes.map(p => ({
+            id: p.id,
+            nombre: p.nombre,
+            orden: p.orden,
+            rolesPermitidos: p.rolesPermitidos,
+            opciones: prods
+              .filter(prod => p.rolesPermitidos.some(r => prod.categoria.toLowerCase().includes(r.toLowerCase())))
+              .map(prod => ({
+                productoId: prod.id,
+                nombre: prod.nombre,
+                agotado: prod.agotado
+              }))
+          }))
+        })));
       }
 
       if (mesaIdInicial) {
-        // Verificar si la mesa ya tiene un pedido activo (deriva a ampliación CUS07.2)
-        try {
-          const pedidoActivo = await pedidoService.obtenerPedidoActivoPorMesa(mesaIdInicial, token);
-          if (pedidoActivo) {
-            setModo('ampliacion');
-            setPedidoExistente(pedidoActivo);
-            setMesaSeleccionada({
-              id: mesaIdInicial,
-              nombre: pedidoActivo.mesaNombre || 'Mesa',
-              ocupacion: 'Ocupada',
-              activa: true
-            });
-          } else {
+        if (modoInicial === 'nuevo') {
+          setModo('nuevo');
+          let m = mesas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
+          if (!m) {
+            const todas = await getMesasService({}, token);
+            m = todas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
+          }
+          if (m) {
+            setMesaSeleccionada(m);
+            if (!mesas.some((item) => String(item.id).toLowerCase() === String(m!.id).toLowerCase())) {
+              setMesasLibres((prev) => [m!, ...prev]);
+            }
+          }
+        } else {
+          // Verificar si la mesa ya tiene un pedido activo (deriva a ampliación CUS07.2)
+          try {
+            const pedidoActivo = await pedidoService.obtenerPedidoActivoPorMesa(mesaIdInicial, token);
+            if (pedidoActivo) {
+              setModo('ampliacion');
+              setPedidoExistente(pedidoActivo);
+              setMesaSeleccionada({
+                id: mesaIdInicial,
+                nombre: pedidoActivo.mesaNombre || 'Mesa',
+                ocupacion: 'Ocupada',
+                activa: true
+              });
+            } else {
             let m = mesas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
             if (!m) {
               const todas = await getMesasService({}, token);
@@ -144,6 +184,7 @@ export function usePedidoMesaManagement({
             setMesaSeleccionada(mesaEncontrada);
           }
         }
+        }
       }
     } catch (err: any) {
       if (esErrorSesionVencida(err)) {
@@ -154,7 +195,7 @@ export function usePedidoMesaManagement({
     } finally {
       setCargando(false);
     }
-  }, [token, mesaIdInicial, onLogout]);
+  }, [token, mesaIdInicial, modoInicial, onLogout]);
 
   useEffect(() => {
     cargarDatos();

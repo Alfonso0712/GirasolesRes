@@ -102,8 +102,7 @@ public class PedidosController : ControllerBase
         }
 
         var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }

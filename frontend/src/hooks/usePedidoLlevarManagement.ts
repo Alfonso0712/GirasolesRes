@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { pedidoService } from '../services/pedidoService';
+import { getMenusCompletosService } from '../services/menuCompletoService';
 import { menuDiaService } from '../services/menuDiaService';
 import type { MenuCompletoDia } from '../types/menuDia';
 import type {
@@ -77,15 +78,37 @@ export function usePedidoLlevarManagement({
     setErrorGeneral(null);
 
     try {
-      const [prods, menuHoy] = await Promise.all([
+      const [prods, menuHoy, menusCompletosActivos] = await Promise.all([
         pedidoService.obtenerCatalogoPedido(token),
-        menuDiaService.obtenerMenuHoy(token).catch(() => null)
+        menuDiaService.obtenerMenuHoy(token).catch(() => null),
+        getMenusCompletosService(true, token).catch(() => [])
       ]);
-      const esDefinido = menuHoy ? menuHoy.definido : prods.length > 0;
-      setMenuDefinido(esDefinido);
+      setMenuDefinido(true); // RN-142: Sin menú del día definido no se bloquean ventas
       setCatalogo(prods);
-      if (menuHoy?.menusCompletos) {
+      if (menuHoy?.menusCompletos && menuHoy.menusCompletos.length > 0) {
         setMenusCompletos(menuHoy.menusCompletos);
+      } else if (menusCompletosActivos && menusCompletosActivos.length > 0) {
+        setMenusCompletos(menusCompletosActivos.map(m => ({
+          id: m.id,
+          nombre: m.nombre,
+          precio: m.precio,
+          incluye: m.incluye ?? null,
+          disponible: true,
+          motivoNoDisponible: null,
+          partes: m.partes.map(p => ({
+            id: p.id,
+            nombre: p.nombre,
+            orden: p.orden,
+            rolesPermitidos: p.rolesPermitidos,
+            opciones: prods
+              .filter(prod => p.rolesPermitidos.some(r => prod.categoria.toLowerCase().includes(r.toLowerCase())))
+              .map(prod => ({
+                productoId: prod.id,
+                nombre: prod.nombre,
+                agotado: prod.agotado
+              }))
+          }))
+        })));
       }
     } catch (err: any) {
       if (esErrorSesionVencida(err)) {

@@ -30,6 +30,7 @@ import type { MenuCompletoDia } from '../types/menuDia';
 interface PedidoMesaPageProps {
   session: UserSession;
   mesaIdInicial?: string | null;
+  modoInicial?: 'nuevo' | 'ampliacion';
   onLogout: (banner?: { type: 'success' | 'error' | 'info' | 'warning'; message: string }) => void;
   onVolverAMesas: () => void;
   onNavigateToMenuDia?: () => void;
@@ -38,6 +39,7 @@ interface PedidoMesaPageProps {
 export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   session,
   mesaIdInicial,
+  modoInicial,
   onLogout,
   onVolverAMesas,
   onNavigateToMenuDia,
@@ -88,6 +90,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   } = usePedidoMesaManagement({
     token: session.token,
     mesaIdInicial,
+    modoInicial,
     onLogout,
   });
 
@@ -674,7 +677,6 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               type="button"
               variant="primary"
               disabled={
-                !menuDefinido ||
                 registrando ||
                 lineasBorrador.length === 0 ||
                 !mesaSeleccionada ||
@@ -723,7 +725,6 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           type="button"
           variant="primary"
           disabled={
-            !menuDefinido ||
             registrando ||
             lineasBorrador.length === 0 ||
             !mesaSeleccionada ||

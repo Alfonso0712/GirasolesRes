@@ -14,6 +14,8 @@ import type { UserSession } from '../types/auth';
 import type { MesaItem, FiltroEstadoMesa } from '../types/mesa';
 import { useMesasManagement } from '../hooks/useMesasManagement';
 import { menuDiaService } from '../services/menuDiaService';
+import { pedidoService } from '../services/pedidoService';
+import type { PedidoItemDto } from '../types/pedido';
 import { MesaCard } from '../components/mesas';
 import { MesaFormModal } from '../components/mesas';
 import { MesaConfirmModal } from '../components/mesas';
@@ -25,7 +27,7 @@ interface MesasPageProps {
     type: 'success' | 'error' | 'info' | 'warning';
     message: string;
   }) => void;
-  onNavigateToPedido?: (mesaId: string) => void;
+  onNavigateToPedido?: (mesaId: string, modo?: 'nuevo' | 'ampliacion') => void;
   onNavigateToCobro?: (mesa: { id: string; nombre: string }) => void;
   onNavigateToPedidoLlevar?: () => void;
   onNavigateToMenuDia?: () => void;
@@ -99,12 +101,31 @@ export const MesasPage: React.FC<MesasPageProps> = ({
     };
   }, [session.token]);
 
-  const handleAccionRol = (mesa: MesaItem, accion: string) => {
-    if (accion === 'REGISTRAR PEDIDO' || accion === 'AGREGAR PRODUCTOS') {
+  const [modalMesaOcupada, setModalMesaOcupada] = useState<{ mesa: MesaItem; cantidadPedidos: number } | null>(null);
+
+  const handleAccionRol = async (mesa: MesaItem, accion: string) => {
+    if (accion === 'REGISTRAR PEDIDO') {
       if (onNavigateToPedido) {
-        onNavigateToPedido(mesa.id);
+        onNavigateToPedido(mesa.id, 'nuevo');
         return;
       }
+    }
+    if (accion === 'AGREGAR PRODUCTOS') {
+      if (onNavigateToPedido) {
+        onNavigateToPedido(mesa.id, 'ampliacion');
+        return;
+      }
+    }
+    if (accion === 'OPCIONES_MESA_OCUPADA') {
+      try {
+        const res = await pedidoService.listarPedidos({ mesaId: mesa.id }, session.token);
+        const abiertos = res.items.filter((p: PedidoItemDto) => p.estado !== 'Pagado' && p.estado !== 'Anulado');
+        const count = abiertos.length > 0 ? abiertos.length : 1;
+        setModalMesaOcupada({ mesa, cantidadPedidos: count });
+      } catch {
+        setModalMesaOcupada({ mesa, cantidadPedidos: 1 });
+      }
+      return;
     }
     if (accion === 'COBRAR') {
       if (onNavigateToCobro) {
@@ -410,6 +431,58 @@ export const MesasPage: React.FC<MesasPageProps> = ({
         todasLasMesas={todasLasMesas}
         onSave={handleGuardarMesa}
       />
+
+      {/* Modal MSG-95: Diálogo al elegir una mesa ocupada */}
+      {modalMesaOcupada && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl border border-neutral-200/80 animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-3 border border-amber-200">
+              <Utensils className="w-6 h-6" />
+            </div>
+            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-2">
+              Mesa Ocupada
+            </h3>
+            <p className="text-xs sm:text-sm text-[#7C6F66] mb-6 leading-relaxed">
+              La <strong>{modalMesaOcupada.mesa.nombre}</strong> ya tiene <strong>{modalMesaOcupada.cantidadPedidos}</strong> pedido(s) abierto(s). ¿Registrar un pedido nuevo o agregar productos a uno existente?
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  const mesaId = modalMesaOcupada.mesa.id;
+                  setModalMesaOcupada(null);
+                  onNavigateToPedido?.(mesaId, 'nuevo');
+                }}
+                className="flex-1 py-2.5 px-4 bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-bold rounded-xl shadow-2xs transition-colors cursor-pointer"
+              >
+                PEDIDO NUEVO
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const mesaId = modalMesaOcupada.mesa.id;
+                  setModalMesaOcupada(null);
+                  onNavigateToPedido?.(mesaId, 'ampliacion');
+                }}
+                className="flex-1 py-2.5 px-4 bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-800 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+              >
+                AGREGAR PRODUCTOS
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setModalMesaOcupada(null)}
+              className="mt-3 text-xs text-neutral-400 hover:text-neutral-600 transition-colors cursor-pointer"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal CUS06.3 / Vista 6.4: Activar o Desactivar Mesa */}
       <MesaConfirmModal

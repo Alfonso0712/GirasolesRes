@@ -296,23 +296,23 @@ public class PedidoRepository : IPedidoRepository
             .FirstOrDefaultAsync(p => p.Id_Pedido == id, ct);
     }
 
-    public async Task<IReadOnlyList<Comanda>> ObtenerAvisosPendientesAsync(DateOnly fechaOperativa, Guid? usuarioId, bool esMozo, CancellationToken ct = default)
+    public async Task<IReadOnlyList<Comanda>> ObtenerAvisosPendientesAsync(DateOnly fechaOperativa, Guid? usuarioId, bool esCajero, CancellationToken ct = default)
     {
         var query = _context.Comandas
             .Include(c => c.Cmd_Pedido)
                 .ThenInclude(p => p!.Ped_Mesa)
             .Where(c => c.Cmd_Estado == EstadoComanda.Lista && !c.Cmd_AvisoVisto && c.Cmd_Pedido != null && c.Cmd_Pedido.Ped_FechaOperativa == fechaOperativa);
 
-        if (esMozo)
+        if (esCajero)
+        {
+            query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.ParaLlevar);
+        }
+        else
         {
             if (usuarioId.HasValue)
             {
                 query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value);
             }
-        }
-        else
-        {
-            query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.ParaLlevar);
         }
 
         return await query

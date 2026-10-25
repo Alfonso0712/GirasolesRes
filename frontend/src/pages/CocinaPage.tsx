@@ -10,6 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { comandaService } from '../services/comandaService';
+import { renovarTokenService } from '../services/authService';
 import { PlatosAgotadosModal } from '../components/menu-dia';
 import { ComandaCard, CocinaResumenBar } from '../components/cocina';
 import { PageHeader, PageContainer } from '../components/layout';
@@ -19,6 +20,7 @@ import type { ComandaKdsItem, ResumenProducto } from '../types/comanda';
 interface CocinaPageProps {
   session: UserSession;
   onLogout: () => void;
+  onUpdateSession?: (session: UserSession) => void;
 }
 
 interface AvisoDeshacer {
@@ -28,7 +30,24 @@ interface AvisoDeshacer {
   segundosRestantes: number;
 }
 
-export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout }) => {
+export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpdateSession }) => {
+  // RN-20, RN-82: Mantener la sesión vigente mientras la pantalla de comandas esté abierta, renovando el token cada 20 minutos con /api/auth/renovar
+  useEffect(() => {
+    const INTERVALO_MS = 20 * 60 * 1000; // 20 minutos
+    const intervalId = setInterval(async () => {
+      try {
+        const nuevoToken = await renovarTokenService(session.token);
+        if (nuevoToken && onUpdateSession) {
+          onUpdateSession({ ...session, token: nuevoToken });
+        }
+      } catch (err) {
+        console.warn('Error al renovar token periódico de cocina:', err);
+      }
+    }, INTERVALO_MS);
+
+    return () => clearInterval(intervalId);
+  }, [session, onUpdateSession]);
+
   const [comandas, setComandas] = useState<ComandaKdsItem[]>([]);
   const [resumen, setResumen] = useState<ResumenProducto[]>([]);
   const [cargando, setCargando] = useState(true);

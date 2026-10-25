@@ -22,6 +22,19 @@ public class CobrosController : ControllerBase
         _logger = logger;
     }
 
+    private bool ValidarRolCajero(out IActionResult? forbiddenResult)
+    {
+        var rol = User.FindFirstValue(ClaimTypes.Role);
+        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
+        {
+            forbiddenResult = StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
+            return false;
+        }
+
+        forbiddenResult = null;
+        return true;
+    }
+
     private bool ValidarRolCajeroOAdmin(out IActionResult? forbiddenResult)
     {
         var rol = User.FindFirstValue(ClaimTypes.Role);
@@ -69,7 +82,7 @@ public class CobrosController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> ProcesarCobro([FromBody] CobroRequest request, CancellationToken ct)
     {
-        if (!ValidarRolCajeroOAdmin(out var forbidden))
+        if (!ValidarRolCajero(out var forbidden))
         {
             return forbidden!;
         }

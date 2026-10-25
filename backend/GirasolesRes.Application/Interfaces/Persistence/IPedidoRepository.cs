@@ -21,7 +21,7 @@ public interface IPedidoRepository
         int tamano,
         CancellationToken ct = default);
     Task<Pedido?> ObtenerDetalleCompletoPorIdAsync(Guid id, CancellationToken ct = default);
-    Task<IReadOnlyList<Comanda>> ObtenerAvisosPendientesAsync(DateOnly fechaOperativa, Guid? usuarioId, bool esMozo, CancellationToken ct = default);
+    Task<IReadOnlyList<Comanda>> ObtenerAvisosPendientesAsync(DateOnly fechaOperativa, Guid? usuarioId, bool esCajero, CancellationToken ct = default);
     Task<Comanda?> ObtenerComandaPorIdAsync(Guid comandaId, CancellationToken ct = default);
     Task ActualizarComandaAsync(Comanda comanda, CancellationToken ct = default);
     Task<bool> TieneOtrosPedidosAbiertosEnMesaAsync(Guid mesaId, Guid pedidoExcluidoId, CancellationToken ct = default);

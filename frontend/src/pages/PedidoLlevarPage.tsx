@@ -602,7 +602,6 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
               type="button"
               variant="primary"
               disabled={
-                !menuDefinido ||
                 registrando ||
                 lineasBorrador.length === 0 ||
                 Boolean(errorReferencia) ||
@@ -651,7 +650,6 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
           type="button"
           variant="primary"
           disabled={
-            !menuDefinido ||
             registrando ||
             lineasBorrador.length === 0 ||
             Boolean(errorReferencia) ||

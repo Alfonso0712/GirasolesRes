@@ -33,9 +33,9 @@ public class PedidoServiceUnitTests
     }
 
     [Fact]
-    public async Task RegistrarPedidoMesaAsync_SinMenuDiaDefinido_LanzaPedidoConflictException409()
+    public async Task RegistrarPedidoMesaAsync_SinMenuDiaDefinido_NoBloqueaYRegistraPedido()
     {
-        // ARRANGE
+        // ARRANGE - RN-142: Sin menú del día definido no se bloquean ventas
         var mesaId = Guid.NewGuid();
         var mesa = new Mesa("Mesa 1");
         _mesaRepoMock.Setup(m => m.ObtenerPorIdAsync(mesaId, It.IsAny<CancellationToken>()))
@@ -45,10 +45,19 @@ public class PedidoServiceUnitTests
             .ReturnsAsync((Pedido?)null);
         _pedidoRepoMock.Setup(p => p.ExistePedidoActivoEnMesaAsync(mesaId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
+        _pedidoRepoMock.Setup(p => p.ObtenerSiguienteNumeroDiarioAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+        _pedidoRepoMock.Setup(p => p.ObtenerSiguienteNumeroComandaDiarioAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
 
         // Menú del día no existe (null)
         _menuDiaRepoMock.Setup(m => m.ObtenerPorFechaAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((MenuDia?)null);
+
+        var prodId = Guid.NewGuid();
+        var prod = new Producto("Lomo Saltado", CategoriaProducto.Almuerzo, 25.00m, true);
+        _productoRepoMock.Setup(pr => pr.ObtenerPorIdsAsync(It.IsAny<IEnumerable<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Producto> { prod });
 
         var request = new RegistrarPedidoMesaRequest
         {
@@ -56,28 +65,37 @@ public class PedidoServiceUnitTests
             MesaId = mesaId,
             Lineas = new List<LineaPedidoRequest>
             {
-                new LineaPedidoRequest { ProductoId = Guid.NewGuid(), Cantidad = 1 }
+                new LineaPedidoRequest { ProductoId = prod.Id_Producto, Cantidad = 1 }
             }
         };
 
-        // ACT & ASSERT
-        var ex = await Assert.ThrowsAsync<PedidoConflictException>(() =>
-            _service.RegistrarPedidoMesaAsync(request, "mozo1", Guid.NewGuid(), "127.0.0.1"));
+        // ACT
+        var resultado = await _service.RegistrarPedidoMesaAsync(request, "mozo1", Guid.NewGuid(), "127.0.0.1");
 
-        Assert.Equal("menu_no_definido", ex.Codigo);
-        Assert.Equal(MensajesCatalogo.MSG_MENU_NO_DEFINIDO, ex.Message);
+        // ASSERT
+        Assert.NotNull(resultado);
+        Assert.Equal(1, resultado.Numero);
+        Assert.Equal(25.00m, resultado.Total);
     }
 
     [Fact]
-    public async Task RegistrarPedidoLlevarAsync_SinMenuDiaDefinido_LanzaPedidoConflictException409()
+    public async Task RegistrarPedidoLlevarAsync_SinMenuDiaDefinido_NoBloqueaYRegistraPedido()
     {
-        // ARRANGE
+        // ARRANGE - RN-142: Sin menú del día definido no se bloquean ventas
         _pedidoRepoMock.Setup(p => p.ObtenerPorSolicitudIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Pedido?)null);
+        _pedidoRepoMock.Setup(p => p.ObtenerSiguienteNumeroDiarioAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(2);
+        _pedidoRepoMock.Setup(p => p.ObtenerSiguienteNumeroComandaDiarioAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(2);
 
         // Menú del día no existe (null)
         _menuDiaRepoMock.Setup(m => m.ObtenerPorFechaAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((MenuDia?)null);
+
+        var prod = new Producto("Arroz con Pollo", CategoriaProducto.Almuerzo, 18.00m, true);
+        _productoRepoMock.Setup(pr => pr.ObtenerPorIdsAsync(It.IsAny<IEnumerable<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Producto> { prod });
 
         var request = new RegistrarPedidoLlevarRequest
         {
@@ -85,30 +103,38 @@ public class PedidoServiceUnitTests
             Referencia = "Cliente Mostrador",
             Lineas = new List<LineaPedidoRequest>
             {
-                new LineaPedidoRequest { ProductoId = Guid.NewGuid(), Cantidad = 1 }
+                new LineaPedidoRequest { ProductoId = prod.Id_Producto, Cantidad = 1 }
             }
         };
 
-        // ACT & ASSERT
-        var ex = await Assert.ThrowsAsync<PedidoConflictException>(() =>
-            _service.RegistrarPedidoLlevarAsync(request, "cajero1", Guid.NewGuid(), "127.0.0.1"));
+        // ACT
+        var resultado = await _service.RegistrarPedidoLlevarAsync(request, "cajero1", Guid.NewGuid(), "127.0.0.1");
 
-        Assert.Equal("menu_no_definido", ex.Codigo);
-        Assert.Equal(MensajesCatalogo.MSG_MENU_NO_DEFINIDO, ex.Message);
+        // ASSERT
+        Assert.NotNull(resultado);
+        Assert.Equal(2, resultado.Numero);
+        Assert.Equal(18.00m, resultado.Total);
     }
 
     [Fact]
-    public async Task ObtenerMenuParaPedidoAsync_SinMenuDiaDefinido_RetornaListaVacia()
+    public async Task ObtenerMenuParaPedidoAsync_SinMenuDiaDefinido_RetornaProductosActivos()
     {
-        // ARRANGE
+        // ARRANGE - RN-142: Ofrecer todos los productos activos de la carta
         _menuDiaRepoMock.Setup(m => m.ObtenerPorFechaAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((MenuDia?)null);
+
+        var prod1 = new Producto("Lomo Saltado", CategoriaProducto.Almuerzo, 25.00m, true);
+        var prod2 = new Producto("Chicha Morada", CategoriaProducto.Bebidas, 5.00m, true);
+        _productoRepoMock.Setup(pr => pr.ListarDisponiblesAsync(null, null, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Producto> { prod1, prod2 });
 
         // ACT
         var resultado = await _service.ObtenerMenuParaPedidoAsync();
 
         // ASSERT
         Assert.NotNull(resultado);
-        Assert.Empty(resultado);
+        Assert.Equal(2, resultado.Count);
+        Assert.Contains(resultado, p => p.Nombre == "Lomo Saltado");
+        Assert.Contains(resultado, p => p.Nombre == "Chicha Morada");
     }
 }

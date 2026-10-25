@@ -310,11 +310,13 @@ public class InicioService : IInicioService
             ));
         }
 
-        // 2. Menú de hoy sin definir (MSG-204, Prioridad 2)
+        // 2. Menú de hoy sin definir (MSG-204, Prioridad 2) - solo si la caja del día está abierta
         var menuRes = await _menuDiaService.ObtenerMenuHoyAsync(ct);
         var menu = menuRes.Data;
         var menuDefinido = menu != null && menu.Definido;
-        if (!menuDefinido)
+
+        var cajaAbiertaHoy = await _cajaRepository.ObtenerCajaAbiertaAsync(ct);
+        if (cajaAbiertaHoy != null && !menuDefinido)
         {
             alertas.Add(new AlertaInicioDto(
                 "menu_sin_definir",

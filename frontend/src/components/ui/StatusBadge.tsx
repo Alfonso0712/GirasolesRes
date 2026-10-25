@@ -52,6 +52,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       normalized === 'entregado' ||
       normalized === 'cuadra' ||
       normalized === 'pagado' ||
+      normalized === 'listo · pagado' ||
       normalized === 'emitido' ||
       normalized === 'true'
     ) {
@@ -75,6 +76,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       normalized === 'sobrante' ||
       normalized === 'en preparacion' ||
       normalized === 'en preparación' ||
+      normalized === 'pagado · en preparacion' ||
+      normalized === 'pagado · en preparación' ||
+      normalized === 'pagado · pendiente' ||
       normalized === 'en curso' ||
       normalized === 'pendiente' ||
       normalized === 'ocupada' ||
@@ -99,9 +103,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         ? Ban
         : XCircle;
     } else if (resolvedIntent === 'warning') {
-      if (normalized === 'en preparacion' || normalized === 'en preparación') {
+      if (normalized.includes('preparacion') || normalized.includes('preparación')) {
         IconComponent = Flame;
-      } else if (normalized === 'pendiente' || normalized === 'en curso') {
+      } else if (normalized.includes('pendiente') || normalized === 'en curso') {
         IconComponent = Clock;
       } else {
         IconComponent = AlertTriangle;

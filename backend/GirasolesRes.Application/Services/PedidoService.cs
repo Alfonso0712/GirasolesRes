@@ -63,20 +63,13 @@ public class PedidoService : IPedidoService
             throw new PedidoConflictException("mesa_inactiva", "La mesa seleccionada se encuentra inactiva.");
         }
 
-        if (mesa.Mes_Ocupacion == EstadoOcupacionMesa.Ocupada ||
-            await _pedidoRepository.ExistePedidoActivoEnMesaAsync(request.MesaId, ct))
-        {
-            throw new PedidoConflictException("mesa_ocupada", string.Format(MensajesCatalogo.MSG_95, mesa.Mes_Nombre));
-        }
+        // RV-60, RN-54: Varios pedidos por mesa permitidos; mesa pasa/permanece en Ocupada
 
         // 3 y 4. Validación de Productos y Menús Completos (RV-61, RV-62, RV-63, RV-64, RV-65, RV-163, RV-166, RN-54, CUS07.1)
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue && menuDia.Men_MenusCompletos.Count == 0))
-        {
-            throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
-        }
+        // RN-142: Sin menú del día definido no se bloquean ventas
 
         var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
 
@@ -175,10 +168,7 @@ public class PedidoService : IPedidoService
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue && menuDia.Men_MenusCompletos.Count == 0))
-        {
-            throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
-        }
+        // RN-142: Sin menú del día definido no se bloquean ventas
 
         var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
 
@@ -276,10 +266,7 @@ public class PedidoService : IPedidoService
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
         var menuDia = await _menuDiaRepository.ObtenerPorFechaAsync(fechaOperativa, ct);
 
-        if (menuDia == null || (menuDia.Men_Platos.Count == 0 && !menuDia.Id_Desayuno.HasValue && menuDia.Men_MenusCompletos.Count == 0))
-        {
-            throw new PedidoConflictException("menu_no_definido", MensajesCatalogo.MSG_MENU_NO_DEFINIDO);
-        }
+        // RN-142: Sin menú del día definido no se bloquean ventas
 
         var itemsProcesados = await ValidarYProcesarLineasAsync(request.Lineas, menuDia, ct);
 
@@ -371,8 +358,16 @@ public class PedidoService : IPedidoService
             return lista;
         }
 
-        // Si no hay menú del día definido para la fecha actual (CUS07.1 / CUS08), retornar lista vacía
-        return Array.Empty<ProductoMenuPedidoDto>();
+        // RN-142: Sin menú del día definido, ofrecer todos los productos activos de la carta y componentes
+        var todosProds = (await _productoRepository.ListarDisponiblesAsync(null, cancellationToken: ct)) ?? new List<Producto>();
+        return todosProds.Select(p => new ProductoMenuPedidoDto(
+            p.Id_Producto,
+            p.Pro_Nombre,
+            p.Pro_Categoria?.ToString() ?? string.Empty,
+            p.Pro_Precio.GetValueOrDefault(),
+            Agotado: false,
+            Disponible: true
+        )).ToList();
     }
 
     private static PedidoResponseDto MapearAPedidoDto(Pedido p)
@@ -459,37 +454,66 @@ public class PedidoService : IPedidoService
         var pedidosDto = items.Select(p =>
         {
             var esMio = p.Id_Usuario == usuarioId;
-            var estadoEfectivo = ResolverEstadoEfectivo(p).ToString();
+            var estadoEfectivo = ResolverEstadoEfectivo(p);
+            string estadoMostrar;
+            if (p.Ped_Estado == EstadoPedido.Pagado)
+            {
+                var estadoPrep = ResolverEstadoPreparacion(p);
+                if (estadoPrep == EstadoPedido.Listo)
+                {
+                    estadoMostrar = "Listo · Pagado";
+                }
+                else if (estadoPrep == EstadoPedido.EnPreparacion)
+                {
+                    estadoMostrar = "Pagado · En preparación";
+                }
+                else if (estadoPrep == EstadoPedido.Pendiente)
+                {
+                    estadoMostrar = "Pagado · Pendiente";
+                }
+                else
+                {
+                    estadoMostrar = "Pagado";
+                }
+            }
+            else
+            {
+                estadoMostrar = estadoEfectivo.ToString();
+            }
 
             // RN-65 / RV-75: Solo modifica o anula el creador, no pagado ni anulado, y todas comandas pendientes
             bool todasComandasPendientes = p.Ped_Comandas.Any() &&
                 p.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).All(c => c.Cmd_Estado == EstadoComanda.Pendiente);
 
+            bool esAdmin = string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase);
             bool esMozoOCajero = string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase);
 
-            bool puedeModificarOAnular = esMozoOCajero &&
-                                         esMio &&
-                                         p.Ped_Estado != EstadoPedido.Pagado &&
-                                         p.Ped_Estado != EstadoPedido.Anulado &&
-                                         todasComandasPendientes;
+            bool puedeModificar = esMozoOCajero &&
+                                  esMio &&
+                                  p.Ped_Estado != EstadoPedido.Pagado &&
+                                  p.Ped_Estado != EstadoPedido.Anulado &&
+                                  todasComandasPendientes;
+
+            bool puedeAnular = (esAdmin && p.Ped_Estado != EstadoPedido.Pagado && p.Ped_Estado != EstadoPedido.Anulado) ||
+                               (esMozoOCajero && esMio && p.Ped_Estado != EstadoPedido.Pagado && p.Ped_Estado != EstadoPedido.Anulado && todasComandasPendientes);
 
             string? motivoDeshabilitado = null;
-            if (!puedeModificarOAnular)
+            if (!puedeAnular && !puedeModificar)
             {
                 if (p.Ped_Estado == EstadoPedido.Pagado || p.Ped_Estado == EstadoPedido.Anulado)
                 {
                     motivoDeshabilitado = MensajesCatalogo.MSG_104;
                 }
-                else if (!esMio)
+                else if (!esMio && !esAdmin)
                 {
                     motivoDeshabilitado = MensajesCatalogo.MSG_116;
                 }
-                else if (!todasComandasPendientes)
+                else if (!todasComandasPendientes && !esAdmin)
                 {
                     motivoDeshabilitado = MensajesCatalogo.MSG_115;
                 }
-                else if (!esMozoOCajero)
+                else if (!esMozoOCajero && !esAdmin)
                 {
                     motivoDeshabilitado = MensajesCatalogo.MSG_39;
                 }
@@ -503,12 +527,12 @@ public class PedidoService : IPedidoService
                 p.Ped_Tipo == TipoPedido.ParaLlevar ? (p.Ped_Notas ?? "Para llevar") : null,
                 p.Ped_FechaHoraUtc.AddHours(-5).ToString("HH:mm"),
                 p.Ped_Total,
-                estadoEfectivo,
+                estadoMostrar,
                 p.Ped_Usuario?.Usu_Nombre ?? "Usuario",
                 p.Id_Usuario,
                 esMio,
-                puedeModificarOAnular,
-                puedeModificarOAnular,
+                puedeModificar,
+                puedeAnular,
                 motivoDeshabilitado
             );
         }).ToList();
@@ -758,9 +782,11 @@ public class PedidoService : IPedidoService
         string? direccionIp,
         CancellationToken ct = default)
     {
-        // RN-65: Solo Mozo o Cajero
+        // RN-65: Mozo, Cajero o Administrador
+        var esAdmin = string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase);
         if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
+            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
+            !esAdmin)
         {
             throw new UnauthorizedAccessException(MensajesCatalogo.MSG_39);
         }
@@ -771,8 +797,8 @@ public class PedidoService : IPedidoService
             throw new KeyNotFoundException("Pedido no encontrado.");
         }
 
-        // RN-65: Mismo usuario que lo registró
-        if (pedido.Id_Usuario != usuarioId)
+        // RN-65: Si no es Administrador, solo el mismo usuario que lo registró puede anularlo
+        if (!esAdmin && pedido.Id_Usuario != usuarioId)
         {
             throw new UnauthorizedAccessException(MensajesCatalogo.MSG_116);
         }
@@ -783,11 +809,15 @@ public class PedidoService : IPedidoService
             throw new PedidoConflictException("pedido_bloqueado", MensajesCatalogo.MSG_104);
         }
 
-        // RV-75 / RV-80: Revalidar que todas las comandas sigan pendientes
-        var comandasValidas = pedido.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
-        if (comandasValidas.Any(c => c.Cmd_Estado != EstadoComanda.Pendiente))
+        // RV-75 / RV-80: Para Mozo y Cajero, revalidar que todas las comandas sigan pendientes.
+        // El Administrador puede anular cualquier pedido no pagado, aun con comandas en preparación o listas.
+        if (!esAdmin)
         {
-            throw new PedidoConflictException("cocina_iniciada", MensajesCatalogo.MSG_115);
+            var comandasValidas = pedido.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+            if (comandasValidas.Any(c => c.Cmd_Estado != EstadoComanda.Pendiente))
+            {
+                throw new PedidoConflictException("cocina_iniciada", MensajesCatalogo.MSG_115);
+            }
         }
 
         // RV-76: Motivo obligatorio entre 5 y 100 caracteres
@@ -833,9 +863,9 @@ public class PedidoService : IPedidoService
         string rol,
         CancellationToken ct = default)
     {
-        var esMozo = string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase);
+        var esCajero = string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase);
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
-        var comandas = await _pedidoRepository.ObtenerAvisosPendientesAsync(fechaOperativa, usuarioId, esMozo, ct);
+        var comandas = await _pedidoRepository.ObtenerAvisosPendientesAsync(fechaOperativa, usuarioId, esCajero, ct);
 
         return comandas.Select(c => new AvisoComandaDto(
             c.Id_Comanda,
@@ -873,6 +903,32 @@ public class PedidoService : IPedidoService
             direccionIp
         );
         await _pedidoRepository.RegistrarAuditoriaAsync(auditoria, ct);
+    }
+
+    private static EstadoPedido ResolverEstadoPreparacion(Pedido p)
+    {
+        var comandasValidas = p.Ped_Comandas.Where(c => c.Cmd_Estado != EstadoComanda.Cancelada).ToList();
+        if (!comandasValidas.Any())
+        {
+            return EstadoPedido.Pagado;
+        }
+
+        if (comandasValidas.Any(c => c.Cmd_Estado == EstadoComanda.EnPreparacion))
+        {
+            return EstadoPedido.EnPreparacion;
+        }
+
+        if (comandasValidas.Any(c => c.Cmd_Estado == EstadoComanda.Pendiente))
+        {
+            return EstadoPedido.Pendiente;
+        }
+
+        if (comandasValidas.All(c => c.Cmd_Estado == EstadoComanda.Lista))
+        {
+            return EstadoPedido.Listo;
+        }
+
+        return EstadoPedido.Pagado;
     }
 
     private static EstadoPedido ResolverEstadoEfectivo(Pedido p)
@@ -955,7 +1011,7 @@ public class PedidoService : IPedidoService
             }
         }
 
-        var productos = await _productoRepository.ObtenerPorIdsAsync(todosProductoIds, ct);
+        var productos = (await _productoRepository.ObtenerPorIdsAsync(todosProductoIds, ct)) ?? new List<Producto>();
         var productosDict = productos.ToDictionary(p => p.Id_Producto);
 
         Dictionary<int, MenuCompleto> menusDict = new();
@@ -965,8 +1021,13 @@ public class PedidoService : IPedidoService
             menusDict = menus.ToDictionary(m => m.Id_MenuCompleto);
         }
 
-        var menusHabilitadosHoy = menuDia?.Men_MenusCompletos.Select(m => m.Id_MenuCompleto).ToHashSet() ?? new HashSet<int>();
-        var platosMenuDiaDict = menuDia?.Men_Platos.ToDictionary(p => p.Id_Producto, p => p.Mdp_Agotado) ?? new Dictionary<Guid, bool>();
+        var menuDiaDefinido = menuDia != null && (menuDia.Men_Platos.Count > 0 || menuDia.Id_Desayuno.HasValue || menuDia.Men_MenusCompletos.Count > 0);
+        var menusHabilitadosHoy = menuDiaDefinido
+            ? menuDia!.Men_MenusCompletos.Select(m => m.Id_MenuCompleto).ToHashSet()
+            : menusDict.Values.Where(m => m.Men_Activo).Select(m => m.Id_MenuCompleto).ToHashSet();
+        var platosMenuDiaDict = menuDiaDefinido
+            ? menuDia!.Men_Platos.ToDictionary(p => p.Id_Producto, p => p.Mdp_Agotado)
+            : new Dictionary<Guid, bool>();
 
         var itemsProcesados = new List<ItemProcesadoLinea>();
 
