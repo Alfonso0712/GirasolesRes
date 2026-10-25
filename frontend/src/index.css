@@ -42,8 +42,8 @@
 @layer base {
   body {
     font-family: var(--font-sans);
-    color: #2C1A0E;
-    background-color: #FAF7F4;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
     -webkit-font-smoothing: antialiased;
     margin: 0;
     padding: 0;
@@ -60,15 +60,15 @@
 
 /* Clases Utilitarias Estandarizadas para Componentes del Sistema */
 .table-th-standard {
-  background-color: #FAF7F4;
-  color: #7C6F66;
+  background-color: var(--color-canvas);
+  color: var(--color-ink-muted);
   font-weight: 600;
   font-size: 0.75rem;
   line-height: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #E5E0DB;
+  border-bottom: 1px solid var(--color-line);
   text-align: left;
 }
 
@@ -76,21 +76,21 @@
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: #2C1A0E;
-  border-bottom: 1px solid #F0EBE6;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-line-soft);
 }
 
 .table-cell-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #2C1A0E;
+  color: var(--color-ink);
   line-height: 1.25rem;
 }
 
 .table-cell-sub {
   font-size: 0.75rem;
   font-weight: 400;
-  color: #706A65;
+  color: var(--color-ink-muted);
   line-height: 1rem;
 }
 
@@ -98,7 +98,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: #2C1A0E;
+  color: var(--color-ink);
   line-height: 1.25rem;
 }
 
@@ -144,16 +144,16 @@
   padding-left: 0.875rem;
   padding-right: 0.875rem;
   border-radius: 0.75rem;
-  border: 1px solid #E5E7EB;
-  background-color: #FFFFFF;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-surface);
   font-size: 0.875rem;
-  color: #1F2937;
+  color: var(--color-ink);
   outline: none;
   transition-property: border-color, box-shadow;
   transition-duration: 150ms;
 }
 .input-filter-standard:focus {
-  border-color: #C74E00;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px #FDE68A;
 }
 
@@ -164,7 +164,7 @@
   justify-content: space-between;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
 }
 
 .modal-close-btn {
@@ -192,7 +192,7 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  border-top: 1px solid #E5E7EB;
+  border-top: 1px solid var(--color-line);
   background-color: rgba(249, 250, 251, 0.8);
 }
 
