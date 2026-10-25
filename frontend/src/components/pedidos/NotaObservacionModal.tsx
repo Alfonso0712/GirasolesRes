@@ -63,18 +63,18 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
         if (e.key === 'Escape') onClose();
       }}
     >
-      <div className="bg-white rounded-2xl max-w-md w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200/80">
+      <div className="bg-surface rounded-2xl max-w-md w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200/80">
         {/* Encabezado fijo */}
-        <div className="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-[#FAF7F4]">
+        <div className="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-canvas">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center">
               <MessageSquare className="w-5 h-5" />
             </div>
             <div>
-              <h2 id="modal-nota-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
+              <h2 id="modal-nota-title" className="text-xl font-sans font-bold text-ink">
                 Nota para {productoNombre}
               </h2>
-              <p className="text-xs text-[#7C6F66]">
+              <p className="text-xs text-ink-muted">
                 Indique preferencias o detalles para la preparación en cocina.
               </p>
             </div>
@@ -93,7 +93,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
         <form onSubmit={handleGuardar} className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-y-auto p-5 space-y-4">
             <div>
-              <label htmlFor="observacion-input" className="block text-xs font-semibold text-[#2C1A0E] mb-1.5">
+              <label htmlFor="observacion-input" className="block text-xs font-semibold text-ink mb-1.5">
                 Observación (máx. 100 caracteres)
               </label>
               <textarea
@@ -103,10 +103,10 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
                 onChange={(e) => setNota(e.target.value.slice(0, 100))}
                 rows={3}
                 placeholder="Ej. presa de pescado, término medio..."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-[#2C1A0E] focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] resize-none transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-ink focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent resize-none transition-all"
               />
               <div className="flex justify-between items-center mt-1 text-xs">
-                <span className="text-[#7C6F66]">Opcional</span>
+                <span className="text-ink-muted">Opcional</span>
                 <span className={`tabular-nums ${nota.length >= 95 ? 'text-rose-600 font-bold' : 'text-neutral-500'}`}>
                   {nota.length} / 100
                 </span>
@@ -124,7 +124,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
                     key={frase}
                     type="button"
                     onClick={() => agregarNotaRapida(frase)}
-                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-neutral-100 hover:bg-amber-50 hover:text-[#B84500] text-neutral-700 border border-neutral-200 transition-colors cursor-pointer"
+                    className="px-2.5 py-1 text-xs font-medium rounded-lg bg-neutral-100 hover:bg-amber-50 hover:text-accent text-neutral-700 border border-neutral-200 transition-colors cursor-pointer"
                   >
                     + {frase}
                   </button>
@@ -141,7 +141,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
             <Button
               type="submit"
               variant="primary"
-              className="bg-[#C74E00] hover:bg-[#B84600] text-white font-medium"
+              className="bg-primary hover:bg-primary-hover text-white font-medium"
             >
               <Check className="w-4 h-4 mr-1.5 inline" />
               Guardar Nota

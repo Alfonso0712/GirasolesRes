@@ -397,7 +397,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     : 'inicio'
                 )
               }
-              className="mt-6 px-4 py-2 bg-[#C74E00] text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer"
+              className="mt-6 px-4 py-2 bg-primary text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-primary transition-colors cursor-pointer"
             >
               Ir al módulo principal
             </button>
@@ -434,7 +434,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     : 'inicio'
                 )
               }
-              className="mt-6 px-4 py-2 bg-[#C74E00] text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer"
+              className="mt-6 px-4 py-2 bg-primary text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-primary transition-colors cursor-pointer"
             >
               Ir al módulo principal
             </button>

@@ -40,7 +40,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <div>
               <h2
                 id="modal-ticket-title"
-                className="text-base font-sans font-bold text-[#2C1A0E] tracking-tight"
+                className="text-base font-sans font-bold text-ink tracking-tight"
               >
                 Comprobante Emitido
               </h2>
@@ -78,7 +78,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
 
             {/* Metadatos */}
             <div className="py-2.5 border-b border-dashed border-neutral-300 space-y-0.5 text-xs">
-              <div className="text-center font-bold text-xs text-[#B84500] pb-1">
+              <div className="text-center font-bold text-xs text-accent pb-1">
                 {comprobante.tipoComprobante === 'Factura'
                   ? 'FACTURA ELECTRÓNICA'
                   : comprobante.tipoComprobante === 'Boleta'
@@ -231,7 +231,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3.5 py-2 rounded-xl bg-[#2C1A0E] hover:bg-[#482813] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-ink-fill hover:bg-sidebar text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Imprimir</span>
@@ -239,7 +239,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
             >
               Cerrar
             </button>

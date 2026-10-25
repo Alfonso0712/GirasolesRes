@@ -82,10 +82,10 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               type="button"
               onClick={() => descargar('pdf')}
               disabled={cargando || descargando !== null || Boolean(errorRango)}
-              className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[40px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs inline-flex items-center gap-2 min-h-[40px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Descargar reporte en formato PDF (A4)"
             >
-              <FileText className="w-4 h-4 text-[#B84500]" />
+              <FileText className="w-4 h-4 text-accent" />
               <span>{descargando === 'pdf' ? 'Preparando archivo…' : 'Descargar PDF'}</span>
             </button>
 
@@ -110,8 +110,8 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           onClick={() => cambiarTab('platos')}
           className={`px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
             tabActiva === 'platos'
-              ? 'bg-[#C74E00] text-white shadow-xs'
-              : 'bg-white border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+              ? 'bg-primary text-white shadow-xs'
+              : 'bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
           }`}
         >
           <Utensils className="w-4 h-4" />
@@ -123,8 +123,8 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           onClick={() => cambiarTab('ventas')}
           className={`px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
             tabActiva === 'ventas'
-              ? 'bg-[#C74E00] text-white shadow-xs'
-              : 'bg-white border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+              ? 'bg-primary text-white shadow-xs'
+              : 'bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
           }`}
         >
           <Receipt className="w-4 h-4" />
@@ -133,10 +133,10 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
       </div>
 
       {/* 3. Barra de Filtros, Rango y Atajos Rápidos */}
-      <div className="shrink-0 bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col gap-3">
+      <div className="shrink-0 bg-surface p-4 rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col gap-3">
         {/* Atajos Rápidos de Rango */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
+          <span className="text-xs font-semibold text-ink-muted flex items-center gap-1 mr-1">
             <Calendar className="w-3.5 h-3.5 text-neutral-500" /> Atajos:
           </span>
           {atajos.map((a) => (
@@ -146,7 +146,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               onClick={() => aplicarAtajo(a.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 atajoActivo === a.id
-                  ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
+                  ? 'bg-ink-fill text-white font-semibold shadow-2xs'
                   : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60'
               }`}
             >
@@ -166,7 +166,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               type="date"
               value={desde}
               onChange={(e) => setDesde(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-white text-xs font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px]"
+              className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-surface text-xs font-medium text-neutral-800 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent min-h-[38px]"
             />
           </div>
 
@@ -179,7 +179,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               type="date"
               value={hasta}
               onChange={(e) => setHasta(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-white text-xs font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px]"
+              className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-surface text-xs font-medium text-neutral-800 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent min-h-[38px]"
             />
           </div>
 
@@ -193,7 +193,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 id="filtro-producto"
                 value={productoFiltroId}
                 onChange={(e) => setProductoFiltroId(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-white text-xs font-medium text-neutral-800 focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] min-h-[38px] max-w-[200px]"
+                className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-surface text-xs font-medium text-neutral-800 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent min-h-[38px] max-w-[200px]"
               >
                 <option value="">Todos los productos</option>
                 {productosDisponibles.map((p) => (
@@ -210,7 +210,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
             type="button"
             onClick={() => consultar()}
             disabled={cargando || Boolean(errorRango)}
-            className="px-5 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-xs shadow-xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-5 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-xs inline-flex items-center gap-2 min-h-[38px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {cargando ? (
               <>
@@ -301,7 +301,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
                 <div className="text-right sm:self-auto shrink-0 pl-12 sm:pl-0">
                   <span className="text-xs text-neutral-500 font-sans block">Total Platos / Ventas</span>
-                  <span className="font-sans font-bold tabular-nums text-sm text-[#2C1A0E]">
+                  <span className="font-sans font-bold tabular-nums text-sm text-ink">
                     S/ {reportePlatos.totalMonto.toFixed(2)}
                   </span>
                 </div>
@@ -310,27 +310,27 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
             {/* Tarjetas Resumen Principales de Platos */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                   Total Platos Vendidos
                 </span>
-                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#2C1A0E] tabular-nums mt-1">
+                <span className="font-sans font-bold text-2xl sm:text-3xl text-ink tabular-nums mt-1">
                   {reportePlatos ? reportePlatos.totalPlatos : '0'}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Suma de raciones servidas</span>
               </div>
 
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                   Monto Total de Platos
                 </span>
-                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#B84500] tabular-nums mt-1">
+                <span className="font-sans font-bold text-2xl sm:text-3xl text-accent tabular-nums mt-1">
                   S/ {reportePlatos ? reportePlatos.totalMonto.toFixed(2) : '0.00'}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Calculado por precio en comanda</span>
               </div>
 
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                   Total en Ventas Registradas
                 </span>
@@ -343,7 +343,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
             {/* Subtotales por Categoría (RV-138 / Desayuno, Almuerzo, Otro) */}
             {reportePlatos?.subtotales && reportePlatos.subtotales.length > 0 && (
-              <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
+              <div className="bg-surface p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
                 <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3">
                   Subtotales por Categoría
                 </p>
@@ -354,14 +354,14 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                       className="p-3 rounded-xl bg-neutral-50/70 border border-neutral-200/70 flex items-center justify-between"
                     >
                       <div>
-                        <span className="text-xs font-bold text-[#482813] block">
+                        <span className="text-xs font-bold text-ink block">
                           {CATEGORIA_LABELS[sub.categoria] || sub.categoria}
                         </span>
                         <span className="text-xs text-neutral-500">
                           {sub.cantidad} {sub.cantidad === 1 ? 'plato' : 'platos'}
                         </span>
                       </div>
-                      <span className="font-sans font-bold text-sm text-[#B84500] tabular-nums">
+                      <span className="font-sans font-bold text-sm text-accent tabular-nums">
                         S/ {sub.monto.toFixed(2)}
                       </span>
                     </div>
@@ -372,13 +372,13 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
 
             {/* Vista 14.3: Detalle por Día del Producto Seleccionado */}
             {reportePlatos?.porDia && reportePlatos.porDia.length > 0 && (
-              <div className="bg-white p-4 rounded-2xl border border-amber-200 shadow-2xs">
+              <div className="bg-surface p-4 rounded-2xl border border-amber-200 shadow-2xs">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
+                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
                       Desglose Diario del Plato
                     </p>
-                    <p className="text-sm font-semibold text-[#2C1A0E] mt-0.5">
+                    <p className="text-sm font-semibold text-ink mt-0.5">
                       Ventas diarias del producto en el rango consultado
                     </p>
                   </div>
@@ -401,7 +401,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                       className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/80 text-center"
                     >
                       <span className="text-xs font-medium text-neutral-500 block">{d.fecha}</span>
-                      <span className="text-base font-bold text-[#2C1A0E] font-sans tabular-nums block mt-0.5">
+                      <span className="text-base font-bold text-ink font-sans tabular-nums block mt-0.5">
                         {d.cantidad} un.
                       </span>
                     </div>
@@ -421,7 +421,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <select
                   value={ordenPlatos}
                   onChange={(e) => setOrdenPlatos(e.target.value as CriterioOrdenPlatos)}
-                  className="px-2.5 py-1 rounded-lg border border-neutral-200 bg-white text-xs font-semibold text-neutral-700 cursor-pointer focus:outline-none"
+                  className="px-2.5 py-1 rounded-lg border border-neutral-200 bg-surface text-xs font-semibold text-neutral-700 cursor-pointer focus:outline-none"
                 >
                   <option value="cantidad">Mayor cantidad</option>
                   <option value="monto">Mayor monto (S/)</option>
@@ -448,8 +448,8 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               </TableHead>
               <TableBody>
                 {platosOrdenados.map((item) => (
-                  <tr key={item.productoId} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
-                    <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">
+                  <tr key={item.productoId} className="hover:bg-neutral-50/60 transition-colors border-b border-line-soft">
+                    <td className="py-3 px-4 font-semibold text-sm text-ink">
                       <span>{item.producto}</span>
                       {!item.activo && (
                         <span className="ml-2 text-xs font-medium text-neutral-500 bg-neutral-100 border border-neutral-200 rounded px-1.5 py-0.5">
@@ -476,10 +476,10 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                         {item.activo ? 'Activo' : 'Desactivado'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#2C1A0E]">
+                    <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-ink">
                       {item.cantidad}
                     </td>
-                    <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#B84500]">
+                    <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent">
                       S/ {item.monto.toFixed(2)}
                     </td>
                   </tr>
@@ -496,22 +496,22 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
           <>
             {/* 4 Tarjetas de Resumen Financiero (RV-136) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                     Total General
                   </span>
-                  <div className="w-7 h-7 rounded-lg bg-amber-50 text-[#B84500] flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-amber-50 text-accent flex items-center justify-center">
                     <TrendingUp className="w-4 h-4" />
                   </div>
                 </div>
-                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#B84500] tabular-nums mt-2">
+                <span className="font-sans font-bold text-2xl sm:text-3xl text-accent tabular-nums mt-2">
                   S/ {reporteVentas ? reporteVentas.total.toFixed(2) : '0.00'}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Ingresos brutos vigentes</span>
               </div>
 
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                     Total en Efectivo
@@ -526,7 +526,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="text-xs text-neutral-500 mt-1">Cobros en caja física</span>
               </div>
 
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                     Total por Yape
@@ -541,7 +541,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <span className="text-xs text-neutral-500 mt-1">Billeteras electrónicas</span>
               </div>
 
-              <div className="p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
+              <div className="p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
                     Cantidad de Ventas
@@ -550,7 +550,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                     <Receipt className="w-4 h-4" />
                   </div>
                 </div>
-                <span className="font-sans font-bold text-2xl sm:text-3xl text-[#2C1A0E] tabular-nums mt-2">
+                <span className="font-sans font-bold text-2xl sm:text-3xl text-ink tabular-nums mt-2">
                   {reporteVentas ? reporteVentas.nVentas : '0'}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Comprobantes vigentes</span>
@@ -595,8 +595,8 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               </TableHead>
               <TableBody>
                 {reporteVentas?.porDia.map((d) => (
-                  <tr key={d.fecha} className="hover:bg-neutral-50/60 transition-colors border-b border-[#F0EBE6]">
-                    <td className="py-3 px-4 font-semibold text-sm text-[#2C1A0E]">{d.fecha}</td>
+                  <tr key={d.fecha} className="hover:bg-neutral-50/60 transition-colors border-b border-line-soft">
+                    <td className="py-3 px-4 font-semibold text-sm text-ink">{d.fecha}</td>
                     <td className="py-3 px-4 text-center font-sans font-medium text-sm tabular-nums">
                       {d.nVentas}
                     </td>
@@ -606,7 +606,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                     <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-purple-700">
                       S/ {d.yape.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-[#B84500]">
+                    <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-accent">
                       S/ {d.total.toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -615,7 +615,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                           type="button"
                           onClick={onNavigateToCierres}
                           title="Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres."
-                          className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-[#B84600] border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-accent border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
                         >
                           <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                           <span>Con ajustes</span>

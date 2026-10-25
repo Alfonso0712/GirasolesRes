@@ -19,9 +19,9 @@ export const ReportKpiCard: React.FC<ReportKpiCardProps> = ({
   className = '',
 }) => {
   const variantStyles = {
-    primary: 'border-amber-300/80 bg-amber-50/40 text-[#2C1A0E]',
+    primary: 'border-amber-300/80 bg-amber-50/40 text-ink',
     secondary: 'border-emerald-200 bg-emerald-50/40 text-emerald-950',
-    neutral: 'border-neutral-200/90 bg-white text-[#2C1A0E]',
+    neutral: 'border-neutral-200/90 bg-surface text-ink',
   };
 
   return (
@@ -33,14 +33,14 @@ export const ReportKpiCard: React.FC<ReportKpiCardProps> = ({
           {label}
         </span>
         {Icon && (
-          <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200 flex items-center justify-center text-[#B84500] shadow-2xs shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-surface border border-neutral-200 flex items-center justify-center text-accent shadow-2xs shrink-0">
             <Icon className="w-4 h-4" />
           </div>
         )}
       </div>
 
       <div className="mt-1">
-        <span className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-[#2C1A0E]">
+        <span className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-ink">
           {value}
         </span>
         {subvalue && (

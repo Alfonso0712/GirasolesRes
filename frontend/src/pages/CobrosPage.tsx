@@ -186,9 +186,9 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                 disabled={cargando}
                 title="Actualizar pedidos ahora"
                 aria-label="Actualizar pedidos ahora"
-                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
               >
-                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+                <RotateCcw className={`w-3.5 h-3.5 text-accent ${cargando ? 'animate-spin' : ''}`} />
                 <span>Actualizar</span>
               </button>
             </div>
@@ -221,7 +221,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setAbrirCajaModalOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                    className="px-4 py-2 rounded-xl bg-primary hover:bg-primary text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
                   >
                     <DollarSign className="w-4 h-4" />
                     <span>Abrir caja</span>
@@ -247,26 +247,26 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
       {/* 2. Tarjetas KPI / Resumen Rápido (shrink-0) */}
       <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
+        <div className="p-3.5 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Por Cobrar
             </span>
-            <span className="text-xl font-bold font-sans tabular-nums text-[#2C1A0E]">
+            <span className="text-xl font-bold font-sans tabular-nums text-ink">
               {totalPedidos} {totalPedidos === 1 ? 'pedido' : 'pedidos'}
             </span>
           </div>
-          <div className="w-9 h-9 rounded-lg bg-orange-50 text-[#B84500] flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-orange-50 text-accent flex items-center justify-center">
             <Receipt className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
+        <div className="p-3.5 bg-surface rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Listos en Cocina
             </span>
-            <span className="text-xl font-bold font-sans tabular-nums text-[#2C1A0E]">
+            <span className="text-xl font-bold font-sans tabular-nums text-ink">
               {totalListos} listos
             </span>
           </div>
@@ -275,23 +275,23 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
           </div>
         </div>
 
-        <div className="p-3.5 bg-white rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
+        <div className="p-3.5 bg-surface rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
               Monto Pendiente
             </span>
-            <span className="text-xl font-bold font-sans tabular-nums text-[#B84500]">
+            <span className="text-xl font-bold font-sans tabular-nums text-accent">
               S/ {totalPorCobrar.toFixed(2)}
             </span>
           </div>
-          <div className="w-9 h-9 rounded-lg bg-amber-50 text-[#B84500] flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-amber-50 text-accent flex items-center justify-center">
             <CreditCard className="w-4 h-4" />
           </div>
         </div>
       </div>
 
       {/* 3. Barra de Filtros Fija (shrink-0) */}
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-surface p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
         {/* Input de Búsqueda */}
         <div className="relative w-full sm:w-64">
           <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -300,7 +300,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar mesa o n.º de pedido..."
-            className="w-full pl-8 pr-8 py-2 rounded-xl border border-neutral-200 text-xs text-[#2C1A0E] placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] transition-colors min-h-[38px]"
+            className="w-full pl-8 pr-8 py-2 rounded-xl border border-neutral-200 text-xs text-ink placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors min-h-[38px]"
           />
           {busqueda && (
             <button
@@ -316,7 +316,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
         {/* Píldoras de Estado */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs font-semibold text-[#7C6F66] flex items-center gap-1 mr-1">
+          <span className="text-xs font-semibold text-ink-muted flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5" />
             Estado:
           </span>
@@ -336,8 +336,8 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                 onClick={() => setFiltroTipo(tipo)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] ${
                   activo
-                    ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
-                    : 'text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E]'
+                    ? 'bg-ink-fill text-white font-semibold shadow-2xs'
+                    : 'text-ink-muted hover:bg-neutral-100 hover:text-ink'
                 }`}
               >
                 {labels[tipo]}
@@ -380,12 +380,12 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                     return (
                       <tr
                         key={p.pedidoId}
-                        className={`transition-colors border-b border-[#F0EBE6] hover:bg-neutral-50/70 ${
+                        className={`transition-colors border-b border-line-soft hover:bg-neutral-50/70 ${
                           p.estaListo ? 'bg-emerald-50/25' : ''
                         }`}
                       >
                         {/* N.º Pedido */}
-                        <td className="py-3 px-4 font-semibold font-sans tabular-nums text-sm text-[#2C1A0E]">
+                        <td className="py-3 px-4 font-semibold font-sans tabular-nums text-sm text-ink">
                           #{p.numero}
                         </td>
 
@@ -393,11 +393,11 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             {esMesa ? (
-                              <Utensils className="w-4 h-4 text-[#B84500]" />
+                              <Utensils className="w-4 h-4 text-accent" />
                             ) : (
-                              <ShoppingBag className="w-4 h-4 text-[#B84500]" />
+                              <ShoppingBag className="w-4 h-4 text-accent" />
                             )}
-                            <span className="font-semibold text-sm text-[#2C1A0E]">
+                            <span className="font-semibold text-sm text-ink">
                               {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
                             </span>
                           </div>
@@ -429,7 +429,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                         </td>
 
                         {/* Total a Cobrar */}
-                        <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-[#B84500]">
+                        <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent">
                           S/ {p.total.toFixed(2)}
                         </td>
 
@@ -441,7 +441,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                               onClick={() => handleIniciarCobro(p)}
                               title={`Cobrar pedido #${p.numero}`}
                               aria-label={`Cobrar pedido #${p.numero}`}
-                              className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
+                              className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
                             >
                               <DollarSign className="w-4 h-4" />
                               <span>Cobrar</span>

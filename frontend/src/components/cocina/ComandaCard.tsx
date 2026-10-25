@@ -26,7 +26,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
     return (
       <article
         key={c.id}
-        className={`bg-white rounded-3xl p-5 sm:p-6 border shadow-sm transition-all flex flex-col justify-between gap-4 ${
+        className={`bg-surface rounded-3xl p-5 sm:p-6 border shadow-sm transition-all flex flex-col justify-between gap-4 ${
           esNueva
             ? 'border-emerald-500 ring-4 ring-emerald-300/40 animate-pulse'
             : c.esDemora
@@ -77,7 +77,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
 
           {/* Subtítulo: Destino y Mozo */}
           <div className="text-sm text-neutral-600 mb-3 pb-3 border-b border-neutral-100 flex items-center justify-between">
-            <span className="font-bold text-[#B84500] text-base">{destino}</span>
+            <span className="font-bold text-accent text-base">{destino}</span>
             <span className="text-xs text-neutral-500">Por: {c.registradoPor}</span>
           </div>
 
@@ -110,7 +110,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
           type="button"
           onClick={() => onAccionPrincipal(c)}
           disabled={estaProcesando}
-          className="w-full min-h-[56px] h-14 rounded-2xl bg-[#C74E00] hover:bg-[#b84600] active:scale-[0.99] text-white font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50"
+          className="w-full min-h-[56px] h-14 rounded-2xl bg-primary hover:bg-primary-hover active:scale-[0.99] text-white font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50"
           title={`Iniciar preparación del pedido N.º ${c.pedidoNumero}`}
         >
           {estaProcesando ? (

@@ -313,7 +313,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
 
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">
-      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10 bg-[#FAF7F4] text-neutral-900 select-none">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10 bg-canvas text-neutral-900 select-none">
       {/* Franja superior de desconexión (MSG-132) */}
       {sinConexion && (
         <div
@@ -349,10 +349,10 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
             <button
               type="button"
               onClick={() => setAbrirModalPlatosAgotados(true)}
-              className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B84500] text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[40px]"
+              className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-accent text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[40px]"
               title="Abrir disponibilidad de platos del menú"
             >
-              <UtensilsCrossed className="w-4 h-4 text-[#B84500]" />
+              <UtensilsCrossed className="w-4 h-4 text-accent" />
               <span>Platos agotados</span>
             </button>
 
@@ -363,7 +363,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer min-h-[40px] shadow-2xs ${
                 sonidoActivado
                   ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                  : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+                  : 'bg-surface text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
               }`}
               title="Activar o desactivar sonido de nueva comanda"
             >
@@ -389,10 +389,10 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
                 type="button"
                 onClick={() => cargarComandas(false)}
                 disabled={cargando}
-                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
                 title="Actualizar comandas manualmente"
               >
-                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+                <RotateCcw className={`w-3.5 h-3.5 text-accent ${cargando ? 'animate-spin' : ''}`} />
                 <span>Actualizar</span>
               </button>
             </div>
@@ -408,7 +408,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
       <div className="w-full">
         {cargando && comandas.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-neutral-500 gap-3">
-            <RotateCw className="w-8 h-8 animate-spin text-[#B84500]" />
+            <RotateCw className="w-8 h-8 animate-spin text-accent" />
             <span className="text-base font-semibold">Cargando comandas de cocina…</span>
           </div>
         ) : errorCarga && comandas.length === 0 ? (
@@ -418,14 +418,14 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
             <button
               type="button"
               onClick={() => cargarComandas(false)}
-              className="mt-4 px-6 py-2.5 rounded-xl bg-[#C74E00] text-white font-semibold text-sm hover:bg-[#b84600] transition-colors cursor-pointer"
+              className="mt-4 px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-hover transition-colors cursor-pointer"
             >
               Reintentar
             </button>
           </div>
         ) : comandas.length === 0 ? (
           /* Estado sin comandas (MSG-124 / Sección 7) */
-          <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-white/70 rounded-3xl border border-dashed border-amber-300 my-auto">
+          <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-surface/70 rounded-3xl border border-dashed border-amber-300 my-auto">
             <div className="w-20 h-20 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 shadow-xs">
               <CheckCircle2 className="w-10 h-10" />
             </div>
@@ -464,7 +464,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
               </div>
 
               {comandasPendientes.length === 0 ? (
-                <div className="p-8 text-center bg-white/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
+                <div className="p-8 text-center bg-surface/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
                   No hay comandas en espera de preparación.
                 </div>
               ) : (
@@ -507,7 +507,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
               </div>
 
               {comandasEnPreparacion.length === 0 ? (
-                <div className="p-8 text-center bg-white/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
+                <div className="p-8 text-center bg-surface/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
                   No hay comandas en preparación en este momento.
                 </div>
               ) : (

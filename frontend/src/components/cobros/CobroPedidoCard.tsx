@@ -17,15 +17,15 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
     <div
       key={p.pedidoId}
       className={`p-4 rounded-xl border border-neutral-200/90 shadow-2xs flex flex-col gap-3 ${
-        p.estaListo ? 'bg-emerald-50/20 border-emerald-200' : 'bg-white'
+        p.estaListo ? 'bg-emerald-50/20 border-emerald-200' : 'bg-surface'
       }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {esMesa ? (
-            <Utensils className="w-4 h-4 text-[#B84500]" />
+            <Utensils className="w-4 h-4 text-accent" />
           ) : (
-            <ShoppingBag className="w-4 h-4 text-[#B84500]" />
+            <ShoppingBag className="w-4 h-4 text-accent" />
           )}
           <span className="font-bold text-neutral-900">
             {esMesa ? p.mesa || 'Mesa' : 'Para Llevar'}
@@ -59,7 +59,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
           <span className="text-xs text-neutral-500 font-bold uppercase block">
             Total
           </span>
-          <span className="text-lg font-bold font-sans tabular-nums text-[#B84500]">
+          <span className="text-lg font-bold font-sans tabular-nums text-accent">
             S/ {p.total.toFixed(2)}
           </span>
         </div>
@@ -68,7 +68,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
           <button
             type="button"
             onClick={() => onCobrar(p)}
-            className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+            className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
           >
             <DollarSign className="w-4 h-4" />
             <span>Cobrar pedido</span>

@@ -30,7 +30,7 @@ export const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
     <div
       className={`rounded-2xl border p-5 xl:p-6 flex flex-col justify-between transition-all ${
         habilitado
-          ? 'bg-white border-[#D35400] shadow-sm'
+          ? 'bg-surface border-accent shadow-sm'
           : 'bg-neutral-50/80 border-neutral-200 opacity-80'
       }`}
     >
@@ -40,7 +40,7 @@ export const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
             <h3 className="font-sans font-bold text-neutral-900 text-base xl:text-lg">
               {nombre}
             </h3>
-            <span className="text-lg xl:text-xl font-sans font-bold tabular-nums whitespace-nowrap text-[#B84500]">
+            <span className="text-lg xl:text-xl font-sans font-bold tabular-nums whitespace-nowrap text-accent">
               S/ {precio.toFixed(2)}
             </span>
           </div>
@@ -52,7 +52,7 @@ export const CardMenuCompletoDia: React.FC<CardMenuCompletoDiaProps> = ({
               onChange={onToggle}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D35400]"></div>
+            <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
           </label>
         </div>
 

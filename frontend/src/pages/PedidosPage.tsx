@@ -252,7 +252,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           title="Pedidos"
           subtitle="Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar."
           badge={
-            <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-white border border-neutral-200">
+            <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-surface border border-neutral-200">
               Actualizado hace {segundosDesdeActualizacion} s
             </span>
           }
@@ -261,10 +261,10 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               type="button"
               onClick={() => cargarPedidos()}
               disabled={cargando}
-              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60 shrink-0"
+              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60 shrink-0"
               aria-label="Refrescar lista de pedidos"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-accent ${cargando ? 'animate-spin' : ''}`} />
               <span>Actualizar</span>
             </button>
           }
@@ -280,7 +280,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               filtroEstado === 'Pendiente'
                 ? 'bg-amber-100/80 border-amber-400 ring-2 ring-amber-300'
-                : 'bg-white border-neutral-200/80 hover:border-amber-300 hover:shadow-xs'
+                : 'bg-surface border-neutral-200/80 hover:border-amber-300 hover:shadow-xs'
             }`}
           >
             <div className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -298,7 +298,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               filtroEstado === 'EnPreparacion'
                 ? 'bg-blue-100/80 border-blue-400 ring-2 ring-blue-300'
-                : 'bg-white border-neutral-200/80 hover:border-blue-300 hover:shadow-xs'
+                : 'bg-surface border-neutral-200/80 hover:border-blue-300 hover:shadow-xs'
             }`}
           >
             <div className="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -316,7 +316,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               filtroEstado === 'Listo'
                 ? 'bg-emerald-100/80 border-emerald-400 ring-2 ring-emerald-300'
-                : 'bg-white border-neutral-200/80 hover:border-emerald-300 hover:shadow-xs'
+                : 'bg-surface border-neutral-200/80 hover:border-emerald-300 hover:shadow-xs'
             }`}
           >
             <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -334,7 +334,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               filtroEstado === 'Pagado'
                 ? 'bg-neutral-200 border-neutral-400 ring-2 ring-neutral-300'
-                : 'bg-white border-neutral-200/80 hover:border-neutral-300 hover:shadow-xs'
+                : 'bg-surface border-neutral-200/80 hover:border-neutral-300 hover:shadow-xs'
             }`}
           >
             <div className="text-xs font-bold text-neutral-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -351,7 +351,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             className={`col-span-2 sm:col-span-1 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               filtroEstado === 'Anulado'
                 ? 'bg-rose-100/80 border-rose-400 ring-2 ring-rose-300'
-                : 'bg-white border-neutral-200/80 hover:border-rose-300 hover:shadow-xs'
+                : 'bg-surface border-neutral-200/80 hover:border-rose-300 hover:shadow-xs'
             }`}
           >
             <div className="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -365,8 +365,8 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
         </div>
 
         {/* Barra de Filtros Combinables (RV-81) */}
-        <div className="px-3.5 py-3 sm:p-4 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs mb-3 flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#7C6F66]">
+        <div className="px-3.5 py-3 sm:p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs mb-3 flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-ink-muted">
             <Filter className="w-3.5 h-3.5" />
             <span>Filtros:</span>
           </div>
@@ -375,7 +375,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <select
             value={filtroEstado}
             onChange={(e) => setFiltroEstado(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
+            className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
           >
             <option value="">Todos los estados</option>
             <option value="Pendiente">Pendiente</option>
@@ -389,7 +389,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <select
             value={filtroTipo}
             onChange={(e) => setFiltroTipo(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
+            className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
           >
             <option value="">Todos los tipos</option>
             <option value="Mesa">Mesa</option>
@@ -400,7 +400,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           <select
             value={filtroMesaId}
             onChange={(e) => setFiltroMesaId(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
+            className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
           >
             <option value="">Todas las mesas</option>
             {mesas.map((m) => (
@@ -414,7 +414,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
               type="checkbox"
               checked={filtroSoloMios}
               onChange={(e) => setFiltroSoloMios(e.target.checked)}
-              className="w-4 h-4 rounded text-[#B84500] focus:ring-[#D35400] border-neutral-300 cursor-pointer"
+              className="w-4 h-4 rounded text-accent focus:ring-accent border-neutral-300 cursor-pointer"
             />
             <span>Solo mis pedidos</span>
           </label>
@@ -427,7 +427,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                 type="date"
                 value={filtroFecha}
                 onChange={(e) => setFiltroFecha(e.target.value)}
-                className="text-xs p-2 rounded-xl border border-neutral-200 bg-white focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400] focus:outline-none cursor-pointer min-h-[38px]"
+                className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
               />
             </div>
           )}
@@ -437,7 +437,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             <button
               type="button"
               onClick={handleLimpiarFiltros}
-              className="text-xs font-bold text-[#B84500] hover:text-[#B84600] p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-xs font-bold text-accent hover:text-accent p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <X className="w-3.5 h-3.5" />
               <span>Quitar filtros</span>
@@ -480,7 +480,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                     return (
                       <tr
                         key={p.id}
-                        className={`transition-colors border-b border-[#F0EBE6] ${
+                        className={`transition-colors border-b border-line-soft ${
                           esAnulado
                             ? 'opacity-60 bg-neutral-50/70'
                             : p.esMio
@@ -488,17 +488,17 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                             : 'hover:bg-neutral-50/60'
                         } ${esListo ? 'ring-1 ring-emerald-300' : ''}`}
                       >
-                        <td className="py-3 px-4 font-semibold tabular-nums text-sm text-[#2C1A0E]">
+                        <td className="py-3 px-4 font-semibold tabular-nums text-sm text-ink">
                           #{p.numero}
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             {p.tipo === 'Mesa' ? (
-                              <Utensils className="w-4 h-4 text-[#B84500]" />
+                              <Utensils className="w-4 h-4 text-accent" />
                             ) : (
                               <ShoppingBag className="w-4 h-4 text-orange-600" />
                             )}
-                            <span className="font-semibold text-sm text-[#2C1A0E]">
+                            <span className="font-semibold text-sm text-ink">
                               {p.tipo === 'Mesa' ? (p.mesa || 'Mesa') : 'Para llevar'}
                             </span>
                           </div>
@@ -515,7 +515,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                           <div className="flex items-center gap-1.5">
                             <span>{p.registradoPor}</span>
                             {p.esMio && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-[#B84500] font-semibold text-xs">
+                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-accent font-semibold text-xs">
                                 Mío
                               </span>
                             )}
@@ -524,7 +524,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                         <td className="py-3 px-4 whitespace-nowrap">
                           <StatusBadge status={p.estado} />
                         </td>
-                        <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-[#2C1A0E]">
+                        <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-ink">
                           S/ {p.total.toFixed(2)}
                         </td>
                         <td className="py-3 px-4">

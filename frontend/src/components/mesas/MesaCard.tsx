@@ -37,7 +37,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
   const esInactiva = !mesa.activa;
 
   // RV-58: Colorimetría semántica e icono diferenciado según Design System
-  let estiloCard = 'bg-white border-neutral-200/90 text-neutral-800 shadow-2xs hover:shadow-md';
+  let estiloCard = 'bg-surface border-neutral-200/90 text-neutral-800 shadow-2xs hover:shadow-md';
   let badgeColor = 'bg-neutral-100 text-neutral-600 border-neutral-200';
   let IconoEstado = CheckCircle2;
 
@@ -51,13 +51,13 @@ export const MesaCard: React.FC<MesaCardProps> = ({
     IconoEstado = CheckCircle2;
   } else if (esOcupada) {
     estiloCard = 'bg-amber-50/40 border-amber-200/90 text-amber-950 shadow-2xs hover:border-amber-400 hover:shadow-md';
-    badgeColor = 'bg-amber-100/80 text-[#B84600] border-amber-200';
+    badgeColor = 'bg-amber-100/80 text-accent border-amber-200';
     IconoEstado = Clock;
   }
 
   // Resaltado temporal post-mutación (Shneiderman 3)
   const claseResaltado = isHighlighted
-    ? 'ring-2 ring-[#D35400] ring-offset-2 scale-[1.02] transition-transform duration-300'
+    ? 'ring-2 ring-accent ring-offset-2 scale-[1.02] transition-transform duration-300'
     : 'transition-all duration-200';
 
   const handleClickCard = () => {
@@ -92,7 +92,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
       <div className="flex justify-between items-start gap-2 mb-1.5">
         <div className="flex flex-col gap-1 min-w-0">
           <h3
-            className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-[#2C1A0E] tabular-nums break-words leading-snug line-clamp-2"
+            className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-ink tabular-nums break-words leading-snug line-clamp-2"
             title={mesa.nombre}
           >
             {mesa.nombre}
@@ -116,7 +116,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
               }}
               title={`Editar ${mesa.nombre}`}
               aria-label={`Editar ${mesa.nombre}`}
-              className="w-7 h-7 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-100 text-neutral-600 shadow-2xs inline-flex items-center justify-center transition-colors cursor-pointer"
             >
               <Edit2 className="w-3.5 h-3.5 text-neutral-600" />
             </button>
@@ -148,7 +148,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 cursor-pointer'
                   : esOcupada
                   ? 'bg-neutral-100 border-neutral-200 text-neutral-500 cursor-not-allowed opacity-60'
-                  : 'bg-amber-50 hover:bg-amber-100 text-[#B84600] border-amber-200 cursor-pointer'
+                  : 'bg-amber-50 hover:bg-amber-100 text-accent border-amber-200 cursor-pointer'
               }`}
             >
               {mesa.activa ? <PowerOff className="w-3.5 h-3.5" /> : <Power className="w-3.5 h-3.5" />}
@@ -159,7 +159,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
 
       {/* Descripción con texto flexible */}
       <p
-        className="text-xs sm:text-sm text-[#7C6F66] font-sans break-words line-clamp-2 mb-2 w-full"
+        className="text-xs sm:text-sm text-ink-muted font-sans break-words line-clamp-2 mb-2 w-full"
         title={esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}
       >
         {esInactiva ? 'No disponible en salón' : esLibre ? 'Lista para comensales' : 'Con pedido en curso'}
@@ -188,7 +188,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                 className={`w-full min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap ${
                   esInactiva
                     ? 'bg-neutral-100 border border-neutral-200 text-neutral-500 cursor-not-allowed opacity-60'
-                    : 'bg-[#C74E00] hover:bg-[#B84600] text-white border border-transparent cursor-pointer'
+                    : 'bg-primary hover:bg-primary-hover text-white border border-transparent cursor-pointer'
                 }`}
               >
                 <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
@@ -206,7 +206,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   }}
                   title={`Ver/ampliar pedido en ${mesa.nombre}`}
                   aria-label={`Pedido ${mesa.nombre}`}
-                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap bg-[#C74E00] hover:bg-[#B84600] text-white cursor-pointer"
+                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap bg-primary hover:bg-primary-hover text-white cursor-pointer"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
                   <span className="whitespace-nowrap font-bold">Pedido</span>
@@ -220,7 +220,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   }}
                   title={`Cobrar ${mesa.nombre}`}
                   aria-label={`Cobrar ${mesa.nombre}`}
-                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg border border-[#2C1A0E] bg-[#2C1A0E] hover:bg-[#482813] text-white shadow-2xs inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-xs font-bold whitespace-nowrap"
+                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg border border-ink-fill bg-ink-fill hover:bg-sidebar text-white shadow-2xs inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-xs font-bold whitespace-nowrap"
                 >
                   <DollarSign className="w-3.5 h-3.5 shrink-0" />
                   <span className="whitespace-nowrap font-bold">Cobrar</span>
@@ -246,7 +246,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   e.stopPropagation();
                   onAccionRol?.(mesa, 'REGISTRAR PEDIDO');
                 }}
-                className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-[#C74E00] hover:bg-[#B84600] text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-primary hover:bg-primary-hover text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Registrar pedido</span>
@@ -277,7 +277,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                   e.stopPropagation();
                   onAccionRol?.(mesa, 'COBRAR');
                 }}
-                className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-[#2C1A0E] hover:bg-[#482813] text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-ink-fill hover:bg-sidebar text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <DollarSign className="w-4 h-4" />
                 <span>Cobrar mesa</span>

@@ -162,19 +162,19 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
     >
       <div
         ref={modalRef}
-        className="bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] border border-amber-200/80 flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent border border-amber-200/80 flex items-center justify-center shadow-xs">
               <Coins className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">
                 Herramienta de Arqueo
               </p>
-              <h2 id="contador-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
+              <h2 id="contador-title" className="font-sans text-xl font-bold text-ink tracking-tight">
                 Contador de Billetes y Monedas
               </h2>
             </div>
@@ -190,7 +190,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
         </div>
 
         {/* Contenido scrolleable */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-[#2C1A0E]">
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-ink">
           <p className="text-sm text-neutral-600">
             Ingrese la cantidad de unidades por cada denominación. El total se suma en tiempo real y no se guarda el desglose individual.
           </p>
@@ -198,7 +198,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
           {/* Sección Billetes */}
           <div>
             <div className="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200">
-              <Banknote className="w-4 h-4 text-[#B84500]" />
+              <Banknote className="w-4 h-4 text-accent" />
               <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-700">
                 Billetes (S/)
               </h3>
@@ -213,10 +213,10 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                 return (
                   <div
                     key={b.id}
-                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-[#D35400] transition-colors"
+                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
                   >
                     <div className="w-20">
-                      <span className="font-bold text-sm text-[#2C1A0E]">{b.etiqueta}</span>
+                      <span className="font-bold text-sm text-ink">{b.etiqueta}</span>
                     </div>
                     <div className="flex-1 flex flex-col items-end">
                       <div className="flex items-center gap-2">
@@ -231,10 +231,10 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                           value={cant}
                           onChange={(e) => handleCantidadChange(b.id, e.target.value)}
                           placeholder="0"
-                          className={`w-20 text-right px-2 py-1 bg-white border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
+                          className={`w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
                             err
                               ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                              : 'border-neutral-200 focus:ring-[#D35400]'
+                              : 'border-neutral-200 focus:ring-accent'
                           }`}
                         />
                       </div>
@@ -252,7 +252,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
           {/* Sección Monedas */}
           <div>
             <div className="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200">
-              <Coins className="w-4 h-4 text-[#B84500]" />
+              <Coins className="w-4 h-4 text-accent" />
               <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-700">
                 Monedas (S/)
               </h3>
@@ -267,10 +267,10 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                 return (
                   <div
                     key={m.id}
-                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-[#D35400] transition-colors"
+                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
                   >
                     <div className="w-20">
-                      <span className="font-bold text-sm text-[#2C1A0E]">{m.etiqueta}</span>
+                      <span className="font-bold text-sm text-ink">{m.etiqueta}</span>
                     </div>
                     <div className="flex-1 flex flex-col items-end">
                       <div className="flex items-center gap-2">
@@ -285,10 +285,10 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
                           value={cant}
                           onChange={(e) => handleCantidadChange(m.id, e.target.value)}
                           placeholder="0"
-                          className={`w-20 text-right px-2 py-1 bg-white border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
+                          className={`w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
                             err
                               ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                              : 'border-neutral-200 focus:ring-[#D35400]'
+                              : 'border-neutral-200 focus:ring-accent'
                           }`}
                         />
                       </div>
@@ -310,7 +310,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
             <button
               type="button"
               onClick={handleLimpiar}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Limpiar
@@ -319,7 +319,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               <span className="text-xs uppercase font-bold tracking-wider text-neutral-500 block">
                 Total Contado
               </span>
-              <span className="font-sans text-2xl font-bold text-[#2C1A0E] tabular-nums whitespace-nowrap">
+              <span className="font-sans text-2xl font-bold text-ink tabular-nums whitespace-nowrap">
                 S/ {totalCalculado.toFixed(2)}
               </span>
             </div>
@@ -329,7 +329,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+              className="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
             >
               Cancelar
             </button>
@@ -337,7 +337,7 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               type="button"
               disabled={hayErrores}
               onClick={handleConfirmar}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary-hover disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
             >
               <Check className="w-4 h-4" />
               USAR ESTE TOTAL

@@ -55,18 +55,18 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
       aria-labelledby="titulo-detalle-venta"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 text-neutral-800 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
+      <div className="bg-surface rounded-2xl max-w-2xl w-full p-6 text-neutral-800 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
         {/* Encabezado */}
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 shrink-0">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
-              esAnulada ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-amber-50 text-[#B84500] border-amber-200'
+              esAnulada ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-amber-50 text-accent border-amber-200'
             }`}>
               <Receipt className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
+                <span className="text-xs font-bold uppercase tracking-wider text-accent">
                   DETALLE DE VENTA
                 </span>
                 {venta && (
@@ -82,7 +82,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   </span>
                 )}
               </div>
-              <h2 id="titulo-detalle-venta" className="text-xl font-sans font-bold text-[#2C1A0E]">
+              <h2 id="titulo-detalle-venta" className="text-xl font-sans font-bold text-ink">
                 {loading ? 'Cargando comprobante…' : venta ? `Comprobante ${venta.comprobante}` : 'Detalle'}
               </h2>
             </div>
@@ -101,7 +101,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
           {loading ? (
             <div className="py-12 flex flex-col items-center justify-center gap-2 text-neutral-500">
-              <span className="w-6 h-6 border-2 border-[#C74E00]/20 border-t-[#C74E00] rounded-full animate-spin" />
+              <span className="w-6 h-6 border-2 border-accent/20 border-t-accent rounded-full animate-spin" />
               <p className="text-xs">Cargando información de la venta…</p>
             </div>
           ) : !venta ? (
@@ -184,13 +184,13 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
 
               {/* Tabla de Consumo (Líneas) */}
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#482813] mb-2 flex items-center gap-1.5">
-                  <Utensils className="w-3.5 h-3.5 text-[#B84500]" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-ink mb-2 flex items-center gap-1.5">
+                  <Utensils className="w-3.5 h-3.5 text-accent" />
                   <span>Platos y Bebidas Consumidos</span>
                 </h3>
                 <div className="border border-neutral-200 rounded-xl overflow-hidden shadow-2xs">
                   <table className="w-full text-left border-collapse">
-                    <thead className="bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
+                    <thead className="bg-canvas text-ink-muted font-semibold text-xs uppercase tracking-wider border-b border-line">
                       <tr>
                         <th className="py-2.5 px-3 text-left w-14">Cant.</th>
                         <th className="py-2.5 px-3 text-left">Descripción</th>
@@ -198,14 +198,14 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                         <th className="py-2.5 px-3 text-right w-24">Importe</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#F0EBE6] bg-white text-sm">
+                    <tbody className="divide-y divide-line-soft bg-surface text-sm">
                       {venta.lineas.map((linea, idx) => (
-                        <tr key={idx} className="hover:bg-neutral-50/50 border-b border-[#F0EBE6]">
-                          <td className="py-2.5 px-3 tabular-nums font-semibold text-center text-[#2C1A0E] text-sm">
+                        <tr key={idx} className="hover:bg-neutral-50/50 border-b border-line-soft">
+                          <td className="py-2.5 px-3 tabular-nums font-semibold text-center text-ink text-sm">
                             {linea.cantidad}
                           </td>
                           <td className="py-2.5 px-3">
-                            <span className="font-semibold text-sm text-[#2C1A0E]">{linea.productoNombre}</span>
+                            <span className="font-semibold text-sm text-ink">{linea.productoNombre}</span>
                             {linea.elecciones && (
                               <span className="text-xs text-stone-500 italic block mt-0.5">
                                 {linea.elecciones}{linea.incluye ? ` (incluye ${linea.incluye})` : ''}
@@ -220,7 +220,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                           <td className="py-2.5 px-3 text-right tabular-nums text-sm text-stone-600">
                             S/ {linea.precioUnitario.toFixed(2)}
                           </td>
-                          <td className="py-2.5 px-3 text-right tabular-nums font-semibold text-sm text-[#2C1A0E]">
+                          <td className="py-2.5 px-3 text-right tabular-nums font-semibold text-sm text-ink">
                             S/ {linea.subtotal.toFixed(2)}
                           </td>
                         </tr>
@@ -247,8 +247,8 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm pt-1 border-t border-amber-200/30">
-                    <span className="font-bold text-[#482813]">TOTAL COBRADO:</span>
-                    <span className="font-sans font-bold text-lg text-[#B84500] tabular-nums whitespace-nowrap">
+                    <span className="font-bold text-ink">TOTAL COBRADO:</span>
+                    <span className="font-sans font-bold text-lg text-accent tabular-nums whitespace-nowrap">
                       S/ {venta.total.toFixed(2)}
                     </span>
                   </div>
@@ -258,7 +258,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-neutral-600">
                   <div>
                     <span className="text-neutral-500 block uppercase font-medium">Método de Pago</span>
-                    <span className="font-bold text-[#2C1A0E] flex items-center gap-1 mt-0.5">
+                    <span className="font-bold text-ink flex items-center gap-1 mt-0.5">
                       {venta.metodo === 'Efectivo' ? (
                         <>
                           <DollarSign className="w-3.5 h-3.5 text-emerald-700" />
@@ -309,9 +309,9 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
               type="button"
               disabled={loading || !venta || descargandoTicket}
               onClick={() => venta && onDescargarTicket(venta.ventaId, true)}
-              className="px-3 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-[#B84500]" />
+              <Download className="w-3.5 h-3.5 text-accent" />
               <span>{descargandoTicket ? 'Descargando PDF...' : 'Descargar PDF (copia)'}</span>
             </button>
           </div>

@@ -52,7 +52,7 @@ export const IconActionButton: React.FC<IconActionButtonProps> = ({
     view:
       'bg-[#EFF6FF] hover:bg-blue-100 text-[#1D4ED8] border border-[#BFDBFE] hover:border-blue-300 shadow-2xs',
     edit:
-      'bg-[#FFFBEB] hover:bg-amber-100 text-[#B84500] border border-[#FDE68A] hover:border-amber-300 shadow-2xs',
+      'bg-[#FFFBEB] hover:bg-amber-100 text-accent border border-[#FDE68A] hover:border-amber-300 shadow-2xs',
     download:
       'bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] border border-[#CBD5E1] hover:border-slate-400 shadow-2xs',
     print:
@@ -81,7 +81,7 @@ export const IconActionButton: React.FC<IconActionButtonProps> = ({
         onClick={onClick}
         disabled={disabled}
         aria-label={label}
-        className={`inline-flex items-center justify-center rounded-xl transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#C74E00]/25 ${
+        className={`inline-flex items-center justify-center rounded-xl transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-accent/25 ${
           sizeClasses[size]
         } ${disabled ? disabledClasses : variantClasses[variant]} ${className}`}
       >

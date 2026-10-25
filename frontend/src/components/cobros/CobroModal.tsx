@@ -247,12 +247,12 @@ export const CobroModal: React.FC<CobroModalProps> = ({
       aria-labelledby="modal-cobro-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-neutral-200/80 overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] animate-in zoom-in-95 duration-200">
+      <div className="bg-surface rounded-2xl max-w-lg w-full shadow-2xl border border-neutral-200/80 overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#B84500] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+              <span className="text-xs font-bold uppercase tracking-wider text-accent bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                 Cobro en Caja
               </span>
               <span className="text-xs text-neutral-500">·</span>
@@ -262,7 +262,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
             </div>
             <h2
               id="modal-cobro-title"
-              className="text-xl font-sans font-bold text-[#2C1A0E] tracking-tight"
+              className="text-xl font-sans font-bold text-ink tracking-tight"
             >
               Pedido N.º {pedido.numero}
             </h2>
@@ -290,7 +290,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                 Total a Cobrar
               </span>
-              <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-[#B84500] tracking-tight">
+              <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-accent tracking-tight">
                 S/ {total.toFixed(2)}
               </div>
               {tipoComprobante !== 'Ticket' && (
@@ -330,7 +330,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
 
           {/* Selector de Tipo de Comprobante */}
           <div>
-            <label className="block text-xs font-bold text-[#2C1A0E] uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
               Tipo de Comprobante
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -339,8 +339,8 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 onClick={() => setTipoComprobante('Ticket')}
                 className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
                   tipoComprobante === 'Ticket'
-                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                    : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
+                    ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
+                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
                 <div className="font-bold">Ticket</div>
@@ -352,8 +352,8 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 onClick={() => setTipoComprobante('Boleta')}
                 className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
                   tipoComprobante === 'Boleta'
-                    ? 'bg-[#C74E00] text-white border-[#C74E00] shadow-2xs'
-                    : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
+                    ? 'bg-primary text-white border-accent shadow-2xs'
+                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
                 <div className="font-bold">Boleta</div>
@@ -366,7 +366,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
                   tipoComprobante === 'Factura'
                     ? 'bg-[#1E3A8A] text-white border-[#1E3A8A] shadow-2xs'
-                    : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
+                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
                 <div className="font-bold">Factura</div>
@@ -379,8 +379,8 @@ export const CobroModal: React.FC<CobroModalProps> = ({
           {tipoComprobante === 'Boleta' && (
             <div className="p-3.5 bg-neutral-50/80 rounded-xl border border-neutral-200/80 space-y-3 animate-in fade-in duration-150">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#2C1A0E]">Modalidad de Boleta:</span>
-                <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-neutral-200 text-xs">
+                <span className="text-xs font-bold text-ink">Modalidad de Boleta:</span>
+                <div className="flex items-center gap-1 bg-surface p-1 rounded-lg border border-neutral-200 text-xs">
                   <button
                     type="button"
                     disabled={esExigidoDocumentoPorMonto}
@@ -417,7 +417,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               {(modoBoleta === 'dni' || esExigidoDocumentoPorMonto) && (
                 <div className="space-y-2.5 pt-1">
                   <div>
-                    <label className="block text-xs font-semibold text-[#2C1A0E] mb-1">
+                    <label className="block text-xs font-semibold text-ink mb-1">
                       Número de DNI (8 dígitos)
                     </label>
                     <div className="flex gap-2">
@@ -427,7 +427,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                         value={numDoc}
                         onChange={(e) => setNumDoc(e.target.value.replace(/\D/g, ''))}
                         placeholder="Ej. 44444444"
-                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] text-sm tabular-nums"
+                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent text-sm tabular-nums"
                       />
                       <button
                         type="button"
@@ -442,7 +442,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-[#2C1A0E] mb-1">
+                    <label className="block text-xs font-semibold text-ink mb-1">
                       Nombre o Titular
                     </label>
                     <input
@@ -450,7 +450,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                       value={razonSocial}
                       onChange={(e) => setRazonSocial(e.target.value)}
                       placeholder="Nombres y Apellidos"
-                      className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] text-sm bg-white"
+                      className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent text-sm bg-surface"
                     />
                   </div>
 
@@ -474,7 +474,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
           {tipoComprobante === 'Factura' && (
             <div className="p-3.5 bg-neutral-50/80 rounded-xl border border-neutral-200/80 space-y-2.5 animate-in fade-in duration-150">
               <div>
-                <label className="block text-xs font-semibold text-[#2C1A0E] mb-1">
+                <label className="block text-xs font-semibold text-ink mb-1">
                   Número de RUC (11 dígitos, inicia con 10 o 20)
                 </label>
                 <div className="flex gap-2">
@@ -499,7 +499,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#2C1A0E] mb-1">
+                <label className="block text-xs font-semibold text-ink mb-1">
                   Razón Social <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -507,12 +507,12 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   value={razonSocial}
                   onChange={(e) => setRazonSocial(e.target.value)}
                   placeholder="Razón Social de la Empresa"
-                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-sm bg-white"
+                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-sm bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#2C1A0E] mb-1">
+                <label className="block text-xs font-semibold text-ink mb-1">
                   Dirección Fiscal
                 </label>
                 <input
@@ -520,7 +520,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   value={direccion}
                   onChange={(e) => setDireccion(e.target.value)}
                   placeholder="Dirección Fiscal (Opcional)"
-                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-xs bg-white"
+                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-xs bg-surface"
                 />
               </div>
 
@@ -540,7 +540,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
 
           {/* Método de Pago Selector */}
           <div>
-            <label className="block text-xs font-bold text-[#2C1A0E] uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
               Seleccione Medio de Pago
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -549,8 +549,8 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 onClick={() => setMetodo('efectivo')}
                 className={`p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer ${
                   metodo === 'efectivo'
-                    ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
-                    : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
+                    ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
+                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
                 <DollarSign className="w-5 h-5 shrink-0" />
@@ -563,7 +563,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 className={`p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer ${
                   metodo === 'yape'
                     ? 'bg-[#732282] text-white border-[#732282] shadow-sm'
-                    : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200'
+                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
                 <Smartphone className="w-5 h-5 shrink-0" />
@@ -578,9 +578,9 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <div>
                 <label
                   htmlFor="monto-recibido-input"
-                  className="block text-xs font-semibold text-[#2C1A0E] mb-1.5"
+                  className="block text-xs font-semibold text-ink mb-1.5"
                 >
-                  Monto Recibido del Cliente (S/) <span className="text-[#B84500]">*</span>
+                  Monto Recibido del Cliente (S/) <span className="text-accent">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold text-neutral-500">
@@ -596,7 +596,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                     onChange={(e) => setMontoRecibidoStr(e.target.value)}
                     autoFocus
                     disabled={loading}
-                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 text-[#2C1A0E] text-xl font-bold font-sans tabular-nums"
+                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 text-ink text-xl font-bold font-sans tabular-nums"
                     placeholder="0.00"
                   />
                 </div>
@@ -611,7 +611,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleQuickAmount(total)}
-                    className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-semibold font-sans tabular-nums text-neutral-700 shadow-2xs transition-colors cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-xs font-semibold font-sans tabular-nums text-neutral-700 shadow-2xs transition-colors cursor-pointer"
                   >
                     Exacto (S/ {total.toFixed(2)})
                   </button>
@@ -624,7 +624,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                       className={`px-3 py-1.5 rounded-lg border text-xs font-semibold font-sans tabular-nums transition-colors cursor-pointer ${
                         b < total
                           ? 'border-neutral-100 bg-neutral-100/50 text-neutral-500 cursor-not-allowed'
-                          : 'border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs'
+                          : 'border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs'
                       }`}
                     >
                       S/ {b}
@@ -691,7 +691,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               <div>
                 <label
                   htmlFor="yape-ref-input"
-                  className="block text-xs font-bold text-[#2C1A0E] uppercase tracking-wider mb-1"
+                  className="block text-xs font-bold text-ink uppercase tracking-wider mb-1"
                 >
                   Número de operación / Referencia (Opcional)
                 </label>
@@ -703,7 +703,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   onChange={(e) => setYapeReferencia(e.target.value)}
                   disabled={loading}
                   placeholder="Ej. 128492"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#C74E00] text-neutral-900 text-sm tabular-nums"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent text-neutral-900 text-sm tabular-nums"
                 />
               </div>
             </div>
@@ -727,7 +727,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                 canSubmit
                   ? tipoComprobante === 'Factura'
                     ? 'bg-[#1E3A8A] hover:bg-[#1E40AF] cursor-pointer'
-                    : 'bg-[#C74E00] hover:bg-[#B84600] cursor-pointer'
+                    : 'bg-primary hover:bg-primary-hover cursor-pointer'
                   : 'bg-neutral-300 text-neutral-500 cursor-not-allowed opacity-70'
               }`}
             >

@@ -23,7 +23,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     <header className={`shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${className}`}>
       <div>
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl font-bold font-sans text-[#2C1A0E] tracking-tight">
+          <h1 className="text-2xl font-bold font-sans text-ink tracking-tight">
             {title}
           </h1>
 

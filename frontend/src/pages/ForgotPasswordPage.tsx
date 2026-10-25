@@ -95,7 +95,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
         <button
           type="button"
           onClick={onBackToLogin}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#482813] hover:text-[#B84500] transition-colors cursor-pointer py-1 px-1.5 -ml-1.5 rounded-lg"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink hover:text-accent transition-colors cursor-pointer py-1 px-1.5 -ml-1.5 rounded-lg"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Volver al inicio de sesión</span>
@@ -104,20 +104,20 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
       {/* Indicador de paso (Paso X de 3) y subtítulo */}
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[#B84500] text-xs font-bold tracking-widest uppercase">
+        <span className="text-accent text-xs font-bold tracking-widest uppercase">
           RECUPERACIÓN SEGURA
         </span>
-        <span className="text-xs font-medium text-[#7C6F66] tabular-nums">
+        <span className="text-xs font-medium text-ink-muted tabular-nums">
           {paso === 'solicitar' ? 'Paso 1 de 3' : paso === 'restablecer' ? 'Paso 2 de 3' : 'Paso 3 de 3'}
         </span>
       </div>
 
       {paso === 'solicitar' && (
         <>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-1">
             Recuperar contraseña
           </h2>
-          <p className="text-[#7C6F66] text-xs sm:text-sm mb-3">
+          <p className="text-ink-muted text-xs sm:text-sm mb-3">
             Le enviaremos un código de verificación de 6 dígitos a su correo electrónico registrado.
           </p>
 
@@ -159,7 +159,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
       {paso === 'restablecer' && (
         <>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-1">
             Nueva contraseña
           </h2>
 
@@ -207,7 +207,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
                 <button
                   type="button"
                   onClick={() => setMostrarPass(!mostrarPass)}
-                  className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                  className="text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   {mostrarPass ? 'Ocultar' : 'Mostrar'}
                 </button>
@@ -245,7 +245,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
 
       {paso === 'exito' && (
         <div className="text-left py-2 animate-in fade-in">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-2">
             Contraseña actualizada
           </h2>
 
@@ -253,7 +253,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
             <CheckCircle2 className="w-7 h-7" />
           </div>
 
-          <p className="text-[#7C6F66] text-xs sm:text-sm leading-relaxed mb-6">
+          <p className="text-ink-muted text-xs sm:text-sm leading-relaxed mb-6">
             Su contraseña se actualizó correctamente. Ya puede ingresar con sus nuevas credenciales.
           </p>
 

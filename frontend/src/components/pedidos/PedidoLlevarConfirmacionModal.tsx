@@ -30,33 +30,33 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
       aria-labelledby="modal-llevar-exito-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 p-6 text-center">
+      <div className="bg-surface rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 p-6 text-center">
         {/* Ícono de éxito con animación */}
         <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 animate-in zoom-in-75 duration-300">
           <CheckCircle2 className="w-10 h-10" />
         </div>
 
         {/* Título y Mensaje de Éxito (MSG-110 / RV-74) */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-[#B84500] text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-accent text-xs font-bold uppercase tracking-wider mb-2">
           <ShoppingBag className="w-3.5 h-3.5" />
           <span>Para Llevar</span>
         </div>
 
-        <h2 id="modal-llevar-exito-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-1">
+        <h2 id="modal-llevar-exito-title" className="text-xl font-sans font-bold text-ink mb-1">
           Pedido para llevar N.º {numeroPedido} registrado
         </h2>
-        <p className="text-sm text-[#7C6F66] mb-5">
+        <p className="text-sm text-ink-muted mb-5">
           La comanda se envió a cocina.
         </p>
 
         {/* Resumen del Pedido */}
-        <div className="bg-[#FAF7F4] border border-neutral-200/80 rounded-xl p-4 mb-6">
+        <div className="bg-canvas border border-neutral-200/80 rounded-xl p-4 mb-6">
           <div className="flex justify-around items-center">
             <div>
-              <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
+              <span className="block text-xs uppercase tracking-wider text-ink-muted font-semibold">
                 Pedido
               </span>
-              <span className="text-lg font-bold text-[#B84500] tabular-nums">
+              <span className="text-lg font-bold text-accent tabular-nums">
                 #{numeroPedido}
               </span>
             </div>
@@ -64,7 +64,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
             <div className="h-8 w-px bg-neutral-200" />
 
             <div>
-              <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
+              <span className="block text-xs uppercase tracking-wider text-ink-muted font-semibold">
                 Total
               </span>
               <span className="text-lg font-bold text-emerald-700 tabular-nums">
@@ -76,7 +76,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
           {referencia && (
             <div className="mt-3 pt-3 border-t border-neutral-200/60 text-xs text-neutral-600 flex items-center justify-center gap-1">
               <span className="font-semibold text-neutral-500">Cliente / Ref:</span>
-              <span className="font-bold text-[#2C1A0E] bg-white px-2 py-0.5 rounded-md border border-neutral-200">
+              <span className="font-bold text-ink bg-surface px-2 py-0.5 rounded-md border border-neutral-200">
                 {referencia}
               </span>
             </div>
@@ -100,7 +100,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
               type="button"
               variant="primary"
               onClick={onNuevoPedido}
-              className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold"
+              className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-primary hover:bg-primary-hover text-white font-semibold"
             >
               <Plus className="w-4 h-4" />
               NUEVO PEDIDO

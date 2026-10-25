@@ -166,13 +166,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
       {/* Encabezado del Formulario */}
       <div className="mb-[clamp(0.5rem,1.5vh,1rem)] text-left">
-        <span className="text-[#B84500] text-xs font-bold tracking-widest uppercase block mb-1">
+        <span className="text-accent text-xs font-bold tracking-widest uppercase block mb-1">
           BIENVENIDO
         </span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#2C1A0E] tracking-tight mb-1">
+        <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight mb-1">
           Iniciar sesión
         </h2>
-        <p className="text-[#7C6F66] text-xs sm:text-sm">
+        <p className="text-ink-muted text-xs sm:text-sm">
           Ingrese su usuario y contraseña para acceder al sistema.
         </p>
       </div>
@@ -225,7 +225,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               type="button"
               tabIndex={0}
               onClick={() => setMostrarContrasena(!mostrarContrasena)}
-              className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+              className="text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
             >
               {mostrarContrasena ? 'Ocultar' : 'Mostrar'}
             </button>
@@ -256,7 +256,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           <button
             type="button"
             onClick={onForgotPasswordClick}
-            className="text-[#B84500] text-xs sm:text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#C74E00] rounded py-1 px-2 cursor-pointer"
+            className="text-accent text-xs sm:text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-accent rounded py-1 px-2 cursor-pointer"
           >
             ¿Olvidó su contraseña?
           </button>
@@ -266,35 +266,35 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       {/* Tarjeta de Acceso de Demostración Limpia (Solo en entorno de desarrollo) */}
       {import.meta.env.DEV && (
         <div className="mt-[clamp(0.5rem,1.5vh,1rem)] border border-dashed border-[#D5CCC3] rounded-2xl p-[clamp(0.5rem,1.2vh,0.75rem)] bg-neutral-50/70 text-left">
-          <p className="font-bold text-xs text-[#2C1A0E]">Acceso de demostración</p>
-          <p className="text-xs text-[#7C6F66] mt-0.5 mb-1.5">Seleccione un perfil para probar el acceso rápido</p>
+          <p className="font-bold text-xs text-ink">Acceso de demostración</p>
+          <p className="text-xs text-ink-muted mt-0.5 mb-1.5">Seleccione un perfil para probar el acceso rápido</p>
 
           <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-[#EFEAE5]">
             <button
               type="button"
               onClick={() => cargarDemo('admin', 'Password123!')}
-              className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-[#B84600] border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-accent border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
             >
               Administrador
             </button>
             <button
               type="button"
               onClick={() => cargarDemo('atorres', 'Password123!')}
-              className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
+              className="px-2.5 py-1 bg-surface hover:bg-neutral-100 text-ink border border-line rounded-lg text-xs font-medium transition-colors cursor-pointer"
             >
               Cajero
             </button>
             <button
               type="button"
               onClick={() => cargarDemo('lperez', 'Password123!')}
-              className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
+              className="px-2.5 py-1 bg-surface hover:bg-neutral-100 text-ink border border-line rounded-lg text-xs font-medium transition-colors cursor-pointer"
             >
               Mozo
             </button>
             <button
               type="button"
               onClick={() => cargarDemo('msoto', 'Password123!')}
-              className="px-2.5 py-1 bg-white hover:bg-neutral-100 text-[#482813] border border-[#E5E0DB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
+              className="px-2.5 py-1 bg-surface hover:bg-neutral-100 text-ink border border-line rounded-lg text-xs font-medium transition-colors cursor-pointer"
             >
               Cocinero
             </button>

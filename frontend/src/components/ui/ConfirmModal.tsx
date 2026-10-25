@@ -90,7 +90,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           role="dialog"
           aria-modal="true"
           aria-labelledby="confirm-title"
-          className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 text-center relative max-h-[calc(100vh-2rem)] overflow-y-auto"
+          className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 text-center relative max-h-[calc(100vh-2rem)] overflow-y-auto"
         >
           <button
             type="button"
@@ -105,7 +105,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <AlertTriangle className="w-7 h-7 text-amber-600" />
           </div>
 
-          <h3 id="confirm-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
+          <h3 id="confirm-title" className="text-xl font-sans font-bold text-ink mb-2">
             No se puede eliminar a {nombreUsuario}
           </h3>
 
@@ -128,7 +128,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 type="button"
                 onClick={onDesactivarDirecto}
                 disabled={loading}
-                className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 bg-[#C74E00] hover:bg-[#B84600] text-white cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white cursor-pointer"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -180,7 +180,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
-        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 text-center relative max-h-[calc(100vh-2rem)] overflow-y-auto"
+        className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 text-center relative max-h-[calc(100vh-2rem)] overflow-y-auto"
       >
         <button
           type="button"
@@ -195,7 +195,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           {config.icono}
         </div>
 
-        <h3 id="confirm-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
+        <h3 id="confirm-title" className="text-xl font-sans font-bold text-ink mb-2">
           {config.titulo}
         </h3>
 

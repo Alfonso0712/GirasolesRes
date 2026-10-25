@@ -29,7 +29,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const breadcrumbs = resolveBreadcrumbs(paginaActiva);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#FAF7F4]">
+    <div className="flex h-screen overflow-hidden bg-canvas">
       <Sidebar
         session={session}
         onLogout={onLogout}

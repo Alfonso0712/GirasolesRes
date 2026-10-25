@@ -18,7 +18,7 @@ export const FormMessage: React.FC<FormMessageProps> = ({ type, message, classNa
     icon = <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />;
   } else if (type === 'info') {
     styleClasses = 'bg-amber-50 text-amber-900 border border-amber-200 font-medium';
-    icon = <Info className="w-4 h-4 text-[#B84500] shrink-0" />;
+    icon = <Info className="w-4 h-4 text-accent shrink-0" />;
   } else if (type === 'warning') {
     styleClasses = 'bg-amber-50 text-amber-800 border border-amber-300 font-medium';
     icon = <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />;

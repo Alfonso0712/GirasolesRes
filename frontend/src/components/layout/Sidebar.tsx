@@ -158,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Aside (Fixed drawer en móvil/tablet, estático en desktop) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-[#482813] text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-sidebar text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
           isOpenMobile ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
@@ -191,7 +191,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => handleNavigate('inicio')}
             className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 ${
               paginaActiva === 'inicio'
-                ? 'bg-[#C74E00] text-white shadow-md font-semibold'
+                ? 'bg-primary text-white shadow-md font-semibold'
                 : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
             }`}
           >
@@ -219,7 +219,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {/* Indicador de módulo activo cuando el grupo está colapsado (Nielsen 1) */}
                     {!isOpen && tieneItemActivo && (
                       <span
-                        className="w-2 h-2 rounded-full bg-[#D35400] shrink-0 shadow-2xs"
+                        className="w-2 h-2 rounded-full bg-primary shrink-0 shadow-2xs"
                         title="Módulo activo dentro de esta sección"
                       />
                     )}
@@ -258,7 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => handleNavigate(item.id)}
                           className={`w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
                             esActivo
-                              ? 'bg-[#C74E00] text-white shadow-md font-semibold'
+                              ? 'bg-primary text-white shadow-md font-semibold'
                               : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
                           }`}
                         >

@@ -39,40 +39,40 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
       aria-labelledby="modal-exito-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 p-6 text-center">
+      <div className="bg-surface rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 p-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 animate-in zoom-in-75 duration-300">
           <CheckCircle2 className="w-10 h-10" />
         </div>
 
-        <h2 id="modal-exito-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-1">
+        <h2 id="modal-exito-title" className="text-xl font-sans font-bold text-ink mb-1">
           {mensajeTitulo}
         </h2>
-        <p className="text-sm text-[#7C6F66] mb-5">
+        <p className="text-sm text-ink-muted mb-5">
           {mensajeDetalle}
         </p>
 
         {/* Resumen del Pedido */}
-        <div className="bg-[#FAF7F4] border border-neutral-200/80 rounded-xl p-4 mb-6 flex justify-around items-center">
+        <div className="bg-canvas border border-neutral-200/80 rounded-xl p-4 mb-6 flex justify-around items-center">
           <div>
-            <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
+            <span className="block text-xs uppercase tracking-wider text-ink-muted font-semibold">
               Mesa
             </span>
-            <span className="text-base font-bold text-[#2C1A0E]">
+            <span className="text-base font-bold text-ink">
               {mesaNombre}
             </span>
           </div>
           <div className="h-8 w-px bg-neutral-200" />
           <div>
-            <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
+            <span className="block text-xs uppercase tracking-wider text-ink-muted font-semibold">
               Pedido
             </span>
-            <span className="text-base font-bold text-[#B84500] tabular-nums">
+            <span className="text-base font-bold text-accent tabular-nums">
               #{numeroPedido}
             </span>
           </div>
           <div className="h-8 w-px bg-neutral-200" />
           <div>
-            <span className="block text-xs uppercase tracking-wider text-[#7C6F66] font-semibold">
+            <span className="block text-xs uppercase tracking-wider text-ink-muted font-semibold">
               Total
             </span>
             <span className="text-base font-bold text-emerald-700 tabular-nums">
@@ -97,7 +97,7 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
             type="button"
             variant="primary"
             onClick={onNuevoPedido}
-            className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-[#C74E00] hover:bg-[#B84600] text-white"
+            className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px] bg-primary hover:bg-primary-hover text-white"
           >
             <Plus className="w-4 h-4" />
             Nuevo Pedido

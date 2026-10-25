@@ -76,14 +76,14 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
       aria-labelledby="anular-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 animate-in zoom-in-95 duration-200">
+      <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 id="anular-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
+              <h3 id="anular-title" className="font-sans font-bold text-xl text-ink">
                 Anular pedido N.º {pedido.numero}
               </h3>
               <p className="text-xs text-neutral-500">{destino}</p>
@@ -136,7 +136,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
                 className={`w-full p-3 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${
                   errorValidacion
                     ? 'border-rose-400 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               <div className="flex justify-between items-center text-xs text-neutral-500 mt-1 px-1">
@@ -173,7 +173,7 @@ export const AnularPedidoModal: React.FC<AnularPedidoModalProps> = ({
               <p className="text-xs text-rose-800 leading-relaxed">
                 No se podrá deshacer y quedará registrado con su motivo:
               </p>
-              <p className="mt-2 text-xs tabular-nums bg-white/80 p-2.5 rounded-lg border border-rose-200 text-neutral-800 italic">
+              <p className="mt-2 text-xs tabular-nums bg-surface/80 p-2.5 rounded-lg border border-rose-200 text-neutral-800 italic">
                 "{motivo.trim()}"
               </p>
             </div>

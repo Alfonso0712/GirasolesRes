@@ -16,11 +16,11 @@ export const AgotadoItemCard: React.FC<AgotadoItemCardProps> = ({
 }) => {
   return (
     <div
-      className={`p-4 rounded-2xl border bg-white flex flex-col justify-between min-h-[140px] transition-all ${
+      className={`p-4 rounded-2xl border bg-surface flex flex-col justify-between min-h-[140px] transition-all ${
         item.agotado
           ? 'border-neutral-300 bg-neutral-50/70 opacity-80'
           : 'border-neutral-200 hover:border-neutral-300 shadow-2xs'
-      } ${esResaltado ? 'ring-2 ring-[#D35400]' : ''}`}
+      } ${esResaltado ? 'ring-2 ring-accent' : ''}`}
     >
       <div className="flex flex-col items-start gap-1.5 mb-2">
         <span

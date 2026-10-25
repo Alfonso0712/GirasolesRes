@@ -26,10 +26,10 @@ export const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
   const todosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
 
   return (
-    <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
+    <div className="bg-surface rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs">
       <div className="px-5 xl:px-6 py-4 bg-neutral-50/70 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-xl bg-orange-100 text-[#B84500] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-xl bg-orange-100 text-accent flex items-center justify-center shrink-0">
             <Icon className="w-5 h-5 xl:w-6 xl:h-6" />
           </div>
           <div>
@@ -48,7 +48,7 @@ export const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
             onClick={() =>
               todosSeleccionados ? onDeselectAll(ids) : onSelectAll(ids)
             }
-            className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs sm:text-sm xl:text-base font-bold text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-xl transition-colors cursor-pointer"
+            className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs sm:text-sm xl:text-base font-bold text-neutral-700 hover:text-neutral-900 bg-surface hover:bg-neutral-100 border border-neutral-300 rounded-xl transition-colors cursor-pointer"
           >
             {todosSeleccionados ? 'Deseleccionar todos' : 'Seleccionar todos'}
           </button>
@@ -72,19 +72,19 @@ export const SeccionComponentesRol: React.FC<SeccionComponentesRolProps> = ({
                   aria-pressed={estaSeleccionado}
                   className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer min-h-[56px] ${
                     estaSeleccionado
-                      ? 'border-[#D35400] bg-orange-50/50 text-[#B84500] shadow-xs ring-1 ring-[#D35400]'
-                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
+                      ? 'border-accent bg-orange-50/50 text-accent shadow-xs ring-1 ring-accent'
+                      : 'border-neutral-200 bg-surface text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50/60'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="shrink-0">
                       {estaSeleccionado ? (
-                        <CheckSquare className="w-5 h-5 text-[#B84500]" />
+                        <CheckSquare className="w-5 h-5 text-accent" />
                       ) : (
                         <Square className="w-5 h-5 text-neutral-500" />
                       )}
                     </div>
-                    <span className="text-sm font-semibold text-[#2C1A0E] leading-snug break-words">
+                    <span className="text-sm font-semibold text-ink leading-snug break-words">
                       {item.nombre}
                     </span>
                   </div>

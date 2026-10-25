@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
   const esAdmin = session?.rol === 'Administrador';
 
   return (
-    <header className="bg-white border-b border-neutral-200 px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center shadow-xs relative shrink-0">
+    <header className="bg-surface border-b border-neutral-200 px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center shadow-xs relative shrink-0">
       {/* Left side: Hamburger (mobile/tablet) + Breadcrumbs */}
       <div className="flex items-center gap-2 sm:gap-3">
         {onToggleSidebar && (
@@ -70,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="hidden md:flex items-center gap-6">
           {session && (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#FFF3E0] text-[#B84500] font-bold text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
+              <div className="w-9 h-9 rounded-lg bg-[#FFF3E0] text-accent font-bold text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
                 {obtenerIniciales(session.nombre)}
               </div>
               <div className="flex flex-col">
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
             aria-expanded={menuMovilAbierto}
             aria-label="Menú de perfil de usuario"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#B84500] font-bold text-xs flex items-center justify-center border border-amber-200/60">
+            <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-accent font-bold text-xs flex items-center justify-center border border-amber-200/60">
               {obtenerIniciales(session?.nombre)}
             </div>
             <ChevronDown className="w-4 h-4 text-neutral-500" />
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Mobile Dropdown Menu */}
           {menuMovilAbierto && (
-            <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-neutral-200 p-2 z-50 animate-in fade-in slide-in-from-top-1">
+            <div className="absolute right-0 top-full mt-2 w-56 bg-surface rounded-2xl shadow-xl border border-neutral-200 p-2 z-50 animate-in fade-in slide-in-from-top-1">
               <div className="px-3 py-2 border-b border-neutral-100 mb-1">
                 <p className="text-xs font-bold text-neutral-900 truncate">{session?.nombre}</p>
                 <p className="text-xs text-neutral-500">{session?.rol}</p>

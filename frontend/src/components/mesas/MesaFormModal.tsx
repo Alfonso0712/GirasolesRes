@@ -161,15 +161,15 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-2xl max-w-md w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200/80 animate-in zoom-in-95 duration-200"
+        className="bg-surface rounded-2xl max-w-md w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200/80 animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado fijo (shrink-0) */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div>
-            <h2 id="modal-mesa-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
+            <h2 id="modal-mesa-title" className="font-sans font-bold text-xl text-ink">
               {isEdit ? 'Editar Mesa' : 'Nueva Mesa'}
             </h2>
-            <p className="text-xs text-[#7C6F66] mt-0.5">
+            <p className="text-xs text-ink-muted mt-0.5">
               {isEdit
                 ? 'Modifique el número o nombre identificador de la mesa'
                 : 'Registre una mesa para la asignación de pedidos en salón'}
@@ -192,11 +192,11 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="campo-nombre-mesa"
-                  className="block text-sm font-medium text-[#2C1A0E]"
+                  className="block text-sm font-medium text-ink"
                 >
-                  Número o nombre de la mesa <span className="text-[#B84500]">*</span>
+                  Número o nombre de la mesa <span className="text-accent">*</span>
                 </label>
-                <span className="text-xs text-[#7C6F66] tabular-nums">
+                <span className="text-xs text-ink-muted tabular-nums">
                   {nombre.length}/20
                 </span>
               </div>
@@ -219,7 +219,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-none ${
                   errorNombre
                     ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:ring-2 focus:ring-rose-200'
-                    : 'border-neutral-200 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200 text-[#2C1A0E]'
+                    : 'border-neutral-200 focus:border-accent focus:ring-2 focus:ring-amber-200 text-ink'
                 } ${guardando ? 'bg-neutral-100 text-neutral-500 cursor-not-allowed' : ''}`}
               />
 
@@ -233,7 +233,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
                   <span>{errorNombre}</span>
                 </p>
               ) : (
-                <p className="mt-1 text-xs text-[#7C6F66]">
+                <p className="mt-1 text-xs text-ink-muted">
                   De 1 a 20 caracteres (letras, números, espacios, tildes, guion y punto).
                 </p>
               )}
@@ -263,7 +263,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
             <button
               type="submit"
               disabled={guardando}
-              className="px-5 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer min-h-[40px] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer min-h-[40px] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {guardando ? (
                 <>

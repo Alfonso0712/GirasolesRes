@@ -153,16 +153,16 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="change-password-title"
-        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 relative"
+        className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl border border-neutral-200 relative"
       >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center border border-amber-200/50">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center border border-amber-200/50">
               <KeyRound className="w-5 h-5" />
             </div>
             <div>
-              <h2 id="change-password-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
+              <h2 id="change-password-title" className="text-xl font-sans font-bold text-ink">
                 Cambiar contraseña
               </h2>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -191,7 +191,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Contraseña actual */}
           <div>
-            <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
+            <label className="block text-sm font-medium text-ink mb-1.5">
               Contraseña actual <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -207,13 +207,13 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                   errores.contrasenaActual
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setMostrarActual(!mostrarActual)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
               >
                 {mostrarActual ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -225,7 +225,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           {/* Nueva contraseña */}
           <div>
-            <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
+            <label className="block text-sm font-medium text-ink mb-1.5">
               Nueva contraseña <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -240,13 +240,13 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                   errores.nuevaContrasena
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setMostrarNueva(!mostrarNueva)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
               >
                 {mostrarNueva ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -258,7 +258,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           {/* Confirmar nueva contraseña */}
           <div>
-            <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
+            <label className="block text-sm font-medium text-ink mb-1.5">
               Confirmar nueva contraseña <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -273,13 +273,13 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                   errores.confirmarContrasena
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
               >
                 {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -302,7 +302,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             <button
               type="submit"
               disabled={guardando}
-              className={`px-6 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
                 guardando ? 'opacity-70 cursor-not-allowed' : ''
               }`}
             >

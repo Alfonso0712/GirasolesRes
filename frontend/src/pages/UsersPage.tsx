@@ -155,7 +155,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
             <button
               type="button"
               onClick={handleAbrirNuevo}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo usuario</span>
@@ -164,7 +164,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         />
 
         {/* 2. Barra de Filtros y Búsqueda */}
-        <div className="bg-white rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex flex-col sm:flex-row gap-3 items-center">
+        <div className="bg-surface rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex flex-col sm:flex-row gap-3 items-center">
           {/* Búsqueda por Nombre o Usuario */}
           <div className="relative flex-1 w-full">
             <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -177,7 +177,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                 setPagina(1);
               }}
               placeholder="Buscar por nombre o usuario..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-800 placeholder-neutral-400 bg-neutral-50/50 hover:bg-white focus:bg-white focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px] transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-800 placeholder-neutral-400 bg-neutral-50/50 hover:bg-surface focus:bg-surface focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-all"
             />
           </div>
 
@@ -190,7 +190,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                 setPagina(1);
               }}
               aria-label="Filtrar por rol"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white hover:border-neutral-300 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px] transition-colors cursor-pointer"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface hover:border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-colors cursor-pointer"
             >
               <option value="Todos">Todos los roles</option>
               <option value="Administrador">Administrador</option>
@@ -209,7 +209,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                 setPagina(1);
               }}
               aria-label="Filtrar por estado"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white hover:border-neutral-300 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px] transition-colors cursor-pointer"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface hover:border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-colors cursor-pointer"
             >
               <option value="Todos">Todos los estados</option>
               <option value="Activo">Activo</option>
@@ -221,7 +221,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
             <button
               type="button"
               onClick={handleQuitarFiltros}
-              className="text-xs font-semibold text-[#B84500] hover:text-[#C74E00] p-2 rounded-xl hover:bg-amber-50 cursor-pointer whitespace-nowrap transition-colors"
+              className="text-xs font-semibold text-accent hover:text-accent p-2 rounded-xl hover:bg-amber-50 cursor-pointer whitespace-nowrap transition-colors"
             >
               Quitar filtros
             </button>
@@ -261,7 +261,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                       return (
                         <tr
                           key={u.id}
-                          className={`transition-colors border-b border-[#F0EBE6] ${
+                          className={`transition-colors border-b border-line-soft ${
                             esResaltado
                               ? 'bg-amber-100/60 font-medium'
                               : 'hover:bg-neutral-50/70'
@@ -270,10 +270,10 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                           {/* Nombre */}
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-[#B84500] font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                              <div className="w-8 h-8 rounded-lg bg-[#FFF3E0] text-accent font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                                 {obtenerIniciales(u.nombre)}
                               </div>
-                              <span className="font-semibold text-[#2C1A0E] text-sm break-words">
+                              <span className="font-semibold text-ink text-sm break-words">
                                 {u.nombre}
                               </span>
                             </div>

@@ -55,14 +55,14 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
     >
       <div
         ref={modalRef}
-        className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-neutral-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
+        className="w-full max-w-md bg-surface rounded-2xl shadow-xl border border-neutral-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
       >
         <div className="p-6">
           <div className="flex items-start justify-between gap-3 mb-4">
             <div
               className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${
                 esAgotar
-                  ? 'bg-amber-50 text-[#B84500] border-amber-200'
+                  ? 'bg-amber-50 text-accent border-amber-200'
                   : 'bg-emerald-50 text-emerald-600 border-emerald-200'
               }`}
             >
@@ -86,7 +86,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
 
           <h3
             id="disponibilidad-modal-title"
-            className="text-xl font-sans font-bold text-[#2C1A0E] mb-2"
+            className="text-xl font-sans font-bold text-ink mb-2"
           >
             {esAgotar
               ? `¿Marcar ${plato.nombre} como agotado?`
@@ -109,7 +109,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
             type="button"
             onClick={onClose}
             disabled={procesando}
-            className="px-4 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-700 bg-white hover:bg-neutral-50 transition-colors disabled:opacity-50 cursor-pointer min-h-[44px]"
+            className="px-4 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-700 bg-surface hover:bg-neutral-50 transition-colors disabled:opacity-50 cursor-pointer min-h-[44px]"
           >
             Cancelar
           </button>
@@ -121,7 +121,7 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
             disabled={procesando}
             className={`px-5 py-2.5 rounded-xl text-white text-sm font-semibold shadow-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer min-h-[44px] ${
               esAgotar
-                ? 'bg-[#C74E00] hover:bg-[#B84600]'
+                ? 'bg-primary hover:bg-primary-hover'
                 : 'bg-emerald-600 hover:bg-emerald-700'
             }`}
           >
