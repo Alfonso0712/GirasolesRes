@@ -119,7 +119,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
       <div
         role="region"
         aria-label="Estado de caja operativa"
-        className="shrink-0 p-4 sm:p-5 rounded-2xl bg-[#F4F9F4] border border-emerald-200/90 text-emerald-950 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-in fade-in duration-200"
+        className="shrink-0 p-4 sm:p-5 rounded-2xl bg-surface-success border border-emerald-200/90 text-emerald-950 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-in fade-in duration-200"
       >
         <div className="flex items-start sm:items-center gap-3.5">
           <div className="w-11 h-11 rounded-xl bg-emerald-100 text-[#2E7D32] flex items-center justify-center shrink-0 border border-emerald-200 shadow-2xs">
