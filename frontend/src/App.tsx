@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { LoginPage } from './pages/LoginPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { HomePage } from './pages/HomePage';
+import { setTheme } from './hooks/useTheme';
+import { obtenerTemaActual } from './services/perfilService';
 import type { UserSession } from './types/auth';
 
 export function App() {
@@ -16,9 +18,20 @@ export function App() {
     const saved = localStorage.getItem('girasoles_session');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
+        const parsed: UserSession = JSON.parse(saved);
         setSession(parsed);
         setCurrentPage('home');
+
+        // Sincronizar tema del servidor en segundo plano sin bloquear el render
+        obtenerTemaActual(parsed.token)
+          .then((serverTheme) => {
+            if (serverTheme === 'light' || serverTheme === 'dark') {
+              setTheme(serverTheme);
+            }
+          })
+          .catch(() => {
+            // Silenciosamente ignorar cualquier fallo de red/auth
+          });
       } catch {
         localStorage.removeItem('girasoles_session');
       }
@@ -26,15 +39,20 @@ export function App() {
   }, []);
 
   const handleLoginSuccess = (userSession: UserSession) => {
-    setSession(userSession);
+    if (userSession.tema === 'light' || userSession.tema === 'dark') {
+      setTheme(userSession.tema);
+    }
+    const { tema: _, ...sessionToStore } = userSession;
+    setSession(sessionToStore);
     setLogoutBanner(null);
-    localStorage.setItem('girasoles_session', JSON.stringify(userSession));
+    localStorage.setItem('girasoles_session', JSON.stringify(sessionToStore));
     setCurrentPage('home');
   };
 
   const handleUpdateSession = (newSession: UserSession) => {
-    setSession(newSession);
-    localStorage.setItem('girasoles_session', JSON.stringify(newSession));
+    const { tema: _, ...sessionToStore } = newSession;
+    setSession(sessionToStore);
+    localStorage.setItem('girasoles_session', JSON.stringify(sessionToStore));
   };
 
   const handleLogout = (banner?: {
