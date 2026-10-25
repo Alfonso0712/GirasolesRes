@@ -280,7 +280,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             {/* Nombre Completo */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-sm font-medium text-ink">
+                <label className="form-label-standard !mb-0">
                   Nombre completo <span className="text-rose-500">*</span>
                 </label>
                 <span className="text-xs text-neutral-500 tabular-nums">
@@ -309,11 +309,11 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
             {/* Usuario */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-sm font-medium text-ink">
+                <label className="form-label-standard !mb-0">
                   Nombre de usuario <span className="text-rose-500">*</span>
                 </label>
                 <span className="text-xs text-neutral-500 tabular-nums">
@@ -344,7 +344,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
 
             {/* Rol */}
             <div>
-              <label className="block text-sm font-medium text-ink mb-1.5">
+              <label className="form-label-standard">
                 Rol en el restaurante <span className="text-rose-500">*</span>
               </label>
               <select
@@ -373,7 +373,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
 
           {/* Correo electrónico */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1">
+            <label className="form-label-standard">
               Correo electrónico{' '}
               {rol === 'Administrador' ? (
                 <span className="text-rose-500">* (obligatorio para Administrador)</span>
@@ -404,16 +404,18 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           </div>
 
           {/* Contraseña y Confirmar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start pt-1">
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                {isEdit ? 'Nueva contraseña' : 'Contraseña'}{' '}
-                {isEdit ? (
-                  <span className="text-neutral-500 font-normal">(dejar vacía para no cambiar)</span>
-                ) : (
-                  <span className="text-rose-500">*</span>
-                )}
-              </label>
+              <div className="flex items-center justify-between mb-1.5 min-h-[20px]">
+                <label className="form-label-standard !mb-0">
+                  {isEdit ? 'Nueva contraseña' : 'Contraseña'}{' '}
+                  {isEdit ? (
+                    <span className="text-neutral-500 font-normal text-xs">(dejar vacía para no cambiar)</span>
+                  ) : (
+                    <span className="text-rose-500">*</span>
+                  )}
+                </label>
+              </div>
               <div className="relative">
                 <input
                   ref={contrasenaInputRef}
@@ -425,7 +427,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                     if (errores.contrasena) setErrores({ ...errores, contrasena: '' });
                   }}
                   placeholder="Mínimo 8 caracteres"
-                  className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
+                  className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl border text-sm text-ink focus:outline-none transition-colors ${
                     errores.contrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
                       : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
@@ -445,10 +447,12 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-ink mb-1.5">
-                Confirmar contraseña{' '}
-                {(!isEdit || contrasena) && <span className="text-rose-500">*</span>}
-              </label>
+              <div className="flex items-center justify-between mb-1.5 min-h-[20px]">
+                <label className="form-label-standard !mb-0">
+                  Confirmar contraseña{' '}
+                  {(!isEdit || contrasena) && <span className="text-rose-500">*</span>}
+                </label>
+              </div>
               <div className="relative">
                 <input
                   ref={confirmarContrasenaInputRef}
@@ -461,7 +465,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   }}
                   placeholder="Repita la contraseña"
                   disabled={isEdit && !contrasena}
-                  className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
+                  className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl border text-sm text-ink focus:outline-none transition-colors ${
                     errores.confirmarContrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
                       : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'

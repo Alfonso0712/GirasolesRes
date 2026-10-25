@@ -700,6 +700,21 @@ input::placeholder, textarea::placeholder {
   background-color: rgba(249, 250, 251, 0.8);
 }
 
+.form-label-standard {
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 0.375rem;
+}
+
+@media (min-width: 640px) {
+  .form-label-standard {
+    font-size: 0.875rem;
+  }
+}
+
 
 /* Scrollbars globales accesibles */
 * {

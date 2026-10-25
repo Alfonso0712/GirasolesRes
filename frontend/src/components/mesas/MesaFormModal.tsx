@@ -192,7 +192,7 @@ export const MesaFormModal: React.FC<MesaFormModalProps> = ({
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="campo-nombre-mesa"
-                  className="block text-sm font-medium text-ink"
+                  className="form-label-standard !mb-0"
                 >
                   Número o nombre de la mesa <span className="text-accent">*</span>
                 </label>

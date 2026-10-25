@@ -417,7 +417,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               {(modoBoleta === 'dni' || esExigidoDocumentoPorMonto) && (
                 <div className="space-y-2.5 pt-1">
                   <div>
-                    <label className="block text-xs font-semibold text-ink mb-1">
+                    <label className="form-label-standard">
                       Número de DNI (8 dígitos)
                     </label>
                     <div className="flex gap-2">
@@ -442,7 +442,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-ink mb-1">
+                    <label className="form-label-standard">
                       Nombre o Titular
                     </label>
                     <input
@@ -474,7 +474,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
           {tipoComprobante === 'Factura' && (
             <div className="p-3.5 bg-neutral-50/80 rounded-xl border border-neutral-200/80 space-y-2.5 animate-in fade-in duration-150">
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1">
+                <label className="form-label-standard">
                   Número de RUC (11 dígitos, inicia con 10 o 20)
                 </label>
                 <div className="flex gap-2">
@@ -499,7 +499,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1">
+                <label className="form-label-standard">
                   Razón Social <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -512,7 +512,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1">
+                <label className="form-label-standard">
                   Dirección Fiscal
                 </label>
                 <input

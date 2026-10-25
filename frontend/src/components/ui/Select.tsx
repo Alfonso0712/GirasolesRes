@@ -135,7 +135,7 @@ export const Select: React.FC<SelectProps> = ({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-xs sm:text-sm font-semibold text-ink mb-1.5"
+          className="form-label-standard"
         >
           {label} {required && <span className="text-danger">*</span>}
         </label>

@@ -93,7 +93,7 @@ export const NotaObservacionModal: React.FC<NotaObservacionModalProps> = ({
         <form onSubmit={handleGuardar} className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-y-auto p-5 space-y-4">
             <div>
-              <label htmlFor="observacion-input" className="block text-xs font-semibold text-ink mb-1.5">
+              <label htmlFor="observacion-input" className="form-label-standard">
                 Observación (máx. 100 caracteres)
               </label>
               <textarea

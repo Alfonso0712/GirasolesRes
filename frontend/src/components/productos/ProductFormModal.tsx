@@ -276,7 +276,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
             {/* Selector de Tipo de Producto (Carta vs Componente) */}
             <div>
-              <label className="block text-sm font-medium text-ink mb-1.5">
+              <label className="form-label-standard">
                 Tipo de producto <span className="text-accent">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80">
@@ -323,7 +323,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="prod-nombre"
-                  className="block text-sm font-medium text-ink"
+                  className="form-label-standard !mb-0"
                 >
                   Nombre {tipo === 'Componente' ? 'del componente' : 'del producto'}{' '}
                   <span className="text-accent">*</span>
@@ -376,7 +376,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-categoria"
-                    className="block text-sm font-medium text-ink mb-1.5"
+                    className="form-label-standard"
                   >
                     Categoría de carta <span className="text-accent">*</span>
                   </label>
@@ -420,7 +420,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-precio"
-                    className="block text-sm font-medium text-ink mb-1.5"
+                    className="form-label-standard"
                   >
                     Precio de venta (S/) <span className="text-accent">*</span>
                   </label>
@@ -477,7 +477,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-rol"
-                    className="block text-sm font-medium text-ink mb-1.5"
+                    className="form-label-standard"
                   >
                     Rol del componente <span className="text-accent">*</span>
                   </label>

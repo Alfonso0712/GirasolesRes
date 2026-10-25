@@ -185,7 +185,7 @@ export const ArmarMenuCompletoModal: React.FC<ArmarMenuCompletoModalProps> = ({
 
             {/* Observación opcional */}
             <div className="pt-2 border-t border-neutral-100">
-              <label htmlFor="obs-menu-input" className="block text-sm font-medium text-ink mb-1.5 font-sans">
+              <label htmlFor="obs-menu-input" className="form-label-standard">
                 Nota u observación especial (opcional)
               </label>
               <input

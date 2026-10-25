@@ -191,7 +191,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Contraseña actual */}
           <div>
-            <label className="block text-sm font-medium text-ink mb-1.5">
+            <label className="form-label-standard">
               Contraseña actual <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -225,7 +225,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           {/* Nueva contraseña */}
           <div>
-            <label className="block text-sm font-medium text-ink mb-1.5">
+            <label className="form-label-standard">
               Nueva contraseña <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -258,7 +258,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           {/* Confirmar nueva contraseña */}
           <div>
-            <label className="block text-sm font-medium text-ink mb-1.5">
+            <label className="form-label-standard">
               Confirmar nueva contraseña <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
