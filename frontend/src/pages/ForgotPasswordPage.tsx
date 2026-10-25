@@ -164,7 +164,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
           </h2>
 
           {/* Banner informativo de envío de código */}
-          <div className="bg-[#FEF9EE] border border-[#FCE8B3] rounded-xl p-3 text-xs text-[#7A4B13] font-medium mb-3">
+          <div className="bg-notice-bg border border-notice-border rounded-xl p-3 text-xs text-notice-text font-medium mb-3">
             Código enviado a <span className="font-bold">{correo}</span>
           </div>
 

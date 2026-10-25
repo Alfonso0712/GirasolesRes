@@ -265,15 +265,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
       {/* Tarjeta de Acceso de Demostración Limpia (Solo en entorno de desarrollo) */}
       {import.meta.env.DEV && (
-        <div className="mt-[clamp(0.5rem,1.5vh,1rem)] border border-dashed border-[#D5CCC3] rounded-2xl p-[clamp(0.5rem,1.2vh,0.75rem)] bg-neutral-50/70 text-left">
+        <div className="mt-[clamp(0.5rem,1.5vh,1rem)] border border-dashed border-demo-border rounded-2xl p-[clamp(0.5rem,1.2vh,0.75rem)] bg-neutral-50/70 text-left">
           <p className="font-bold text-xs text-ink">Acceso de demostración</p>
           <p className="text-xs text-ink-muted mt-0.5 mb-1.5">Seleccione un perfil para probar el acceso rápido</p>
 
-          <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-[#EFEAE5]">
+          <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-demo-divider">
             <button
               type="button"
               onClick={() => cargarDemo('admin', 'Password123!')}
-              className="px-2.5 py-1 bg-[#FFF6EE] hover:bg-[#FFEAD8] text-accent border border-[#FAD8BE] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="px-2.5 py-1 bg-chip-accent-bg hover:bg-chip-accent-hover text-accent border border-chip-accent-border rounded-lg text-xs font-semibold transition-colors cursor-pointer"
             >
               Administrador
             </button>

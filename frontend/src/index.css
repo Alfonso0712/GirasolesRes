@@ -41,6 +41,19 @@
   --color-line-strong: #E5E0DB;
   --color-surface-raised: #FFFFFF;
   --color-surface-success: #F4F9F4;
+  /* Superficies pastel y elementos demo */
+  --color-chip-accent-bg: #FFF6EE;
+  --color-chip-accent-border: #FAD8BE;
+  --color-chip-accent-hover: #FFEAD8;
+  --color-demo-border: #D5CCC3;
+  --color-demo-divider: #EFEAE5;
+  --color-notice-bg: #FEF9EE;
+  --color-notice-border: #FCE8B3;
+  --color-notice-text: #7A4B13;
+  --color-surface-warm: #F5EBE1;
+  --color-surface-soft: #FDFBF9;
+  --color-modal-close-hover-bg: #F3F4F6;
+  --color-modal-close-hover-text: #374151;
   --color-fill-strong: #171717;
   --color-fill-strong-soft: #262626;
   --color-brand-tint: #FFF3E0;
@@ -107,6 +120,19 @@
     --color-surface: #252320;
     --color-surface-raised: #2E2B28;
     --color-surface-success: #102418;
+    /* Superficies pastel y elementos demo (modo oscuro) */
+    --color-chip-accent-bg: #3A2A22;
+    --color-chip-accent-border: #5A3A2C;
+    --color-chip-accent-hover: #4A3326;
+    --color-demo-border: #4A4542;
+    --color-demo-divider: #3A3634;
+    --color-notice-bg: #2A2412;
+    --color-notice-border: #5A4A1A;
+    --color-notice-text: #FCD34D;
+    --color-surface-warm: #34302D;
+    --color-surface-soft: #252320;
+    --color-modal-close-hover-bg: #3A3634;
+    --color-modal-close-hover-text: #F5F5F5;
     --color-sidebar: #141312;
     --color-ink: #F5F5F5;
     --color-ink-muted: #B0B0B0;
@@ -284,7 +310,19 @@
     --color-surface: #FFFFFF;
     --color-surface-raised: #FFFFFF;
     --color-surface-success: #F4F9F4;
-  --color-surface-success: #F4F9F4;
+    /* Superficies pastel y elementos demo */
+    --color-chip-accent-bg: #FFF6EE;
+    --color-chip-accent-border: #FAD8BE;
+    --color-chip-accent-hover: #FFEAD8;
+    --color-demo-border: #D5CCC3;
+    --color-demo-divider: #EFEAE5;
+    --color-notice-bg: #FEF9EE;
+    --color-notice-border: #FCE8B3;
+    --color-notice-text: #7A4B13;
+    --color-surface-warm: #F5EBE1;
+    --color-surface-soft: #FDFBF9;
+    --color-modal-close-hover-bg: #F3F4F6;
+    --color-modal-close-hover-text: #374151;
     --color-sidebar: #482813;
     --color-ink: #2C1A0E;
     --color-ink-muted: #7C6F66;
@@ -648,8 +686,8 @@ input::placeholder, textarea::placeholder {
   justify-content: center;
 }
 .modal-close-btn:hover {
-  color: #374151;
-  background-color: #F3F4F6;
+  color: var(--color-modal-close-hover-text);
+  background-color: var(--color-modal-close-hover-bg);
 }
 
 .modal-footer-standard {

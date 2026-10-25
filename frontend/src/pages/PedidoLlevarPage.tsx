@@ -108,7 +108,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   // Si está cargando el catálogo
   if (cargando) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#FDFBF9] animate-in fade-in duration-200">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-surface-soft animate-in fade-in duration-200">
         <div className="w-12 h-12 rounded-2xl bg-amber-100 text-accent flex items-center justify-center animate-spin mb-4">
           <ShoppingBag className="w-6 h-6" />
         </div>

@@ -364,7 +364,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               </div>
 
               {/* Botones de Entregable */}
-              <div className="p-4 bg-[#F5EBE1] border border-neutral-200 rounded-xl flex flex-wrap items-center justify-between gap-3">
+              <div className="p-4 bg-surface-warm border border-neutral-200 rounded-xl flex flex-wrap items-center justify-between gap-3">
                 <span className="text-xs text-neutral-600 font-semibold">
                   Descargue o imprima el voucher de balance para el registro físico del restaurante (reemplaza el cuaderno).
                 </span>
