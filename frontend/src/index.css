@@ -54,6 +54,49 @@
   --color-role-cocinero-bg: #F4ECF7;
   --color-role-cocinero-text: #732282;
   --color-role-cocinero-border: #E8DAEF;
+
+  /* Tokens para IconActionButton */
+  --color-action-info-bg: #EFF6FF;
+  --color-action-info-text: #1D4ED8;
+  --color-action-info-border: #BFDBFE;
+  --color-action-info-hover-bg: #DBEAFE;
+  --color-action-info-hover-border: #93C5FD;
+
+  --color-action-success-bg: #ECFDF5;
+  --color-action-success-text: #047857;
+  --color-action-success-border: #A7F3D0;
+  --color-action-success-hover-bg: #D1FAE5;
+  --color-action-success-hover-border: #6EE7B7;
+
+  --color-action-edit-bg: #FFFBEB;
+  --color-action-edit-border: #FDE68A;
+  --color-action-edit-hover-bg: #FEF3C7;
+  --color-action-edit-hover-border: #FCD34D;
+
+  --color-action-warning-bg: #FEF3C7;
+  --color-action-warning-text: #92400E;
+  --color-action-warning-border: #FDE68A;
+  --color-action-warning-hover-bg: #FDE68A;
+  --color-action-warning-hover-border: #FCD34D;
+
+  --color-action-danger-bg: #FEF2F2;
+  --color-action-danger-text: #B91C1C;
+  --color-action-danger-border: #FECACA;
+  --color-action-danger-hover-bg: #FFE4E6;
+  --color-action-danger-hover-border: #FDA4AF;
+
+  --color-action-download-bg: #F1F5F9;
+  --color-action-download-text: #334155;
+  --color-action-download-border: #CBD5E1;
+  --color-action-download-hover-bg: #E2E8F0;
+  --color-action-download-hover-border: #94A3B8;
+
+  --color-action-default-text: #334155;
+
+  --color-action-disabled-bg: #F3F4F6;
+  --color-action-disabled-text: #8A8179;
+  --color-action-disabled-border: #E5E7EB;
+
 }
 
 @media screen {
@@ -99,6 +142,49 @@
     --color-role-cocinero-bg: #2C2140;
     --color-role-cocinero-text: #D8BDF9;
     --color-role-cocinero-border: #4A3A6B;
+
+    /* Tokens para IconActionButton (modo oscuro) */
+    --color-action-info-bg: #141E2E;
+    --color-action-info-text: #60A5FA;
+    --color-action-info-border: #264A7A;
+    --color-action-info-hover-bg: #1A2A42;
+    --color-action-info-hover-border: #3B5998;
+
+    --color-action-success-bg: #102418;
+    --color-action-success-text: #34D399;
+    --color-action-success-border: #1F5238;
+    --color-action-success-hover-bg: #143021;
+    --color-action-success-hover-border: #2A6B48;
+
+    --color-action-edit-bg: #2A2412;
+    --color-action-edit-border: #5A4A1A;
+    --color-action-edit-hover-bg: #382E16;
+    --color-action-edit-hover-border: #7A6224;
+
+    --color-action-warning-bg: #382E16;
+    --color-action-warning-text: #FBBF24;
+    --color-action-warning-border: #5A4A1A;
+    --color-action-warning-hover-bg: #4A3C1B;
+    --color-action-warning-hover-border: #7A6224;
+
+    --color-action-danger-bg: #2A1414;
+    --color-action-danger-text: #F87171;
+    --color-action-danger-border: #5C2626;
+    --color-action-danger-hover-bg: #381A1A;
+    --color-action-danger-hover-border: #7A3333;
+
+    --color-action-download-bg: #34302D;
+    --color-action-download-text: #DADADA;
+    --color-action-download-border: #4A4542;
+    --color-action-download-hover-bg: #3A3634;
+    --color-action-download-hover-border: #5C5652;
+
+    --color-action-default-text: #DADADA;
+
+    --color-action-disabled-bg: #34302D;
+    --color-action-disabled-text: #B0B0B0;
+    --color-action-disabled-border: #3A3634;
+
 
     /* escalas neutras (neutral y stone usan los mismos valores) */
     --color-neutral-50: #2E2B28;
@@ -232,6 +318,92 @@
     --color-role-cocinero-bg: #F4ECF7;
     --color-role-cocinero-text: #732282;
     --color-role-cocinero-border: #E8DAEF;
+
+  /* Tokens para IconActionButton */
+  --color-action-info-bg: #EFF6FF;
+  --color-action-info-text: #1D4ED8;
+  --color-action-info-border: #BFDBFE;
+  --color-action-info-hover-bg: #DBEAFE;
+  --color-action-info-hover-border: #93C5FD;
+
+  --color-action-success-bg: #ECFDF5;
+  --color-action-success-text: #047857;
+  --color-action-success-border: #A7F3D0;
+  --color-action-success-hover-bg: #D1FAE5;
+  --color-action-success-hover-border: #6EE7B7;
+
+  --color-action-edit-bg: #FFFBEB;
+  --color-action-edit-border: #FDE68A;
+  --color-action-edit-hover-bg: #FEF3C7;
+  --color-action-edit-hover-border: #FCD34D;
+
+  --color-action-warning-bg: #FEF3C7;
+  --color-action-warning-text: #92400E;
+  --color-action-warning-border: #FDE68A;
+  --color-action-warning-hover-bg: #FDE68A;
+  --color-action-warning-hover-border: #FCD34D;
+
+  --color-action-danger-bg: #FEF2F2;
+  --color-action-danger-text: #B91C1C;
+  --color-action-danger-border: #FECACA;
+  --color-action-danger-hover-bg: #FFE4E6;
+  --color-action-danger-hover-border: #FDA4AF;
+
+  --color-action-download-bg: #F1F5F9;
+  --color-action-download-text: #334155;
+  --color-action-download-border: #CBD5E1;
+  --color-action-download-hover-bg: #E2E8F0;
+  --color-action-download-hover-border: #94A3B8;
+
+  --color-action-default-text: #334155;
+
+  --color-action-disabled-bg: #F3F4F6;
+  --color-action-disabled-text: #8A8179;
+  --color-action-disabled-border: #E5E7EB;
+
+
+  /* Tokens para IconActionButton */
+  --color-action-info-bg: #EFF6FF;
+  --color-action-info-text: #1D4ED8;
+  --color-action-info-border: #BFDBFE;
+  --color-action-info-hover-bg: #DBEAFE;
+  --color-action-info-hover-border: #93C5FD;
+
+  --color-action-success-bg: #ECFDF5;
+  --color-action-success-text: #047857;
+  --color-action-success-border: #A7F3D0;
+  --color-action-success-hover-bg: #D1FAE5;
+  --color-action-success-hover-border: #6EE7B7;
+
+  --color-action-edit-bg: #FFFBEB;
+  --color-action-edit-border: #FDE68A;
+  --color-action-edit-hover-bg: #FEF3C7;
+  --color-action-edit-hover-border: #FCD34D;
+
+  --color-action-warning-bg: #FEF3C7;
+  --color-action-warning-text: #92400E;
+  --color-action-warning-border: #FDE68A;
+  --color-action-warning-hover-bg: #FDE68A;
+  --color-action-warning-hover-border: #FCD34D;
+
+  --color-action-danger-bg: #FEF2F2;
+  --color-action-danger-text: #B91C1C;
+  --color-action-danger-border: #FECACA;
+  --color-action-danger-hover-bg: #FFE4E6;
+  --color-action-danger-hover-border: #FDA4AF;
+
+  --color-action-download-bg: #F1F5F9;
+  --color-action-download-text: #334155;
+  --color-action-download-border: #CBD5E1;
+  --color-action-download-hover-bg: #E2E8F0;
+  --color-action-download-hover-border: #94A3B8;
+
+  --color-action-default-text: #334155;
+
+  --color-action-disabled-bg: #F3F4F6;
+  --color-action-disabled-text: #8A8179;
+  --color-action-disabled-border: #E5E7EB;
+
 
     /* escalas neutras de Tailwind 4 */
     --color-neutral-50: oklch(98.5% 0 none);
