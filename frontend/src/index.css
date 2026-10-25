@@ -142,8 +142,7 @@
     --color-line-soft: #2E2B28;
     --color-line-strong: #7A7270;
     --color-accent: #E8B49A;
-    --color-primary: #9E5A3C;
-    --color-primary-hover: #733D25;
+    /* primary y primary-hover iguales que en modo claro */
     --color-brand-tint: #3A2A22;
     --color-sidebar-line: rgb(255 255 255 / 0.08);
     --color-fill-strong: #3A3634;
