@@ -15,6 +15,9 @@ public static class DependencyInjection
         services.AddScoped<IMenuCompletoService, MenuCompletoService>();
         services.AddScoped<IMenuDiaService, MenuDiaService>();
         services.AddScoped<IMesaService, MesaService>();
+        services.AddScoped<IPedidoComandoService, PedidoComandoService>();
+        services.AddScoped<IPedidoConsultaService, PedidoConsultaService>();
+        services.AddScoped<IAvisoComandaService, AvisoComandaService>();
         services.AddScoped<IPedidoService, PedidoService>();
         services.AddScoped<IComandaService, ComandaService>();
         services.AddScoped<ICobroService, CobroService>();
