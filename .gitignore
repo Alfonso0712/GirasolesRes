@@ -46,3 +46,19 @@ Desktop.ini
 
 # Temporary Word files
 ~$*
+
+
+# ==============================
+# Scratch scripts & Figma tooling
+# ==============================
+*.zip
+*.bak
+*.cjs
+screenshots/
+figma-*/
+figwright/
+figwright-plugin/
+penpot-mcp/
+figma_export_board_preview.png
+resize_logo.ps1
+frontend/public/LOGO_GIRASOLES_figma.png

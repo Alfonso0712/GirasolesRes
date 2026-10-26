@@ -14,6 +14,19 @@ public static class DatabaseSeeder
         {
             await context.Database.EnsureCreatedAsync();
 
+            // Migración automática de pref_tema para modo oscuro
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(@"
+                    ALTER TABLE public.usuarios
+                        ADD COLUMN IF NOT EXISTS pref_tema VARCHAR(10) NOT NULL DEFAULT 'light';
+                ");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Aviso al verificar o crear la columna pref_tema.");
+            }
+
             if (!await context.Usuarios.AnyAsync())
             {
                 logger.LogInformation("Iniciando sembrado inicial de usuarios para el Restaurante Girasoles...");
