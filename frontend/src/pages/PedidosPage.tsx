@@ -545,7 +545,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               onClick={() => handleAbrirModificar(p.id)}
                             />
 
-                            {(session.rol === 'Administrador' || session.rol === 'Cajero') &&
+                            {session.rol === 'Cajero' &&
                               !esAnulado &&
                               p.estado.toLowerCase() !== 'pagado' && (
                                 <IconActionButton
