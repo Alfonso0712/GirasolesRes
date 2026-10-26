@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 using GirasolesRes.Application.Common;
 using Xunit;
@@ -12,16 +12,15 @@ public class CatalogoMensajesUnitTests
         var dir = AppContext.BaseDirectory;
         while (!string.IsNullOrEmpty(dir))
         {
-            var rutaCsv = Path.Combine(dir, "analisis", "mensajes_documentados.csv");
-            if (File.Exists(rutaCsv))
-            {
-                return rutaCsv;
-            }
+            var rutaCsv = Path.Combine(dir, "tests", "GirasolesRes.Tests", "TestData", "mensajes_documentados.csv");
+            if (File.Exists(rutaCsv)) return rutaCsv;
+            var rutaDirecta = Path.Combine(dir, "TestData", "mensajes_documentados.csv");
+            if (File.Exists(rutaDirecta)) return rutaDirecta;
             var dirPadre = Directory.GetParent(dir);
             dir = dirPadre?.FullName;
         }
 
-        throw new FileNotFoundException("No se encontró analisis/mensajes_documentados.csv en el árbol del proyecto.");
+        throw new FileNotFoundException("No se encontró TestData/mensajes_documentados.csv en el árbol del proyecto.");
     }
 
     private static string NormalizarTexto(string s)
