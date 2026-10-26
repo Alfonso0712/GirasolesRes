@@ -264,10 +264,15 @@ public class CajaService : ICajaService
         // Fórmula: efectivoEsperado = montoInicial + ventasEfectivo (Yape no ingresa a caja física)
         var efectivoEsperado = decimal.Round(caja.Caj_MontoApertura + ventasEfectivo, 2);
 
-        // 4. Desglose de platos vendidos
-        var platosVendidos = ventas
+        // 4. Desglose en 3 bloques (D-017, RN-138, E-401): Carta, Menús Completos y Componentes
+        var todosDetalles = ventas
             .SelectMany(v => v.Ven_Pedido?.Ped_Detalles ?? Enumerable.Empty<DetallePedido>())
-            .GroupBy(d => d.Det_Producto?.Pro_Nombre ?? "Producto")
+            .ToList();
+
+        // Bloque 1: Productos de carta (cantidad y monto)
+        var productosCarta = todosDetalles
+            .Where(d => !d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Det_Producto?.Pro_Nombre ?? d.Det_Nombre ?? "Producto")
             .Select(g => new PlatoVendidoResumenDto(
                 Nombre: g.Key,
                 Cantidad: g.Sum(d => d.Det_Cantidad),
@@ -275,6 +280,46 @@ public class CajaService : ICajaService
             ))
             .OrderByDescending(p => p.Cantidad)
             .ThenBy(p => p.Nombre)
+            .ToList();
+
+        // Bloque 2: Menús completos (cantidad y monto)
+        var menusCompletos = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Id_MenuCompleto!.Value)
+            .Select(g =>
+            {
+                var first = g.First();
+                var nombre = !string.IsNullOrWhiteSpace(first.Det_Nombre)
+                    ? first.Det_Nombre
+                    : first.Det_MenuCompleto?.Men_Nombre ?? $"Menú #{g.Key}";
+                return new MenuCompletoCierreDto(
+                    MenuCompletoId: g.Key,
+                    Nombre: nombre,
+                    Cantidad: g.Sum(d => d.Det_Cantidad),
+                    Monto: decimal.Round(g.Sum(d => d.Det_Subtotal), 2)
+                );
+            })
+            .OrderByDescending(m => m.Cantidad)
+            .ThenBy(m => m.Nombre)
+            .ToList();
+
+        // Bloque 3: Componentes elegidos en menús (veces elegidas, sin monto según RN-138)
+        var componentes = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .SelectMany(d => d.Det_Opciones.Select(o => new { Opcion = o, Cantidad = d.Det_Cantidad }))
+            .GroupBy(x => x.Opcion.Id_Producto)
+            .Select(g =>
+            {
+                var first = g.First().Opcion;
+                return new ComponenteCierreDto(
+                    ProductoId: g.Key,
+                    Producto: first.Lpo_ProductoNombre,
+                    Rol: first.Lpo_ParteNombre,
+                    Cantidad: g.Sum(x => x.Cantidad)
+                );
+            })
+            .OrderByDescending(c => c.Cantidad)
+            .ThenBy(c => c.Producto)
             .ToList();
 
         var fechaAperturaLocal = TimeZoneHelper.ToPeruTime(caja.Caj_FechaAperturaUtc).ToString("dd/MM/yyyy HH:mm");
@@ -292,8 +337,11 @@ public class CajaService : ICajaService
             Total: totalVentas,
             EfectivoEsperado: efectivoEsperado,
             CantidadVentas: cantidadVentas,
-            PlatosVendidos: platosVendidos,
-            PedidosPendientes: pedidosPendientesDto
+            PlatosVendidos: productosCarta,
+            PedidosPendientes: pedidosPendientesDto,
+            MenusCompletos: menusCompletos,
+            Componentes: componentes,
+            ProductosCarta: productosCarta
         );
     }
 
@@ -577,11 +625,16 @@ public class CajaService : ICajaService
             ? TimeZoneHelper.ToPeruTime(caja.Caj_FechaCierreUtc.Value).ToString("dd/MM/yyyy HH:mm")
             : null;
 
-        // Platos vendidos (de ventas vigentes de la caja)
-        var platosVendidos = caja.Caj_Ventas
+        // Desglose en 3 bloques de ventas vigentes (D-017, RN-138, E-401)
+        var todosDetalles = caja.Caj_Ventas
             .Where(v => v.Ven_Estado == EstadoVenta.Vigente)
             .SelectMany(v => v.Ven_Pedido?.Ped_Detalles ?? Enumerable.Empty<DetallePedido>())
-            .GroupBy(d => d.Det_Producto?.Pro_Nombre ?? "Producto")
+            .ToList();
+
+        // Bloque 1: Productos de carta (cantidad y monto)
+        var productosCarta = todosDetalles
+            .Where(d => !d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Det_Producto?.Pro_Nombre ?? d.Det_Nombre ?? "Producto")
             .Select(g => new PlatoVendidoResumenDto(
                 Nombre: g.Key,
                 Cantidad: g.Sum(d => d.Det_Cantidad),
@@ -590,6 +643,48 @@ public class CajaService : ICajaService
             .OrderByDescending(p => p.Cantidad)
             .ThenBy(p => p.Nombre)
             .ToList();
+
+        // Bloque 2: Menús completos (cantidad y monto)
+        var menusCompletos = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Id_MenuCompleto!.Value)
+            .Select(g =>
+            {
+                var first = g.First();
+                var nombre = !string.IsNullOrWhiteSpace(first.Det_Nombre)
+                    ? first.Det_Nombre
+                    : first.Det_MenuCompleto?.Men_Nombre ?? $"Menú #{g.Key}";
+                return new MenuCompletoCierreDto(
+                    MenuCompletoId: g.Key,
+                    Nombre: nombre,
+                    Cantidad: g.Sum(d => d.Det_Cantidad),
+                    Monto: decimal.Round(g.Sum(d => d.Det_Subtotal), 2)
+                );
+            })
+            .OrderByDescending(m => m.Cantidad)
+            .ThenBy(m => m.Nombre)
+            .ToList();
+
+        // Bloque 3: Componentes elegidos en menús (veces elegidas, sin monto)
+        var componentes = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .SelectMany(d => d.Det_Opciones.Select(o => new { Opcion = o, Cantidad = d.Det_Cantidad }))
+            .GroupBy(x => x.Opcion.Id_Producto)
+            .Select(g =>
+            {
+                var first = g.First().Opcion;
+                return new ComponenteCierreDto(
+                    ProductoId: g.Key,
+                    Producto: first.Lpo_ProductoNombre,
+                    Rol: first.Lpo_ParteNombre,
+                    Cantidad: g.Sum(x => x.Cantidad)
+                );
+            })
+            .OrderByDescending(c => c.Cantidad)
+            .ThenBy(c => c.Producto)
+            .ToList();
+
+        var platosVendidos = productosCarta;
 
         // Ajustes posteriores (ventas anuladas en esta caja, RN-113, E-317)
         var ajustesPosteriores = caja.Caj_Ventas
@@ -643,7 +738,10 @@ public class CajaService : ICajaService
             CantidadVentas: caja.Caj_CantidadVentas ?? 0,
             Platos: platosVendidos,
             PlatosVendidos: platosVendidos,
-            AjustesPosteriores: ajustesPosteriores
+            AjustesPosteriores: ajustesPosteriores,
+            MenusCompletos: menusCompletos,
+            Componentes: componentes,
+            ProductosCarta: productosCarta
         );
     }
 

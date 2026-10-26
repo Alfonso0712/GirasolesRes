@@ -16,6 +16,16 @@ public static class RestauranteConstantes
     public const decimal PrecioMaximoProducto = 999.99m;
 
     /// <summary>
+    /// Ventana de tiempo en segundos para deshacer el cambio de estado de comanda en interfaz (RV-88, RN-78).
+    /// </summary>
+    public const int SegundosVentanaDeshacerComanda = 10;
+
+    /// <summary>
+    /// Tolerancia técnica máxima en segundos para deshacer en el servidor (RN-78).
+    /// </summary>
+    public const double SegundosToleranciaDeshacerComanda = 10.5;
+
+    /// <summary>
     /// Duración estándar de vigencia de token JWT en minutos (RN-20).
     /// </summary>
     public const int MinutosExpiracionToken = 30;

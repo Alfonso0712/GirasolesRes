@@ -314,16 +314,18 @@ public class PedidoRepository : IPedidoRepository
                 .ThenInclude(p => p!.Ped_Mesa)
             .Where(c => c.Cmd_Estado == EstadoComanda.Lista && !c.Cmd_AvisoVisto && c.Cmd_Pedido != null && c.Cmd_Pedido.Ped_FechaOperativa == fechaOperativa);
 
+        if (usuarioId.HasValue)
+        {
+            query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value);
+        }
+
         if (esCajero)
         {
             query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.ParaLlevar);
         }
         else
         {
-            if (usuarioId.HasValue)
-            {
-                query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value);
-            }
+            query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.Mesa);
         }
 
         return await query

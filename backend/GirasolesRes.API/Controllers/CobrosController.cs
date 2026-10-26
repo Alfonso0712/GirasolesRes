@@ -52,7 +52,7 @@ public class CobrosController : ControllerBase
     [HttpGet("pendientes")]
     public async Task<IActionResult> ObtenerPendientesCobro(CancellationToken ct)
     {
-        if (!ValidarRolCajeroOAdmin(out var forbidden))
+        if (!ValidarRolCajero(out var forbidden))
         {
             return forbidden!;
         }
@@ -134,7 +134,7 @@ public class CobrosController : ControllerBase
     [HttpGet("comprobantes/{ventaId:guid}")]
     public async Task<IActionResult> ObtenerComprobante([FromRoute] Guid ventaId, [FromQuery] bool copia = false, CancellationToken ct = default)
     {
-        if (!ValidarRolCajeroOAdmin(out var forbidden))
+        if (!ValidarRolCajero(out var forbidden))
         {
             return forbidden!;
         }
@@ -158,7 +158,7 @@ public class CobrosController : ControllerBase
     [HttpGet("comprobantes/{ventaId:guid}/pdf")]
     public async Task<IActionResult> DescargarComprobantePdf([FromRoute] Guid ventaId, [FromQuery] bool copia = false, CancellationToken ct = default)
     {
-        if (!ValidarRolCajeroOAdmin(out var forbidden))
+        if (!ValidarRolCajero(out var forbidden))
         {
             return forbidden!;
         }

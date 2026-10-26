@@ -193,4 +193,9 @@ public class Caja
             throw new CajaMontoInvalidoException(monto, campo, "El monto debe tener como máximo 2 decimales.");
         }
     }
+
+    internal void AgregarVenta(Venta venta)
+    {
+        _caj_Ventas.Add(venta);
+    }
 }

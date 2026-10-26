@@ -322,7 +322,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                                   label="Desactivar usuario"
                                   variant="deactivate"
                                   disabled={esPropiaCuenta}
-                                  disabledReason="No puede desactivar su propia cuenta"
+                                  disabledReason="No puede desactivar ni eliminar su propia cuenta."
                                   onClick={(e) => handleAbrirConfirmacion(u, 'desactivar', e)}
                                 />
                               ) : (
@@ -340,7 +340,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
                                 label="Eliminar usuario"
                                 variant="delete"
                                 disabled={esPropiaCuenta}
-                                disabledReason="No puede eliminar su propia cuenta"
+                                disabledReason="No puede desactivar ni eliminar su propia cuenta."
                                 onClick={(e) => handleAbrirConfirmacion(u, 'eliminar', e)}
                               />
                             </div>

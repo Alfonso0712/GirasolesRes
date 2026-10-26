@@ -95,8 +95,8 @@ export const MenuDisponibilidadConfirmModal: React.FC<MenuDisponibilidadConfirmM
 
           <p className="text-sm text-neutral-600 leading-relaxed mb-1">
             {esAgotar
-              ? 'Mozos y cajeros ya no podrán pedirlo; los pedidos registrados no cambian.'
-              : 'Podrá pedirse nuevamente en la toma de pedidos.'}
+              ? 'No se podrán tomar nuevos pedidos de este plato.'
+              : 'Volverá a ofrecerse en los pedidos nuevos.'}
           </p>
 
           <p className="text-xs text-neutral-500">

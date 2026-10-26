@@ -81,6 +81,26 @@ public record PlatoVendidoResumenDto(
     string Nombre,
     int Cantidad,
     decimal Total
+)
+{
+    public decimal Monto => Total;
+}
+
+public record MenuCompletoCierreDto(
+    int MenuCompletoId,
+    string Nombre,
+    int Cantidad,
+    decimal Monto
+)
+{
+    public decimal Total => Monto;
+}
+
+public record ComponenteCierreDto(
+    Guid ProductoId,
+    string Producto,
+    string Rol,
+    int Cantidad
 );
 
 public record PedidoPendienteCierreDto(
@@ -105,7 +125,10 @@ public record ResumenCierreResponseDto(
     decimal EfectivoEsperado,
     int CantidadVentas,
     IReadOnlyList<PlatoVendidoResumenDto> PlatosVendidos,
-    IReadOnlyList<PedidoPendienteCierreDto> PedidosPendientes
+    IReadOnlyList<PedidoPendienteCierreDto> PedidosPendientes,
+    IReadOnlyList<MenuCompletoCierreDto>? MenusCompletos = null,
+    IReadOnlyList<ComponenteCierreDto>? Componentes = null,
+    IReadOnlyList<PlatoVendidoResumenDto>? ProductosCarta = null
 );
 
 // =========================================================================
@@ -230,7 +253,10 @@ public record CierreDetalleDto(
     int CantidadVentas,
     IReadOnlyList<PlatoVendidoResumenDto> Platos,
     IReadOnlyList<PlatoVendidoResumenDto> PlatosVendidos,
-    IReadOnlyList<AjustePosteriorDto> AjustesPosteriores
+    IReadOnlyList<AjustePosteriorDto> AjustesPosteriores,
+    IReadOnlyList<MenuCompletoCierreDto>? MenusCompletos = null,
+    IReadOnlyList<ComponenteCierreDto>? Componentes = null,
+    IReadOnlyList<PlatoVendidoResumenDto>? ProductosCarta = null
 );
 
 // =========================================================================
@@ -261,6 +287,8 @@ public class CierreVoucherDto
     public string? Observacion { get; set; }
 
     public List<PlatoVendidoVoucherDto> PlatosVendidos { get; set; } = new();
+    public List<MenuCompletoCierreDto> MenusCompletos { get; set; } = new();
+    public List<ComponenteCierreDto> Componentes { get; set; } = new();
 }
 
 public class PlatoVendidoVoucherDto

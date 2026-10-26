@@ -15,9 +15,8 @@ import type { MesaItem, FiltroEstadoMesa } from '../types/mesa';
 import { useMesasManagement } from '../hooks/useMesasManagement';
 import { menuDiaService } from '../services/menuDiaService';
 import { pedidoService } from '../services/pedidoService';
-import { MesaCard } from '../components/mesas';
-import { MesaFormModal } from '../components/mesas';
-import { MesaConfirmModal } from '../components/mesas';
+import { MesaCard, MesaFormModal, MesaConfirmModal, SelectorPedidoModal } from '../components/mesas';
+import type { PedidoAbiertoMesaDto } from '../types/pedido';
 import { PageHeader, PageContainer } from '../components/layout';
 
 interface MesasPageProps {
@@ -26,7 +25,7 @@ interface MesasPageProps {
     type: 'success' | 'error' | 'info' | 'warning';
     message: string;
   }) => void;
-  onNavigateToPedido?: (mesaId: string, modo?: 'nuevo' | 'ampliacion') => void;
+  onNavigateToPedido?: (mesaId: string, modo?: 'nuevo' | 'ampliacion', pedidoId?: string) => void;
   onNavigateToCobro?: (mesa: { id: string; nombre: string }) => void;
   onNavigateToPedidoLlevar?: () => void;
   onNavigateToMenuDia?: () => void;
@@ -101,6 +100,22 @@ export const MesasPage: React.FC<MesasPageProps> = ({
   }, [session.token]);
 
   const [modalMesaOcupada, setModalMesaOcupada] = useState<{ mesa: MesaItem; cantidadPedidos: number } | null>(null);
+  const [pedidosSelector, setPedidosSelector] = useState<{ mesa: MesaItem; pedidos: PedidoAbiertoMesaDto[] } | null>(null);
+
+  const iniciarAgregarProductos = async (mesa: MesaItem) => {
+    try {
+      const pedidos = await pedidoService.obtenerPedidosActivosPorMesa(mesa.id, session.token);
+      if (!pedidos || pedidos.length === 0) {
+        onNavigateToPedido?.(mesa.id, 'nuevo');
+      } else if (pedidos.length === 1) {
+        onNavigateToPedido?.(mesa.id, 'ampliacion', pedidos[0].id);
+      } else {
+        setPedidosSelector({ mesa, pedidos });
+      }
+    } catch {
+      onNavigateToPedido?.(mesa.id, 'ampliacion');
+    }
+  };
 
   const handleAccionRol = async (mesa: MesaItem, accion: string) => {
     if (accion === 'REGISTRAR PEDIDO') {
@@ -110,10 +125,8 @@ export const MesasPage: React.FC<MesasPageProps> = ({
       }
     }
     if (accion === 'AGREGAR PRODUCTOS') {
-      if (onNavigateToPedido) {
-        onNavigateToPedido(mesa.id, 'ampliacion');
-        return;
-      }
+      await iniciarAgregarProductos(mesa);
+      return;
     }
     if (accion === 'OPCIONES_MESA_OCUPADA') {
       try {
@@ -461,10 +474,10 @@ export const MesasPage: React.FC<MesasPageProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  const mesaId = modalMesaOcupada.mesa.id;
+                onClick={async () => {
+                  const m = modalMesaOcupada.mesa;
                   setModalMesaOcupada(null);
-                  onNavigateToPedido?.(mesaId, 'ampliacion');
+                  await iniciarAgregarProductos(m);
                 }}
                 className="flex-1 py-2.5 px-4 bg-surface border border-neutral-300 hover:bg-neutral-50 text-neutral-800 text-xs font-bold rounded-xl transition-colors cursor-pointer"
               >
@@ -480,6 +493,21 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Modal Selector de Pedido para Mesa con Múltiples Pedidos Abiertos */}
+      {pedidosSelector && (
+        <SelectorPedidoModal
+          isOpen={!!pedidosSelector}
+          mesaNombre={pedidosSelector.mesa.nombre}
+          pedidos={pedidosSelector.pedidos}
+          onSeleccionarPedido={(pedidoId) => {
+            const mesaId = pedidosSelector.mesa.id;
+            setPedidosSelector(null);
+            onNavigateToPedido?.(mesaId, 'ampliacion', pedidoId);
+          }}
+          onClose={() => setPedidosSelector(null)}
+        />
       )}
 
       {/* Modal CUS06.3 / Vista 6.4: Activar o Desactivar Mesa */}

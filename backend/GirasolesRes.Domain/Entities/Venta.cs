@@ -71,4 +71,9 @@ public class Venta
         Ven_FechaHoraAnulacionUtc = DateTime.UtcNow;
         if (!string.IsNullOrWhiteSpace(destinoPedido)) Ven_DestinoPedido = destinoPedido.Trim();
     }
+
+    internal void AsignarPedido(Pedido pedido)
+    {
+        Ven_Pedido = pedido;
+    }
 }

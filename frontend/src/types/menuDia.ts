@@ -64,8 +64,6 @@ export interface GuardarMenuDiaRequest {
   productosCarta?: string[];
   opciones?: string[];
   menusCompletos?: number[];
-  desayunoId?: string | null;
-  platoIds?: string[];
 }
 
 export interface CambiarDisponibilidadRequest {

@@ -51,6 +51,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   // Estado de mesa seleccionada para pedido (CUS07)
   const [mesaSeleccionadaParaPedido, setMesaSeleccionadaParaPedido] = useState<string | null>(null);
   const [modoPedidoMesa, setModoPedidoMesa] = useState<'nuevo' | 'ampliacion'>('nuevo');
+  const [pedidoIdParaPedidoMesa, setPedidoIdParaPedidoMesa] = useState<string | null>(null);
 
   // Estados para navegación contextual hacia Cobros (CUS11)
   const [mesaParaCobro, setMesaParaCobro] = useState<{ id: string; nombre: string } | null>(null);
@@ -301,9 +302,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         <MesasPage
           session={session}
           onLogout={onLogout}
-          onNavigateToPedido={(mesaId, modo) => {
+          onNavigateToPedido={(mesaId, modo, pedidoId) => {
             setMesaSeleccionadaParaPedido(mesaId);
             setModoPedidoMesa(modo || 'nuevo');
+            setPedidoIdParaPedidoMesa(pedidoId || null);
             setPaginaActiva('pedidos-mesa');
           }}
           onNavigateToCobro={(mesa) => {
@@ -322,9 +324,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           session={session}
           mesaIdInicial={mesaSeleccionadaParaPedido}
           modoInicial={modoPedidoMesa}
+          pedidoIdInicial={pedidoIdParaPedidoMesa}
           onLogout={onLogout}
           onVolverAMesas={() => {
             setMesaSeleccionadaParaPedido(null);
+            setPedidoIdParaPedidoMesa(null);
             setPaginaActiva('mesas');
           }}
           onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}

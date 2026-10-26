@@ -150,13 +150,6 @@ public class GuardarMenuDiaRequest
 
     [JsonPropertyName("menusCompletos")]
     public List<int>? MenusCompletos { get; set; }
-
-    // Compatibilidad retroactiva
-    [JsonPropertyName("desayunoId")]
-    public Guid? DesayunoId { get; set; }
-
-    [JsonPropertyName("platoIds")]
-    public List<Guid>? PlatoIds { get; set; }
 }
 
 public class CambiarDisponibilidadRequest

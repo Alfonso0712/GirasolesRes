@@ -44,7 +44,7 @@ public class PedidoMenuCompletoUnitTests
         var bebida = new Producto("Avena", RolComponente.BebidaDesayuno);
         var plato = new Producto("Lomo al jugo", RolComponente.PlatoDesayuno);
 
-        var dia = new MenuDia(DateOnly.FromDateTime(DateTime.UtcNow), null, "admin");
+        var dia = new MenuDia(DateOnly.FromDateTime(DateTime.UtcNow), "admin");
         dia.SincronizarMenusCompletos(new[] { 1 }, "admin");
         dia.SincronizarPlatos(new[] { bebida.Id_Producto, plato.Id_Producto }, "admin");
 

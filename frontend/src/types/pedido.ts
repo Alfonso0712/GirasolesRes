@@ -99,6 +99,7 @@ export interface ProductoMenuPedido {
   precio: number;
   agotado: boolean;
   disponible: boolean;
+  rol?: string | null;
 }
 
 export interface LineaBorrador {

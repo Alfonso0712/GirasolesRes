@@ -54,9 +54,25 @@ export interface PlatoVendidoResumenDto {
   cantidad: number;
   total: number;
   productoId?: string;
+  monto?: number;
 }
 
 export type PlatoVendidoCierreDto = PlatoVendidoResumenDto;
+
+export interface MenuCompletoCierreDto {
+  menuCompletoId: number;
+  nombre: string;
+  cantidad: number;
+  monto: number;
+  total?: number;
+}
+
+export interface ComponenteCierreDto {
+  productoId: string;
+  producto: string;
+  rol: string;
+  cantidad: number;
+}
 
 export interface PedidoPendienteCierreDto {
   pedidoId: string;
@@ -80,6 +96,9 @@ export interface CierreResumenDto {
   efectivoEsperado: number;
   cantidadVentas: number;
   platosVendidos: PlatoVendidoResumenDto[];
+  productosCarta?: PlatoVendidoResumenDto[];
+  menusCompletos?: MenuCompletoCierreDto[];
+  componentes?: ComponenteCierreDto[];
   pedidosPendientes: PedidoPendienteCierreDto[];
 }
 
@@ -193,6 +212,9 @@ export interface CierreDetalleDto {
   cantidadVentas?: number;
   platos?: PlatoVendidoResumenDto[];
   platosVendidos: PlatoVendidoResumenDto[];
+  productosCarta?: PlatoVendidoResumenDto[];
+  menusCompletos?: MenuCompletoCierreDto[];
+  componentes?: ComponenteCierreDto[];
   ajustesPosteriores: AjustePosteriorDto[];
   tieneAjustesPosteriores?: boolean;
   conAjustes?: boolean;

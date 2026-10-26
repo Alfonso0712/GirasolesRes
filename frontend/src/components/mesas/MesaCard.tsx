@@ -63,14 +63,11 @@ export const MesaCard: React.FC<MesaCardProps> = ({
   const handleClickCard = () => {
     if (esInactiva) return;
 
-    if (esMozo) {
+    if (esMozo || esAdmin) {
       if (esLibre) onAccionRol?.(mesa, 'REGISTRAR PEDIDO');
       else if (esOcupada) onAccionRol?.(mesa, 'OPCIONES_MESA_OCUPADA');
     } else if (esCajero && esOcupada) {
       onAccionRol?.(mesa, 'COBRAR');
-    } else if (esAdmin) {
-      if (esOcupada) onAccionRol?.(mesa, 'OPCIONES_MESA_OCUPADA');
-      else onEditar?.(mesa);
     }
   };
 
@@ -167,79 +164,14 @@ export const MesaCard: React.FC<MesaCardProps> = ({
 
       {/* Contenido / Botones de Acción según Rol */}
       <div className="pt-2 border-t border-neutral-200/50 flex items-center justify-between gap-2 mt-auto">
-        {/* Acciones de Administrador */}
-        {esAdmin && (
-          <div className="flex items-center gap-2 w-full">
-            {esLibre && (
-              <button
-                type="button"
-                disabled={esInactiva}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (esInactiva) return;
-                  onAccionRol?.(mesa, 'REGISTRAR PEDIDO');
-                }}
-                title={
-                  esInactiva
-                    ? 'Mesa inactiva (no disponible en salón)'
-                    : `Tomar pedido en ${mesa.nombre}`
-                }
-                aria-label={`Pedido ${mesa.nombre}`}
-                className={`w-full min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap ${
-                  esInactiva
-                    ? 'bg-neutral-100 border border-neutral-200 text-neutral-500 cursor-not-allowed opacity-60'
-                    : 'bg-primary hover:bg-primary-hover text-white border border-transparent cursor-pointer'
-                }`}
-              >
-                <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-                <span className="whitespace-nowrap">Tomar Pedido</span>
-              </button>
-            )}
-
-            {esOcupada && (
-              <>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAccionRol?.(mesa, 'AGREGAR PRODUCTOS');
-                  }}
-                  title={`Ver/ampliar pedido en ${mesa.nombre}`}
-                  aria-label={`Pedido ${mesa.nombre}`}
-                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap bg-primary hover:bg-primary-hover text-white cursor-pointer"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-                  <span className="whitespace-nowrap font-bold">Pedido</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAccionRol?.(mesa, 'COBRAR');
-                  }}
-                  title={`Cobrar ${mesa.nombre}`}
-                  aria-label={`Cobrar ${mesa.nombre}`}
-                  className="flex-1 min-w-0 h-8.5 px-3 rounded-lg border border-ink-fill bg-ink-fill hover:bg-sidebar text-white shadow-2xs inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-xs font-bold whitespace-nowrap"
-                >
-                  <DollarSign className="w-3.5 h-3.5 shrink-0" />
-                  <span className="whitespace-nowrap font-bold">Cobrar</span>
-                </button>
-              </>
-            )}
-
-            {esInactiva && (
+        {/* Acciones de Mozo y Administrador */}
+        {(esMozo || esAdmin) && (
+          <div className="w-full">
+            {esInactiva ? (
               <div className="w-full h-8 flex items-center justify-center text-xs text-neutral-500 font-medium">
                 Mesa inactiva
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Acciones de Mozo */}
-        {esMozo && !esInactiva && (
-          <div className="w-full">
-            {esLibre ? (
+            ) : esLibre ? (
               <button
                 type="button"
                 onClick={(e) => {

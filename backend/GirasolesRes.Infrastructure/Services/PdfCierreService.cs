@@ -40,10 +40,15 @@ public class PdfCierreService : IPdfCierreService
         var cajeroApertura = caja.Caj_Usuario?.Usu_Nombre ?? "Cajero(a)";
         var cajeroCierre = caja.Caj_UsuarioCierre?.Usu_Nombre ?? cajeroApertura;
 
-        var platosVendidos = caja.Caj_Ventas
+        var todosDetalles = caja.Caj_Ventas
             .Where(v => v.Ven_Estado == EstadoVenta.Vigente && v.Ven_Pedido != null)
             .SelectMany(v => v.Ven_Pedido!.Ped_Detalles)
-            .GroupBy(d => d.Det_Producto != null ? d.Det_Producto.Pro_Nombre : "Producto General")
+            .ToList();
+
+        // 1. Productos de Carta
+        var platosVendidos = todosDetalles
+            .Where(d => !d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Det_Producto != null ? d.Det_Producto.Pro_Nombre : (d.Det_Nombre ?? "Producto General"))
             .Select(g =>
             {
                 var cant = g.Sum(d => d.Det_Cantidad);
@@ -57,6 +62,44 @@ public class PdfCierreService : IPdfCierreService
                 };
             })
             .OrderByDescending(p => p.Subtotal)
+            .ToList();
+
+        // 2. Menús Completos
+        var menusCompletos = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .GroupBy(d => d.Id_MenuCompleto!.Value)
+            .Select(g =>
+            {
+                var first = g.First();
+                var nombre = !string.IsNullOrWhiteSpace(first.Det_Nombre)
+                    ? first.Det_Nombre
+                    : first.Det_MenuCompleto?.Men_Nombre ?? $"Menú #{g.Key}";
+                return new MenuCompletoCierreDto(
+                    MenuCompletoId: g.Key,
+                    Nombre: nombre,
+                    Cantidad: g.Sum(d => d.Det_Cantidad),
+                    Monto: decimal.Round(g.Sum(d => d.Det_Subtotal), 2)
+                );
+            })
+            .OrderByDescending(m => m.Cantidad)
+            .ToList();
+
+        // 3. Componentes (veces elegidas, sin monto)
+        var componentes = todosDetalles
+            .Where(d => d.Id_MenuCompleto.HasValue)
+            .SelectMany(d => d.Det_Opciones.Select(o => new { Opcion = o, Cantidad = d.Det_Cantidad }))
+            .GroupBy(x => x.Opcion.Id_Producto)
+            .Select(g =>
+            {
+                var first = g.First().Opcion;
+                return new ComponenteCierreDto(
+                    ProductoId: g.Key,
+                    Producto: first.Lpo_ProductoNombre,
+                    Rol: first.Lpo_ParteNombre,
+                    Cantidad: g.Sum(x => x.Cantidad)
+                );
+            })
+            .OrderByDescending(c => c.Cantidad)
             .ToList();
 
         var datos = new CierreVoucherDto
@@ -78,7 +121,9 @@ public class PdfCierreService : IPdfCierreService
             Diferencia = caja.Caj_Diferencia ?? 0m,
             EstadoCuadre = caja.ObtenerEstadoCuadre()?.ToString() ?? (caja.Caj_Diferencia == 0m ? "Cuadra" : (caja.Caj_Diferencia > 0m ? "Sobrante" : "Faltante")),
             Observacion = caja.Caj_Observacion,
-            PlatosVendidos = platosVendidos
+            PlatosVendidos = platosVendidos,
+            MenusCompletos = menusCompletos,
+            Componentes = componentes
         };
 
         return GenerarVoucherCierre(datos);
@@ -189,86 +234,140 @@ public class PdfCierreService : IPdfCierreService
 
         curY += cardHeight + 10f;
 
-        // --- 4. CONSOLIDADO DE PLATOS Y PRODUCTOS VENDIDOS ---
-        builder.DrawText("CONSOLIDADO DE PRODUCTOS Y PLATOS VENDIDOS DURANTE EL TURNO", 28f, curY + 9f, "/F2", 8.5f, 0.282f, 0.157f, 0.075f);
-        curY += 13f;
+        // --- 4. CONSOLIDADO EN TRES BLOQUES (D-017, RN-138, E-401) ---
+        float rowHeight = 11.5f;
 
-        // Encabezado de la Tabla
-        builder.DrawFilledRect(28f, curY, 539.28f, 16f, 0.282f, 0.157f, 0.075f);
-        builder.DrawText("#", 34f, curY + 11f, "/F2", 7.5f, 1.0f, 1.0f, 1.0f);
-        builder.DrawText("Cant.", 55f, curY + 11f, "/F2", 7.5f, 1.0f, 1.0f, 1.0f);
-        builder.DrawText("Nombre del Plato / Bebida", 100f, curY + 11f, "/F2", 7.5f, 1.0f, 1.0f, 1.0f);
-        builder.DrawText("P. Unit Prom.", 410f, curY + 11f, "/F2", 7.5f, 1.0f, 1.0f, 1.0f, alignRight: true);
-        builder.DrawText("Subtotal (S/)", 525f, curY + 11f, "/F2", 7.5f, 1.0f, 1.0f, 1.0f, alignRight: true);
-        curY += 16f;
+        // 4A. BLOQUE 1: PRODUCTOS DE CARTA (CANTIDAD Y MONTO)
+        builder.DrawText("1. PRODUCTOS DE CARTA VENDIDOS EN EL TURNO", 28f, curY + 7f, "/F2", 7.5f, 0.282f, 0.157f, 0.075f);
+        curY += 10f;
+        builder.DrawFilledRect(28f, curY, 539.28f, 12f, 0.282f, 0.157f, 0.075f);
+        builder.DrawText("Cant.", 34f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("Nombre del Producto / Plato", 70f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("P. Unit Prom.", 410f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f, alignRight: true);
+        builder.DrawText("Subtotal (S/)", 525f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f, alignRight: true);
+        curY += 12f;
 
-        // Filas de Datos con Regla Anti-Desborde (Top 11 + Otros si > 12)
-        int maxRows = 12;
-        var itemsToDisplay = d.PlatosVendidos;
-        bool hasAggregation = itemsToDisplay.Count > maxRows;
-        int directCount = hasAggregation ? 11 : itemsToDisplay.Count;
-
-        float rowHeight = 14f;
-        int rowIdx = 1;
-        int totalUnidades = 0;
-        decimal totalPlatos = 0m;
-
-        if (itemsToDisplay.Count == 0)
+        int totalCartaUnidades = 0;
+        decimal totalCartaMonto = 0m;
+        if (d.PlatosVendidos.Count == 0)
         {
             builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.98f, 0.98f, 0.98f);
-            builder.DrawText("Sin ventas de platos registradas en este turno", 100f, curY + 10f, "/F3", 7.5f, 0.5f, 0.5f, 0.5f);
+            builder.DrawText("Sin productos de carta vendidos en este turno", 70f, curY + 8.5f, "/F3", 6.5f, 0.5f, 0.5f, 0.5f);
             curY += rowHeight;
         }
         else
         {
-            for (int i = 0; i < directCount; i++)
+            int maxCarta = Math.Min(d.PlatosVendidos.Count, 5);
+            for (int i = 0; i < maxCarta; i++)
             {
-                var p = itemsToDisplay[i];
-                totalUnidades += p.Cantidad;
-                totalPlatos += p.Subtotal;
-
-                bool isEven = (rowIdx % 2 == 0);
-                if (isEven)
-                {
-                    builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.965f, 0.965f, 0.965f);
-                }
-
-                builder.DrawText(rowIdx.ToString(), 34f, curY + 10f, "/F1", 7.5f, 0.3f, 0.3f, 0.3f);
-                builder.DrawText(p.Cantidad.ToString(), 58f, curY + 10f, "/F2", 7.5f, 0.2f, 0.2f, 0.2f);
-
-                var nombreTruncado = p.Nombre.Length > 48 ? p.Nombre[..48] + "..." : p.Nombre;
-                builder.DrawText(nombreTruncado, 100f, curY + 10f, "/F1", 7.5f, 0.15f, 0.15f, 0.15f);
-
-                builder.DrawText($"S/ {p.PrecioUnitarioPromedio,6:F2}", 410f, curY + 10f, "/F1", 7.5f, 0.3f, 0.3f, 0.3f, alignRight: true);
-                builder.DrawText($"S/ {p.Subtotal,7:F2}", 525f, curY + 10f, "/F2", 7.5f, 0.15f, 0.15f, 0.15f, alignRight: true);
-
+                var p = d.PlatosVendidos[i];
+                totalCartaUnidades += p.Cantidad;
+                totalCartaMonto += p.Subtotal;
+                if (i % 2 == 1) builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.965f, 0.965f, 0.965f);
+                builder.DrawText(p.Cantidad.ToString(), 34f, curY + 8.5f, "/F2", 6.5f, 0.2f, 0.2f, 0.2f);
+                var nom = p.Nombre.Length > 50 ? p.Nombre[..50] + "..." : p.Nombre;
+                builder.DrawText(nom, 70f, curY + 8.5f, "/F1", 6.5f, 0.15f, 0.15f, 0.15f);
+                builder.DrawText($"S/ {p.PrecioUnitarioPromedio,6:F2}", 410f, curY + 8.5f, "/F1", 6.5f, 0.3f, 0.3f, 0.3f, alignRight: true);
+                builder.DrawText($"S/ {p.Subtotal,7:F2}", 525f, curY + 8.5f, "/F2", 6.5f, 0.15f, 0.15f, 0.15f, alignRight: true);
                 curY += rowHeight;
-                rowIdx++;
             }
-
-            if (hasAggregation)
+            if (d.PlatosVendidos.Count > maxCarta)
             {
-                var remaining = itemsToDisplay.Skip(directCount).ToList();
-                int sumCantRest = remaining.Sum(r => r.Cantidad);
-                decimal sumSubRest = remaining.Sum(r => r.Subtotal);
-                totalUnidades += sumCantRest;
-                totalPlatos += sumSubRest;
-
+                var rest = d.PlatosVendidos.Skip(maxCarta).ToList();
+                int rCant = rest.Sum(r => r.Cantidad);
+                decimal rSub = rest.Sum(r => r.Subtotal);
+                totalCartaUnidades += rCant;
+                totalCartaMonto += rSub;
                 builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.94f, 0.94f, 0.94f);
-                builder.DrawText("-", 34f, curY + 10f, "/F1", 7.5f, 0.4f, 0.4f, 0.4f);
-                builder.DrawText(sumCantRest.ToString(), 58f, curY + 10f, "/F2", 7.5f, 0.2f, 0.2f, 0.2f);
-                builder.DrawText($"Otros productos del turno ({remaining.Count} variedades adicionales)", 100f, curY + 10f, "/F3", 7.5f, 0.3f, 0.3f, 0.3f);
-                builder.DrawText("-", 410f, curY + 10f, "/F1", 7.5f, 0.4f, 0.4f, 0.4f, alignRight: true);
-                builder.DrawText($"S/ {sumSubRest,7:F2}", 525f, curY + 10f, "/F2", 7.5f, 0.15f, 0.15f, 0.15f, alignRight: true);
+                builder.DrawText(rCant.ToString(), 34f, curY + 8.5f, "/F2", 6.5f, 0.2f, 0.2f, 0.2f);
+                builder.DrawText($"Otros {rest.Count} productos de carta adicionales", 70f, curY + 8.5f, "/F3", 6.5f, 0.3f, 0.3f, 0.3f);
+                builder.DrawText($"S/ {rSub,7:F2}", 525f, curY + 8.5f, "/F2", 6.5f, 0.15f, 0.15f, 0.15f, alignRight: true);
                 curY += rowHeight;
             }
         }
+        builder.DrawFilledRect(28f, curY, 539.28f, 12f, 0.92f, 0.92f, 0.92f);
+        builder.DrawText($"Subtotal Carta: {totalCartaUnidades} unidades", 70f, curY + 8.5f, "/F2", 7f, 0.2f, 0.2f, 0.2f);
+        builder.DrawText($"S/ {totalCartaMonto,7:F2}", 525f, curY + 8.5f, "/F2", 7f, 0.827f, 0.329f, 0.000f, alignRight: true);
+        curY += 15f;
 
-        // Fila Totalizadora de la Tabla
-        builder.DrawFilledRect(28f, curY, 539.28f, 15f, 0.90f, 0.90f, 0.90f, 0.70f, 0.70f, 0.70f, 0.5f);
-        builder.DrawText($"TOTAL CONSOLIDADO: {totalUnidades} unidades vendidas", 55f, curY + 11f, "/F2", 8f, 0.20f, 0.20f, 0.20f);
-        builder.DrawText($"S/ {totalPlatos,8:F2}", 525f, curY + 11f, "/F2", 8.5f, 0.827f, 0.329f, 0.000f, alignRight: true);
-        curY += 21f;
+        // 4B. BLOQUE 2: MENÚS COMPLETOS (CANTIDAD Y MONTO)
+        builder.DrawText("2. MENÚS COMPLETOS VENDIDOS EN EL TURNO", 28f, curY + 7f, "/F2", 7.5f, 0.282f, 0.157f, 0.075f);
+        curY += 10f;
+        builder.DrawFilledRect(28f, curY, 539.28f, 12f, 0.282f, 0.157f, 0.075f);
+        builder.DrawText("Cant.", 34f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("Nombre del Menú Completo", 70f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("Subtotal (S/)", 525f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f, alignRight: true);
+        curY += 12f;
+
+        int totalMenusUnidades = 0;
+        decimal totalMenusMonto = 0m;
+        if (d.MenusCompletos.Count == 0)
+        {
+            builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.98f, 0.98f, 0.98f);
+            builder.DrawText("Sin menús completos vendidos en este turno", 70f, curY + 8.5f, "/F3", 6.5f, 0.5f, 0.5f, 0.5f);
+            curY += rowHeight;
+        }
+        else
+        {
+            int maxMenus = Math.Min(d.MenusCompletos.Count, 4);
+            for (int i = 0; i < maxMenus; i++)
+            {
+                var m = d.MenusCompletos[i];
+                totalMenusUnidades += m.Cantidad;
+                totalMenusMonto += m.Monto;
+                if (i % 2 == 1) builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.965f, 0.965f, 0.965f);
+                builder.DrawText(m.Cantidad.ToString(), 34f, curY + 8.5f, "/F2", 6.5f, 0.2f, 0.2f, 0.2f);
+                var nom = m.Nombre.Length > 50 ? m.Nombre[..50] + "..." : m.Nombre;
+                builder.DrawText(nom, 70f, curY + 8.5f, "/F1", 6.5f, 0.15f, 0.15f, 0.15f);
+                builder.DrawText($"S/ {m.Monto,7:F2}", 525f, curY + 8.5f, "/F2", 6.5f, 0.15f, 0.15f, 0.15f, alignRight: true);
+                curY += rowHeight;
+            }
+        }
+        builder.DrawFilledRect(28f, curY, 539.28f, 12f, 0.92f, 0.92f, 0.92f);
+        builder.DrawText($"Subtotal Menús Completos: {totalMenusUnidades} unidades", 70f, curY + 8.5f, "/F2", 7f, 0.2f, 0.2f, 0.2f);
+        builder.DrawText($"S/ {totalMenusMonto,7:F2}", 525f, curY + 8.5f, "/F2", 7f, 0.827f, 0.329f, 0.000f, alignRight: true);
+        curY += 15f;
+
+        // 4C. BLOQUE 3: COMPONENTES ELEGIDOS EN MENÚS (VECES ELEGIDAS, SIN MONTO - RN-138)
+        builder.DrawText("3. COMPONENTES ELEGIDOS EN MENÚS COMPLETOS (VECES ELEGIDAS, SIN MONTO - RN-138)", 28f, curY + 7f, "/F2", 7.5f, 0.282f, 0.157f, 0.075f);
+        curY += 10f;
+        builder.DrawFilledRect(28f, curY, 539.28f, 12f, 0.282f, 0.157f, 0.075f);
+        builder.DrawText("Veces", 34f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("Componente / Insumo Elegido", 70f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("Rol / Parte", 340f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f);
+        builder.DrawText("Monto", 525f, curY + 8.5f, "/F2", 6.5f, 1.0f, 1.0f, 1.0f, alignRight: true);
+        curY += 12f;
+
+        int totalCompElecciones = 0;
+        if (d.Componentes.Count == 0)
+        {
+            builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.98f, 0.98f, 0.98f);
+            builder.DrawText("Sin componentes elegidos en este turno", 70f, curY + 8.5f, "/F3", 6.5f, 0.5f, 0.5f, 0.5f);
+            curY += rowHeight;
+        }
+        else
+        {
+            int maxComp = Math.Min(d.Componentes.Count, 5);
+            for (int i = 0; i < maxComp; i++)
+            {
+                var c = d.Componentes[i];
+                totalCompElecciones += c.Cantidad;
+                if (i % 2 == 1) builder.DrawFilledRect(28f, curY, 539.28f, rowHeight, 0.965f, 0.965f, 0.965f);
+                builder.DrawText(c.Cantidad.ToString(), 34f, curY + 8.5f, "/F2", 6.5f, 0.2f, 0.2f, 0.2f);
+                var nom = c.Producto.Length > 40 ? c.Producto[..40] + "..." : c.Producto;
+                builder.DrawText(nom, 70f, curY + 8.5f, "/F1", 6.5f, 0.15f, 0.15f, 0.15f);
+                builder.DrawText(c.Rol, 340f, curY + 8.5f, "/F1", 6.5f, 0.35f, 0.35f, 0.35f);
+                builder.DrawText("S/ 0.00 (Incluido)", 525f, curY + 8.5f, "/F3", 6.5f, 0.4f, 0.4f, 0.4f, alignRight: true);
+                curY += rowHeight;
+            }
+        }
+        builder.DrawFilledRect(28f, curY, 539.28f, 12f, 0.92f, 0.92f, 0.92f);
+        builder.DrawText($"Total Elecciones de Componentes: {totalCompElecciones} selecciones", 70f, curY + 8.5f, "/F2", 7f, 0.2f, 0.2f, 0.2f);
+        builder.DrawText("S/ 0.00", 525f, curY + 8.5f, "/F3", 7f, 0.4f, 0.4f, 0.4f, alignRight: true);
+        curY += 16f;
+
+        // Limitar curY para asegurar que observaciones, firmas y pie siempre queden dentro de página 1 (RNF-48)
+        if (curY > 660f) curY = 660f;
 
         // --- 5. OBSERVACIONES DEL ARQUEO ---
         builder.DrawText("OBSERVACIONES DEL ARQUEO:", 28f, curY + 7f, "/F2", 7.5f, 0.282f, 0.157f, 0.075f);

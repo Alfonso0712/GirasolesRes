@@ -334,22 +334,7 @@ public class PedidoService : IPedidoService
         {
             var lista = new List<ProductoMenuPedidoDto>();
 
-            // Desayuno del día
-            if (menuDia.Id_Desayuno.HasValue)
-            {
-                var des = await _productoRepository.ObtenerPorIdAsync(menuDia.Id_Desayuno.Value, ct);
-                if (des != null && des.Pro_Activo)
-                {
-                    lista.Add(new ProductoMenuPedidoDto(
-                        des.Id_Producto,
-                        des.Pro_Nombre,
-                        des.Pro_Categoria?.ToString() ?? string.Empty,
-                        des.Pro_Precio.GetValueOrDefault(),
-                        Agotado: false,
-                        Disponible: true
-                    ));
-                }
-            }
+
 
             // Platos del menú del día (exclusivamente productos de Carta)
             foreach (var plato in menuDia.Men_Platos)
@@ -376,10 +361,11 @@ public class PedidoService : IPedidoService
         return todosProds.Select(p => new ProductoMenuPedidoDto(
             p.Id_Producto,
             p.Pro_Nombre,
-            p.Pro_Categoria?.ToString() ?? string.Empty,
+            p.Pro_Categoria?.ToString() ?? p.Pro_Rol?.ToString() ?? string.Empty,
             p.Pro_Precio.GetValueOrDefault(),
             Agotado: false,
-            Disponible: true
+            Disponible: true,
+            Rol: p.Pro_Rol?.ToString()
         )).ToList();
     }
 
@@ -1034,7 +1020,7 @@ public class PedidoService : IPedidoService
             menusDict = menus.ToDictionary(m => m.Id_MenuCompleto);
         }
 
-        var menuDiaDefinido = menuDia != null && (menuDia.Men_Platos.Count > 0 || menuDia.Id_Desayuno.HasValue || menuDia.Men_MenusCompletos.Count > 0);
+        var menuDiaDefinido = menuDia != null && (menuDia.Men_Platos.Count > 0 || menuDia.Men_MenusCompletos.Count > 0);
         var menusHabilitadosHoy = menuDiaDefinido
             ? menuDia!.Men_MenusCompletos.Select(m => m.Id_MenuCompleto).ToHashSet()
             : menusDict.Values.Where(m => m.Men_Activo).Select(m => m.Id_MenuCompleto).ToHashSet();
@@ -1126,10 +1112,10 @@ public class PedidoService : IPedidoService
                     throw new ArgumentException(MensajesCatalogo.MSG_215);
                 }
 
-                // RV-63 / MSG-79: Revalidar disponibilidad y que no esté agotado
+                // RV-63 / MSG-225: Revalidar disponibilidad y que no esté agotado
                 if (platosMenuDiaDict.TryGetValue(producto.Id_Producto, out var estaAgotado) && estaAgotado)
                 {
-                    throw new PedidoConflictException("producto_agotado", string.Format(MensajesCatalogo.MSG_79, producto.Pro_Nombre));
+                    throw new PedidoConflictException("producto_agotado", string.Format(MensajesCatalogo.MSG_225, producto.Pro_Nombre));
                 }
 
                 itemsProcesados.Add(new ItemProcesadoLinea

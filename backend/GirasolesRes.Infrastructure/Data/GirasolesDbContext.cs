@@ -159,16 +159,12 @@ public class GirasolesDbContext : DbContext
             entity.Property(m => m.Id_Menu).HasColumnName("id_menu");
             entity.Property(m => m.Men_Fecha).HasColumnName("fec_menu").HasColumnType("date").IsRequired();
             entity.HasIndex(m => m.Men_Fecha).IsUnique();
-            entity.Property(m => m.Id_Desayuno).HasColumnName("id_desayuno");
             entity.Property(m => m.Men_UsuarioCreacion).HasColumnName("nom_usuario_creacion").HasMaxLength(50).IsRequired();
             entity.Property(m => m.Men_UsuarioActualizacion).HasColumnName("nom_usuario_actualizacion").HasMaxLength(50);
             entity.Property(m => m.Men_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
             entity.Property(m => m.Men_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
 
-            entity.HasOne(m => m.Men_Desayuno)
-                  .WithMany()
-                  .HasForeignKey(m => m.Id_Desayuno)
-                  .OnDelete(DeleteBehavior.SetNull);
+
 
             entity.HasMany(m => m.Men_Platos)
                   .WithOne(p => p.Mdp_MenuDia)

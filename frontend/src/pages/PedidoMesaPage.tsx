@@ -31,6 +31,7 @@ interface PedidoMesaPageProps {
   session: UserSession;
   mesaIdInicial?: string | null;
   modoInicial?: 'nuevo' | 'ampliacion';
+  pedidoIdInicial?: string | null;
   onLogout: (banner?: { type: 'success' | 'error' | 'info' | 'warning'; message: string }) => void;
   onVolverAMesas: () => void;
   onNavigateToMenuDia?: () => void;
@@ -40,6 +41,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   session,
   mesaIdInicial,
   modoInicial,
+  pedidoIdInicial,
   onLogout,
   onVolverAMesas,
   onNavigateToMenuDia,
@@ -91,6 +93,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     token: session.token,
     mesaIdInicial,
     modoInicial,
+    pedidoIdInicial,
     onLogout,
   });
 

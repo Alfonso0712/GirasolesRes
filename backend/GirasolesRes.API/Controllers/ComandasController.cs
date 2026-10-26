@@ -30,8 +30,7 @@ public class ComandasController : ControllerBase
     public async Task<IActionResult> ListarComandas([FromQuery] string? estado)
     {
         var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
@@ -62,8 +61,7 @@ public class ComandasController : ControllerBase
         }
 
         var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
@@ -101,8 +99,7 @@ public class ComandasController : ControllerBase
     public async Task<IActionResult> DeshacerEstado([FromRoute] Guid id)
     {
         var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }

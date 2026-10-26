@@ -17,7 +17,7 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
 | `InicioController` | `Controllers/InicioController.cs` | 2 | Dashboard y paneles de inicio por rol |
 | `MenuDiaController` | `Controllers/MenuDiaController.cs` | 4 | Menú del día, opciones, platos agotados |
 | `MenusCompletosController` | `Controllers/MenusCompletosController.cs` | 4 | Configuración, precios y estado de menús completos |
-| `MesasController` | `Controllers/MesasController.cs` | 5 | Salón, CRUD de mesas, cambio de estado |
+| `MesasController` | `Controllers/MesasController.cs` | 5 | Salón, CRUD de mesas, cambio de estado (sin capacidad ni plano) |
 | `PedidosController` | `Controllers/PedidosController.cs` | 9 | Pedidos de mesa y para llevar, líneas, anulación, activos por mesa |
 | `PerfilController` | `Controllers/PerfilController.cs` | 2 | Cambio de contraseña y preferencia de tema visual |
 | `ProductosController` | `Controllers/ProductosController.cs` | 6 | Carta, catálogo, productos activos/agotados |
@@ -45,8 +45,8 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
   - **Entrada:** `ResetPasswordRequest` (`Correo`, `Codigo`, `NuevaContrasena`).
   - **Respuestas:** `200 OK` (MSG_16); `400 BadRequest` (MSG_13, MSG_14, MSG_15).
 - `GET /api/auth/me` (L:200)
-  - **Autorización:** `[Authorize]` (Cualquier rol autenticado).
-  - **Respuestas:** `200 OK` (Datos del usuario extraídos de los Claims del JWT: id, nombre, usuario, rol, tema).
+  - **Autorización:** `[Authorize]` (Cualquier rol autenticado: `Administrador`, `Cajero`, `Mozo`, `Cocinero`).
+  - **Respuestas:** `200 OK` (`{ success: true, usuario: string, nombre: string, rol: string, email: string, tema: string }`); `401 Unauthorized`.
 - `POST /api/auth/logout` (L:225)
   - **Autorización:** `[Authorize]`.
   - **Entrada:** `LogoutRequest?` (`Motivo`).
@@ -57,10 +57,11 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
 
 ### 2.2 `AvisosController` (`backend/GirasolesRes.API/Controllers/AvisosController.cs`)
 - `GET /api/avisos` (L:28)
-  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`).
-  - **Respuestas:** `200 OK` (Lista `AvisoComandaDto[]` con avisos de comandas listas para servir).
+  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`, `Cajero`).
+  - **Filtro de Destinatario:** Entrega avisos exclusivamente al usuario que registró el pedido (`Id_Usuario`). En pedidos de mesa (`TipoPedido.Mesa`), a quien lo registró (`Mozo` o `Administrador`); en pedidos para llevar (`TipoPedido.ParaLlevar`), al `Cajero` creador.
+  - **Respuestas:** `200 OK` (Lista `AvisoComandaDto[]`: id, pedidoId, numero, tipo, mesa, referencia, hora); `403 Forbidden` (Otros roles).
 - `POST /api/avisos/{id:guid}/visto` (L:60)
-  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`).
+  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`, `Cajero`).
   - **Respuestas:** `200 OK`; `404 NotFound`.
 
 ### 2.3 `CajaController` (`backend/GirasolesRes.API/Controllers/CajaController.cs`)
@@ -68,72 +69,75 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
   - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
   - **Respuestas:** `200 OK` (`CajaActualDto`: estado de jornada, total efectivo, total Yape, cantidad de ventas).
 - `POST /api/caja/abrir` (L:66)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`).
-  - **Entrada:** `AbrirCajaRequestDto` (`MontoInicial`).
-  - **Respuestas:** `200 OK`; `400 BadRequest` (Monto negativo o superior a S/ 5000); `409 Conflict` (Ya existe caja abierta).
+  - **Autorización:** `[Authorize(Roles = "Cajero")]` (Rol estricto: `Cajero`). Mozo, Administrador y Cocinero reciben `403 Forbidden`.
+  - **Entrada:** `AbrirCajaRequestDto` (`MontoInicial`: entre S/ 0.00 y S/ 99,999.99 con hasta dos decimales).
+  - **Respuestas:** `200 OK`; `400 BadRequest` (MSG_169, MSG_170, MSG_171); `403 Forbidden`; `409 Conflict` (Ya existe caja abierta).
 - `GET /api/caja/cierre/resumen` (L:176)
   - **Autorización:** `[Authorize]` (Roles: `Cajero`).
-  - **Respuestas:** `200 OK` (`ResumenCierreDto`: pre-cierre con arqueo teórico calculado por el sistema).
+  - **Respuestas:** `200 OK` (`ResumenCierreDto`: pre-cierre con arqueo teórico calculado y desglose en 3 bloques independientes según D-017 / RN-138 / E-401: 1. `ProductosCarta` con cantidad y monto; 2. `MenusCompletos` con cantidad y monto; 3. `Componentes` con conteo de elecciones sin monto comercial).
 - `POST /api/caja/cerrar` (L:209)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`).
-  - **Entrada:** `CerrarCajaRequestDto` (`MontoEfectivoReal`, `Observaciones`).
-  - **Respuestas:** `200 OK` (Cierre efectuado y descuadre calculado); `409 Conflict` (Pedidos pendientes sin cobrar o comandas abiertas).
+  - **Autorización:** `[Authorize(Roles = "Cajero")]` (Rol estricto: `Cajero`). Mozo, Administrador y Cocinero reciben `403 Forbidden`.
+  - **Entrada:** `CerrarCajaRequestDto` (`EfectivoContado`: hasta 99,999.99, `Observaciones`: máx. 200 caracteres).
+  - **Respuestas:** `200 OK` (Cierre efectuado y descuadre calculado); `400 BadRequest` (MSG_175); `403 Forbidden`; `409 Conflict` (Pedidos pendientes sin cobrar o comandas abiertas).
 - `GET /api/caja/cierres` (L:367)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
   - **Parámetros:** `fechaInicio`, `fechaFin`, `cajeroId`, `pagina`, `tamano`.
   - **Respuestas:** `200 OK` (`HistorialCierresPaginadoDto`: historial paginado de turnos y cierres de caja).
 - `GET /api/caja/cierres/{id:guid}` (L:459)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Respuestas:** `200 OK` (`CierreDetalleDto`: detalle de cierre, platos vendidos y ajustes posteriores); `404 NotFound`.
+  - **Respuestas:** `200 OK` (`CierreDetalleDto`: detalle de cierre con desglose de ventas en 3 bloques: `ProductosCarta`, `MenusCompletos`, `Componentes`); `404 NotFound`.
 - `GET /api/caja/cierres/{id:guid}/pdf` (L:490)
   - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`application/pdf` con acta de cierre generada por `PdfCanvasBuilder`).
+  - **Respuestas:** `200 OK` (`application/pdf` con acta de cierre generada por `PdfCanvasBuilder`, formateada en 3 bloques tabulares independientes: Productos de Carta, Menús Completos y Componentes según D-017).
 - `GET /api/caja/estado` (L:530)
   - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`{ abierta: bool, cajaId: Guid? }`).
+  - **Propósito:** Endpoint de compatibilidad hacia atrás para consulta de estado de caja.
+  - **Respuestas:** `200 OK` (`CajaEstadoDto`: `{ estaAbierta: bool, cajaId: Guid?, montoApertura: decimal?, fechaAperturaUtc: DateTime?, fechaAperturaLocal: string?, cajeroNombre: string? }`); `401 Unauthorized`; `403 Forbidden`; `500 InternalServerError`.
 
 ### 2.4 `CobrosController` (`backend/GirasolesRes.API/Controllers/CobrosController.cs`)
 - `GET /api/cobros/pendientes` (L:52)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero`, D-016: solo Cajero cobra; otros roles reciben `403 Forbidden`).
   - **Respuestas:** `200 OK` (`PedidoPendienteCobroDto[]`: lista de pedidos listos o entregados pendientes de facturación).
 - `POST /api/cobros` (L:82)
-  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero` por RBAC).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero`). Mozo, Administrador y Cocinero reciben `403 Forbidden`.
   - **Entrada:** `CobroRequest` (`PedidoId`, `Metodo`, `MontoRecibido`, `TotalMostrado`, `TipoComprobante`, `TipoDocReceptor`, `NumDocReceptor`, `RazonSocialReceptor`, `DireccionReceptor`).
-  - **Respuestas:** `200 OK` (`CobroResponseDto`: comprobante emitido, mesa liberada si no quedan otros pedidos activos); `400 BadRequest` (Monto insuficiente, RUC inválido); `403 Forbidden` (Si el rol no es Cajero); `409 Conflict` (Pedido ya pagado o caja cerrada).
+  - **Respuestas:** `201 Created` (`CobroResponseDto`: comprobante emitido, mesa liberada si no quedan otros pedidos activos); `400 BadRequest` (Monto insuficiente, RUC inválido); `403 Forbidden`; `409 Conflict` (Pedido ya pagado o caja cerrada).
 - `GET /api/cobros/comprobantes/{ventaId:guid}` (L:134)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero`, D-016).
   - **Parámetros:** `copia` (bool).
   - **Respuestas:** `200 OK` (`ComprobanteDetalleDto`); `404 NotFound`.
 - `GET /api/cobros/comprobantes/{ventaId:guid}/pdf` (L:158)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero`, D-016).
   - **Parámetros:** `copia` (bool).
   - **Respuestas:** `200 OK` (`application/pdf` del comprobante de pago electrónico en formato ticket 80mm).
 
 ### 2.5 `ComandasController` (`backend/GirasolesRes.API/Controllers/ComandasController.cs`)
 - `GET /api/comandas` (L:29)
-  - **Autorización:** `[Authorize]` (Roles: `Cocinero`, `Administrador`).
-  - **Parámetros:** `estado` (Pendiente, EnPreparacion, Lista).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cocinero`, D-015: solo Cocinero ve y cambia comandas; otros roles reciben `403 Forbidden` con MSG_39).
+  - **Parámetros:** `estados` (pendiente, enPreparacion, lista).
   - **Respuestas:** `200 OK` (`ListarComandasResponseDto`: comandas activas con cálculo de demora `>= 15 min`).
 - `PATCH /api/comandas/{id:guid}/estado` (L:54)
-  - **Autorización:** `[Authorize]` (Roles: `Cocinero`, `Administrador`).
-  - **Entrada:** `ActualizarEstadoComandaRequest` (`NuevoEstado`: EnPreparacion o Listo).
-  - **Respuestas:** `200 OK`; `400 BadRequest` (Transición inválida); `404 NotFound`.
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cocinero`, D-015).
+  - **Entrada:** `ActualizarEstadoComandaRequest` (`Estado`: enPreparacion o lista).
+  - **Respuestas:** `200 OK` (`ActualizarEstadoComandaResponse`: incluye ventana `DeshacerHasta` de 10 segundos según `RestauranteConstantes.SegundosVentanaDeshacerComanda`); `400 BadRequest`; `404 NotFound`.
 - `POST /api/comandas/{id:guid}/deshacer` (L:100)
-  - **Autorización:** `[Authorize]` (Roles: `Cocinero`, `Administrador`).
-  - **Respuestas:** `200 OK` (Revierte estado si han pasado ≤ 60 segundos según `RestauranteConstantes.SegundosVentanaDeshacerComanda`); `400 BadRequest` (MSG_125 si expiró el tiempo de gracia).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cocinero`, D-015).
+  - **Respuestas:** `200 OK` (`DeshacerEstadoComandaResponse`: revierte estado si han transcurrido ≤ 10 segundos, con tolerancia técnica en servidor de hasta 10.5 segundos según `RestauranteConstantes.SegundosToleranciaDeshacerComanda`); `400 BadRequest` (MSG_134 si expiró el tiempo permitido, pedido pagado o anulado).
 
 ### 2.6 `ConsultasController` (`backend/GirasolesRes.API/Controllers/ConsultasController.cs`)
-- `GET /api/consultas/dni/{dni}` (L:23)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`ConsultaDniResponseDto`: `{ nombres, apellidoPaterno, apellidoMaterno }`); `400 BadRequest`; `404 NotFound`.
-- `GET /api/consultas/ruc/{ruc}` (L:49)
-  - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`ConsultaRucResponseDto`: `{ razonSocial, direccion, estado, condicion }`); `400 BadRequest`; `404 NotFound`.
+- `GET /api/consultas/dni/{dni}` (L:26)
+  - **Autorización:** `[Authorize]` (Rol estricto verificado en controlador: `Cajero`, D-016: padrón exclusivo de cobranza; otros roles reciben `403 Forbidden` con MSG_39).
+  - **Entrada:** `dni` (string en ruta, 8 dígitos numéricos).
+  - **Respuestas:** `200 OK` (`ConsultaDniResultadoDto`: `{ dni, nombres, apellidoPaterno, apellidoMaterno, nombreCompleto }`); `400 BadRequest` (MSG_226 si no tiene 8 dígitos); `403 Forbidden` (MSG_39 si rol no es Cajero); `404 NotFound` (MSG_228); `503 ServiceUnavailable` (MSG_230).
+- `GET /api/consultas/ruc/{ruc}` (L:57)
+  - **Autorización:** `[Authorize]` (Rol estricto verificado en controlador: `Cajero`, D-016).
+  - **Entrada:** `ruc` (string en ruta, 11 dígitos numéricos).
+  - **Respuestas:** `200 OK` (`ConsultaRucResultadoDto`: `{ ruc, razonSocial, estado, condicion, direccion, departamento, provincia, distrito }`); `400 BadRequest` (MSG_227 si no tiene 11 dígitos); `403 Forbidden` (MSG_39 si rol no es Cajero); `404 NotFound` (MSG_228); `503 ServiceUnavailable` (MSG_230).
 
 ### 2.7 `InicioController` (`backend/GirasolesRes.API/Controllers/InicioController.cs`)
 - `GET /api/inicio` (L:39)
   - **Autorización:** `[Authorize]` (Responde datos según rol extraído del JWT: Mozo, Cajero, Cocinero, Administrador).
-  - **Respuestas:** `200 OK` (`InicioDto`: KPIs gerenciales, estado de caja, comandas activas, alertas condicionales).
+  - **Respuestas:** `200 OK` (`InicioDto`: KPIs gerenciales, estado de caja, comandas activas, alertas condicionales con umbral de demora `>= 15 min`).
 - `GET /api/inicio/{bloque}` (L:74)
   - **Autorización:** `[Authorize]`.
   - **Respuestas:** `200 OK` (`BloqueInicioDto`: refresco granular de alertas, métricas o estado).
@@ -141,51 +145,53 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
 ### 2.8 `MenuDiaController` (`backend/GirasolesRes.API/Controllers/MenuDiaController.cs`)
 - `GET /api/menu-dia` (L:28)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cajero`, `Mozo`, `Cocinero`).
-  - **Respuestas:** `200 OK` (`MenuDiaResponseDto`: fecha operativa, platos agrupados por rol, estado de publicación).
+  - **Respuestas:** `200 OK` (`MenuDiaResponseDto`: fecha operativa, platos agrupados por rol, estado de publicación, sin desayuno único según D-013).
 - `GET /api/menu-dia/candidatos` (L:50)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Respuestas:** `200 OK` (`CandidatosMenuDiaResponseDto`: productos disponibles para armar la carta del día).
+  - **Respuestas:** `200 OK` (`CandidatoMenuDto[]`: lista de productos activos disponibles para armar la carta del día con `{ id: Guid, nombre: string, tipo: string, rol?: string, categoria?: string, precio?: decimal }`); `401 Unauthorized`; `403 Forbidden`; `500 InternalServerError`.
 - `PUT /api/menu-dia/hoy` (L:72)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `GuardarMenuDiaRequest` (`DesayunoId`, `EntradasIds`, `SopasIds`, `SegundosIds`).
+  - **Entrada:** `GuardarMenuDiaRequest` (`ProductosCarta`: `List<Guid>?`, `Opciones`: `List<Guid>?`, `MenusCompletos`: `List<int>?`). D-013/D-014: sin `Id_Desayuno` único ni residuo `PlatoIds`; gestiona productos de carta, opciones por rol y menús completos asociados.
   - **Respuestas:** `200 OK`; `400 BadRequest`.
 - `PATCH /api/menu-dia/hoy/platos/{productoId:guid}/disponibilidad` (L:102)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cocinero`).
-  - **Entrada:** `ActualizarDisponibilidadPlatoRequest` (`Disponible`: bool).
-  - **Respuestas:** `200 OK` (Marca plato agotado o restablece disponibilidad).
+  - **Entrada:** Ruta: `productoId` (Guid); Body: `CambiarDisponibilidadRequest` (`Agotado`: bool).
+  - **Respuestas:** `200 OK` (`{ success: true, message: string, data: CambiarDisponibilidadResponseDto { productoId, nombre, agotado } }`, donde `message` es MSG_77 si agotado o MSG_78 si disponible); `400 BadRequest`; `401 Unauthorized`; `403 Forbidden`; `404 NotFound` (MSG_79 si no hay menú hoy, o si el producto no forma parte del menú).
 
 ### 2.9 `MenusCompletosController` (`backend/GirasolesRes.API/Controllers/MenusCompletosController.cs`)
 - `GET /api/menus-completos` (L:29)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cajero`, `Mozo`, `Cocinero`).
   - **Parámetros:** `soloActivos` (bool?).
-  - **Respuestas:** `200 OK` (`MenuCompletoDto[]`: Desayuno completo, Almuerzo completo, Solo segundo).
+  - **Respuestas:** `200 OK` (`MenuCompletoResponseDto[]`: Desayuno completo, Almuerzo completo, Solo segundo).
 - `GET /api/menus-completos/{id:int}` (L:67)
-  - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Respuestas:** `200 OK` (`MenuCompletoDto`); `404 NotFound`.
+  - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cajero`, `Mozo`, `Cocinero`).
+  - **Entrada:** Ruta: `id` (int).
+  - **Respuestas:** `200 OK` (`MenuCompletoResponseDto`: `{ id, nombre, precio, activo, incluye, partes: MenuCompletoParteResponseDto[] }`); `401 Unauthorized`; `403 Forbidden`; `404 NotFound` (MSG_38).
 - `PUT /api/menus-completos/{id:int}` (L:87)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `ActualizarPrecioMenuCompletoRequest` (`Precio`).
-  - **Respuestas:** `200 OK`; `400 BadRequest` (Precio fuera de rango S/ 1 a S/ 100).
+  - **Entrada:** `ActualizarPrecioMenuCompletoRequest` (`Precio`: entre S/ 0.01 y S/ 999.99).
+  - **Respuestas:** `200 OK`; `400 BadRequest` (MSG_55, MSG_56).
 - `PATCH /api/menus-completos/{id:int}/estado` (L:132)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
   - **Entrada:** `CambiarEstadoMenuCompletoRequest` (`Activo`).
   - **Respuestas:** `200 OK`.
 
 ### 2.10 `MesasController` (`backend/GirasolesRes.API/Controllers/MesasController.cs`)
+- *Arquitectura del Salón:* Sin capacidad ni plano (simplificación documental estricta).
 - `GET /api/mesas` (L:28)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cajero`, `Mozo`).
   - **Parámetros:** `ocupacion`, `soloActivas`.
-  - **Respuestas:** `200 OK` (`MesaDto[]`: lista de mesas con ordenamiento natural: Mesa 1, Mesa 2, Mesa 10).
+  - **Respuestas:** `200 OK` (`MesaDto[]`: id, nombre, ocupacion, activa; orden natural).
 - `GET /api/mesas/resumen` (L:67)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cajero`, `Mozo`).
   - **Respuestas:** `200 OK` (`ResumenMesasDto`: total, libres, ocupadas, inactivas).
 - `POST /api/mesas` (L:88)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `CrearMesaRequest` (`Nombre`: máx. 20 caracteres RV-168 / D-008).
+  - **Entrada:** `CrearMesaRequest` (`Nombre`: entre 1 y 20 caracteres RV-168 / D-008; sin capacidad).
   - **Respuestas:** `201 Created` (`MesaDto`); `400 BadRequest` (MSG_81, MSG_82); `409 Conflict` (MSG_83 nombre duplicado).
 - `PUT /api/mesas/{id:guid}` (L:169)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `ActualizarMesaRequest` (`Nombre`: máx. 20 caracteres).
+  - **Entrada:** `ActualizarMesaRequest` (`Nombre`: máx. 20 caracteres; sin capacidad).
   - **Respuestas:** `200 OK` (`MesaDto`); `400 BadRequest`; `409 Conflict` (Duplicado MSG_83 o mesa ocupada).
 - `PATCH /api/mesas/{id:guid}/estado` (L:259)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
@@ -194,13 +200,17 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
 
 ### 2.11 `PedidosController` (`backend/GirasolesRes.API/Controllers/PedidosController.cs`)
 - `POST /api/pedidos/mesa` (L:30)
-  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`).
+  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`). El `Cajero` recibe `403 Forbidden`.
   - **Entrada:** `RegistrarPedidoMesaRequest` (`SolicitudId`, `MesaId`, `Lineas`, `Notas`).
-  - **Respuestas:** `201 Created` (`RegistrarPedidoResultDto`: comanda generada automáticamente); `409 Conflict` (Plato agotado o mesa inactiva). Nota: Mesas ocupadas aceptan pedidos adicionales independientes (RN-46).
+  - **Respuestas:** `201 Created` (`RegistrarPedidoResultDto`: PedidoId, Numero, Total, ComandaId, MesaNombre); `403 Forbidden`; `409 Conflict` (Plato agotado o mesa inactiva).
+- `POST /api/pedidos/{id:guid}/lineas` (L:337)
+  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`). El `Cajero` recibe `403 Forbidden`.
+  - **Entrada:** `AgregarLineasPedidoRequest` (`SolicitudId`, `Lineas`).
+  - **Respuestas:** `200 OK` (`AgregarLineasResultDto`: Total, ComandaId, NumeroPedido; genera comanda adicional para cocina); `403 Forbidden`.
 - `POST /api/pedidos/llevar` (L:94)
-  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero` por RBAC).
+  - **Autorización:** `[Authorize]` (Rol estricto: `Cajero`). Mozo, Administrador y Cocinero reciben `403 Forbidden`.
   - **Entrada:** `RegistrarPedidoLlevarRequest` (`SolicitudId`, `Referencia`, `Lineas`).
-  - **Respuestas:** `201 Created` (`RegistrarPedidoLlevarResultDto`); `403 Forbidden` (Si el rol no es Cajero).
+  - **Respuestas:** `201 Created` (`RegistrarPedidoLlevarResultDto`: PedidoId, Numero, Total, ComandaId); `403 Forbidden`.
 - `GET /api/pedidos` (L:153)
   - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Cajero`, `Administrador`).
   - **Parámetros:** `Fecha`, `Estado`, `Tipo`, `MesaId`, `SoloMios`, `Pagina`, `Tamano`.
@@ -216,26 +226,23 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
   - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Cajero`, `Administrador`).
   - **Entrada:** `AnularPedidoRequest` (`SolicitudId`, `Motivo`: 5 a 100 caracteres).
   - **Respuestas:** `200 OK`; `403 Forbidden` (Mozo solo antes de cocina; Administrador en cualquier momento mientras no esté pagado, según RN-65).
-- `POST /api/pedidos/{id:guid}/lineas` (L:337)
-  - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Administrador`).
-  - **Entrada:** `AgregarLineasPedidoRequest` (`SolicitudId`, `Lineas`).
-  - **Respuestas:** `200 OK` (`AgregarLineasResultDto`: genera comanda adicional para cocina).
 - `GET /api/pedidos/mesa/{mesaId:guid}/activo` (L:403)
   - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`PedidoAbiertoMesaDto[]`: lista de todos los pedidos abiertos de la mesa con `id`, `numero`, `estado` y `total` para alimentar el diálogo `MSG-95`).
+  - **Respuestas:** `200 OK` (`PedidoAbiertoMesaDto[]`: lista de todos los pedidos abiertos de la mesa con `id`, `numero`, `estado` y `total` para selector y aviso MSG-95).
 - `GET /api/pedidos/catalogo-pedido` (L:413)
   - **Autorización:** `[Authorize]` (Roles: `Mozo`, `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`ProductoMenuPedidoDto[]`: catálogo habilitado para armar pedidos).
+  - **Respuestas:** `200 OK` (`ProductoMenuPedidoDto[]`: catálogo habilitado; si no hay menú del día definido, ofrece todos los productos activos de Carta y Componente).
 
 ### 2.12 `PerfilController` (`backend/GirasolesRes.API/Controllers/PerfilController.cs`)
 - `PUT /api/perfil/contrasena` (L:28)
-  - **Autorización:** `[Authorize]` (Cualquier usuario autenticado).
+  - **Autorización:** `[Authorize]` (Roles: `Administrador`).
   - **Entrada:** `CambiarContrasenaPropiaRequest` (`ContrasenaActual`, `NuevaContrasena`, `ConfirmarContrasena`).
-  - **Respuestas:** `200 OK`; `400 BadRequest` (Contraseña actual incorrecta, longitud menor a 8 caracteres, complejidad PBKDF2).
+  - **Respuestas:** `200 OK`; `400 BadRequest` (Contraseña actual incorrecta, longitud menor a 8 caracteres, complejidad PBKDF2); `403 Forbidden` (Otros roles).
 - `PATCH /api/perfil/tema` (L:158)
-  - **Autorización:** `[Authorize]` (Cualquier usuario autenticado).
+  - **Autorización:** `[Authorize]` (Cualquier usuario autenticado: `Administrador`, `Mozo`, `Cajero`, `Cocinero`).
   - **Entrada:** `ActualizarTemaRequest` (`Tema`: "light" | "dark").
-  - **Respuestas:** `200 OK` (`{ mensaje: string, tema: string }`); `400 BadRequest` (Tema no soportado).
+  - **Persistencia:** Almacena la preferencia en la columna `pref_tema` de la tabla `usuarios` en PostgreSQL (`Usuario.Usu_PreferenciaTema`).
+  - **Respuestas:** `200 OK` (`{ success: true, message: "Tema actualizado.", data: { tema: "light" | "dark" } }`); `400 BadRequest` (Valor distinto a "light" o "dark").
 
 ### 2.13 `ProductosController` (`backend/GirasolesRes.API/Controllers/ProductosController.cs`)
 - `GET /api/productos` (L:27)
@@ -247,11 +254,11 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
   - **Respuestas:** `200 OK` (`ProductoDto`); `404 NotFound`.
 - `POST /api/productos` (L:97)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `CrearProductoRequest` (`Nombre`, `Tipo`, `Categoria`, `RolComponente`, `Precio`, `Agotado`).
-  - **Respuestas:** `201 Created` (`ProductoDto`); `400 BadRequest`; `409 Conflict` (Nombre duplicado).
+  - **Entrada:** `CrearProductoRequest` (`Nombre`: máx. 50 caracteres, `Tipo`: Carta o Componente, `Categoria`: Carta, `Rol`: Componente, `Precio`: obligatorio en Carta hasta S/ 999.99).
+  - **Respuestas:** `201 Created` (`ProductoDto`); `400 BadRequest` (MSG_55, MSG_56); `409 Conflict` (Nombre duplicado dentro de su tipo).
 - `PUT /api/productos/{id:guid}` (L:150)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `ActualizarProductoRequest` (`Nombre`, `Tipo`, `Categoria`, `RolComponente`, `Precio`, `Agotado`).
+  - **Entrada:** `ActualizarProductoRequest` (`Nombre`, `Tipo`, `Categoria`, `Rol`, `Precio`: hasta S/ 999.99).
   - **Respuestas:** `200 OK` (`ProductoDto`); `400 BadRequest`; `409 Conflict`.
 - `PATCH /api/productos/{id:guid}/estado` (L:213)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
@@ -317,4 +324,5 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
   - **Respuestas:** `200 OK` (Venta anulada, comprobante marcado anulado); `400 BadRequest` (MSG_100, MSG_101); `403 Forbidden` (Solo Administrador); `409 Conflict` (Caja ya cerrada o venta ya anulada).
 - `GET /api/ventas/{id:guid}/ticket` (L:158)
   - **Autorización:** `[Authorize]` (Roles: `Cajero`, `Administrador`).
-  - **Respuestas:** `200 OK` (`application/pdf` con ticket térmico de 80mm generado por `PdfCanvasBuilder`).
+  - **Parámetros:** Ruta: `id` (Guid); Query: `copia` (bool, default: `true`).
+  - **Respuestas:** `200 OK` (`application/pdf` con ticket térmico de 80mm generado por `PdfCanvasBuilder`, nombre `Comprobante_{id:N}_{(copia ? "COPIA" : "ORIGINAL")}.pdf`); `401 Unauthorized`; `403 Forbidden`; `404 NotFound`.

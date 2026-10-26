@@ -29,7 +29,6 @@ ALTER TABLE IF EXISTS ONLY public.ventas DROP CONSTRAINT IF EXISTS fk_ventas_ped
 ALTER TABLE IF EXISTS ONLY public.ventas DROP CONSTRAINT IF EXISTS fk_ventas_caja;
 ALTER TABLE IF EXISTS ONLY public.pedidos DROP CONSTRAINT IF EXISTS fk_pedidos_usuario;
 ALTER TABLE IF EXISTS ONLY public.pedidos DROP CONSTRAINT IF EXISTS fk_pedidos_mesa;
-ALTER TABLE IF EXISTS ONLY public.menus_dia DROP CONSTRAINT IF EXISTS fk_menus_dia_desayuno;
 ALTER TABLE IF EXISTS ONLY public.menu_dia_platos DROP CONSTRAINT IF EXISTS fk_menu_dia_platos_producto;
 ALTER TABLE IF EXISTS ONLY public.menu_dia_platos DROP CONSTRAINT IF EXISTS fk_menu_dia_platos_menu;
 ALTER TABLE IF EXISTS ONLY public.detalles_pedido DROP CONSTRAINT IF EXISTS fk_detalles_pedido_producto;
@@ -478,7 +477,6 @@ ALTER SEQUENCE public.menus_completos_partes_id_parte_seq OWNED BY public.menus_
 CREATE TABLE public.menus_dia (
     id_menu uuid NOT NULL,
     fec_menu date NOT NULL,
-    id_desayuno uuid,
     nom_usuario_creacion character varying(50) NOT NULL,
     nom_usuario_actualizacion character varying(50),
     fec_creacion_utc timestamp with time zone NOT NULL,
@@ -1086,7 +1084,7 @@ COPY public.menus_completos_partes (id_parte, id_menu_completo, nom_parte, num_o
 -- Data for Name: menus_dia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.menus_dia (id_menu, fec_menu, id_desayuno, nom_usuario_creacion, nom_usuario_actualizacion, fec_creacion_utc, fec_actualizacion_utc) FROM stdin;
+COPY public.menus_dia (id_menu, fec_menu, nom_usuario_creacion, nom_usuario_actualizacion, fec_creacion_utc, fec_actualizacion_utc) FROM stdin;
 12eda018-7e58-474b-b43d-7ff6fbfa7c04	2026-10-17	c475030b-7c73-4853-9e94-1bd161492287	admin	admin	2026-10-17 14:01:32.589742-05	2026-10-17 14:29:42.822955-05
 57cd9055-9971-42ee-9269-117869eebe7a	2026-10-18	\N	admin	admin	2026-10-18 17:39:31.22313-05	2026-10-18 23:13:40.832119-05
 0c1359c5-0dfc-4e72-8bc9-d56d8cfcc425	2026-10-19	\N	admin	admin	2026-10-19 11:48:08.870257-05	2026-10-19 11:48:30.149916-05

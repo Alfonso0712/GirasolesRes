@@ -78,18 +78,18 @@ public static class MensajesCatalogo
 
     // CUS-05: Gestión del menú del día
     public const string MSG_68 = "Seleccione al menos un producto para el menú de hoy.";
-    public const string MSG_69 = "Registre productos antes de definir el menú. (enlace \"Ir a Productos\")";
+    public const string MSG_69 = "Registre productos antes de definir el menú del día.";
     public const string MSG_70 = "Menú del día guardado correctamente.";
-    public const string MSG_71 = "Todavía no definió el menú de hoy. Seleccione los productos y pulse GUARDAR MENÚ.";
-    public const string MSG_72 = "Tiene cambios sin guardar. ¿Desea descartarlos?";
-    public const string MSG_73 = "Solo se puede modificar el menú de la fecha actual.";
-    public const string MSG_74 = "¿Marcar {0} como agotado? Mozos y cajeros ya no podrán pedirlo; los pedidos registrados no cambian.";
-    public const string MSG_75 = "¿Marcar {0} como disponible? Podrá pedirse nuevamente.";
-    public const string MSG_76 = "{0} marcado como agotado.";
-    public const string MSG_77 = "{0} marcado como disponible.";
-    public const string MSG_78 = "No hay menú definido para hoy. La administradora debe definirlo.";
-    public const string MSG_79 = "{0} se agotó. Elija otro plato.";
-    public const string MSG_80 = "No se pudo cargar el menú del día. Intente nuevamente.";
+    public const string MSG_71 = "Todavía no definió el menú de hoy. Seleccione los productos en cada pestaña y pulse \"Guardar menú del día\".";
+    public const string MSG_72 = "Cambios sin guardar";
+    public const string MSG_73 = "¿Descartar los cambios? Se restablecerá el menú guardado.";
+    public const string MSG_74 = "No se pudo guardar el menú del día. Intente nuevamente.";
+    public const string MSG_75 = "¿Marcar {0} como agotado? No se podrán tomar nuevos pedidos de este plato.";
+    public const string MSG_76 = "¿Marcar {0} como disponible? Volverá a ofrecerse en los pedidos nuevos.";
+    public const string MSG_77 = "{0} marcado como agotado.";
+    public const string MSG_78 = "{0} marcado como disponible.";
+    public const string MSG_79 = "No hay menú definido para hoy.";
+    public const string MSG_80 = "No se pudo actualizar el plato. Intente nuevamente.";
 
     // CUS-06: Gestión de mesas
     public const string MSG_81 = "Ingrese el número o nombre de la mesa.";
@@ -106,10 +106,10 @@ public static class MensajesCatalogo
     public const string MSG_92 = "No hay mesas registradas. Pida a la administradora que las registre.";
     public const string MSG_93 = "No hay mesas con ese estado. Cambie el filtro.";
     public const string MSG_94 = "No se pudieron cargar las mesas. Intente nuevamente.";
-    public const string MSG_95 = "La {0} ya tiene un pedido abierto. Agregue productos a ese pedido.";
+    public const string MSG_95 = "La {0} ya tiene {1} pedido(s) abierto(s). ¿Registrar un pedido nuevo o agregar productos a uno existente?";
 
     // CUS-07: Registro de pedido de mesa
-    public const string MSG_96 = "Seleccione una mesa libre.";
+    public const string MSG_96 = "Seleccione una mesa.";
     public const string MSG_97 = "Agregue al menos un producto al pedido.";
     public const string MSG_98 = "La cantidad debe ser un número entero entre 1 y 20.";
     public const string MSG_99 = "La observación no puede superar los 100 caracteres.";
@@ -121,7 +121,7 @@ public static class MensajesCatalogo
     public const string MSG_105 = "No se pudo registrar el pedido. Su pedido sigue en pantalla; intente nuevamente.";
     public const string MSG_106 = "No se pudieron agregar los productos. El pedido no cambió; intente nuevamente.";
     public const string MSG_107 = "No hay productos disponibles para pedir. Avise a la administradora.";
-    public const string MSG_108 = "No hay mesas libres. Revise la vista de mesas.";
+    public const string MSG_108 = "No hay mesas activas. Revise la vista de mesas.";
 
     // CUS-08: Registro de pedido para llevar
     public const string MSG_109 = "La referencia no puede superar los 30 caracteres.";
@@ -133,7 +133,7 @@ public static class MensajesCatalogo
     public const string MSG_113 = "Todavía no hay pedidos hoy.";
     public const string MSG_114 = "No se pudieron cargar los pedidos. Intente nuevamente.";
     public const string MSG_115 = "El pedido ya está en preparación y no puede modificarse. Avise a cocina.";
-    public const string MSG_116 = "Solo puede modificar o anular los pedidos que usted registró.";
+    public const string MSG_116 = "Solo puede modificar los pedidos que usted registró; anular pedidos de otros es función del Administrador.";
     public const string MSG_117 = "Indique el motivo de la anulación (entre 5 y 100 caracteres).";
     public const string MSG_118 = "¿Anular el pedido N.º {0} ({1})? No se podrá deshacer y quedará registrado con su motivo.";
     public const string MSG_119 = "Pedido N.º {0} modificado. Cocina verá la comanda actualizada.";
@@ -185,7 +185,8 @@ public static class MensajesCatalogo
     public const string MSG_159 = "Solo puede consultar las ventas de los últimos 7 días.";
     public const string MSG_160 = "Indique el motivo de la anulación (entre 5 y 100 caracteres).";
     public const string MSG_161 = "¿Anular la venta {0} por S/ {1:F2}? No se puede deshacer y quedará registrada con su motivo.";
-    public const string MSG_162_POR_COBRAR = "Venta {0} anulada. El pedido N.º {1} volvió a pendiente de cobro.";
+    public const string MSG_162_PENDIENTE_COBRO = "Venta {0} anulada. El pedido N.º {1} volvió a pendiente de cobro.";
+    public const string MSG_162_POR_COBRAR = MSG_162_PENDIENTE_COBRO;
     public const string MSG_162_ANULADO = "Venta {0} anulada. El pedido N.º {1} fue anulado.";
     public const string MSG_163 = "La venta ya fue anulada.";
     public const string MSG_164 = "No se pudo anular la venta. La venta sigue vigente; intente nuevamente.";
@@ -193,18 +194,18 @@ public static class MensajesCatalogo
 
     // CUS-13: Gestión de caja (Catálogo de mensajes MSG-166 a MSG-189)
     public const string MSG_166 = "Todavía no hay caja abierta. Ábrala para empezar a cobrar.";
-    public const string MSG_167 = "Ya existe una caja abierta en el sistema.";
+    public const string MSG_167 = "Ya existe una caja abierta desde las {0} por {1}.";
     public const string MSG_168 = "Hay una caja del {0} sin cerrar. Ciérrela antes de abrir una nueva o cobrar.";
     public const string MSG_169 = "Ingrese el monto inicial.";
-    public const string MSG_170 = "Ingrese un monto válido, desde S/ 0.00 y con hasta 2 decimales.";
+    public const string MSG_170 = "Ingrese un monto válido, desde S/ 0.00 y con hasta 2 decimales (ejemplo: 50.00).";
     public const string MSG_171 = "El monto no puede superar S/ 99,999.99.";
-    public const string MSG_172 = "¿Abrir la caja con S/ {0:F2}? Podrá empezar a registrar cobros.";
-    public const string MSG_173 = "Caja abierta con S/ {0:F2}.";
-    public const string MSG_174 = "No se puede cerrar la caja: hay pedidos pendientes de cobro.";
+    public const string MSG_172 = "¿Abrir la caja con S/ {0:F2} de monto inicial?";
+    public const string MSG_173 = "Caja abierta con S/ {0:F2}. Ya puede cobrar.";
+    public const string MSG_174 = "No se puede cerrar la caja: hay {0} pedido(s) pendiente(s) de cobro. Cóbrelos o anúlelos primero.";
     public const string MSG_175 = "Ingrese el efectivo contado.";
     public const string MSG_176 = "Cuadra: el efectivo contado coincide con el esperado.";
-    public const string MSG_177 = "Sobrante de S/ {0:F2}";
-    public const string MSG_178 = "Faltante de S/ {0:F2}";
+    public const string MSG_177 = "Sobrante de S/ {0:F2}. Se recomienda indicar una observación.";
+    public const string MSG_178 = "Faltante de S/ {0:F2}. Se recomienda indicar una observación.";
     public const string MSG_179 = "La observación no puede superar los 200 caracteres.";
     public const string MSG_180 = "¿Cerrar la caja? No podrá cobrar hasta abrir una nueva y el cierre no se puede deshacer.";
     public const string MSG_181 = "Caja cerrada. {0}";
@@ -215,7 +216,7 @@ public static class MensajesCatalogo
     public const string MSG_186 = "No se pudo cargar el historial de cierres. Intente nuevamente.";
     public const string MSG_187 = "Aún no hay cierres de caja registrados.";
     public const string MSG_188 = "La fecha \"desde\" no puede ser posterior a \"hasta\" ni incluir fechas futuras.";
-    public const string MSG_189 = "Los totales cambiaron mientras contaba. Revise el resumen antes de cerrar.";
+    public const string MSG_189 = "Los totales cambiaron mientras contaba (efectivo esperado: S/ {0:F2}). Revise el resumen antes de cerrar.";
 
     // CUS-14: Reportes (Complemento CUS14)
     public const string MSG_190 = "La fecha \"desde\" no puede ser posterior a \"hasta\".";
@@ -260,5 +261,13 @@ public static class MensajesCatalogo
     public const string MSG_222 = "{0} agregado: {1} + {2}.";
     public const string MSG_223 = "La opción \"{0}\" se agotó. Elija otra en \"{1}\".";
     public const string MSG_224 = "Seleccione al menos un producto de carta o habilite un menú completo con sus opciones.";
+
+    // CUS-07/08 y CUS-11/12: Platos agotados y Consultas de documento
+    public const string MSG_225 = "El plato {0} se agotó. Elija otro plato.";
+    public const string MSG_226 = "El DNI debe tener exactamente 8 dígitos numéricos.";
+    public const string MSG_227 = "El RUC debe tener 11 dígitos numéricos y comenzar con 10 o 20.";
+    public const string MSG_228 = "Documento no encontrado en el padrón oficial. Puede ingresar la razón social manualmente.";
+    public const string MSG_229 = "Por normativa tributaria (SUNAT), ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.";
+    public const string MSG_230 = "Servicio de consulta de identidad no disponible en este momento. Verifique la conexión o ingrese los datos manualmente.";
 }
 

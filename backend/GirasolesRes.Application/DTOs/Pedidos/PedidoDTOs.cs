@@ -135,7 +135,8 @@ public record ProductoMenuPedidoDto(
     string Categoria,
     decimal Precio,
     bool Agotado,
-    bool Disponible
+    bool Disponible,
+    string? Rol = null
 );
 
 // CUS09: Gestión de Pedidos DTOs

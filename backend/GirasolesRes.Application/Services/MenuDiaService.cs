@@ -99,24 +99,6 @@ public class MenuDiaService : IMenuDiaService
             var opcionesIds = request.Opciones?.Distinct().ToList() ?? new List<Guid>();
             var menusCompletosIds = request.MenusCompletos?.Distinct().ToList() ?? new List<int>();
 
-            // Soporte retrocompatible si vienen en platoIds
-            if (productosCartaIds.Count == 0 && opcionesIds.Count == 0 && request.PlatoIds != null && request.PlatoIds.Count > 0)
-            {
-                var legacyPlatos = await _productoRepository.ObtenerPorIdsAsync(request.PlatoIds, cancellationToken);
-                foreach (var lp in legacyPlatos)
-                {
-                    if (lp.Pro_Tipo == TipoProducto.Componente)
-                        opcionesIds.Add(lp.Id_Producto);
-                    else
-                        productosCartaIds.Add(lp.Id_Producto);
-                }
-            }
-
-            if (request.DesayunoId.HasValue && !productosCartaIds.Contains(request.DesayunoId.Value))
-            {
-                productosCartaIds.Add(request.DesayunoId.Value);
-            }
-
             // RV-162 / MSG-224: Para guardar el menú del día debe haber al menos un producto de carta o un menú completo habilitado
             if (productosCartaIds.Count == 0 && menusCompletosIds.Count == 0)
             {
@@ -194,15 +176,14 @@ public class MenuDiaService : IMenuDiaService
 
             if (esNuevo)
             {
-                menu = new MenuDia(fechaHoy, request.DesayunoId, usuario);
+                menu = new MenuDia(fechaHoy, usuario);
                 menu.SincronizarPlatos(todosLosPlatosIds, usuario);
                 menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.AgregarAsync(menu, cancellationToken);
             }
             else
             {
-                menu!.ActualizarDesayuno(request.DesayunoId, usuario);
-                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
+                                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
                 menu.SincronizarPlatos(todosLosPlatosIds, usuario);
                 menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.ActualizarAsync(menu, cancellationToken);
@@ -241,7 +222,7 @@ public class MenuDiaService : IMenuDiaService
             var menu = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
             if (menu == null)
             {
-                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_78);
+                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_79);
             }
 
             var plato = menu.Men_Platos.FirstOrDefault(p => p.Id_Producto == productoId);
@@ -269,7 +250,7 @@ public class MenuDiaService : IMenuDiaService
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
 
-            var mensaje = string.Format(agotado ? MensajesCatalogo.MSG_76 : MensajesCatalogo.MSG_77, nombrePlato);
+            var mensaje = string.Format(agotado ? MensajesCatalogo.MSG_77 : MensajesCatalogo.MSG_78, nombrePlato);
 
             return ApiResponse<CambiarDisponibilidadResponseDto>.Exitoso(new CambiarDisponibilidadResponseDto
             {
@@ -354,11 +335,7 @@ public class MenuDiaService : IMenuDiaService
         {
             Fecha = menu.Men_Fecha.ToString("yyyy-MM-dd"),
             Definido = true,
-            Desayuno = menu.Men_Desayuno != null ? new DesayunoMenuDto
-            {
-                Id = menu.Men_Desayuno.Id_Producto,
-                Nombre = menu.Men_Desayuno.Pro_Nombre
-            } : null,
+            Desayuno = null,
             Platos = menu.Men_Platos
                 .Where(p => p.Mdp_Producto?.Pro_Tipo == TipoProducto.Carta)
                 .OrderBy(p => p.Mdp_Producto?.Pro_Categoria)
