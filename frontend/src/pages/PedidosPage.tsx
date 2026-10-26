@@ -474,7 +474,8 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           </TableHead>
           <TableBody>
                   {pedidos.map((p) => {
-                    const esAnulado = p.estado.toLowerCase() === 'anulado';
+                    const esAnulado = p.estado.toLowerCase().includes('anulado');
+                    const esPagado = p.estado.toLowerCase().includes('pagado');
                     const esListo = p.estado.toLowerCase() === 'listo';
 
                     return (
@@ -545,16 +546,22 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               onClick={() => handleAbrirModificar(p.id)}
                             />
 
-                            {session.rol === 'Cajero' &&
-                              !esAnulado &&
-                              p.estado.toLowerCase() !== 'pagado' && (
-                                <IconActionButton
-                                  icon={DollarSign}
-                                  label="Cobrar pedido en caja"
-                                  variant="activate"
-                                  onClick={() => onNavigateToCobro?.(p.id)}
-                                />
-                              )}
+                            {session.rol === 'Cajero' && (
+                              <IconActionButton
+                                icon={DollarSign}
+                                label="Cobrar pedido en caja"
+                                variant="activate"
+                                disabled={esPagado || esAnulado}
+                                disabledReason={
+                                  esPagado
+                                    ? 'El pedido ya fue pagado'
+                                    : esAnulado
+                                    ? 'El pedido está anulado'
+                                    : 'Cobrar pedido en caja'
+                                }
+                                onClick={() => onNavigateToCobro?.(p.id)}
+                              />
+                            )}
 
                             <IconActionButton
                               icon={Trash2}
