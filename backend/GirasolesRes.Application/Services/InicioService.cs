@@ -1,4 +1,4 @@
-using GirasolesRes.Application.Common;
+﻿using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Inicio;
 using GirasolesRes.Application.Interfaces.Persistence;
@@ -271,8 +271,8 @@ public class InicioService : IInicioService
             return new BloqueMenuAdminDto(false, 0, 0);
         }
 
-        var totalPlatos = menu.Platos.Count;
-        var agotados = menu.Platos.Count(p => p.Agotado);
+        var totalPlatos = (menu.Platos?.Count ?? 0) + (menu.Opciones?.Count ?? 0);
+        var agotados = (menu.Platos?.Count(p => p.Agotado) ?? 0) + (menu.Opciones?.Count(o => o.Agotado) ?? 0);
         return new BloqueMenuAdminDto(true, totalPlatos, agotados);
     }
 
@@ -343,7 +343,7 @@ public class InicioService : IInicioService
         // 4. Platos agotados hoy (MSG-206, Prioridad 4)
         if (menuDefinido && menu != null)
         {
-            var agotadosCount = menu.Platos.Count(p => p.Agotado);
+            var agotadosCount = (menu.Platos?.Count(p => p.Agotado) ?? 0) + (menu.Opciones?.Count(o => o.Agotado) ?? 0);
             if (agotadosCount > 0)
             {
                 alertas.Add(new AlertaInicioDto(
@@ -496,9 +496,18 @@ public class InicioService : IInicioService
     {
         var menuRes = await _menuDiaService.ObtenerMenuHoyAsync(ct);
         var menu = menuRes.Data;
-        var agotados = (menu?.Platos ?? new())
+
+        var agotadosPlatos = (menu?.Platos ?? new())
             .Where(p => p.Agotado)
-            .Select(p => p.Nombre)
+            .Select(p => p.Nombre);
+
+        var agotadosOpciones = (menu?.Opciones ?? new())
+            .Where(o => o.Agotado)
+            .Select(o => o.Nombre);
+
+        var agotados = agotadosPlatos
+            .Concat(agotadosOpciones)
+            .Distinct()
             .ToList();
 
         return new BloqueAgotadosCocineroDto(agotados.Count, agotados);
