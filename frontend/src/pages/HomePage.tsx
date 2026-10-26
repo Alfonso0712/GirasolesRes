@@ -20,7 +20,9 @@ import { AvisoComandaModal } from '../components/cocina';
 import { logoutService, renovarTokenService } from '../services/authService';
 import { pedidoService } from '../services/pedidoService';
 import { cajaService } from '../services/cajaService';
-import { Check, ShieldAlert } from 'lucide-react';
+import { comandaService } from '../services/comandaService';
+import { reproducirSonidoKds } from '../utils/audioKds';
+import { Check, ShieldAlert, Bell } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
 import type { CajaActualResponseDto } from '../types/caja';
@@ -147,6 +149,52 @@ export const HomePage: React.FC<HomePageProps> = ({
       setCerrandoAviso(false);
     }
   };
+
+  // Notificación de nueva comanda para Cocinero si está fuera de la pantalla de cocina
+  const comandasPreviasCocineroRef = useRef<Set<string>>(new Set());
+  const primeraCargaCocineroRef = useRef<boolean>(true);
+  const [avisoNuevaComandaCocinero, setAvisoNuevaComandaCocinero] = useState<{
+    pedidoNumero: number;
+    destino: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (session.rol !== 'Cocinero' || paginaActiva === 'cocina') return;
+
+    const verificarComandasCocinero = async () => {
+      try {
+        const res = await comandaService.listarComandas(session.token);
+        const ids = new Set(res.items.map((c) => c.id));
+
+        if (primeraCargaCocineroRef.current) {
+          primeraCargaCocineroRef.current = false;
+        } else {
+          const nuevas = res.items.filter(
+            (c) => !comandasPreviasCocineroRef.current.has(c.id) && c.estado === 'Pendiente'
+          );
+          if (nuevas.length > 0) {
+            const sonidoActivado = localStorage.getItem('kds_sonido_activado') !== 'false';
+            reproducirSonidoKds('pendiente', sonidoActivado);
+
+            const n = nuevas[0];
+            const destinoStr =
+              n.tipo === 'Mesa' ? n.mesa || 'Mesa' : `Para llevar${n.referencia ? ` (${n.referencia})` : ''}`;
+            setAvisoNuevaComandaCocinero({
+              pedidoNumero: n.pedidoNumero,
+              destino: destinoStr
+            });
+          }
+        }
+        comandasPreviasCocineroRef.current = ids;
+      } catch (err) {
+        console.warn('Error al verificar comandas en inicio:', err);
+      }
+    };
+
+    verificarComandasCocinero();
+    const interval = setInterval(verificarComandasCocinero, 8000);
+    return () => clearInterval(interval);
+  }, [session.rol, session.token, paginaActiva]);
 
   // Referencia para temporizador de inactividad
   const ultimaActividadRef = useRef<number>(Date.now());
@@ -487,6 +535,45 @@ export const HomePage: React.FC<HomePageProps> = ({
         onCerrar={handleCerrarAviso}
         cargando={cerrandoAviso}
       />
+
+      {/* Notificación para cocinero cuando llega una nueva comanda y está en Inicio u otra pantalla */}
+      {avisoNuevaComandaCocinero && (
+        <aside
+          role="alert"
+          aria-live="assertive"
+          className="fixed bottom-6 right-6 z-50 bg-neutral-900/95 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-amber-400 animate-in slide-in-from-bottom-4 duration-300 max-w-md w-[92%]"
+        >
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+            <Bell className="w-5 h-5 animate-bounce" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              Nueva orden en cocina
+            </p>
+            <p className="text-sm font-bold text-white mt-0.5 truncate">
+              Pedido N.º {avisoNuevaComandaCocinero.pedidoNumero} · {avisoNuevaComandaCocinero.destino}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setAvisoNuevaComandaCocinero(null);
+              setPaginaActiva('cocina');
+            }}
+            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-neutral-950 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
+          >
+            Ir a Cocina
+          </button>
+          <button
+            type="button"
+            onClick={() => setAvisoNuevaComandaCocinero(null)}
+            className="p-1 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer text-lg leading-none"
+            aria-label="Cerrar notificación"
+          >
+            ×
+          </button>
+        </aside>
+      )}
 
       {/* Notificación flotante de confirmación (MSG-47 / RV-28 - 4 segundos) */}
       {toastMensaje && (

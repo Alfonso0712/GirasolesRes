@@ -7,8 +7,11 @@ import {
   AlertTriangle,
   UtensilsCrossed,
   Undo2,
-  AlertCircle
+  AlertCircle,
+  Bell,
+  X
 } from 'lucide-react';
+import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
 import { comandaService } from '../services/comandaService';
 import { renovarTokenService } from '../services/authService';
 import { PlatosAgotadosModal } from '../components/menu-dia';
@@ -74,6 +77,30 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
   const [avisoDeshacer, setAvisoDeshacer] = useState<AvisoDeshacer | null>(null);
   const avisoTimerRef = useRef<any>(null);
 
+  // Detección de primera carga y notificación de comanda nueva
+  const esPrimeraCargaRef = useRef<boolean>(true);
+  const [notificacionNueva, setNotificacionNueva] = useState<{
+    pedidoNumero: number;
+    destino: string;
+    itemsCount: number;
+  } | null>(null);
+  const notificacionTimerRef = useRef<any>(null);
+
+  // Desbloqueo de AudioContext ante interacción del usuario en la pantalla
+  useEffect(() => {
+    const handleInteraccion = () => {
+      desbloquearAudioKds();
+    };
+    window.addEventListener('click', handleInteraccion, { passive: true });
+    window.addEventListener('touchstart', handleInteraccion, { passive: true });
+    window.addEventListener('keydown', handleInteraccion, { passive: true });
+    return () => {
+      window.removeEventListener('click', handleInteraccion);
+      window.removeEventListener('touchstart', handleInteraccion);
+      window.removeEventListener('keydown', handleInteraccion);
+    };
+  }, []);
+
   // Procesando estado por comanda (RV-89)
   const [procesandoIds, setProcesandoIds] = useState<Record<string, boolean>>({});
 
@@ -85,34 +112,14 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
   // Estabilidad de interacción táctil (RV-94)
   const tocandoTarjetaRef = useRef<boolean>(false);
 
-  // Reproductor de sonido sintetizado Web Audio API (RV-92)
-  const reproducirAvisoSonoro = useCallback(() => {
-    if (!sonidoActivado) return;
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime); // Tono A5
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.25);
-    } catch (err) {
-      console.warn('Audio no habilitado en navegador:', err);
-    }
-  }, [sonidoActivado]);
-
   const toggleSonido = () => {
     const nuevo = !sonidoActivado;
     setSonidoActivado(nuevo);
     localStorage.setItem('kds_sonido_activado', String(nuevo));
+    if (nuevo) {
+      desbloquearAudioKds();
+      reproducirSonidoKds('pendiente', true);
+    }
   };
 
   // Carga de comandas (CUS10.2 / RNF-31)
@@ -140,15 +147,37 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         let huboNuevas = false;
 
         res.items.forEach((c) => {
-          if (!comandasPreviasRef.current.has(c.id)) {
+          if (!comandasPreviasRef.current.has(c.id) && c.estado === 'Pendiente') {
             nuevasEncontradas[c.id] = true;
             huboNuevas = true;
           }
         });
 
-        if (comandasPreviasRef.current.size > 0 && huboNuevas) {
-          reproducirAvisoSonoro();
+        if (esPrimeraCargaRef.current) {
+          esPrimeraCargaRef.current = false;
+        } else if (huboNuevas) {
+          reproducirSonidoKds('pendiente', sonidoActivado);
           setComandasNuevas((prev) => ({ ...prev, ...nuevasEncontradas }));
+
+          // Mostrar notificación flotante prominente
+          const primeraNueva = res.items.find((c) => nuevasEncontradas[c.id]);
+          if (primeraNueva) {
+            const destinoStr =
+              primeraNueva.tipo === 'Mesa'
+                ? primeraNueva.mesa || 'Mesa'
+                : `Para llevar${primeraNueva.referencia ? ` (${primeraNueva.referencia})` : ''}`;
+
+            setNotificacionNueva({
+              pedidoNumero: primeraNueva.pedidoNumero,
+              destino: destinoStr,
+              itemsCount: primeraNueva.lineas.reduce((acc, l) => acc + l.cantidad, 0)
+            });
+
+            if (notificacionTimerRef.current) clearTimeout(notificacionTimerRef.current);
+            notificacionTimerRef.current = setTimeout(() => {
+              setNotificacionNueva(null);
+            }, 8000);
+          }
 
           // Quitar etiqueta NUEVA a los 10 segundos
           setTimeout(() => {
@@ -180,7 +209,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         if (!silencioso) setCargando(false);
       }
     },
-    [session.token, reproducirAvisoSonoro, onLogout]
+    [session.token, sonidoActivado, onLogout]
   );
 
   // Inicial y auto-refresco cada 5 segundos (RNF-31)
@@ -235,6 +264,9 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
     try {
       const res = await comandaService.actualizarEstado(comanda.id, 'enPreparacion', session.token);
 
+      // Sonido para cuando pase a preparación
+      reproducirSonidoKds('preparacion', sonidoActivado);
+
       // Actualizar estado local inmediatamente
       setComandas((prev) =>
         prev.map((c) => (c.id === comanda.id ? { ...c, estado: 'EnPreparacion' } : c))
@@ -266,6 +298,9 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
     setProcesandoIds((prev) => ({ ...prev, [comanda.id]: true }));
     try {
       const res = await comandaService.actualizarEstado(comanda.id, 'lista', session.token);
+
+      // Sonido para cuando pase a Listo
+      reproducirSonidoKds('lista', sonidoActivado);
 
       // Las comandas listas salen de la pantalla (RN-81)
       setComandas((prev) => prev.filter((c) => c.id !== comanda.id));
@@ -551,6 +586,43 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
             <span>DESHACER</span>
           </button>
         </div>
+      )}
+
+      {/* Notificación flotante de NUEVA COMANDA (RV-92) */}
+      {notificacionNueva && (
+        <aside
+          role="alert"
+          aria-live="assertive"
+          className="fixed top-20 right-4 sm:right-8 z-50 bg-neutral-900/95 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-amber-400 animate-in slide-in-from-top-3 duration-200 max-w-md w-[92%]"
+        >
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+            <Bell className="w-5 h-5 animate-bounce" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                Nueva orden de cocina
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white animate-pulse">
+                PENDIENTE
+              </span>
+            </div>
+            <p className="text-sm font-bold text-white mt-0.5 truncate">
+              Pedido N.º {notificacionNueva.pedidoNumero} · {notificacionNueva.destino}
+            </p>
+            <p className="text-xs text-neutral-400">
+              {notificacionNueva.itemsCount} {notificacionNueva.itemsCount === 1 ? 'porción' : 'porciones'} por preparar
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setNotificacionNueva(null)}
+            className="p-1 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Cerrar notificación"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </aside>
       )}
 
       {/* Modal PLATOS AGOTADOS (CUS05.2 / RN-83) */}
