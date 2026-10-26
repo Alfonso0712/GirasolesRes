@@ -41,12 +41,12 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="discard-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-neutral-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-150">
+      <div className="w-full max-w-md bg-surface rounded-2xl shadow-xl border border-neutral-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-150">
         <div className="p-6">
           <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#B84500] border border-amber-200 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-accent border border-amber-200 flex items-center justify-center shrink-0">
               <AlertCircle className="w-6 h-6" />
             </div>
 
@@ -62,7 +62,7 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
 
           <h3
             id="discard-modal-title"
-            className="text-xl font-sans font-bold text-[#2C1A0E] mb-2"
+            className="text-xl font-sans font-bold text-ink mb-2"
           >
             Tiene cambios sin guardar
           </h3>
@@ -76,7 +76,7 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-700 bg-white hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+            className="px-4 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-700 bg-surface hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
           >
             Continuar editando
           </button>

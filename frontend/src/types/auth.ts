@@ -1,3 +1,6 @@
+import type { Theme } from '../hooks/useTheme';
+
+export type { Theme };
 export type RolUsuario = 'Administrador' | 'Cajero' | 'Mozo' | 'Cocinero';
 
 export interface UserSession {
@@ -5,6 +8,7 @@ export interface UserSession {
   rol: RolUsuario;
   nombre: string;
   usuario: string;
+  tema?: Theme;
 }
 
 export interface LoginErrorResponse {

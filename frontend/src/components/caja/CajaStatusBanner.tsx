@@ -85,7 +85,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
             <p className="text-xs sm:text-sm text-rose-800 mt-1 font-medium">
               {textoMensaje}
             </p>
-            <p className="text-xs text-rose-600 mt-0.5">
+            <p className="text-xs text-danger mt-0.5">
               No es posible aperturar un nuevo turno ni cobrar pedidos hasta que la jornada previa sea conciliada y cerrada.
             </p>
           </div>
@@ -119,7 +119,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
       <div
         role="region"
         aria-label="Estado de caja operativa"
-        className="shrink-0 p-4 sm:p-5 rounded-2xl bg-[#F4F9F4] border border-emerald-200/90 text-emerald-950 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-in fade-in duration-200"
+        className="shrink-0 p-4 sm:p-5 rounded-2xl bg-surface-success border border-emerald-200/90 text-emerald-950 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-in fade-in duration-200"
       >
         <div className="flex items-start sm:items-center gap-3.5">
           <div className="w-11 h-11 rounded-xl bg-emerald-100 text-[#2E7D32] flex items-center justify-center shrink-0 border border-emerald-200 shadow-2xs">
@@ -147,10 +147,10 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
         {/* Resumen contable rápido y botón de cierre */}
         <div className="flex items-center gap-4 flex-wrap justify-between lg:justify-end">
           {resumen && (
-            <div className="flex items-center gap-3 text-xs bg-white/80 px-3.5 py-2 rounded-xl border border-emerald-200 shadow-2xs tabular-nums">
+            <div className="flex items-center gap-3 text-xs bg-surface/80 px-3.5 py-2 rounded-xl border border-emerald-200 shadow-2xs tabular-nums">
               <div>
                 <span className="text-neutral-500 block text-xs uppercase font-bold">Ventas ({resumen.cantidadVentas})</span>
-                <span className="font-bold text-[#482813]">S/ {resumen.totalVentas.toFixed(2)}</span>
+                <span className="font-bold text-ink">S/ {resumen.totalVentas.toFixed(2)}</span>
               </div>
               <div className="h-6 w-px bg-neutral-200" />
               <div>
@@ -170,7 +170,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
               type="button"
               onClick={onCerrarCaja}
               disabled={loading}
-              className="px-4 py-2.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px] flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl border border-stone-300 bg-surface hover:bg-stone-50 text-stone-700 text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px] flex items-center gap-1.5"
             >
               <Lock className="w-4 h-4 text-stone-500" />
               <span>Cerrar caja</span>
@@ -193,7 +193,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
       className="shrink-0 p-4 sm:p-5 rounded-2xl bg-amber-50/90 border border-amber-200/90 text-amber-950 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 animate-in fade-in duration-200"
     >
       <div className="flex items-center gap-3.5">
-        <div className="w-11 h-11 rounded-xl bg-amber-100 text-[#B84600] flex items-center justify-center shrink-0 border border-amber-200/80 shadow-2xs">
+        <div className="w-11 h-11 rounded-xl bg-amber-100 text-accent flex items-center justify-center shrink-0 border border-amber-200/80 shadow-2xs">
           <Lock className="w-5 h-5 stroke-[2.2]" />
         </div>
         <div>
@@ -201,7 +201,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
             <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-200 text-amber-800 shrink-0 whitespace-nowrap">
               Caja Inactiva
             </span>
-            <h4 className="font-bold text-sm sm:text-base text-[#482813]">
+            <h4 className="font-bold text-sm sm:text-base text-ink">
               {textoMensaje}
             </h4>
           </div>
@@ -216,7 +216,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           type="button"
           onClick={onAbrirCaja}
           disabled={loading}
-          className="px-5 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer shrink-0 min-h-[44px] flex items-center justify-center gap-2 active:scale-[0.98]"
+          className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer shrink-0 min-h-[44px] flex items-center justify-center gap-2 active:scale-[0.98]"
         >
           <DollarSign className="w-4 h-4" />
           <span>ABRIR CAJA</span>

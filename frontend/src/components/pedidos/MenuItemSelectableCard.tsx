@@ -27,20 +27,20 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
         esAgotado
           ? 'bg-neutral-100/70 border-neutral-300/80 text-neutral-500 select-none opacity-65'
           : cantEnBorrador > 0
-          ? 'bg-amber-50/40 border-[#D35400] shadow-xs'
-          : 'bg-white border-neutral-200 hover:border-neutral-300 hover:shadow-xs'
+          ? 'bg-amber-50/40 border-accent shadow-xs'
+          : 'bg-surface border-neutral-200 hover:border-neutral-300 hover:shadow-xs'
       }`}
     >
       {/* Insignia de Cantidad seleccionada */}
       {cantEnBorrador > 0 && !esAgotado && (
-        <span className="absolute -top-2 -right-2 bg-[#D35400] text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-xs tabular-nums">
+        <span className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-xs tabular-nums">
           {cantEnBorrador}
         </span>
       )}
 
       <div>
         <div className="flex items-start justify-between gap-2">
-          <h4 className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-[#2C1A0E] leading-snug break-words">
+          <h4 className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-ink leading-snug break-words">
             {nombre}
           </h4>
           {esAgotado && (
@@ -49,7 +49,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             </span>
           )}
         </div>
-        <span className="block text-xs sm:text-sm text-[#7C6F66] mt-0.5">
+        <span className="block text-xs sm:text-sm text-ink-muted mt-0.5">
           {categoria}
         </span>
       </div>
@@ -65,7 +65,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             <button
               type="button"
               onClick={onDisminuir}
-              className="w-10 h-10 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+              className="w-10 h-10 rounded-lg border border-neutral-300 bg-surface hover:bg-neutral-50 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer active:scale-95"
               aria-label={`Disminuir ${nombre}`}
               title="Disminuir cantidad"
             >
@@ -81,7 +81,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
               esAgotado
                 ? 'bg-neutral-200 text-neutral-500 border border-neutral-300 cursor-not-allowed opacity-60'
-                : 'bg-[#C74E00] hover:bg-[#B84600] text-white shadow-xs cursor-pointer active:scale-95'
+                : 'bg-primary hover:bg-primary-hover text-white shadow-xs cursor-pointer active:scale-95'
             }`}
             aria-label={`Agregar ${nombre}`}
             title={esAgotado ? 'Plato agotado - No disponible' : 'Agregar plato al pedido'}

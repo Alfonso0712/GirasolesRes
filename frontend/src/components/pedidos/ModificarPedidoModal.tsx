@@ -161,14 +161,14 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modificar-title"
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       >
-        <div className="bg-white rounded-2xl p-5 sm:p-7 max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
+        <div className="bg-surface rounded-2xl p-5 sm:p-7 max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
             <div>
               <div className="flex items-center gap-3">
-                <h3 id="modificar-title" className="text-xl font-bold font-sans text-[#2C1A0E]">
+                <h3 id="modificar-title" className="text-xl font-bold font-sans text-ink">
                   Modificar Pedido N.º {pedido.numero}
                 </h3>
                 {hayCambiosSinGuardar && (
@@ -193,7 +193,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
 
           {errorValidacion && (
             <div className="mt-3 p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+              <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
               <span>{errorValidacion}</span>
             </div>
           )}
@@ -220,7 +220,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                   lineas.map((l, index) => (
                     <div
                       key={`${l.productoId}-${index}`}
-                      className="p-3 bg-white rounded-xl border border-neutral-200 shadow-xs flex flex-col gap-2"
+                      className="p-3 bg-surface rounded-xl border border-neutral-200 shadow-xs flex flex-col gap-2"
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -271,7 +271,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                           onChange={(e) => handleCambiarObservacion(index, e.target.value)}
                           maxLength={100}
                           placeholder="Nota (ej. sin sal, presa pierna)…"
-                          className="w-full text-xs p-2 rounded-lg border border-neutral-200 focus:border-[#D35400] focus:outline-none"
+                          className="w-full text-xs p-2 rounded-lg border border-neutral-200 focus:border-accent focus:outline-none"
                         />
                       </div>
                     </div>
@@ -282,14 +282,14 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               {/* Total al pie de columna */}
               <div className="pt-3 border-t border-neutral-200 flex justify-between items-center mt-2">
                 <span className="text-xs font-semibold text-neutral-600">Nuevo Total:</span>
-                <span className="text-xl font-bold tabular-nums text-[#B84500]">
+                <span className="text-xl font-bold tabular-nums text-accent">
                   S/ {totalCalculado.toFixed(2)}
                 </span>
               </div>
             </div>
 
             {/* Columna Derecha: Catálogo de Productos Disponibles */}
-            <div className="flex flex-col border border-neutral-200 rounded-2xl p-4 bg-white min-h-0 overflow-hidden">
+            <div className="flex flex-col border border-neutral-200 rounded-2xl p-4 bg-surface min-h-0 overflow-hidden">
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">
                 Agregar Productos Disponibles
               </span>
@@ -301,12 +301,12 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
                   placeholder="Buscar plato o bebida…"
-                  className="flex-1 text-xs p-2 rounded-xl border border-neutral-300 focus:border-[#D35400] focus:outline-none"
+                  className="flex-1 text-xs p-2 rounded-xl border border-neutral-300 focus:border-accent focus:outline-none"
                 />
                 <select
                   value={categoriaFiltro}
                   onChange={(e) => setCategoriaFiltro(e.target.value)}
-                  className="text-xs p-2 rounded-xl border border-neutral-300 focus:border-[#D35400] focus:outline-none cursor-pointer"
+                  className="text-xs p-2 rounded-xl border border-neutral-300 focus:border-accent focus:outline-none cursor-pointer"
                 >
                   <option value="todos">Todas</option>
                   {categorias.map((c) => (
@@ -334,14 +334,14 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
                     </div>
 
                     {prod.agotado ? (
-                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-bold text-danger bg-rose-50 px-2 py-0.5 rounded-md">
                         Agotado
                       </span>
                     ) : (
                       <button
                         type="button"
                         onClick={() => handleAgregarProducto(prod)}
-                        className="py-1 px-3 rounded-lg bg-amber-500/10 text-[#B84500] hover:bg-[#C74E00] hover:text-white font-semibold flex items-center gap-1 transition-all cursor-pointer min-h-[36px]"
+                        className="py-1 px-3 rounded-lg bg-amber-500/10 text-accent hover:bg-primary hover:text-white font-semibold flex items-center gap-1 transition-all cursor-pointer min-h-[36px]"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Agregar</span>
@@ -367,7 +367,7 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
               type="button"
               onClick={handleGuardar}
               disabled={loading || lineas.length === 0}
-              className="py-3 px-6 rounded-xl bg-[#C74E00] text-white font-semibold text-xs hover:bg-[#b84500] transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
+              className="py-3 px-6 rounded-xl bg-primary text-white font-semibold text-xs hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
             >
               {loading ? 'Guardando…' : 'Guardar Cambios'}
             </button>
@@ -380,10 +380,10 @@ export const ModificarPedidoModal: React.FC<ModificarPedidoModalProps> = ({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-150"
+          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-150"
         >
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-amber-200 text-center animate-in zoom-in-95 duration-150">
-            <h4 className="font-bold text-[#2C1A0E] text-base mb-2 font-sans">
+          <div className="bg-surface rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-amber-200 text-center animate-in zoom-in-95 duration-150">
+            <h4 className="font-bold text-ink text-base mb-2 font-sans">
               Cambios sin guardar
             </h4>
             <p className="text-xs text-neutral-600 mb-5 leading-relaxed">

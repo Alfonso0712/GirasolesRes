@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               ? 'bg-emerald-500 text-white'
               : cajaEstado === 'anteriorSinCerrar'
               ? 'bg-rose-500 text-white animate-pulse'
-              : 'bg-stone-600 text-amber-200'
+              : 'bg-[#57534E] text-[#FDE68A]'
           }`}
         >
           {cajaEstado === 'abierta'
@@ -150,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Backdrop Overlay */}
       {isOpenMobile && (
         <div
-          className="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 z-40 bg-fill-strong/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
           onClick={onCloseMobile}
           aria-hidden="true"
         />
@@ -158,12 +158,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Aside (Fixed drawer en móvil/tablet, estático en desktop) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-[#482813] text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-sidebar text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
           isOpenMobile ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Bloque 1: Cabecera Fija con Logo y botón cerrar móvil (shrink-0) */}
-        <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-amber-900/40 mb-2">
+        <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-sidebar-line mb-2">
           <div className="flex-1 flex items-center py-1">
             <img
               src={logoGirasoles}
@@ -176,7 +176,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               type="button"
               onClick={onCloseMobile}
               aria-label="Cerrar menú"
-              className="lg:hidden p-2 text-amber-200/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
+              className="lg:hidden p-2 text-[#FDE68A]/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
             >
               <X className="w-5 h-5" />
             </button>
@@ -191,8 +191,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => handleNavigate('inicio')}
             className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 ${
               paginaActiva === 'inicio'
-                ? 'bg-[#C74E00] text-white shadow-md font-semibold'
-                : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+                ? 'bg-primary text-white shadow-md font-semibold'
+                : 'text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white'
             }`}
           >
             <Home className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
@@ -219,7 +219,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {/* Indicador de módulo activo cuando el grupo está colapsado (Nielsen 1) */}
                     {!isOpen && tieneItemActivo && (
                       <span
-                        className="w-2 h-2 rounded-full bg-[#D35400] shrink-0 shadow-2xs"
+                        className="w-2 h-2 rounded-full bg-primary shrink-0 shadow-2xs"
                         title="Módulo activo dentro de esta sección"
                       />
                     )}
@@ -232,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             ? 'bg-emerald-400'
                             : cajaEstado === 'anteriorSinCerrar'
                             ? 'bg-rose-400 animate-pulse'
-                            : 'bg-stone-400'
+                            : 'bg-[#A8A29E]'
                         }`}
                         title={`Caja: ${cajaEstado}`}
                       />
@@ -258,8 +258,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => handleNavigate(item.id)}
                           className={`w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
                             esActivo
-                              ? 'bg-[#C74E00] text-white shadow-md font-semibold'
-                              : 'text-amber-100/80 hover:bg-white/10 hover:text-white'
+                              ? 'bg-primary text-white shadow-md font-semibold'
+                              : 'text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white'
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
@@ -278,11 +278,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Bloque 3: Pie Fijo de "Acceso protegido" (shrink-0) */}
-        <div className="shrink-0 pt-3 xl:pt-3.5 border-t border-amber-900/40 flex items-center gap-3 mt-1">
+        <div className="shrink-0 pt-3 xl:pt-3.5 border-t border-sidebar-line flex items-center gap-3 mt-1">
           <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-white tracking-wide">Acceso protegido</p>
-            <p className="text-xs text-amber-200/70">Sesión segura y activa</p>
+            <p className="text-xs text-[#FDE68A]/70">Sesión segura y activa</p>
           </div>
         </div>
       </aside>

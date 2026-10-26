@@ -10,18 +10,18 @@ export interface FormMessageProps {
 export const FormMessage: React.FC<FormMessageProps> = ({ type, message, className = 'p-3 mb-3' }) => {
   if (!message) return null;
 
-  let styleClasses = 'bg-[#FDF2F2] text-[#9B1C1C] border border-[#F8B4B4] font-semibold tracking-wide';
-  let icon = <AlertTriangle className="w-4 h-4 text-[#C81E1E] shrink-0" />;
+  let styleClasses = 'bg-alert-error-bg text-alert-error-text border border-alert-error-border font-semibold tracking-wide';
+  let icon = <AlertTriangle className="w-4 h-4 text-alert-error-icon shrink-0" />;
 
   if (type === 'success') {
     styleClasses = 'bg-emerald-50 text-emerald-800 border border-emerald-200 font-medium';
-    icon = <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />;
+    icon = <CheckCircle2 className="w-4 h-4 text-success shrink-0" />;
   } else if (type === 'info') {
     styleClasses = 'bg-amber-50 text-amber-900 border border-amber-200 font-medium';
-    icon = <Info className="w-4 h-4 text-[#B84500] shrink-0" />;
+    icon = <Info className="w-4 h-4 text-accent shrink-0" />;
   } else if (type === 'warning') {
     styleClasses = 'bg-amber-50 text-amber-800 border border-amber-300 font-medium';
-    icon = <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />;
+    icon = <AlertCircle className="w-4 h-4 text-warning shrink-0" />;
   }
 
   return (

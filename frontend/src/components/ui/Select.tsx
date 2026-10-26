@@ -135,9 +135,9 @@ export const Select: React.FC<SelectProps> = ({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-xs sm:text-sm font-semibold text-[#2C1A0E] mb-1.5"
+          className="form-label-standard"
         >
-          {label} {required && <span className="text-rose-600">*</span>}
+          {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
 
@@ -162,7 +162,7 @@ export const Select: React.FC<SelectProps> = ({
           } ${
             error
               ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-500 focus:ring-rose-200'
-              : 'border-neutral-200 bg-white text-neutral-800 hover:border-neutral-300 focus:border-[#C74E00] focus:ring-[#C74E00]/20'
+              : 'border-line-strong bg-surface text-neutral-800 hover:border-neutral-300 focus:border-accent focus:ring-accent/20'
           } ${disabled ? 'opacity-50 cursor-not-allowed bg-neutral-100 text-neutral-400' : ''} ${selectClassName}`}
         >
           {leftIcon && (
@@ -177,7 +177,7 @@ export const Select: React.FC<SelectProps> = ({
 
           <ChevronDown
             className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform duration-200 ${
-              isOpen ? 'rotate-180 text-[#C74E00]' : ''
+              isOpen ? 'rotate-180 text-accent' : ''
             }`}
             aria-hidden="true"
           />
@@ -191,7 +191,7 @@ export const Select: React.FC<SelectProps> = ({
             aria-activedescendant={
               highlightedIndex >= 0 ? `${selectId}-opt-${highlightedIndex}` : undefined
             }
-            className="absolute z-50 left-0 right-0 mt-1.5 max-h-60 overflow-y-auto rounded-xl bg-white border border-neutral-200/90 shadow-lg py-1 text-sm focus:outline-hidden [scrollbar-width:thin] animate-in fade-in-50 zoom-in-95 duration-100"
+            className="absolute z-50 left-0 right-0 mt-1.5 max-h-60 overflow-y-auto rounded-xl bg-surface border border-neutral-200/90 shadow-lg py-1 text-sm focus:outline-hidden [scrollbar-width:thin] animate-in fade-in-50 zoom-in-95 duration-100"
           >
             {options.length === 0 ? (
               <li className="px-3.5 py-2 text-xs text-neutral-400 italic">No hay opciones</li>
@@ -213,9 +213,9 @@ export const Select: React.FC<SelectProps> = ({
                       option.disabled
                         ? 'opacity-40 cursor-not-allowed bg-transparent text-neutral-400'
                         : isSelected
-                        ? 'bg-[#C74E00]/10 text-[#2C1A0E] font-semibold'
+                        ? 'bg-primary/10 text-ink font-semibold'
                         : isHighlighted
-                        ? 'bg-[#FAF7F4] text-neutral-900'
+                        ? 'bg-canvas text-neutral-900'
                         : 'text-neutral-700 hover:bg-neutral-50'
                     }`}
                   >
@@ -228,7 +228,7 @@ export const Select: React.FC<SelectProps> = ({
                       )}
                     </div>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-[#B84500] shrink-0" aria-hidden="true" />
+                      <Check className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
                     )}
                   </li>
                 );
@@ -243,7 +243,7 @@ export const Select: React.FC<SelectProps> = ({
       )}
 
       {error && (
-        <p className="text-xs text-rose-600 mt-1 font-medium">{error}</p>
+        <p className="text-xs text-danger mt-1 font-medium">{error}</p>
       )}
     </div>
   );

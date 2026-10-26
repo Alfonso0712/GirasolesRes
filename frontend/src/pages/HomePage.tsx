@@ -375,7 +375,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           />
         ) : (
           <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-            <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+            <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
               <ShieldAlert className="w-8 h-8" />
             </div>
             <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
@@ -397,7 +397,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     : 'inicio'
                 )
               }
-              className="mt-6 px-4 py-2 bg-[#C74E00] text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer"
+              className="mt-6 px-4 py-2 bg-primary text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-primary-hover transition-colors cursor-pointer"
             >
               Ir al módulo principal
             </button>
@@ -412,7 +412,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           />
         ) : (
           <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-            <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+            <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
               <ShieldAlert className="w-8 h-8" />
             </div>
             <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
@@ -434,7 +434,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     : 'inicio'
                 )
               }
-              className="mt-6 px-4 py-2 bg-[#C74E00] text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer"
+              className="mt-6 px-4 py-2 bg-primary text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-primary-hover transition-colors cursor-pointer"
             >
               Ir al módulo principal
             </button>

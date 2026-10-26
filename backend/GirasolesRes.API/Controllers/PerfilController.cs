@@ -150,4 +150,80 @@ public class PerfilController : ControllerBase
             });
         }
     }
+
+    /// <summary>
+    /// Actualizar preferencia de tema visual (light / dark) del usuario autenticado
+    /// </summary>
+    [Authorize]
+    [HttpPatch("tema")]
+    public async Task<IActionResult> ActualizarTema(
+        [FromBody] ActualizarTemaRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Datos de tema inválidos.",
+                errors = ModelState
+            });
+        }
+
+        var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
+        {
+            return Unauthorized(new { message = "Token inválido o expirado." });
+        }
+
+        try
+        {
+            var temaNormalizado = (request.Tema ?? string.Empty).Trim().ToLowerInvariant();
+            await _perfilService.ActualizarTemaAsync(usuarioId, temaNormalizado, cancellationToken);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Tema actualizado.",
+                data = new
+                {
+                    tema = temaNormalizado
+                }
+            });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = ex.Message
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = ex.Message
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = ex.Message
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar tema de usuario.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new
+            {
+                success = false,
+                message = MensajesCatalogo.MSG_38,
+                detail = ex.Message
+            });
+        }
+    }
 }

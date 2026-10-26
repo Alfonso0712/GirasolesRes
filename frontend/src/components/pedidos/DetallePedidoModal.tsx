@@ -80,19 +80,19 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="detalle-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
+      <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
         {/* Cabecera */}
         <div className="flex items-start justify-between pb-4 border-b border-neutral-100">
           <div>
             <div className="flex items-center gap-3">
-              <h3 id="detalle-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
+              <h3 id="detalle-title" className="text-xl font-sans font-bold text-ink">
                 Pedido N.º {pedido.numero}
               </h3>
               {renderBadgeEstado(pedido.estado)}
             </div>
-            <p className="text-sm font-semibold text-[#B84500] mt-0.5">{destino}</p>
+            <p className="text-sm font-semibold text-accent mt-0.5">{destino}</p>
           </div>
           <button
             type="button"
@@ -119,7 +119,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
         {/* Motivo de anulación si aplica */}
         {pedido.estado.toLowerCase() === 'anulado' && pedido.motivoAnulacion && (
           <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
             <div>
               <span className="font-bold">Motivo de anulación: </span>
               <span>{pedido.motivoAnulacion}</span>
@@ -136,7 +136,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
             </h4>
             <div className="border border-neutral-200 rounded-xl overflow-hidden text-sm shadow-2xs">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-[#FAF7F4] text-[#7C6F66] font-semibold text-xs uppercase tracking-wider border-b border-[#E5E0DB]">
+                <thead className="bg-canvas text-ink-muted font-semibold text-xs uppercase tracking-wider border-b border-line">
                   <tr>
                     <th className="py-2.5 px-3 w-14 text-center">Cant.</th>
                     <th className="py-2.5 px-3">Plato / Bebida</th>
@@ -144,16 +144,16 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                     <th className="py-2.5 px-3 text-right w-24">Subtotal</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F0EBE6]">
+                <tbody className="divide-y divide-line-soft">
                   {pedido.lineas.map((linea) => (
-                    <tr key={linea.detalleId} className="hover:bg-neutral-50/50 border-b border-[#F0EBE6]">
-                      <td className="py-2.5 px-3 font-semibold text-sm text-[#2C1A0E] text-center tabular-nums">
+                    <tr key={linea.detalleId} className="hover:bg-neutral-50/50 border-b border-line-soft">
+                      <td className="py-2.5 px-3 font-semibold text-sm text-ink text-center tabular-nums">
                         {linea.cantidad}
                       </td>
                       <td className="py-2.5 px-3">
-                        <div className="font-semibold text-sm text-[#2C1A0E]">{linea.nombre}</div>
+                        <div className="font-semibold text-sm text-ink">{linea.nombre}</div>
                         {linea.observacion && (
-                          <div className="text-xs text-[#B84500] italic mt-0.5">
+                          <div className="text-xs text-accent italic mt-0.5">
                             Nota: {linea.observacion}
                           </div>
                         )}
@@ -161,7 +161,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                       <td className="py-2.5 px-3 text-right text-stone-600 text-xs tabular-nums">
                         S/ {linea.precioUnitario.toFixed(2)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-[#2C1A0E] text-sm tabular-nums">
+                      <td className="py-2.5 px-3 text-right font-semibold text-ink text-sm tabular-nums">
                         S/ {linea.subtotal.toFixed(2)}
                       </td>
                     </tr>
@@ -173,7 +173,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
             {/* Total general */}
             <div className="flex justify-between items-center mt-3 px-2">
               <span className="text-sm font-semibold text-neutral-600">Total del Pedido:</span>
-              <span className="text-xl font-bold tabular-nums text-[#B84500]">
+              <span className="text-xl font-bold tabular-nums text-accent">
                 S/ {pedido.total.toFixed(2)}
               </span>
             </div>
@@ -233,7 +233,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
                   onClose();
                   onAbrirModificar(pedido.id);
                 }}
-                className="py-2.5 px-4 rounded-xl border border-[#D35400] text-[#B84500] font-semibold text-xs hover:bg-amber-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]"
+                className="py-2.5 px-4 rounded-xl border border-accent text-accent font-semibold text-xs hover:bg-amber-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 <span>Modificar</span>

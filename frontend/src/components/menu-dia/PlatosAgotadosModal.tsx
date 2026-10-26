@@ -70,17 +70,17 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="platos-agotados-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-neutral-200 flex flex-col max-h-[85vh]">
+      <div className="bg-surface rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-neutral-200 flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-accent flex items-center justify-center">
               <UtensilsCrossed className="w-5 h-5" />
             </div>
             <div>
-              <h3 id="platos-agotados-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
+              <h3 id="platos-agotados-title" className="text-xl font-sans font-bold text-ink">
                 Disponibilidad de Platos
               </h3>
               <p className="text-xs text-neutral-500">
@@ -102,7 +102,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
         <div className="flex-1 overflow-y-auto py-4 space-y-2.5 pr-1 scroll-thin">
           {cargando ? (
             <div className="py-12 flex flex-col items-center justify-center text-neutral-500 gap-3">
-              <RefreshCw className="w-6 h-6 animate-spin text-[#B84500]" />
+              <RefreshCw className="w-6 h-6 animate-spin text-accent" />
               <span className="text-sm">Cargando platos del día…</span>
             </div>
           ) : error ? (
@@ -123,7 +123,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
                   className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
                     plato.agotado
                       ? 'bg-rose-50/70 border-rose-200 text-rose-900'
-                      : 'bg-white border-neutral-200 text-neutral-800'
+                      : 'bg-surface border-neutral-200 text-neutral-800'
                   }`}
                 >
                   <div>
@@ -174,7 +174,7 @@ export const PlatosAgotadosModal: React.FC<PlatosAgotadosModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-neutral-800 text-white text-sm font-semibold hover:bg-neutral-900 transition-colors cursor-pointer min-h-[44px]"
+            className="px-6 py-2.5 rounded-xl bg-fill-strong-soft text-white text-sm font-semibold hover:bg-fill-strong transition-colors cursor-pointer min-h-[44px]"
           >
             Listo, volver a cocina
           </button>

@@ -39,7 +39,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
       type="button"
       tabIndex={0}
       onClick={() => setShowPassword(!showPassword)}
-      className="text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+      className="text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
     >
       {showPassword ? 'Ocultar' : 'Mostrar'}
     </button>
@@ -47,7 +47,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
 
   return (
     <div className={`mb-1 sm:mb-1.5 text-left ${className}`}>
-      <label htmlFor={inputId} className="block text-xs sm:text-sm font-semibold text-[#2C1A0E] mb-1">
+      <label htmlFor={inputId} className="form-label-standard">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -67,12 +67,12 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           onChange={onChange}
           placeholder={placeholder}
           required={required}
-          className={`w-full min-h-[48px] py-3 rounded-xl border text-sm transition-all duration-150 outline-none text-[#2C1A0E] placeholder:text-[#A89F96] ${
+          className={`w-full min-h-[48px] py-3 rounded-xl border text-sm transition-all duration-150 outline-none text-ink placeholder:text-ink-faint ${
             leftIcon ? 'pl-10' : 'pl-4'
           } ${renderRightElement ? 'pr-12' : 'pr-4'} ${
             error
-              ? 'border-red-500 bg-white focus:border-red-500 focus:ring-2 focus:ring-red-200'
-              : 'border-[#E5E0DB] bg-white focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20'
+              ? 'border-red-500 bg-surface focus:border-red-500 focus:ring-2 focus:ring-red-200'
+              : 'border-line-strong bg-surface focus:border-accent focus:ring-2 focus:ring-accent/20'
           }`}
           aria-invalid={!!error}
           aria-describedby={error ? `${inputId}-error` : undefined}

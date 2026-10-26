@@ -61,19 +61,19 @@ export const InactivityModal: React.FC<InactivityModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="inactivity-title"
-        className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-amber-200 text-center relative"
+        className="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-amber-200 text-center relative"
       >
-        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 border border-amber-200/60 shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-warning flex items-center justify-center mx-auto mb-4 border border-amber-200/60 shadow-xs">
           <Clock className="w-7 h-7 animate-pulse" />
         </div>
 
         {/* MSG-42 */}
-        <h3 id="inactivity-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
+        <h3 id="inactivity-title" className="text-xl font-sans font-bold text-ink mb-2">
           Aviso de inactividad
         </h3>
 
@@ -89,7 +89,7 @@ export const InactivityModal: React.FC<InactivityModalProps> = ({
           type="button"
           onClick={handleContinueClick}
           disabled={renovando}
-          className={`w-full py-2.5 px-4 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
             renovando ? 'opacity-70 cursor-not-allowed' : ''
           }`}
         >

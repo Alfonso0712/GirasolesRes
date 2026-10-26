@@ -15,6 +15,7 @@ public class Usuario
     public DateTime? Usu_BloqueadoHastaUtc { get; private set; }
     public DateTime Usu_FechaCreacionUtc { get; private set; }
     public DateTime? Usu_FechaActualizacionUtc { get; private set; }
+    public string Usu_Tema { get; private set; } = TemaUsuario.Claro;
 
     // Constructor privado para EF Core
     private Usuario() { }
@@ -87,5 +88,16 @@ public class Usuario
     {
         Usu_Activo = activo;
         Usu_FechaActualizacionUtc = DateTime.UtcNow;
+    }
+
+    public void ActualizarTema(string tema)
+    {
+        var temaNormalizado = (tema ?? string.Empty).Trim().ToLowerInvariant();
+        if (!TemaUsuario.EsValido(temaNormalizado))
+        {
+            throw new ArgumentException("El tema debe ser 'light' o 'dark'.", nameof(tema));
+        }
+
+        Usu_Tema = temaNormalizado;
     }
 }

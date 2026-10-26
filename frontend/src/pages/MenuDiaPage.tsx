@@ -102,7 +102,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   if (!tienePermiso) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+        <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
           <ShieldAlert className="w-8 h-8" />
         </div>
         <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
@@ -212,7 +212,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         subtitle="Planificación diaria de opciones, menús completos, carta y disponibilidad del servicio."
         badge={
           <div className="flex items-center gap-2">
-            <span className="text-xs text-neutral-600 font-medium capitalize flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-neutral-200 shadow-2xs">
+            <span className="text-xs text-neutral-600 font-medium capitalize flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface border border-neutral-200 shadow-2xs">
               <Calendar className="w-3.5 h-3.5 text-neutral-500" />
               {fechaHoyFormateada}
             </span>
@@ -231,7 +231,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           role="alert"
           className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3"
         >
-          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5" />
+          <AlertCircle className="w-5 h-5 shrink-0 text-danger mt-0.5" />
           <div className="flex-1 font-medium">{errorValidacionGuardar}</div>
         </div>
       )}
@@ -241,7 +241,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           role="status"
           className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3 animate-in fade-in"
         >
-          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-success" />
           <span className="font-medium">{avisoExito}</span>
         </div>
       )}
@@ -251,7 +251,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
           role="alert"
           className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3"
         >
-          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
+          <AlertCircle className="w-5 h-5 shrink-0 text-danger" />
           <span className="font-medium">{avisoError}</span>
         </div>
       )}
@@ -265,13 +265,13 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               onClick={() => setTabActiva('opciones')}
               className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'opciones'
-                  ? 'border-[#D35400] text-[#B84500]'
+                  ? 'border-accent text-accent'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
               <Sparkles className="w-4 h-4" />
               <span>Opciones del día</span>
-              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-[#B84500] font-bold">
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-orange-100 text-accent font-bold">
                 {opcionesSeleccionadas.size}
               </span>
             </button>
@@ -281,7 +281,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               onClick={() => setTabActiva('menus')}
               className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'menus'
-                  ? 'border-[#D35400] text-[#B84500]'
+                  ? 'border-accent text-accent'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
@@ -297,7 +297,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               onClick={() => setTabActiva('carta')}
               className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 tabActiva === 'carta'
-                  ? 'border-[#D35400] text-[#B84500]'
+                  ? 'border-accent text-accent'
                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
               }`}
             >
@@ -331,7 +331,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 
       {cargando ? (
         <div className="py-20 text-center text-neutral-500">
-          <div className="w-8 h-8 border-3 border-[#D35400] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm font-medium">Cargando menú del día y productos activos…</p>
         </div>
       ) : (
@@ -488,7 +488,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     onClick={() => setCatCartaActiva(cat.id)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                       catCartaActiva === cat.id
-                        ? 'bg-neutral-900 text-white'
+                        ? 'bg-fill-strong text-white'
                         : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                     }`}
                   >
@@ -535,7 +535,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                         key={mc.id}
                         className={`p-4 rounded-xl border flex flex-col justify-between ${
                           mc.disponible
-                            ? 'bg-white border-neutral-200'
+                            ? 'bg-surface border-neutral-200'
                             : 'bg-amber-50/80 border-amber-300'
                         }`}
                       >
@@ -566,7 +566,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
               )}
 
               {/* FILTROS Y BÚSQUEDA */}
-              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-surface p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs">
                 <div className="relative w-full sm:w-72">
                   <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -574,7 +574,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                     placeholder="Buscar plato o componente…"
                     value={busquedaDisp}
                     onChange={(e) => setBusquedaDisp(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D35400] focus:ring-1 focus:ring-[#D35400]"
+                    className="w-full pl-9 pr-8 py-2 text-xs bg-surface border border-neutral-200 rounded-xl focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
                   />
                   {busquedaDisp && (
                     <button
@@ -596,8 +596,8 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                       onClick={() => setFiltroTipoDisp(tipo)}
                       className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                         filtroTipoDisp === tipo
-                          ? 'bg-[#2C1A0E] text-white font-semibold shadow-2xs'
-                          : 'bg-white text-[#7C6F66] hover:bg-neutral-100 hover:text-[#2C1A0E] border border-neutral-200'
+                          ? 'bg-ink-fill text-white font-semibold shadow-2xs'
+                          : 'bg-surface text-ink-muted hover:bg-neutral-100 hover:text-ink border border-neutral-200'
                       }`}
                     >
                       {tipo}
@@ -632,12 +632,12 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 
       {/* BARRA INFERIOR FIJA (STICKY FOOTER): SOLO SE MUESTRA CUANDO HAY CAMBIOS SIN GUARDAR Y FUERA DE DISPONIBILIDAD */}
       {esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar && (
-        <div className="sticky bottom-0 z-50 w-full bg-white/95 backdrop-blur-md border-t border-neutral-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3.5 mt-auto">
+        <div className="sticky bottom-0 z-50 w-full bg-surface/95 backdrop-blur-md border-t border-neutral-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3.5 mt-auto">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               {tieneCambiosSinGuardar ? (
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#D35400] animate-ping shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-ping shrink-0" />
                   <div>
                     <p className="text-xs sm:text-sm font-bold text-neutral-900">
                       Tiene cambios pendientes sin publicar
@@ -649,7 +649,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
                   <span>El menú actual está publicado y guardado.</span>
                 </div>
               )}
@@ -661,7 +661,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                   type="button"
                   onClick={() => setDiscardModalOpen(true)}
                   disabled={guardando}
-                  className="px-4 py-2 text-xs sm:text-sm font-bold text-neutral-700 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
+                  className="px-4 py-2 text-xs sm:text-sm font-bold text-neutral-700 bg-surface hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-colors cursor-pointer min-h-[42px]"
                 >
                   Descartar cambios
                 </button>
@@ -671,7 +671,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
                 type="button"
                 onClick={handleGuardarMenu}
                 disabled={guardando}
-                className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
+                className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-primary hover:bg-primary-hover rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-2 cursor-pointer min-h-[42px]"
               >
                 {guardando ? (
                   <>

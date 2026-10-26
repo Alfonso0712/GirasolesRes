@@ -54,6 +54,7 @@ public class GirasolesDbContext : DbContext
             entity.Property(u => u.Usu_BloqueadoHastaUtc).HasColumnName("bloq_hasta_utc");
             entity.Property(u => u.Usu_FechaCreacionUtc).HasColumnName("fec_creacion_utc").IsRequired();
             entity.Property(u => u.Usu_FechaActualizacionUtc).HasColumnName("fec_actualizacion_utc");
+            entity.Property(u => u.Usu_Tema).HasColumnName("pref_tema").HasMaxLength(10).IsRequired().HasDefaultValue("light");
         });
 
         modelBuilder.Entity<RegistroIngreso>(entity =>

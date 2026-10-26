@@ -2,7 +2,7 @@ import React from 'react';
 
 export const AuthBrandPanel: React.FC = () => {
   return (
-    <aside className="hidden lg:flex lg:w-[60%] lg:max-w-[60%] lg:basis-[60%] text-white p-12 xl:p-16 flex-col justify-between relative overflow-hidden shrink-0 grow-0 select-none h-full bg-[#2C1A0E]">
+    <aside className="hidden lg:flex lg:w-[60%] lg:max-w-[60%] lg:basis-[60%] text-white p-12 xl:p-16 flex-col justify-between relative overflow-hidden shrink-0 grow-0 select-none h-full bg-ink-fill">
       {/* Fotografía gastronómica de fondo con imagen oficial del restaurante */}
       <img
         src="/bg-login-gastronomia.png"

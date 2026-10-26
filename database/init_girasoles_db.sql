@@ -596,7 +596,8 @@ CREATE TABLE public.usuarios (
     int_fallidos integer DEFAULT 0 NOT NULL,
     bloq_hasta_utc timestamp with time zone,
     fec_creacion_utc timestamp with time zone NOT NULL,
-    fec_actualizacion_utc timestamp with time zone
+    fec_actualizacion_utc timestamp with time zone,
+    pref_tema character varying(10) DEFAULT 'light'::character varying NOT NULL
 );
 
 
@@ -1588,6 +1589,14 @@ ALTER TABLE ONLY public.registros_ingreso
 
 ALTER TABLE ONLY public.usuarios
     ADD CONSTRAINT "PK_usuarios" PRIMARY KEY (id_usuario);
+
+
+--
+-- Name: usuarios chk_usuarios_pref_tema; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.usuarios
+    ADD CONSTRAINT chk_usuarios_pref_tema CHECK (((pref_tema)::text = ANY (ARRAY[('light'::character varying)::text, ('dark'::character varying)::text])));
 
 
 --

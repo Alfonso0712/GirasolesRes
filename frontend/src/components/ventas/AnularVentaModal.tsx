@@ -86,20 +86,20 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="titulo-anular-venta"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 text-neutral-800 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
+      <div className="bg-surface rounded-2xl max-w-lg w-full p-6 text-neutral-800 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 max-h-[92vh] flex flex-col">
         {/* Encabezado */}
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 text-danger flex items-center justify-center border border-rose-200 shrink-0">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-rose-600">
+              <p className="text-xs font-bold uppercase tracking-wider text-danger">
                 ACCIÓN IRREVERSIBLE
               </p>
-              <h2 id="titulo-anular-venta" className="text-xl font-sans font-bold text-[#2C1A0E]">
+              <h2 id="titulo-anular-venta" className="text-xl font-sans font-bold text-ink">
                 Anular Venta {venta.comprobante}
               </h2>
             </div>
@@ -127,7 +127,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
 
           {/* Advertencia MSG-165 si caja cerrada */}
           {venta.cajaCerrada && (
-            <div className="p-3 bg-amber-50 rounded-xl border border-amber-300 text-xs text-[#B84600] flex items-start gap-2.5">
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-300 text-xs text-accent flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>
                 <strong>Aviso de cierre de caja:</strong> La venta pertenece a una caja cerrada: se anulará y el ajuste quedará registrado en los reportes.
@@ -137,7 +137,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
 
           {/* Motivos rápidos (RV-113) */}
           <div>
-            <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
+            <label className="block text-sm font-medium text-ink mb-1.5">
               Motivos rápidos:
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -152,8 +152,8 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                   }}
                   className={`px-2.5 py-1 text-xs rounded-lg border transition-all cursor-pointer ${
                     motivo === m
-                      ? 'bg-[#C74E00] text-white border-[#C74E00] font-semibold'
-                      : 'bg-white border-neutral-200 text-neutral-700 hover:border-amber-400 hover:bg-amber-50/50'
+                      ? 'bg-primary text-white border-accent font-semibold'
+                      : 'bg-surface border-neutral-200 text-neutral-700 hover:border-amber-400 hover:bg-amber-50/50'
                   }`}
                 >
                   {m}
@@ -165,10 +165,10 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
           {/* Campo Motivo */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label htmlFor="motivo-anulacion" className="text-sm font-medium text-[#2C1A0E]">
-                Motivo de anulación <span className="text-rose-600">*</span>
+              <label htmlFor="motivo-anulacion" className="text-sm font-medium text-ink">
+                Motivo de anulación <span className="text-danger">*</span>
               </label>
-              <span className={`text-xs tabular-nums ${motivo.length > 100 || (motivo.length > 0 && motivo.length < 5) ? 'text-rose-600 font-bold' : 'text-neutral-500'}`}>
+              <span className={`text-xs tabular-nums ${motivo.length > 100 || (motivo.length > 0 && motivo.length < 5) ? 'text-danger font-bold' : 'text-neutral-500'}`}>
                 {motivo.length}/100
               </span>
             </div>
@@ -182,14 +182,14 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                 if (errorLocal) setErrorLocal(null);
               }}
               placeholder="Explique el motivo por el cual se anula la venta (ej. cliente canceló consumo)..."
-              className={`w-full px-3 py-2 text-xs rounded-xl border bg-white focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full px-3 py-2 text-xs rounded-xl border bg-surface focus:outline-none focus:ring-2 transition-all ${
                 errorLocal
                   ? 'border-rose-400 focus:ring-rose-200'
-                  : 'border-neutral-200 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                  : 'border-neutral-200 focus:border-accent focus:ring-2 focus:ring-amber-200'
               }`}
             />
             {errorLocal && (
-              <p className="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
+              <p className="text-xs text-danger font-medium mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 <span>{errorLocal}</span>
               </p>
@@ -198,15 +198,15 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
 
           {/* Destino del pedido (RV-115, RN-102) */}
           <div className="pt-2 border-t border-neutral-100">
-            <label className="block text-sm font-medium text-[#2C1A0E] mb-2">
-              ¿Qué desea hacer con el pedido N.º {venta.pedidoNumero}? <span className="text-rose-600">*</span>
+            <label className="block text-sm font-medium text-ink mb-2">
+              ¿Qué desea hacer con el pedido N.º {venta.pedidoNumero}? <span className="text-danger">*</span>
             </label>
             <div className="space-y-2">
               <label
                 className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                   destinoPedido === 'porCobrar'
-                    ? 'border-[#C74E00] bg-amber-50/40 ring-1 ring-[#C74E00]'
-                    : 'border-neutral-200 bg-white hover:bg-neutral-50'
+                    ? 'border-accent bg-amber-50/40 ring-1 ring-accent'
+                    : 'border-neutral-200 bg-surface hover:bg-neutral-50'
                 }`}
               >
                 <input
@@ -216,11 +216,11 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                   checked={destinoPedido === 'porCobrar'}
                   disabled={loading}
                   onChange={() => setDestinoPedido('porCobrar')}
-                  className="mt-0.5 text-[#B84500] focus:ring-[#C74E00]"
+                  className="mt-0.5 text-accent focus:ring-accent"
                 />
                 <div className="text-xs">
-                  <span className="font-bold text-[#2C1A0E] flex items-center gap-1.5">
-                    <RotateCcw className="w-3.5 h-3.5 text-[#B84500]" />
+                  <span className="font-bold text-ink flex items-center gap-1.5">
+                    <RotateCcw className="w-3.5 h-3.5 text-accent" />
                     Dejar el pedido por cobrar (Recomendado)
                   </span>
                   <p className="text-neutral-500 mt-0.5 leading-normal">
@@ -233,7 +233,7 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                 className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                   destinoPedido === 'anular'
                     ? 'border-rose-500 bg-rose-50/40 ring-1 ring-rose-500'
-                    : 'border-neutral-200 bg-white hover:bg-neutral-50'
+                    : 'border-neutral-200 bg-surface hover:bg-neutral-50'
                 }`}
               >
                 <input
@@ -243,11 +243,11 @@ export const AnularVentaModal: React.FC<AnularVentaModalProps> = ({
                   checked={destinoPedido === 'anular'}
                   disabled={loading}
                   onChange={() => setDestinoPedido('anular')}
-                  className="mt-0.5 text-rose-600 focus:ring-rose-500"
+                  className="mt-0.5 text-danger focus:ring-rose-500"
                 />
                 <div className="text-xs">
                   <span className="font-bold text-rose-900 flex items-center gap-1.5">
-                    <Ban className="w-3.5 h-3.5 text-rose-600" />
+                    <Ban className="w-3.5 h-3.5 text-danger" />
                     Anular también el pedido
                   </span>
                   <p className="text-neutral-500 mt-0.5 leading-normal">

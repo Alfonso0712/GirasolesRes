@@ -267,11 +267,11 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="cerrar-caja-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
@@ -280,10 +280,10 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               <Lock className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">
                 Gestión de Caja
               </p>
-              <h2 id="cerrar-caja-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
+              <h2 id="cerrar-caja-title" className="font-sans text-xl font-bold text-ink tracking-tight">
                 Cierre de Caja y Cuadre de Turno
               </h2>
             </div>
@@ -301,7 +301,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
         </div>
 
         {/* Contenido scrolleable */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-[#2C1A0E]">
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-ink">
           {resultadoCierre ? (
             /* Vista de Éxito / Entregable de Cierre (RNF-48, MSG-181) */
             <div className="space-y-6 py-2">
@@ -323,7 +323,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                     Monto Inicial
                   </p>
-                  <p className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5">
+                  <p className="text-base font-bold text-ink tabular-nums mt-0.5">
                     S/ {resultadoCierre.montoInicial.toFixed(2)}
                   </p>
                 </div>
@@ -331,7 +331,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                     Efectivo Esperado
                   </p>
-                  <p className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5">
+                  <p className="text-base font-bold text-ink tabular-nums mt-0.5">
                     S/ {resultadoCierre.efectivoEsperado.toFixed(2)}
                   </p>
                 </div>
@@ -339,7 +339,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                     Efectivo Contado
                   </p>
-                  <p className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5">
+                  <p className="text-base font-bold text-ink tabular-nums mt-0.5">
                     S/ {resultadoCierre.efectivoContado.toFixed(2)}
                   </p>
                 </div>
@@ -364,7 +364,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               </div>
 
               {/* Botones de Entregable */}
-              <div className="p-4 bg-[#F5EBE1] border border-neutral-200 rounded-xl flex flex-wrap items-center justify-between gap-3">
+              <div className="p-4 bg-surface-warm border border-neutral-200 rounded-xl flex flex-wrap items-center justify-between gap-3">
                 <span className="text-xs text-neutral-600 font-semibold">
                   Descargue o imprima el voucher de balance para el registro físico del restaurante (reemplaza el cuaderno).
                 </span>
@@ -373,7 +373,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     type="button"
                     onClick={handleDescargarPdf}
                     disabled={descargandoPdf}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-[#C74E00] hover:bg-[#B94600] disabled:bg-neutral-400 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-[#B94600] disabled:bg-neutral-400 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
                   >
                     <Download className="w-4 h-4" />
                     {descargandoPdf ? 'DESCARGANDO...' : 'DESCARGAR PDF'}
@@ -381,7 +381,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
                   >
                     <Printer className="w-4 h-4" />
                     Imprimir
@@ -391,7 +391,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
             </div>
           ) : cargandoResumen ? (
             <div className="py-12 flex flex-col items-center justify-center gap-3 text-neutral-500">
-              <div className="w-8 h-8 border-3 border-[#D35400] border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin" />
               <p className="text-sm font-semibold">Calculando resumen contable en vivo…</p>
             </div>
           ) : errorCarga ? (
@@ -437,11 +437,11 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="divide-y divide-red-200 bg-white rounded-xl border border-red-200 overflow-hidden max-h-48 overflow-y-auto">
+                  <div className="divide-y divide-red-200 bg-surface rounded-xl border border-red-200 overflow-hidden max-h-48 overflow-y-auto">
                     {resumen?.pedidosPendientes.map((p) => (
                       <div key={p.pedidoId} className="p-3 flex items-center justify-between text-xs gap-3">
                         <div>
-                          <span className="font-bold text-[#2C1A0E]">Pedido #{p.numero}</span>
+                          <span className="font-bold text-ink">Pedido #{p.numero}</span>
                           <span className="text-neutral-500 ml-2">
                             ({p.tipo} · {p.mesa || 'Sin mesa'})
                           </span>
@@ -457,7 +457,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                                 onClose();
                                 onCobrarPedido(p.pedidoId);
                               }}
-                              className="px-3 py-1.5 rounded-lg bg-[#C74E00] hover:bg-[#B94600] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                              className="px-3 py-1.5 rounded-lg bg-primary hover:bg-[#B94600] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px]"
                             >
                               Cobrar
                             </button>
@@ -486,7 +486,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
                         Monto Inicial
                       </span>
-                      <span className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5 block">
+                      <span className="text-base font-bold text-ink tabular-nums mt-0.5 block">
                         S/ {resumen.montoInicial.toFixed(2)}
                       </span>
                       <span className="text-xs text-stone-500 block">Fondo turno</span>
@@ -494,9 +494,9 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
                       <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <Banknote className="w-3 h-3 text-[#B84500]" /> Ventas Efectivo
+                        <Banknote className="w-3 h-3 text-accent" /> Ventas Efectivo
                       </span>
-                      <span className="text-base font-bold text-[#2C1A0E] tabular-nums mt-0.5 block">
+                      <span className="text-base font-bold text-ink tabular-nums mt-0.5 block">
                         S/ {resumen.ventasEfectivo.toFixed(2)}
                       </span>
                       <span className="text-xs text-stone-500 block">Gaveta física</span>
@@ -514,7 +514,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
                       <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <DollarSign className="w-3 h-3 text-emerald-600" /> Total Ventas
+                        <DollarSign className="w-3 h-3 text-success" /> Total Ventas
                       </span>
                       <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
                         S/ {resumen.totalVentas.toFixed(2)}
@@ -526,7 +526,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block">
                         Efectivo Esperado
                       </span>
-                      <span className="text-lg font-bold text-[#B84500] tabular-nums mt-0.5 block">
+                      <span className="text-lg font-bold text-accent tabular-nums mt-0.5 block">
                         S/ {resumen.efectivoEsperado.toFixed(2)}
                       </span>
                       <span className="text-xs text-neutral-500 block">
@@ -555,7 +555,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     type="button"
                     disabled={tienePedidosPendientes}
                     onClick={() => setContadorModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#5C341A] hover:bg-[#482813] disabled:bg-neutral-300 rounded-xl shadow-sm transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#5C341A] hover:bg-sidebar disabled:bg-neutral-300 rounded-xl shadow-sm transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
                   >
                     <Coins className="w-4 h-4 text-[#F39C12]" />
                     CONTAR BILLETES Y MONEDAS
@@ -580,7 +580,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       if (errorServidor) setErrorServidor(null);
                     }}
                     placeholder="0.00"
-                    className="block w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-xl text-xl font-bold tabular-nums text-[#2C1A0E] focus:outline-hidden focus:ring-2 focus:ring-[#D35400]/20 focus:border-[#D35400] disabled:bg-stone-100 disabled:cursor-not-allowed"
+                    className="block w-full pl-10 pr-4 py-3 bg-surface border border-neutral-200 rounded-xl text-xl font-bold tabular-nums text-ink focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent disabled:bg-stone-100 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -601,7 +601,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                       ) : (
                         <AlertTriangle
                           className={`w-5 h-5 shrink-0 ${
-                            diferenciaCalculada > 0 ? 'text-amber-600' : 'text-red-600'
+                            diferenciaCalculada > 0 ? 'text-warning' : 'text-red-600'
                           }`}
                         />
                       )}
@@ -655,7 +655,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     value={observacion}
                     onChange={(e) => setObservacion(e.target.value)}
                     placeholder="Detalles de sobrante, faltante o incidencias del turno..."
-                    className="block w-full px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs text-[#2C1A0E] focus:outline-hidden focus:ring-1 focus:ring-[#D35400] focus:border-[#D35400] disabled:bg-stone-100"
+                    className="block w-full px-3 py-2 bg-surface border border-neutral-200 rounded-xl text-xs text-ink focus:outline-hidden focus:ring-1 focus:ring-accent focus:border-accent disabled:bg-stone-100"
                   />
                   {observacion.length > 200 && (
                     <p className="text-xs text-red-600 font-bold mt-1">
@@ -667,11 +667,11 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
               {/* Desglose de Platos Vendidos */}
               {resumen && (resumen.platosVendidos?.length ?? 0) > 0 && (
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white">
+                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface">
                   <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Utensils className="w-3.5 h-3.5 text-[#B84500]" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E]">
+                      <Utensils className="w-3.5 h-3.5 text-accent" />
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
                         Platos Vendidos en el Turno
                       </h4>
                     </div>
@@ -698,10 +698,10 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
           {/* Diálogo Modal de Confirmación MSG-180 (RV-127 / E-306) */}
           {pasoConfirmacion && (
-            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
               <div
                 ref={confirmDialogRef}
-                className="bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-[#2C1A0E] space-y-4 animate-in zoom-in-95 duration-200"
+                className="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-ink space-y-4 animate-in zoom-in-95 duration-200"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
@@ -751,7 +751,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     type="button"
                     disabled={procesandoCierre}
                     onClick={() => setPasoConfirmacion(false)}
-                    className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+                    className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
                   >
                     Cancelar
                   </button>
@@ -785,7 +785,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary-hover rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
             >
               Volver a Caja
             </button>
@@ -794,7 +794,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+                className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
               >
                 Cancelar
               </button>

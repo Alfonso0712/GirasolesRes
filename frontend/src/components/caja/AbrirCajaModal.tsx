@@ -182,23 +182,23 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="abrir-caja-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transition-all animate-in zoom-in-95 duration-200"
+        className="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transition-all animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center border border-amber-200/80 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center border border-amber-200/80 shadow-xs">
               <DollarSign className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">
                 Gestión de Caja
               </p>
-              <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
+              <h2 id="abrir-caja-title" className="font-sans text-xl font-bold text-ink tracking-tight">
                 Apertura de Caja
               </h2>
             </div>
@@ -216,7 +216,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
         </div>
 
         {/* Cuerpo */}
-        <div className="p-6 text-[#2C1A0E]">
+        <div className="p-6 text-ink">
           {errorServidor && (
             <div className="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-red-700 animate-in fade-in duration-200">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
@@ -237,7 +237,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               {sugerenciaInicial !== null && sugerenciaInicial !== undefined && sugerenciaInicial >= 0 && (
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2 text-neutral-600">
-                    <HelpCircle className="w-4 h-4 text-[#B84500] shrink-0" />
+                    <HelpCircle className="w-4 h-4 text-accent shrink-0" />
                     <span>Sugerido del último cierre:</span>
                   </div>
                   <button
@@ -246,7 +246,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                       setMontoInput(sugerenciaInicial.toFixed(2));
                       setErrorValidacion(null);
                     }}
-                    className="font-bold text-[#B84500] hover:underline cursor-pointer tabular-nums"
+                    className="font-bold text-accent hover:underline cursor-pointer tabular-nums"
                   >
                     <span className="tabular-nums">S/ {sugerenciaInicial.toFixed(2)}</span> (Usar)
                   </button>
@@ -274,10 +274,10 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                       if (errorValidacion) setErrorValidacion(null);
                     }}
                     placeholder="0.00"
-                    className={`block w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-lg font-bold tabular-nums text-[#2C1A0E] focus:outline-hidden focus:ring-2 ${
+                    className={`block w-full pl-10 pr-4 py-3 bg-surface border rounded-xl text-lg font-bold tabular-nums text-ink focus:outline-hidden focus:ring-2 ${
                       errorValidacion
                         ? 'border-red-500 focus:ring-red-500 bg-red-50/50'
-                        : 'border-neutral-200 focus:border-[#D35400] focus:ring-[#D35400]/20'
+                        : 'border-neutral-200 focus:border-accent focus:ring-accent/20'
                     }`}
                   />
                 </div>
@@ -302,7 +302,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                       setMontoInput(val.toFixed(2));
                       setErrorValidacion(null);
                     }}
-                    className="flex-1 py-1.5 text-xs font-semibold font-sans tabular-nums rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+                    className="flex-1 py-1.5 text-xs font-semibold font-sans tabular-nums rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
                   >
                     S/ {val}
                   </button>
@@ -314,13 +314,13 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+                  className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C74E00] hover:bg-[#B84600] rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary-hover rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
                 >
                   Continuar
                 </button>
@@ -330,11 +330,11 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
             /* Paso 2: Diálogo de Confirmación MSG-172 con Foco Inicial en Cancelar (RV-127) */
             <div className="space-y-4">
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-                <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <ShieldAlert className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                 <div className="text-sm">
                   <p className="font-bold text-amber-900">Confirmación de Apertura</p>
                   <p className="text-amber-800 mt-1">
-                    ¿Abrir la caja con <strong className="font-bold text-[#2C1A0E] tabular-nums">S/ {montoNumerico.toFixed(2)}</strong>? Podrá empezar a registrar cobros.
+                    ¿Abrir la caja con <strong className="font-bold text-ink tabular-nums">S/ {montoNumerico.toFixed(2)}</strong>? Podrá empezar a registrar cobros.
                   </p>
                 </div>
               </div>
@@ -349,7 +349,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                   type="button"
                   disabled={procesando}
                   onClick={() => setPasoConfirmacion(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-colors cursor-pointer min-h-[44px]"
+                  className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-colors cursor-pointer min-h-[44px]"
                 >
                   Cancelar
                 </button>

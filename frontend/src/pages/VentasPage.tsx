@@ -131,9 +131,9 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               type="button"
               onClick={() => cargarVentas()}
               disabled={cargando}
-              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+              className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${cargando ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-accent ${cargando ? 'animate-spin' : ''}`} />
               <span>Actualizar</span>
             </button>
           }
@@ -142,8 +142,8 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
         {/* 2. Tarjetas de Resumen KPI */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {/* KPI 1: Ventas Vigentes */}
-          <div className="bg-white rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] flex items-center justify-center shrink-0 border border-amber-200">
+          <div className="bg-surface rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center shrink-0 border border-amber-200">
               <Receipt className="w-5 h-5" />
             </div>
             <div>
@@ -151,7 +151,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 Ventas vigentes
               </span>
               <div className="flex items-baseline gap-1 mt-0.5">
-                <span className="font-sans font-bold text-2xl text-[#2C1A0E] tabular-nums">
+                <span className="font-sans font-bold text-2xl text-ink tabular-nums">
                   {resumen.vigentes}
                 </span>
                 <span className="text-xs text-neutral-500 font-medium">ventas</span>
@@ -178,13 +178,13 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           </div>
 
           {/* KPI 3: Desglose Efectivo vs Yape */}
-          <div className="bg-white rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center justify-between gap-2">
+          <div className="bg-surface rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center justify-between gap-2">
             <div className="flex-1 border-r border-neutral-100 pr-2">
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
                 <DollarSign className="w-3.5 h-3.5 text-emerald-700" />
                 <span>Efectivo</span>
               </span>
-              <span className="font-sans font-bold text-base sm:text-lg text-[#2C1A0E] tabular-nums block mt-0.5">
+              <span className="font-sans font-bold text-base sm:text-lg text-ink tabular-nums block mt-0.5">
                 S/ {resumen.efectivo.toFixed(2)}
               </span>
             </div>
@@ -219,7 +219,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
         </div>
 
         {/* 3. Barra de Filtros y Búsqueda */}
-        <div className="bg-white p-4 rounded-2xl border border-neutral-200/90 shadow-2xs space-y-3">
+        <div className="bg-surface p-4 rounded-2xl border border-neutral-200/90 shadow-2xs space-y-3">
           {/* Filtro por Tipo de Comprobante */}
           <div className="flex flex-wrap items-center gap-1.5 pb-2.5 border-b border-neutral-100">
             <span className="text-xs font-semibold text-neutral-600 flex items-center gap-1 mr-1 select-none">
@@ -241,7 +241,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   onClick={() => setFiltroTipoComprobante(tipo)}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] ${
                     activo
-                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                       : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200'
                   }`}
                 >
@@ -260,7 +260,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 placeholder="Buscar por comprobante, cliente o RUC..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-neutral-50/50 hover:bg-white focus:bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px] transition-all"
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-neutral-50/50 hover:bg-surface focus:bg-surface border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-all"
               />
             </div>
 
@@ -275,7 +275,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   type="date"
                   value={desde}
                   onChange={(e) => setDesde(e.target.value)}
-                  className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px]"
+                  className="px-3 py-1.5 text-xs bg-surface border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px]"
                 />
               </div>
 
@@ -289,7 +289,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   type="date"
                   value={hasta}
                   onChange={(e) => setHasta(e.target.value)}
-                  className="px-3 py-1.5 text-xs bg-white border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-[#C74E00] focus:ring-2 focus:ring-[#C74E00]/20 min-h-[40px]"
+                  className="px-3 py-1.5 text-xs bg-surface border border-neutral-200 rounded-xl font-medium text-neutral-800 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px]"
                 />
               </div>
 
@@ -300,7 +300,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   onClick={() => setFiltroRapido('hoy')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
                     esFiltroRapidoActivo('hoy')
-                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                       : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                   }`}
                 >
@@ -311,7 +311,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   onClick={() => setFiltroRapido('ayer')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
                     esFiltroRapidoActivo('ayer')
-                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                       : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                   }`}
                 >
@@ -322,7 +322,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                   onClick={() => setFiltroRapido('semana')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
                     esFiltroRapidoActivo('semana')
-                      ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                      ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                       : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                   }`}
                 >
@@ -334,7 +334,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                     onClick={() => setFiltroRapido('mes')}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
                       esFiltroRapidoActivo('mes')
-                        ? 'bg-[#2C1A0E] text-white border-[#2C1A0E] shadow-2xs'
+                        ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                         : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                     }`}
                   >
@@ -347,7 +347,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 <button
                   type="button"
                   onClick={limpiarFiltros}
-                  className="px-2.5 py-1.5 text-xs font-semibold text-[#B84500] hover:text-[#C74E00] hover:bg-amber-50 rounded-xl transition-colors cursor-pointer ml-auto sm:ml-0"
+                  className="px-2.5 py-1.5 text-xs font-semibold text-accent hover:text-accent hover:bg-amber-50 rounded-xl transition-colors cursor-pointer ml-auto sm:ml-0"
                 >
                   Quitar filtros
                 </button>
@@ -356,7 +356,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           </div>
 
           {errorFechas && (
-            <p className="text-xs text-rose-600 font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
+            <p className="text-xs text-danger font-medium flex items-center gap-1.5 pt-1 border-t border-neutral-100">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{errorFechas}</span>
             </p>
@@ -398,10 +398,10 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                     return (
                       <tr
                         key={v.ventaId}
-                        className={`transition-colors border-b border-[#F0EBE6] ${
+                        className={`transition-colors border-b border-line-soft ${
                           esAnulada
                             ? 'bg-stone-50 hover:bg-stone-100/70 text-stone-700'
-                            : 'hover:bg-neutral-50/70 bg-white text-neutral-800'
+                            : 'hover:bg-neutral-50/70 bg-surface text-neutral-800'
                         }`}
                       >
                         {/* Comprobante */}
@@ -419,7 +419,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                               >
                                 {v.comprobante.startsWith('F') ? 'Factura' : v.comprobante.startsWith('B') ? 'Boleta' : 'Ticket'}
                               </span>
-                              <span className={`tabular-nums font-semibold text-sm ${esAnulada ? 'text-stone-700' : 'text-[#2C1A0E]'}`}>
+                              <span className={`tabular-nums font-semibold text-sm ${esAnulada ? 'text-stone-700' : 'text-ink'}`}>
                                 {v.comprobante}
                               </span>
                             </div>
@@ -437,13 +437,13 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                         </td>
 
                         {/* Pedido N.º */}
-                        <td className="py-3 px-4 tabular-nums font-semibold text-sm text-[#2C1A0E]">
+                        <td className="py-3 px-4 tabular-nums font-semibold text-sm text-ink">
                           #{v.pedidoNumero}
                         </td>
 
                         {/* Destino (Mesa o Llevar) */}
                         <td className="py-3 px-4">
-                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2C1A0E]">
+                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
                             {v.tipo === 'Para Llevar' ? (
                               <>
                                 <ShoppingBag className="w-3.5 h-3.5 text-orange-600 shrink-0" />
@@ -453,7 +453,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                               </>
                             ) : (
                               <>
-                                <Utensils className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                                <Utensils className="w-3.5 h-3.5 text-info shrink-0" />
                                 <span>{v.mesa || 'Salón'}</span>
                               </>
                             )}
@@ -480,13 +480,13 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
 
                         {/* Total con alto contraste WCAG AA */}
                         <td className="py-3 px-4 text-right tabular-nums font-semibold text-sm whitespace-nowrap">
-                          <span className={esAnulada ? 'text-stone-700 font-semibold' : 'text-[#2C1A0E]'}>
+                          <span className={esAnulada ? 'text-stone-700 font-semibold' : 'text-ink'}>
                             S/ {v.total.toFixed(2)}
                           </span>
                         </td>
 
                         {/* Cajero */}
-                        <td className="py-3 px-4 text-sm font-medium text-[#2C1A0E] truncate max-w-36 w-36" title={v.cajero}>
+                        <td className="py-3 px-4 text-sm font-medium text-ink truncate max-w-36 w-36" title={v.cajero}>
                           {v.cajero}
                         </td>
 

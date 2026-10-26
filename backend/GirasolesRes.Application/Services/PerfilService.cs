@@ -131,4 +131,34 @@ public class PerfilService : IPerfilService
             return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
+
+    public async Task<string> ObtenerTemaAsync(Guid usuarioId, CancellationToken cancellationToken = default)
+    {
+        var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId, cancellationToken);
+        if (usuario == null)
+        {
+            return TemaUsuario.Claro;
+        }
+
+        return usuario.Usu_Tema;
+    }
+
+    public async Task ActualizarTemaAsync(Guid usuarioId, string tema, CancellationToken cancellationToken = default)
+    {
+        var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId, cancellationToken);
+        if (usuario == null)
+        {
+            throw new KeyNotFoundException("Usuario no encontrado.");
+        }
+
+        if (!usuario.Usu_Activo)
+        {
+            throw new InvalidOperationException("Cuenta desactivada.");
+        }
+
+        usuario.ActualizarTema(tema);
+
+        await _usuarioRepository.ActualizarAsync(usuario, cancellationToken);
+        await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
+    }
 }

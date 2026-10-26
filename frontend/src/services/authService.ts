@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient';
-import type { UserSession } from '../types/auth';
+import type { UserSession, Theme } from '../types/auth';
 
 const BASE_URL = '/api/auth';
 
@@ -69,4 +69,50 @@ export async function cambiarContrasenaPropiaService(
     token
   );
   return { token: body.token, message: body.message };
+}
+
+
+function getStoredToken(): string | undefined {
+  try {
+    const raw = localStorage.getItem('girasoles_session');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return parsed.token;
+    }
+  } catch {
+    // ignore
+  }
+  return undefined;
+}
+
+export async function actualizarTema(tema: Theme, token?: string): Promise<Theme> {
+  const authToken = token || getStoredToken();
+  if (!authToken) {
+    return tema;
+  }
+  const body = await apiClient.patch<ApiResponse<{ tema: Theme }>>(
+    '/api/perfil/tema',
+    { tema },
+    authToken
+  );
+  return body.data?.tema ?? tema;
+}
+
+export async function obtenerTemaActual(token?: string): Promise<Theme | null> {
+  try {
+    const authToken = token || getStoredToken();
+    if (!authToken) {
+      return null;
+    }
+    const body = await apiClient.get<{ success?: boolean; tema?: Theme }>(
+      '/api/auth/me',
+      authToken
+    );
+    if (body && (body.tema === 'light' || body.tema === 'dark')) {
+      return body.tema;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }

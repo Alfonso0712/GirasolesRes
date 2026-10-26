@@ -156,7 +156,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="detalle-cierre-title"
-      className="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      className="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
     >
       <style>{`
         @media print {
@@ -195,19 +195,19 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
       <div
         ref={modalRef}
-        className="cierre-modal-container bg-white border border-neutral-200 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden text-[#2C1A0E] animate-in zoom-in-95 duration-200"
+        className="cierre-modal-container bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden text-ink animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B84500] border border-amber-200/80 flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent border border-amber-200/80 flex items-center justify-center shadow-xs">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#B84500]">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">
                 Historial de Caja
               </p>
-              <h2 id="detalle-cierre-title" className="font-sans text-xl font-bold text-[#2C1A0E] tracking-tight">
+              <h2 id="detalle-cierre-title" className="font-sans text-xl font-bold text-ink tracking-tight">
                 Detalle de Cierre de Caja
               </h2>
             </div>
@@ -224,10 +224,10 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-[#2C1A0E]">
+        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-ink">
           {cargando ? (
             <div className="py-16 flex flex-col items-center justify-center gap-3 text-neutral-500">
-              <Loader2 className="w-8 h-8 text-[#B84500] animate-spin" />
+              <Loader2 className="w-8 h-8 text-accent animate-spin" />
               <p className="text-sm font-semibold">Cargando detalle del cierre…</p>
             </div>
           ) : error ? (
@@ -242,7 +242,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               {/* Alerta de Ajustes Posteriores por Anulación */}
               {tieneAjustes && (
                 <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fade-in break-inside-avoid">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <span className="font-bold text-sm text-amber-900 block">
                       Turno con ventas anuladas después del cierre
@@ -258,7 +258,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
                 <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 sm:pr-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#B84500]" /> Apertura del Turno
+                    <Calendar className="w-3.5 h-3.5 text-accent" /> Apertura del Turno
                   </span>
                   <p className="font-bold text-stone-900 text-sm mt-0.5">
                     {detalle.fechaAperturaLocal || formatLimaFecha(detalle.fechaApertura)}
@@ -274,7 +274,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
 
                 <div className="space-y-1.5 pt-1 sm:pt-0 sm:pl-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#B84500]" /> Cierre y Cuadre
+                    <Clock className="w-3.5 h-3.5 text-accent" /> Cierre y Cuadre
                   </span>
                   <p className="font-bold text-stone-900 text-sm mt-0.5">
                     {detalle.fechaCierreLocal ||
@@ -295,10 +295,10 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               {/* Sección 2: Desglose Financiero Completo (8 Métricas Clave) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid">
                 {/* Tarjeta A: Resumen de Ventas Facturadas */}
-                <div className="p-4 bg-white border border-neutral-200 rounded-xl shadow-xs space-y-3">
+                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E] flex items-center gap-1.5">
-                      <DollarSign className="w-4 h-4 text-[#B84500]" />
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4 text-accent" />
                       Flujo de Ventas del Turno
                     </h3>
                   </div>
@@ -316,7 +316,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                         <Banknote className="w-3.5 h-3.5 text-stone-500" />
                         Ventas en Efectivo:
                       </span>
-                      <span className="font-bold text-[#2C1A0E] tabular-nums">
+                      <span className="font-bold text-ink tabular-nums">
                         S/ {(detalle.ventasEfectivo ?? 0).toFixed(2)}
                       </span>
                     </div>
@@ -332,8 +332,8 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     </div>
 
                     <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
-                      <span className="text-[#2C1A0E]">Total de ventas facturadas:</span>
-                      <span className="text-[#B84500] text-base tabular-nums">
+                      <span className="text-ink">Total de ventas facturadas:</span>
+                      <span className="text-accent text-base tabular-nums">
                         S/ {(detalle.totalVentas ?? 0).toFixed(2)}
                       </span>
                     </div>
@@ -341,10 +341,10 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 </div>
 
                 {/* Tarjeta B: Arqueo Físico y Cuadratura de Efectivo */}
-                <div className="p-4 bg-white border border-neutral-200 rounded-xl shadow-xs space-y-3">
+                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E] flex items-center gap-1.5">
-                      <Banknote className="w-4 h-4 text-[#B84500]" />
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
+                      <Banknote className="w-4 h-4 text-accent" />
                       Arqueo y Cuadratura de Efectivo
                     </h3>
                   </div>
@@ -352,7 +352,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between items-center text-neutral-600">
                       <span>Efectivo Físico Esperado:</span>
-                      <span className="font-bold text-[#2C1A0E] tabular-nums">
+                      <span className="font-bold text-ink tabular-nums">
                         S/ {(detalle.efectivoEsperado ?? (detalle.montoInicial + detalle.ventasEfectivo)).toFixed(2)}
                       </span>
                     </div>
@@ -426,11 +426,11 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               )}
 
               {/* Sección 4: Consolidado de Platos Vendidos (Tabla con cabecera y totales) */}
-              <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white break-inside-avoid shadow-xs">
+              <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
                 <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Utensils className="w-4 h-4 text-[#B84500]" />
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#2C1A0E]">
+                    <Utensils className="w-4 h-4 text-accent" />
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
                       Consolidado de Platos y Productos Vendidos
                     </h4>
                   </div>
@@ -442,33 +442,33 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                      <thead className="bg-[#FAF7F4] border-b border-[#E5E0DB] text-xs uppercase font-semibold text-[#7C6F66] tracking-wider">
+                      <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
                         <tr>
                           <th className="px-4 py-2.5">Plato / Producto</th>
                           <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
                           <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#F0EBE6] text-sm">
+                      <tbody className="divide-y divide-line-soft text-sm">
                         {detalle.platosVendidos.map((p, idx) => (
-                          <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-[#F0EBE6]">
-                            <td className="px-4 py-2.5 font-semibold text-sm text-[#2C1A0E]">{p.nombre}</td>
+                          <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
+                            <td className="px-4 py-2.5 font-semibold text-sm text-ink">{p.nombre}</td>
                             <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
                               {p.cantidad}
                             </td>
-                            <td className="px-4 py-2.5 text-right font-semibold text-sm text-[#2C1A0E] tabular-nums">
+                            <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
                               S/ {(p.total ?? 0).toFixed(2)}
                             </td>
                           </tr>
                         ))}
                       </tbody>
-                      <tfoot className="bg-[#FAF7F4] border-t border-[#E5E0DB] font-semibold text-xs">
+                      <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
                         <tr>
-                          <td className="px-4 py-2.5 text-[#2C1A0E]">TOTAL CONSOLIDADO</td>
+                          <td className="px-4 py-2.5 text-ink">TOTAL CONSOLIDADO</td>
                           <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
                             {detalle.platosVendidos.reduce((acc, p) => acc + p.cantidad, 0)}
                           </td>
-                          <td className="px-4 py-2.5 text-right text-[#B84500] tabular-nums font-bold text-sm">
+                          <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
                             S/ {detalle.platosVendidos.reduce((acc, p) => acc + (p.total ?? 0), 0).toFixed(2)}
                           </td>
                         </tr>
@@ -503,7 +503,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     {detalle.ajustesPosteriores.map((a) => (
                       <div key={a.ventaId} className="p-3.5 hover:bg-amber-100/30 transition-colors space-y-1">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-[#2C1A0E]">
+                          <span className="font-bold text-ink">
                             {a.comprobante || a.numeroComprobante || 'Comprobante'}
                           </span>
                           <span className="font-bold text-red-600 tabular-nums">
@@ -533,7 +533,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+            className="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
           >
             Cerrar
           </button>
@@ -543,7 +543,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               type="button"
               onClick={handlePrint}
               disabled={cargando || !detalle}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 hover:bg-neutral-50 disabled:opacity-40 rounded-xl transition-colors cursor-pointer min-h-[44px]"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 hover:bg-neutral-50 disabled:opacity-40 rounded-xl transition-colors cursor-pointer min-h-[44px]"
               title="Imprimir resumen mediante diálogo del navegador"
             >
               <Printer className="w-4 h-4" />
@@ -554,7 +554,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               type="button"
               onClick={handleDescargarPdf}
               disabled={cargando || !detalle || descargandoPdf || esAbierta}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#C74E00] hover:bg-[#B84600] disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-primary hover:bg-primary-hover disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
               title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
             >
               {descargandoPdf ? (

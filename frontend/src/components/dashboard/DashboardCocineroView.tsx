@@ -35,7 +35,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
       {tieneDemora && (
         <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl flex items-center justify-between gap-4 text-amber-900 shadow-xs animate-pulse">
           <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-amber-600 shrink-0" />
+            <Clock className="w-6 h-6 text-warning shrink-0" />
             <div>
               <p className="text-sm font-bold">
                 Atención: hay comandas con más de 15 minutos de espera ({comandas?.masAntiguaMinutos} min).
@@ -56,7 +56,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
       )}
 
       {/* ACCESOS RÁPIDOS DEL COCINERO */}
-      <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-xs">
+      <div className="bg-surface border border-neutral-200/80 rounded-2xl p-5 shadow-xs">
         <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Operación de Cocina KDS
         </h3>
@@ -64,7 +64,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('cocina')}
-            className="p-4 bg-[#C74E00] text-white hover:bg-[#b84500] rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
             <ChefHat className="w-5 h-5" />
             <span>PANTALLA DE COMANDAS (KDS)</span>
@@ -73,9 +73,9 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('menu-dia')}
-            className="p-4 bg-white border border-neutral-200/80 hover:border-[#D35400] rounded-xl font-bold text-sm text-neutral-800 hover:text-[#B84500] shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <Utensils className="w-5 h-5 text-[#B84500]" />
+            <Utensils className="w-5 h-5 text-accent" />
             <span>MARCAR PLATOS AGOTADOS / MENÚ</span>
           </button>
         </div>
@@ -89,7 +89,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
         ) : (
           <div
             onClick={() => onNavigate('cocina')}
-            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
+            className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:border-accent hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -122,7 +122,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-accent font-semibold">
               <span>Abrir pantalla de cocina</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
@@ -135,7 +135,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
         ) : (
           <div
             onClick={() => onNavigate('menu-dia')}
-            className="p-5 bg-white border border-neutral-200/80 rounded-2xl shadow-xs hover:border-[#D35400] hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
+            className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:border-accent hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -168,7 +168,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
                 </p>
               )}
             </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-[#B84500] font-semibold">
+            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-accent font-semibold">
               <span>Gestionar disponibilidad</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>

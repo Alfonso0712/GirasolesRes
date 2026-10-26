@@ -77,11 +77,11 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-mesa-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 animate-in zoom-in-95 duration-200"
+        className="bg-surface rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-neutral-200/80 animate-in zoom-in-95 duration-200"
       >
         <div className="p-6">
           <div className="flex items-start gap-4">
@@ -89,9 +89,9 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
                 estaBloqueadaPorOcupada
-                  ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                  ? 'bg-rose-50 text-danger border border-rose-200'
                   : esDesactivar
-                  ? 'bg-amber-50 text-[#B84600] border border-amber-200'
+                  ? 'bg-amber-50 text-accent border border-amber-200'
                   : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
               }`}
             >
@@ -105,7 +105,7 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h2 id="confirm-mesa-title" className="font-sans font-bold text-xl text-[#2C1A0E]">
+              <h2 id="confirm-mesa-title" className="font-sans font-bold text-xl text-ink">
                 {estaBloqueadaPorOcupada
                   ? 'Acción no permitida'
                   : esDesactivar
@@ -114,7 +114,7 @@ export const MesaConfirmModal: React.FC<MesaConfirmModalProps> = ({
               </h2>
 
               {/* Mensajes según catálogo */}
-              <div className="mt-2 text-sm text-[#7C6F66]">
+              <div className="mt-2 text-sm text-ink-muted">
                 {estaBloqueadaPorOcupada ? (
                   // RV-56 / MSG-88
                   <p className="text-rose-700 font-medium">

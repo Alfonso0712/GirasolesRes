@@ -13,11 +13,13 @@ namespace GirasolesRes.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IPerfilService _perfilService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(IAuthService authService, IPerfilService perfilService, ILogger<AuthController> logger)
     {
         _authService = authService;
+        _perfilService = perfilService;
         _logger = logger;
     }
 
@@ -196,15 +198,23 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpGet("me")]
-    public IActionResult Me()
+    public async Task<IActionResult> Me(CancellationToken cancellationToken)
     {
+        var tema = "light";
+        var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (Guid.TryParse(usuarioIdClaim, out var usuarioId))
+        {
+            tema = await _perfilService.ObtenerTemaAsync(usuarioId, cancellationToken);
+        }
+
         return Ok(new
         {
             success = true,
             usuario = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("usuario"),
             nombre = User.FindFirstValue("nombreCompleto"),
             rol = User.FindFirstValue(ClaimTypes.Role),
-            email = User.FindFirstValue(ClaimTypes.Email)
+            email = User.FindFirstValue(ClaimTypes.Email),
+            tema
         });
     }
 

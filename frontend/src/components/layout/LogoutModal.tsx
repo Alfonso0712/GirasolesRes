@@ -41,12 +41,12 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="logout-title"
-        className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 text-center relative"
+        className="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 text-center relative"
       >
         <button
           type="button"
@@ -56,12 +56,12 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
           <X className="w-4 h-4" />
         </button>
 
-        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#B84500] flex items-center justify-center mx-auto mb-4 border border-amber-200/50 shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-amber-50 text-accent flex items-center justify-center mx-auto mb-4 border border-amber-200/50 shadow-xs">
           <LogOut className="w-6 h-6" />
         </div>
 
         {/* MSG-40 */}
-        <h3 id="logout-title" className="text-xl font-sans font-bold text-[#2C1A0E] mb-2">
+        <h3 id="logout-title" className="text-xl font-sans font-bold text-ink mb-2">
           ¿Cerrar sesión?
         </h3>
 
@@ -83,7 +83,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`flex-1 py-2.5 px-4 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`flex-1 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
               loading ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >

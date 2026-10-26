@@ -223,29 +223,29 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-2xl max-w-lg w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200"
+        className="bg-surface rounded-2xl max-w-lg w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200"
       >
         {/* Encabezado fijo con marca visual */}
         <div className="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-gradient-to-r from-amber-50/50 to-transparent">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF7F4] border border-amber-900/10 flex items-center justify-center text-[#B84500]">
+            <div className="w-10 h-10 rounded-xl bg-canvas border border-amber-900/10 flex items-center justify-center text-accent">
               <Utensils className="w-5 h-5" />
             </div>
             <div>
               <h2
                 id="modal-title"
-                className="text-lg sm:text-xl font-sans font-bold text-[#2C1A0E] leading-tight"
+                className="text-lg sm:text-xl font-sans font-bold text-ink leading-tight"
               >
                 {isEditing ? 'Editar Producto' : 'Nuevo Producto o Componente'}
               </h2>
-              <p className="text-xs text-[#7C6F66]">
+              <p className="text-xs text-ink-muted">
                 {isEditing
                   ? 'Modifique el nombre, categoría, rol o precio del ítem.'
                   : 'Defina un producto independiente de carta o un componente de menú.'}
@@ -269,15 +269,15 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             {/* Banner de error general del servidor (ej. MSG-53, MSG-216) */}
             {errorServidor && (
               <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-rose-700 text-sm">
-                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-danger" />
                 <span>{errorServidor}</span>
               </div>
             )}
 
             {/* Selector de Tipo de Producto (Carta vs Componente) */}
             <div>
-              <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
-                Tipo de producto <span className="text-[#B84500]">*</span>
+              <label className="form-label-standard">
+                Tipo de producto <span className="text-accent">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80">
                 <button
@@ -288,7 +288,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   disabled={isEditing || guardando}
                   className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
                     tipo === 'Carta'
-                      ? 'bg-white text-[#B84500] shadow-sm border border-neutral-200/60'
+                      ? 'bg-surface text-accent shadow-sm border border-neutral-200/60'
                       : 'text-neutral-600 hover:text-neutral-900'
                   } ${isEditing ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
@@ -303,7 +303,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   disabled={isEditing || guardando}
                   className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
                     tipo === 'Componente'
-                      ? 'bg-white text-emerald-700 shadow-sm border border-neutral-200/60'
+                      ? 'bg-surface text-emerald-700 shadow-sm border border-neutral-200/60'
                       : 'text-neutral-600 hover:text-neutral-900'
                   } ${isEditing ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
@@ -323,12 +323,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="prod-nombre"
-                  className="block text-sm font-medium text-[#2C1A0E]"
+                  className="form-label-standard !mb-0"
                 >
                   Nombre {tipo === 'Componente' ? 'del componente' : 'del producto'}{' '}
-                  <span className="text-[#B84500]">*</span>
+                  <span className="text-accent">*</span>
                 </label>
-                <span className="text-xs text-[#7C6F66] tabular-nums">
+                <span className="text-xs text-ink-muted tabular-nums">
                   {nombre.length}/50
                 </span>
               </div>
@@ -353,17 +353,17 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden ${
                   errores.nombre
                     ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                    : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-200 bg-surface text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
                 disabled={guardando}
               />
               {errores.nombre ? (
-                <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errores.nombre}
                 </p>
               ) : (
-                <p className="mt-1 text-xs text-[#7C6F66]">
+                <p className="mt-1 text-xs text-ink-muted">
                   De 3 a 50 caracteres.
                 </p>
               )}
@@ -376,9 +376,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-categoria"
-                    className="block text-sm font-medium text-[#2C1A0E] mb-1.5"
+                    className="form-label-standard"
                   >
-                    Categoría de carta <span className="text-[#B84500]">*</span>
+                    Categoría de carta <span className="text-accent">*</span>
                   </label>
                   <select
                     id="prod-categoria"
@@ -390,10 +390,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         setErrores((prev) => ({ ...prev, categoria: '' }));
                       }
                     }}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-surface ${
                       errores.categoria
                         ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                        : 'border-neutral-200 text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                        : 'border-neutral-200 text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200'
                     }`}
                     disabled={guardando}
                   >
@@ -404,12 +404,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     ))}
                   </select>
                   {CATEGORIAS_PRODUCTO.find((c) => c.valor === categoria)?.descripcion && !errores.categoria && (
-                    <p className="mt-1 text-xs text-[#7C6F66]">
+                    <p className="mt-1 text-xs text-ink-muted">
                       {CATEGORIAS_PRODUCTO.find((c) => c.valor === categoria)?.descripcion}
                     </p>
                   )}
                   {errores.categoria && (
-                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {errores.categoria}
                     </p>
@@ -420,9 +420,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-precio"
-                    className="block text-sm font-medium text-[#2C1A0E] mb-1.5"
+                    className="form-label-standard"
                   >
-                    Precio de venta (S/) <span className="text-[#B84500]">*</span>
+                    Precio de venta (S/) <span className="text-accent">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
@@ -444,14 +444,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl border text-sm font-sans font-medium transition-all outline-hidden ${
                         errores.precio
                           ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                          : 'border-neutral-200 bg-white text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                          : 'border-neutral-200 bg-surface text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200'
                       }`}
                       disabled={guardando}
                     />
                   </div>
 
                   {errores.precio && (
-                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {errores.precio}
                     </p>
@@ -460,7 +460,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   {/* Mensaje informativo cuando se edita el precio */}
                   {precioCambioEnEdicion && !errores.precio && (
                     <div className="mt-2 p-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl flex items-start gap-2 text-xs text-amber-900 animate-in fade-in duration-200">
-                      <Info className="w-4 h-4 text-[#B84500] shrink-0 mt-0.5" />
+                      <Info className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                       <span>
                         El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian.
                       </span>
@@ -477,9 +477,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div>
                   <label
                     htmlFor="prod-rol"
-                    className="block text-sm font-medium text-[#2C1A0E] mb-1.5"
+                    className="form-label-standard"
                   >
-                    Rol del componente <span className="text-[#B84500]">*</span>
+                    Rol del componente <span className="text-accent">*</span>
                   </label>
                   <select
                     id="prod-rol"
@@ -491,10 +491,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         setErrores((prev) => ({ ...prev, rol: '' }));
                       }
                     }}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-white ${
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-surface ${
                       errores.rol
                         ? 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                        : 'border-neutral-200 text-neutral-900 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                        : 'border-neutral-200 text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200'
                     }`}
                     disabled={guardando}
                   >
@@ -505,12 +505,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     ))}
                   </select>
                   {ROLES_COMPONENTE.find((r) => r.valor === rol)?.descripcion && !errores.rol && (
-                    <p className="mt-1 text-xs text-[#7C6F66]">
+                    <p className="mt-1 text-xs text-ink-muted">
                       {ROLES_COMPONENTE.find((r) => r.valor === rol)?.descripcion}
                     </p>
                   )}
                   {errores.rol && (
-                    <p className="mt-1 text-xs text-rose-600 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {errores.rol}
                     </p>
@@ -537,14 +537,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={guardando}
-              className="px-4 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 bg-white hover:bg-neutral-50 font-medium text-sm transition-colors cursor-pointer min-h-[44px]"
+              className="px-4 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 bg-surface hover:bg-neutral-50 font-medium text-sm transition-colors cursor-pointer min-h-[44px]"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={guardando}
-              className="px-5 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed min-h-[44px]"
+              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed min-h-[44px]"
             >
               {guardando ? (
                 <>

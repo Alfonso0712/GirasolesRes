@@ -36,7 +36,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   if (cargandoInicial) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#B84500] mb-4 animate-pulse">
+        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-accent mb-4 animate-pulse">
           <RefreshCw className="w-6 h-6 animate-spin" />
         </div>
         <h2 className="text-xl font-bold font-sans text-neutral-800 mb-1">
@@ -52,7 +52,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   if (errorGeneral && !data) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mb-4">
+        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-danger mb-4">
           <AlertCircle className="w-7 h-7" />
         </div>
         <h2 className="text-xl font-bold font-sans text-neutral-800 mb-2">
@@ -64,7 +64,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
         <button
           type="button"
           onClick={() => refrescarManual()}
-          className="px-5 py-2.5 bg-[#C74E00] text-white rounded-xl font-semibold text-sm shadow-sm hover:bg-[#b84500] transition-colors cursor-pointer flex items-center gap-2"
+          className="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-hover transition-colors cursor-pointer flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Reintentar
@@ -78,18 +78,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
   // Helper para renderizar error específico por bloque (RV-149, RNF-55)
   const renderBloqueError = (nombreBloque: string) => (
     <div className="p-4 bg-rose-50/70 border border-rose-200 rounded-2xl text-center">
-      <AlertCircle className="w-6 h-6 text-rose-600 mx-auto mb-2" />
+      <AlertCircle className="w-6 h-6 text-danger mx-auto mb-2" />
       <p className="text-xs font-semibold text-rose-800 mb-1">
         No se pudo cargar este bloque
       </p>
-      <p className="text-xs text-rose-600 mb-3">
+      <p className="text-xs text-danger mb-3">
         Intente nuevamente sin afectar el resto del panel.
       </p>
       <button
         type="button"
         onClick={() => reintentarBloque(nombreBloque)}
         disabled={reintentandoBloque[nombreBloque]}
-        className="px-3 py-1.5 bg-white border border-rose-300 text-rose-700 text-xs font-medium rounded-lg hover:bg-rose-50 transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+        className="px-3 py-1.5 bg-surface border border-rose-300 text-rose-700 text-xs font-medium rounded-lg hover:bg-rose-50 transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
       >
         <RefreshCw className={`w-3 h-3 ${reintentandoBloque[nombreBloque] ? 'animate-spin' : ''}`} />
         Reintentar
@@ -113,12 +113,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
             <div className="flex items-center gap-3 shrink-0">
               {sinConexion ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                  <WifiOff className="w-3.5 h-3.5 text-amber-600" />
+                  <WifiOff className="w-3.5 h-3.5 text-warning" />
                   Sin conexión
                 </span>
               ) : actualizando ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#B84500]" />
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-accent" />
                   Actualizando...
                 </span>
               ) : (
@@ -132,9 +132,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
                 onClick={() => refrescarManual()}
                 disabled={actualizando}
                 aria-label="Actualizar datos del panel"
-                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
               >
-                <RotateCcw className={`w-3.5 h-3.5 text-[#B84500] ${actualizando ? 'animate-spin' : ''}`} />
+                <RotateCcw className={`w-3.5 h-3.5 text-accent ${actualizando ? 'animate-spin' : ''}`} />
                 <span>Actualizar</span>
               </button>
             </div>

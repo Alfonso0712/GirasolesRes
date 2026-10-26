@@ -224,8 +224,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
   if (!esAdmin) {
     return (
       <div className="flex-1 flex items-center justify-center p-6 bg-neutral-50/50">
-        <div className="max-w-md w-full bg-white rounded-2xl border border-rose-200 p-8 text-center shadow-lg">
-          <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4">
+        <div className="max-w-md w-full bg-surface rounded-2xl border border-rose-200 p-8 text-center shadow-lg">
+          <div className="w-12 h-12 rounded-full bg-rose-50 text-danger flex items-center justify-center mx-auto mb-4">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <h2 className="text-xl font-bold text-neutral-900 mb-2">Acceso Restringido</h2>
@@ -255,7 +255,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-emerald-800 text-sm shadow-xs animate-in fade-in duration-200"
         >
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
             <span className="font-medium">{avisoExito}</span>
           </div>
           <button
@@ -276,7 +276,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           className="shrink-0 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between gap-3 text-rose-800 text-sm shadow-xs animate-in fade-in duration-200"
         >
           <div className="flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            <AlertCircle className="w-5 h-5 text-danger shrink-0" />
             <span className="font-medium">{avisoError}</span>
           </div>
           <button
@@ -301,7 +301,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               ref={nuevoBtnRef}
               type="button"
               onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84500] text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo producto</span>
@@ -317,7 +317,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           onClick={() => setPestañaActiva('catalogo')}
           className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
             pestañaActiva === 'catalogo'
-              ? 'border-[#D35400] text-[#B84500]'
+              ? 'border-accent text-accent'
               : 'border-transparent text-neutral-500 hover:text-neutral-900'
           }`}
         >
@@ -333,7 +333,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           onClick={() => setPestañaActiva('menus_completos')}
           className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
             pestañaActiva === 'menus_completos'
-              ? 'border-[#D35400] text-[#B84500]'
+              ? 'border-accent text-accent'
               : 'border-transparent text-neutral-500 hover:text-neutral-900'
           }`}
         >
@@ -351,7 +351,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {pestañaActiva === 'catalogo' && (
         <>
           {/* Barra de Filtros y Búsqueda */}
-          <div className="shrink-0 bg-white rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
+          <div className="shrink-0 bg-surface rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
               <Search className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -364,7 +364,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   setPagina(1);
                 }}
                 placeholder="Buscar por nombre de producto o componente..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors"
+                className="w-full pl-10 pr-4 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors"
               />
             </div>
 
@@ -377,7 +377,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   setPagina(1);
                 }}
                 aria-label="Filtrar por tipo"
-                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
+                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
               >
                 <option value="Todos">Todos los tipos</option>
                 <option value="Carta">Productos de carta</option>
@@ -395,7 +395,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 }}
                 disabled={filtroTipo === 'Componente'}
                 aria-label="Filtrar por categoría"
-                className={`w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer ${
+                className={`w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer ${
                   filtroTipo === 'Componente' ? 'opacity-50 cursor-not-allowed bg-neutral-50' : ''
                 }`}
               >
@@ -417,7 +417,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                   setPagina(1);
                 }}
                 aria-label="Filtrar por estado"
-                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-white focus:outline-none focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
+                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
               >
                 <option value="Todos">Todos los estados</option>
                 <option value="Activo">Activo</option>
@@ -460,9 +460,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           return (
                             <tr
                               key={prod.id}
-                              className={`transition-colors border-b border-[#F0EBE6] hover:bg-neutral-50/60 ${
+                              className={`transition-colors border-b border-line-soft hover:bg-neutral-50/60 ${
                                 estaResaltado
-                                  ? 'bg-amber-50/70 ring-2 ring-inset ring-[#D35400]/40'
+                                  ? 'bg-amber-50/70 ring-2 ring-inset ring-accent/40'
                                   : ''
                               }`}
                             >
@@ -472,7 +472,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                                       esComponente
                                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                        : 'bg-amber-50 text-[#B84500] border border-amber-200'
+                                        : 'bg-amber-50 text-accent border border-amber-200'
                                     }`}
                                   >
                                     {esComponente ? (
@@ -481,7 +481,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                                       <UtensilsCrossed className="w-4 h-4" />
                                     )}
                                   </div>
-                                  <span className="font-semibold text-[#2C1A0E] text-sm break-words">
+                                  <span className="font-semibold text-ink text-sm break-words">
                                     {prod.nombre}
                                   </span>
                                 </div>
@@ -519,7 +519,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
                               <td className="py-3 px-4 text-right font-medium">
                                 {prod.precio != null ? (
-                                  <span className="text-[#2C1A0E] font-semibold text-sm tabular-nums whitespace-nowrap">
+                                  <span className="text-ink font-semibold text-sm tabular-nums whitespace-nowrap">
                                     S/ {prod.precio.toFixed(2)}
                                   </span>
                                 ) : (
@@ -599,13 +599,13 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {pestañaActiva === 'menus_completos' && (
         <div className="space-y-4">
           {errorMenus ? (
-            <div className="p-8 text-center bg-white rounded-2xl border border-neutral-200">
+            <div className="p-8 text-center bg-surface rounded-2xl border border-neutral-200">
               <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
               <p className="text-sm text-neutral-700 font-medium">{errorMenus}</p>
               <button
                 type="button"
                 onClick={cargarMenusCompletos}
-                className="mt-3 px-4 py-2 bg-neutral-900 text-white rounded-xl text-xs font-semibold"
+                className="mt-3 px-4 py-2 bg-fill-strong text-white rounded-xl text-xs font-semibold"
               >
                 Reintentar
               </button>
@@ -613,7 +613,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           ) : cargandoMenus ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 xl:gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-64 bg-white rounded-2xl border border-neutral-200 p-6 animate-pulse" />
+                <div key={i} className="h-64 bg-surface rounded-2xl border border-neutral-200 p-6 animate-pulse" />
               ))}
             </div>
           ) : (
@@ -631,7 +631,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 return (
                   <div
                     key={m.id}
-                    className={`bg-white rounded-2xl border p-6 xl:p-7 flex flex-col justify-between shadow-sm transition-all hover:shadow-md ${
+                    className={`bg-surface rounded-2xl border p-6 xl:p-7 flex flex-col justify-between shadow-sm transition-all hover:shadow-md ${
                       m.activo ? 'border-neutral-200/90' : 'border-neutral-200 bg-neutral-50/70 opacity-80'
                     }`}
                   >
@@ -639,11 +639,11 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                       {/* Cabecera de la tarjeta */}
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#FAF7F4] border border-amber-900/10 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-canvas border border-amber-900/10 flex items-center justify-center">
                             {icono}
                           </div>
                           <div>
-                            <h3 className="font-sans font-bold text-base sm:text-lg lg:text-xl text-[#2C1A0E] leading-snug break-words">
+                            <h3 className="font-sans font-bold text-base sm:text-lg lg:text-xl text-ink leading-snug break-words">
                               {m.nombre}
                             </h3>
                             <span className="text-xs text-neutral-500 font-medium">
@@ -669,8 +669,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                           Precio actual
                         </span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xs font-bold text-[#B84500]">S/</span>
-                          <span className="text-2xl font-sans font-bold tabular-nums whitespace-nowrap text-[#B84500]">
+                          <span className="text-xs font-bold text-accent">S/</span>
+                          <span className="text-2xl font-sans font-bold tabular-nums whitespace-nowrap text-accent">
                             {m.precio.toFixed(2)}
                           </span>
                         </div>
@@ -679,7 +679,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                       {/* Incluye adicional */}
                       {m.incluye && (
                         <div className="mt-3 flex items-center gap-1.5 text-xs text-emerald-800 bg-emerald-50/70 border border-emerald-200/60 px-3 py-1.5 rounded-lg font-medium">
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <Sparkles className="w-3.5 h-3.5 text-success shrink-0" />
                           <span>Incluye: {m.incluye}</span>
                         </div>
                       )}
@@ -715,9 +715,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                       <button
                         type="button"
                         onClick={() => handleAbrirModalPrecio(m)}
-                        className="flex-1 py-2 px-3 rounded-xl bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-50 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:border-[#D35400]"
+                        className="flex-1 py-2 px-3 rounded-xl bg-surface border border-neutral-200 text-neutral-800 hover:bg-neutral-50 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:border-accent"
                       >
-                        <DollarSign className="w-3.5 h-3.5 text-[#B84500]" />
+                        <DollarSign className="w-3.5 h-3.5 text-accent" />
                         <span>Modificar precio</span>
                       </button>
 
@@ -726,7 +726,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                         onClick={() => handleAbrirModalEstadoMenu(m)}
                         className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                           m.activo
-                            ? 'bg-amber-50 text-[#B84500] border-amber-200 hover:bg-amber-100'
+                            ? 'bg-amber-50 text-accent border-amber-200 hover:bg-amber-100'
                             : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                         }`}
                       >
@@ -761,17 +761,17 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {/* Modal para Modificar Precio de Menú Completo (CUS04.5 / RV-160) */}
       {modalPrecioOpen && menuParaPrecio && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 text-[#B84500] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 text-accent flex items-center justify-center">
                   <DollarSign className="w-4 h-4" />
                 </div>
-                <h3 className="font-sans font-bold text-base text-[#482813]">
+                <h3 className="font-sans font-bold text-base text-ink">
                   Modificar Precio
                 </h3>
               </div>
@@ -796,9 +796,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               <div>
                 <label
                   htmlFor="nuevo-precio-menu"
-                  className="block text-xs font-semibold text-[#2C1A0E] uppercase tracking-wider mb-1.5"
+                  className="block text-xs font-semibold text-ink uppercase tracking-wider mb-1.5"
                 >
-                  Nuevo Precio (S/) <span className="text-[#B84500]">*</span>
+                  Nuevo Precio (S/) <span className="text-accent">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm">
@@ -815,12 +815,12 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                       if (errorPrecio) setErrorPrecio(null);
                     }}
                     placeholder="0.00"
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm font-sans font-medium focus:border-[#D35400] focus:ring-2 focus:ring-amber-200 outline-none"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm font-sans font-medium focus:border-accent focus:ring-2 focus:ring-amber-200 outline-none"
                     disabled={guardandoPrecio}
                   />
                 </div>
                 {errorPrecio && (
-                  <p className="mt-1 text-xs text-rose-600 font-medium">{errorPrecio}</p>
+                  <p className="mt-1 text-xs text-danger font-medium">{errorPrecio}</p>
                 )}
                 <p className="mt-1 text-xs text-neutral-500">
                   Mayor a S/ 0.00 y no superior a S/ 999.99.
@@ -839,7 +839,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 <button
                   type="submit"
                   disabled={guardandoPrecio}
-                  className="px-4 py-2 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+                  className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
                 >
                   {guardandoPrecio ? (
                     <>
@@ -859,20 +859,20 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       {/* Modal para Confirmar Cambio de Estado de Menú Completo (MSG-218) */}
       {modalEstadoMenuOpen && menuParaEstado && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 text-center">
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200 text-center">
             <div
               className={`w-12 h-12 rounded-full mx-auto flex items-center justify-center mb-4 ${
-                menuParaEstado.activo ? 'bg-amber-50 text-[#B84500]' : 'bg-emerald-50 text-emerald-700'
+                menuParaEstado.activo ? 'bg-amber-50 text-accent' : 'bg-emerald-50 text-emerald-700'
               }`}
             >
               {menuParaEstado.activo ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
             </div>
 
-            <h3 className="font-sans font-bold text-lg text-[#2C1A0E] mb-2">
+            <h3 className="font-sans font-bold text-lg text-ink mb-2">
               {menuParaEstado.activo ? '¿Desactivar menú completo?' : '¿Activar menú completo?'}
             </h3>
 
@@ -896,7 +896,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                 onClick={handleConfirmarEstadoMenu}
                 disabled={guardandoEstadoMenu}
                 className={`px-4 py-2.5 rounded-xl text-white text-xs font-semibold shadow-sm transition-all cursor-pointer ${
-                  menuParaEstado.activo ? 'bg-[#C74E00] hover:bg-[#B84600]' : 'bg-emerald-600 hover:bg-emerald-700'
+                  menuParaEstado.activo ? 'bg-primary hover:bg-primary-hover' : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               >
                 {guardandoEstadoMenu

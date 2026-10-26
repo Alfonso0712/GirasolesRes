@@ -235,18 +235,18 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200 relative max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden"
+        className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200 relative max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden"
       >
         {/* Header (shrink-0) */}
         <div className="shrink-0 flex items-center justify-between pb-4 border-b border-neutral-100 mb-4">
           <div>
-            <h2 id="modal-title" className="text-xl font-sans font-bold text-[#2C1A0E]">
+            <h2 id="modal-title" className="text-xl font-sans font-bold text-ink">
               {isEdit ? `Editar usuario - ${usuarioAEditar?.nombre}` : 'Nuevo usuario'}
             </h2>
             <p className="text-xs text-neutral-500 mt-0.5">
@@ -268,7 +268,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
         {/* Global Error Banner (shrink-0) */}
         {errorServidor && (
           <div className="shrink-0 mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-rose-800 text-xs">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-danger shrink-0" />
             <span>{errorServidor}</span>
           </div>
         )}
@@ -280,7 +280,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             {/* Nombre Completo */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-sm font-medium text-[#2C1A0E]">
+                <label className="form-label-standard !mb-0">
                   Nombre completo <span className="text-rose-500">*</span>
                 </label>
                 <span className="text-xs text-neutral-500 tabular-nums">
@@ -301,19 +301,19 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                 errores.nombre
                   ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                  : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                  : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
               }`}
             />
             {errores.nombre && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.nombre}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.nombre}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
             {/* Usuario */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-sm font-medium text-[#2C1A0E]">
+                <label className="form-label-standard !mb-0">
                   Nombre de usuario <span className="text-rose-500">*</span>
                 </label>
                 <span className="text-xs text-neutral-500 tabular-nums">
@@ -334,17 +334,17 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                   errores.usuario
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
               />
               {errores.usuario && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.usuario}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.usuario}</p>
               )}
             </div>
 
             {/* Rol */}
             <div>
-              <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
+              <label className="form-label-standard">
                 Rol en el restaurante <span className="text-rose-500">*</span>
               </label>
               <select
@@ -354,10 +354,10 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   setRol(e.target.value as RolUsuario);
                   if (errores.rol) setErrores({ ...errores, rol: '' });
                 }}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors bg-white ${
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors bg-surface ${
                   errores.rol
                     ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                 }`}
               >
                 <option value="Administrador">Administrador</option>
@@ -366,14 +366,14 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 <option value="Cocinero">Cocinero</option>
               </select>
               {errores.rol && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.rol}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.rol}</p>
               )}
             </div>
           </div>
 
           {/* Correo electrónico */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1">
+            <label className="form-label-standard">
               Correo electrónico{' '}
               {rol === 'Administrador' ? (
                 <span className="text-rose-500">* (obligatorio para Administrador)</span>
@@ -395,25 +395,27 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
                 errores.correo
                   ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                  : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                  : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
               }`}
             />
             {errores.correo && (
-              <p className="text-xs text-rose-600 mt-1 font-medium">{errores.correo}</p>
+              <p className="text-xs text-danger mt-1 font-medium">{errores.correo}</p>
             )}
           </div>
 
           {/* Contraseña y Confirmar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start pt-1">
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                {isEdit ? 'Nueva contraseña' : 'Contraseña'}{' '}
-                {isEdit ? (
-                  <span className="text-neutral-500 font-normal">(dejar vacía para no cambiar)</span>
-                ) : (
-                  <span className="text-rose-500">*</span>
-                )}
-              </label>
+              <div className="flex items-center justify-between mb-1.5 min-h-[20px]">
+                <label className="form-label-standard !mb-0">
+                  {isEdit ? 'Nueva contraseña' : 'Contraseña'}{' '}
+                  {isEdit ? (
+                    <span className="text-neutral-500 font-normal text-xs">(dejar vacía para no cambiar)</span>
+                  ) : (
+                    <span className="text-rose-500">*</span>
+                  )}
+                </label>
+              </div>
               <div className="relative">
                 <input
                   ref={contrasenaInputRef}
@@ -425,30 +427,32 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                     if (errores.contrasena) setErrores({ ...errores, contrasena: '' });
                   }}
                   placeholder="Mínimo 8 caracteres"
-                  className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
+                  className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl border text-sm text-ink focus:outline-none transition-colors ${
                     errores.contrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                      : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarContrasena(!mostrarContrasena)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   {mostrarContrasena ? 'Ocultar' : 'Mostrar'}
                 </button>
               </div>
               {errores.contrasena && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.contrasena}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.contrasena}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#2C1A0E] mb-1.5">
-                Confirmar contraseña{' '}
-                {(!isEdit || contrasena) && <span className="text-rose-500">*</span>}
-              </label>
+              <div className="flex items-center justify-between mb-1.5 min-h-[20px]">
+                <label className="form-label-standard !mb-0">
+                  Confirmar contraseña{' '}
+                  {(!isEdit || contrasena) && <span className="text-rose-500">*</span>}
+                </label>
+              </div>
               <div className="relative">
                 <input
                   ref={confirmarContrasenaInputRef}
@@ -461,30 +465,30 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   }}
                   placeholder="Repita la contraseña"
                   disabled={isEdit && !contrasena}
-                  className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
+                  className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl border text-sm text-ink focus:outline-none transition-colors ${
                     errores.confirmarContrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                      : 'border-neutral-300 focus:border-[#C74E00] focus:ring-2 focus:ring-amber-200'
+                      : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
                   } ${isEdit && !contrasena ? 'bg-neutral-100 cursor-not-allowed' : ''}`}
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
                   disabled={isEdit && !contrasena}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#B84500] hover:text-[#B84600] px-2 py-1 rounded transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
                 </button>
               </div>
               {errores.confirmarContrasena && (
-                <p className="text-xs text-rose-600 mt-1 font-medium">{errores.confirmarContrasena}</p>
+                <p className="text-xs text-danger mt-1 font-medium">{errores.confirmarContrasena}</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Action buttons (Sticky at bottom of modal) */}
-        <div className="shrink-0 flex items-center justify-end gap-3 pt-4 border-t border-neutral-100 mt-4 bg-white">
+        <div className="shrink-0 flex items-center justify-end gap-3 pt-4 border-t border-neutral-100 mt-4 bg-surface">
           <button
             type="button"
             onClick={onClose}
@@ -496,7 +500,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           <button
             type="submit"
             disabled={guardando}
-            className={`px-6 py-2.5 rounded-xl bg-[#C74E00] hover:bg-[#B84600] text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
               guardando ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >
