@@ -35,7 +35,7 @@ public class MesasController : ControllerBase
         var rol = ObtenerRolUsuario();
         var resultado = await _mesaService.ListarMesasAsync(estado, incluirInactivas, rol, cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -56,7 +56,7 @@ public class MesasController : ControllerBase
     public async Task<IActionResult> ObtenerResumen(CancellationToken cancellationToken)
     {
         var resultado = await _mesaService.ObtenerResumenAsync(cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -96,7 +96,7 @@ public class MesasController : ControllerBase
 
         var resultado = await _mesaService.RegistrarMesaAsync(request, adminUser, ip, cancellationToken);
 
-        if (resultado.Success && resultado.Data is not null)
+        if (resultado.IsSuccess && resultado.Data is not null)
         {
             return StatusCode(StatusCodes.Status201Created, new
             {
@@ -164,7 +164,7 @@ public class MesasController : ControllerBase
 
         var resultado = await _mesaService.ActualizarMesaAsync(id, request, adminUser, ip, cancellationToken);
 
-        if (resultado.Success && resultado.Data is not null)
+        if (resultado.IsSuccess && resultado.Data is not null)
         {
             return Ok(new
             {
@@ -226,7 +226,7 @@ public class MesasController : ControllerBase
 
         var resultado = await _mesaService.CambiarEstadoAsync(id, request.Activa, adminUser, ip, cancellationToken);
 
-        if (resultado.Success && resultado.Data is not null)
+        if (resultado.IsSuccess && resultado.Data is not null)
         {
             return Ok(new
             {

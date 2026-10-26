@@ -42,7 +42,7 @@ public class MesaServiceUnitTests
         var resultado = await _service.RegistrarMesaAsync(request, "admin", "127.0.0.1");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_84, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal("Mesa 5", resultado.Data!.Nombre); // Limpieza de espacios redundantes RV-53
@@ -70,7 +70,7 @@ public class MesaServiceUnitTests
         var resultado = await _service.RegistrarMesaAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_83, resultado.Message);
         _mesaRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Mesa>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -90,7 +90,7 @@ public class MesaServiceUnitTests
         var resultado = await _service.CambiarEstadoAsync(mesaId, false, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Contains("tiene un pedido pendiente de cobro", resultado.Message);
         Assert.True(mesa.Mes_Activa); // Estado no modificado
         _mesaRepoMock.Verify(r => r.ActualizarAsync(It.IsAny<Mesa>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -110,7 +110,7 @@ public class MesaServiceUnitTests
         var resultado = await _service.CambiarEstadoAsync(mesaId, false, "admin");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_89, resultado.Message);
         Assert.False(mesa.Mes_Activa);
 
@@ -137,7 +137,7 @@ public class MesaServiceUnitTests
         var resultado = await _service.ListarMesasAsync(null, true, "Administrador");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.NotNull(resultado.Data);
         Assert.Equal(3, resultado.Data!.Count);
         // Verificación de orden natural: Mesa 1, Mesa 2, Mesa 10

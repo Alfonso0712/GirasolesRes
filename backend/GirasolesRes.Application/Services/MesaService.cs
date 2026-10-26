@@ -21,7 +21,7 @@ public class MesaService : IMesaService
         _auditoriaMesaRepository = auditoriaMesaRepository;
     }
 
-    public async Task<ApiResponse<List<MesaDto>>> ListarMesasAsync(
+    public async Task<Result<List<MesaDto>>> ListarMesasAsync(
         string? estado,
         bool incluirInactivas,
         string rolUsuario,
@@ -54,25 +54,25 @@ public class MesaService : IMesaService
                 ))
                 .ToList();
 
-            return ApiResponse<List<MesaDto>>.Exitoso(mesasOrdenadas);
+            return Result<List<MesaDto>>.Exitoso(mesasOrdenadas);
         }
         catch (Exception ex)
         {
-            return ApiResponse<List<MesaDto>>.Fallido(MensajesCatalogo.MSG_94, detalle: ex.Message);
+            return Result<List<MesaDto>>.Fallido(MensajesCatalogo.MSG_94, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MesaDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<MesaDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
             var mesa = await _mesaRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (mesa is null)
             {
-                return ApiResponse<MesaDto>.Fallido("La mesa no existe.");
+                return Result<MesaDto>.Fallido("La mesa no existe.");
             }
 
-            return ApiResponse<MesaDto>.Exitoso(new MesaDto(
+            return Result<MesaDto>.Exitoso(new MesaDto(
                 mesa.Id_Mesa,
                 mesa.Mes_Nombre,
                 mesa.Mes_Ocupacion.ToString(),
@@ -81,11 +81,11 @@ public class MesaService : IMesaService
         }
         catch (Exception ex)
         {
-            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MesaDto>> RegistrarMesaAsync(
+    public async Task<Result<MesaDto>> RegistrarMesaAsync(
         CrearMesaRequest request,
         string adminUsername,
         string? ipAddress = null,
@@ -99,13 +99,13 @@ public class MesaService : IMesaService
             // RV-51: Validación obligatoria y longitud
             if (string.IsNullOrWhiteSpace(nombreLimpio))
             {
-                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_81);
+                return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_81);
             }
 
             if (nombreLimpio.Length < 1 || nombreLimpio.Length > 20 ||
                 !Regex.IsMatch(nombreLimpio, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.]+$"))
             {
-                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_82);
+                return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_82);
             }
 
             // RV-52 / RN-41: Nombre único sin distinguir mayúsculas, tildes ni espacios
@@ -113,7 +113,7 @@ public class MesaService : IMesaService
             var existe = await _mesaRepository.ExisteNombreNormalizadoAsync(normalizado, null, cancellationToken);
             if (existe)
             {
-                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
+                return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
             }
 
             // RN-42: Toda mesa nueva se registra Activa y Libre
@@ -132,15 +132,15 @@ public class MesaService : IMesaService
             await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
             var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
-            return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_84);
+            return Result<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_84);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MesaDto>> ActualizarMesaAsync(
+    public async Task<Result<MesaDto>> ActualizarMesaAsync(
         Guid id,
         ActualizarMesaRequest request,
         string adminUsername,
@@ -152,7 +152,7 @@ public class MesaService : IMesaService
             var mesa = await _mesaRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (mesa is null)
             {
-                return ApiResponse<MesaDto>.Fallido("La mesa no existe.");
+                return Result<MesaDto>.Fallido("La mesa no existe.");
             }
 
             // RV-53: Limpieza de espacios redundantes
@@ -161,13 +161,13 @@ public class MesaService : IMesaService
             // RV-51: Validación de obligatoriedad y caracteres
             if (string.IsNullOrWhiteSpace(nombreLimpio))
             {
-                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_81);
+                return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_81);
             }
 
             if (nombreLimpio.Length < 1 || nombreLimpio.Length > 20 ||
                 !Regex.IsMatch(nombreLimpio, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-.]+$"))
             {
-                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_82);
+                return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_82);
             }
 
             // RV-52 / RN-41: Nombre único sin distinguir mayúsculas, tildes ni espacios (excluyendo id actual)
@@ -175,7 +175,7 @@ public class MesaService : IMesaService
             var existe = await _mesaRepository.ExisteNombreNormalizadoAsync(normalizado, id, cancellationToken);
             if (existe)
             {
-                return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
+                return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_83);
             }
 
             var nombreAnterior = mesa.Mes_Nombre;
@@ -194,15 +194,15 @@ public class MesaService : IMesaService
             await _mesaRepository.GuardarCambiosAsync(cancellationToken);
 
             var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
-            return ApiResponse<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_85);
+            return Result<MesaDto>.Exitoso(dto, MensajesCatalogo.MSG_85);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MesaDto>> CambiarEstadoAsync(
+    public async Task<Result<MesaDto>> CambiarEstadoAsync(
         Guid id,
         bool activa,
         string adminUsername,
@@ -214,13 +214,13 @@ public class MesaService : IMesaService
             var mesa = await _mesaRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (mesa is null)
             {
-                return ApiResponse<MesaDto>.Fallido("La mesa no existe.");
+                return Result<MesaDto>.Fallido("La mesa no existe.");
             }
 
             // RV-56 / RN-44: Una mesa ocupada no se puede desactivar
             if (!activa && mesa.Mes_Ocupacion == EstadoOcupacionMesa.Ocupada)
             {
-                return ApiResponse<MesaDto>.Fallido(string.Format(MensajesCatalogo.MSG_88, mesa.Mes_Nombre));
+                return Result<MesaDto>.Fallido(string.Format(MensajesCatalogo.MSG_88, mesa.Mes_Nombre));
             }
 
             mesa.CambiarActiva(activa);
@@ -240,15 +240,15 @@ public class MesaService : IMesaService
 
             var mensajeExito = activa ? MensajesCatalogo.MSG_90 : MensajesCatalogo.MSG_89;
             var dto = new MesaDto(mesa.Id_Mesa, mesa.Mes_Nombre, mesa.Mes_Ocupacion.ToString(), mesa.Mes_Activa);
-            return ApiResponse<MesaDto>.Exitoso(dto, mensajeExito);
+            return Result<MesaDto>.Exitoso(dto, mensajeExito);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MesaDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<ResumenMesasDto>> ObtenerResumenAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<ResumenMesasDto>> ObtenerResumenAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -257,7 +257,7 @@ public class MesaService : IMesaService
             var ocupadas = todas.Count(m => m.Mes_Activa && m.Mes_Ocupacion == EstadoOcupacionMesa.Ocupada);
             var inactivas = todas.Count(m => !m.Mes_Activa);
 
-            return ApiResponse<ResumenMesasDto>.Exitoso(new ResumenMesasDto(
+            return Result<ResumenMesasDto>.Exitoso(new ResumenMesasDto(
                 todas.Count,
                 libres,
                 ocupadas,
@@ -266,7 +266,7 @@ public class MesaService : IMesaService
         }
         catch (Exception ex)
         {
-            return ApiResponse<ResumenMesasDto>.Fallido(MensajesCatalogo.MSG_94, detalle: ex.Message);
+            return Result<ResumenMesasDto>.Fallido(MensajesCatalogo.MSG_94, detalle: ex.Message);
         }
     }
 }

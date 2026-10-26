@@ -5,33 +5,33 @@ namespace GirasolesRes.Application.Interfaces.Services;
 
 public interface IMesaService
 {
-    Task<ApiResponse<List<MesaDto>>> ListarMesasAsync(
+    Task<Result<List<MesaDto>>> ListarMesasAsync(
         string? estado,
         bool incluirInactivas,
         string rolUsuario,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<MesaDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Result<MesaDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<MesaDto>> RegistrarMesaAsync(
+    Task<Result<MesaDto>> RegistrarMesaAsync(
         CrearMesaRequest request,
         string adminUsername,
         string? ipAddress = null,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<MesaDto>> ActualizarMesaAsync(
+    Task<Result<MesaDto>> ActualizarMesaAsync(
         Guid id,
         ActualizarMesaRequest request,
         string adminUsername,
         string? ipAddress = null,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<MesaDto>> CambiarEstadoAsync(
+    Task<Result<MesaDto>> CambiarEstadoAsync(
         Guid id,
         bool activa,
         string adminUsername,
         string? ipAddress = null,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<ResumenMesasDto>> ObtenerResumenAsync(CancellationToken cancellationToken = default);
+    Task<Result<ResumenMesasDto>> ObtenerResumenAsync(CancellationToken cancellationToken = default);
 }
