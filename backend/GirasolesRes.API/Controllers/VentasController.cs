@@ -10,7 +10,7 @@ namespace GirasolesRes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Cajero,Administrador")]
 public class VentasController : ControllerBase
 {
     private readonly IVentaService _ventaService;
@@ -27,33 +27,9 @@ public class VentasController : ControllerBase
         _logger = logger;
     }
 
-    private bool ValidarRolCajeroOAdmin(out string rol, out IActionResult? forbiddenResult)
+    private string ObtenerNombreAdmin()
     {
-        rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            forbiddenResult = StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-            return false;
-        }
-
-        forbiddenResult = null;
-        return true;
-    }
-
-    private bool ValidarSoloAdmin(out string nombreUsuario, out IActionResult? forbiddenResult)
-    {
-        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
-        nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("sub") ?? "Admin";
-
-        if (!string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            forbiddenResult = StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-            return false;
-        }
-
-        forbiddenResult = null;
-        return true;
+        return User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("sub") ?? "Admin";
     }
 
     [HttpGet]
@@ -65,10 +41,7 @@ public class VentasController : ControllerBase
         [FromQuery] int tamano = 20,
         CancellationToken ct = default)
     {
-        if (!ValidarRolCajeroOAdmin(out var rol, out var forbidden))
-        {
-            return forbidden!;
-        }
+        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
 
         try
         {
@@ -93,11 +66,6 @@ public class VentasController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ObtenerDetalle(Guid id, CancellationToken ct)
     {
-        if (!ValidarRolCajeroOAdmin(out _, out var forbidden))
-        {
-            return forbidden!;
-        }
-
         try
         {
             var detalle = await _ventaService.ObtenerDetalleVentaAsync(id, ct);
@@ -115,16 +83,13 @@ public class VentasController : ControllerBase
     }
 
     [HttpPost("{id:guid}/anular")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> AnularVenta(
         Guid id,
         [FromBody] AnularVentaRequest request,
         CancellationToken ct)
     {
-        if (!ValidarSoloAdmin(out var adminNombre, out var forbidden))
-        {
-            return forbidden!;
-        }
-
+        var adminNombre = ObtenerNombreAdmin();
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
         try
@@ -161,11 +126,6 @@ public class VentasController : ControllerBase
         [FromQuery] bool copia = true,
         CancellationToken ct = default)
     {
-        if (!ValidarRolCajeroOAdmin(out _, out var forbidden))
-        {
-            return forbidden!;
-        }
-
         try
         {
             var bytes = await _cobroService.GenerarComprobantePdfAsync(id, copia, ct);

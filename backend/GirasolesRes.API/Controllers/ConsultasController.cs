@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using GirasolesRes.Application.Common;
-
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +7,7 @@ namespace GirasolesRes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Cajero")]
 public class ConsultasController : ControllerBase
 {
     private readonly IConsultaDocumentoService _consultaService;
@@ -26,11 +24,6 @@ public class ConsultasController : ControllerBase
     [HttpGet("dni/{dni}")]
     public async Task<IActionResult> ConsultarDni([FromRoute] string dni, CancellationToken ct)
     {
-        var rol = User.FindFirstValue(System.Security.Claims.ClaimTypes.Role);
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
         var dniTrim = dni?.Trim() ?? string.Empty;
         if (dniTrim.Length != 8 || !dniTrim.All(char.IsDigit))
         {
@@ -57,11 +50,6 @@ public class ConsultasController : ControllerBase
     [HttpGet("ruc/{ruc}")]
     public async Task<IActionResult> ConsultarRuc([FromRoute] string ruc, CancellationToken ct)
     {
-        var rol = User.FindFirstValue(System.Security.Claims.ClaimTypes.Role);
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
         var rucTrim = ruc?.Trim() ?? string.Empty;
         if (rucTrim.Length != 11 || !rucTrim.All(char.IsDigit))
         {

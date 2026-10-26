@@ -9,7 +9,7 @@ namespace GirasolesRes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Cocinero")]
 public class ComandasController : ControllerBase
 {
     private readonly IComandaService _comandaService;
@@ -29,12 +29,6 @@ public class ComandasController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> ListarComandas([FromQuery] string? estado)
     {
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
-
         try
         {
             var res = await _comandaService.ListarComandasAsync(estado);
@@ -58,12 +52,6 @@ public class ComandasController : ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
-        }
-
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
 
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Cocinero";
@@ -98,12 +86,6 @@ public class ComandasController : ControllerBase
     [HttpPost("{id:guid}/deshacer")]
     public async Task<IActionResult> DeshacerEstado([FromRoute] Guid id)
     {
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cocinero", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
-
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Cocinero";
 
         try

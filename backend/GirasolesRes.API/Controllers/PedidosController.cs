@@ -25,9 +25,10 @@ public class PedidosController : ControllerBase
     }
 
     /// <summary>
-    /// CUS07.1: Registra un pedido de mesa (Vistas 7.1 y 7.2). Rol requerido: Mozo.
+    /// CUS07.1: Registra un pedido de mesa (Vistas 7.1 y 7.2). Roles requeridos: Mozo, Administrador.
     /// </summary>
     [HttpPost("mesa")]
+    [Authorize(Roles = "Mozo,Administrador")]
     public async Task<IActionResult> RegistrarPedidoMesa(
         [FromBody] RegistrarPedidoMesaRequest request,
         CancellationToken cancellationToken)
@@ -35,13 +36,6 @@ public class PedidosController : ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
-        }
-
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
 
         var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -92,6 +86,7 @@ public class PedidosController : ControllerBase
     /// CUS08: Registra un pedido para llevar (Vistas 8.1 y 8.2). Rol requerido: Cajero.
     /// </summary>
     [HttpPost("llevar")]
+    [Authorize(Roles = "Cajero")]
     public async Task<IActionResult> RegistrarPedidoLlevar(
         [FromBody] RegistrarPedidoLlevarRequest request,
         CancellationToken cancellationToken)
@@ -99,12 +94,6 @@ public class PedidosController : ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
-        }
-
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
 
         var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -182,16 +171,9 @@ public class PedidosController : ControllerBase
     /// CUS09.1: Consulta el detalle completo de un pedido por ID (Vista 9.2). Roles: Administrador, Cajero, Mozo.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Mozo,Cajero,Administrador")]
     public async Task<IActionResult> ObtenerPorId(Guid id, CancellationToken cancellationToken)
     {
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
-
         var pedido = await _pedidoService.ObtenerDetalleCompletoAsync(id, cancellationToken);
         if (pedido == null)
         {
@@ -205,6 +187,7 @@ public class PedidosController : ControllerBase
     /// CUS09.2: Modificar pedido (Vista 9.3). Roles: Mozo y Cajero (solo creador, todas comandas pendientes).
     /// </summary>
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Mozo,Cajero")]
     public async Task<IActionResult> ModificarPedido(
         Guid id,
         [FromBody] ModificarPedidoRequest request,
@@ -270,6 +253,7 @@ public class PedidosController : ControllerBase
     /// CUS09.2: Anular pedido (Vista 9.4). Roles: Mozo y Cajero (solo creador, todas comandas pendientes).
     /// </summary>
     [HttpPost("{id:guid}/anular")]
+    [Authorize(Roles = "Mozo,Cajero,Administrador")]
     public async Task<IActionResult> AnularPedido(
         Guid id,
         [FromBody] AnularPedidoRequest request,
@@ -332,9 +316,10 @@ public class PedidosController : ControllerBase
     }
 
     /// <summary>
-    /// CUS07.2: Agrega productos a un pedido existente (Vista 7.3). Rol requerido: Mozo.
+    /// CUS07.2: Agrega productos a un pedido existente (Vista 7.3). Roles requeridos: Mozo, Administrador.
     /// </summary>
     [HttpPost("{id:guid}/lineas")]
+    [Authorize(Roles = "Mozo,Administrador")]
     public async Task<IActionResult> AgregarLineas(
         Guid id,
         [FromBody] AgregarLineasPedidoRequest request,
@@ -343,13 +328,6 @@ public class PedidosController : ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
-        }
-
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
         }
 
         var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);

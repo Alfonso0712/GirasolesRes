@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,7 @@ namespace GirasolesRes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Mozo,Cajero,Administrador")]
 public class AvisosController : ControllerBase
 {
     private readonly IPedidoService _pedidoService;
@@ -23,19 +22,12 @@ public class AvisosController : ControllerBase
     }
 
     /// <summary>
-    /// CUS09.3: Consulta los avisos de comanda lista pendientes (Vista 9.5). Roles: Mozo y Cajero.
+    /// CUS09.3: Consulta los avisos de comanda lista pendientes (Vista 9.5). Roles: Mozo, Cajero, Administrador.
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> ObtenerAvisosPendientes(CancellationToken cancellationToken)
     {
         var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
-        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
-
         var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
         {
@@ -60,14 +52,6 @@ public class AvisosController : ControllerBase
     [HttpPost("{id:guid}/visto")]
     public async Task<IActionResult> MarcarVisto(Guid id, CancellationToken cancellationToken)
     {
-        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
-        if (!string.Equals(rol, "Mozo", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-        }
-
         var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
         {

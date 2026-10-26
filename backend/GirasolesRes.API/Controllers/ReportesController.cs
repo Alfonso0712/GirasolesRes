@@ -8,7 +8,7 @@ namespace GirasolesRes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Administrador")]
 public class ReportesController : ControllerBase
 {
     private readonly IReporteService _reporteService;
@@ -22,27 +22,12 @@ public class ReportesController : ControllerBase
         _logger = logger;
     }
 
-    private bool ValidarSoloAdmin(out string nombreUsuario, out IActionResult? forbiddenResult)
+    private string ObtenerNombreUsuario()
     {
-        var rol = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
-        nombreUsuario = User.FindFirstValue("nombreCompleto") 
+        return User.FindFirstValue("nombreCompleto") 
             ?? User.FindFirstValue(ClaimTypes.Name) 
             ?? User.FindFirstValue("usuario") 
             ?? "Administrador";
-
-        if (!string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            forbiddenResult = StatusCode(StatusCodes.Status403Forbidden, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_39,
-                error = MensajesCatalogo.MSG_39
-            });
-            return false;
-        }
-
-        forbiddenResult = null;
-        return true;
     }
 
     /// <summary>
@@ -54,11 +39,6 @@ public class ReportesController : ControllerBase
         [FromQuery] string? hasta,
         CancellationToken ct)
     {
-        if (!ValidarSoloAdmin(out _, out var forbiddenResult))
-        {
-            return forbiddenResult!;
-        }
-
         try
         {
             var resultado = await _reporteService.ConsultarReporteVentasAsync(desde, hasta, ct);
@@ -89,11 +69,6 @@ public class ReportesController : ControllerBase
         [FromQuery] Guid? productoId,
         CancellationToken ct)
     {
-        if (!ValidarSoloAdmin(out _, out var forbiddenResult))
-        {
-            return forbiddenResult!;
-        }
-
         try
         {
             var resultado = await _reporteService.ConsultarReportePlatosAsync(desde, hasta, productoId, ct);
@@ -128,11 +103,7 @@ public class ReportesController : ControllerBase
         [FromQuery] string? formato,
         CancellationToken ct)
     {
-        if (!ValidarSoloAdmin(out var nombreUsuario, out var forbiddenResult))
-        {
-            return forbiddenResult!;
-        }
-
+        var nombreUsuario = ObtenerNombreUsuario();
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
         var fmt = formato?.Trim().ToLowerInvariant() ?? "csv";
 
@@ -177,11 +148,7 @@ public class ReportesController : ControllerBase
         [FromQuery] string? formato,
         CancellationToken ct)
     {
-        if (!ValidarSoloAdmin(out var nombreUsuario, out var forbiddenResult))
-        {
-            return forbiddenResult!;
-        }
-
+        var nombreUsuario = ObtenerNombreUsuario();
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
         var fmt = formato?.Trim().ToLowerInvariant() ?? "csv";
 

@@ -586,7 +586,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         var request = new RegistrarPedidoLlevarRequest { SolicitudId = "sol-llevar-admin", Lineas = new List<LineaPedidoRequest>() };
 
-        var result = await controller.RegistrarPedidoLlevar(request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.RegistrarPedidoLlevar), () => controller.RegistrarPedidoLlevar(request, CancellationToken.None));
 
 
 
@@ -642,7 +642,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         var request = new RegistrarPedidoLlevarRequest { SolicitudId = "sol-llevar-mozo", Lineas = new List<LineaPedidoRequest>() };
 
-        var result = await controller.RegistrarPedidoLlevar(request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.RegistrarPedidoLlevar), () => controller.RegistrarPedidoLlevar(request, CancellationToken.None));
 
 
 
@@ -698,7 +698,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         var request = new CobroRequest { SolicitudId = "sol-cobro-admin", PedidoId = Guid.NewGuid(), Metodo = "Efectivo", MontoRecibido = 50.00m, TotalMostrado = 40.00m };
 
-        var result = await controller.ProcesarCobro(request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.ProcesarCobro), () => controller.ProcesarCobro(request, CancellationToken.None));
 
 
 
@@ -1115,7 +1115,7 @@ public class CorreccionesTrazabilidadUnitTests
 
 
 
-        var result = await controller.RegistrarPedidoMesa(request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.RegistrarPedidoMesa), () => controller.RegistrarPedidoMesa(request, CancellationToken.None));
 
 
 
@@ -1187,7 +1187,7 @@ public class CorreccionesTrazabilidadUnitTests
 
 
 
-        var result = await controller.AgregarLineas(Guid.NewGuid(), request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.AgregarLineas), () => controller.AgregarLineas(Guid.NewGuid(), request, CancellationToken.None));
 
 
 
@@ -1259,7 +1259,7 @@ public class CorreccionesTrazabilidadUnitTests
 
 
 
-        var result = await controller.RegistrarPedidoLlevar(request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.RegistrarPedidoLlevar), () => controller.RegistrarPedidoLlevar(request, CancellationToken.None));
 
 
 
@@ -1347,7 +1347,7 @@ public class CorreccionesTrazabilidadUnitTests
 
 
 
-        var result = await controller.ProcesarCobro(request, CancellationToken.None);
+        var result = await TestAuthorizationHelper.InvocarConAutorizacionAsync(controller, nameof(controller.ProcesarCobro), () => controller.ProcesarCobro(request, CancellationToken.None));
 
 
 

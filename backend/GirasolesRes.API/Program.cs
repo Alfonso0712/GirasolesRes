@@ -114,7 +114,7 @@ builder.Services.AddAuthentication(options =>
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync("{\"success\":false,\"message\":\"No tiene permiso para usar esta función.\"}");
+            await context.Response.WriteAsync("{\"success\":false,\"message\":\"No tiene permiso para usar esta función.\",\"error\":\"No tiene permiso para usar esta función.\"}");
         }
     };
 });

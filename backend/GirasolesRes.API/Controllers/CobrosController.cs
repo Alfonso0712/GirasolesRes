@@ -10,7 +10,7 @@ namespace GirasolesRes.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Cajero")]
 public class CobrosController : ControllerBase
 {
     private readonly ICobroService _cobroService;
@@ -22,41 +22,9 @@ public class CobrosController : ControllerBase
         _logger = logger;
     }
 
-    private bool ValidarRolCajero(out IActionResult? forbiddenResult)
-    {
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase))
-        {
-            forbiddenResult = StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-            return false;
-        }
-
-        forbiddenResult = null;
-        return true;
-    }
-
-    private bool ValidarRolCajeroOAdmin(out IActionResult? forbiddenResult)
-    {
-        var rol = User.FindFirstValue(ClaimTypes.Role);
-        if (!string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase))
-        {
-            forbiddenResult = StatusCode(StatusCodes.Status403Forbidden, new { message = MensajesCatalogo.MSG_39 });
-            return false;
-        }
-
-        forbiddenResult = null;
-        return true;
-    }
-
     [HttpGet("pendientes")]
     public async Task<IActionResult> ObtenerPendientesCobro(CancellationToken ct)
     {
-        if (!ValidarRolCajero(out var forbidden))
-        {
-            return forbidden!;
-        }
-
         try
         {
             var pedidos = await _cobroService.ObtenerPedidosPendientesCobroAsync(ct);
@@ -82,11 +50,6 @@ public class CobrosController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> ProcesarCobro([FromBody] CobroRequest request, CancellationToken ct)
     {
-        if (!ValidarRolCajero(out var forbidden))
-        {
-            return forbidden!;
-        }
-
         if (!ModelState.IsValid)
         {
             return BadRequest(new { message = MensajesCatalogo.MSG_38, errors = ModelState });
@@ -134,11 +97,6 @@ public class CobrosController : ControllerBase
     [HttpGet("comprobantes/{ventaId:guid}")]
     public async Task<IActionResult> ObtenerComprobante([FromRoute] Guid ventaId, [FromQuery] bool copia = false, CancellationToken ct = default)
     {
-        if (!ValidarRolCajero(out var forbidden))
-        {
-            return forbidden!;
-        }
-
         try
         {
             var comprobante = await _cobroService.ObtenerComprobanteAsync(ventaId, copia, ct);
@@ -158,11 +116,6 @@ public class CobrosController : ControllerBase
     [HttpGet("comprobantes/{ventaId:guid}/pdf")]
     public async Task<IActionResult> DescargarComprobantePdf([FromRoute] Guid ventaId, [FromQuery] bool copia = false, CancellationToken ct = default)
     {
-        if (!ValidarRolCajero(out var forbidden))
-        {
-            return forbidden!;
-        }
-
         try
         {
             var bytes = await _cobroService.GenerarComprobantePdfAsync(ventaId, copia, ct);
