@@ -9,6 +9,7 @@ public class Result
     public bool IsFailure => !IsSuccess;
     public string? Error { get; }
     public string? ErrorCode { get; }
+    public string? Detail => ErrorCode;
     public string Message { get; }
     public object? Errors { get; }
 

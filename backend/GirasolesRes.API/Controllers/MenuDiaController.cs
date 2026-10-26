@@ -30,7 +30,7 @@ public class MenuDiaController : ControllerBase
     public async Task<IActionResult> ObtenerMenuHoy(CancellationToken cancellationToken)
     {
         var resultado = await _menuDiaService.ObtenerMenuHoyAsync(cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -52,7 +52,7 @@ public class MenuDiaController : ControllerBase
     public async Task<IActionResult> ObtenerCandidatos(CancellationToken cancellationToken)
     {
         var resultado = await _menuDiaService.ObtenerCandidatosAsync(cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -77,7 +77,7 @@ public class MenuDiaController : ControllerBase
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
         var resultado = await _menuDiaService.GuardarMenuHoyAsync(request, username, ipAddress, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return BadRequest(new
             {
@@ -116,7 +116,7 @@ public class MenuDiaController : ControllerBase
             ipAddress,
             cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             if (resultado.Message == MensajesCatalogo.MSG_79 || resultado.Message.Contains("no forma parte"))
             {

@@ -41,7 +41,7 @@ public class MenuDiaServiceUnitTests
         var result = await _service.GuardarMenuHoyAsync(request, "admin", "127.0.0.1");
 
         // Assert
-        Assert.False(result.Success);
+        Assert.False(result.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_224, result.Message);
     }
 
@@ -72,7 +72,7 @@ public class MenuDiaServiceUnitTests
         var result = await _service.GuardarMenuHoyAsync(request, "admin", "127.0.0.1");
 
         // Assert
-        Assert.False(result.Success);
+        Assert.False(result.IsSuccess);
         var expectedMsg = string.Format(MensajesCatalogo.MSG_219, "Desayuno completo", "Plato");
         Assert.Equal(expectedMsg, result.Message);
     }
@@ -113,7 +113,7 @@ public class MenuDiaServiceUnitTests
         var result = await _service.GuardarMenuHoyAsync(request, "admin", "127.0.0.1");
 
         // Assert
-        Assert.True(result.Success);
+        Assert.True(result.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_70, result.Message);
         Assert.NotNull(savedMenu);
         Assert.Equal(2, savedMenu.Men_Platos.Count);
@@ -157,7 +157,7 @@ public class MenuDiaServiceUnitTests
         var result = await _service.ObtenerMenuHoyAsync();
 
         // Assert
-        Assert.True(result.Success);
+        Assert.True(result.IsSuccess);
         Assert.NotNull(result.Data);
         var mcDto = Assert.Single(result.Data.MenusCompletos);
         Assert.False(mcDto.Disponible, "El menú completo debe figurar como no disponible.");
@@ -198,14 +198,14 @@ public class MenuDiaServiceUnitTests
         // ACT 1: Guardar menú sin desayuno
         var saveResult = await _service.GuardarMenuHoyAsync(request, "admin", "127.0.0.1");
 
-        Assert.True(saveResult.Success);
+        Assert.True(saveResult.IsSuccess);
         Assert.NotNull(menuGuardado);
         Assert.Null(typeof(MenuDia).GetProperty("Id_Desayuno")); // Id_Desayuno ya no existe en la entidad
 
         // ACT 2: Leer menú del día de hoy sin desayuno
         var readResult = await _service.ObtenerMenuHoyAsync();
 
-        Assert.True(readResult.Success);
+        Assert.True(readResult.IsSuccess);
         Assert.NotNull(readResult.Data);
         Assert.True(readResult.Data.Definido);
         Assert.Single(readResult.Data.Platos);

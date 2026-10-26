@@ -26,7 +26,7 @@ public class MenuDiaService : IMenuDiaService
         _auditoriaRepository = auditoriaRepository;
     }
 
-    public async Task<ApiResponse<MenuDiaResponseDto>> ObtenerMenuHoyAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<MenuDiaResponseDto>> ObtenerMenuHoyAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -35,7 +35,7 @@ public class MenuDiaService : IMenuDiaService
 
             if (menu == null)
             {
-                return ApiResponse<MenuDiaResponseDto>.Exitoso(new MenuDiaResponseDto
+                return Result<MenuDiaResponseDto>.Exitoso(new MenuDiaResponseDto
                 {
                     Fecha = fechaHoy.ToString("yyyy-MM-dd"),
                     Definido = false,
@@ -47,15 +47,15 @@ public class MenuDiaService : IMenuDiaService
             }
 
             var response = MapearAMenuDiaDto(menu, fechaHoy);
-            return ApiResponse<MenuDiaResponseDto>.Exitoso(response);
+            return Result<MenuDiaResponseDto>.Exitoso(response);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_80, detalle: ex.Message);
+            return Result<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_80, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<List<CandidatoMenuDto>>> ObtenerCandidatosAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<List<CandidatoMenuDto>>> ObtenerCandidatosAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -73,18 +73,18 @@ public class MenuDiaService : IMenuDiaService
 
             if (candidatos.Count == 0)
             {
-                return ApiResponse<List<CandidatoMenuDto>>.Exitoso(candidatos, MensajesCatalogo.MSG_69);
+                return Result<List<CandidatoMenuDto>>.Exitoso(candidatos, MensajesCatalogo.MSG_69);
             }
 
-            return ApiResponse<List<CandidatoMenuDto>>.Exitoso(candidatos);
+            return Result<List<CandidatoMenuDto>>.Exitoso(candidatos);
         }
         catch (Exception ex)
         {
-            return ApiResponse<List<CandidatoMenuDto>>.Fallido(MensajesCatalogo.MSG_80, detalle: ex.Message);
+            return Result<List<CandidatoMenuDto>>.Fallido(MensajesCatalogo.MSG_80, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MenuDiaResponseDto>> GuardarMenuHoyAsync(
+    public async Task<Result<MenuDiaResponseDto>> GuardarMenuHoyAsync(
         GuardarMenuDiaRequest request,
         string usuario,
         string? ipAddress,
@@ -102,7 +102,7 @@ public class MenuDiaService : IMenuDiaService
             // RV-162 / MSG-224: Para guardar el menú del día debe haber al menos un producto de carta o un menú completo habilitado
             if (productosCartaIds.Count == 0 && menusCompletosIds.Count == 0)
             {
-                return ApiResponse<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_224);
+                return Result<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_224);
             }
 
             // Validar productos de carta seleccionados
@@ -112,13 +112,13 @@ public class MenuDiaService : IMenuDiaService
                 cartaProductos = await _productoRepository.ObtenerPorIdsAsync(productosCartaIds, cancellationToken);
                 if (cartaProductos.Count != productosCartaIds.Count)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido("Uno o más productos de carta seleccionados no existen en el sistema.");
+                    return Result<MenuDiaResponseDto>.Fallido("Uno o más productos de carta seleccionados no existen en el sistema.");
                 }
 
                 var inactivos = cartaProductos.Where(p => !p.Pro_Activo).Select(p => p.Pro_Nombre).ToList();
                 if (inactivos.Count > 0)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes productos de carta están inactivos y no pueden añadirse: {string.Join(", ", inactivos)}.");
+                    return Result<MenuDiaResponseDto>.Fallido($"Los siguientes productos de carta están inactivos y no pueden añadirse: {string.Join(", ", inactivos)}.");
                 }
             }
 
@@ -129,19 +129,19 @@ public class MenuDiaService : IMenuDiaService
                 componentes = await _productoRepository.ObtenerPorIdsAsync(opcionesIds, cancellationToken);
                 if (componentes.Count != opcionesIds.Count)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido("Uno o más componentes seleccionados no existen en el sistema.");
+                    return Result<MenuDiaResponseDto>.Fallido("Uno o más componentes seleccionados no existen en el sistema.");
                 }
 
                 var inactivos = componentes.Where(p => !p.Pro_Activo).Select(p => p.Pro_Nombre).ToList();
                 if (inactivos.Count > 0)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes componentes están inactivos y no pueden añadirse: {string.Join(", ", inactivos)}.");
+                    return Result<MenuDiaResponseDto>.Fallido($"Los siguientes componentes están inactivos y no pueden añadirse: {string.Join(", ", inactivos)}.");
                 }
 
                 var noComponentes = componentes.Where(p => p.Pro_Tipo != TipoProducto.Componente).Select(p => p.Pro_Nombre).ToList();
                 if (noComponentes.Count > 0)
                 {
-                    return ApiResponse<MenuDiaResponseDto>.Fallido($"Los siguientes ítems no son componentes: {string.Join(", ", noComponentes)}.");
+                    return Result<MenuDiaResponseDto>.Fallido($"Los siguientes ítems no son componentes: {string.Join(", ", noComponentes)}.");
                 }
             }
 
@@ -155,7 +155,7 @@ public class MenuDiaService : IMenuDiaService
                 {
                     if (!dictMenus.TryGetValue(mcId, out var mc))
                     {
-                        return ApiResponse<MenuDiaResponseDto>.Fallido($"El menú completo con ID {mcId} no existe o se encuentra inactivo.");
+                        return Result<MenuDiaResponseDto>.Fallido($"El menú completo con ID {mcId} no existe o se encuentra inactivo.");
                     }
 
                     foreach (var parte in mc.Men_Partes.OrderBy(p => p.Par_Orden))
@@ -163,7 +163,7 @@ public class MenuDiaService : IMenuDiaService
                         bool tieneOpcion = componentes.Any(c => c.Pro_Rol.HasValue && parte.Par_RolesPermitidos.Contains(c.Pro_Rol.Value));
                         if (!tieneOpcion)
                         {
-                            return ApiResponse<MenuDiaResponseDto>.Fallido(string.Format(MensajesCatalogo.MSG_219, mc.Men_Nombre, parte.Par_Nombre));
+                            return Result<MenuDiaResponseDto>.Fallido(string.Format(MensajesCatalogo.MSG_219, mc.Men_Nombre, parte.Par_Nombre));
                         }
                     }
                 }
@@ -202,15 +202,15 @@ public class MenuDiaService : IMenuDiaService
             var menuActualizado = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
             var responseDto = MapearAMenuDiaDto(menuActualizado ?? menu, fechaHoy);
 
-            return ApiResponse<MenuDiaResponseDto>.Exitoso(responseDto, MensajesCatalogo.MSG_70);
+            return Result<MenuDiaResponseDto>.Exitoso(responseDto, MensajesCatalogo.MSG_70);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MenuDiaResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<CambiarDisponibilidadResponseDto>> CambiarDisponibilidadAsync(
+    public async Task<Result<CambiarDisponibilidadResponseDto>> CambiarDisponibilidadAsync(
         Guid productoId,
         bool agotado,
         string usuario,
@@ -222,20 +222,20 @@ public class MenuDiaService : IMenuDiaService
             var menu = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
             if (menu == null)
             {
-                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_79);
+                return Result<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_79);
             }
 
             var plato = menu.Men_Platos.FirstOrDefault(p => p.Id_Producto == productoId);
             if (plato == null)
             {
-                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido("El producto no forma parte del menú del día de hoy.");
+                return Result<CambiarDisponibilidadResponseDto>.Fallido("El producto no forma parte del menú del día de hoy.");
             }
 
             var nombrePlato = plato.Mdp_Producto?.Pro_Nombre ?? "El ítem";
             var cambiado = menu.CambiarDisponibilidadPlato(productoId, agotado, usuario);
             if (!cambiado)
             {
-                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido("No se pudo actualizar la disponibilidad.");
+                return Result<CambiarDisponibilidadResponseDto>.Fallido("No se pudo actualizar la disponibilidad.");
             }
 
             await _menuDiaRepository.ActualizarAsync(menu, cancellationToken);
@@ -252,7 +252,7 @@ public class MenuDiaService : IMenuDiaService
 
             var mensaje = string.Format(agotado ? MensajesCatalogo.MSG_77 : MensajesCatalogo.MSG_78, nombrePlato);
 
-            return ApiResponse<CambiarDisponibilidadResponseDto>.Exitoso(new CambiarDisponibilidadResponseDto
+            return Result<CambiarDisponibilidadResponseDto>.Exitoso(new CambiarDisponibilidadResponseDto
             {
                 ProductoId = productoId,
                 Nombre = nombrePlato,
@@ -261,7 +261,7 @@ public class MenuDiaService : IMenuDiaService
         }
         catch (Exception ex)
         {
-            return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 

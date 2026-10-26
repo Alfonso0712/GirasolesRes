@@ -369,13 +369,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         _menuDiaServiceMock.Setup(m => m.ObtenerMenuHoyAsync(It.IsAny<CancellationToken>()))
 
-            .ReturnsAsync(new ApiResponse<MenuDiaResponseDto>
-
-            {
-
-                Success = true,
-
-                Data = new MenuDiaResponseDto
+            .ReturnsAsync(Result<MenuDiaResponseDto>.Success(new MenuDiaResponseDto
 
                 {
 
@@ -383,9 +377,7 @@ public class CorreccionesTrazabilidadUnitTests
 
                     Definido = false
 
-                }
-
-            });
+                }));
 
 
 
@@ -1659,13 +1651,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         _menuDiaServiceMock.Setup(m => m.ObtenerMenuHoyAsync(It.IsAny<CancellationToken>()))
 
-            .ReturnsAsync(new ApiResponse<MenuDiaResponseDto>
-
-            {
-
-                Success = true,
-
-                Data = new MenuDiaResponseDto
+            .ReturnsAsync(Result<MenuDiaResponseDto>.Success(new MenuDiaResponseDto
 
                 {
 
@@ -1673,9 +1659,7 @@ public class CorreccionesTrazabilidadUnitTests
 
                     Definido = true
 
-                }
-
-            });
+                }));
 
 
 
