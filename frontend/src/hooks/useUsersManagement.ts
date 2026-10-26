@@ -253,7 +253,12 @@ export function useUsersManagement({ session, onLogout }: UseUsersManagementProp
         dispararLogoutPorSesionExpirada();
         return;
       }
-      if (confirmTipo === 'eliminar' && err.message?.includes('movimientos registrados')) {
+      if (
+        confirmTipo === 'eliminar' &&
+        (err.message?.toLowerCase().includes('movimientos') ||
+          err.message?.toLowerCase().includes('historial') ||
+          err.message?.toLowerCase().includes('no se puede eliminar'))
+      ) {
         // Flujo alterno E-33: usuario con movimientos -> MSG-34 y opción de desactivar en el mismo diálogo
         setConfirmErrorMovimientos(true);
       } else {

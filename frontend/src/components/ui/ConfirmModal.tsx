@@ -7,6 +7,7 @@ export interface ConfirmModalProps {
   isOpen: boolean;
   tipo: TipoConfirmacion;
   nombreUsuario: string;
+  usuarioActivo?: boolean;
   onConfirm: () => Promise<void>;
   onClose: () => void;
   loading?: boolean;
@@ -18,6 +19,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   tipo,
   nombreUsuario,
+  usuarioActivo,
   onConfirm,
   onClose,
   loading = false,
@@ -83,6 +85,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   // Flujo alterno E-33: Usuario con movimientos (RN-11 / MSG-34)
   if (errorMovimientos) {
+    const yaEstaInactivo = usuarioActivo === false;
+
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
         <div
@@ -110,35 +114,51 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </h3>
 
           <p className="text-sm text-neutral-600 mb-6 leading-relaxed">
-            No se puede eliminar: el usuario tiene movimientos registrados. Desactívelo para conservar su historial.
+            {yaEstaInactivo
+              ? 'No se puede eliminar: el usuario tiene movimientos registrados en el sistema. Se mantiene desactivado para conservar su historial.'
+              : 'No se puede eliminar: el usuario tiene movimientos registrados. Desactívelo para conservar su historial.'}
           </p>
 
           <div className="flex gap-3 justify-center">
-            <button
-              ref={cancelBtnRef}
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              className="flex-1 py-2.5 px-4 rounded-xl border border-neutral-300 font-semibold text-neutral-700 hover:bg-neutral-50 text-sm transition-colors cursor-pointer"
-            >
-              Cancelar
-            </button>
-            {onDesactivarDirecto && (
+            {yaEstaInactivo ? (
               <button
+                ref={cancelBtnRef}
                 type="button"
-                onClick={onDesactivarDirecto}
+                onClick={onClose}
                 disabled={loading}
-                className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white cursor-pointer"
+                className="w-full py-2.5 px-5 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm transition-colors cursor-pointer shadow-md"
               >
-                {loading ? (
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <PowerOff className="w-4 h-4" />
-                    <span>Desactivar</span>
-                  </>
-                )}
+                Entendido
               </button>
+            ) : (
+              <>
+                <button
+                  ref={cancelBtnRef}
+                  type="button"
+                  onClick={onClose}
+                  disabled={loading}
+                  className="flex-1 py-2.5 px-4 rounded-xl border border-neutral-300 font-semibold text-neutral-700 hover:bg-neutral-50 text-sm transition-colors cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                {onDesactivarDirecto && (
+                  <button
+                    type="button"
+                    onClick={onDesactivarDirecto}
+                    disabled={loading}
+                    className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white cursor-pointer"
+                  >
+                    {loading ? (
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <PowerOff className="w-4 h-4" />
+                        <span>Desactivar</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -374,6 +374,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
           isOpen={confirmModalOpen}
           tipo={confirmTipo}
           nombreUsuario={usuarioAConfirmar?.nombre || ''}
+          usuarioActivo={usuarioAConfirmar?.activo}
           loading={procesandoConfirm}
           errorMovimientos={confirmErrorMovimientos}
           onDesactivarDirecto={handleDesactivarDirectoDesdeModal}

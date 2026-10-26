@@ -4,6 +4,7 @@ using GirasolesRes.Application.DTOs.Usuarios;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GirasolesRes.API.Controllers;
 
@@ -325,6 +326,15 @@ public class UsuariosController : ControllerBase
             {
                 success = false,
                 message = resultado.Message
+            });
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogWarning(ex, "Violación de integridad referencial al eliminar usuario {Id}.", id);
+            return Conflict(new
+            {
+                success = false,
+                message = MensajesCatalogo.MSG_34
             });
         }
         catch (Exception ex)

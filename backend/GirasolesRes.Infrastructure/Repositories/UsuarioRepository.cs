@@ -127,9 +127,18 @@ public class UsuarioRepository : IUsuarioRepository
         return await query.AnyAsync(cancellationToken);
     }
 
-    public Task<bool> TieneMovimientosAsync(Guid usuarioId, CancellationToken cancellationToken = default)
+    public async Task<bool> TieneMovimientosAsync(Guid usuarioId, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(false);
+        var tienePedidos = await _context.Pedidos.AnyAsync(p => p.Id_Usuario == usuarioId, cancellationToken);
+        if (tienePedidos) return true;
+
+        var tieneCajas = await _context.Cajas.AnyAsync(c => c.Id_Usuario == usuarioId || c.Id_UsuarioCierre == usuarioId, cancellationToken);
+        if (tieneCajas) return true;
+
+        var tieneVentas = await _context.Ventas.AnyAsync(v => v.Id_Usuario == usuarioId, cancellationToken);
+        if (tieneVentas) return true;
+
+        return false;
     }
 
     public async Task GuardarCambiosAsync(CancellationToken cancellationToken = default)
