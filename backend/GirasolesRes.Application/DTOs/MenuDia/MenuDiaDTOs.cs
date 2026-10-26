@@ -150,11 +150,6 @@ public class GuardarMenuDiaRequest
 
     [JsonPropertyName("menusCompletos")]
     public List<int>? MenusCompletos { get; set; }
-
-
-
-    [JsonPropertyName("platoIds")]
-    public List<Guid>? PlatoIds { get; set; }
 }
 
 public class CambiarDisponibilidadRequest

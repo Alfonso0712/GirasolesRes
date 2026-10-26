@@ -148,7 +148,7 @@ Este documento detalla la totalidad de los controladores REST y sus endpoints ex
   - **Respuestas:** `200 OK` (`CandidatosMenuDiaResponseDto`: productos disponibles para armar la carta del día).
 - `PUT /api/menu-dia/hoy` (L:72)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`).
-  - **Entrada:** `GuardarMenuDiaRequest` (`ProductosCarta`: `List<Guid>?`, `Opciones`: `List<Guid>?`, `MenusCompletos`: `List<int>?`, `PlatoIds`: `List<Guid>?`). D-013/D-014: sin `Id_Desayuno` único; gestiona productos de carta, opciones por rol y menús completos asociados.
+  - **Entrada:** `GuardarMenuDiaRequest` (`ProductosCarta`: `List<Guid>?`, `Opciones`: `List<Guid>?`, `MenusCompletos`: `List<int>?`). D-013/D-014: sin `Id_Desayuno` único ni residuo `PlatoIds`; gestiona productos de carta, opciones por rol y menús completos asociados.
   - **Respuestas:** `200 OK`; `400 BadRequest`.
 - `PATCH /api/menu-dia/hoy/platos/{productoId:guid}/disponibilidad` (L:102)
   - **Autorización:** `[Authorize]` (Roles: `Administrador`, `Cocinero`).

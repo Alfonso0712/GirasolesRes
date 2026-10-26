@@ -194,7 +194,7 @@ public class Caja
         }
     }
 
-    public void AgregarVenta(Venta venta)
+    internal void AgregarVenta(Venta venta)
     {
         _caj_Ventas.Add(venta);
     }

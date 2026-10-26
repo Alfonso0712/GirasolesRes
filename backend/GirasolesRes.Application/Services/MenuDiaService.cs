@@ -99,21 +99,6 @@ public class MenuDiaService : IMenuDiaService
             var opcionesIds = request.Opciones?.Distinct().ToList() ?? new List<Guid>();
             var menusCompletosIds = request.MenusCompletos?.Distinct().ToList() ?? new List<int>();
 
-            // Soporte retrocompatible si vienen en platoIds
-            if (productosCartaIds.Count == 0 && opcionesIds.Count == 0 && request.PlatoIds != null && request.PlatoIds.Count > 0)
-            {
-                var legacyPlatos = await _productoRepository.ObtenerPorIdsAsync(request.PlatoIds, cancellationToken);
-                foreach (var lp in legacyPlatos)
-                {
-                    if (lp.Pro_Tipo == TipoProducto.Componente)
-                        opcionesIds.Add(lp.Id_Producto);
-                    else
-                        productosCartaIds.Add(lp.Id_Producto);
-                }
-            }
-
-
-
             // RV-162 / MSG-224: Para guardar el menú del día debe haber al menos un producto de carta o un menú completo habilitado
             if (productosCartaIds.Count == 0 && menusCompletosIds.Count == 0)
             {

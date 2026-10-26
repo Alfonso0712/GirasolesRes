@@ -1,10 +1,33 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SelectorPedidoModal } from '../SelectorPedidoModal';
+import { MesasPage } from '../../../pages/MesasPage';
 import type { PedidoAbiertoMesaDto } from '../../../types/pedido';
+import type { UserSession } from '../../../types/auth';
+import { pedidoService } from '../../../services/pedidoService';
+import * as mesaService from '../../../services/mesaService';
 
-describe('SelectorPedidoModal', () => {
+vi.mock('../../../services/pedidoService', () => ({
+  pedidoService: {
+    obtenerPedidosActivosPorMesa: vi.fn(),
+  },
+}));
+
+vi.mock('../../../services/mesaService', () => ({
+  getMesasService: vi.fn(),
+  crearMesaService: vi.fn(),
+  actualizarMesaService: vi.fn(),
+  cambiarEstadoMesaService: vi.fn(),
+}));
+
+vi.mock('../../../services/menuDiaService', () => ({
+  menuDiaService: {
+    obtenerMenuHoy: vi.fn().mockResolvedValue({ definido: true }),
+  },
+}));
+
+describe('SelectorPedidoModal y Flujo de Selección en MesasPage', () => {
   const pedidosEjemplo: PedidoAbiertoMesaDto[] = [
     {
       id: 'ped-guid-1',
@@ -19,6 +42,10 @@ describe('SelectorPedidoModal', () => {
       total: 78.0,
     },
   ];
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('con 2 pedidos abiertos muestra número, estado y total de cada uno y no autoselecciona ninguno', () => {
     const onSeleccionarPedidoMock = vi.fn();
@@ -56,40 +83,59 @@ describe('SelectorPedidoModal', () => {
     expect(onSeleccionarPedidoMock).toHaveBeenCalledWith('ped-guid-2');
   });
 
-  it('con 1 solo pedido abierto el flujo de negocio continúa directo sin selector modal', async () => {
-    const pedidoUnico: PedidoAbiertoMesaDto[] = [
-      {
-        id: 'ped-guid-unico',
-        numero: 105,
-        estado: 'EnPreparacion',
-        total: 32.0,
-      },
-    ];
-
-    const onNavigateToPedidoMock = vi.fn();
-    const setSelectorMock = vi.fn();
-
-    // Simulación del flujo exacto de MesasPage.tsx:iniciarAgregarProductos
-    const resolverAgregarProductos = (
-      mesaId: number,
-      pedidos: PedidoAbiertoMesaDto[],
-      onNavigate: (mesaId: number, modo: string, pedidoId?: string) => void,
-      setSelector: (val: unknown) => void
-    ) => {
-      if (!pedidos || pedidos.length === 0) {
-        onNavigate(mesaId, 'nuevo');
-      } else if (pedidos.length === 1) {
-        onNavigate(mesaId, 'ampliacion', pedidos[0].id);
-      } else {
-        setSelector({ mesaId, pedidos });
-      }
+  it('renderiza MesasPage con 1 solo pedido abierto en mesa ocupada y continúa directo sin mostrar modal selector', async () => {
+    const mockSession: UserSession = {
+      usuario: 'mozo1',
+      rol: 'Mozo',
+      nombre: 'Renzo Mozo',
+      token: 'jwt-token-mozo',
     };
 
-    resolverAgregarProductos(5, pedidoUnico, onNavigateToPedidoMock, setSelectorMock);
+    const pedidoUnico: PedidoAbiertoMesaDto = {
+      id: 'ped-guid-unico',
+      numero: 105,
+      estado: 'EnPreparacion',
+      total: 32.0,
+    };
 
-    // Debe continuar directamente al pedido único sin abrir el selector modal
-    expect(onNavigateToPedidoMock).toHaveBeenCalledTimes(1);
-    expect(onNavigateToPedidoMock).toHaveBeenCalledWith(5, 'ampliacion', 'ped-guid-unico');
-    expect(setSelectorMock).not.toHaveBeenCalled();
+    // 1. Mock de mesa ocupada cargada en MesasPage
+    vi.mocked(mesaService.getMesasService).mockResolvedValue([
+      {
+        id: 'mesa-guid-1',
+        nombre: 'Mesa 1',
+        ocupacion: 'Ocupada',
+        activa: true,
+      },
+    ]);
+
+    // 2. Mock de pedidoService devolviendo exactamente 1 pedido activo para la mesa
+    vi.mocked(pedidoService.obtenerPedidosActivosPorMesa).mockResolvedValue([pedidoUnico]);
+
+    const onNavigateToPedidoMock = vi.fn();
+
+    render(
+      <MesasPage
+        session={mockSession}
+        onNavigateToPedido={onNavigateToPedidoMock}
+      />
+    );
+
+    // 3. Esperar a que la mesa ocupada se renderice en pantalla
+    await waitFor(() => {
+      expect(screen.getByText('Mesa 1')).toBeInTheDocument();
+    });
+
+    // 4. Click en el botón de acción "Agregar productos" de la tarjeta de la mesa
+    const btnAgregar = screen.getByRole('button', { name: /Agregar productos/i });
+    fireEvent.click(btnAgregar);
+
+    // 5. Verificación: continúa directo llamando a onNavigateToPedido con el pedido único
+    await waitFor(() => {
+      expect(onNavigateToPedidoMock).toHaveBeenCalledTimes(1);
+      expect(onNavigateToPedidoMock).toHaveBeenCalledWith('mesa-guid-1', 'ampliacion', 'ped-guid-unico');
+    });
+
+    // 6. Verificación: el modal selector de pedidos NO se muestra
+    expect(screen.queryByText(/Seleccionar Pedido · Mesa 1/i)).not.toBeInTheDocument();
   });
 });

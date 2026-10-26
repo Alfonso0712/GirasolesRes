@@ -72,7 +72,7 @@ public class Venta
         if (!string.IsNullOrWhiteSpace(destinoPedido)) Ven_DestinoPedido = destinoPedido.Trim();
     }
 
-    public void AsignarPedido(Pedido pedido)
+    internal void AsignarPedido(Pedido pedido)
     {
         Ven_Pedido = pedido;
     }

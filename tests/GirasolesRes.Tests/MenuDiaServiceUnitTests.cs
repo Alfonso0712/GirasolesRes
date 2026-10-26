@@ -211,4 +211,18 @@ public class MenuDiaServiceUnitTests
         Assert.Single(readResult.Data.Platos);
         Assert.Equal(platoCarta.Pro_Nombre, readResult.Data.Platos[0].Nombre);
     }
+
+    [Fact]
+    public void GuardarMenuDiaRequest_NoContieneCampoResidualPlatoIds()
+    {
+        var requestType = typeof(GuardarMenuDiaRequest);
+        var propiedadPlatoIds = requestType.GetProperty("PlatoIds", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Instance);
+        Assert.Null(propiedadPlatoIds);
+
+        var propiedades = requestType.GetProperties().Select(p => p.Name).ToList();
+        Assert.Contains("ProductosCarta", propiedades);
+        Assert.Contains("Opciones", propiedades);
+        Assert.Contains("MenusCompletos", propiedades);
+        Assert.DoesNotContain("PlatoIds", propiedades);
+    }
 }
