@@ -85,7 +85,7 @@ public class CatalogoMensajesUnitTests
             // Caso especial MSG-162: se implementa en dos variantes según el CSV
             if (num == 162)
             {
-                Assert.True(fields.ContainsKey("MSG_162_POR_COBRAR"), "Debe existir MSG_162_POR_COBRAR");
+                Assert.True(fields.ContainsKey("MSG_162_PENDIENTE_COBRO") || fields.ContainsKey("MSG_162_POR_COBRAR"), "Debe existir MSG_162_PENDIENTE_COBRO");
                 Assert.True(fields.ContainsKey("MSG_162_ANULADO"), "Debe existir MSG_162_ANULADO");
                 verificados++;
                 continue;

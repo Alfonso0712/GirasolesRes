@@ -889,17 +889,12 @@ public class CorreccionesTrazabilidadUnitTests
 
 
 
-        // ACT 3: Re-preparar y simular 60s (bloqueado)
-
+        // ACT 3: Re-preparar y simular 15s (bloqueado por superar tolerancia de 10.5s)
         comanda.IniciarPreparacion("cocinero1");
-
-        propFecUltimo.SetValue(comanda, DateTime.UtcNow.AddSeconds(-60.0));
-
-        var ex60 = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-
+        propFecUltimo.SetValue(comanda, DateTime.UtcNow.AddSeconds(-15.0));
+        var exExpirado = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             comandaService.DeshacerEstadoAsync(comandaId, "cocinero1"));
-
-        Assert.Equal(MensajesCatalogo.MSG_134, ex60.Message);
+        Assert.Equal(MensajesCatalogo.MSG_134, exExpirado.Message);
 
     }
 

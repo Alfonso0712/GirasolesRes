@@ -329,7 +329,7 @@ public class VentaService : IVentaService
         var compNumero = comprobante?.ObtenerNumeroFormateado() ?? "";
         var pedNumero = pedido?.Ped_NumeroDiario ?? 0;
         string mensaje = destino == "porcobrar"
-            ? string.Format(MensajesCatalogo.MSG_162_POR_COBRAR, compNumero, pedNumero)
+            ? string.Format(MensajesCatalogo.MSG_162_PENDIENTE_COBRO, compNumero, pedNumero)
             : string.Format(MensajesCatalogo.MSG_162_ANULADO, compNumero, pedNumero);
 
         return new AnularVentaResponseDto(

@@ -1,700 +1,700 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  FileText,
-  Download,
-  Printer,
-  Utensils,
-  AlertTriangle,
-  X,
-  Calendar,
-  User,
-  Clock,
-  DollarSign,
-  Banknote,
-  Smartphone,
-  Loader2,
-} from 'lucide-react';
-import { cajaService } from '../../services/cajaService';
-import type { CierreDetalleDto } from '../../types/caja';
-
-interface CierreDetalleModalProps {
-  cajaId: string | null;
-  isOpen: boolean;
-  onClose: () => void;
-  token: string;
-}
-
-export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
-  cajaId,
-  isOpen,
-  onClose,
-  token,
-}) => {
-  const [detalle, setDetalle] = useState<CierreDetalleDto | null>(null);
-  const [cargando, setCargando] = useState<boolean>(true);
-  const [descargandoPdf, setDescargandoPdf] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const modalRef = useRef<HTMLDivElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (isOpen && cajaId) {
-      setCargando(true);
-      setError(null);
-      cajaService
-        .obtenerDetalleCierre(cajaId, token)
-        .then((data) => setDetalle(data))
-        .catch((err) => setError(err.message || 'Error al obtener detalle del cierre.'))
-        .finally(() => setCargando(false));
-    } else {
-      setDetalle(null);
-    }
-  }, [isOpen, cajaId, token]);
-
-  // Focus trap y tecla Escape global
-  useEffect(() => {
-    if (!isOpen) return;
-
-    closeBtnRef.current?.focus();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
-        return;
-      }
-
-      if (e.key === 'Tab') {
-        if (!modalRef.current) return;
-        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusableElements.length === 0) return;
-
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen || !cajaId) return null;
-
-  const handleDescargarPdf = async () => {
-    if (descargandoPdf) return;
-    if (!cajaId) return;
-    setDescargandoPdf(true);
-    try {
-      const downloadFn =
-        (cajaService as any).descargarPdfCierre || cajaService.descargarCierrePdf;
-      await downloadFn.call(cajaService, cajaId, token);
-    } catch (err: any) {
-      alert(err.message || 'Error al descargar el PDF del cierre.');
-    } finally {
-      setDescargandoPdf(false);
-    }
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const formatLimaFecha = (fechaUtc?: string | null): string => {
-    if (!fechaUtc) return '—';
-    try {
-      const d = new Date(fechaUtc);
-      if (isNaN(d.getTime())) return fechaUtc;
-      return new Intl.DateTimeFormat('es-PE', {
-        timeZone: 'America/Lima',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }).format(d);
-    } catch {
-      return fechaUtc;
-    }
-  };
-
-  const tieneAjustes = Boolean(
-    detalle?.tieneAjustesPosteriores ||
-      detalle?.conAjustes ||
-      (detalle?.ajustesPosteriores && detalle.ajustesPosteriores.length > 0)
-  );
-
-  const esAbierta = Boolean(
-    detalle?.estado?.toLowerCase() === 'abierta' ||
-      (!detalle?.fechaCierre &&
-        detalle?.efectivoContado === null &&
-        detalle?.montoInicial !== undefined)
-  );
-
-  const diferenciaNum =
-    detalle?.diferencia !== null && detalle?.diferencia !== undefined
-      ? Number(detalle.diferencia)
-      : null;
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="detalle-cierre-title"
-      className="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
-    >
-      <style>{`
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          .cierre-modal-container, .cierre-modal-container * {
-            visibility: visible;
-          }
-          .cierre-modal-container {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100% !important;
-            max-width: 100% !important;
-            box-shadow: none !important;
-            border: none !important;
-            max-height: none !important;
-            overflow: visible !important;
-          }
-          .cierre-modal-overlay {
-            position: static !important;
-            background: none !important;
-            padding: 0 !important;
-            overflow: visible !important;
-          }
-          .no-print {
-            display: none !important;
-          }
-          .break-inside-avoid {
-            break-inside: avoid;
-            page-break-inside: avoid;
-          }
-        }
-      `}</style>
-
-      <div
-        ref={modalRef}
-        className="cierre-modal-container bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden text-ink animate-in zoom-in-95 duration-200"
-      >
-        {/* Encabezado */}
-        <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent border border-amber-200/80 flex items-center justify-center shadow-xs">
-              <FileText className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                Historial de Caja
-              </p>
-              <h2 id="detalle-cierre-title" className="font-sans text-xl font-bold text-ink tracking-tight">
-                Detalle de Cierre de Caja
-              </h2>
-            </div>
-          </div>
-          <button
-            ref={closeBtnRef}
-            type="button"
-            onClick={onClose}
-            className="no-print modal-close-btn"
-            title="Cerrar modal"
-            aria-label="Cerrar modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-ink">
-          {cargando ? (
-            <div className="py-16 flex flex-col items-center justify-center gap-3 text-neutral-500">
-              <Loader2 className="w-8 h-8 text-accent animate-spin" />
-              <p className="text-sm font-semibold">Cargando detalle del cierre…</p>
-            </div>
-          ) : error ? (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm space-y-1">
-              <p className="font-bold flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-red-600" /> Error al cargar detalle
-              </p>
-              <p>{error}</p>
-            </div>
-          ) : detalle ? (
-            <>
-              {/* Alerta de Ajustes Posteriores por Anulación */}
-              {tieneAjustes && (
-                <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fade-in break-inside-avoid">
-                  <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <span className="font-bold text-sm text-amber-900 block">
-                      Turno con ventas anuladas después del cierre
-                    </span>
-                    <p className="text-amber-800 leading-relaxed">
-                      Se registraron anulaciones posteriores en este turno. El arqueo original de caja se conserva para auditoría y las ventas anuladas se detallan a continuación.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Sección 1: Metadatos del Turno (Apertura y Cierre en formato Lima) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
-                <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 sm:pr-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-accent" /> Apertura del Turno
-                  </span>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">
-                    {detalle.fechaAperturaLocal || formatLimaFecha(detalle.fechaApertura)}
-                  </p>
-                  <p className="text-neutral-600 flex items-center gap-1">
-                    <User className="w-3 h-3 text-stone-500" />
-                    Cajero(a): <strong>{detalle.cajeroApertura || 'Cajero'}</strong>
-                  </p>
-                  <p className="text-neutral-500 text-xs">
-                    Fondo inicial: <strong className="text-neutral-800 tabular-nums">S/ {(detalle.montoInicial ?? 0).toFixed(2)}</strong>
-                  </p>
-                </div>
-
-                <div className="space-y-1.5 pt-1 sm:pt-0 sm:pl-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-accent" /> Cierre y Cuadre
-                  </span>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">
-                    {detalle.fechaCierreLocal ||
-                      (detalle.fechaCierre
-                        ? formatLimaFecha(detalle.fechaCierre)
-                        : 'Turno en curso (Abierta)')}
-                  </p>
-                  <p className="text-neutral-600 flex items-center gap-1">
-                    <User className="w-3 h-3 text-stone-500" />
-                    Cerrado por: <strong>{detalle.cajeroCierre || '—'}</strong>
-                  </p>
-                  <p className="text-neutral-500 text-xs">
-                    Transacciones: <strong className="text-neutral-800">{detalle.cantidadVentas ?? 0} ventas emitidas</strong>
-                  </p>
-                </div>
-              </div>
-
-              {/* Sección 2: Desglose Financiero Completo (8 Métricas Clave) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid">
-                {/* Tarjeta A: Resumen de Ventas Facturadas */}
-                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
-                      <DollarSign className="w-4 h-4 text-accent" />
-                      Flujo de Ventas del Turno
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Monto Inicial (Apertura):</span>
-                      <span className="font-bold text-neutral-800 tabular-nums">
-                        S/ {(detalle.montoInicial ?? 0).toFixed(2)}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span className="flex items-center gap-1">
-                        <Banknote className="w-3.5 h-3.5 text-stone-500" />
-                        Ventas en Efectivo:
-                      </span>
-                      <span className="font-bold text-ink tabular-nums">
-                        S/ {(detalle.ventasEfectivo ?? 0).toFixed(2)}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span className="flex items-center gap-1">
-                        <Smartphone className="w-3.5 h-3.5 text-purple-600" />
-                        Ventas por Yape / QR:
-                      </span>
-                      <span className="font-bold text-purple-900 tabular-nums">
-                        S/ {(detalle.ventasYape ?? 0).toFixed(2)}
-                      </span>
-                    </div>
-
-                    <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
-                      <span className="text-ink">Total de ventas facturadas:</span>
-                      <span className="text-accent text-base tabular-nums">
-                        S/ {(detalle.totalVentas ?? 0).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tarjeta B: Arqueo Físico y Cuadratura de Efectivo */}
-                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
-                      <Banknote className="w-4 h-4 text-accent" />
-                      Arqueo y Cuadratura de Efectivo
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Efectivo Físico Esperado:</span>
-                      <span className="font-bold text-ink tabular-nums">
-                        S/ {(detalle.efectivoEsperado ?? (detalle.montoInicial + detalle.ventasEfectivo)).toFixed(2)}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Efectivo Físico Contado:</span>
-                      <span className="font-bold text-stone-900 tabular-nums">
-                        {esAbierta ? (
-                          <span className="text-stone-500 font-normal">—</span>
-                        ) : detalle.efectivoContado !== null && detalle.efectivoContado !== undefined ? (
-                          <span className="tabular-nums">S/ {Number(detalle.efectivoContado).toFixed(2)}</span>
-                        ) : (
-                          '—'
-                        )}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Diferencia de Cuadre:</span>
-                      <span className="font-bold tabular-nums">
-                        {esAbierta ? (
-                          <span className="text-stone-500 font-normal">—</span>
-                        ) : diferenciaNum === null ? (
-                          '—'
-                        ) : diferenciaNum === 0 ? (
-                          <span className="tabular-nums">S/ 0.00</span>
-                        ) : (
-                          <span className="tabular-nums">{`${diferenciaNum > 0 ? '+' : ''}S/ ${diferenciaNum.toFixed(2)}`}</span>
-                        )}
-                      </span>
-                    </div>
-
-                    {/* Badge de Estado de Cuadre */}
-                    <div className="pt-2 border-t border-neutral-200">
-                      <div
-                        className={`p-2.5 rounded-lg border text-center font-bold text-xs tracking-wider uppercase tabular-nums ${
-                          esAbierta
-                            ? 'bg-stone-50 border-neutral-200 text-neutral-500'
-                            : diferenciaNum === null
-                            ? 'bg-stone-50 border-neutral-200 text-neutral-500'
-                            : diferenciaNum === 0
-                            ? 'bg-emerald-100 border-emerald-300 text-emerald-900'
-                            : diferenciaNum > 0
-                            ? 'bg-amber-100 border-amber-300 text-amber-900'
-                            : 'bg-rose-100 border-rose-300 text-rose-900'
-                        }`}
-                      >
-                        {esAbierta
-                          ? 'Estado: Turno en curso (Sin Arqueo)'
-                          : diferenciaNum === null
-                          ? 'Estado: Sin Arqueo'
-                          : diferenciaNum === 0
-                          ? 'Estado: Cuadra (S/ 0.00)'
-                          : diferenciaNum > 0
-                          ? <span className="tabular-nums">{`Estado: Sobrante (+S/ ${diferenciaNum.toFixed(2)})`}</span>
-                          : <span className="tabular-nums">{`Estado: Faltante (-S/ ${Math.abs(diferenciaNum).toFixed(2)})`}</span>}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sección 3: Observación (Omitida limpiamente si está vacía) */}
-              {detalle.observacion && detalle.observacion.trim().length > 0 && (
-                <div className="p-3.5 bg-stone-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
-                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block mb-1">
-                    Observación del cierre
-                  </span>
-                  <p className="text-neutral-800 italic font-medium">"{detalle.observacion.trim()}"</p>
-                </div>
-              )}
-
-              {/* Sección 4: Consolidado en Tres Bloques (D-017, RN-138, E-401) */}
-              <div className="space-y-4">
-                {/* 4A. Productos de Carta */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
-                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-accent" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                        1. Productos de Carta
-                      </h4>
-                    </div>
-                    <span className="text-xs text-neutral-500 font-semibold">
-                      {detalle.platosVendidos?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} unidades
-                    </span>
-                  </div>
-
-                  {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Plato / Producto</th>
-                            <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
-                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line-soft text-sm">
-                          {detalle.platosVendidos.map((p, idx) => (
-                            <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
-                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{p.nombre}</td>
-                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
-                                {p.cantidad}
-                              </td>
-                              <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
-                                S/ {(p.total ?? 0).toFixed(2)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
-                          <tr>
-                            <td className="px-4 py-2.5 text-ink">Subtotal Carta</td>
-                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
-                              {detalle.platosVendidos.reduce((acc, p) => acc + p.cantidad, 0)}
-                            </td>
-                            <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
-                              S/ {detalle.platosVendidos.reduce((acc, p) => acc + (p.total ?? 0), 0).toFixed(2)}
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="py-4 text-center text-xs text-neutral-500 italic">
-                      Sin productos de carta vendidos en este turno.
-                    </div>
-                  )}
-                </div>
-
-                {/* 4B. Menús Completos */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
-                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-amber-600" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                        2. Menús Completos
-                      </h4>
-                    </div>
-                    <span className="text-xs text-neutral-500 font-semibold">
-                      {detalle.menusCompletos?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} unidades
-                    </span>
-                  </div>
-
-                  {detalle.menusCompletos && detalle.menusCompletos.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Menú Completo</th>
-                            <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
-                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line-soft text-sm">
-                          {detalle.menusCompletos.map((m, idx) => (
-                            <tr key={`${m.menuCompletoId}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
-                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{m.nombre}</td>
-                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
-                                {m.cantidad}
-                              </td>
-                              <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
-                                S/ {(m.monto ?? m.total ?? 0).toFixed(2)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
-                          <tr>
-                            <td className="px-4 py-2.5 text-ink">Subtotal Menús</td>
-                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
-                              {detalle.menusCompletos.reduce((acc, m) => acc + m.cantidad, 0)}
-                            </td>
-                            <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
-                              S/ {detalle.menusCompletos.reduce((acc, m) => acc + (m.monto ?? m.total ?? 0), 0).toFixed(2)}
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="py-4 text-center text-xs text-neutral-500 italic">
-                      Sin menús completos vendidos en este turno.
-                    </div>
-                  )}
-                </div>
-
-                {/* 4C. Componentes de Menú */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
-                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-emerald-600" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                        3. Componentes Elegidos en Menús
-                      </h4>
-                    </div>
-                    <span className="text-xs text-neutral-500 font-semibold">
-                      {detalle.componentes?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} elecciones
-                    </span>
-                  </div>
-
-                  {detalle.componentes && detalle.componentes.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Componente / Insumo</th>
-                            <th className="px-4 py-2.5 text-center w-28">Rol / Parte</th>
-                            <th className="px-4 py-2.5 text-center w-24">Veces Elegida</th>
-                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Monto</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line-soft text-sm">
-                          {detalle.componentes.map((c, idx) => (
-                            <tr key={`${c.productoId}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
-                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{c.producto}</td>
-                              <td className="px-4 py-2.5 text-center font-mono text-xs text-neutral-600">
-                                {c.rol}
-                              </td>
-                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
-                                {c.cantidad}
-                              </td>
-                              <td className="px-4 py-2.5 text-right font-medium text-xs text-neutral-400 italic">
-                                S/ 0.00 (Incluido)
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
-                          <tr>
-                            <td className="px-4 py-2.5 text-ink" colSpan={2}>Total Elecciones Componentes</td>
-                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
-                              {detalle.componentes.reduce((acc, c) => acc + c.cantidad, 0)}
-                            </td>
-                            <td className="px-4 py-2.5 text-right text-neutral-500 tabular-nums font-medium text-xs">
-                              S/ 0.00
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="py-4 text-center text-xs text-neutral-500 italic">
-                      Sin componentes de menú elegidos en este turno.
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Sección 5: Ventas anuladas después del cierre */}
-              {tieneAjustes && detalle.ajustesPosteriores && detalle.ajustesPosteriores.length > 0 && (
-                <div className="border border-amber-200 bg-amber-50/40 rounded-xl overflow-hidden break-inside-avoid">
-                  <div className="bg-amber-100/70 px-4 py-2.5 border-b border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                    <span className="font-bold text-xs uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-700" />
-                      Ventas anuladas después del cierre ({detalle.ajustesPosteriores.length})
-                    </span>
-                    <span className="text-xs text-amber-800 font-semibold">
-                      Arqueo original protegido
-                    </span>
-                  </div>
-
-                  <div className="p-3 bg-amber-100/30 border-b border-amber-200/60 text-xs text-amber-900 leading-normal">
-                    <strong>Nota de auditoría:</strong> El arqueo y balance original de la caja no se modifican. Estas ventas fueron anuladas después de cerrar el turno.
-                  </div>
-
-                  <div className="divide-y divide-amber-200/60 text-xs">
-                    {detalle.ajustesPosteriores.map((a) => (
-                      <div key={a.ventaId} className="p-3.5 hover:bg-amber-100/30 transition-colors space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-ink">
-                            {a.comprobante || a.numeroComprobante || 'Comprobante'}
-                          </span>
-                          <span className="font-bold text-red-600 tabular-nums">
-                            -S/ {Number(a.montoAnulado ?? a.total ?? 0).toFixed(2)} ({a.metodoPago})
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap items-center justify-between text-xs text-neutral-600 gap-2">
-                          <p>
-                            Motivo: <em className="text-neutral-800 font-medium">"{a.motivo || 'Sin motivo'}"</em>
-                          </p>
-                          <p className="text-neutral-500">
-                            Anulado por: <strong>{a.usuarioAnulacion || 'Mozo/Admin'}</strong> ·{' '}
-                            {a.fechaAnulacionLocal || formatLimaFecha(a.fechaAnulacion || a.fechaAnulacionUtc)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          ) : null}
-        </div>
-
-        {/* Footer con Botones de Acción */}
-        <div className="no-print bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-          >
-            Cerrar
-          </button>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrint}
-              disabled={cargando || !detalle}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 hover:bg-neutral-50 disabled:opacity-40 rounded-xl transition-colors cursor-pointer min-h-[44px]"
-              title="Imprimir resumen mediante diálogo del navegador"
-            >
-              <Printer className="w-4 h-4" />
-              Imprimir
-            </button>
-
-            <button
-              type="button"
-              onClick={handleDescargarPdf}
-              disabled={cargando || !detalle || descargandoPdf || esAbierta}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-primary hover:bg-primary-hover disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
-              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
-            >
-              {descargandoPdf ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Generando PDF…
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  Descargar comprobante PDF
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default CierreDetalleModal;
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  FileText,
+  Download,
+  Printer,
+  Utensils,
+  AlertTriangle,
+  X,
+  Calendar,
+  User,
+  Clock,
+  DollarSign,
+  Banknote,
+  Smartphone,
+  Loader2,
+} from 'lucide-react';
+import { cajaService } from '../../services/cajaService';
+import type { CierreDetalleDto } from '../../types/caja';
+
+interface CierreDetalleModalProps {
+  cajaId: string | null;
+  isOpen: boolean;
+  onClose: () => void;
+  token: string;
+}
+
+export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
+  cajaId,
+  isOpen,
+  onClose,
+  token,
+}) => {
+  const [detalle, setDetalle] = useState<CierreDetalleDto | null>(null);
+  const [cargando, setCargando] = useState<boolean>(true);
+  const [descargandoPdf, setDescargandoPdf] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen && cajaId) {
+      setCargando(true);
+      setError(null);
+      cajaService
+        .obtenerDetalleCierre(cajaId, token)
+        .then((data) => setDetalle(data))
+        .catch((err) => setError(err.message || 'Error al obtener detalle del cierre.'))
+        .finally(() => setCargando(false));
+    } else {
+      setDetalle(null);
+    }
+  }, [isOpen, cajaId, token]);
+
+  // Focus trap y tecla Escape global
+  useEffect(() => {
+    if (!isOpen) return;
+
+    closeBtnRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        if (!modalRef.current) return;
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !cajaId) return null;
+
+  const handleDescargarPdf = async () => {
+    if (descargandoPdf) return;
+    if (!cajaId) return;
+    setDescargandoPdf(true);
+    try {
+      const downloadFn =
+        (cajaService as any).descargarPdfCierre || cajaService.descargarCierrePdf;
+      await downloadFn.call(cajaService, cajaId, token);
+    } catch (err: any) {
+      alert(err.message || 'Error al descargar el PDF del cierre.');
+    } finally {
+      setDescargandoPdf(false);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const formatLimaFecha = (fechaUtc?: string | null): string => {
+    if (!fechaUtc) return '—';
+    try {
+      const d = new Date(fechaUtc);
+      if (isNaN(d.getTime())) return fechaUtc;
+      return new Intl.DateTimeFormat('es-PE', {
+        timeZone: 'America/Lima',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).format(d);
+    } catch {
+      return fechaUtc;
+    }
+  };
+
+  const tieneAjustes = Boolean(
+    detalle?.tieneAjustesPosteriores ||
+      detalle?.conAjustes ||
+      (detalle?.ajustesPosteriores && detalle.ajustesPosteriores.length > 0)
+  );
+
+  const esAbierta = Boolean(
+    detalle?.estado?.toLowerCase() === 'abierta' ||
+      (!detalle?.fechaCierre &&
+        detalle?.efectivoContado === null &&
+        detalle?.montoInicial !== undefined)
+  );
+
+  const diferenciaNum =
+    detalle?.diferencia !== null && detalle?.diferencia !== undefined
+      ? Number(detalle.diferencia)
+      : null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="detalle-cierre-title"
+      className="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+    >
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .cierre-modal-container, .cierre-modal-container * {
+            visibility: visible;
+          }
+          .cierre-modal-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-shadow: none !important;
+            border: none !important;
+            max-height: none !important;
+            overflow: visible !important;
+          }
+          .cierre-modal-overlay {
+            position: static !important;
+            background: none !important;
+            padding: 0 !important;
+            overflow: visible !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .break-inside-avoid {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+        }
+      `}</style>
+
+      <div
+        ref={modalRef}
+        className="cierre-modal-container bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden text-ink animate-in zoom-in-95 duration-200"
+      >
+        {/* Encabezado */}
+        <div className="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent border border-amber-200/80 flex items-center justify-center shadow-xs">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                Historial de Caja
+              </p>
+              <h2 id="detalle-cierre-title" className="font-sans text-xl font-bold text-ink tracking-tight">
+                Detalle de Cierre de Caja
+              </h2>
+            </div>
+          </div>
+          <button
+            ref={closeBtnRef}
+            type="button"
+            onClick={onClose}
+            className="no-print modal-close-btn"
+            title="Cerrar modal"
+            aria-label="Cerrar modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-ink">
+          {cargando ? (
+            <div className="py-16 flex flex-col items-center justify-center gap-3 text-neutral-500">
+              <Loader2 className="w-8 h-8 text-accent animate-spin" />
+              <p className="text-sm font-semibold">Cargando detalle del cierre…</p>
+            </div>
+          ) : error ? (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm space-y-1">
+              <p className="font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-600" /> Error al cargar detalle
+              </p>
+              <p>{error}</p>
+            </div>
+          ) : detalle ? (
+            <>
+              {/* Alerta de Ajustes Posteriores por Anulación */}
+              {tieneAjustes && (
+                <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-950 animate-fade-in break-inside-avoid">
+                  <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <span className="font-bold text-sm text-amber-900 block">
+                      Turno con ventas anuladas después del cierre
+                    </span>
+                    <p className="text-amber-800 leading-relaxed">
+                      Se registraron anulaciones posteriores en este turno. El arqueo original de caja se conserva para auditoría y las ventas anuladas se detallan a continuación.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Sección 1: Metadatos del Turno (Apertura y Cierre en formato Lima) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
+                <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 sm:pr-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-accent" /> Apertura del Turno
+                  </span>
+                  <p className="font-bold text-stone-900 text-sm mt-0.5">
+                    {detalle.fechaAperturaLocal || formatLimaFecha(detalle.fechaApertura)}
+                  </p>
+                  <p className="text-neutral-600 flex items-center gap-1">
+                    <User className="w-3 h-3 text-stone-500" />
+                    Cajero(a): <strong>{detalle.cajeroApertura || 'Cajero'}</strong>
+                  </p>
+                  <p className="text-neutral-500 text-xs">
+                    Fondo inicial: <strong className="text-neutral-800 tabular-nums">S/ {(detalle.montoInicial ?? 0).toFixed(2)}</strong>
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 pt-1 sm:pt-0 sm:pl-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-accent" /> Cierre y Cuadre
+                  </span>
+                  <p className="font-bold text-stone-900 text-sm mt-0.5">
+                    {detalle.fechaCierreLocal ||
+                      (detalle.fechaCierre
+                        ? formatLimaFecha(detalle.fechaCierre)
+                        : 'Turno en curso (Abierta)')}
+                  </p>
+                  <p className="text-neutral-600 flex items-center gap-1">
+                    <User className="w-3 h-3 text-stone-500" />
+                    Cerrado por: <strong>{detalle.cajeroCierre || '—'}</strong>
+                  </p>
+                  <p className="text-neutral-500 text-xs">
+                    Transacciones: <strong className="text-neutral-800">{detalle.cantidadVentas ?? 0} ventas emitidas</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Sección 2: Desglose Financiero Completo (8 Métricas Clave) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid">
+                {/* Tarjeta A: Resumen de Ventas Facturadas */}
+                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4 text-accent" />
+                      Flujo de Ventas del Turno
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between items-center text-neutral-600">
+                      <span>Monto Inicial (Apertura):</span>
+                      <span className="font-bold text-neutral-800 tabular-nums">
+                        S/ {(detalle.montoInicial ?? 0).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-neutral-600">
+                      <span className="flex items-center gap-1">
+                        <Banknote className="w-3.5 h-3.5 text-stone-500" />
+                        Ventas en Efectivo:
+                      </span>
+                      <span className="font-bold text-ink tabular-nums">
+                        S/ {(detalle.ventasEfectivo ?? 0).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-neutral-600">
+                      <span className="flex items-center gap-1">
+                        <Smartphone className="w-3.5 h-3.5 text-purple-600" />
+                        Ventas por Yape / QR:
+                      </span>
+                      <span className="font-bold text-purple-900 tabular-nums">
+                        S/ {(detalle.ventasYape ?? 0).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
+                      <span className="text-ink">Total de ventas facturadas:</span>
+                      <span className="text-accent text-base tabular-nums">
+                        S/ {(detalle.totalVentas ?? 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tarjeta B: Arqueo Físico y Cuadratura de Efectivo */}
+                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
+                      <Banknote className="w-4 h-4 text-accent" />
+                      Arqueo y Cuadratura de Efectivo
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between items-center text-neutral-600">
+                      <span>Efectivo Físico Esperado:</span>
+                      <span className="font-bold text-ink tabular-nums">
+                        S/ {(detalle.efectivoEsperado ?? (detalle.montoInicial + detalle.ventasEfectivo)).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-neutral-600">
+                      <span>Efectivo Físico Contado:</span>
+                      <span className="font-bold text-stone-900 tabular-nums">
+                        {esAbierta ? (
+                          <span className="text-stone-500 font-normal">—</span>
+                        ) : detalle.efectivoContado !== null && detalle.efectivoContado !== undefined ? (
+                          <span className="tabular-nums">S/ {Number(detalle.efectivoContado).toFixed(2)}</span>
+                        ) : (
+                          '—'
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-neutral-600">
+                      <span>Diferencia de Cuadre:</span>
+                      <span className="font-bold tabular-nums">
+                        {esAbierta ? (
+                          <span className="text-stone-500 font-normal">—</span>
+                        ) : diferenciaNum === null ? (
+                          '—'
+                        ) : diferenciaNum === 0 ? (
+                          <span className="tabular-nums">S/ 0.00</span>
+                        ) : (
+                          <span className="tabular-nums">{`${diferenciaNum > 0 ? '+' : ''}S/ ${diferenciaNum.toFixed(2)}`}</span>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Badge de Estado de Cuadre */}
+                    <div className="pt-2 border-t border-neutral-200">
+                      <div
+                        className={`p-2.5 rounded-lg border text-center font-bold text-xs tracking-wider uppercase tabular-nums ${
+                          esAbierta
+                            ? 'bg-stone-50 border-neutral-200 text-neutral-500'
+                            : diferenciaNum === null
+                            ? 'bg-stone-50 border-neutral-200 text-neutral-500'
+                            : diferenciaNum === 0
+                            ? 'bg-emerald-100 border-emerald-300 text-emerald-900'
+                            : diferenciaNum > 0
+                            ? 'bg-amber-100 border-amber-300 text-amber-900'
+                            : 'bg-rose-100 border-rose-300 text-rose-900'
+                        }`}
+                      >
+                        {esAbierta
+                          ? 'Estado: Turno en curso (Sin Arqueo)'
+                          : diferenciaNum === null
+                          ? 'Estado: Sin Arqueo'
+                          : diferenciaNum === 0
+                          ? 'Estado: Cuadra (S/ 0.00)'
+                          : diferenciaNum > 0
+                          ? <span className="tabular-nums">{`Estado: Sobrante (+S/ ${diferenciaNum.toFixed(2)})`}</span>
+                          : <span className="tabular-nums">{`Estado: Faltante (-S/ ${Math.abs(diferenciaNum).toFixed(2)})`}</span>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección 3: Observación (Omitida limpiamente si está vacía) */}
+              {detalle.observacion && detalle.observacion.trim().length > 0 && (
+                <div className="p-3.5 bg-stone-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block mb-1">
+                    Observación del cierre
+                  </span>
+                  <p className="text-neutral-800 italic font-medium">"{detalle.observacion.trim()}"</p>
+                </div>
+              )}
+
+              {/* Sección 4: Consolidado en Tres Bloques (D-017, RN-138, E-401) */}
+              <div className="space-y-4">
+                {/* 4A. Productos de Carta */}
+                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
+                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Utensils className="w-4 h-4 text-accent" />
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
+                        1. Productos de Carta
+                      </h4>
+                    </div>
+                    <span className="text-xs text-neutral-500 font-semibold">
+                      {detalle.platosVendidos?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} unidades
+                    </span>
+                  </div>
+
+                  {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
+                          <tr>
+                            <th className="px-4 py-2.5">Plato / Producto</th>
+                            <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
+                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-line-soft text-sm">
+                          {detalle.platosVendidos.map((p, idx) => (
+                            <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
+                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{p.nombre}</td>
+                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
+                                {p.cantidad}
+                              </td>
+                              <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
+                                S/ {(p.total ?? 0).toFixed(2)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
+                          <tr>
+                            <td className="px-4 py-2.5 text-ink">Subtotal Carta</td>
+                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
+                              {detalle.platosVendidos.reduce((acc, p) => acc + p.cantidad, 0)}
+                            </td>
+                            <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
+                              S/ {detalle.platosVendidos.reduce((acc, p) => acc + (p.total ?? 0), 0).toFixed(2)}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="py-4 text-center text-xs text-neutral-500 italic">
+                      Sin productos de carta vendidos en este turno.
+                    </div>
+                  )}
+                </div>
+
+                {/* 4B. Menús Completos */}
+                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
+                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Utensils className="w-4 h-4 text-amber-600" />
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
+                        2. Menús Completos
+                      </h4>
+                    </div>
+                    <span className="text-xs text-neutral-500 font-semibold">
+                      {detalle.menusCompletos?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} unidades
+                    </span>
+                  </div>
+
+                  {detalle.menusCompletos && detalle.menusCompletos.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
+                          <tr>
+                            <th className="px-4 py-2.5">Menú Completo</th>
+                            <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
+                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-line-soft text-sm">
+                          {detalle.menusCompletos.map((m, idx) => (
+                            <tr key={`${m.menuCompletoId}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
+                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{m.nombre}</td>
+                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
+                                {m.cantidad}
+                              </td>
+                              <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
+                                S/ {(m.monto ?? m.total ?? 0).toFixed(2)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
+                          <tr>
+                            <td className="px-4 py-2.5 text-ink">Subtotal Menús</td>
+                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
+                              {detalle.menusCompletos.reduce((acc, m) => acc + m.cantidad, 0)}
+                            </td>
+                            <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
+                              S/ {detalle.menusCompletos.reduce((acc, m) => acc + (m.monto ?? m.total ?? 0), 0).toFixed(2)}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="py-4 text-center text-xs text-neutral-500 italic">
+                      Sin menús completos vendidos en este turno.
+                    </div>
+                  )}
+                </div>
+
+                {/* 4C. Componentes de Menú */}
+                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
+                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Utensils className="w-4 h-4 text-emerald-600" />
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
+                        3. Componentes Elegidos en Menús
+                      </h4>
+                    </div>
+                    <span className="text-xs text-neutral-500 font-semibold">
+                      {detalle.componentes?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} elecciones
+                    </span>
+                  </div>
+
+                  {detalle.componentes && detalle.componentes.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
+                          <tr>
+                            <th className="px-4 py-2.5">Componente / Insumo</th>
+                            <th className="px-4 py-2.5 text-center w-28">Rol / Parte</th>
+                            <th className="px-4 py-2.5 text-center w-24">Veces Elegida</th>
+                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Monto</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-line-soft text-sm">
+                          {detalle.componentes.map((c, idx) => (
+                            <tr key={`${c.productoId}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
+                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{c.producto}</td>
+                              <td className="px-4 py-2.5 text-center font-mono text-xs text-neutral-600">
+                                {c.rol}
+                              </td>
+                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
+                                {c.cantidad}
+                              </td>
+                              <td className="px-4 py-2.5 text-right font-medium text-xs text-neutral-400 italic">
+                                S/ 0.00 (Incluido)
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
+                          <tr>
+                            <td className="px-4 py-2.5 text-ink" colSpan={2}>Total Elecciones Componentes</td>
+                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
+                              {detalle.componentes.reduce((acc, c) => acc + c.cantidad, 0)}
+                            </td>
+                            <td className="px-4 py-2.5 text-right text-neutral-500 tabular-nums font-medium text-xs">
+                              S/ 0.00
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="py-4 text-center text-xs text-neutral-500 italic">
+                      Sin componentes de menú elegidos en este turno.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sección 5: Ventas anuladas después del cierre */}
+              {tieneAjustes && detalle.ajustesPosteriores && detalle.ajustesPosteriores.length > 0 && (
+                <div className="border border-amber-200 bg-amber-50/40 rounded-xl overflow-hidden break-inside-avoid">
+                  <div className="bg-amber-100/70 px-4 py-2.5 border-b border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <span className="font-bold text-xs uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-700" />
+                      Ventas anuladas después del cierre ({detalle.ajustesPosteriores.length})
+                    </span>
+                    <span className="text-xs text-amber-800 font-semibold">
+                      Arqueo original protegido
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-amber-100/30 border-b border-amber-200/60 text-xs text-amber-900 leading-normal">
+                    <strong>Nota de auditoría:</strong> El arqueo y balance original de la caja no se modifican. Estas ventas fueron anuladas después de cerrar el turno.
+                  </div>
+
+                  <div className="divide-y divide-amber-200/60 text-xs">
+                    {detalle.ajustesPosteriores.map((a) => (
+                      <div key={a.ventaId} className="p-3.5 hover:bg-amber-100/30 transition-colors space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-ink">
+                            {a.comprobante || a.numeroComprobante || 'Comprobante'}
+                          </span>
+                          <span className="font-bold text-red-600 tabular-nums">
+                            -S/ {Number(a.montoAnulado ?? a.total ?? 0).toFixed(2)} ({a.metodoPago})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center justify-between text-xs text-neutral-600 gap-2">
+                          <p>
+                            Motivo: <em className="text-neutral-800 font-medium">"{a.motivo || 'Sin motivo'}"</em>
+                          </p>
+                          <p className="text-neutral-500">
+                            Anulado por: <strong>{a.usuarioAnulacion || 'Mozo/Admin'}</strong> ·{' '}
+                            {a.fechaAnulacionLocal || formatLimaFecha(a.fechaAnulacion || a.fechaAnulacionUtc)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : null}
+        </div>
+
+        {/* Footer con Botones de Acción */}
+        <div className="no-print bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+          >
+            Cerrar
+          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handlePrint}
+              disabled={cargando || !detalle}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 hover:bg-neutral-50 disabled:opacity-40 rounded-xl transition-colors cursor-pointer min-h-[44px]"
+              title="Imprimir resumen mediante diálogo del navegador"
+            >
+              <Printer className="w-4 h-4" />
+              Imprimir
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDescargarPdf}
+              disabled={cargando || !detalle || descargandoPdf || esAbierta}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-primary hover:bg-primary-hover disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
+            >
+              {descargandoPdf ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Generando PDF…
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Descargar comprobante PDF
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CierreDetalleModal;
