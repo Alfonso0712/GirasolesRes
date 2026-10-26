@@ -55,7 +55,7 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
         id: 'cocina',
         label: 'Cocina (KDS)',
         icon: ChefHat,
-        roles: ['Administrador', 'Cocinero'],
+        roles: ['Cocinero'],
         matchPaths: ['cocina'],
       },
     ],

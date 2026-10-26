@@ -444,7 +444,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
         )
-      ) : paginaActiva === 'cocina' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
+      ) : paginaActiva === 'cocina' && session.rol === 'Cocinero' ? (
         <CocinaPage
           session={session}
           onLogout={onLogout}
