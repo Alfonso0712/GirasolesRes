@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type {
   BloqueMesas,
   BloqueSimpleCantidad
@@ -6,7 +6,6 @@ import type {
 import {
   CheckCircle2,
   Utensils,
-  UtensilsCrossed,
   Clock,
   LayoutGrid,
   ChevronRight
@@ -63,22 +62,13 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
         <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Acciones Operativas del Salón
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => onNavigate('pedido-mesa')}
-            className="p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <UtensilsCrossed className="w-5 h-5" />
-            <span>NUEVO PEDIDO DE MESA</span>
-          </button>
-
+        <div>
           <button
             type="button"
             onClick={() => onNavigate('mesas')}
-            className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
+            className="w-full p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <LayoutGrid className="w-5 h-5 text-accent" />
+            <LayoutGrid className="w-5 h-5" />
             <span>VER MESAS Y SALÓN</span>
           </button>
         </div>
