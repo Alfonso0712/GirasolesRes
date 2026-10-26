@@ -468,7 +468,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
                   No hay comandas en espera de preparación.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3.5">
+                <div className="flex flex-col gap-3.5">
                   {comandasPendientes.map((c) => (
                     <ComandaCard
                       key={c.id}
@@ -511,7 +511,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
                   No hay comandas en preparación en este momento.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3.5">
+                <div className="flex flex-col gap-3.5">
                   {comandasEnPreparacion.map((c) => (
                     <ComandaCard
                       key={c.id}

@@ -26,7 +26,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
     return (
       <article
         key={c.id}
-        className={`bg-surface rounded-3xl p-5 sm:p-6 border shadow-sm transition-all flex flex-col justify-between gap-4 ${
+        className={`w-full bg-surface rounded-3xl p-5 sm:p-6 border shadow-sm transition-all flex flex-col justify-between gap-4 ${
           esNueva
             ? 'border-emerald-500 ring-4 ring-emerald-300/40 animate-pulse'
             : c.esDemora
@@ -133,7 +133,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
   return (
     <article
       key={c.id}
-      className={`bg-blue-50/40 rounded-3xl p-5 sm:p-6 border border-blue-200 shadow-sm transition-all flex flex-col justify-between gap-4 ${
+      className={`w-full bg-blue-50/40 rounded-3xl p-5 sm:p-6 border border-blue-200 shadow-sm transition-all flex flex-col justify-between gap-4 ${
         c.esDemora ? 'border-rose-400 ring-2 ring-rose-200' : ''
       }`}
     >
