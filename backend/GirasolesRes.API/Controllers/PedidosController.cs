@@ -398,18 +398,13 @@ public class PedidosController : ControllerBase
     }
 
     /// <summary>
-    /// Obtiene el pedido activo de una mesa específica (si lo tuviera).
+    /// Obtiene todos los pedidos abiertos de una mesa específica para alimentar MSG-95.
     /// </summary>
     [HttpGet("mesa/{mesaId:guid}/activo")]
     public async Task<IActionResult> ObtenerActivoPorMesa(Guid mesaId, CancellationToken cancellationToken)
     {
-        var pedido = await _pedidoService.ObtenerPedidoActivoPorMesaAsync(mesaId, cancellationToken);
-        if (pedido == null)
-        {
-            return NotFound(new { message = "No hay pedido activo en esta mesa." });
-        }
-
-        return Ok(pedido);
+        var pedidos = await _pedidoService.ObtenerPedidosActivosPorMesaAsync(mesaId, cancellationToken);
+        return Ok(pedidos);
     }
 
     /// <summary>

@@ -87,6 +87,13 @@ public record AgregarLineasResultDto(
     int NumeroPedido
 );
 
+public record PedidoAbiertoMesaDto(
+    Guid Id,
+    int Numero,
+    string Estado,
+    decimal Total
+);
+
 public record EleccionOpcionResponseDto(
     string Parte,
     Guid ProductoId,

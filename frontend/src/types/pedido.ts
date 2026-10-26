@@ -69,6 +69,13 @@ export interface LineaPedidoResponseDto {
   elecciones?: EleccionOpcionResponseDto[];
 }
 
+export interface PedidoAbiertoMesaDto {
+  id: string;
+  numero: number;
+  estado: string;
+  total: number;
+}
+
 export interface PedidoResponseDto {
   id: string;
   numero: number;

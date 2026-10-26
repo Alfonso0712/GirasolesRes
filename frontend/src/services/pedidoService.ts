@@ -7,6 +7,7 @@ import type {
   AgregarLineasPedidoRequest,
   AgregarLineasResultDto,
   PedidoResponseDto,
+  PedidoAbiertoMesaDto,
   ProductoMenuPedido
 } from '../types/pedido';
 
@@ -53,18 +54,19 @@ export const pedidoService = {
   },
 
   /**
-   * Obtiene el pedido activo de una mesa
+   * Obtiene todos los pedidos abiertos de una mesa específica (para alimentar MSG-95)
    */
+  obtenerPedidosActivosPorMesa: async (
+    mesaId: string,
+    token?: string
+  ): Promise<PedidoAbiertoMesaDto[]> => {
+    return await apiClient.get<PedidoAbiertoMesaDto[]>(`/api/pedidos/mesa/${mesaId}/activo`, token);
+  },
   obtenerPedidoActivoPorMesa: async (
     mesaId: string,
-    token: string
-  ): Promise<PedidoResponseDto | null> => {
-    try {
-      return await apiClient.get<PedidoResponseDto>(`/api/pedidos/mesa/${mesaId}/activo`, token);
-    } catch (err: any) {
-      if (err.status === 404) return null;
-      throw err;
-    }
+    token?: string
+  ): Promise<PedidoAbiertoMesaDto[]> => {
+    return await apiClient.get<PedidoAbiertoMesaDto[]>(`/api/pedidos/mesa/${mesaId}/activo`, token);
   },
 
   /**

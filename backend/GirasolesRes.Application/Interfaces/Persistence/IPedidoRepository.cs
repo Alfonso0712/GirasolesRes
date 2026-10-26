@@ -7,6 +7,7 @@ public interface IPedidoRepository
     Task<Pedido?> ObtenerPorIdAsync(Guid id, CancellationToken ct = default);
     Task<Pedido?> ObtenerPorSolicitudIdAsync(string solicitudId, CancellationToken ct = default);
     Task<Pedido?> ObtenerPedidoActivoPorMesaAsync(Guid mesaId, CancellationToken ct = default);
+    Task<IReadOnlyList<Pedido>> ObtenerPedidosActivosPorMesaAsync(Guid mesaId, CancellationToken ct = default);
     Task<bool> ExistePedidoActivoEnMesaAsync(Guid mesaId, CancellationToken ct = default);
     Task<int> ObtenerSiguienteNumeroDiarioAsync(DateOnly fechaOperativa, CancellationToken ct = default);
     Task<int> ObtenerSiguienteNumeroComandaDiarioAsync(DateOnly fechaOperativa, CancellationToken ct = default);

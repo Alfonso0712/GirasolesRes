@@ -145,4 +145,47 @@ public class MesaServiceUnitTests
         Assert.Equal("Mesa 2", resultado.Data[1].Nombre);
         Assert.Equal("Mesa 10", resultado.Data[2].Nombre);
     }
+
+    [Fact]
+    public void CrearMesaRequest_NombreCon20Caracteres_PasaValidacion_D008()
+    {
+        // ARRANGE: Exactamente 20 caracteres (límite superior RV-168, D-008)
+        var request = new CrearMesaRequest { Nombre = "Mesa Terraza VIP 012" }; // 20 chars
+        Assert.Equal(20, request.Nombre.Length);
+
+        // ACT
+        var resultados = request.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(request)).ToList();
+
+        // ASSERT
+        Assert.Empty(resultados);
+    }
+
+    [Fact]
+    public void CrearMesaRequest_NombreCon21Caracteres_RetornaErrorMSG82_D008()
+    {
+        // ARRANGE: 21 caracteres (supera límite de 20 RV-168, D-008)
+        var request = new CrearMesaRequest { Nombre = "Mesa Terraza VIP 0123" }; // 21 chars
+        Assert.Equal(21, request.Nombre.Length);
+
+        // ACT
+        var resultados = request.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(request)).ToList();
+
+        // ASSERT
+        Assert.Single(resultados);
+        Assert.Equal(MensajesCatalogo.MSG_82, resultados[0].ErrorMessage);
+    }
+
+    [Fact]
+    public void CrearMesaRequest_NombreVacio_RetornaErrorMSG81()
+    {
+        // ARRANGE: Nombre vacío o puros espacios
+        var request = new CrearMesaRequest { Nombre = "    " };
+
+        // ACT
+        var resultados = request.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(request)).ToList();
+
+        // ASSERT
+        Assert.Single(resultados);
+        Assert.Equal(MensajesCatalogo.MSG_81, resultados[0].ErrorMessage);
+    }
 }

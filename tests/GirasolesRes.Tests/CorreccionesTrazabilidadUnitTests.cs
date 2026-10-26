@@ -365,4 +365,46 @@ public class CorreccionesTrazabilidadUnitTests
         Assert.True(min15 >= RestauranteConstantes.MinutosDemoraCocina);
         Assert.True(min16 >= RestauranteConstantes.MinutosDemoraCocina);
     }
+
+    [Fact]
+    public async Task ObtenerPedidosActivosPorMesa_DosPedidosAbiertos_DevuelveListaConIdNumeroEstadoTotal()
+    {
+        // 3. GET /api/pedidos/mesa/{mesaId}/activo debe devolver TODOS los pedidos abiertos de la mesa
+        // (lista con id, número, estado y total) para alimentar MSG-95
+        var mesaId = Guid.NewGuid();
+        var mozoId = Guid.NewGuid();
+
+        var pedido1 = new Pedido(1, DateOnly.FromDateTime(DateTime.Today), mesaId, mozoId, "sol-1", TipoPedido.Mesa, null);
+        var comanda1 = new Comanda(pedido1.Id_Pedido, 1, "Mesa 1", false);
+        pedido1.AgregarComanda(comanda1);
+
+        var pedido2 = new Pedido(2, DateOnly.FromDateTime(DateTime.Today), mesaId, mozoId, "sol-2", TipoPedido.Mesa, null);
+        var comanda2 = new Comanda(pedido2.Id_Pedido, 2, "Mesa 1", false);
+        comanda2.IniciarPreparacion("cocinero1");
+        pedido2.AgregarComanda(comanda2);
+
+        _pedidoRepoMock.Setup(r => r.ObtenerPedidosActivosPorMesaAsync(mesaId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Pedido> { pedido1, pedido2 });
+
+        var service = CrearPedidoService();
+
+        // ACT
+        var resultado = await service.ObtenerPedidosActivosPorMesaAsync(mesaId);
+
+        // ASSERT: Devuelve ambos pedidos abiertos con su id, número, estado y total
+        Assert.NotNull(resultado);
+        Assert.Equal(2, resultado.Count);
+
+        // Pedido 1
+        Assert.Equal(pedido1.Id_Pedido, resultado[0].Id);
+        Assert.Equal(1, resultado[0].Numero);
+        Assert.Equal("Pendiente", resultado[0].Estado);
+        Assert.Equal(pedido1.Ped_Total, resultado[0].Total);
+
+        // Pedido 2
+        Assert.Equal(pedido2.Id_Pedido, resultado[1].Id);
+        Assert.Equal(2, resultado[1].Numero);
+        Assert.Equal("Pendiente", resultado[1].Estado);
+        Assert.Equal(pedido2.Ped_Total, resultado[1].Total);
+    }
 }

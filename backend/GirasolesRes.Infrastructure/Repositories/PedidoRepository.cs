@@ -52,6 +52,17 @@ public class PedidoRepository : IPedidoRepository
             .FirstOrDefaultAsync(p => p.Ped_SolicitudId == solicitudId.Trim(), ct);
     }
 
+    public async Task<IReadOnlyList<Pedido>> ObtenerPedidosActivosPorMesaAsync(Guid mesaId, CancellationToken ct = default)
+    {
+        return await _context.Pedidos
+            .Include(p => p.Ped_Comandas)
+            .Where(p => p.Id_Mesa == mesaId &&
+                        p.Ped_Estado != EstadoPedido.Pagado &&
+                        p.Ped_Estado != EstadoPedido.Anulado)
+            .OrderBy(p => p.Ped_NumeroDiario)
+            .ToListAsync(ct);
+    }
+
     public async Task<Pedido?> ObtenerPedidoActivoPorMesaAsync(Guid mesaId, CancellationToken ct = default)
     {
         return await _context.Pedidos

@@ -142,13 +142,15 @@ export function usePedidoMesaManagement({
         } else {
           // Verificar si la mesa ya tiene un pedido activo (deriva a ampliación CUS07.2)
           try {
-            const pedidoActivo = await pedidoService.obtenerPedidoActivoPorMesa(mesaIdInicial, token);
-            if (pedidoActivo) {
+            const pedidos = await pedidoService.obtenerPedidosActivosPorMesa(mesaIdInicial, token);
+            if (pedidos && pedidos.length > 0) {
+              const ultimo = pedidos[pedidos.length - 1];
+              const detalle = await pedidoService.obtenerPedidoPorId(ultimo.id, token);
               setModo('ampliacion');
-              setPedidoExistente(pedidoActivo);
+              setPedidoExistente(detalle);
               setMesaSeleccionada({
                 id: mesaIdInicial,
-                nombre: pedidoActivo.mesaNombre || 'Mesa',
+                nombre: detalle.mesaNombre || 'Mesa',
                 ocupacion: 'Ocupada',
                 activa: true
               });

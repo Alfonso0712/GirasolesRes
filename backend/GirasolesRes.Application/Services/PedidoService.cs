@@ -312,6 +312,19 @@ public class PedidoService : IPedidoService
         return pedido == null ? null : MapearAPedidoDto(pedido);
     }
 
+    public async Task<IReadOnlyList<PedidoAbiertoMesaDto>> ObtenerPedidosActivosPorMesaAsync(Guid mesaId, CancellationToken ct = default)
+    {
+        var pedidos = await _pedidoRepository.ObtenerPedidosActivosPorMesaAsync(mesaId, ct);
+        return pedidos.Select(p => new PedidoAbiertoMesaDto(
+            p.Id_Pedido,
+            p.Ped_NumeroDiario,
+            p.Ped_Estado.ToString(),
+            p.Ped_Total
+        )).ToList();
+    }
+
+
+
     public async Task<IReadOnlyList<ProductoMenuPedidoDto>> ObtenerMenuParaPedidoAsync(CancellationToken ct = default)
     {
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();

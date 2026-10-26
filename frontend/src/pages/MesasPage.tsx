@@ -15,7 +15,6 @@ import type { MesaItem, FiltroEstadoMesa } from '../types/mesa';
 import { useMesasManagement } from '../hooks/useMesasManagement';
 import { menuDiaService } from '../services/menuDiaService';
 import { pedidoService } from '../services/pedidoService';
-import type { PedidoItemDto } from '../types/pedido';
 import { MesaCard } from '../components/mesas';
 import { MesaFormModal } from '../components/mesas';
 import { MesaConfirmModal } from '../components/mesas';
@@ -118,9 +117,8 @@ export const MesasPage: React.FC<MesasPageProps> = ({
     }
     if (accion === 'OPCIONES_MESA_OCUPADA') {
       try {
-        const res = await pedidoService.listarPedidos({ mesaId: mesa.id }, session.token);
-        const abiertos = res.items.filter((p: PedidoItemDto) => p.estado !== 'Pagado' && p.estado !== 'Anulado');
-        const count = abiertos.length > 0 ? abiertos.length : 1;
+        const pedidos = await pedidoService.obtenerPedidosActivosPorMesa(mesa.id, session.token);
+        const count = pedidos && pedidos.length > 0 ? pedidos.length : 1;
         setModalMesaOcupada({ mesa, cantidadPedidos: count });
       } catch {
         setModalMesaOcupada({ mesa, cantidadPedidos: 1 });
