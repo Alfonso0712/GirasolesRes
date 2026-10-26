@@ -112,10 +112,7 @@ public class MenuDiaService : IMenuDiaService
                 }
             }
 
-            if (request.DesayunoId.HasValue && !productosCartaIds.Contains(request.DesayunoId.Value))
-            {
-                productosCartaIds.Add(request.DesayunoId.Value);
-            }
+
 
             // RV-162 / MSG-224: Para guardar el menú del día debe haber al menos un producto de carta o un menú completo habilitado
             if (productosCartaIds.Count == 0 && menusCompletosIds.Count == 0)
@@ -194,15 +191,14 @@ public class MenuDiaService : IMenuDiaService
 
             if (esNuevo)
             {
-                menu = new MenuDia(fechaHoy, request.DesayunoId, usuario);
+                menu = new MenuDia(fechaHoy, usuario);
                 menu.SincronizarPlatos(todosLosPlatosIds, usuario);
                 menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.AgregarAsync(menu, cancellationToken);
             }
             else
             {
-                menu!.ActualizarDesayuno(request.DesayunoId, usuario);
-                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
+                                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
                 menu.SincronizarPlatos(todosLosPlatosIds, usuario);
                 menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.ActualizarAsync(menu, cancellationToken);
@@ -354,11 +350,7 @@ public class MenuDiaService : IMenuDiaService
         {
             Fecha = menu.Men_Fecha.ToString("yyyy-MM-dd"),
             Definido = true,
-            Desayuno = menu.Men_Desayuno != null ? new DesayunoMenuDto
-            {
-                Id = menu.Men_Desayuno.Id_Producto,
-                Nombre = menu.Men_Desayuno.Pro_Nombre
-            } : null,
+            Desayuno = null,
             Platos = menu.Men_Platos
                 .Where(p => p.Mdp_Producto?.Pro_Tipo == TipoProducto.Carta)
                 .OrderBy(p => p.Mdp_Producto?.Pro_Categoria)

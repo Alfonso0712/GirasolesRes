@@ -18,7 +18,6 @@ public class MenuDiaRepository : IMenuDiaRepository
     public async Task<MenuDia?> ObtenerPorFechaAsync(DateOnly fecha, CancellationToken cancellationToken = default)
     {
         return await _context.MenusDia
-            .Include(m => m.Men_Desayuno)
             .Include(m => m.Men_Platos)
                 .ThenInclude(p => p.Mdp_Producto)
             .Include(m => m.Men_MenusCompletos)
@@ -31,7 +30,6 @@ public class MenuDiaRepository : IMenuDiaRepository
     {
         var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
         return await _context.MenusDia
-            .Include(m => m.Men_Desayuno)
             .Include(m => m.Men_Platos)
                 .ThenInclude(p => p.Mdp_Producto)
             .Include(m => m.Men_MenusCompletos)

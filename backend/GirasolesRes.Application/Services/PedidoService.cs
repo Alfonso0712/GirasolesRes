@@ -334,22 +334,7 @@ public class PedidoService : IPedidoService
         {
             var lista = new List<ProductoMenuPedidoDto>();
 
-            // Desayuno del día
-            if (menuDia.Id_Desayuno.HasValue)
-            {
-                var des = await _productoRepository.ObtenerPorIdAsync(menuDia.Id_Desayuno.Value, ct);
-                if (des != null && des.Pro_Activo)
-                {
-                    lista.Add(new ProductoMenuPedidoDto(
-                        des.Id_Producto,
-                        des.Pro_Nombre,
-                        des.Pro_Categoria?.ToString() ?? string.Empty,
-                        des.Pro_Precio.GetValueOrDefault(),
-                        Agotado: false,
-                        Disponible: true
-                    ));
-                }
-            }
+
 
             // Platos del menú del día (exclusivamente productos de Carta)
             foreach (var plato in menuDia.Men_Platos)
@@ -1034,7 +1019,7 @@ public class PedidoService : IPedidoService
             menusDict = menus.ToDictionary(m => m.Id_MenuCompleto);
         }
 
-        var menuDiaDefinido = menuDia != null && (menuDia.Men_Platos.Count > 0 || menuDia.Id_Desayuno.HasValue || menuDia.Men_MenusCompletos.Count > 0);
+        var menuDiaDefinido = menuDia != null && (menuDia.Men_Platos.Count > 0 || menuDia.Men_MenusCompletos.Count > 0);
         var menusHabilitadosHoy = menuDiaDefinido
             ? menuDia!.Men_MenusCompletos.Select(m => m.Id_MenuCompleto).ToHashSet()
             : menusDict.Values.Where(m => m.Men_Activo).Select(m => m.Id_MenuCompleto).ToHashSet();

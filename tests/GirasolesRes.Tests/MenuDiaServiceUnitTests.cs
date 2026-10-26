@@ -125,7 +125,7 @@ public class MenuDiaServiceUnitTests
     {
         // Arrange
         var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
-        var menu = new MenuDia(fechaHoy, null, "admin");
+        var menu = new MenuDia(fechaHoy, "admin");
 
         var quaker = new Producto("Quaker", RolComponente.BebidaDesayuno);
         var seco = new Producto("Seco de pollo", RolComponente.PlatoDesayuno);
@@ -163,5 +163,52 @@ public class MenuDiaServiceUnitTests
         Assert.False(mcDto.Disponible, "El menú completo debe figurar como no disponible.");
         var expectedMotivo = string.Format(MensajesCatalogo.MSG_220, "Desayuno completo", "Bebida");
         Assert.Equal(expectedMotivo, mcDto.MotivoNoDisponible);
+    }
+
+    [Fact]
+    public async Task Punto2_D013_GuardarYLeerMenuDia_SinDesayuno_FuncionaCorrectamente()
+    {
+        // D-013: Eliminar definitivamente Id_Desayuno / DesayunoId de MenuDia.
+        // Los desayunos se eligen en ProductosCarta y el desayuno completo es un MenuCompleto.
+        var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
+        var platoCarta = new Producto("Desayuno Continental", CategoriaProducto.Desayuno, 18.00m, true);
+
+        _mockProductoRepo.Setup(r => r.ObtenerPorIdsAsync(It.IsAny<IEnumerable<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Producto> { platoCarta });
+
+        MenuDia? menuGuardado = null;
+        _mockMenuDiaRepo.Setup(r => r.ObtenerMenuHoyConDetalleAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(() => menuGuardado);
+
+        _mockMenuDiaRepo.Setup(r => r.AgregarAsync(It.IsAny<MenuDia>(), It.IsAny<CancellationToken>()))
+            .Callback<MenuDia, CancellationToken>((m, _) => {
+                menuGuardado = m;
+                // Simular navegación del plato guardado
+                var plato = m.Men_Platos.First();
+                typeof(MenuDiaPlato).GetProperty(nameof(MenuDiaPlato.Mdp_Producto))!.SetValue(plato, platoCarta);
+            })
+            .Returns(Task.CompletedTask);
+
+        var request = new GuardarMenuDiaRequest
+        {
+            ProductosCarta = new List<Guid> { platoCarta.Id_Producto },
+            MenusCompletos = new List<int>()
+        };
+
+        // ACT 1: Guardar menú sin desayuno
+        var saveResult = await _service.GuardarMenuHoyAsync(request, "admin", "127.0.0.1");
+
+        Assert.True(saveResult.Success);
+        Assert.NotNull(menuGuardado);
+        Assert.Null(typeof(MenuDia).GetProperty("Id_Desayuno")); // Id_Desayuno ya no existe en la entidad
+
+        // ACT 2: Leer menú del día de hoy sin desayuno
+        var readResult = await _service.ObtenerMenuHoyAsync();
+
+        Assert.True(readResult.Success);
+        Assert.NotNull(readResult.Data);
+        Assert.True(readResult.Data.Definido);
+        Assert.Single(readResult.Data.Platos);
+        Assert.Equal(platoCarta.Pro_Nombre, readResult.Data.Platos[0].Nombre);
     }
 }
