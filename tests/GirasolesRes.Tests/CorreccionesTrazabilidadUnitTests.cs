@@ -507,6 +507,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         var comanda = new Comanda(pedido.Id_Pedido, 11, "Mesa 11", false);
 
+        comanda.IniciarPreparacion("cocinero1");
         comanda.MarcarComoLista("cocinero1");
 
         pedido.AgregarComanda(comanda);
@@ -890,8 +891,10 @@ public class CorreccionesTrazabilidadUnitTests
 
 
         // ACT 3: Re-preparar y simular 15s (bloqueado por superar tolerancia de 10.5s)
-        comanda.IniciarPreparacion("cocinero1");
-        propFecUltimo.SetValue(comanda, DateTime.UtcNow.AddSeconds(-15.0));
+        var comanda15s = new Comanda(Guid.NewGuid(), 1, "Mesa 1", false);
+        comanda15s.IniciarPreparacion("cocinero1");
+        comandaRepoMock.Setup(r => r.ObtenerComandaPorIdAsync(comandaId)).ReturnsAsync(comanda15s);
+        propFecUltimo.SetValue(comanda15s, DateTime.UtcNow.AddSeconds(-15.0));
         var exExpirado = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             comandaService.DeshacerEstadoAsync(comandaId, "cocinero1"));
         Assert.Equal(MensajesCatalogo.MSG_134, exExpirado.Message);
@@ -1392,6 +1395,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         var comandaMozo1 = new Comanda(pedidoMozo1.Id_Pedido, 1, "Mesa 1", false);
 
+        comandaMozo1.IniciarPreparacion("cocinero1");
         comandaMozo1.MarcarComoLista("cocinero1");
 
         pedidoMozo1.AgregarComanda(comandaMozo1);

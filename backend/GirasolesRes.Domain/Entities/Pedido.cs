@@ -165,7 +165,7 @@ public class Pedido
 
         foreach (var comanda in _ped_Comandas)
         {
-            comanda.CambiarEstado(EstadoComanda.Cancelada);
+            comanda.Cancelar();
         }
     }
 

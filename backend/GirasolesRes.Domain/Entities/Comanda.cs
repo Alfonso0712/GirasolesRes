@@ -64,13 +64,14 @@ public class Comanda
         _cmd_Detalles.Add(new DetalleComanda(Id_Comanda, idProducto, idMenuCompleto, nombreProducto, cantidad, observacion, elecciones, incluye));
     }
 
-    public void CambiarEstado(EstadoComanda nuevoEstado)
-    {
-        Cmd_Estado = nuevoEstado;
-    }
-
     public void IniciarPreparacion(string usuario)
     {
+        if (string.IsNullOrWhiteSpace(usuario))
+            throw new ArgumentException("El usuario es obligatorio.", nameof(usuario));
+
+        if (Cmd_Estado != EstadoComanda.Pendiente)
+            throw new InvalidOperationException($"Solo una comanda en estado Pendiente puede pasar a En preparación. Estado actual: {Cmd_Estado}.");
+
         Cmd_EstadoAnterior = Cmd_Estado;
         Cmd_Estado = EstadoComanda.EnPreparacion;
         Cmd_FecInicioPreparacionUtc = DateTime.UtcNow;
@@ -80,6 +81,12 @@ public class Comanda
 
     public void MarcarComoLista(string usuario)
     {
+        if (string.IsNullOrWhiteSpace(usuario))
+            throw new ArgumentException("El usuario es obligatorio.", nameof(usuario));
+
+        if (Cmd_Estado != EstadoComanda.EnPreparacion)
+            throw new InvalidOperationException($"Solo una comanda en preparación puede marcarse como lista. Estado actual: {Cmd_Estado}.");
+
         Cmd_EstadoAnterior = Cmd_Estado;
         Cmd_Estado = EstadoComanda.Lista;
         Cmd_FecListaUtc = DateTime.UtcNow;
@@ -92,26 +99,36 @@ public class Comanda
 
     public void DeshacerUltimoEstado()
     {
-        if (Cmd_EstadoAnterior.HasValue)
-        {
-            var estadoARevertir = Cmd_Estado;
-            Cmd_Estado = Cmd_EstadoAnterior.Value;
-            Cmd_EstadoAnterior = null;
-            Cmd_FecUltimoCambioEstadoUtc = DateTime.UtcNow;
+        if (!Cmd_EstadoAnterior.HasValue)
+            throw new InvalidOperationException("No se puede deshacer: la comanda no tiene un estado anterior registrado.");
 
-            if (estadoARevertir == EstadoComanda.EnPreparacion)
-            {
-                Cmd_FecInicioPreparacionUtc = null;
-                Cmd_NomUsuarioPreparacion = null;
-            }
-            else if (estadoARevertir == EstadoComanda.Lista)
-            {
-                Cmd_FecListaUtc = null;
-                Cmd_NomUsuarioLista = null;
-                // Si el aviso no fue visto, se retira/invalida
-                Cmd_AvisoVisto = true;
-            }
+        var estadoARevertir = Cmd_Estado;
+        Cmd_Estado = Cmd_EstadoAnterior.Value;
+        Cmd_EstadoAnterior = null;
+        Cmd_FecUltimoCambioEstadoUtc = DateTime.UtcNow;
+
+        if (estadoARevertir == EstadoComanda.EnPreparacion)
+        {
+            Cmd_FecInicioPreparacionUtc = null;
+            Cmd_NomUsuarioPreparacion = null;
         }
+        else if (estadoARevertir == EstadoComanda.Lista)
+        {
+            Cmd_FecListaUtc = null;
+            Cmd_NomUsuarioLista = null;
+            // Si el aviso no fue visto, se retira/invalida
+            Cmd_AvisoVisto = true;
+        }
+    }
+
+    public void Cancelar()
+    {
+        if (Cmd_Estado == EstadoComanda.Cancelada)
+            return;
+
+        Cmd_EstadoAnterior = Cmd_Estado;
+        Cmd_Estado = EstadoComanda.Cancelada;
+        Cmd_FecUltimoCambioEstadoUtc = DateTime.UtcNow;
     }
 
     public void MarcarComoModificada()
