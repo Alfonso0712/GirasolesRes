@@ -62,3 +62,22 @@ penpot-mcp/
 figma_export_board_preview.png
 resize_logo.ps1
 frontend/public/LOGO_GIRASOLES_figma.png
+
+# ==============================
+# Local Documentation & Word files
+# ==============================
+*.docx
+
+# ==============================
+# Local Analysis & Audit reports
+# ==============================
+04_*.md
+analisis/
+
+# ==============================
+# Database Dumps & Backups
+# ==============================
+database/backup_completo_*.sql
+backend/sql/
+*.dump
+*.backup
