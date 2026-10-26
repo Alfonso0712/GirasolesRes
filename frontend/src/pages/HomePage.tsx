@@ -353,7 +353,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             setPaginaActiva('caja');
           }}
         />
-      ) : paginaActiva === 'caja' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
+      ) : paginaActiva === 'caja' && session.rol === 'Cajero' ? (
         <CobrosPage
           session={session}
           onLogout={onLogout}

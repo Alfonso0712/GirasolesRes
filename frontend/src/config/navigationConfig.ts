@@ -68,7 +68,7 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
         id: 'caja',
         label: 'Caja y Cobros',
         icon: DollarSign,
-        roles: ['Administrador', 'Cajero'],
+        roles: ['Cajero'],
         matchPaths: ['caja'],
       },
       {

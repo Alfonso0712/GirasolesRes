@@ -439,7 +439,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
             renderBloqueError('caja')
           ) : (
             <div
-              onClick={() => onNavigate('caja')}
+              onClick={() => onNavigate('historial-cierres')}
               className="p-4 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:border-accent transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-2">
@@ -553,7 +553,7 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
     { label: 'Nuevo Pedido de Mesa', pagina: 'pedido-mesa', icon: UtensilsCrossed },
     { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
     { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
-    { label: 'Gestión de Caja', pagina: 'caja', icon: DollarSign },
+    { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: DollarSign },
     { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: Receipt },
     { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: TrendingUp },
     { label: 'Menú del Día', pagina: 'menu-dia', icon: ClipboardList },
