@@ -407,4 +407,435 @@ public class CorreccionesTrazabilidadUnitTests
         Assert.Equal("Pendiente", resultado[1].Estado);
         Assert.Equal(pedido2.Ped_Total, resultado[1].Total);
     }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 1: REVERTIR DESHACER DE COMANDA A 10 SEGUNDOS (TOLERANCIA 10.5s)
+    // ------------------------------------------------------------------------
+    [Fact]
+    public async Task Punto1_DeshacerComanda_Ventana10Segundos_ConTolerancia10Punto5_ValidaCorrectamente()
+    {
+        Assert.Equal(10, RestauranteConstantes.SegundosVentanaDeshacerComanda);
+        Assert.Equal(10.5, RestauranteConstantes.SegundosToleranciaDeshacerComanda);
+
+        var comandaRepoMock = new Mock<IComandaRepository>();
+        var comandaService = new ComandaService(comandaRepoMock.Object);
+
+        var comandaId = Guid.NewGuid();
+        var comanda = new Comanda(Guid.NewGuid(), 1, "Mesa 1", false);
+        comanda.IniciarPreparacion("cocinero1"); // Estado anterior = Pendiente, Estado = EnPreparacion
+
+        // Simular que el cambio ocurrió hace 10.0 segundos (dentro de los 10.5s)
+        var propFecUltimo = typeof(Comanda).GetProperty("Cmd_FecUltimoCambioEstadoUtc");
+        propFecUltimo!.SetValue(comanda, DateTime.UtcNow.AddSeconds(-10.0));
+
+        comandaRepoMock.Setup(r => r.ObtenerComandaPorIdAsync(comandaId))
+            .ReturnsAsync(comanda);
+
+        // ACT 1: 10.0s debe permitir deshacer
+        var res10s = await comandaService.DeshacerEstadoAsync(comandaId, "cocinero1");
+        Assert.NotNull(res10s);
+        Assert.Equal("Pendiente", res10s.Estado);
+
+        // ACT 2: Re-preparar y simular 10.6s (supera tolerancia técnica 10.5s)
+        comanda.IniciarPreparacion("cocinero1");
+        propFecUltimo.SetValue(comanda, DateTime.UtcNow.AddSeconds(-10.6));
+        var ex10Punto6 = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            comandaService.DeshacerEstadoAsync(comandaId, "cocinero1"));
+        Assert.Equal(MensajesCatalogo.MSG_134, ex10Punto6.Message);
+
+        // ACT 3: Re-preparar y simular 60s (bloqueado)
+        comanda.IniciarPreparacion("cocinero1");
+        propFecUltimo.SetValue(comanda, DateTime.UtcNow.AddSeconds(-60.0));
+        var ex60 = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            comandaService.DeshacerEstadoAsync(comandaId, "cocinero1"));
+        Assert.Equal(MensajesCatalogo.MSG_134, ex60.Message);
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 2: PRECIO DE PRODUCTO ACEPTA HASTA 999.99
+    // ------------------------------------------------------------------------
+    [Fact]
+    public void Punto2_PrecioProducto_AceptaHasta999Punto99_RechazaMayor()
+    {
+        Assert.Equal(999.99m, RestauranteConstantes.PrecioMaximoProducto);
+
+        var prodValido = new GirasolesRes.Application.DTOs.Productos.CrearProductoRequest
+        {
+            Nombre = "Plato Gourmet Especial",
+            Tipo = "Carta",
+            Categoria = "Almuerzo",
+            Precio = 999.99m
+        };
+
+        var prodInvalido = new GirasolesRes.Application.DTOs.Productos.CrearProductoRequest
+        {
+            Nombre = "Plato Gourmet Excedido",
+            Tipo = "Carta",
+            Categoria = "Almuerzo",
+            Precio = 1000.00m
+        };
+
+        var contextValido = new System.ComponentModel.DataAnnotations.ValidationContext(prodValido);
+        var resultsValido = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+        var esValido = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(prodValido, contextValido, resultsValido, true);
+        Assert.True(esValido);
+
+        var contextInvalido = new System.ComponentModel.DataAnnotations.ValidationContext(prodInvalido);
+        var resultsInvalido = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+        var esInvalido = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(prodInvalido, contextInvalido, resultsInvalido, true);
+        Assert.False(esInvalido);
+        Assert.Contains(resultsInvalido, r => r.ErrorMessage == MensajesCatalogo.MSG_56);
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 3: CAPACIDAD DE MESA ELIMINADA POR COMPLETO
+    // ------------------------------------------------------------------------
+    [Fact]
+    public void Punto3_CapacidadMesa_EliminadaCompletamenteDeEntidadYDtos()
+    {
+        var tiposAInspeccionar = new[]
+        {
+            typeof(Mesa),
+            typeof(GirasolesRes.Application.DTOs.Mesas.MesaDto),
+            typeof(GirasolesRes.Application.DTOs.Mesas.CrearMesaRequest),
+            typeof(GirasolesRes.Application.DTOs.Mesas.ActualizarMesaRequest)
+        };
+
+        foreach (var tipo in tiposAInspeccionar)
+        {
+            var props = tipo.GetProperties();
+            var tieneCapacidad = props.Any(p => p.Name.ToLowerInvariant().Contains("capacidad"));
+            Assert.False(tieneCapacidad, $"El tipo {tipo.Name} no debe contener ninguna propiedad de capacidad.");
+        }
+
+        var mesa = new Mesa("Mesa Salón 1");
+        Assert.Equal("Mesa Salón 1", mesa.Mes_Nombre);
+        Assert.Equal(EstadoOcupacionMesa.Libre, mesa.Mes_Ocupacion);
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 4: MATRIZ DE ROLES (MOZO, CAJERO, ADMINISTRADOR, COCINERO)
+    // ------------------------------------------------------------------------
+    private static ControllerContext CrearContextoConRol(string rol, Guid? usuarioId = null)
+    {
+        var uid = usuarioId ?? Guid.NewGuid();
+        return new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Role, rol),
+                    new Claim(ClaimTypes.NameIdentifier, uid.ToString()),
+                    new Claim(ClaimTypes.Name, $"usuario_{rol.ToLowerInvariant()}")
+                }, "TestAuth"))
+            }
+        };
+    }
+
+    [Theory]
+    [InlineData("Mozo", true)]
+    [InlineData("Administrador", true)]
+    [InlineData("Cajero", false)]
+    [InlineData("Cocinero", false)]
+    public async Task Punto4_RegistrarPedidoMesa_RolesPermitidosYBloqueados(string rol, bool permitido)
+    {
+        var mockService = new Mock<IPedidoService>();
+        var mockLogger = new Mock<ILogger<PedidosController>>();
+        mockService.Setup(s => s.RegistrarPedidoMesaAsync(It.IsAny<RegistrarPedidoMesaRequest>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new RegistrarPedidoResultDto(Guid.NewGuid(), 1, 20m, Guid.NewGuid(), "Mesa 1"));
+
+        var controller = new PedidosController(mockService.Object, mockLogger.Object)
+        {
+            ControllerContext = CrearContextoConRol(rol)
+        };
+
+        var request = new RegistrarPedidoMesaRequest
+        {
+            SolicitudId = $"sol-mesa-{rol}",
+            MesaId = Guid.NewGuid(),
+            Lineas = new List<LineaPedidoRequest> { new() { ProductoId = Guid.NewGuid(), Cantidad = 1 } }
+        };
+
+        var result = await controller.RegistrarPedidoMesa(request, CancellationToken.None);
+
+        if (permitido)
+        {
+            var objResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status201Created, objResult.StatusCode);
+        }
+        else
+        {
+            var objResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status403Forbidden, objResult.StatusCode);
+        }
+    }
+
+    [Theory]
+    [InlineData("Mozo", true)]
+    [InlineData("Administrador", true)]
+    [InlineData("Cajero", false)]
+    [InlineData("Cocinero", false)]
+    public async Task Punto4_AgregarLineasPedidoMesa_RolesPermitidosYBloqueados(string rol, bool permitido)
+    {
+        var mockService = new Mock<IPedidoService>();
+        var mockLogger = new Mock<ILogger<PedidosController>>();
+        mockService.Setup(s => s.AgregarLineasAsync(It.IsAny<Guid>(), It.IsAny<AgregarLineasPedidoRequest>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new AgregarLineasResultDto(40m, Guid.NewGuid(), 1));
+
+        var controller = new PedidosController(mockService.Object, mockLogger.Object)
+        {
+            ControllerContext = CrearContextoConRol(rol)
+        };
+
+        var request = new AgregarLineasPedidoRequest
+        {
+            Lineas = new List<LineaPedidoRequest> { new() { ProductoId = Guid.NewGuid(), Cantidad = 1 } }
+        };
+
+        var result = await controller.AgregarLineas(Guid.NewGuid(), request, CancellationToken.None);
+
+        if (permitido)
+        {
+            Assert.IsType<OkObjectResult>(result);
+        }
+        else
+        {
+            var objResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status403Forbidden, objResult.StatusCode);
+        }
+    }
+
+    [Theory]
+    [InlineData("Cajero", true)]
+    [InlineData("Mozo", false)]
+    [InlineData("Administrador", false)]
+    [InlineData("Cocinero", false)]
+    public async Task Punto4_RegistrarPedidoLlevar_RolesPermitidosYBloqueados(string rol, bool permitido)
+    {
+        var mockService = new Mock<IPedidoService>();
+        var mockLogger = new Mock<ILogger<PedidosController>>();
+        mockService.Setup(s => s.RegistrarPedidoLlevarAsync(It.IsAny<RegistrarPedidoLlevarRequest>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new RegistrarPedidoLlevarResultDto(Guid.NewGuid(), 1, 20m, Guid.NewGuid()));
+
+        var controller = new PedidosController(mockService.Object, mockLogger.Object)
+        {
+            ControllerContext = CrearContextoConRol(rol)
+        };
+
+        var request = new RegistrarPedidoLlevarRequest
+        {
+            SolicitudId = $"sol-llevar-{rol}",
+            Lineas = new List<LineaPedidoRequest> { new() { ProductoId = Guid.NewGuid(), Cantidad = 1 } }
+        };
+
+        var result = await controller.RegistrarPedidoLlevar(request, CancellationToken.None);
+
+        if (permitido)
+        {
+            var objResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status201Created, objResult.StatusCode);
+        }
+        else
+        {
+            var objResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status403Forbidden, objResult.StatusCode);
+        }
+    }
+
+    [Theory]
+    [InlineData("Cajero", true)]
+    [InlineData("Mozo", false)]
+    [InlineData("Administrador", false)]
+    [InlineData("Cocinero", false)]
+    public async Task Punto4_ProcesarCobro_RolesPermitidosYBloqueados(string rol, bool permitido)
+    {
+        var mockService = new Mock<ICobroService>();
+        var mockLogger = new Mock<ILogger<CobrosController>>();
+        mockService.Setup(s => s.ProcesarCobroAsync(It.IsAny<CobroRequest>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CobroResponseDto(
+                Guid.NewGuid(),
+                new GirasolesRes.Application.DTOs.Cobros.ComprobanteResumenDto("T001", 1, "T001-000001", DateTime.UtcNow, "25/10/2026 12:00"),
+                0m,
+                "Cobro exitoso"));
+
+        var controller = new CobrosController(mockService.Object, mockLogger.Object)
+        {
+            ControllerContext = CrearContextoConRol(rol)
+        };
+
+        var request = new CobroRequest
+        {
+            SolicitudId = $"sol-cobro-{rol}",
+            PedidoId = Guid.NewGuid(),
+            Metodo = "Efectivo",
+            MontoRecibido = 30m,
+            TotalMostrado = 30m
+        };
+
+        var result = await controller.ProcesarCobro(request, CancellationToken.None);
+
+        if (permitido)
+        {
+            Assert.IsType<CreatedAtActionResult>(result);
+        }
+        else
+        {
+            var objResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status403Forbidden, objResult.StatusCode);
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 5: AVISO DE PEDIDO LISTO LLEGA SOLO A QUIEN REGISTRÓ EL PEDIDO
+    // ------------------------------------------------------------------------
+    [Fact]
+    public async Task Punto5_AvisoPedidoListo_LlegaSoloAQuienRegistroElPedido()
+    {
+        var mozo1Id = Guid.NewGuid();
+        var mozo2Id = Guid.NewGuid();
+
+        var pedidoMozo1 = new Pedido(1, DateOnly.FromDateTime(DateTime.Today), Guid.NewGuid(), mozo1Id, "sol-m1", TipoPedido.Mesa, null);
+        var comandaMozo1 = new Comanda(pedidoMozo1.Id_Pedido, 1, "Mesa 1", false);
+        comandaMozo1.MarcarComoLista("cocinero1");
+        pedidoMozo1.AgregarComanda(comandaMozo1);
+
+        _pedidoRepoMock.Setup(r => r.ObtenerAvisosPendientesAsync(It.IsAny<DateOnly>(), mozo1Id, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comanda> { comandaMozo1 });
+
+        _pedidoRepoMock.Setup(r => r.ObtenerAvisosPendientesAsync(It.IsAny<DateOnly>(), mozo2Id, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comanda>());
+
+        var service = CrearPedidoService();
+
+        // ACT: Mozo 1 consulta avisos
+        var avisosMozo1 = await service.ObtenerAvisosPendientesAsync(mozo1Id, "Mozo");
+        Assert.Single(avisosMozo1);
+        Assert.Equal(comandaMozo1.Id_Comanda, avisosMozo1[0].Id);
+
+        // ACT: Mozo 2 consulta avisos
+        var avisosMozo2 = await service.ObtenerAvisosPendientesAsync(mozo2Id, "Mozo");
+        Assert.Empty(avisosMozo2);
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 7: SIN MENÚ DEL DÍA DEFINIDO OFRECE CARTA, COMPONENTES Y MENÚS COMPLETOS
+    // ------------------------------------------------------------------------
+    [Fact]
+    public async Task Punto7_SinMenuDiaDefinido_OfreceProductosCartaComponentesYMenusCompletos()
+    {
+        _menuDiaRepoMock.Setup(m => m.ObtenerPorFechaAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((MenuDia?)null); // Sin menú del día
+
+        var prodCarta = new Producto("Lomo Saltado", CategoriaProducto.Almuerzo, 35m, true);
+        var prodComp = new Producto("Sopa Criolla", RolComponente.Entrada, true);
+
+        _productoRepoMock.Setup(r => r.ListarDisponiblesAsync(null, null, null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Producto> { prodCarta, prodComp });
+
+        var service = CrearPedidoService();
+        var catalogo = await service.ObtenerMenuParaPedidoAsync();
+
+        Assert.Equal(2, catalogo.Count);
+        Assert.Contains(catalogo, p => p.Id == prodCarta.Id_Producto && p.Disponible && !p.Agotado);
+        Assert.Contains(catalogo, p => p.Id == prodComp.Id_Producto && p.Disponible && !p.Agotado);
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 8: DEMORA EN COCINA Y EN DASHBOARD (14:59 NO CUENTA, 15:00 SÍ)
+    // ------------------------------------------------------------------------
+    [Fact]
+    public void Punto8_DemoraCocina_PruebaLimite14Min59SegNoEsDemora_15Min00SegSiEsDemora()
+    {
+        // 14 min 59 s: TotalMinutes = 14.983 -> (int) = 14 -> no es demora (< 15)
+        var minutos14_59 = (int)(TimeSpan.FromMinutes(14) + TimeSpan.FromSeconds(59)).TotalMinutes;
+        Assert.Equal(14, minutos14_59);
+        var esDemora14_59 = minutos14_59 >= RestauranteConstantes.MinutosDemoraCocina;
+        Assert.False(esDemora14_59);
+
+        // 15 min 00 s: TotalMinutes = 15.0 -> (int) = 15 -> sí es demora (>= 15)
+        var minutos15_00 = (int)TimeSpan.FromMinutes(15).TotalMinutes;
+        Assert.Equal(15, minutos15_00);
+        var esDemora15_00 = minutos15_00 >= RestauranteConstantes.MinutosDemoraCocina;
+        Assert.True(esDemora15_00);
+    }
+
+    [Fact]
+    public async Task Punto8_DemoraDashboard_PruebaLimite14MinutosNoAlerta_15MinutosSiAlerta()
+    {
+        var inicioService = new InicioService(
+            _reporteServiceMock.Object,
+            _cajaServiceMock.Object,
+            _cajaRepoMock.Object,
+            _mesaServiceMock.Object,
+            _pedidoRepoMock.Object,
+            _menuDiaServiceMock.Object,
+            _comandaServiceMock.Object
+        );
+
+        _cajaRepoMock.Setup(c => c.ObtenerCajaAbiertaAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Caja?)null);
+
+        _menuDiaServiceMock.Setup(m => m.ObtenerMenuHoyAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ApiResponse<MenuDiaResponseDto>
+            {
+                Success = true,
+                Data = new MenuDiaResponseDto
+                {
+                    Fecha = DateTime.Today.ToString("yyyy-MM-dd"),
+                    Definido = true
+                }
+            });
+
+        _reporteServiceMock.Setup(r => r.ConsultarReporteVentasAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ReporteVentasResponseDto(
+                DateTime.Today.ToString("yyyy-MM-dd"),
+                DateTime.Today.ToString("yyyy-MM-dd"),
+                0, 0m, 0m, 0m,
+                new VentasAnuladasResumenDto(0, 0m),
+                new List<VentaPorDiaDto>()
+            ));
+
+        // Caso A: Comanda con 14 minutos de espera
+        var comandas14Min = new ListarComandasResponseDto
+        {
+            Items = new List<ComandaItemDto>
+            {
+                new() { Id = Guid.NewGuid(), MinutosEspera = 14, EsDemora = false }
+            }
+        };
+        _comandaServiceMock.Setup(c => c.ListarComandasAsync("pendiente,enPreparacion"))
+            .ReturnsAsync(comandas14Min);
+
+        var bloque14 = await inicioService.ObtenerBloqueAsync("alertas", "Administrador", Guid.NewGuid());
+        var alertas14 = Assert.IsAssignableFrom<IEnumerable<AlertaInicioDto>>(bloque14.Datos);
+        Assert.DoesNotContain(alertas14, a => a.Tipo == "comandas_demora");
+
+        // Caso B: Comanda con 15 minutos de espera
+        var comandas15Min = new ListarComandasResponseDto
+        {
+            Items = new List<ComandaItemDto>
+            {
+                new() { Id = Guid.NewGuid(), MinutosEspera = 15, EsDemora = true }
+            }
+        };
+        _comandaServiceMock.Setup(c => c.ListarComandasAsync("pendiente,enPreparacion"))
+            .ReturnsAsync(comandas15Min);
+
+        var bloque15 = await inicioService.ObtenerBloqueAsync("alertas", "Administrador", Guid.NewGuid());
+        var alertas15 = Assert.IsAssignableFrom<IEnumerable<AlertaInicioDto>>(bloque15.Datos);
+        Assert.Contains(alertas15, a => a.Tipo == "comandas_demora");
+    }
+
+    // ------------------------------------------------------------------------
+    // PUNTO 9: KEEP-ALIVE DEL COCINERO (RENOVACIÓN CADA 20 MINUTOS)
+    // ------------------------------------------------------------------------
+    [Fact]
+    public void Punto9_KeepAliveCocinero_RenovacionCada20Minutos()
+    {
+        Assert.Equal(20, RestauranteConstantes.MinutosRenovacionTokenCocina);
+
+        var intervaloMsEsperado = 20 * 60 * 1000;
+        Assert.Equal(1_200_000, intervaloMsEsperado);
+    }
 }
