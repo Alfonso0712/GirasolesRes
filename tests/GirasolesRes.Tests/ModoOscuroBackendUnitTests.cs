@@ -252,7 +252,7 @@ public class ModoOscuroBackendUnitTests
         var resultado = await authService.IniciarSesionAsync(request);
 
         // Assert
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.NotNull(resultado.Data);
         Assert.Equal(temaUsuario, resultado.Data.Tema);
     }

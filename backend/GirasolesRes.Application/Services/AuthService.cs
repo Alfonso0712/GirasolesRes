@@ -43,7 +43,7 @@ public class AuthService : IAuthService
         _emailService = emailService;
     }
 
-    public async Task<ApiResponse<LoginResponse>> IniciarSesionAsync(LoginRequest request, string? direccionIp = null, CancellationToken cancellationToken = default)
+    public async Task<Result<LoginResponse>> IniciarSesionAsync(LoginRequest request, string? direccionIp = null, CancellationToken cancellationToken = default)
     {
         // Normalización y recorte de cadenas (Semana 07)
         var nombreUsuario = (request.Usuario ?? string.Empty).Trim();
@@ -67,7 +67,7 @@ public class AuthService : IAuthService
 
         if (errores.Count > 0)
         {
-            return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_01, errores);
+            return Result<LoginResponse>.Fallido(MensajesCatalogo.MSG_01, errores);
         }
 
         // Búsqueda asíncrona mediante repositorio
@@ -76,21 +76,21 @@ public class AuthService : IAuthService
         if (usuario == null)
         {
             await RegistrarAuditoriaAsync(nombreUsuario, false, "Usuario inexistente", direccionIp, cancellationToken);
-            return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_04);
+            return Result<LoginResponse>.Fallido(MensajesCatalogo.MSG_04);
         }
 
         // RN-03: Bloqueo de cuenta
         if (usuario.EstaBloqueado())
         {
             await RegistrarAuditoriaAsync(nombreUsuario, false, "Cuenta bloqueada temporalmente", direccionIp, cancellationToken);
-            return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_06);
+            return Result<LoginResponse>.Fallido(MensajesCatalogo.MSG_06);
         }
 
         // RN-01: Estado activo
         if (!usuario.Usu_Activo)
         {
             await RegistrarAuditoriaAsync(nombreUsuario, false, "Cuenta desactivada", direccionIp, cancellationToken);
-            return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_05);
+            return Result<LoginResponse>.Fallido(MensajesCatalogo.MSG_05);
         }
 
         // Verificación criptográfica con PBKDF2
@@ -107,10 +107,10 @@ public class AuthService : IAuthService
 
             if (estaBloqueado)
             {
-                return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_06);
+                return Result<LoginResponse>.Fallido(MensajesCatalogo.MSG_06);
             }
 
-            return ApiResponse<LoginResponse>.Fallido(MensajesCatalogo.MSG_04);
+            return Result<LoginResponse>.Fallido(MensajesCatalogo.MSG_04);
         }
 
         // Ingreso exitoso: reinicio de intentos
@@ -132,16 +132,16 @@ public class AuthService : IAuthService
             Tema = usuario.Usu_Tema
         };
 
-        return ApiResponse<LoginResponse>.Exitoso(responseData, MensajesCatalogo.MSG_08);
+        return Result<LoginResponse>.Exitoso(responseData, MensajesCatalogo.MSG_08);
     }
 
-    public async Task<ApiResponse<string>> SolicitarRecuperacionPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken = default)
+    public async Task<Result<string>> SolicitarRecuperacionPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken = default)
     {
         var correo = (request.Correo ?? string.Empty).Trim().ToLowerInvariant();
 
         if (string.IsNullOrWhiteSpace(correo) || !EmailRegex.IsMatch(correo))
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_12);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_12);
         }
 
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
@@ -162,14 +162,14 @@ public class AuthService : IAuthService
             var enviado = await _emailService.EnviarCodigoRecuperacionAsync(correo, codigo, cancellationToken);
             if (!enviado)
             {
-                return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_18);
+                return Result<string>.Fallido(MensajesCatalogo.MSG_18);
             }
         }
 
-        return ApiResponse<string>.Exitoso(MensajesCatalogo.MSG_11, MensajesCatalogo.MSG_11);
+        return Result<string>.Exitoso(MensajesCatalogo.MSG_11, MensajesCatalogo.MSG_11);
     }
 
-    public async Task<ApiResponse<string>> RestablecerPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
+    public async Task<Result<string>> RestablecerPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
     {
         var correo = (request.Correo ?? string.Empty).Trim().ToLowerInvariant();
         var codigo = (request.Codigo ?? string.Empty).Trim();
@@ -177,19 +177,19 @@ public class AuthService : IAuthService
 
         if (string.IsNullOrWhiteSpace(correo) || !EmailRegex.IsMatch(correo))
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_12);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_12);
         }
 
         if (nuevaContrasena.Length < 8 || nuevaContrasena.Length > 64)
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_14);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_14);
         }
 
         var codigoValido = await _codigoRecuperacionRepository.ObtenerUltimoValidoAsync(correo, cancellationToken);
 
         if (codigoValido == null || !codigoValido.EsValido(codigo))
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_13);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_13);
         }
 
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
@@ -199,7 +199,7 @@ public class AuthService : IAuthService
         }
         if (usuario == null || usuario.Usu_Rol != RolUsuario.Administrador)
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_13);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_13);
         }
 
         var nuevoHash = _passwordHasher.HashPassword(nuevaContrasena);
@@ -210,10 +210,10 @@ public class AuthService : IAuthService
         await _codigoRecuperacionRepository.ActualizarAsync(codigoValido, cancellationToken);
         await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-        return ApiResponse<string>.Exitoso(MensajesCatalogo.MSG_16, MensajesCatalogo.MSG_16);
+        return Result<string>.Exitoso(MensajesCatalogo.MSG_16, MensajesCatalogo.MSG_16);
     }
 
-    public async Task<ApiResponse<bool>> LogoutAsync(
+    public async Task<Result<bool>> LogoutAsync(
         string jti,
         string nombreUsuario,
         string motivo,
@@ -239,15 +239,15 @@ public class AuthService : IAuthService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<bool>.Exitoso(true, MensajesCatalogo.MSG_41);
+            return Result<bool>.Exitoso(true, MensajesCatalogo.MSG_41);
         }
         catch
         {
-            return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<bool>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 
-    public async Task<ApiResponse<string>> RenovarTokenAsync(
+    public async Task<Result<string>> RenovarTokenAsync(
         string nombreUsuario,
         CancellationToken cancellationToken = default)
     {
@@ -256,15 +256,15 @@ public class AuthService : IAuthService
             var usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync(nombreUsuario, cancellationToken);
             if (usuario == null || !usuario.Usu_Activo)
             {
-                return ApiResponse<string>.Fallido("Sesión vencida o usuario inactivo.");
+                return Result<string>.Fallido("Sesión vencida o usuario inactivo.");
             }
 
             var nuevoToken = _jwtGenerator.GenerarToken(usuario);
-            return ApiResponse<string>.Exitoso(nuevoToken);
+            return Result<string>.Exitoso(nuevoToken);
         }
         catch
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 

@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
         var resultado = await _authService.IniciarSesionAsync(request, ip, cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             // Semana 07 y 08: Respuesta HTTP estructurada
             return Ok(new
@@ -103,7 +103,7 @@ public class AuthController : ControllerBase
         request.Correo = request.Correo.Trim();
         var resultado = await _authService.SolicitarRecuperacionPasswordAsync(request, cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             return Ok(new
             {
@@ -140,7 +140,7 @@ public class AuthController : ControllerBase
 
         var resultado = await _authService.RestablecerPasswordAsync(request, cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             return Ok(new
             {
@@ -233,7 +233,7 @@ public class AuthController : ControllerBase
         }
 
         var resultado = await _authService.RenovarTokenAsync(usuario, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return Unauthorized(new
             {
