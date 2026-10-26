@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DetallePedidoModal } from '../components/pedidos';
-import { ModificarPedidoModal } from '../components/pedidos';
 import { AnularPedidoModal } from '../components/pedidos';
 import { pedidoService } from '../services/pedidoService';
 import { getMesasService } from '../services/mesaService';
@@ -8,9 +7,7 @@ import type { UserSession } from '../types/auth';
 import type {
   PedidoItemDto,
   ResumenEstadosDto,
-  DetallePedidoCompletoDto,
-  ProductoMenuPedido,
-  ModificarPedidoRequest
+  DetallePedidoCompletoDto
 } from '../types/pedido';
 import type { MesaItem } from '../types/mesa';
 import {
@@ -21,7 +18,6 @@ import {
   RotateCcw,
   Filter,
   Eye,
-  Edit2,
   Trash2,
   Calendar,
   X,
@@ -79,11 +75,6 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   const [pedidoSeleccionadoDetalle, setPedidoSeleccionadoDetalle] = useState<DetallePedidoCompletoDto | null>(null);
   const [abrirModalDetalle, setAbrirModalDetalle] = useState(false);
 
-  const [pedidoSeleccionadoModificar, setPedidoSeleccionadoModificar] = useState<DetallePedidoCompletoDto | null>(null);
-  const [abrirModalModificar, setAbrirModalModificar] = useState(false);
-  const [guardandoModificacion, setGuardandoModificacion] = useState(false);
-  const [catalogoProductos, setCatalogoProductos] = useState<ProductoMenuPedido[]>([]);
-
   const [pedidoParaAnular, setPedidoParaAnular] = useState<PedidoItemDto | null>(null);
   const [abrirModalAnular, setAbrirModalAnular] = useState(false);
   const [guardandoAnulacion, setGuardandoAnulacion] = useState(false);
@@ -96,16 +87,6 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
     getMesasService({ incluirInactivas: false }, session.token)
       .then((data: MesaItem[]) => setMesas(data.filter((m: MesaItem) => m.activa)))
       .catch((err: unknown) => console.warn('Error al cargar mesas:', err));
-  }, [session.token]);
-
-  // Cargar catálogo de productos para modificar
-  const cargarCatalogoProductos = useCallback(async () => {
-    try {
-      const prods = await pedidoService.obtenerCatalogoPedido(session.token);
-      setCatalogoProductos(prods);
-    } catch (err) {
-      console.warn('Error al cargar catálogo de productos:', err);
-    }
   }, [session.token]);
 
   // Consulta de pedidos (CUS09.1)
@@ -177,31 +158,6 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
       setAbrirModalDetalle(true);
     } catch (err: any) {
       alert(err.message || 'Error al obtener el detalle del pedido.');
-    }
-  };
-
-  // Abrir pantalla de modificación (CUS09.2)
-  const handleAbrirModificar = async (pedidoId: string) => {
-    try {
-      await cargarCatalogoProductos();
-      const detalle = await pedidoService.obtenerDetalleCompleto(pedidoId, session.token);
-      setPedidoSeleccionadoModificar(detalle);
-      setAbrirModalModificar(true);
-    } catch (err: any) {
-      alert(err.message || 'Error al preparar la modificación del pedido.');
-    }
-  };
-
-  // Guardar modificación (CUS09.2)
-  const handleGuardarModificacion = async (pedidoId: string, req: ModificarPedidoRequest) => {
-    setGuardandoModificacion(true);
-    try {
-      await pedidoService.modificarPedido(pedidoId, req, session.token);
-      setToastMensaje(`Pedido modificado. Cocina verá la comanda actualizada.`);
-      setAbrirModalModificar(false);
-      cargarPedidos(true);
-    } finally {
-      setGuardandoModificacion(false);
     }
   };
 
@@ -537,15 +493,6 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                               onClick={() => handleVerDetalle(p.id)}
                             />
 
-                            <IconActionButton
-                              icon={Edit2}
-                              label="Modificar pedido"
-                              variant="edit"
-                              disabled={!p.puedeModificar}
-                              disabledReason={p.motivoDeshabilitado || 'Modificar pedido'}
-                              onClick={() => handleAbrirModificar(p.id)}
-                            />
-
                             {session.rol === 'Cajero' && (
                               <IconActionButton
                                 icon={DollarSign}
@@ -584,24 +531,12 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           pedido={pedidoSeleccionadoDetalle}
           isOpen={abrirModalDetalle}
           onClose={() => setAbrirModalDetalle(false)}
-          onAbrirModificar={(id) => handleAbrirModificar(id)}
           onAbrirAnular={(id) => {
             const item = pedidos.find((p) => p.id === id);
             if (item) handleAbrirAnular(item);
           }}
-          puedeModificar={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.puedeModificar : false}
           puedeAnular={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.puedeAnular : false}
           motivoDeshabilitado={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.motivoDeshabilitado : null}
-        />
-
-        {/* Modal de Modificación (Vista 9.3) */}
-        <ModificarPedidoModal
-          pedido={pedidoSeleccionadoModificar}
-          isOpen={abrirModalModificar}
-          onClose={() => setAbrirModalModificar(false)}
-          catalogoProductos={catalogoProductos}
-          onGuardarModificacion={handleGuardarModificacion}
-          loading={guardandoModificacion}
         />
 
         {/* Modal de Anulación (Vista 9.4) */}

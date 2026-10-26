@@ -1,4 +1,4 @@
-using GirasolesRes.Application.Common;
+﻿using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Domain.Entities;
 using GirasolesRes.Domain.Enums;
@@ -312,20 +312,27 @@ public class PedidoRepository : IPedidoRepository
         var query = _context.Comandas
             .Include(c => c.Cmd_Pedido)
                 .ThenInclude(p => p!.Ped_Mesa)
+            .Include(c => c.Cmd_Pedido)
+                .ThenInclude(p => p!.Ped_Usuario)
             .Where(c => c.Cmd_Estado == EstadoComanda.Lista && !c.Cmd_AvisoVisto && c.Cmd_Pedido != null && c.Cmd_Pedido.Ped_FechaOperativa == fechaOperativa);
-
-        if (usuarioId.HasValue)
-        {
-            query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value);
-        }
 
         if (esCajero)
         {
             query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.ParaLlevar);
+            if (usuarioId.HasValue)
+            {
+                query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value ||
+                                         (c.Cmd_Pedido!.Ped_Usuario != null && c.Cmd_Pedido.Ped_Usuario.Usu_Rol == RolUsuario.Administrador));
+            }
         }
         else
         {
             query = query.Where(c => c.Cmd_Pedido!.Ped_Tipo == TipoPedido.Mesa);
+            if (usuarioId.HasValue)
+            {
+                query = query.Where(c => c.Cmd_Pedido!.Id_Usuario == usuarioId.Value ||
+                                         (c.Cmd_Pedido!.Ped_Usuario != null && c.Cmd_Pedido.Ped_Usuario.Usu_Rol == RolUsuario.Administrador));
+            }
         }
 
         return await query

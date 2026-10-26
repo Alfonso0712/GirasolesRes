@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Volume2,
   VolumeX,
@@ -7,15 +7,13 @@ import {
   AlertTriangle,
   UtensilsCrossed,
   Undo2,
-  AlertCircle,
-  Bell,
-  X
+  AlertCircle
 } from 'lucide-react';
 import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
 import { comandaService } from '../services/comandaService';
 import { renovarTokenService } from '../services/authService';
 import { PlatosAgotadosModal } from '../components/menu-dia';
-import { ComandaCard, CocinaResumenBar } from '../components/cocina';
+import { ComandaCard, CocinaResumenBar, AvisoNuevoPedidoCocinaModal } from '../components/cocina';
 import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { ComandaKdsItem, ResumenProducto } from '../types/comanda';
@@ -83,9 +81,9 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
     pedidoNumero: number;
     destino: string;
     itemsCount: number;
+    hora?: string;
   } | null>(null);
-  const notificacionTimerRef = useRef<any>(null);
-
+  
   // Desbloqueo de AudioContext ante interacción del usuario en la pantalla
   useEffect(() => {
     const handleInteraccion = () => {
@@ -170,13 +168,9 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
             setNotificacionNueva({
               pedidoNumero: primeraNueva.pedidoNumero,
               destino: destinoStr,
-              itemsCount: primeraNueva.lineas.reduce((acc, l) => acc + l.cantidad, 0)
+              itemsCount: primeraNueva.lineas.reduce((acc, l) => acc + l.cantidad, 0),
+              hora: primeraNueva.horaLlegada
             });
-
-            if (notificacionTimerRef.current) clearTimeout(notificacionTimerRef.current);
-            notificacionTimerRef.current = setTimeout(() => {
-              setNotificacionNueva(null);
-            }, 8000);
           }
 
           // Quitar etiqueta NUEVA a los 10 segundos
@@ -588,42 +582,11 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         </div>
       )}
 
-      {/* Notificación flotante de NUEVA COMANDA (RV-92) */}
-      {notificacionNueva && (
-        <aside
-          role="alert"
-          aria-live="assertive"
-          className="fixed top-20 right-4 sm:right-8 z-50 bg-neutral-900/95 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-amber-400 animate-in slide-in-from-top-3 duration-200 max-w-md w-[92%]"
-        >
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-            <Bell className="w-5 h-5 animate-bounce" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                Nueva orden de cocina
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white animate-pulse">
-                PENDIENTE
-              </span>
-            </div>
-            <p className="text-sm font-bold text-white mt-0.5 truncate">
-              Pedido N.º {notificacionNueva.pedidoNumero} · {notificacionNueva.destino}
-            </p>
-            <p className="text-xs text-neutral-400">
-              {notificacionNueva.itemsCount} {notificacionNueva.itemsCount === 1 ? 'porción' : 'porciones'} por preparar
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setNotificacionNueva(null)}
-            className="p-1 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
-            aria-label="Cerrar notificación"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </aside>
-      )}
+      {/* Modal emergente de NUEVA COMANDA (CUS10 / RV-92) */}
+      <AvisoNuevoPedidoCocinaModal
+        aviso={notificacionNueva}
+        onCerrar={() => setNotificacionNueva(null)}
+      />
 
       {/* Modal PLATOS AGOTADOS (CUS05.2 / RN-83) */}
       <PlatosAgotadosModal

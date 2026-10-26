@@ -21,9 +21,12 @@ public class AvisoComandaService : IAvisoComandaService
         string rol,
         CancellationToken ct = default)
     {
+        var esAdmin = string.Equals(rol, "Administrador", StringComparison.OrdinalIgnoreCase);
         var esCajero = string.Equals(rol, "Cajero", StringComparison.OrdinalIgnoreCase);
         var fechaOperativa = TimeZoneHelper.ObtenerFechaActualLima();
-        var comandas = await _pedidoRepository.ObtenerAvisosPendientesAsync(fechaOperativa, usuarioId, esCajero, ct);
+        // Para Administrador, no restringir por usuario para que supervise todos los despachos
+        var idFiltro = esAdmin ? (Guid?)null : usuarioId;
+        var comandas = await _pedidoRepository.ObtenerAvisosPendientesAsync(fechaOperativa, idFiltro, esCajero, ct);
 
         return comandas.Select(c => new AvisoComandaDto(
             c.Id_Comanda,

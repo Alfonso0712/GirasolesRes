@@ -1,14 +1,12 @@
 import React from 'react';
-import { X, Clock, User, AlertCircle, ChefHat, CheckCircle2, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
+import { X, Clock, User, AlertCircle, ChefHat, CheckCircle2, AlertTriangle, Trash2 } from 'lucide-react';
 import type { DetallePedidoCompletoDto } from '../../types/pedido';
 
 interface DetallePedidoModalProps {
   pedido: DetallePedidoCompletoDto | null;
   isOpen: boolean;
   onClose: () => void;
-  onAbrirModificar?: (pedidoId: string) => void;
   onAbrirAnular?: (pedidoId: string) => void;
-  puedeModificar?: boolean;
   puedeAnular?: boolean;
   motivoDeshabilitado?: string | null;
 }
@@ -17,9 +15,7 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
   pedido,
   isOpen,
   onClose,
-  onAbrirModificar,
   onAbrirAnular,
-  puedeModificar = false,
   puedeAnular = false,
   motivoDeshabilitado
 }) => {
@@ -226,20 +222,6 @@ export const DetallePedidoModal: React.FC<DetallePedidoModalProps> = ({
           )}
 
           <div className="flex gap-2 w-full sm:w-auto ml-auto">
-            {onAbrirModificar && puedeModificar && (
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onAbrirModificar(pedido.id);
-                }}
-                className="py-2.5 px-4 rounded-xl border border-accent text-accent font-semibold text-xs hover:bg-amber-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Modificar</span>
-              </button>
-            )}
-
             {onAbrirAnular && puedeAnular && (
               <button
                 type="button"

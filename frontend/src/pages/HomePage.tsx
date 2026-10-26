@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { UsersPage } from './UsersPage';
 import { MesasPage } from './MesasPage';
@@ -16,13 +16,13 @@ import { DashboardPage } from './DashboardPage';
 import { LogoutModal } from '../components/layout';
 import { InactivityModal } from '../components/layout';
 import { ChangePasswordModal } from '../components/usuarios';
-import { AvisoComandaModal } from '../components/cocina';
+import { AvisoComandaModal, AvisoNuevoPedidoCocinaModal, type NuevoPedidoCocinaInfo } from '../components/cocina';
 import { logoutService, renovarTokenService } from '../services/authService';
 import { pedidoService } from '../services/pedidoService';
 import { cajaService } from '../services/cajaService';
 import { comandaService } from '../services/comandaService';
-import { reproducirSonidoKds } from '../utils/audioKds';
-import { Check, ShieldAlert, Bell } from 'lucide-react';
+import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
+import { Check, ShieldAlert } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
 import type { CajaActualResponseDto } from '../types/caja';
@@ -115,17 +115,38 @@ export const HomePage: React.FC<HomePageProps> = ({
   // RV-28: Mensaje flotante de confirmación (Toast) durante 4 segundos
   const [toastMensaje, setToastMensaje] = useState<string | null>(null);
 
+  // Desbloqueo de AudioContext ante cualquier interacción de usuario en la app
+  useEffect(() => {
+    const handleGlobalInteraction = () => {
+      desbloquearAudioKds();
+    };
+    window.addEventListener('click', handleGlobalInteraction, { passive: true });
+    window.addEventListener('touchstart', handleGlobalInteraction, { passive: true });
+    window.addEventListener('keydown', handleGlobalInteraction, { passive: true });
+    return () => {
+      window.removeEventListener('click', handleGlobalInteraction);
+      window.removeEventListener('touchstart', handleGlobalInteraction);
+      window.removeEventListener('keydown', handleGlobalInteraction);
+    };
+  }, []);
+
   // CUS09.3: Avisos de comandas listas para recoger (HU27 / RF-27 / RN-71)
   const [avisosPendientes, setAvisosPendientes] = useState<AvisoComandaDto[]>([]);
   const [cerrandoAviso, setCerrandoAviso] = useState(false);
+  const avisosPreviosRef = useRef<Set<string>>(new Set());
 
-  // Sondeo cada 15 segundos para avisos de pedidos listos
+  // Sondeo cada 5 segundos para avisos de pedidos listos
   const consultarAvisos = useCallback(async () => {
     if (session.rol !== 'Mozo' && session.rol !== 'Cajero' && session.rol !== 'Administrador') return;
     try {
       const data = await pedidoService.obtenerAvisosPendientes(session.token);
       if (Array.isArray(data)) {
         setAvisosPendientes(data);
+        const hayNuevos = data.some((a) => !avisosPreviosRef.current.has(a.id));
+        if (hayNuevos && avisosPreviosRef.current.size > 0) {
+          reproducirSonidoKds('lista', true);
+        }
+        avisosPreviosRef.current = new Set(data.map((a) => a.id));
       }
     } catch (err) {
       console.warn('Error al consultar avisos de pedidos listos:', err);
@@ -134,7 +155,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   useEffect(() => {
     consultarAvisos();
-    const interval = setInterval(consultarAvisos, 15000);
+    const interval = setInterval(consultarAvisos, 5000);
     return () => clearInterval(interval);
   }, [consultarAvisos]);
 
@@ -153,10 +174,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   // Notificación de nueva comanda para Cocinero si está fuera de la pantalla de cocina
   const comandasPreviasCocineroRef = useRef<Set<string>>(new Set());
   const primeraCargaCocineroRef = useRef<boolean>(true);
-  const [avisoNuevaComandaCocinero, setAvisoNuevaComandaCocinero] = useState<{
-    pedidoNumero: number;
-    destino: string;
-  } | null>(null);
+  const [avisoNuevaComandaCocinero, setAvisoNuevaComandaCocinero] = useState<NuevoPedidoCocinaInfo | null>(null);
 
   useEffect(() => {
     if (session.rol !== 'Cocinero' || paginaActiva === 'cocina') return;
@@ -180,8 +198,11 @@ export const HomePage: React.FC<HomePageProps> = ({
             const destinoStr =
               n.tipo === 'Mesa' ? n.mesa || 'Mesa' : `Para llevar${n.referencia ? ` (${n.referencia})` : ''}`;
             setAvisoNuevaComandaCocinero({
+              comandaId: n.id,
               pedidoNumero: n.pedidoNumero,
-              destino: destinoStr
+              destino: destinoStr,
+              itemsCount: n.lineas.reduce((acc, l) => acc + l.cantidad, 0),
+              hora: n.horaLlegada
             });
           }
         }
@@ -192,7 +213,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     };
 
     verificarComandasCocinero();
-    const interval = setInterval(verificarComandasCocinero, 8000);
+    const interval = setInterval(verificarComandasCocinero, 5000);
     return () => clearInterval(interval);
   }, [session.rol, session.token, paginaActiva]);
 
@@ -536,44 +557,15 @@ export const HomePage: React.FC<HomePageProps> = ({
         cargando={cerrandoAviso}
       />
 
-      {/* Notificación para cocinero cuando llega una nueva comanda y está en Inicio u otra pantalla */}
-      {avisoNuevaComandaCocinero && (
-        <aside
-          role="alert"
-          aria-live="assertive"
-          className="fixed bottom-6 right-6 z-50 bg-neutral-900/95 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-amber-400 animate-in slide-in-from-bottom-4 duration-300 max-w-md w-[92%]"
-        >
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-            <Bell className="w-5 h-5 animate-bounce" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-400">
-              Nueva orden en cocina
-            </p>
-            <p className="text-sm font-bold text-white mt-0.5 truncate">
-              Pedido N.º {avisoNuevaComandaCocinero.pedidoNumero} · {avisoNuevaComandaCocinero.destino}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setAvisoNuevaComandaCocinero(null);
-              setPaginaActiva('cocina');
-            }}
-            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-neutral-950 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
-          >
-            Ir a Cocina
-          </button>
-          <button
-            type="button"
-            onClick={() => setAvisoNuevaComandaCocinero(null)}
-            className="p-1 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer text-lg leading-none"
-            aria-label="Cerrar notificación"
-          >
-            ×
-          </button>
-        </aside>
-      )}
+      {/* Modal emergente de nueva comanda para cocinero */}
+      <AvisoNuevoPedidoCocinaModal
+        aviso={avisoNuevaComandaCocinero}
+        onCerrar={() => setAvisoNuevaComandaCocinero(null)}
+        onIrACocina={() => {
+          setAvisoNuevaComandaCocinero(null);
+          setPaginaActiva('cocina');
+        }}
+      />
 
       {/* Notificación flotante de confirmación (MSG-47 / RV-28 - 4 segundos) */}
       {toastMensaje && (
