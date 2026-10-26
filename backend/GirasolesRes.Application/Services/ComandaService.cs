@@ -157,7 +157,7 @@ public class ComandaService : IComandaService
                 {
                     Id = comanda.Id_Comanda,
                     Estado = "EnPreparacion",
-                    DeshacerHasta = (comanda.Cmd_FecUltimoCambioEstadoUtc ?? DateTime.UtcNow).AddSeconds(10),
+                    DeshacerHasta = (comanda.Cmd_FecUltimoCambioEstadoUtc ?? DateTime.UtcNow).AddSeconds(RestauranteConstantes.SegundosVentanaDeshacerComanda),
                     Mensaje = string.Format(MensajesCatalogo.MSG_126, comanda.Cmd_NumeroDiario)
                 };
             }
@@ -185,7 +185,7 @@ public class ComandaService : IComandaService
             {
                 Id = comanda.Id_Comanda,
                 Estado = "EnPreparacion",
-                DeshacerHasta = comanda.Cmd_FecUltimoCambioEstadoUtc!.Value.AddSeconds(10),
+                DeshacerHasta = comanda.Cmd_FecUltimoCambioEstadoUtc!.Value.AddSeconds(RestauranteConstantes.SegundosVentanaDeshacerComanda),
                 Mensaje = string.Format(MensajesCatalogo.MSG_126, comanda.Cmd_NumeroDiario)
             };
         }
@@ -198,7 +198,7 @@ public class ComandaService : IComandaService
                 {
                     Id = comanda.Id_Comanda,
                     Estado = "Lista",
-                    DeshacerHasta = (comanda.Cmd_FecUltimoCambioEstadoUtc ?? DateTime.UtcNow).AddSeconds(10),
+                    DeshacerHasta = (comanda.Cmd_FecUltimoCambioEstadoUtc ?? DateTime.UtcNow).AddSeconds(RestauranteConstantes.SegundosVentanaDeshacerComanda),
                     Mensaje = string.Format(MensajesCatalogo.MSG_127, comanda.Cmd_NumeroDiario, "el personal de servicio")
                 };
             }
@@ -234,7 +234,7 @@ public class ComandaService : IComandaService
             {
                 Id = comanda.Id_Comanda,
                 Estado = "Lista",
-                DeshacerHasta = comanda.Cmd_FecUltimoCambioEstadoUtc!.Value.AddSeconds(10),
+                DeshacerHasta = comanda.Cmd_FecUltimoCambioEstadoUtc!.Value.AddSeconds(RestauranteConstantes.SegundosVentanaDeshacerComanda),
                 Mensaje = string.Format(MensajesCatalogo.MSG_127, comanda.Cmd_NumeroDiario, rolResponsable)
             };
         }
@@ -259,7 +259,7 @@ public class ComandaService : IComandaService
         }
 
         var segundosTranscurridos = (DateTime.UtcNow - comanda.Cmd_FecUltimoCambioEstadoUtc.Value).TotalSeconds;
-        if (segundosTranscurridos > 10.5)
+        if (segundosTranscurridos > RestauranteConstantes.SegundosToleranciaDeshacerComanda)
         {
             throw new InvalidOperationException(MensajesCatalogo.MSG_134);
         }
