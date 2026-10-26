@@ -1,13 +1,12 @@
-# GirasolesRes — Sistema de Gestión Gastronómica, Punto de Venta (POS) y Control Operativo
+﻿# GirasolesRes — Sistema de Gestión Gastronómica, Punto de Venta (POS) y Control Operativo
 
 [![Build and Test CI](https://github.com/Alfonso0712/GirasolesRes/actions/workflows/ci.yml/badge.svg)](https://github.com/Alfonso0712/GirasolesRes/actions/workflows/ci.yml)
-[![Tests Passing](https://img.shields.io/badge/xUnit%20Tests-96%20Passing-brightgreen.svg?logo=dotnet)](tests/GirasolesRes.Tests/)
+[![Tests Passing](https://img.shields.io/badge/xUnit%20Tests-271%20Passing-brightgreen.svg?logo=dotnet)](tests/GirasolesRes.Tests/)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0%20LTS-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![React 19](https://img.shields.io/badge/React-19.2.8-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%20%7C%2018-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Tailwind CSS 4](https://img.shields.io/badge/Tailwind%20CSS-4.3.3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Quality Model](https://img.shields.io/badge/Calidad-ISO%2FIEC%2025010-D35400)](docs/DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.md)
 
 Plataforma web transaccional integral diseñada para optimizar el ciclo operativo, sincronizar en tiempo real el salón, la cocina (KDS) y la caja registradora, y garantizar el cumplimiento tributario (SUNAT) y la cuadratura financiera del restaurante **"Girasoles"**.
 
@@ -56,17 +55,12 @@ GirasolesRes/
 ├── .github/workflows/          # Integración Continua (GitHub Actions CI)
 ├── docker-compose.yml          # Contenedor de PostgreSQL 16 con init script
 ├── GirasolesRes.sln            # Solución .NET estándar
-├── GirasolesRes.slnx           # Solución moderna de Visual Studio 2022
 ├── CHANGELOG.md                # Historial de cambios y entregas (SemVer)
 ├── AGENTS.md                   # Reglas y gobernanza de arquitectura y desarrollo
-├── docs/                       # Documentación técnica formal
-│   ├── DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.md
-│   ├── DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.docx
-│   └── database/DATA_DICTIONARY.md   # Diccionario de 24 tablas PostgreSQL
-├── database/                   # Backups y scripts de inicialización SQL
+├── database/                   # Scripts de inicialización y migraciones SQL
 │   ├── init_girasoles_db.sql
-│   ├── backup_completo_girasoles_db.sql
-│   └── cleanup_orphaned_orders.sql
+│   ├── cleanup_orphaned_orders.sql
+│   └── README.md
 ├── backend/                    # Backend ASP.NET Core 8 (Clean Architecture)
 │   ├── GirasolesRes.Domain/          # Núcleo: Entidades POCO (24) y Enums
 │   ├── GirasolesRes.Application/     # Casos de uso, DTOs, Result<T>, Interfaces
@@ -195,9 +189,8 @@ El sistema incluye cuentas de prueba operativas precargadas:
 
 ---
 
-## 8. Documentación Académica y Técnica
+## 8. Arquitectura y Gobernanza
 
-- 📄 **Documento Técnico Académico (IEEE / ISO/IEC 25010):** [docs/DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.md](docs/DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.md) | Versión Word: [docs/DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.docx](docs/DOCUMENTO_TECNICO_GIRASOLESRES_IEEE.docx)
-- 🗄️ **Diccionario de Datos (24 Tablas):** [docs/database/DATA_DICTIONARY.md](docs/database/DATA_DICTIONARY.md)
+- 📐 **Estándares y Reglas de Desarrollo:** [AGENTS.md](AGENTS.md)
 - 📜 **Historial de Versiones:** [CHANGELOG.md](CHANGELOG.md)
-- 🎨 **Sistema de Diseño y Calidad UI/UX:** [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) | [MANUAL_ESTANDARES_CALIDAD_UI.md](MANUAL_ESTANDARES_CALIDAD_UI.md)
+- 🗄️ **Base de Datos y Scripts:** [database/README.md](database/README.md)
