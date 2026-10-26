@@ -5,7 +5,7 @@ namespace GirasolesRes.Application.Interfaces.Services;
 
 public interface IProductoService
 {
-    Task<ApiResponse<PaginacionProductosResponse>> ListarProductosAsync(
+    Task<Result<PaginacionProductosResponse>> ListarProductosAsync(
         string? busqueda,
         string? categoria,
         string? tipo = null,
@@ -15,29 +15,29 @@ public interface IProductoService
         int tamano = 10,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<ProductoResponseDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Result<ProductoResponseDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<ProductoResponseDto>> RegistrarProductoAsync(
+    Task<Result<ProductoResponseDto>> RegistrarProductoAsync(
         CrearProductoRequest request,
         string adminUsername,
         string? ipAddress = null,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<ProductoResponseDto>> ActualizarProductoAsync(
+    Task<Result<ProductoResponseDto>> ActualizarProductoAsync(
         Guid id,
         ActualizarProductoRequest request,
         string adminUsername,
         string? ipAddress = null,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<CambiarEstadoProductoResponseDto>> CambiarEstadoAsync(
+    Task<Result<CambiarEstadoProductoResponseDto>> CambiarEstadoAsync(
         Guid id,
         bool nuevoEstado,
         string adminUsername,
         string? ipAddress = null,
         CancellationToken cancellationToken = default);
 
-    Task<ApiResponse<List<ProductoResponseDto>>> ListarDisponiblesAsync(
+    Task<Result<List<ProductoResponseDto>>> ListarDisponiblesAsync(
         string? categoria,
         string? tipo = null,
         string? rol = null,

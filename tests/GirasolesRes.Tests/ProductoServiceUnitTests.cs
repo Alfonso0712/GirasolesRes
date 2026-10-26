@@ -48,7 +48,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin", "127.0.0.1");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal("Lomo Saltado", resultado.Data!.Nombre);
@@ -77,7 +77,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin", "127.0.0.1");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal("Sopa a la minuta", resultado.Data!.Nombre);
@@ -103,7 +103,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_214, resultado.Message);
         _productoRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Producto>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -127,7 +127,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_53, resultado.Message);
         _productoRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Producto>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -151,7 +151,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
         _productoRepoMock.Verify(r => r.AgregarAsync(It.Is<Producto>(p => p.Pro_Tipo == TipoProducto.Componente), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -172,7 +172,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_55, resultado.Message);
         _productoRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Producto>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -193,7 +193,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_56, resultado.Message);
         _productoRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Producto>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -212,7 +212,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.CambiarEstadoAsync(productoId, false, "admin");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_63, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.False(resultado.Data!.Activo);
@@ -249,7 +249,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.ActualizarProductoAsync(productoId, request, "admin");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_58, resultado.Message);
         Assert.Equal(27.00m, producto.Pro_Precio);
 
@@ -287,7 +287,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.ActualizarProductoAsync(productoId, request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_216, resultado.Message);
         _productoRepoMock.Verify(r => r.ActualizarAsync(It.IsAny<Producto>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -316,7 +316,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal(categoriaEsperada.ToString(), resultado.Data!.Categoria);
@@ -345,7 +345,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.ListarProductosAsync(null, "Platos Extras / A la Carta", null, null, null, 1, 10);
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         _productoRepoMock.Verify(r => r.ListarProductosAsync(
             null,
             CategoriaProducto.PlatosExtras,
@@ -376,7 +376,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_57, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal("Quinua", resultado.Data!.Nombre);
@@ -401,7 +401,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_215, resultado.Message);
         var errors = resultado.Errors as Dictionary<string, string>;
         Assert.NotNull(errors);
@@ -424,7 +424,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.RegistrarProductoAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_214, resultado.Message);
         var errors = resultado.Errors as Dictionary<string, string>;
         Assert.NotNull(errors);
@@ -447,7 +447,7 @@ public class ProductoServiceUnitTests
 
         // ACT 1: Crear como componente -> permitido
         var resultado1 = await _service.RegistrarProductoAsync(requestComponente, "admin");
-        Assert.True(resultado1.Success);
+        Assert.True(resultado1.IsSuccess);
 
         // ARRANGE 2: Intentar crear otro componente con el mismo nombre -> rechazado MSG-53
         _productoRepoMock.Setup(r => r.ExisteNombreAsync("papa a la huancaina", TipoProducto.Componente, null, It.IsAny<CancellationToken>()))
@@ -455,7 +455,7 @@ public class ProductoServiceUnitTests
 
         // ACT 2: Crear otro componente duplicado -> rechazado
         var resultado2 = await _service.RegistrarProductoAsync(requestComponente, "admin");
-        Assert.False(resultado2.Success);
+        Assert.False(resultado2.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_53, resultado2.Message);
     }
 
@@ -481,7 +481,7 @@ public class ProductoServiceUnitTests
         var resultado = await _service.ActualizarProductoAsync(prodExistente.Id_Producto, request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_216, resultado.Message);
         var errors = resultado.Errors as Dictionary<string, string>;
         Assert.NotNull(errors);

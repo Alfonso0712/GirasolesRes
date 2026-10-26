@@ -29,7 +29,7 @@ public class ProductoService : IProductoService
         _menuDiaRepository = menuDiaRepository;
     }
 
-    public async Task<ApiResponse<PaginacionProductosResponse>> ListarProductosAsync(
+    public async Task<Result<PaginacionProductosResponse>> ListarProductosAsync(
         string? busqueda,
         string? categoria,
         string? tipo = null,
@@ -80,7 +80,7 @@ public class ProductoService : IProductoService
 
             var dtos = items.Select(MapearADto).ToList();
 
-            return ApiResponse<PaginacionProductosResponse>.Exitoso(new PaginacionProductosResponse
+            return Result<PaginacionProductosResponse>.Exitoso(new PaginacionProductosResponse
             {
                 Items = dtos,
                 Total = total
@@ -88,29 +88,29 @@ public class ProductoService : IProductoService
         }
         catch (Exception ex)
         {
-            return ApiResponse<PaginacionProductosResponse>.Fallido(MensajesCatalogo.MSG_67, detalle: ex.Message);
+            return Result<PaginacionProductosResponse>.Fallido(MensajesCatalogo.MSG_67, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<ProductoResponseDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<ProductoResponseDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
             var producto = await _productoRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (producto == null)
             {
-                return ApiResponse<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+                return Result<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
             }
 
-            return ApiResponse<ProductoResponseDto>.Exitoso(MapearADto(producto));
+            return Result<ProductoResponseDto>.Exitoso(MapearADto(producto));
         }
         catch (Exception ex)
         {
-            return ApiResponse<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<ProductoResponseDto>> RegistrarProductoAsync(
+    public async Task<Result<ProductoResponseDto>> RegistrarProductoAsync(
         CrearProductoRequest request,
         string adminUsername,
         string? ipAddress = null,
@@ -121,7 +121,7 @@ public class ProductoService : IProductoService
             var validacion = ValidarDatosProducto(request.Nombre, request.Tipo, request.Categoria, request.Rol, request.Precio);
             if (!validacion.EsValido)
             {
-                return ApiResponse<ProductoResponseDto>.Fallido(
+                return Result<ProductoResponseDto>.Fallido(
                     validacion.MensajeGeneral,
                     errores: validacion.Errores);
             }
@@ -135,7 +135,7 @@ public class ProductoService : IProductoService
             var existe = await _productoRepository.ExisteNombreAsync(nombreNormalizado, tipoEnum, null, cancellationToken);
             if (existe)
             {
-                return ApiResponse<ProductoResponseDto>.Fallido(
+                return Result<ProductoResponseDto>.Fallido(
                     MensajesCatalogo.MSG_53,
                     errores: new Dictionary<string, string> { { "nombre", MensajesCatalogo.MSG_53 } });
             }
@@ -176,15 +176,15 @@ public class ProductoService : IProductoService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _productoRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<ProductoResponseDto>.Exitoso(MapearADto(nuevoProducto), MensajesCatalogo.MSG_57);
+            return Result<ProductoResponseDto>.Exitoso(MapearADto(nuevoProducto), MensajesCatalogo.MSG_57);
         }
         catch (Exception ex)
         {
-            return ApiResponse<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<ProductoResponseDto>> ActualizarProductoAsync(
+    public async Task<Result<ProductoResponseDto>> ActualizarProductoAsync(
         Guid id,
         ActualizarProductoRequest request,
         string adminUsername,
@@ -196,13 +196,13 @@ public class ProductoService : IProductoService
             var producto = await _productoRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (producto == null)
             {
-                return ApiResponse<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+                return Result<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
             }
 
             var validacion = ValidarDatosProducto(request.Nombre, request.Tipo, request.Categoria, request.Rol, request.Precio);
             if (!validacion.EsValido)
             {
-                return ApiResponse<ProductoResponseDto>.Fallido(
+                return Result<ProductoResponseDto>.Fallido(
                     validacion.MensajeGeneral,
                     errores: validacion.Errores);
             }
@@ -216,7 +216,7 @@ public class ProductoService : IProductoService
                 var tienePedidos = await _productoRepository.TienePedidosAsync(id, cancellationToken);
                 if (tienePedidos)
                 {
-                    return ApiResponse<ProductoResponseDto>.Fallido(
+                    return Result<ProductoResponseDto>.Fallido(
                         MensajesCatalogo.MSG_216,
                         errores: new Dictionary<string, string> { { "tipo", MensajesCatalogo.MSG_216 } });
                 }
@@ -228,7 +228,7 @@ public class ProductoService : IProductoService
             var existe = await _productoRepository.ExisteNombreAsync(nombreNormalizado, nuevoTipo, id, cancellationToken);
             if (existe)
             {
-                return ApiResponse<ProductoResponseDto>.Fallido(
+                return Result<ProductoResponseDto>.Fallido(
                     MensajesCatalogo.MSG_53,
                     errores: new Dictionary<string, string> { { "nombre", MensajesCatalogo.MSG_53 } });
             }
@@ -275,15 +275,15 @@ public class ProductoService : IProductoService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _productoRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<ProductoResponseDto>.Exitoso(MapearADto(producto), MensajesCatalogo.MSG_58);
+            return Result<ProductoResponseDto>.Exitoso(MapearADto(producto), MensajesCatalogo.MSG_58);
         }
         catch (Exception ex)
         {
-            return ApiResponse<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<ProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<CambiarEstadoProductoResponseDto>> CambiarEstadoAsync(
+    public async Task<Result<CambiarEstadoProductoResponseDto>> CambiarEstadoAsync(
         Guid id,
         bool nuevoEstado,
         string adminUsername,
@@ -295,7 +295,7 @@ public class ProductoService : IProductoService
             var producto = await _productoRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (producto == null)
             {
-                return ApiResponse<CambiarEstadoProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+                return Result<CambiarEstadoProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
             }
 
             producto.CambiarEstado(nuevoEstado);
@@ -322,7 +322,7 @@ public class ProductoService : IProductoService
 
             var mensaje = nuevoEstado ? MensajesCatalogo.MSG_64 : MensajesCatalogo.MSG_63;
 
-            return ApiResponse<CambiarEstadoProductoResponseDto>.Exitoso(
+            return Result<CambiarEstadoProductoResponseDto>.Exitoso(
                 new CambiarEstadoProductoResponseDto
                 {
                     Activo = producto.Pro_Activo,
@@ -332,11 +332,11 @@ public class ProductoService : IProductoService
         }
         catch (Exception ex)
         {
-            return ApiResponse<CambiarEstadoProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<CambiarEstadoProductoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<List<ProductoResponseDto>>> ListarDisponiblesAsync(
+    public async Task<Result<List<ProductoResponseDto>>> ListarDisponiblesAsync(
         string? categoria,
         string? tipo = null,
         string? rol = null,
@@ -372,11 +372,11 @@ public class ProductoService : IProductoService
             }
 
             var disponibles = await _productoRepository.ListarDisponiblesAsync(categoriaEnum, tipoEnum, rolEnum, cancellationToken);
-            return ApiResponse<List<ProductoResponseDto>>.Exitoso(disponibles.Select(MapearADto).ToList());
+            return Result<List<ProductoResponseDto>>.Exitoso(disponibles.Select(MapearADto).ToList());
         }
         catch (Exception ex)
         {
-            return ApiResponse<List<ProductoResponseDto>>.Fallido(MensajesCatalogo.MSG_67, detalle: ex.Message);
+            return Result<List<ProductoResponseDto>>.Fallido(MensajesCatalogo.MSG_67, detalle: ex.Message);
         }
     }
 

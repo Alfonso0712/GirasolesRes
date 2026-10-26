@@ -46,7 +46,7 @@ public class ProductosController : ControllerBase
             tamano <= 0 ? 10 : tamano,
             cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -66,7 +66,7 @@ public class ProductosController : ControllerBase
     public async Task<IActionResult> ObtenerPorId(Guid id, CancellationToken cancellationToken = default)
     {
         var resultado = await _productoService.ObtenerPorIdAsync(id, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return NotFound(new
             {
@@ -107,7 +107,7 @@ public class ProductosController : ControllerBase
 
         var resultado = await _productoService.RegistrarProductoAsync(request, adminUsername, ipAddress, cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             if (resultado.Message == MensajesCatalogo.MSG_53)
             {
@@ -161,7 +161,7 @@ public class ProductosController : ControllerBase
 
         var resultado = await _productoService.ActualizarProductoAsync(id, request, adminUsername, ipAddress, cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             if (resultado.Message == MensajesCatalogo.MSG_53)
             {
@@ -214,7 +214,7 @@ public class ProductosController : ControllerBase
 
         var resultado = await _productoService.CambiarEstadoAsync(id, request.Activo, adminUsername, ipAddress, cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return NotFound(new
             {
@@ -239,7 +239,7 @@ public class ProductosController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var resultado = await _productoService.ListarDisponiblesAsync(categoria, tipo, rol, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
