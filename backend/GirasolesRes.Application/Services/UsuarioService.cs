@@ -24,7 +24,7 @@ public class UsuarioService : IUsuarioService
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<ApiResponse<PaginacionUsuariosResponse>> ListarUsuariosAsync(
+    public async Task<Result<PaginacionUsuariosResponse>> ListarUsuariosAsync(
         string? busqueda,
         string? rol,
         bool? activo,
@@ -61,33 +61,33 @@ public class UsuarioService : IUsuarioService
                 Total = total
             };
 
-            return ApiResponse<PaginacionUsuariosResponse>.Exitoso(response);
+            return Result<PaginacionUsuariosResponse>.Exitoso(response);
         }
         catch
         {
-            return ApiResponse<PaginacionUsuariosResponse>.Fallido(MensajesCatalogo.MSG_37);
+            return Result<PaginacionUsuariosResponse>.Fallido(MensajesCatalogo.MSG_37);
         }
     }
 
-    public async Task<ApiResponse<UsuarioResponseDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<UsuarioResponseDto>> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
             var usuario = await _usuarioRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (usuario == null)
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido("Usuario no encontrado.");
+                return Result<UsuarioResponseDto>.Fallido("Usuario no encontrado.");
             }
 
-            return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario));
+            return Result<UsuarioResponseDto>.Exitoso(MapearADto(usuario));
         }
         catch
         {
-            return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 
-    public async Task<ApiResponse<UsuarioResponseDto>> RegistrarUsuarioAsync(
+    public async Task<Result<UsuarioResponseDto>> RegistrarUsuarioAsync(
         CrearUsuarioRequest request,
         string adminUsername,
         string? ipAddress = null,
@@ -103,19 +103,19 @@ public class UsuarioService : IUsuarioService
             // RV-12 / RN-08: Unicidad de usuario
             if (await _usuarioRepository.ExisteNombreUsuarioAsync(request.Usuario, null, cancellationToken))
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_21);
+                return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_21);
             }
 
             // RV-16 / RN-08: Unicidad de correo si se proporciona
             if (!string.IsNullOrWhiteSpace(request.Correo) &&
                 await _usuarioRepository.ExisteCorreoAsync(request.Correo, null, cancellationToken))
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_24);
+                return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_24);
             }
 
             if (!Enum.TryParse<RolUsuario>(request.Rol, true, out var rolEnum))
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_22);
+                return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_22);
             }
 
             // RNF-01: Hash de contraseña PBKDF2
@@ -142,15 +142,15 @@ public class UsuarioService : IUsuarioService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario), MensajesCatalogo.MSG_25);
+            return Result<UsuarioResponseDto>.Exitoso(MapearADto(usuario), MensajesCatalogo.MSG_25);
         }
         catch
         {
-            return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 
-    public async Task<ApiResponse<UsuarioResponseDto>> ActualizarUsuarioAsync(
+    public async Task<Result<UsuarioResponseDto>> ActualizarUsuarioAsync(
         Guid id,
         ActualizarUsuarioRequest request,
         string adminUsername,
@@ -162,7 +162,7 @@ public class UsuarioService : IUsuarioService
             var usuario = await _usuarioRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (usuario == null)
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido("Usuario no encontrado.");
+                return Result<UsuarioResponseDto>.Fallido("Usuario no encontrado.");
             }
 
             // RV-17: Recorte de espacios
@@ -173,19 +173,19 @@ public class UsuarioService : IUsuarioService
             // RV-12 / RN-08: Unicidad de nombre de usuario
             if (await _usuarioRepository.ExisteNombreUsuarioAsync(request.Usuario, id, cancellationToken))
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_21);
+                return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_21);
             }
 
             // RV-16 / RN-08: Unicidad de correo
             if (!string.IsNullOrWhiteSpace(request.Correo) &&
                 await _usuarioRepository.ExisteCorreoAsync(request.Correo, id, cancellationToken))
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_24);
+                return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_24);
             }
 
             if (!Enum.TryParse<RolUsuario>(request.Rol, true, out var nuevoRol))
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_22);
+                return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_22);
             }
 
             // RN-10: Protección del último administrador activo ante cambio de rol
@@ -194,7 +194,7 @@ public class UsuarioService : IUsuarioService
                 var adminActivos = await _usuarioRepository.ContarAdministradoresActivosAsync(cancellationToken);
                 if (adminActivos <= 1)
                 {
-                    return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_32);
+                    return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_32);
                 }
             }
 
@@ -222,15 +222,15 @@ public class UsuarioService : IUsuarioService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario), MensajesCatalogo.MSG_26);
+            return Result<UsuarioResponseDto>.Exitoso(MapearADto(usuario), MensajesCatalogo.MSG_26);
         }
         catch
         {
-            return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 
-    public async Task<ApiResponse<UsuarioResponseDto>> CambiarEstadoAsync(
+    public async Task<Result<UsuarioResponseDto>> CambiarEstadoAsync(
         Guid id,
         bool nuevoEstado,
         string adminUsername,
@@ -242,7 +242,7 @@ public class UsuarioService : IUsuarioService
             var usuario = await _usuarioRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (usuario == null)
             {
-                return ApiResponse<UsuarioResponseDto>.Fallido("Usuario no encontrado.");
+                return Result<UsuarioResponseDto>.Fallido("Usuario no encontrado.");
             }
 
             if (!nuevoEstado)
@@ -250,7 +250,7 @@ public class UsuarioService : IUsuarioService
                 // RV-21 / RN-10: Intento de desactivar su propia cuenta
                 if (usuario.Usu_Usuario.Equals(adminUsername.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_31);
+                    return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_31);
                 }
 
                 // RV-21 / RN-10: Intento de desactivar el último administrador activo
@@ -259,7 +259,7 @@ public class UsuarioService : IUsuarioService
                     var adminActivos = await _usuarioRepository.ContarAdministradoresActivosAsync(cancellationToken);
                     if (adminActivos <= 1)
                     {
-                        return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_32);
+                        return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_32);
                     }
                 }
             }
@@ -279,15 +279,15 @@ public class UsuarioService : IUsuarioService
             await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
             var mensajeExito = nuevoEstado ? MensajesCatalogo.MSG_30 : MensajesCatalogo.MSG_29;
-            return ApiResponse<UsuarioResponseDto>.Exitoso(MapearADto(usuario), mensajeExito);
+            return Result<UsuarioResponseDto>.Exitoso(MapearADto(usuario), mensajeExito);
         }
         catch
         {
-            return ApiResponse<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<UsuarioResponseDto>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 
-    public async Task<ApiResponse<bool>> EliminarUsuarioAsync(
+    public async Task<Result<bool>> EliminarUsuarioAsync(
         Guid id,
         string adminUsername,
         string? ipAddress = null,
@@ -298,13 +298,13 @@ public class UsuarioService : IUsuarioService
             var usuario = await _usuarioRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (usuario == null)
             {
-                return ApiResponse<bool>.Fallido("Usuario no encontrado.");
+                return Result<bool>.Fallido("Usuario no encontrado.");
             }
 
             // RV-21 / RN-10: No puede eliminar su propia cuenta
             if (usuario.Usu_Usuario.Equals(adminUsername.Trim(), StringComparison.OrdinalIgnoreCase))
             {
-                return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_31);
+                return Result<bool>.Fallido(MensajesCatalogo.MSG_31);
             }
 
             // RV-21 / RN-10: No puede eliminar el último administrador activo
@@ -313,7 +313,7 @@ public class UsuarioService : IUsuarioService
                 var adminActivos = await _usuarioRepository.ContarAdministradoresActivosAsync(cancellationToken);
                 if (adminActivos <= 1)
                 {
-                    return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_32);
+                    return Result<bool>.Fallido(MensajesCatalogo.MSG_32);
                 }
             }
 
@@ -321,7 +321,7 @@ public class UsuarioService : IUsuarioService
             var tieneMovimientos = await _usuarioRepository.TieneMovimientosAsync(id, cancellationToken);
             if (tieneMovimientos)
             {
-                return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_34);
+                return Result<bool>.Fallido(MensajesCatalogo.MSG_34);
             }
 
             var nombreAfectado = usuario.Usu_Usuario;
@@ -337,11 +337,11 @@ public class UsuarioService : IUsuarioService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<bool>.Exitoso(true, MensajesCatalogo.MSG_35);
+            return Result<bool>.Exitoso(true, MensajesCatalogo.MSG_35);
         }
         catch
         {
-            return ApiResponse<bool>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<bool>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 

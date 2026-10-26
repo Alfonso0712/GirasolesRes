@@ -42,7 +42,7 @@ public class UsuariosController : ControllerBase
             tamano <= 0 ? 10 : tamano,
             cancellationToken);
 
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -61,7 +61,7 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> ObtenerPorId(Guid id, CancellationToken cancellationToken)
     {
         var resultado = await _usuarioService.ObtenerPorIdAsync(id, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return NotFound(new
             {
@@ -94,7 +94,7 @@ public class UsuariosController : ControllerBase
 
         var resultado = await _usuarioService.RegistrarUsuarioAsync(request, adminUser, ip, cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status201Created, new
             {
@@ -142,7 +142,7 @@ public class UsuariosController : ControllerBase
 
         var resultado = await _usuarioService.ActualizarUsuarioAsync(id, request, adminUser, ip, cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             return Ok(new
             {
@@ -191,7 +191,7 @@ public class UsuariosController : ControllerBase
 
         var resultado = await _usuarioService.CambiarEstadoAsync(id, request.Activo, adminUser, ip, cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             return Ok(new
             {
@@ -240,7 +240,7 @@ public class UsuariosController : ControllerBase
 
             var resultado = await _usuarioService.EliminarUsuarioAsync(id, adminUser, ip, cancellationToken);
 
-            if (resultado.Success)
+            if (resultado.IsSuccess)
             {
                 return Ok(new
                 {

@@ -53,7 +53,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.RegistrarUsuarioAsync(request, "admin", "127.0.0.1");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_25, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal("jperez", resultado.Data!.Usuario);
@@ -83,7 +83,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.RegistrarUsuarioAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_21, resultado.Message);
         _usuarioRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Usuario>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -110,7 +110,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.RegistrarUsuarioAsync(request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_24, resultado.Message);
         _usuarioRepoMock.Verify(r => r.AgregarAsync(It.IsAny<Usuario>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -129,7 +129,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.CambiarEstadoAsync(adminId, false, "admin_master");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_31, resultado.Message);
         Assert.True(adminUser.Usu_Activo); // No se modificó el estado
         _usuarioRepoMock.Verify(r => r.ActualizarAsync(It.IsAny<Usuario>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -151,7 +151,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.CambiarEstadoAsync(otroAdminId, false, "admin_master");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_32, resultado.Message);
         Assert.True(otroAdmin.Usu_Activo);
     }
@@ -170,7 +170,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.EliminarUsuarioAsync(adminId, "admin_master");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_31, resultado.Message);
         _usuarioRepoMock.Verify(r => r.EliminarAsync(It.IsAny<Usuario>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -191,7 +191,7 @@ public class UsuarioServiceUnitTests
         var resultado = await _service.EliminarUsuarioAsync(mozoId, "admin_master");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_34, resultado.Message);
         _usuarioRepoMock.Verify(r => r.EliminarAsync(It.IsAny<Usuario>(), It.IsAny<CancellationToken>()), Times.Never);
     }
