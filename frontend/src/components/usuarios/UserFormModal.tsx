@@ -410,7 +410,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                 <label className="form-label-standard !mb-0">
                   {isEdit ? 'Nueva contraseña' : 'Contraseña'}{' '}
                   {isEdit ? (
-                    <span className="text-neutral-500 font-normal text-xs">(dejar vacía para no cambiar)</span>
+                    <span className="text-neutral-500 font-normal text-xs">(opcional)</span>
                   ) : (
                     <span className="text-rose-500">*</span>
                   )}
@@ -469,7 +469,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                     errores.confirmarContrasena
                       ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
                       : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
-                  } ${isEdit && !contrasena ? 'bg-neutral-100 cursor-not-allowed' : ''}`}
+                  } ${isEdit && !contrasena ? 'bg-neutral-100 dark:bg-neutral-800/40 opacity-60 cursor-not-allowed' : ''}`}
                 />
                 <button
                   type="button"
