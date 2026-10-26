@@ -1,3 +1,4 @@
+using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class ConsultasController : ControllerBase
         var dniTrim = dni?.Trim() ?? string.Empty;
         if (dniTrim.Length != 8 || !dniTrim.All(char.IsDigit))
         {
-            return BadRequest(new { message = "El DNI debe tener exactamente 8 dígitos numéricos." });
+            return BadRequest(new { message = MensajesCatalogo.MSG_226 });
         }
 
         try
@@ -34,7 +35,7 @@ public class ConsultasController : ControllerBase
             var resultado = await _consultaService.ConsultarDniAsync(dniTrim, ct);
             if (resultado == null)
             {
-                return NotFound(new { message = "No se encontraron datos para el DNI ingresado." });
+                return NotFound(new { message = MensajesCatalogo.MSG_228 });
             }
 
             return Ok(resultado);
@@ -42,7 +43,7 @@ public class ConsultasController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al consultar DNI {Dni}", dniTrim);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { message = "Servicio de consulta no disponible temporalmente." });
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { message = MensajesCatalogo.MSG_230 });
         }
     }
 
@@ -52,7 +53,7 @@ public class ConsultasController : ControllerBase
         var rucTrim = ruc?.Trim() ?? string.Empty;
         if (rucTrim.Length != 11 || !rucTrim.All(char.IsDigit))
         {
-            return BadRequest(new { message = "El RUC debe tener exactamente 11 dígitos numéricos." });
+            return BadRequest(new { message = MensajesCatalogo.MSG_227 });
         }
 
         try
@@ -60,7 +61,7 @@ public class ConsultasController : ControllerBase
             var resultado = await _consultaService.ConsultarRucAsync(rucTrim, ct);
             if (resultado == null)
             {
-                return NotFound(new { message = "No se encontraron datos para el RUC ingresado." });
+                return NotFound(new { message = MensajesCatalogo.MSG_228 });
             }
 
             return Ok(resultado);
@@ -68,7 +69,7 @@ public class ConsultasController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al consultar RUC {Ruc}", rucTrim);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { message = "Servicio de consulta no disponible temporalmente." });
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { message = MensajesCatalogo.MSG_230 });
         }
     }
 }

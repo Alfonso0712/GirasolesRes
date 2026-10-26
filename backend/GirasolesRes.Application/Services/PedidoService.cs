@@ -1126,10 +1126,10 @@ public class PedidoService : IPedidoService
                     throw new ArgumentException(MensajesCatalogo.MSG_215);
                 }
 
-                // RV-63 / MSG-79: Revalidar disponibilidad y que no esté agotado
+                // RV-63 / MSG-225: Revalidar disponibilidad y que no esté agotado
                 if (platosMenuDiaDict.TryGetValue(producto.Id_Producto, out var estaAgotado) && estaAgotado)
                 {
-                    throw new PedidoConflictException("producto_agotado", string.Format(MensajesCatalogo.MSG_79, producto.Pro_Nombre));
+                    throw new PedidoConflictException("producto_agotado", string.Format(MensajesCatalogo.MSG_225, producto.Pro_Nombre));
                 }
 
                 itemsProcesados.Add(new ItemProcesadoLinea

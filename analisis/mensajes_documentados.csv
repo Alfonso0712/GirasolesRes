@@ -1,0 +1,229 @@
+﻿id,texto,tipo,ubicacion,definido_en
+MSG-01,Ingrese su usuario.,Error,Bajo el campo Usuario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-01
+MSG-02,Ingrese su contraseña.,Error,Bajo el campo Contraseña,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-02
+MSG-03,"El usuario debe tener entre 3 y 30 caracteres, sin espacios.",Error,Bajo el campo Usuario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-03
+MSG-04,Usuario o contraseña incorrectos. Revise sus datos e intente nuevamente.,Error,Aviso sobre el formulario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-04
+MSG-05,Su cuenta está desactivada. Comuníquese con la administradora.,Error,Aviso sobre el formulario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-05
+MSG-06,Demasiados intentos. Intente nuevamente en 15 minutos.,Error,Aviso sobre el formulario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-06
+MSG-07,Ingresando… (texto del botón mientras se valida),Estado,Botón INGRESAR,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-07
+MSG-08,Ingreso correcto. Redirigiendo…,Éxito,Aviso sobre el formulario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-08
+MSG-09,No se pudo conectar con el servidor. Verifique su conexión e intente nuevamente.,Error,Aviso sobre el formulario,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-09
+MSG-10,Mayúsculas activadas.,Aviso,Bajo el campo Contraseña,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-10
+MSG-100,Pedido N.º [n] registrado para [mesa]. La comanda se envió a cocina.,Éxito,Pantalla de confirmación,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-100
+MSG-101,Productos agregados al pedido N.º [n]. Se envió una comanda adicional a cocina.,Éxito,Pantalla de confirmación,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-101
+MSG-102,Tiene un pedido sin registrar. ¿Desea descartarlo?,Confirmación,Diálogo,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-102
+MSG-103,Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.,Error,Sobre la lista de líneas,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-103
+MSG-104,El pedido ya no puede modificarse porque fue pagado o anulado.,Error,Aviso,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-104
+MSG-105,No se pudo registrar el pedido. Su pedido sigue en pantalla; intente nuevamente.,Error,Sobre el botón de registrar,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-105
+MSG-106,No se pudieron agregar los productos. El pedido no cambió; intente nuevamente.,Error,Sobre el botón de agregar,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-106
+MSG-107,No hay productos disponibles para pedir. Avise a la administradora.,Informativo,En la pantalla,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-107
+MSG-108,No hay mesas activas. Revise la vista de mesas.,Informativo,Selector de mesa,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-108
+MSG-109,La referencia no puede superar los 30 caracteres.,Error,Bajo el campo Referencia,Anexo_CUS07_Pedido_para_Llevar_Girasoles.md#MSG-109
+MSG-11,"Si el correo está registrado, recibirá un código de 6 dígitos en unos minutos.",Éxito,Vista 1.2,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-11
+MSG-110,Pedido para llevar N.º [n] registrado. La comanda se envió a cocina.,Éxito,Pantalla de confirmación,Anexo_CUS07_Pedido_para_Llevar_Girasoles.md#MSG-110
+MSG-111,No se pudo registrar el pedido para llevar. Su pedido sigue en pantalla; intente nuevamente.,Error,Sobre el botón de registrar,Anexo_CUS07_Pedido_para_Llevar_Girasoles.md#MSG-111
+MSG-112,No se encontraron pedidos con ese criterio. Pruebe con otro filtro.,Informativo,En la lista,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-112
+MSG-113,Todavía no hay pedidos hoy.,Informativo,En la lista,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-113
+MSG-114,No se pudieron cargar los pedidos. Intente nuevamente. (botón Reintentar),Error,En la lista,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-114
+MSG-115,El pedido ya está en preparación y no puede modificarse. Avise a cocina.,Error,Aviso / botón deshabilitado,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-115
+MSG-116,Solo puede modificar los pedidos que usted registró; anular pedidos de otros es función del Administrador.,Error,Aviso / botón deshabilitado,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-116
+MSG-117,Indique el motivo de la anulación (entre 5 y 100 caracteres).,Error,Bajo el campo Motivo,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-117
+MSG-118,¿Anular el pedido N.º [n] ([mesa o Para llevar])? No se podrá deshacer y quedará registrado con su motivo.,Confirmación,Diálogo,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-118
+MSG-119,Pedido N.º [n] modificado. Cocina verá la comanda actualizada.,Éxito,Aviso temporal (4 s),Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-119
+MSG-12,"Ingrese un correo válido, por ejemplo: nombre@dominio.com.",Error,Bajo el campo Correo,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-12
+MSG-120,Pedido N.º [n] anulado.,Éxito,Aviso temporal (4 s),Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-120
+MSG-121,"Para quitar todos los productos, anule el pedido.",Error,Sobre el botón GUARDAR,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-121
+MSG-122,No se pudo actualizar el pedido. El pedido original no cambió; intente nuevamente.,Error,Pantalla de modificación o diálogo,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-122
+MSG-123,Pedido N.º [n] listo para recoger: [mesa o Para llevar y referencia].,Aviso,Aviso emergente,Anexo_CUS08_Gestion_de_Pedidos_Girasoles.md#MSG-123
+MSG-124,No hay comandas pendientes. Todo al día.,Informativo,En la pantalla,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-124
+MSG-125,No se pudieron cargar las comandas. Intente nuevamente. (botón Reintentar),Error,En la pantalla,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-125
+MSG-126,Comanda N.º [n] en preparación. (botón DESHACER),Aviso (10 s),Aviso inferior,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-126
+MSG-127,Comanda N.º [n] marcada como lista. Se avisó a [mozo o cajero]. (botón DESHACER),Aviso (10 s),Aviso inferior,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-127
+MSG-128,La comanda N.º [n] fue anulada y se retiró de la pantalla.,Informativo,Aviso,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-128
+MSG-129,El pedido N.º [n] fue modificado. Revise los cambios.,Aviso,Aviso y etiqueta MODIFICADA,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-129
+MSG-13,El código es incorrecto o ha vencido. Solicite uno nuevo.,Error,Bajo el campo Código,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-13
+MSG-130,Primero debe iniciar la preparación de la comanda.,Error,Aviso,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-130
+MSG-131,No se pudo actualizar la comanda. El estado anterior se conserva; intente nuevamente.,Error,Aviso,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-131
+MSG-132,Sin conexión: las comandas pueden estar desactualizadas (datos de hace [x] s).,Aviso,Franja superior,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-132
+MSG-133,Nueva comanda N.º [n] ([mesa o Para llevar]).,Aviso,Etiqueta NUEVA y aviso,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-133
+MSG-134,"No se puede deshacer: el pedido ya fue pagado, anulado o pasó el tiempo permitido.",Error,Aviso,Anexo_CUS09_Comandas_de_Cocina_Girasoles.md#MSG-134
+MSG-135,Debe abrir la caja antes de cobrar. (botón ABRIR CAJA),Error,Sobre la lista de cobros,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-135
+MSG-136,No hay pedidos pendientes de cobro.,Informativo,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-136
+MSG-137,El pedido N.º [n] no puede cobrarse: ya fue pagado o anulado.,Error,Aviso,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-137
+MSG-138,El pedido N.º [n] aún no está listo ([estado]). ¿Desea cobrarlo de todos modos?,Confirmación,Diálogo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-138
+MSG-139,El total del pedido cambió a S/ [x]. Revise el detalle antes de cobrar.,Aviso,Paso 1 del cobro,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-139
+MSG-14,La contraseña debe tener entre 8 y 64 caracteres.,Error,Bajo Nueva contraseña,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-14
+MSG-140,Seleccione el método de pago.,Error,Sobre el selector,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-140
+MSG-141,Ingrese el monto recibido.,Error,Bajo el campo Monto,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-141
+MSG-142,"Ingrese un monto válido, con hasta 2 decimales (ejemplo: 20.00).",Error,Bajo el campo Monto,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-142
+MSG-143,El monto recibido es menor al total. Falta S/ [x].,Error,Bajo el campo Monto,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-143
+MSG-144,Confirme que recibió el pago por Yape.,Error,Sobre la casilla,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-144
+MSG-146,Cobro registrado. Comprobante [serie-número] por S/ [x].,Éxito,Paso 3 del cobro,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-146
+MSG-147,No se pudo registrar el cobro. El pedido sigue pendiente de cobro; intente nuevamente.,Error,Sobre el botón CONFIRMAR PAGO,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-147
+MSG-148,No se pudo generar la vista del comprobante. La venta está registrada; regenérelo desde Ventas.,Error,Paso 3 del cobro,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-148
+MSG-149,No se encontró una impresora disponible. Descargue el comprobante.,Aviso,Paso 3 del cobro,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-149
+MSG-15,Las contraseñas no coinciden.,Error,Bajo Confirmar contraseña,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-15
+MSG-150,¿Cancelar el cobro? El pedido seguirá pendiente de cobro.,Confirmación,Diálogo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-150
+MSG-151,La referencia de Yape no puede superar los 20 caracteres.,Error,Bajo el campo Referencia,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-151
+MSG-152,"El monto recibido no puede superar S/ 9,999.99.",Error,Bajo el campo Monto,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-152
+MSG-153,No se encontraron ventas con ese criterio. Pruebe con otra fecha o número de comprobante.,Informativo,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-153
+MSG-154,Todavía no hay ventas registradas hoy.,Informativo,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-154
+MSG-155,No se pudieron cargar las ventas. Intente nuevamente. (botón Reintentar),Error,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-155
+MSG-156,El número de comprobante no es válido. Use el formato T001-000123 o solo el correlativo.,Error,Bajo el campo Buscar,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-156
+MSG-157,"La fecha ""desde"" no puede ser posterior a ""hasta"".",Error,Bajo los campos de fecha,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-157
+MSG-158,El rango no puede superar los 31 días ni incluir fechas futuras.,Error,Bajo los campos de fecha,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-158
+MSG-159,Solo puede consultar las ventas de los últimos 7 días.,Error,Bajo los campos de fecha,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-159
+MSG-16,Contraseña actualizada. Ya puede iniciar sesión.,Éxito,Login (tras redirigir),Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-16
+MSG-160,Indique el motivo de la anulación (entre 5 y 100 caracteres).,Error,Bajo el campo Motivo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-160
+MSG-161,¿Anular la venta [comprobante] por S/ [x]? No se puede deshacer y quedará registrada con su motivo.,Confirmación,Diálogo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-161
+MSG-162,Venta [comprobante] anulada. [El pedido N.º [n] volvió a pendiente de cobro. / El pedido N.º [n] fue anulado.],Éxito,Aviso temporal (4 s),Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-162
+MSG-163,La venta ya fue anulada.,Error,Aviso,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-163
+MSG-164,No se pudo anular la venta. La venta sigue vigente; intente nuevamente.,Error,Sobre el botón ANULAR VENTA,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-164
+MSG-165,La venta pertenece a una caja cerrada: se anulará y el ajuste quedará registrado en los reportes.,Advertencia,Diálogo de anulación,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-165
+MSG-166,Todavía no hay caja abierta. Ábrala para empezar a cobrar.,Informativo,Encabezado de la pantalla,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-166
+MSG-167,Ya existe una caja abierta desde las [hora] por [usuario].,Error,Aviso,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-167
+MSG-168,Hay una caja del [fecha] sin cerrar. Ciérrela antes de abrir una nueva o cobrar. (botón CERRAR CAJA),Advertencia,Encabezado de la pantalla,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-168
+MSG-169,Ingrese el monto inicial.,Error,Bajo el campo Monto inicial,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-169
+MSG-17,"Si es personal del restaurante, pida a la administradora que restablezca su contraseña.",Ayuda,Vista 1.2,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-17
+MSG-170,"Ingrese un monto válido, desde S/ 0.00 y con hasta 2 decimales (ejemplo: 50.00).",Error,Bajo el campo de monto,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-170
+MSG-171,"El monto no puede superar S/ 99,999.99.",Error,Bajo el campo de monto,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-171
+MSG-172,¿Abrir la caja con S/ [x] de monto inicial?,Confirmación,Diálogo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-172
+MSG-173,Caja abierta con S/ [x]. Ya puede cobrar.,Éxito,Aviso temporal (4 s),Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-173
+MSG-174,No se puede cerrar la caja: hay [n] pedido(s) pendiente(s) de cobro. Cóbrelos o anúlelos primero.,Error,Sobre la lista de pedidos,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-174
+MSG-175,Ingrese el efectivo contado.,Error,Bajo el campo Efectivo contado,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-175
+MSG-176,Cuadra: el efectivo contado coincide con el esperado.,Informativo,Indicador de diferencia,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-176
+MSG-177,Sobrante de S/ [x]. Se recomienda indicar una observación.,Advertencia,Indicador de diferencia,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-177
+MSG-178,Faltante de S/ [x]. Se recomienda indicar una observación.,Advertencia,Indicador de diferencia,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-178
+MSG-179,La observación no puede superar los 200 caracteres.,Error,Bajo el campo Observación,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-179
+MSG-18,No se pudo enviar el código. Intente nuevamente.,Error,Vista 1.2,Anexo_CUS01_Inicio_de_Sesion_Girasoles.md#MSG-18
+MSG-180,¿Cerrar la caja? No podrá cobrar hasta abrir una nueva y el cierre no se puede deshacer.,Confirmación,Diálogo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-180
+MSG-181,Caja cerrada. [Cuadra / Sobrante de S/ x / Faltante de S/ x].,Éxito,Resumen del cierre,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-181
+MSG-182,No se pudo abrir la caja. No se registró la apertura; intente nuevamente.,Error,Sobre el botón CONFIRMAR,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-182
+MSG-183,No se pudo cerrar la caja. La caja sigue abierta; intente nuevamente.,Error,Sobre el botón CONFIRMAR CIERRE,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-183
+MSG-184,La cantidad debe ser un número entero entre 0 y 999.,Error,Junto a la denominación,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-184
+MSG-185,No se encontraron cierres de caja con ese criterio. Pruebe con otro rango de fechas.,Informativo,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-185
+MSG-186,No se pudo cargar el historial de cierres. Intente nuevamente. (botón Reintentar),Error,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-186
+MSG-187,Aún no hay cierres de caja registrados.,Informativo,En la lista,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-187
+MSG-188,"La fecha ""desde"" no puede ser posterior a ""hasta"" ni incluir fechas futuras.",Error,Bajo los campos de fecha,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-188
+MSG-189,Los totales cambiaron mientras contaba (efectivo esperado: S/ [x]). Revise el resumen antes de cerrar.,Aviso,Resumen del cierre,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-189
+MSG-19,Ingrese el nombre completo.,Error,Bajo el campo Nombre,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-19
+MSG-190,"La fecha ""desde"" no puede ser posterior a ""hasta"".",Error,Bajo los campos de fecha,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-190
+MSG-191,El rango no puede incluir fechas futuras ni superar los 366 días.,Error,Bajo los campos de fecha,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-191
+MSG-192,No hay ventas en el rango seleccionado. Pruebe con otras fechas.,Informativo,En el reporte,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-192
+MSG-193,No hay platos vendidos en el período. Pruebe con otras fechas o con otro producto.,Informativo,En el reporte,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-193
+MSG-194,No se pudo generar el reporte de ventas. Intente nuevamente. (botón Reintentar),Error,En el reporte,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-194
+MSG-195,No se pudieron consultar los platos vendidos. Intente nuevamente. (botón Reintentar),Error,En el reporte,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-195
+MSG-196,Los filtros cambiaron. Pulse CONSULTAR para actualizar el reporte.,Aviso,Junto al botón CONSULTAR,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-196
+MSG-197,Cuadra con ventas: el monto de los platos coincide con el total vendido (S/ [x]).,Informativo,Indicador del reporte de platos,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-197
+MSG-198,El monto de los platos (S/ [x]) no coincide con el total vendido (S/ [y]). Diferencia: S/ [z]. Informe al equipo técnico.,Advertencia,Indicador del reporte de platos,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-198
+MSG-199,Incluye [n] venta(s) anulada(s) por S/ [x] que no se suman.,Informativo,Pie del resumen,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-199
+MSG-20,El nombre debe tener entre 3 y 60 caracteres y solo letras y espacios.,Error,Bajo el campo Nombre,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-20
+MSG-200,Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres.,Informativo,"Fila del día ""Con ajustes""",Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-200
+MSG-201,No se pudo descargar el archivo. Intente nuevamente.,Error,Junto a los botones de descarga,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-201
+MSG-202,Todavía no hay ventas registradas hoy.,Informativo,Tarjeta de ventas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-202
+MSG-203,Todo en orden: no hay alertas por atender.,Informativo,Bloque de alertas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-203
+MSG-204,"El menú de hoy aún no está definido. (enlace ""Definir menú"")",Alerta,Bloque de alertas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-204
+MSG-205,"[n] comanda(s) llevan más de 15 minutos de espera. (enlace ""Ver pedidos"")",Alerta,Bloque de alertas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-205
+MSG-206,"[n] plato(s) agotado(s) hoy. (enlace ""Ver menú"")",Alerta,Bloque de alertas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-206
+MSG-207,"[n] venta(s) anulada(s) hoy por S/ [x]. (enlace ""Ver ventas"")",Alerta,Bloque de alertas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-207
+MSG-208,"El último cierre ([fecha]) tuvo [faltante / sobrante] de S/ [x]. (enlace ""Ver cierre"")",Alerta,Bloque de alertas,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-208
+MSG-209,No se pudo cargar este bloque. Intente nuevamente. (botón Reintentar),Error,Bloque afectado,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-209
+MSG-21,Ese usuario ya está registrado. Elija otro nombre de usuario.,Error,Bajo el campo Usuario,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-21
+MSG-210,No se pudo cargar el panel. Intente nuevamente. (botón Reintentar),Error,Pantalla de inicio,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-210
+MSG-211,Abra la caja primero.,Ayuda,Botón COBRAR deshabilitado,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-211
+MSG-212,No tiene pedidos listos por recoger.,Informativo,Bloque del Mozo,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-212
+MSG-213,Seleccione el tipo de producto.,Error,Bajo Tipo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-213
+MSG-214,Seleccione el rol del componente.,Error,Bajo Rol,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-214
+MSG-215,Los componentes no llevan precio: se usan dentro de un menú completo.,Informativo,Formulario,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-215
+MSG-216,No se puede cambiar el tipo: el producto ya tiene pedidos. Desactívelo y cree uno nuevo.,Error,Formulario de edición,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-216
+MSG-217,Menú completo actualizado correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS02_a_CUS04_Girasoles.md#MSG-217
+MSG-218,"¿Desactivar el menú completo [nombre]? No se podrá pedir hasta activarlo, pero se conservará su historial.",Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-218
+MSG-219,"[Menú] necesita al menos una opción en ""[parte]"". Seleccione opciones o quite el menú de hoy.",Error,Pestaña Menús completos,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-219
+MSG-22,Seleccione un rol.,Error,Bajo la lista Rol,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-22
+MSG-220,"[Menú] no está disponible hoy: no hay opciones en ""[parte]"".",Informativo,Tarjeta del menú,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-220
+MSG-221,"Elija una opción en ""[parte]"".",Error,Bajo la parte sin elegir,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-221
+MSG-222,[Menú] agregado: [opción 1] + [opción 2].,Éxito,Aviso temporal,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-222
+MSG-223,"La opción ""[nombre]"" se agotó. Elija otra en ""[parte]"".",Error,Armado y línea,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-223
+MSG-224,Seleccione al menos un producto de carta o habilite un menú completo con sus opciones.,Error,Sobre el botón GUARDAR MENÚ DEL DÍA,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-224
+MSG-225,El plato [nombre] se agotó. Elija otro plato.,Error,Armado y línea,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-225
+MSG-226,El DNI debe tener exactamente 8 dígitos numéricos.,Error,Bajo el campo DNI,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-226
+MSG-227,El RUC debe tener 11 dígitos numéricos y comenzar con 10 o 20.,Error,Bajo el campo RUC,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-227
+MSG-228,Documento no encontrado en el padrón oficial. Puede ingresar la razón social manualmente.,Advertencia,Bajo el botón Consultar,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-228
+MSG-229,"Por normativa tributaria (SUNAT), ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.",Advertencia,Bajo el selector de comprobante,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-229
+MSG-23,El correo es obligatorio para el administrador.,Error,Bajo el campo Correo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-23
+MSG-230,Servicio de consulta de identidad no disponible en este momento. Verifique la conexión o ingrese los datos manualmente.,Aviso,Sobre el botón Consultar,Anexo_CUS10_a_CUS14_Cobro_Ventas_Caja_Reportes_Dashboard_Girasoles.md#MSG-230
+MSG-24,Ese correo ya está asignado a otro usuario.,Error,Bajo el campo Correo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-24
+MSG-25,Usuario registrado correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS02_a_CUS04_Girasoles.md#MSG-25
+MSG-26,Cambios guardados correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS02_a_CUS04_Girasoles.md#MSG-26
+MSG-27,"¿Desactivar a [nombre]? No podrá iniciar sesión, pero se conservará su historial.",Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-27
+MSG-28,¿Activar a [nombre]? Podrá iniciar sesión nuevamente.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-28
+MSG-29,Usuario desactivado.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-29
+MSG-30,Usuario activado.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-30
+MSG-31,No puede desactivar ni eliminar su propia cuenta.,Error,Aviso sobre la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-31
+MSG-32,Debe haber al menos un administrador activo.,Error,Aviso sobre la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-32
+MSG-33,¿Eliminar a [nombre]? Esta acción no se puede deshacer.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-33
+MSG-34,No se puede eliminar: el usuario tiene movimientos registrados. Desactívelo para conservar su historial.,Error,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-34
+MSG-35,Usuario eliminado correctamente.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-35
+MSG-36,No se encontraron usuarios con ese criterio. Pruebe con otro nombre o quite los filtros.,Informativo,En la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-36
+MSG-37,No se pudo cargar la lista de usuarios. Intente nuevamente. (botón Reintentar),Error,En la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-37
+MSG-38,No se pudo completar la operación. Intente nuevamente.,Error,Formulario o diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-38
+MSG-39,No tiene permiso para usar esta función.,Error,Pantalla de acceso denegado,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-39
+MSG-40,¿Cerrar sesión? Tendrá que ingresar nuevamente para usar el sistema.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-40
+MSG-41,Sesión cerrada correctamente.,Éxito,Pantalla de login,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-41
+MSG-42,Su sesión vencerá en 2 minutos por inactividad. ¿Desea continuar? (botón CONTINUAR),Aviso,Ventana de aviso,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-42
+MSG-43,Su sesión expiró por inactividad. Inicie sesión nuevamente.,Informativo,Pantalla de login,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-43
+MSG-44,Ingrese su contraseña actual.,Error,Bajo Contraseña actual,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-44
+MSG-45,La contraseña actual no es correcta. Revise lo escrito e intente nuevamente.,Error,Bajo Contraseña actual,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-45
+MSG-46,La nueva contraseña debe ser distinta de la actual.,Error,Bajo Nueva contraseña,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-46
+MSG-47,Contraseña actualizada correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS02_a_CUS04_Girasoles.md#MSG-47
+MSG-48,Por seguridad se cerró su sesión tras varios intentos fallidos. Inicie sesión nuevamente.,Informativo,Pantalla de login,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-48
+MSG-49,No tiene permiso para cambiar la contraseña. Pida a la administradora que la restablezca.,Error,Aviso,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-49
+MSG-50,"No se pudo cerrar la sesión en el servidor, pero se cerró en este equipo.",Aviso,Pantalla de login,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-50
+MSG-51,Ingrese el nombre del producto.,Error,Bajo Nombre,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-51
+MSG-52,El nombre debe tener entre 3 y 50 caracteres.,Error,Bajo Nombre,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-52
+MSG-53,Ese producto ya está registrado. Use otro nombre o edite el existente.,Error,Bajo Nombre,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-53
+MSG-54,Seleccione una categoría.,Error,Bajo Categoría,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-54
+MSG-55,Ingrese el precio.,Error,Bajo Precio,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-55
+MSG-56,"Ingrese un precio válido, mayor a S/ 0.00 y con hasta 2 decimales (ejemplo: 8.00).",Error,Bajo Precio,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-56
+MSG-57,Producto registrado correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS02_a_CUS04_Girasoles.md#MSG-57
+MSG-58,Producto actualizado correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS02_a_CUS04_Girasoles.md#MSG-58
+MSG-59,El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian.,Informativo,Bajo Precio,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-59
+MSG-60,"¿Desactivar [producto]? Dejará de aparecer al tomar pedidos y en el menú del día, pero se conservará su historial.",Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-60
+MSG-61,¿Activar [producto]? Volverá a estar disponible para pedidos y para el menú del día.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-61
+MSG-62,[Producto] forma parte del menú de hoy. Al desactivarlo se retirará del menú.,Advertencia,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-62
+MSG-63,Producto desactivado.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-63
+MSG-64,Producto activado.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-64
+MSG-65,"No hay productos registrados. Use ""Nuevo producto"" para crear el primero.",Informativo,En la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-65
+MSG-66,No se encontraron productos con ese criterio. Pruebe con otro nombre o quite los filtros.,Informativo,En la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-66
+MSG-67,No se pudo cargar la lista de productos. Intente nuevamente. (botón Reintentar),Error,En la lista,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-67
+MSG-69,Registre productos antes de definir el menú del día.,Informativo,En la pantalla,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-69
+MSG-70,Menú del día guardado correctamente.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-70
+MSG-71,"Todavía no definió el menú de hoy. Seleccione los productos en cada pestaña y pulse ""Guardar menú del día"".",Informativo,Aviso superior,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-71
+MSG-72,Cambios sin guardar,Indicador,Barra inferior,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-72
+MSG-73,¿Descartar los cambios? Se restablecerá el menú guardado.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-73
+MSG-74,No se pudo guardar el menú del día. Intente nuevamente.,Error,Aviso,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-74
+MSG-75,¿Marcar [plato] como agotado? No se podrán tomar nuevos pedidos de este plato.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-75
+MSG-76,¿Marcar [plato] como disponible? Volverá a ofrecerse en los pedidos nuevos.,Confirmación,Diálogo,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-76
+MSG-77,[Plato] marcado como agotado.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-77
+MSG-78,[Plato] marcado como disponible.,Éxito,Aviso temporal,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-78
+MSG-79,No hay menú definido para hoy.,Informativo,En la pantalla,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-79
+MSG-80,No se pudo actualizar el plato. Intente nuevamente.,Error,Aviso,Anexo_CUS02_a_CUS04_Girasoles.md#MSG-80
+MSG-81,Ingrese el número o nombre de la mesa.,Error,Bajo el campo Nombre,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-81
+MSG-82,El nombre de la mesa debe tener entre 1 y 20 caracteres.,Error,Bajo el campo Nombre,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-82
+MSG-83,Esa mesa ya está registrada. Use otro número o nombre.,Error,Bajo el campo Nombre,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-83
+MSG-84,Mesa registrada correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-84
+MSG-85,Mesa actualizada correctamente.,Éxito,Aviso temporal (4 s),Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-85
+MSG-86,"¿Desactivar [mesa]? Dejará de aparecer al tomar pedidos, pero se conservará su historial.",Confirmación,Diálogo,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-86
+MSG-87,¿Activar [mesa]? Volverá a estar disponible para pedidos.,Confirmación,Diálogo,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-87
+MSG-88,No se puede desactivar [mesa]: tiene un pedido pendiente de cobro.,Error,Diálogo,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-88
+MSG-89,Mesa desactivada.,Éxito,Aviso temporal,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-89
+MSG-90,Mesa activada.,Éxito,Aviso temporal,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-90
+MSG-91,"No hay mesas registradas. Use ""Nueva mesa"" para crear la primera.",Informativo,En la pantalla (Administrador),Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-91
+MSG-92,No hay mesas registradas. Pida a la administradora que las registre.,Informativo,En la pantalla (Mozo y Cajero),Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-92
+MSG-93,No hay mesas con ese estado. Cambie el filtro.,Informativo,En la pantalla,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-93
+MSG-94,No se pudieron cargar las mesas. Intente nuevamente. (botón Reintentar),Error,En la pantalla,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-94
+MSG-95,La [mesa] ya tiene [n] pedido(s) abierto(s). ¿Registrar un pedido nuevo o agregar productos a uno existente?,Aviso,Diálogo al elegir una mesa ocupada,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-95
+MSG-96,Seleccione una mesa.,Error,Sobre el selector de mesa,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-96
+MSG-97,Agregue al menos un producto al pedido.,Error,Sobre el botón de registrar,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-97
+MSG-98,La cantidad debe ser un número entero entre 1 y 20.,Error,Junto a la línea,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-98
+MSG-99,La observación no puede superar los 100 caracteres.,Error,Junto a la línea,Anexo_CUS05_y_CUS06_Mesas_y_Pedido_de_Mesa_Girasoles.md#MSG-99

@@ -163,7 +163,7 @@ export function usePedidoLlevarManagement({
   // Agregar producto al borrador (RV-61, RV-62, RV-63)
   const agregarProducto = (producto: ProductoMenuPedido, observacion = '') => {
     if (producto.agotado) {
-      setErrorGeneral(`El plato "${producto.nombre}" se encuentra agotado.`); // MSG-79
+      setErrorGeneral(`El plato ${producto.nombre} se agotó. Elija otro plato.`); // MSG-225
       return;
     }
 

@@ -111,7 +111,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
       }
     } else if (tipoComprobante === 'Factura') {
       if (docLimpio.length !== 11 || !/^\d+$/.test(docLimpio) || (!docLimpio.startsWith('10') && !docLimpio.startsWith('20'))) {
-        setDocFeedback({ tipo: 'error', texto: 'El RUC debe tener 11 dígitos y comenzar con 10 o 20.' });
+        setDocFeedback({ tipo: 'error', texto: 'El RUC debe tener 11 dígitos numéricos y comenzar con 10 o 20.' });
         return;
       }
       setBuscandoDoc(true);
@@ -410,7 +410,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
               {esExigidoDocumentoPorMonto && (
                 <div className="p-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg flex items-center gap-1.5">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-700" />
-                  <span>Por normativa SUNAT, ventas mayores o iguales a S/ 700.00 requieren DNI o RUC.</span>
+                  <span>Por normativa tributaria (SUNAT), ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.</span>
                 </div>
               )}
 

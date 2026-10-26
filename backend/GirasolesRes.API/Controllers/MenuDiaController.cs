@@ -118,7 +118,7 @@ public class MenuDiaController : ControllerBase
 
         if (!resultado.Success)
         {
-            if (resultado.Message == MensajesCatalogo.MSG_78 || resultado.Message.Contains("no forma parte"))
+            if (resultado.Message == MensajesCatalogo.MSG_79 || resultado.Message.Contains("no forma parte"))
             {
                 return NotFound(new
                 {

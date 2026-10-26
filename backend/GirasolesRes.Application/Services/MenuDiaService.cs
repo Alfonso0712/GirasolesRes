@@ -241,7 +241,7 @@ public class MenuDiaService : IMenuDiaService
             var menu = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
             if (menu == null)
             {
-                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_78);
+                return ApiResponse<CambiarDisponibilidadResponseDto>.Fallido(MensajesCatalogo.MSG_79);
             }
 
             var plato = menu.Men_Platos.FirstOrDefault(p => p.Id_Producto == productoId);
@@ -269,7 +269,7 @@ public class MenuDiaService : IMenuDiaService
 
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
 
-            var mensaje = string.Format(agotado ? MensajesCatalogo.MSG_76 : MensajesCatalogo.MSG_77, nombrePlato);
+            var mensaje = string.Format(agotado ? MensajesCatalogo.MSG_77 : MensajesCatalogo.MSG_78, nombrePlato);
 
             return ApiResponse<CambiarDisponibilidadResponseDto>.Exitoso(new CambiarDisponibilidadResponseDto
             {
