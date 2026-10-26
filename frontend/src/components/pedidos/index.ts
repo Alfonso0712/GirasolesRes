@@ -6,3 +6,6 @@ export * from './PedidoDescartarModal';
 export * from './PedidoLlevarConfirmacionModal';
 export * from './AnularPedidoModal';
 export * from './MenuItemSelectableCard';
+export * from './PedidoCatalogoPanel';
+export * from './PedidoTicketSidebar';
+export * from './PedidoMobileDrawer';

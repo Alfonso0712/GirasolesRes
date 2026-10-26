@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17
     container_name: girasoles-db
     restart: unless-stopped
     environment:
@@ -8,15 +8,35 @@ services:
       POSTGRES_PASSWORD: Password123!
       POSTGRES_DB: girasoles_db
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - girasoles_postgres_data:/var/lib/postgresql/data
       - ./database/init_girasoles_db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d girasoles_db"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: girasoles-api
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:5050:5050"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5050
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=girasoles_db;Username=postgres;Password=Password123!
+      - Jwt__SecretKey=GirasolesRestauranteSuperClaveSecretaSegura2026!@#$%^
+      - Jwt__Issuer=GirasolesRes
+      - Jwt__Audience=GirasolesResApp
+      - Jwt__ExpiryMinutes=120
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   girasoles_postgres_data:

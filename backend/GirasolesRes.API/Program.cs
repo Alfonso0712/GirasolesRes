@@ -122,15 +122,33 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// CORS para React + Vite en desarrollo
+// CORS para React + Vite en desarrollo y Cloudflare Pages en producción
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.SetIsOriginAllowed(origin =>
+        {
+            if (string.IsNullOrWhiteSpace(origin)) return false;
+            if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri)) return false;
+
+            var host = uri.Host.ToLowerInvariant();
+
+            // Localhost y desarrollo
+            if (host == "localhost" || host == "127.0.0.1") return true;
+
+            // Dominio de producción y subdominios
+            if (host == "girasolesres.pp.ua" || host.EndsWith(".girasolesres.pp.ua")) return true;
+            if (host == "girasoles.astrazynk.pp.ua" || host.EndsWith(".astrazynk.pp.ua")) return true;
+
+            // Despliegues de Cloudflare Pages (*.pages.dev)
+            if (host.EndsWith(".pages.dev")) return true;
+
+            return false;
+        })
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
