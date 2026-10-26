@@ -22,8 +22,8 @@ public class MesasController : ControllerBase
     }
 
     /// <summary>
-    /// CUS06.2 / RF-17: Ver mesas y su estado en orden natural
-    /// Accesible por: Administrador, Cajero y Mozo (RN-40)
+    /// CUS06.2 / RF-17: Listar todas las mesas activas para Salón (Mozo/Cajero)
+    /// o todas (activas e inactivas) para Administración (RN-40)
     /// </summary>
     [HttpGet]
     [Authorize(Roles = "Administrador,Cajero,Mozo")]
@@ -32,33 +32,20 @@ public class MesasController : ControllerBase
         [FromQuery] bool incluirInactivas = false,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var rol = ObtenerRolUsuario();
-            var resultado = await _mesaService.ListarMesasAsync(estado, incluirInactivas, rol, cancellationToken);
+        var rol = ObtenerRolUsuario();
+        var resultado = await _mesaService.ListarMesasAsync(estado, incluirInactivas, rol, cancellationToken);
 
-            if (!resultado.Success)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // Contrato API CUS06: Retorna lista de mesas en orden natural
-            return Ok(resultado.Data);
-        }
-        catch (Exception ex)
+        if (!resultado.Success)
         {
-            _logger.LogError(ex, "Error al listar mesas.");
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_94,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        // Contrato API CUS06: Retorna lista de mesas en orden natural
+        return Ok(resultado.Data);
     }
 
     /// <summary>
@@ -104,62 +91,49 @@ public class MesasController : ControllerBase
             });
         }
 
-        try
+        var adminUser = ObtenerNombreUsuario();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var resultado = await _mesaService.RegistrarMesaAsync(request, adminUser, ip, cancellationToken);
+
+        if (resultado.Success && resultado.Data is not null)
         {
-            var adminUser = ObtenerNombreUsuario();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var resultado = await _mesaService.RegistrarMesaAsync(request, adminUser, ip, cancellationToken);
-
-            if (resultado.Success && resultado.Data is not null)
+            return StatusCode(StatusCodes.Status201Created, new
             {
-                return StatusCode(StatusCodes.Status201Created, new
-                {
-                    id = resultado.Data.Id,
-                    nombre = resultado.Data.Nombre,
-                    ocupacion = resultado.Data.Ocupacion,
-                    activa = resultado.Data.Activa,
-                    success = true,
-                    message = resultado.Message
-                });
-            }
+                id = resultado.Data.Id,
+                nombre = resultado.Data.Nombre,
+                ocupacion = resultado.Data.Ocupacion,
+                activa = resultado.Data.Activa,
+                success = true,
+                message = resultado.Message
+            });
+        }
 
-            // Conflicto por nombre duplicado (RV-52, MSG-83)
-            if (resultado.Message == MensajesCatalogo.MSG_83)
-            {
-                return Conflict(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // Validación de nombre inválido (RV-51, MSG-81, MSG-82)
-            if (resultado.Message == MensajesCatalogo.MSG_81 || resultado.Message == MensajesCatalogo.MSG_82)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+        // Conflicto por nombre duplicado (RV-52, MSG-83)
+        if (resultado.Message == MensajesCatalogo.MSG_83)
+        {
+            return Conflict(new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        // Validación de nombre inválido (RV-51, MSG-81, MSG-82)
+        if (resultado.Message == MensajesCatalogo.MSG_81 || resultado.Message == MensajesCatalogo.MSG_82)
         {
-            _logger.LogError(ex, "Error al registrar mesa.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return BadRequest(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new
+        {
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -185,71 +159,58 @@ public class MesasController : ControllerBase
             });
         }
 
-        try
+        var adminUser = ObtenerNombreUsuario();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var resultado = await _mesaService.ActualizarMesaAsync(id, request, adminUser, ip, cancellationToken);
+
+        if (resultado.Success && resultado.Data is not null)
         {
-            var adminUser = ObtenerNombreUsuario();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var resultado = await _mesaService.ActualizarMesaAsync(id, request, adminUser, ip, cancellationToken);
-
-            if (resultado.Success && resultado.Data is not null)
+            return Ok(new
             {
-                return Ok(new
-                {
-                    id = resultado.Data.Id,
-                    nombre = resultado.Data.Nombre,
-                    ocupacion = resultado.Data.Ocupacion,
-                    activa = resultado.Data.Activa,
-                    success = true,
-                    message = resultado.Message
-                });
-            }
+                id = resultado.Data.Id,
+                nombre = resultado.Data.Nombre,
+                ocupacion = resultado.Data.Ocupacion,
+                activa = resultado.Data.Activa,
+                success = true,
+                message = resultado.Message
+            });
+        }
 
-            if (resultado.Message == "La mesa no existe.")
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // Conflicto por nombre duplicado (RV-52, MSG-83)
-            if (resultado.Message == MensajesCatalogo.MSG_83)
-            {
-                return Conflict(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // Validación de nombre inválido (RV-51, MSG-81, MSG-82)
-            if (resultado.Message == MensajesCatalogo.MSG_81 || resultado.Message == MensajesCatalogo.MSG_82)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+        if (resultado.Message == "La mesa no existe.")
+        {
+            return NotFound(new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        // Conflicto por nombre duplicado (RV-52, MSG-83)
+        if (resultado.Message == MensajesCatalogo.MSG_83)
         {
-            _logger.LogError(ex, "Error al actualizar mesa {Id}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return Conflict(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        // Validación de nombre inválido (RV-51, MSG-81, MSG-82)
+        if (resultado.Message == MensajesCatalogo.MSG_81 || resultado.Message == MensajesCatalogo.MSG_82)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = resultado.Message
+            });
+        }
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new
+        {
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -260,61 +221,48 @@ public class MesasController : ControllerBase
     [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> CambiarEstado(Guid id, [FromBody] CambiarEstadoMesaRequest request, CancellationToken cancellationToken)
     {
-        try
+        var adminUser = ObtenerNombreUsuario();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var resultado = await _mesaService.CambiarEstadoAsync(id, request.Activa, adminUser, ip, cancellationToken);
+
+        if (resultado.Success && resultado.Data is not null)
         {
-            var adminUser = ObtenerNombreUsuario();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var resultado = await _mesaService.CambiarEstadoAsync(id, request.Activa, adminUser, ip, cancellationToken);
-
-            if (resultado.Success && resultado.Data is not null)
+            return Ok(new
             {
-                return Ok(new
-                {
-                    id = resultado.Data.Id,
-                    nombre = resultado.Data.Nombre,
-                    ocupacion = resultado.Data.Ocupacion,
-                    activa = resultado.Data.Activa,
-                    success = true,
-                    message = resultado.Message
-                });
-            }
+                id = resultado.Data.Id,
+                nombre = resultado.Data.Nombre,
+                ocupacion = resultado.Data.Ocupacion,
+                activa = resultado.Data.Activa,
+                success = true,
+                message = resultado.Message
+            });
+        }
 
-            if (resultado.Message == "La mesa no existe.")
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // RV-56 / RN-44: Mesa ocupada al desactivar -> 409 con MSG-88
-            if (resultado.Message.StartsWith("No se puede desactivar", StringComparison.OrdinalIgnoreCase))
-            {
-                return Conflict(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
+        if (resultado.Message == "La mesa no existe.")
+        {
+            return NotFound(new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        // RV-56 / RN-44: Mesa ocupada al desactivar -> 409 con MSG-88
+        if (resultado.Message.StartsWith("No se puede desactivar", StringComparison.OrdinalIgnoreCase))
         {
-            _logger.LogError(ex, "Error al cambiar estado de mesa {Id}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return Conflict(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return BadRequest(new
+        {
+            success = false,
+            message = resultado.Message
+        });
     }
 
     private string ObtenerNombreUsuario()

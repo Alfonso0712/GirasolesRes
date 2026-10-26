@@ -32,33 +32,20 @@ public class MenusCompletosController : ControllerBase
         [FromQuery] bool? soloActivos,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var esAdmin = User.IsInRole("Administrador");
-            var filtrarSoloActivos = soloActivos ?? !esAdmin;
+        var esAdmin = User.IsInRole("Administrador");
+        var filtrarSoloActivos = soloActivos ?? !esAdmin;
 
-            var resultado = await _menuCompletoService.ObtenerTodosAsync(filtrarSoloActivos, cancellationToken);
-            if (!resultado.Success)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return Ok(resultado.Data);
-        }
-        catch (Exception ex)
+        var resultado = await _menuCompletoService.ObtenerTodosAsync(filtrarSoloActivos, cancellationToken);
+        if (!resultado.Success)
         {
-            _logger.LogError(ex, "Error al listar menús completos.");
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_67,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return Ok(resultado.Data);
     }
 
     /// <summary>

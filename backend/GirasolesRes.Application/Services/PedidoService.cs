@@ -55,7 +55,7 @@ public class PedidoService : IPedidoService
         var mesa = await _mesaRepository.ObtenerPorIdAsync(request.MesaId, ct);
         if (mesa == null)
         {
-            throw new KeyNotFoundException(MensajesCatalogo.MSG_96);
+            throw new RecursoNoEncontradoException(MensajesCatalogo.MSG_96);
         }
 
         if (!mesa.Mes_Activa)
@@ -142,18 +142,18 @@ public class PedidoService : IPedidoService
         // 2. Validación de Líneas (RV-61, RV-62, RV-64)
         if (request.Lineas == null || request.Lineas.Count == 0)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_97);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_97);
         }
 
         foreach (var l in request.Lineas)
         {
             if (l.Cantidad < 1 || l.Cantidad > 20)
             {
-                throw new ArgumentOutOfRangeException(nameof(l.Cantidad), MensajesCatalogo.MSG_98);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_98, "cantidad_invalida", "Cantidad");
             }
             if (l.Observacion != null && l.Observacion.Trim().Length > 100)
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_99);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_99);
             }
         }
 
@@ -161,7 +161,7 @@ public class PedidoService : IPedidoService
         var referenciaNormalizada = string.IsNullOrWhiteSpace(request.Referencia) ? null : request.Referencia.Trim();
         if (referenciaNormalizada != null && referenciaNormalizada.Length > 30)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_109);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_109);
         }
 
         // 4. Validación de Productos y Menús Completos (RV-63, RV-65, RV-163, RV-166, RN-54, CUS08)
@@ -235,7 +235,7 @@ public class PedidoService : IPedidoService
         var pedido = await _pedidoRepository.ObtenerPorIdAsync(pedidoId, ct);
         if (pedido == null)
         {
-            throw new KeyNotFoundException("El pedido especificado no existe.");
+            throw new RecursoNoEncontradoException("El pedido especificado no existe.");
         }
 
         // 2. Verificar que no esté pagado ni anulado (RV-69 / RN-52)
@@ -247,18 +247,18 @@ public class PedidoService : IPedidoService
         // 3. Validar líneas
         if (request.Lineas == null || request.Lineas.Count == 0)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_97);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_97);
         }
 
         foreach (var l in request.Lineas)
         {
             if (l.Cantidad < 1 || l.Cantidad > 20)
             {
-                throw new ArgumentOutOfRangeException(nameof(l.Cantidad), MensajesCatalogo.MSG_98);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_98, "cantidad_invalida", "Cantidad");
             }
             if (l.Observacion != null && l.Observacion.Trim().Length > 100)
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_99);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_99);
             }
         }
 
@@ -622,7 +622,7 @@ public class PedidoService : IPedidoService
         var pedido = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(pedidoId, ct);
         if (pedido == null)
         {
-            throw new KeyNotFoundException("Pedido no encontrado.");
+            throw new RecursoNoEncontradoException("Pedido no encontrado.");
         }
 
         // RN-65: Mismo usuario que lo registró
@@ -647,7 +647,7 @@ public class PedidoService : IPedidoService
         // RV-78 / MSG-121: Quitar todos los productos obliga a anular
         if (request.Lineas == null || request.Lineas.Count == 0)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_121);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_121);
         }
 
         // Validación de líneas individuales (RV-78)
@@ -655,11 +655,11 @@ public class PedidoService : IPedidoService
         {
             if (l.Cantidad < 1 || l.Cantidad > 20)
             {
-                throw new ArgumentOutOfRangeException(nameof(l.Cantidad), MensajesCatalogo.MSG_98);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_98, "cantidad_invalida", "Cantidad");
             }
             if (l.Observacion != null && l.Observacion.Trim().Length > 100)
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_99);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_99);
             }
         }
 
@@ -793,7 +793,7 @@ public class PedidoService : IPedidoService
         var pedido = await _pedidoRepository.ObtenerDetalleCompletoPorIdAsync(pedidoId, ct);
         if (pedido == null)
         {
-            throw new KeyNotFoundException("Pedido no encontrado.");
+            throw new RecursoNoEncontradoException("Pedido no encontrado.");
         }
 
         // RN-65: Si no es Administrador, solo el mismo usuario que lo registró puede anularlo
@@ -823,7 +823,7 @@ public class PedidoService : IPedidoService
         var motivo = request.Motivo?.Trim() ?? string.Empty;
         if (motivo.Length < 5 || motivo.Length > 100)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_117);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_117);
         }
 
         pedido.Anular(motivo);
@@ -887,7 +887,7 @@ public class PedidoService : IPedidoService
         var comanda = await _pedidoRepository.ObtenerComandaPorIdAsync(comandaId, ct);
         if (comanda == null)
         {
-            throw new KeyNotFoundException("Comanda no encontrada.");
+            throw new RecursoNoEncontradoException("Comanda no encontrada.");
         }
 
         comanda.MarcarAvisoVisto(nombreUsuario);
@@ -981,7 +981,7 @@ public class PedidoService : IPedidoService
     {
         if (lineas == null || lineas.Count == 0)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_97);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_97);
         }
 
         var todosProductoIds = new HashSet<Guid>();
@@ -1006,7 +1006,7 @@ public class PedidoService : IPedidoService
             }
             else
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_97);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_97);
             }
         }
 
@@ -1036,7 +1036,7 @@ public class PedidoService : IPedidoService
             {
                 if (!menusDict.TryGetValue(l.MenuCompletoId.Value, out var menuCompleto) || !menuCompleto.Men_Activo)
                 {
-                    throw new KeyNotFoundException($"El menú completo con ID {l.MenuCompletoId.Value} no existe o está inactivo.");
+                    throw new RecursoNoEncontradoException($"El menú completo con ID {l.MenuCompletoId.Value} no existe o está inactivo.");
                 }
 
                 // RV-166 / MSG-220: Verificar que el menú completo esté habilitado en el menú del día
@@ -1054,7 +1054,7 @@ public class PedidoService : IPedidoService
                     var parteFaltante = partesOrdenadas.FirstOrDefault(p =>
                         l.Elecciones == null || !l.Elecciones.Any(e => string.Equals(e.Parte?.Trim(), p.Par_Nombre?.Trim(), StringComparison.OrdinalIgnoreCase)));
                     var nombreParte = parteFaltante?.Par_Nombre ?? "menú completo";
-                    throw new ArgumentException(string.Format(MensajesCatalogo.MSG_221, nombreParte));
+                    throw new ReglaNegocioException(string.Format(MensajesCatalogo.MSG_221, nombreParte));
                 }
 
                 foreach (var parte in partesOrdenadas)
@@ -1064,18 +1064,18 @@ public class PedidoService : IPedidoService
 
                     if (eleccion == null)
                     {
-                        throw new ArgumentException(string.Format(MensajesCatalogo.MSG_221, parte.Par_Nombre));
+                        throw new ReglaNegocioException(string.Format(MensajesCatalogo.MSG_221, parte.Par_Nombre));
                     }
 
                     if (!productosDict.TryGetValue(eleccion.ProductoId, out var productoComponente) || !productoComponente.Pro_Activo)
                     {
-                        throw new ArgumentException($"La opción seleccionada para '{parte.Par_Nombre}' no existe o se encuentra inactiva.");
+                        throw new ReglaNegocioException($"La opción seleccionada para '{parte.Par_Nombre}' no existe o se encuentra inactiva.");
                     }
 
                     // Validar rol de componente con roles permitidos de la parte
                     if (!productoComponente.Pro_Rol.HasValue || !parte.Par_RolesPermitidos.Contains(productoComponente.Pro_Rol.Value))
                     {
-                        throw new ArgumentException($"El producto '{productoComponente.Pro_Nombre}' no es válido para la parte '{parte.Par_Nombre}'.");
+                        throw new ReglaNegocioException($"El producto '{productoComponente.Pro_Nombre}' no es válido para la parte '{parte.Par_Nombre}'.");
                     }
 
                     // RV-166 / MSG-223: Revalidar que la opción elegida no esté agotada en el menú del día
@@ -1103,13 +1103,13 @@ public class PedidoService : IPedidoService
             {
                 if (!productosDict.TryGetValue(l.ProductoId.Value, out var producto) || !producto.Pro_Activo)
                 {
-                    throw new KeyNotFoundException($"El producto especificado no existe o está inactivo.");
+                    throw new RecursoNoEncontradoException($"El producto especificado no existe o está inactivo.");
                 }
 
                 // RN-140 / MSG-215: Los componentes no se pueden pedir directamente como productos de carta
                 if (producto.Pro_Tipo == TipoProducto.Componente)
                 {
-                    throw new ArgumentException(MensajesCatalogo.MSG_215);
+                    throw new ReglaNegocioException(MensajesCatalogo.MSG_215);
                 }
 
                 // RV-63 / MSG-225: Revalidar disponibilidad y que no esté agotado

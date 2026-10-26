@@ -34,16 +34,8 @@ public class AvisosController : ControllerBase
             return Unauthorized(new { message = "Token inválido o expirado." });
         }
 
-        try
-        {
-            var avisos = await _pedidoService.ObtenerAvisosPendientesAsync(usuarioId, rol, cancellationToken);
-            return Ok(avisos);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al consultar avisos pendientes.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al obtener los avisos." });
-        }
+        var avisos = await _pedidoService.ObtenerAvisosPendientesAsync(usuarioId, rol, cancellationToken);
+        return Ok(avisos);
     }
 
     /// <summary>
@@ -61,19 +53,7 @@ public class AvisosController : ControllerBase
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Usuario";
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        try
-        {
-            await _pedidoService.MarcarAvisoVistoAsync(id, usuarioId, nombreUsuario, ip, cancellationToken);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al marcar aviso {ComandaId} como visto.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error al actualizar el aviso." });
-        }
+        await _pedidoService.MarcarAvisoVistoAsync(id, usuarioId, nombreUsuario, ip, cancellationToken);
+        return NoContent();
     }
 }

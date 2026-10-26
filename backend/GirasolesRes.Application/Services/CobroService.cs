@@ -101,7 +101,7 @@ public class CobroService : ICobroService
 
         if (pedido == null)
         {
-            throw new KeyNotFoundException("El pedido solicitado no existe.");
+            throw new RecursoNoEncontradoException("El pedido solicitado no existe.");
         }
 
         // 4. Validar que no esté pagado ni anulado (RV-95, RN-85)
@@ -140,19 +140,19 @@ public class CobroService : ICobroService
 
             if (!request.MontoRecibido.HasValue)
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_141);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_141);
             }
 
             var recibido = decimal.Round(request.MontoRecibido.Value, 2);
 
             if (recibido > 9999.99m)
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_152);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_152);
             }
 
             if (recibido < totalReal)
             {
-                throw new ArgumentException(string.Format(MensajesCatalogo.MSG_143, totalReal - recibido));
+                throw new ReglaNegocioException(string.Format(MensajesCatalogo.MSG_143, totalReal - recibido));
             }
 
             montoRecibido = recibido;
@@ -164,7 +164,7 @@ public class CobroService : ICobroService
 
             if (request.YapeConfirmado != true)
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_144);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_144);
             }
 
             if (!string.IsNullOrWhiteSpace(request.YapeReferencia))
@@ -172,7 +172,7 @@ public class CobroService : ICobroService
                 var refTrim = request.YapeReferencia.Trim();
                 if (refTrim.Length > 20)
                 {
-                    throw new ArgumentException(MensajesCatalogo.MSG_151);
+                    throw new ReglaNegocioException(MensajesCatalogo.MSG_151);
                 }
                 yapeReferencia = refTrim;
             }
@@ -183,7 +183,7 @@ public class CobroService : ICobroService
         }
         else
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_140);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_140);
         }
 
         // A. Crear la venta
@@ -220,14 +220,14 @@ public class CobroService : ICobroService
             var ruc = request.NumDocReceptor?.Trim();
             if (string.IsNullOrWhiteSpace(ruc) || ruc.Length != 11 || !ruc.All(char.IsDigit) || (!ruc.StartsWith("10") && !ruc.StartsWith("20")))
             {
-                throw new ArgumentException("El RUC debe tener 11 dígitos numéricos y comenzar con 10 o 20.");
+                throw new ReglaNegocioException("El RUC debe tener 11 dígitos numéricos y comenzar con 10 o 20.");
             }
             numDocReceptor = ruc;
 
             var razon = request.RazonSocialReceptor?.Trim();
             if (string.IsNullOrWhiteSpace(razon))
             {
-                throw new ArgumentException("La razón social es obligatoria para emitir una Factura.");
+                throw new ReglaNegocioException("La razón social es obligatoria para emitir una Factura.");
             }
             razonSocialReceptor = razon;
             direccionReceptor = string.IsNullOrWhiteSpace(request.DireccionReceptor) ? null : request.DireccionReceptor.Trim();
@@ -243,7 +243,7 @@ public class CobroService : ICobroService
             {
                 if (dni.Length != 8 || !dni.All(char.IsDigit))
                 {
-                    throw new ArgumentException("El DNI debe contener exactamente 8 dígitos numéricos.");
+                    throw new ReglaNegocioException("El DNI debe contener exactamente 8 dígitos numéricos.");
                 }
                 tipoDocReceptor = "DNI";
                 numDocReceptor = dni;
@@ -254,7 +254,7 @@ public class CobroService : ICobroService
                 // Boleta Simple
                 if (totalReal >= 700.00m)
                 {
-                    throw new ArgumentException("Por normativa SUNAT, ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.");
+                    throw new ReglaNegocioException("Por normativa SUNAT, ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.");
                 }
                 tipoDocReceptor = null;
                 numDocReceptor = null;
@@ -357,7 +357,7 @@ public class CobroService : ICobroService
 
         if (venta == null || venta.Ven_Comprobante == null)
         {
-            throw new KeyNotFoundException("El comprobante o venta solicitada no existe.");
+            throw new RecursoNoEncontradoException("El comprobante o venta solicitada no existe.");
         }
 
         var comprobante = venta.Ven_Comprobante;

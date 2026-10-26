@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using GirasolesRes.Application.Common;
-using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Pedidos;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -47,39 +46,14 @@ public class PedidosController : ControllerBase
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Mozo";
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        try
-        {
-            var resultado = await _pedidoService.RegistrarPedidoMesaAsync(
-                request,
-                nombreUsuario,
-                usuarioId,
-                ip,
-                cancellationToken);
+        var resultado = await _pedidoService.RegistrarPedidoMesaAsync(
+            request,
+            nombreUsuario,
+            usuarioId,
+            ip,
+            cancellationToken);
 
-            return StatusCode(StatusCodes.Status201Created, resultado);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (PedidoConflictException ex)
-        {
-            return Conflict(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                productosAgotados = ex.ProductosAgotados
-            });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error no controlado al registrar pedido de mesa.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_105 });
-        }
+        return StatusCode(StatusCodes.Status201Created, resultado);
     }
 
     /// <summary>
@@ -105,35 +79,14 @@ public class PedidosController : ControllerBase
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Cajero";
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        try
-        {
-            var resultado = await _pedidoService.RegistrarPedidoLlevarAsync(
-                request,
-                nombreUsuario,
-                usuarioId,
-                ip,
-                cancellationToken);
+        var resultado = await _pedidoService.RegistrarPedidoLlevarAsync(
+            request,
+            nombreUsuario,
+            usuarioId,
+            ip,
+            cancellationToken);
 
-            return StatusCode(StatusCodes.Status201Created, resultado);
-        }
-        catch (PedidoConflictException ex)
-        {
-            return Conflict(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                productosAgotados = ex.ProductosAgotados
-            });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error no controlado al registrar pedido para llevar.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_111 });
-        }
+        return StatusCode(StatusCodes.Status201Created, resultado);
     }
 
     /// <summary>
@@ -151,20 +104,8 @@ public class PedidosController : ControllerBase
             return Unauthorized(new { message = "Token inválido o expirado." });
         }
 
-        try
-        {
-            var resultado = await _pedidoService.ListarPedidosAsync(query, usuarioId, rol, cancellationToken);
-            return Ok(resultado);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al listar pedidos.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_114 });
-        }
+        var resultado = await _pedidoService.ListarPedidosAsync(query, usuarioId, rol, cancellationToken);
+        return Ok(resultado);
     }
 
     /// <summary>
@@ -208,45 +149,16 @@ public class PedidosController : ControllerBase
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Usuario";
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        try
-        {
-            var total = await _pedidoService.ModificarPedidoAsync(
-                id,
-                request,
-                usuarioId,
-                rol,
-                nombreUsuario,
-                ip,
-                cancellationToken);
+        var total = await _pedidoService.ModificarPedidoAsync(
+            id,
+            request,
+            usuarioId,
+            rol,
+            nombreUsuario,
+            ip,
+            cancellationToken);
 
-            return Ok(new { total });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
-        }
-        catch (PedidoConflictException ex)
-        {
-            return Conflict(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                productosAgotados = ex.ProductosAgotados
-            });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al modificar pedido {PedidoId}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_122 });
-        }
+        return Ok(new { total });
     }
 
     /// <summary>
@@ -274,45 +186,16 @@ public class PedidosController : ControllerBase
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Usuario";
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        try
-        {
-            await _pedidoService.AnularPedidoAsync(
-                id,
-                request,
-                usuarioId,
-                rol,
-                nombreUsuario,
-                ip,
-                cancellationToken);
+        await _pedidoService.AnularPedidoAsync(
+            id,
+            request,
+            usuarioId,
+            rol,
+            nombreUsuario,
+            ip,
+            cancellationToken);
 
-            return Ok(new { success = true, message = MensajesCatalogo.MSG_120 });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
-        }
-        catch (PedidoConflictException ex)
-        {
-            return Conflict(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                productosAgotados = ex.ProductosAgotados
-            });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al anular pedido {PedidoId}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_122 });
-        }
+        return Ok(new { success = true, message = MensajesCatalogo.MSG_120 });
     }
 
     /// <summary>
@@ -339,40 +222,15 @@ public class PedidosController : ControllerBase
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Mozo";
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        try
-        {
-            var resultado = await _pedidoService.AgregarLineasAsync(
-                id,
-                request,
-                nombreUsuario,
-                usuarioId,
-                ip,
-                cancellationToken);
+        var resultado = await _pedidoService.AgregarLineasAsync(
+            id,
+            request,
+            nombreUsuario,
+            usuarioId,
+            ip,
+            cancellationToken);
 
-            return Ok(resultado);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (PedidoConflictException ex)
-        {
-            return Conflict(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                productosAgotados = ex.ProductosAgotados
-            });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error no controlado al agregar líneas a pedido {PedidoId}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_106 });
-        }
+        return Ok(resultado);
     }
 
     /// <summary>

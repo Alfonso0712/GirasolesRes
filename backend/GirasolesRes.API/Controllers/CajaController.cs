@@ -3,7 +3,6 @@ using System.Security.Claims;
 using GirasolesRes.Application.Common;
 using GirasolesRes.Application.DTOs.Caja;
 using GirasolesRes.Application.Interfaces.Services;
-using GirasolesRes.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,29 +34,17 @@ public class CajaController : ControllerBase
     [Authorize(Roles = "Cajero,Administrador")]
     public async Task<IActionResult> ObtenerActual(CancellationToken ct)
     {
-        try
+        var usuarioId = ObtenerUsuarioId();
+        var resultado = await _cajaService.ConsultarEstadoActualAsync(usuarioId, ct);
+        return Ok(new
         {
-            var usuarioId = ObtenerUsuarioId();
-            var resultado = await _cajaService.ConsultarEstadoActualAsync(usuarioId, ct);
-            return Ok(new
-            {
-                estado = resultado.Estado,
-                mensaje = resultado.Mensaje,
-                message = resultado.Mensaje,
-                apertura = resultado.Apertura,
-                resumenParcial = resultado.ResumenParcial,
-                sugerenciaMontoInicial = resultado.SugerenciaMontoInicial
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al consultar estado actual de la caja.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = "Error al consultar el estado de la caja.",
-                mensaje = "Error al consultar el estado de la caja."
-            });
-        }
+            estado = resultado.Estado,
+            mensaje = resultado.Mensaje,
+            message = resultado.Mensaje,
+            apertura = resultado.Apertura,
+            resumenParcial = resultado.ResumenParcial,
+            sugerenciaMontoInicial = resultado.SugerenciaMontoInicial
+        });
     }
 
     /// <summary>
@@ -119,16 +106,6 @@ public class CajaController : ControllerBase
             var resultado = await _cajaService.AbrirCajaAsync(request, usuarioId, nombreUsuario, ct);
             return StatusCode(StatusCodes.Status201Created, resultado);
         }
-        catch (CajaYaAbiertaException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message,
-                cajaIdExistente = ex.CajaIdExistente
-            });
-        }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pg && pg.SqlState == "23505")
         {
             return StatusCode(StatusCodes.Status409Conflict, new
@@ -136,36 +113,6 @@ public class CajaController : ControllerBase
                 codigo = "caja_ya_abierta",
                 message = MensajesCatalogo.MSG_167,
                 mensaje = MensajesCatalogo.MSG_167
-            });
-        }
-        catch (CajaAnteriorSinCerrarException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message,
-                cajaId = ex.CajaId,
-                fechaApertura = ex.FechaAperturaUtc
-            });
-        }
-        catch (CajaMontoInvalidoException ex)
-        {
-            return BadRequest(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message,
-                campo = ex.Campo
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al registrar apertura de caja.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = MensajesCatalogo.MSG_182,
-                mensaje = MensajesCatalogo.MSG_182
             });
         }
     }
@@ -177,30 +124,9 @@ public class CajaController : ControllerBase
     [Authorize(Roles = "Cajero")]
     public async Task<IActionResult> ObtenerResumenCierre(CancellationToken ct)
     {
-        try
-        {
-            var usuarioId = ObtenerUsuarioId();
-            var resumen = await _cajaService.ObtenerResumenCierreAsync(usuarioId, ct);
-            return Ok(resumen);
-        }
-        catch (CajaNoAbiertaException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al obtener resumen de cierre de caja.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = "Error al calcular el resumen de cierre.",
-                mensaje = "Error al calcular el resumen de cierre."
-            });
-        }
+        var usuarioId = ObtenerUsuarioId();
+        var resumen = await _cajaService.ObtenerResumenCierreAsync(usuarioId, ct);
+        return Ok(resumen);
     }
 
     /// <summary>
@@ -274,87 +200,11 @@ public class CajaController : ControllerBase
             var resultado = await _cajaService.CerrarCajaAsync(request, usuarioId, nombreUsuario, ct);
             return Ok(resultado);
         }
-        catch (CajaNoAbiertaException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
-        catch (CajaPedidosPendientesException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message,
-                cantidadPedidosPendientes = ex.CantidadPedidosPendientes
-            });
-        }
-        catch (CajaConcurrenciaException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message,
-                efectivoEsperadoActual = ex.EfectivoEsperadoActual,
-                efectivoEsperadoMostrado = ex.EfectivoEsperadoMostrado
-            });
-        }
-        catch (CajaMontoInvalidoException ex)
-        {
-            return BadRequest(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message,
-                campo = ex.Campo
-            });
-        }
-        catch (CajaObservacionInvalidaException ex)
-        {
-            return BadRequest(new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
-        catch (CajaYaCerradaException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = ex.Codigo,
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
         catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
         {
             return StatusCode(StatusCodes.Status409Conflict, new
             {
                 codigo = "caja_ya_cerrada",
-                message = MensajesCatalogo.MSG_183,
-                mensaje = MensajesCatalogo.MSG_183
-            });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return StatusCode(StatusCodes.Status409Conflict, new
-            {
-                codigo = "caja_conflicto",
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al registrar cierre de caja.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
                 message = MensajesCatalogo.MSG_183,
                 mensaje = MensajesCatalogo.MSG_183
             });
@@ -428,29 +278,8 @@ public class CajaController : ControllerBase
             });
         }
 
-        try
-        {
-            var resultado = await _cajaService.ObtenerHistorialCierresAsync(fechaDesde, fechaHasta, pagina, tamano, ct);
-            return Ok(resultado);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new
-            {
-                codigo = "parametro_invalido",
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al consultar historial de cierres.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = MensajesCatalogo.MSG_186,
-                mensaje = MensajesCatalogo.MSG_186
-            });
-        }
+        var resultado = await _cajaService.ObtenerHistorialCierresAsync(fechaDesde, fechaHasta, pagina, tamano, ct);
+        return Ok(resultado);
     }
 
     /// <summary>
@@ -460,28 +289,8 @@ public class CajaController : ControllerBase
     [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> ObtenerDetalleCierre([FromRoute] Guid id, CancellationToken ct)
     {
-        try
-        {
-            var detalle = await _cajaService.ObtenerDetalleCierreAsync(id, ct);
-            return Ok(detalle);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound(new
-            {
-                message = "No se encontró el registro de caja solicitado.",
-                mensaje = "No se encontró el registro de caja solicitado."
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al consultar detalle del cierre {CajaId}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = "Error al obtener el detalle del cierre.",
-                mensaje = "Error al obtener el detalle del cierre."
-            });
-        }
+        var detalle = await _cajaService.ObtenerDetalleCierreAsync(id, ct);
+        return Ok(detalle);
     }
 
     /// <summary>
@@ -491,37 +300,9 @@ public class CajaController : ControllerBase
     [Authorize(Roles = "Cajero,Administrador")]
     public async Task<IActionResult> DescargarCierrePdf([FromRoute] Guid id, CancellationToken ct)
     {
-        try
-        {
-            var pdfBytes = await _pdfCierreService.GenerarVoucherCierreAsync(id, ct);
-            var filename = $"Cierre_Caja_{id}.pdf";
-            return File(pdfBytes, "application/pdf", filename);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound(new
-            {
-                message = "No se encontró el registro de caja solicitado.",
-                mensaje = "No se encontró el registro de caja solicitado."
-            });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new
-            {
-                message = ex.Message,
-                mensaje = ex.Message
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al generar reporte PDF de cierre para la caja {CajaId}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = "No se pudo generar el documento PDF del cierre.",
-                mensaje = "No se pudo generar el documento PDF del cierre."
-            });
-        }
+        var pdfBytes = await _pdfCierreService.GenerarVoucherCierreAsync(id, ct);
+        var filename = $"Cierre_Caja_{id}.pdf";
+        return File(pdfBytes, "application/pdf", filename);
     }
 
     /// <summary>
@@ -531,20 +312,8 @@ public class CajaController : ControllerBase
     [Authorize(Roles = "Cajero,Administrador")]
     public async Task<IActionResult> ObtenerEstado(CancellationToken ct)
     {
-        try
-        {
-            var estado = await _cajaService.ObtenerEstadoCajaAsync(ct);
-            return Ok(estado);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al consultar estado de la caja.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = "Error al consultar estado de la caja.",
-                mensaje = "Error al consultar estado de la caja."
-            });
-        }
+        var estado = await _cajaService.ObtenerEstadoCajaAsync(ct);
+        return Ok(estado);
     }
 
     // ==========================================

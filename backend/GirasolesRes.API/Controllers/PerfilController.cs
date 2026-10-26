@@ -51,104 +51,91 @@ public class PerfilController : ControllerBase
             });
         }
 
-        try
+        var usuario = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("usuario") ?? "";
+        var jti = User.FindFirstValue(JwtRegisteredClaimNames.Jti);
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var expClaim = User.FindFirstValue(JwtRegisteredClaimNames.Exp);
+        DateTime expUtc = DateTime.UtcNow.AddMinutes(30);
+        if (long.TryParse(expClaim, out var expSeconds))
         {
-            var usuario = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("usuario") ?? "";
-            var jti = User.FindFirstValue(JwtRegisteredClaimNames.Jti);
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            expUtc = DateTimeOffset.FromUnixTimeSeconds(expSeconds).UtcDateTime;
+        }
 
-            var expClaim = User.FindFirstValue(JwtRegisteredClaimNames.Exp);
-            DateTime expUtc = DateTime.UtcNow.AddMinutes(30);
-            if (long.TryParse(expClaim, out var expSeconds))
+        var resultado = await _perfilService.CambiarContrasenaPropiaAsync(
+            usuario,
+            request,
+            jti,
+            expUtc,
+            ip,
+            cancellationToken);
+
+        if (resultado.Success)
+        {
+            // RN-22: Se entrega el nuevo token JWT para que la sesión continúe sin interrupción
+            return Ok(new
             {
-                expUtc = DateTimeOffset.FromUnixTimeSeconds(expSeconds).UtcDateTime;
-            }
+                success = true,
+                message = resultado.Message,
+                token = resultado.Data
+            });
+        }
 
-            var resultado = await _perfilService.CambiarContrasenaPropiaAsync(
-                usuario,
-                request,
-                jti,
-                expUtc,
-                ip,
-                cancellationToken);
-
-            if (resultado.Success)
-            {
-                // RN-22: Se entrega el nuevo token JWT para que la sesión continúe sin interrupción
-                return Ok(new
-                {
-                    success = true,
-                    message = resultado.Message,
-                    token = resultado.Data
-                });
-            }
-
-            // RN-17: Cinco intentos consecutivos con contraseña actual incorrecta cierran la sesión (423 Locked)
-            if (resultado.Message == MensajesCatalogo.MSG_48)
-            {
-                return StatusCode(StatusCodes.Status423Locked, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // RV-26 / RN-18: Nueva contraseña igual a la actual (MSG-46)
-            if (resultado.Message == MensajesCatalogo.MSG_46)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = resultado.Message,
-                    field = "nuevaContrasena",
-                    errors = new Dictionary<string, string[]>
-                    {
-                        { "nuevaContrasena", new[] { MensajesCatalogo.MSG_46 } }
-                    }
-                });
-            }
-
-            // RV-30: Contraseña actual incorrecta (MSG-45)
-            if (resultado.Message == MensajesCatalogo.MSG_45)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = resultado.Message,
-                    field = "contrasenaActual",
-                    errors = new Dictionary<string, string[]>
-                    {
-                        { "contrasenaActual", new[] { MensajesCatalogo.MSG_45 } }
-                    }
-                });
-            }
-
-            // RV-16: Rol no permitido (MSG-49)
-            if (resultado.Message == MensajesCatalogo.MSG_49)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
+        // RN-17: Cinco intentos consecutivos con contraseña actual incorrecta cierran la sesión (423 Locked)
+        if (resultado.Message == MensajesCatalogo.MSG_48)
+        {
+            return StatusCode(StatusCodes.Status423Locked, new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        // RV-26 / RN-18: Nueva contraseña igual a la actual (MSG-46)
+        if (resultado.Message == MensajesCatalogo.MSG_46)
         {
-            _logger.LogError(ex, "Error al cambiar contraseña de usuario.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return BadRequest(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
+                message = resultado.Message,
+                field = "nuevaContrasena",
+                errors = new Dictionary<string, string[]>
+                {
+                    { "nuevaContrasena", new[] { MensajesCatalogo.MSG_46 } }
+                }
             });
         }
+
+        // RV-30: Contraseña actual incorrecta (MSG-45)
+        if (resultado.Message == MensajesCatalogo.MSG_45)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = resultado.Message,
+                field = "contrasenaActual",
+                errors = new Dictionary<string, string[]>
+                {
+                    { "contrasenaActual", new[] { MensajesCatalogo.MSG_45 } }
+                }
+            });
+        }
+
+        // RV-16: Rol no permitido (MSG-49)
+        if (resultado.Message == MensajesCatalogo.MSG_49)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                success = false,
+                message = resultado.Message
+            });
+        }
+
+        return BadRequest(new
+        {
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -176,54 +163,17 @@ public class PerfilController : ControllerBase
             return Unauthorized(new { message = "Token inválido o expirado." });
         }
 
-        try
-        {
-            var temaNormalizado = (request.Tema ?? string.Empty).Trim().ToLowerInvariant();
-            await _perfilService.ActualizarTemaAsync(usuarioId, temaNormalizado, cancellationToken);
+        var temaNormalizado = (request.Tema ?? string.Empty).Trim().ToLowerInvariant();
+        await _perfilService.ActualizarTemaAsync(usuarioId, temaNormalizado, cancellationToken);
 
-            return Ok(new
-            {
-                success = true,
-                message = "Tema actualizado.",
-                data = new
-                {
-                    tema = temaNormalizado
-                }
-            });
-        }
-        catch (KeyNotFoundException ex)
+        return Ok(new
         {
-            return NotFound(new
+            success = true,
+            message = "Tema actualizado.",
+            data = new
             {
-                success = false,
-                message = ex.Message
-            });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = ex.Message
-            });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = ex.Message
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al actualizar tema de usuario.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
-            });
-        }
+                tema = temaNormalizado
+            }
+        });
     }
 }

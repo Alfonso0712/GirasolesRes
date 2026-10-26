@@ -1,4 +1,5 @@
 using System.Text;
+using GirasolesRes.API.Middleware;
 using GirasolesRes.Application;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Security;
@@ -152,6 +153,9 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Ocurrió un error al inicializar y sembrar la base de datos.");
     }
 }
+
+// Middleware global para manejo homogéneo de excepciones (Clean Architecture)
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

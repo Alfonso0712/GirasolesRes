@@ -23,7 +23,7 @@ public class UsuariosController : ControllerBase
     }
 
     /// <summary>
-    /// HU-03 / RF-04: Listar y buscar usuarios con paginación y filtros
+    /// HU-03 / RF-04: Listar usuarios con paginación, filtros y ordenamiento
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> Listar(
@@ -34,37 +34,24 @@ public class UsuariosController : ControllerBase
         [FromQuery] int tamano = 10,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var resultado = await _usuarioService.ListarUsuariosAsync(
-                busqueda,
-                rol,
-                estado,
-                pagina <= 0 ? 1 : pagina,
-                tamano <= 0 ? 10 : tamano,
-                cancellationToken);
+        var resultado = await _usuarioService.ListarUsuariosAsync(
+            busqueda,
+            rol,
+            estado,
+            pagina <= 0 ? 1 : pagina,
+            tamano <= 0 ? 10 : tamano,
+            cancellationToken);
 
-            if (!resultado.Success)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return Ok(resultado.Data);
-        }
-        catch (Exception ex)
+        if (!resultado.Success)
         {
-            _logger.LogError(ex, "Error no controlado al listar usuarios.");
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_37,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return Ok(resultado.Data);
     }
 
     /// <summary>
@@ -102,49 +89,36 @@ public class UsuariosController : ControllerBase
             });
         }
 
-        try
+        var adminUser = ObtenerNombreAdmin();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var resultado = await _usuarioService.RegistrarUsuarioAsync(request, adminUser, ip, cancellationToken);
+
+        if (resultado.Success)
         {
-            var adminUser = ObtenerNombreAdmin();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var resultado = await _usuarioService.RegistrarUsuarioAsync(request, adminUser, ip, cancellationToken);
-
-            if (resultado.Success)
+            return StatusCode(StatusCodes.Status201Created, new
             {
-                return StatusCode(StatusCodes.Status201Created, new
-                {
-                    success = true,
-                    message = resultado.Message,
-                    data = resultado.Data
-                });
-            }
+                success = true,
+                message = resultado.Message,
+                data = resultado.Data
+            });
+        }
 
-            // Conflicto de usuario o correo duplicado (MSG-21, MSG-24)
-            if (resultado.Message == MensajesCatalogo.MSG_21 || resultado.Message == MensajesCatalogo.MSG_24)
-            {
-                return Conflict(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
+        // Conflicto de usuario o correo duplicado (MSG-21, MSG-24)
+        if (resultado.Message == MensajesCatalogo.MSG_21 || resultado.Message == MensajesCatalogo.MSG_24)
+        {
+            return Conflict(new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al registrar usuario.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+
+        return BadRequest(new
             {
-                success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
-            });
-        }
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -163,60 +137,47 @@ public class UsuariosController : ControllerBase
             });
         }
 
-        try
+        var adminUser = ObtenerNombreAdmin();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var resultado = await _usuarioService.ActualizarUsuarioAsync(id, request, adminUser, ip, cancellationToken);
+
+        if (resultado.Success)
         {
-            var adminUser = ObtenerNombreAdmin();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var resultado = await _usuarioService.ActualizarUsuarioAsync(id, request, adminUser, ip, cancellationToken);
-
-            if (resultado.Success)
+            return Ok(new
             {
-                return Ok(new
-                {
-                    success = true,
-                    message = resultado.Message,
-                    data = resultado.Data
-                });
-            }
+                success = true,
+                message = resultado.Message,
+                data = resultado.Data
+            });
+        }
 
-            if (resultado.Message == "Usuario no encontrado.")
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // Conflictos por duplicados o protección del último administrador (MSG-21, MSG-24, MSG-32)
-            if (resultado.Message == MensajesCatalogo.MSG_21 ||
-                resultado.Message == MensajesCatalogo.MSG_24 ||
-                resultado.Message == MensajesCatalogo.MSG_32)
-            {
-                return Conflict(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
+        if (resultado.Message == "Usuario no encontrado.")
+        {
+            return NotFound(new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        // Conflictos por duplicados o protección del último administrador (MSG-21, MSG-24, MSG-32)
+        if (resultado.Message == MensajesCatalogo.MSG_21 ||
+            resultado.Message == MensajesCatalogo.MSG_24 ||
+            resultado.Message == MensajesCatalogo.MSG_32)
         {
-            _logger.LogError(ex, "Error al actualizar usuario {Id}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return Conflict(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return BadRequest(new
+        {
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -225,58 +186,45 @@ public class UsuariosController : ControllerBase
     [HttpPatch("{id:guid}/estado")]
     public async Task<IActionResult> CambiarEstado(Guid id, [FromBody] CambiarEstadoRequest request, CancellationToken cancellationToken)
     {
-        try
+        var adminUser = ObtenerNombreAdmin();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var resultado = await _usuarioService.CambiarEstadoAsync(id, request.Activo, adminUser, ip, cancellationToken);
+
+        if (resultado.Success)
         {
-            var adminUser = ObtenerNombreAdmin();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var resultado = await _usuarioService.CambiarEstadoAsync(id, request.Activo, adminUser, ip, cancellationToken);
-
-            if (resultado.Success)
+            return Ok(new
             {
-                return Ok(new
-                {
-                    success = true,
-                    message = resultado.Message,
-                    data = resultado.Data
-                });
-            }
+                success = true,
+                message = resultado.Message,
+                data = resultado.Data
+            });
+        }
 
-            if (resultado.Message == "Usuario no encontrado.")
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            // Protección de cuenta propia o último administrador (MSG-31, MSG-32)
-            if (resultado.Message == MensajesCatalogo.MSG_31 || resultado.Message == MensajesCatalogo.MSG_32)
-            {
-                return Conflict(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
+        if (resultado.Message == "Usuario no encontrado.")
+        {
+            return NotFound(new
             {
                 success = false,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        // Protección de cuenta propia o último administrador (MSG-31, MSG-32)
+        if (resultado.Message == MensajesCatalogo.MSG_31 || resultado.Message == MensajesCatalogo.MSG_32)
         {
-            _logger.LogError(ex, "Error al cambiar estado del usuario {Id}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return Conflict(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return BadRequest(new
+        {
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -335,16 +283,6 @@ public class UsuariosController : ControllerBase
             {
                 success = false,
                 message = MensajesCatalogo.MSG_34
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al eliminar usuario {Id}.", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_38,
-                detail = ex.Message
             });
         }
     }

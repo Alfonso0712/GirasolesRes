@@ -1,4 +1,5 @@
-using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Inicio;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Services;
@@ -112,7 +113,7 @@ public class InicioService : IInicioService
         var existeBloque = BloquesAdmin.Contains(b) || BloquesCajero.Contains(b) || BloquesMozo.Contains(b) || BloquesCocinero.Contains(b);
         if (!existeBloque)
         {
-            throw new KeyNotFoundException("Bloque no encontrado.");
+            throw new RecursoNoEncontradoException("Bloque no encontrado.");
         }
 
         // RV-154, RN-125: El servidor no envía datos que el rol no puede ver (403)
@@ -148,7 +149,7 @@ public class InicioService : IInicioService
                 "mislistos" => await ObtenerMisListosAsync(usuarioId, fechaActual, ct),
                 "comandas" => await ObtenerComandasCocineroAsync(ct),
                 "agotados" => await ObtenerAgotadosCocineroAsync(ct),
-                _ => throw new KeyNotFoundException("Bloque no soportado.")
+                _ => throw new RecursoNoEncontradoException("Bloque no soportado.")
             };
             return datos;
         });

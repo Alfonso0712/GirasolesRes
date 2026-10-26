@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Security.Claims;
 using GirasolesRes.API.Controllers;
+using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Auth;
 using GirasolesRes.Application.DTOs.Perfil;
 using GirasolesRes.Application.Interfaces.Persistence;
@@ -130,7 +131,7 @@ public class ModoOscuroBackendUnitTests
             .ReturnsAsync((Usuario?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => service.ActualizarTemaAsync(Guid.NewGuid(), "dark"));
+        await Assert.ThrowsAsync<RecursoNoEncontradoException>(() => service.ActualizarTemaAsync(Guid.NewGuid(), "dark"));
     }
 
     [Fact]
@@ -151,7 +152,7 @@ public class ModoOscuroBackendUnitTests
             .ReturnsAsync(usuarioInactivo);
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => service.ActualizarTemaAsync(usuarioInactivo.Id_Usuario, "dark"));
+        await Assert.ThrowsAsync<ConflictoException>(() => service.ActualizarTemaAsync(usuarioInactivo.Id_Usuario, "dark"));
     }
 
     [Fact]

@@ -882,7 +882,7 @@ public class CorreccionesTrazabilidadUnitTests
 
         propFecUltimo.SetValue(comanda, DateTime.UtcNow.AddSeconds(-10.6));
 
-        var ex10Punto6 = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var ex10Punto6 = await Assert.ThrowsAsync<ConflictoException>(() =>
 
             comandaService.DeshacerEstadoAsync(comandaId, "cocinero1"));
 
@@ -895,7 +895,7 @@ public class CorreccionesTrazabilidadUnitTests
         comanda15s.IniciarPreparacion("cocinero1");
         comandaRepoMock.Setup(r => r.ObtenerComandaPorIdAsync(comandaId)).ReturnsAsync(comanda15s);
         propFecUltimo.SetValue(comanda15s, DateTime.UtcNow.AddSeconds(-15.0));
-        var exExpirado = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var exExpirado = await Assert.ThrowsAsync<ConflictoException>(() =>
             comandaService.DeshacerEstadoAsync(comandaId, "cocinero1"));
         Assert.Equal(MensajesCatalogo.MSG_134, exExpirado.Message);
 

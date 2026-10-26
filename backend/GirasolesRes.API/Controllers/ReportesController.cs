@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,24 +38,8 @@ public class ReportesController : ControllerBase
         [FromQuery] string? hasta,
         CancellationToken ct)
     {
-        try
-        {
-            var resultado = await _reporteService.ConsultarReporteVentasAsync(desde, hasta, ct);
-            return Ok(resultado);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message, error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al generar reporte de ventas.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = MensajesCatalogo.MSG_194,
-                error = MensajesCatalogo.MSG_194
-            });
-        }
+        var resultado = await _reporteService.ConsultarReporteVentasAsync(desde, hasta, ct);
+        return Ok(resultado);
     }
 
     /// <summary>
@@ -69,28 +52,8 @@ public class ReportesController : ControllerBase
         [FromQuery] Guid? productoId,
         CancellationToken ct)
     {
-        try
-        {
-            var resultado = await _reporteService.ConsultarReportePlatosAsync(desde, hasta, productoId, ct);
-            return Ok(resultado);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message, error = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message, error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al consultar platos vendidos.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = MensajesCatalogo.MSG_195,
-                error = MensajesCatalogo.MSG_195
-            });
-        }
+        var resultado = await _reporteService.ConsultarReportePlatosAsync(desde, hasta, productoId, ct);
+        return Ok(resultado);
     }
 
     /// <summary>
@@ -107,33 +70,17 @@ public class ReportesController : ControllerBase
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
         var fmt = formato?.Trim().ToLowerInvariant() ?? "csv";
 
-        try
+        if (fmt == "pdf")
         {
-            if (fmt == "pdf")
-            {
-                var bytes = await _reporteService.ExportarReporteVentasPdfAsync(desde, hasta, nombreUsuario, ip, ct);
-                var filename = $"Reporte_Ventas_{desde ?? "hoy"}_{hasta ?? "hoy"}.pdf";
-                return File(bytes, "application/pdf", filename);
-            }
-            else
-            {
-                var bytes = await _reporteService.ExportarReporteVentasCsvAsync(desde, hasta, nombreUsuario, ip, ct);
-                var filename = $"Reporte_Ventas_{desde ?? "hoy"}_{hasta ?? "hoy"}.csv";
-                return File(bytes, "text/csv; charset=utf-8", filename);
-            }
+            var bytes = await _reporteService.ExportarReporteVentasPdfAsync(desde, hasta, nombreUsuario, ip, ct);
+            var filename = $"Reporte_Ventas_{desde ?? "hoy"}_{hasta ?? "hoy"}.pdf";
+            return File(bytes, "application/pdf", filename);
         }
-        catch (ArgumentException ex)
+        else
         {
-            return BadRequest(new { message = ex.Message, error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al exportar reporte de ventas.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = MensajesCatalogo.MSG_201,
-                error = MensajesCatalogo.MSG_201
-            });
+            var bytes = await _reporteService.ExportarReporteVentasCsvAsync(desde, hasta, nombreUsuario, ip, ct);
+            var filename = $"Reporte_Ventas_{desde ?? "hoy"}_{hasta ?? "hoy"}.csv";
+            return File(bytes, "text/csv; charset=utf-8", filename);
         }
     }
 
@@ -152,37 +99,17 @@ public class ReportesController : ControllerBase
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
         var fmt = formato?.Trim().ToLowerInvariant() ?? "csv";
 
-        try
+        if (fmt == "pdf")
         {
-            if (fmt == "pdf")
-            {
-                var bytes = await _reporteService.ExportarReportePlatosPdfAsync(desde, hasta, productoId, nombreUsuario, ip, ct);
-                var filename = $"Reporte_Platos_{desde ?? "hoy"}_{hasta ?? "hoy"}.pdf";
-                return File(bytes, "application/pdf", filename);
-            }
-            else
-            {
-                var bytes = await _reporteService.ExportarReportePlatosCsvAsync(desde, hasta, productoId, nombreUsuario, ip, ct);
-                var filename = $"Reporte_Platos_{desde ?? "hoy"}_{hasta ?? "hoy"}.csv";
-                return File(bytes, "text/csv; charset=utf-8", filename);
-            }
+            var bytes = await _reporteService.ExportarReportePlatosPdfAsync(desde, hasta, productoId, nombreUsuario, ip, ct);
+            var filename = $"Reporte_Platos_{desde ?? "hoy"}_{hasta ?? "hoy"}.pdf";
+            return File(bytes, "application/pdf", filename);
         }
-        catch (KeyNotFoundException ex)
+        else
         {
-            return NotFound(new { message = ex.Message, error = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message, error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al exportar reporte de platos.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = MensajesCatalogo.MSG_201,
-                error = MensajesCatalogo.MSG_201
-            });
+            var bytes = await _reporteService.ExportarReportePlatosCsvAsync(desde, hasta, productoId, nombreUsuario, ip, ct);
+            var filename = $"Reporte_Platos_{desde ?? "hoy"}_{hasta ?? "hoy"}.csv";
+            return File(bytes, "text/csv; charset=utf-8", filename);
         }
     }
 }

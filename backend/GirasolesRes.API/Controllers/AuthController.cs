@@ -40,62 +40,48 @@ public class AuthController : ControllerBase
             });
         }
 
-        try
+        // Semana 07: Normalización de cadenas
+        request.Usuario = request.Usuario.Trim();
+
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var resultado = await _authService.IniciarSesionAsync(request, ip, cancellationToken);
+
+        if (resultado.Success)
         {
-            // Semana 07: Normalización de cadenas
-            request.Usuario = request.Usuario.Trim();
-
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var resultado = await _authService.IniciarSesionAsync(request, ip, cancellationToken);
-
-            if (resultado.Success)
+            // Semana 07 y 08: Respuesta HTTP estructurada
+            return Ok(new
             {
-                // Semana 07 y 08: Respuesta HTTP estructurada
-                return Ok(new
-                {
-                    success = true,
-                    message = resultado.Message,
-                    data = resultado.Data
-                });
-            }
-
-            // Mapeo estructurado según la razón de fallo
-            if (resultado.Message == MensajesCatalogo.MSG_05)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            if (resultado.Message == MensajesCatalogo.MSG_06)
-            {
-                return StatusCode(StatusCodes.Status423Locked, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return Unauthorized(new
-            {
-                success = false,
+                success = true,
                 message = resultado.Message,
-                errors = resultado.Errors
+                data = resultado.Data
             });
         }
-        catch (Exception ex)
+
+        // Mapeo estructurado según la razón de fallo
+        if (resultado.Message == MensajesCatalogo.MSG_05)
         {
-            _logger.LogError(ex, "Error no controlado en login.");
-            // Semana 07: Control de excepciones y respuestas robustas
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return StatusCode(StatusCodes.Status403Forbidden, new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_09,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        if (resultado.Message == MensajesCatalogo.MSG_06)
+        {
+            return StatusCode(StatusCodes.Status423Locked, new
+            {
+                success = false,
+                message = resultado.Message
+            });
+        }
+
+        return Unauthorized(new
+        {
+            success = false,
+            message = resultado.Message,
+            errors = resultado.Errors
+        });
     }
 
     /// <summary>
@@ -114,36 +100,23 @@ public class AuthController : ControllerBase
             });
         }
 
-        try
+        request.Correo = request.Correo.Trim();
+        var resultado = await _authService.SolicitarRecuperacionPasswordAsync(request, cancellationToken);
+
+        if (resultado.Success)
         {
-            request.Correo = request.Correo.Trim();
-            var resultado = await _authService.SolicitarRecuperacionPasswordAsync(request, cancellationToken);
-
-            if (resultado.Success)
+            return Ok(new
             {
-                return Ok(new
-                {
-                    success = true,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
-            {
-                success = false,
+                success = true,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        return BadRequest(new
         {
-            _logger.LogError(ex, "Error en forgot-password.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_09,
-                detail = ex.Message
-            });
-        }
+            success = false,
+            message = resultado.Message
+        });
     }
 
     /// <summary>
@@ -162,38 +135,25 @@ public class AuthController : ControllerBase
             });
         }
 
-        try
+        request.Correo = request.Correo.Trim();
+        request.Codigo = request.Codigo.Trim();
+
+        var resultado = await _authService.RestablecerPasswordAsync(request, cancellationToken);
+
+        if (resultado.Success)
         {
-            request.Correo = request.Correo.Trim();
-            request.Codigo = request.Codigo.Trim();
-
-            var resultado = await _authService.RestablecerPasswordAsync(request, cancellationToken);
-
-            if (resultado.Success)
+            return Ok(new
             {
-                return Ok(new
-                {
-                    success = true,
-                    message = resultado.Message
-                });
-            }
-
-            return BadRequest(new
-            {
-                success = false,
+                success = true,
                 message = resultado.Message
             });
         }
-        catch (Exception ex)
+
+        return BadRequest(new
         {
-            _logger.LogError(ex, "Error en reset-password.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_09,
-                detail = ex.Message
-            });
-        }
+            success = false,
+            message = resultado.Message
+        });
     }
 
     [Authorize]
@@ -262,41 +222,29 @@ public class AuthController : ControllerBase
     [HttpPost("renovar")]
     public async Task<IActionResult> RenovarToken(CancellationToken cancellationToken)
     {
-        try
+        var usuario = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("usuario");
+        if (string.IsNullOrEmpty(usuario))
         {
-            var usuario = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("usuario");
-            if (string.IsNullOrEmpty(usuario))
-            {
-                return Unauthorized(new
-                {
-                    success = false,
-                    message = "Sesión vencida."
-                });
-            }
-
-            var resultado = await _authService.RenovarTokenAsync(usuario, cancellationToken);
-            if (!resultado.Success)
-            {
-                return Unauthorized(new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return Ok(new
-            {
-                token = resultado.Data
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al renovar token JWT.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return Unauthorized(new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_38
+                message = "Sesión vencida."
             });
         }
+
+        var resultado = await _authService.RenovarTokenAsync(usuario, cancellationToken);
+        if (!resultado.Success)
+        {
+            return Unauthorized(new
+            {
+                success = false,
+                message = resultado.Message
+            });
+        }
+
+        return Ok(new
+        {
+            token = resultado.Data
+        });
     }
 }

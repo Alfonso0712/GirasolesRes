@@ -1,4 +1,5 @@
-using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Caja;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Services;
@@ -511,17 +512,17 @@ public class CajaService : ICajaService
         // 1. Validar filtros temporales (RV-130, MSG-188, E-315)
         if (desde.HasValue && hasta.HasValue && desde.Value.Date > hasta.Value.Date)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_188);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_188);
         }
 
         if (desde.HasValue && DateOnly.FromDateTime(desde.Value) > hoyLima)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_188);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_188);
         }
 
         if (hasta.HasValue && DateOnly.FromDateTime(hasta.Value) > hoyLima)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_188);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_188);
         }
 
         // 2. Sanitizar paginación
@@ -617,7 +618,7 @@ public class CajaService : ICajaService
         var caja = await _cajaRepository.ObtenerPorIdConDetallesAsync(id, ct);
         if (caja == null)
         {
-            throw new KeyNotFoundException("No se encontró el registro de caja solicitado.");
+            throw new RecursoNoEncontradoException("No se encontró el registro de caja solicitado.");
         }
 
         var fechaAperturaLocal = TimeZoneHelper.ToPeruTime(caja.Caj_FechaAperturaUtc).ToString("dd/MM/yyyy HH:mm");

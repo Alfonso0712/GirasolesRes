@@ -36,39 +36,26 @@ public class ProductosController : ControllerBase
         [FromQuery] int tamano = 10,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var resultado = await _productoService.ListarProductosAsync(
-                busqueda,
-                categoria,
-                tipo,
-                rol,
-                estado,
-                pagina <= 0 ? 1 : pagina,
-                tamano <= 0 ? 10 : tamano,
-                cancellationToken);
+        var resultado = await _productoService.ListarProductosAsync(
+            busqueda,
+            categoria,
+            tipo,
+            rol,
+            estado,
+            pagina <= 0 ? 1 : pagina,
+            tamano <= 0 ? 10 : tamano,
+            cancellationToken);
 
-            if (!resultado.Success)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    success = false,
-                    message = resultado.Message
-                });
-            }
-
-            return Ok(resultado.Data);
-        }
-        catch (Exception ex)
+        if (!resultado.Success)
         {
-            _logger.LogError(ex, "Error no controlado al listar productos.");
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 success = false,
-                message = MensajesCatalogo.MSG_67,
-                detail = ex.Message
+                message = resultado.Message
             });
         }
+
+        return Ok(resultado.Data);
     }
 
     /// <summary>

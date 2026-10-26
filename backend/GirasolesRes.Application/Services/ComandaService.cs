@@ -1,4 +1,5 @@
 using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Comandas;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Services;
@@ -138,12 +139,12 @@ public class ComandaService : IComandaService
         var comanda = await _comandaRepository.ObtenerComandaPorIdAsync(idComanda);
         if (comanda == null)
         {
-            throw new KeyNotFoundException("La comanda especificada no existe.");
+            throw new RecursoNoEncontradoException("La comanda no existe.");
         }
 
         if (comanda.Cmd_Estado == EstadoComanda.Cancelada)
         {
-            throw new InvalidOperationException(string.Format(MensajesCatalogo.MSG_128, comanda.Cmd_NumeroDiario));
+            throw new ConflictoException(string.Format(MensajesCatalogo.MSG_128, comanda.Cmd_NumeroDiario));
         }
 
         var estadoObjetivo = request.Estado.Trim().ToLowerInvariant();
@@ -164,7 +165,7 @@ public class ComandaService : IComandaService
 
             if (comanda.Cmd_Estado != EstadoComanda.Pendiente)
             {
-                throw new InvalidOperationException("Solo una comanda en estado Pendiente puede pasar a En preparación.");
+                throw new ConflictoException("Solo una comanda en estado Pendiente puede pasar a En preparación.");
             }
 
             comanda.IniciarPreparacion(nombreUsuario);
@@ -206,12 +207,12 @@ public class ComandaService : IComandaService
             // RV-87 / MSG-130: No se salta de Pendiente a Lista directamente
             if (comanda.Cmd_Estado == EstadoComanda.Pendiente)
             {
-                throw new InvalidOperationException(MensajesCatalogo.MSG_130);
+                throw new ConflictoException(MensajesCatalogo.MSG_130);
             }
 
             if (comanda.Cmd_Estado != EstadoComanda.EnPreparacion)
             {
-                throw new InvalidOperationException("Solo una comanda en preparación puede marcarse como lista.");
+                throw new ConflictoException("Solo una comanda en preparación puede marcarse como lista.");
             }
 
             comanda.MarcarComoLista(nombreUsuario);
@@ -240,7 +241,7 @@ public class ComandaService : IComandaService
         }
         else
         {
-            throw new ArgumentException("El estado debe ser 'enPreparacion' o 'lista'.");
+            throw new ReglaNegocioException("El estado debe ser 'enPreparacion' o 'lista'.");
         }
     }
 
@@ -249,24 +250,24 @@ public class ComandaService : IComandaService
         var comanda = await _comandaRepository.ObtenerComandaPorIdAsync(idComanda);
         if (comanda == null)
         {
-            throw new KeyNotFoundException("La comanda especificada no existe.");
+            throw new RecursoNoEncontradoException("La comanda no existe.");
         }
 
         // RN-78, RN-79, MSG-134: No se puede deshacer si pasaron más de 10 segundos, pedido pagado o anulado
         if (!comanda.Cmd_FecUltimoCambioEstadoUtc.HasValue || !comanda.Cmd_EstadoAnterior.HasValue)
         {
-            throw new InvalidOperationException(MensajesCatalogo.MSG_134);
+            throw new ConflictoException(MensajesCatalogo.MSG_134);
         }
 
         var segundosTranscurridos = (DateTime.UtcNow - comanda.Cmd_FecUltimoCambioEstadoUtc.Value).TotalSeconds;
         if (segundosTranscurridos > RestauranteConstantes.SegundosToleranciaDeshacerComanda)
         {
-            throw new InvalidOperationException(MensajesCatalogo.MSG_134);
+            throw new ConflictoException(MensajesCatalogo.MSG_134);
         }
 
         if (comanda.Cmd_Pedido?.Ped_Estado == EstadoPedido.Pagado || comanda.Cmd_Pedido?.Ped_Estado == EstadoPedido.Anulado)
         {
-            throw new InvalidOperationException(MensajesCatalogo.MSG_134);
+            throw new ConflictoException(MensajesCatalogo.MSG_134);
         }
 
         comanda.DeshacerUltimoEstado();

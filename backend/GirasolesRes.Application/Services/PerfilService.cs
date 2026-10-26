@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
-using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Perfil;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Security;
@@ -148,12 +149,12 @@ public class PerfilService : IPerfilService
         var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId, cancellationToken);
         if (usuario == null)
         {
-            throw new KeyNotFoundException("Usuario no encontrado.");
+            throw new RecursoNoEncontradoException("Usuario no encontrado.");
         }
 
         if (!usuario.Usu_Activo)
         {
-            throw new InvalidOperationException("Cuenta desactivada.");
+            throw new ConflictoException("Cuenta desactivada.");
         }
 
         usuario.ActualizarTema(tema);

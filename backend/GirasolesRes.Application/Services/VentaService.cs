@@ -47,7 +47,7 @@ public class VentaService : IVentaService
             busquedaLimpia = busqueda.Trim();
             if (busquedaLimpia.Length > 15 || !Regex.IsMatch(busquedaLimpia, @"^[a-zA-Z0-9\-]+$"))
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_156);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_156);
             }
         }
 
@@ -65,7 +65,7 @@ public class VentaService : IVentaService
         {
             if (!DateOnly.TryParse(desde.Trim(), out desdeDate))
             {
-                throw new ArgumentException("Formato de fecha inválido para 'desde'. Use YYYY-MM-DD.");
+                throw new ReglaNegocioException("Formato de fecha inválido para 'desde'. Use YYYY-MM-DD.");
             }
             hastaDate = hoyPeru;
         }
@@ -73,7 +73,7 @@ public class VentaService : IVentaService
         {
             if (!DateOnly.TryParse(hasta.Trim(), out hastaDate))
             {
-                throw new ArgumentException("Formato de fecha inválido para 'hasta'. Use YYYY-MM-DD.");
+                throw new ReglaNegocioException("Formato de fecha inválido para 'hasta'. Use YYYY-MM-DD.");
             }
             desdeDate = hastaDate;
         }
@@ -81,23 +81,23 @@ public class VentaService : IVentaService
         {
             if (!DateOnly.TryParse(desde!.Trim(), out desdeDate) || !DateOnly.TryParse(hasta!.Trim(), out hastaDate))
             {
-                throw new ArgumentException("Formato de fecha inválido. Use YYYY-MM-DD.");
+                throw new ReglaNegocioException("Formato de fecha inválido. Use YYYY-MM-DD.");
             }
         }
 
         if (desdeDate > hastaDate)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_157);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_157);
         }
 
         if (desdeDate > hoyPeru || hastaDate > hoyPeru)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_158);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_158);
         }
 
         if ((hastaDate.DayNumber - desdeDate.DayNumber) > 31)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_158);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_158);
         }
 
         if (usuarioRol.Equals("Cajero", StringComparison.OrdinalIgnoreCase) && desdeDate < hoyPeru.AddDays(-7))
@@ -154,7 +154,7 @@ public class VentaService : IVentaService
         var venta = await _ventaRepository.ObtenerDetalleVentaAsync(ventaId, ct);
         if (venta == null)
         {
-            throw new KeyNotFoundException("La venta solicitada no existe.");
+            throw new RecursoNoEncontradoException("La venta solicitada no existe.");
         }
 
         var comprobante = venta.Ven_Comprobante;
@@ -242,19 +242,19 @@ public class VentaService : IVentaService
 
         if (string.IsNullOrWhiteSpace(request.SolicitudId))
         {
-            throw new ArgumentException("El identificador único de solicitud es obligatorio.");
+            throw new ReglaNegocioException("El identificador único de solicitud es obligatorio.");
         }
 
         var motivoLimpio = request.Motivo?.Trim() ?? string.Empty;
         if (motivoLimpio.Length < 5 || motivoLimpio.Length > 100)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_160);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_160);
         }
 
         var destino = request.DestinoPedido?.Trim().ToLower() ?? "porcobrar";
         if (destino != "porcobrar" && destino != "anular")
         {
-            throw new ArgumentException("El destino del pedido debe ser 'porCobrar' o 'anular'.");
+            throw new ReglaNegocioException("El destino del pedido debe ser 'porCobrar' o 'anular'.");
         }
 
         // Idempotencia por solicitudId (RNF-42)
@@ -268,7 +268,7 @@ public class VentaService : IVentaService
         var venta = await _ventaRepository.ObtenerDetalleVentaAsync(ventaId, ct);
         if (venta == null)
         {
-            throw new KeyNotFoundException("La venta no existe.");
+            throw new RecursoNoEncontradoException("La venta no existe.");
         }
 
         if (venta.Ven_Estado == EstadoVenta.Anulada)

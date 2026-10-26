@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using GirasolesRes.Application.Common;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,30 +41,8 @@ public class InicioController : ControllerBase
         var rol = ObtenerRol();
         var usuarioId = ObtenerUsuarioId();
 
-        try
-        {
-            var resultado = await _inicioService.ObtenerInicioAsync(rol, usuarioId, ct);
-            return Ok(resultado);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_39,
-                error = MensajesCatalogo.MSG_39
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al generar dashboard de inicio");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_210,
-                error = MensajesCatalogo.MSG_210
-            });
-        }
+        var resultado = await _inicioService.ObtenerInicioAsync(rol, usuarioId, ct);
+        return Ok(resultado);
     }
 
     /// <summary>
@@ -77,37 +54,7 @@ public class InicioController : ControllerBase
         var rol = ObtenerRol();
         var usuarioId = ObtenerUsuarioId();
 
-        try
-        {
-            var resultado = await _inicioService.ObtenerBloqueAsync(bloque, rol, usuarioId, ct);
-            return Ok(resultado);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound(new
-            {
-                success = false,
-                message = "Bloque inexistente."
-            });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_39,
-                error = MensajesCatalogo.MSG_39
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al refrescar bloque {Bloque}", bloque);
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                success = false,
-                message = MensajesCatalogo.MSG_209,
-                error = MensajesCatalogo.MSG_209
-            });
-        }
+        var resultado = await _inicioService.ObtenerBloqueAsync(bloque, rol, usuarioId, ct);
+        return Ok(resultado);
     }
 }

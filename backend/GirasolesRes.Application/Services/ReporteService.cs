@@ -1,5 +1,6 @@
 using System.Text;
-using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Reportes;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Services;
@@ -200,7 +201,7 @@ public class ReporteService : IReporteService
         {
             if (!DateOnly.TryParse(desde.Trim(), out desdeDate))
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_190);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_190);
             }
             hastaDate = hoyPeru;
         }
@@ -208,7 +209,7 @@ public class ReporteService : IReporteService
         {
             if (!DateOnly.TryParse(hasta.Trim(), out hastaDate))
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_190);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_190);
             }
             desdeDate = hastaDate;
         }
@@ -216,20 +217,20 @@ public class ReporteService : IReporteService
         {
             if (!DateOnly.TryParse(desde!.Trim(), out desdeDate) || !DateOnly.TryParse(hasta!.Trim(), out hastaDate))
             {
-                throw new ArgumentException(MensajesCatalogo.MSG_190);
+                throw new ReglaNegocioException(MensajesCatalogo.MSG_190);
             }
         }
 
         // RV-134: "desde" no puede ser posterior a "hasta" -> MSG-190
         if (desdeDate > hastaDate)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_190);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_190);
         }
 
         // RV-134: No hay fechas futuras y el máximo es de 366 días -> MSG-191
         if (desdeDate > hoyPeru || hastaDate > hoyPeru || (hastaDate.DayNumber - desdeDate.DayNumber) > 366)
         {
-            throw new ArgumentException(MensajesCatalogo.MSG_191);
+            throw new ReglaNegocioException(MensajesCatalogo.MSG_191);
         }
 
         return (desdeDate, hastaDate);

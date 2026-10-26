@@ -87,7 +87,7 @@ public class PedidoMenuCompletoUnitTests
         };
 
         // ACT & ASSERT
-        var ex = await Assert.ThrowsAsync<ArgumentException>(() =>
+        var ex = await Assert.ThrowsAsync<ReglaNegocioException>(() =>
             _service.RegistrarPedidoMesaAsync(request, "mozo1", Guid.NewGuid(), "127.0.0.1"));
 
         Assert.Contains("Plato", ex.Message);

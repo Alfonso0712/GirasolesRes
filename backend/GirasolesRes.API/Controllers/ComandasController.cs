@@ -29,16 +29,8 @@ public class ComandasController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> ListarComandas([FromQuery] string? estado)
     {
-        try
-        {
-            var res = await _comandaService.ListarComandasAsync(estado);
-            return Ok(res);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al listar comandas para cocina.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_125 });
-        }
+        var res = await _comandaService.ListarComandasAsync(estado);
+        return Ok(res);
     }
 
     /// <summary>
@@ -55,29 +47,8 @@ public class ComandasController : ControllerBase
         }
 
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Cocinero";
-
-        try
-        {
-            var res = await _comandaService.ActualizarEstadoAsync(id, request, nombreUsuario);
-            return Ok(res);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound(new { message = "La comanda no existe." });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(new { message = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al actualizar estado de la comanda {ComandaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_131 });
-        }
+        var res = await _comandaService.ActualizarEstadoAsync(id, request, nombreUsuario);
+        return Ok(res);
     }
 
     /// <summary>
@@ -87,24 +58,7 @@ public class ComandasController : ControllerBase
     public async Task<IActionResult> DeshacerEstado([FromRoute] Guid id)
     {
         var nombreUsuario = User.FindFirstValue(ClaimTypes.Name) ?? "Cocinero";
-
-        try
-        {
-            var res = await _comandaService.DeshacerEstadoAsync(id, nombreUsuario);
-            return Ok(res);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound(new { message = "La comanda no existe." });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al deshacer estado de la comanda {ComandaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = MensajesCatalogo.MSG_131 });
-        }
+        var res = await _comandaService.DeshacerEstadoAsync(id, nombreUsuario);
+        return Ok(res);
     }
 }
