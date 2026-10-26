@@ -19,7 +19,7 @@ public class MenuCompletoService : IMenuCompletoService
         _auditoriaRepository = auditoriaRepository;
     }
 
-    public async Task<ApiResponse<List<MenuCompletoResponseDto>>> ObtenerTodosAsync(
+    public async Task<Result<List<MenuCompletoResponseDto>>> ObtenerTodosAsync(
         bool soloActivos = false,
         CancellationToken cancellationToken = default)
     {
@@ -27,15 +27,15 @@ public class MenuCompletoService : IMenuCompletoService
         {
             var menus = await _menuCompletoRepository.ObtenerTodosAsync(soloActivos, cancellationToken);
             var dtos = menus.Select(MapearADto).ToList();
-            return ApiResponse<List<MenuCompletoResponseDto>>.Exitoso(dtos);
+            return Result<List<MenuCompletoResponseDto>>.Exitoso(dtos);
         }
         catch (Exception ex)
         {
-            return ApiResponse<List<MenuCompletoResponseDto>>.Fallido(MensajesCatalogo.MSG_67, detalle: ex.Message);
+            return Result<List<MenuCompletoResponseDto>>.Fallido(MensajesCatalogo.MSG_67, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MenuCompletoResponseDto>> ObtenerPorIdAsync(
+    public async Task<Result<MenuCompletoResponseDto>> ObtenerPorIdAsync(
         int id,
         CancellationToken cancellationToken = default)
     {
@@ -44,18 +44,18 @@ public class MenuCompletoService : IMenuCompletoService
             var menu = await _menuCompletoRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (menu == null)
             {
-                return ApiResponse<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+                return Result<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
             }
 
-            return ApiResponse<MenuCompletoResponseDto>.Exitoso(MapearADto(menu));
+            return Result<MenuCompletoResponseDto>.Exitoso(MapearADto(menu));
         }
         catch (Exception ex)
         {
-            return ApiResponse<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MenuCompletoResponseDto>> ActualizarPrecioAsync(
+    public async Task<Result<MenuCompletoResponseDto>> ActualizarPrecioAsync(
         int id,
         ActualizarPrecioMenuCompletoRequest request,
         string adminUsername,
@@ -67,14 +67,14 @@ public class MenuCompletoService : IMenuCompletoService
             // RV-160: Validación de precio mayor a cero y no superar S/ 999.99
             if (request.Precio <= 0)
             {
-                return ApiResponse<MenuCompletoResponseDto>.Fallido(
+                return Result<MenuCompletoResponseDto>.Fallido(
                     MensajesCatalogo.MSG_55,
                     errores: new Dictionary<string, string> { { "precio", MensajesCatalogo.MSG_55 } });
             }
 
             if (request.Precio > 999.99m || decimal.Round(request.Precio, 2) != request.Precio)
             {
-                return ApiResponse<MenuCompletoResponseDto>.Fallido(
+                return Result<MenuCompletoResponseDto>.Fallido(
                     MensajesCatalogo.MSG_56,
                     errores: new Dictionary<string, string> { { "precio", MensajesCatalogo.MSG_56 } });
             }
@@ -82,7 +82,7 @@ public class MenuCompletoService : IMenuCompletoService
             var menu = await _menuCompletoRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (menu == null)
             {
-                return ApiResponse<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+                return Result<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
             }
 
             var precioAnterior = menu.Men_Precio;
@@ -103,15 +103,15 @@ public class MenuCompletoService : IMenuCompletoService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _menuCompletoRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<MenuCompletoResponseDto>.Exitoso(MapearADto(menu), MensajesCatalogo.MSG_217);
+            return Result<MenuCompletoResponseDto>.Exitoso(MapearADto(menu), MensajesCatalogo.MSG_217);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 
-    public async Task<ApiResponse<MenuCompletoResponseDto>> CambiarEstadoAsync(
+    public async Task<Result<MenuCompletoResponseDto>> CambiarEstadoAsync(
         int id,
         CambiarEstadoMenuCompletoRequest request,
         string adminUsername,
@@ -123,7 +123,7 @@ public class MenuCompletoService : IMenuCompletoService
             var menu = await _menuCompletoRepository.ObtenerPorIdAsync(id, cancellationToken);
             if (menu == null)
             {
-                return ApiResponse<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
+                return Result<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38);
             }
 
             menu.CambiarEstado(request.Activo);
@@ -143,11 +143,11 @@ public class MenuCompletoService : IMenuCompletoService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _menuCompletoRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<MenuCompletoResponseDto>.Exitoso(MapearADto(menu), MensajesCatalogo.MSG_217);
+            return Result<MenuCompletoResponseDto>.Exitoso(MapearADto(menu), MensajesCatalogo.MSG_217);
         }
         catch (Exception ex)
         {
-            return ApiResponse<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
+            return Result<MenuCompletoResponseDto>.Fallido(MensajesCatalogo.MSG_38, detalle: ex.Message);
         }
     }
 

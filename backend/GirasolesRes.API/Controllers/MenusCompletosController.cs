@@ -36,7 +36,7 @@ public class MenusCompletosController : ControllerBase
         var filtrarSoloActivos = soloActivos ?? !esAdmin;
 
         var resultado = await _menuCompletoService.ObtenerTodosAsync(filtrarSoloActivos, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -56,7 +56,7 @@ public class MenusCompletosController : ControllerBase
     public async Task<IActionResult> ObtenerPorId(int id, CancellationToken cancellationToken = default)
     {
         var resultado = await _menuCompletoService.ObtenerPorIdAsync(id, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return NotFound(new
             {
@@ -91,7 +91,7 @@ public class MenusCompletosController : ControllerBase
         var admin = ObtenerNombreAdmin();
 
         var resultado = await _menuCompletoService.ActualizarPrecioAsync(id, request, admin, ip, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             if (resultado.Errors != null)
             {
@@ -136,7 +136,7 @@ public class MenusCompletosController : ControllerBase
         var admin = ObtenerNombreAdmin();
 
         var resultado = await _menuCompletoService.CambiarEstadoAsync(id, request, admin, ip, cancellationToken);
-        if (!resultado.Success)
+        if (!resultado.IsSuccess)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {

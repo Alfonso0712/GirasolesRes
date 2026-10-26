@@ -45,7 +45,7 @@ public class MenuCompletoServiceUnitTests
         var resultado = await _service.ActualizarPrecioAsync(1, request, "admin", "127.0.0.1");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_217, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.Equal(8.50m, resultado.Data!.Precio);
@@ -75,7 +75,7 @@ public class MenuCompletoServiceUnitTests
         var resultado = await _service.ActualizarPrecioAsync(1, request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_55, resultado.Message);
         _menuRepoMock.Verify(r => r.GuardarCambiosAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -93,7 +93,7 @@ public class MenuCompletoServiceUnitTests
         var resultado = await _service.ActualizarPrecioAsync(1, request, "admin");
 
         // ASSERT
-        Assert.False(resultado.Success);
+        Assert.False(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_56, resultado.Message);
         _menuRepoMock.Verify(r => r.GuardarCambiosAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -115,7 +115,7 @@ public class MenuCompletoServiceUnitTests
         var resultado = await _service.CambiarEstadoAsync(2, request, "admin", "127.0.0.1");
 
         // ASSERT
-        Assert.True(resultado.Success);
+        Assert.True(resultado.IsSuccess);
         Assert.Equal(MensajesCatalogo.MSG_217, resultado.Message);
         Assert.NotNull(resultado.Data);
         Assert.False(resultado.Data!.Activo);
