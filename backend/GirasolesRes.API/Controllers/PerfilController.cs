@@ -70,7 +70,7 @@ public class PerfilController : ControllerBase
             ip,
             cancellationToken);
 
-        if (resultado.Success)
+        if (resultado.IsSuccess)
         {
             // RN-22: Se entrega el nuevo token JWT para que la sesión continúe sin interrupción
             return Ok(new

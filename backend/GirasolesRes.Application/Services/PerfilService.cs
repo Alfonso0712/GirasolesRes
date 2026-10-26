@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
-using GirasolesRes.Application.Common;
+using GirasolesRes.Application.Common;
+
 using GirasolesRes.Application.Common.Exceptions;
 using GirasolesRes.Application.DTOs.Perfil;
 using GirasolesRes.Application.Interfaces.Persistence;
@@ -34,7 +35,7 @@ public class PerfilService : IPerfilService
         _jwtGenerator = jwtGenerator;
     }
 
-    public async Task<ApiResponse<string>> CambiarContrasenaPropiaAsync(
+    public async Task<Result<string>> CambiarContrasenaPropiaAsync(
         string nombreUsuario,
         CambiarContrasenaPropiaRequest request,
         string? currentJti = null,
@@ -47,13 +48,13 @@ public class PerfilService : IPerfilService
             var usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync(nombreUsuario, cancellationToken);
             if (usuario == null)
             {
-                return ApiResponse<string>.Fallido("Usuario no encontrado.");
+                return Result<string>.Fallido("Usuario no encontrado.");
             }
 
             // RN-16: Solo el Administrador puede cambiar su contraseña desde la barra superior
             if (usuario.Usu_Rol != RolUsuario.Administrador)
             {
-                return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_49);
+                return Result<string>.Fallido(MensajesCatalogo.MSG_49);
             }
 
             // Validar contraseña actual
@@ -84,16 +85,16 @@ public class PerfilService : IPerfilService
                     await _auditoriaRepository.RegistrarAsync(auditoriaCierre, cancellationToken);
                     await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
 
-                    return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_48);
+                    return Result<string>.Fallido(MensajesCatalogo.MSG_48);
                 }
 
-                return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_45);
+                return Result<string>.Fallido(MensajesCatalogo.MSG_45);
             }
 
             // RV-26 / RN-18: La nueva contraseña debe ser distinta de la actual
             if (_passwordHasher.VerifyPassword(usuario.Usu_PasswordHash, request.NuevaContrasena))
             {
-                return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_46);
+                return Result<string>.Fallido(MensajesCatalogo.MSG_46);
             }
 
             // Reiniciar intentos fallidos consecutivos
@@ -125,11 +126,11 @@ public class PerfilService : IPerfilService
             await _auditoriaRepository.RegistrarAsync(auditoria, cancellationToken);
             await _auditoriaRepository.GuardarCambiosAsync(cancellationToken);
 
-            return ApiResponse<string>.Exitoso(nuevoToken, MensajesCatalogo.MSG_47);
+            return Result<string>.Exitoso(nuevoToken, MensajesCatalogo.MSG_47);
         }
         catch
         {
-            return ApiResponse<string>.Fallido(MensajesCatalogo.MSG_38);
+            return Result<string>.Fallido(MensajesCatalogo.MSG_38);
         }
     }
 

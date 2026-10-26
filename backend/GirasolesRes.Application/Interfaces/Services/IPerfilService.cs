@@ -5,7 +5,7 @@ namespace GirasolesRes.Application.Interfaces.Services;
 
 public interface IPerfilService
 {
-    Task<ApiResponse<string>> CambiarContrasenaPropiaAsync(
+    Task<Result<string>> CambiarContrasenaPropiaAsync(
         string nombreUsuario,
         CambiarContrasenaPropiaRequest request,
         string? currentJti = null,
