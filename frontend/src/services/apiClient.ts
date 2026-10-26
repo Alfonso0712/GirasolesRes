@@ -16,6 +16,17 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: any;
 }
 
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? 'https://girasoles.astrazynk.pp.ua' : '');
+
+export function resolveApiUrl(endpoint: string): string {
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return endpoint;
+  }
+  return `${API_BASE_URL}${endpoint}`;
+}
+
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { token, body, headers: customHeaders, ...restOptions } = options;
 
@@ -28,7 +39,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(endpoint, {
+  const response = await fetch(resolveApiUrl(endpoint), {
     ...restOptions,
     headers,
     body: body !== undefined ? (typeof body === 'string' ? body : JSON.stringify(body)) : undefined,

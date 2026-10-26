@@ -1,5 +1,0 @@
-# Proxy de peticiones API hacia el backend en Cloudflare Tunnel
-/api/*  https://girasoles.astrazynk.pp.ua/api/:splat  200
-
-# Fallback SPA para React Router (evita 404 al recargar páginas)
-/*  /index.html  200

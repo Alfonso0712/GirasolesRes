@@ -10,8 +10,9 @@ import type {
   CajaEstado,
   AbrirCajaRequest,
 } from '../types/caja';
+import { resolveApiUrl } from './apiClient';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
+const API_URL = resolveApiUrl('/api');
 
 async function parseApiError(res: Response, fallbackMessage: string): Promise<Error> {
   const errData = await res.json().catch(() => ({}));

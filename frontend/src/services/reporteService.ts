@@ -1,4 +1,4 @@
-import { apiClient } from './apiClient';
+import { apiClient, resolveApiUrl } from './apiClient';
 import type { ReporteVentasResponse, ReportePlatosResponse } from '../types/reporte';
 
 export const reporteService = {
@@ -33,7 +33,7 @@ export const reporteService = {
     if (productoId && tipo === 'platos') params.append('productoId', productoId);
     params.append('formato', formato);
 
-    const res = await fetch(`/api/reportes/${tipo}/exportar?${params.toString()}`, {
+    const res = await fetch(resolveApiUrl(`/api/reportes/${tipo}/exportar?${params.toString()}`), {
       headers: {
         Authorization: `Bearer ${token}`
       }

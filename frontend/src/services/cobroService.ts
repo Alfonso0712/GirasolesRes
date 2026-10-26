@@ -1,4 +1,4 @@
-import { apiClient } from './apiClient';
+import { apiClient, resolveApiUrl } from './apiClient';
 import type {
   PedidoPendienteCobro,
   CobroRequest,
@@ -31,7 +31,7 @@ export const cobroService = {
     token: string
   ): Promise<void> => {
     const response = await fetch(
-      `/api/cobros/comprobantes/${ventaId}/pdf?copia=${copia}`,
+      resolveApiUrl(`/api/cobros/comprobantes/${ventaId}/pdf?copia=${copia}`),
       {
         headers: {
           Authorization: `Bearer ${token}`,

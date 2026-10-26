@@ -5,8 +5,9 @@ import type {
   AnularVentaResponse,
   FiltroVentasParams
 } from '../types/venta';
+import { resolveApiUrl } from './apiClient';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
+const API_URL = resolveApiUrl('/api');
 
 export const ventaService = {
   async listarVentas(params: FiltroVentasParams, token: string): Promise<ListarVentasResponse> {
