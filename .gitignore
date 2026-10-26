@@ -43,3 +43,6 @@ Desktop.ini
 !.vscode/extensions.json
 .engram/
 .agents/
+
+# Temporary Word files
+~$*
