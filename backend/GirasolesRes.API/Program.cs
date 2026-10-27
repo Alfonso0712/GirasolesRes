@@ -175,15 +175,13 @@ using (var scope = app.Services.CreateScope())
 // Middleware global para manejo homogéneo de excepciones (Clean Architecture)
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-if (app.Environment.IsDevelopment())
+// Swagger habilitado tanto en desarrollo como en producción
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GirasolesRes API v1");
-        c.RoutePrefix = "swagger";
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GirasolesRes API v1");
+    c.RoutePrefix = "swagger";
+});
 
 // RNF-09: Las pantallas protegidas no se guardan en la caché del navegador
 app.Use(async (context, next) =>
