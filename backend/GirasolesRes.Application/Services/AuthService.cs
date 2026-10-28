@@ -145,16 +145,28 @@ public class AuthService : IAuthService
         }
 
         // Solo la Administradora General (@admin) tiene habilitada la recuperación.
-        // Se verifica que el correo pertenezca al usuario administrador registrado o sus alias autorizados.
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
         if (usuario == null && (correo == "cjazztin7@gmail.com" || correo == "chuquijazztin@gmail.com"))
         {
             usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
         }
 
-        if (usuario != null && usuario.Usu_Activo && usuario.Usu_Rol == RolUsuario.Administrador)
+        if (usuario == null)
         {
-            var codigo = Random.Shared.Next(100000, 999999).ToString();
+            return Result<string>.Fallido("El correo ingresado no está registrado.");
+        }
+
+        if (!usuario.Usu_Activo)
+        {
+            return Result<string>.Fallido(MensajesCatalogo.MSG_05);
+        }
+
+        if (usuario.Usu_Rol != RolUsuario.Administrador)
+        {
+            return Result<string>.Fallido(MensajesCatalogo.MSG_17);
+        }
+
+        var codigo = Random.Shared.Next(100000, 999999).ToString();
             await _codigoRecuperacionRepository.InvalidarCodigosActivosPorCorreoAsync(correo, cancellationToken);
 
             var codigoEntidad = new CodigoRecuperacion(correo, codigo, minutosValidez: 15);
@@ -166,7 +178,6 @@ public class AuthService : IAuthService
             {
                 return Result<string>.Fallido(MensajesCatalogo.MSG_18);
             }
-        }
 
         return Result<string>.Exitoso(MensajesCatalogo.MSG_11, MensajesCatalogo.MSG_11);
     }
@@ -199,9 +210,20 @@ public class AuthService : IAuthService
         {
             usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
         }
-        if (usuario == null || !usuario.Usu_Activo || usuario.Usu_Rol != RolUsuario.Administrador)
+
+        if (usuario == null)
         {
-            return Result<string>.Fallido(MensajesCatalogo.MSG_13);
+            return Result<string>.Fallido("El correo ingresado no está registrado.");
+        }
+
+        if (!usuario.Usu_Activo)
+        {
+            return Result<string>.Fallido(MensajesCatalogo.MSG_05);
+        }
+
+        if (usuario.Usu_Rol != RolUsuario.Administrador)
+        {
+            return Result<string>.Fallido(MensajesCatalogo.MSG_17);
         }
 
         var nuevoHash = _passwordHasher.HashPassword(nuevaContrasena);
