@@ -144,8 +144,14 @@ public class AuthService : IAuthService
             return Result<string>.Fallido(MensajesCatalogo.MSG_12);
         }
 
-        // La recuperación opera exclusivamente para Administradora General (@admin), independientemente del correo ingresado
-        var usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
+        // Solo la Administradora General (@admin) tiene habilitada la recuperación.
+        // Se verifica que el correo pertenezca al usuario administrador registrado o sus alias autorizados.
+        var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
+        if (usuario == null && (correo == "cjazztin7@gmail.com" || correo == "chuquijazztin@gmail.com"))
+        {
+            usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
+        }
+
         if (usuario != null && usuario.Usu_Activo && usuario.Usu_Rol == RolUsuario.Administrador)
         {
             var codigo = Random.Shared.Next(100000, 999999).ToString();
@@ -188,8 +194,11 @@ public class AuthService : IAuthService
             return Result<string>.Fallido(MensajesCatalogo.MSG_13);
         }
 
-        // La recuperación opera exclusivamente para Administradora General (@admin)
-        var usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
+        var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
+        if (usuario == null && (correo == "cjazztin7@gmail.com" || correo == "chuquijazztin@gmail.com"))
+        {
+            usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
+        }
         if (usuario == null || !usuario.Usu_Activo || usuario.Usu_Rol != RolUsuario.Administrador)
         {
             return Result<string>.Fallido(MensajesCatalogo.MSG_13);
