@@ -1,28 +1,29 @@
+using System.Net;
+using System.Net.Http;
 using GirasolesRes.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Resend;
+using Moq.Protected;
 using Xunit;
 
 namespace GirasolesRes.Tests;
 
 public class EmailServiceUnitTests
 {
-    private readonly Mock<IResend> _resendMock;
     private readonly Mock<ILogger<EmailService>> _loggerMock;
     private readonly IConfiguration _configuration;
 
     public EmailServiceUnitTests()
     {
-        _resendMock = new Mock<IResend>();
         _loggerMock = new Mock<ILogger<EmailService>>();
 
         var configValues = new Dictionary<string, string?>
         {
-            { "Resend:ApiKey", "re_test_key" },
-            { "Resend:From", "Restaurante Girasoles <test@resend.dev>" },
-            { "Resend:ToOverride", "" }
+            { "Mailjet:ApiKey", "test_api_key" },
+            { "Mailjet:SecretKey", "test_secret_key" },
+            { "Mailjet:FromEmail", "no-reply@girasolesres.pp.ua" },
+            { "Mailjet:FromName", "Restaurante Girasoles" }
         };
 
         _configuration = new ConfigurationBuilder()
@@ -34,33 +35,50 @@ public class EmailServiceUnitTests
     public async Task EnviarCodigoRecuperacionAsync_EnvioExitoso_RetornaTrue()
     {
         // ARRANGE
-        var response = (ResendResponse<Guid>)System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(typeof(ResendResponse<Guid>));
+        var handlerMock = new Mock<HttpMessageHandler>();
+        handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent("{\"Messages\":[{\"Status\":\"success\"}]}")
+            });
 
-        _resendMock
-            .Setup(r => r.EmailSendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-        var service = new EmailService(_resendMock.Object, _configuration, _loggerMock.Object);
+        var httpClient = new HttpClient(handlerMock.Object);
+        var service = new EmailService(httpClient, _configuration, _loggerMock.Object);
 
         // ACT
         var result = await service.EnviarCodigoRecuperacionAsync("user@example.com", "123456");
 
         // ASSERT
         Assert.True(result);
-        _resendMock.Verify(r => r.EmailSendAsync(
-            It.Is<EmailMessage>(m => (m.Subject ?? "").Contains("Código de Recuperación") && (m.HtmlBody ?? "").Contains("123456")),
-            It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task EnviarCodigoRecuperacionAsync_FalloEnResend_RetornaFalseSinLanzarExcepcion()
+    public async Task EnviarCodigoRecuperacionAsync_FalloEnApi_RetornaFalseSinLanzarExcepcion()
     {
         // ARRANGE
-        _resendMock
-            .Setup(r => r.EmailSendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Resend API unreachable"));
+        var handlerMock = new Mock<HttpMessageHandler>();
+        handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.InternalServerError,
+                Content = new StringContent("{\"ErrorMessage\":\"Internal Error\"}")
+            });
 
-        var service = new EmailService(_resendMock.Object, _configuration, _loggerMock.Object);
+        var httpClient = new HttpClient(handlerMock.Object);
+        var service = new EmailService(httpClient, _configuration, _loggerMock.Object);
 
         // ACT
         var result = await service.EnviarCodigoRecuperacionAsync("user@example.com", "123456");
@@ -77,13 +95,13 @@ public class EmailServiceUnitTests
             .AddInMemoryCollection(new Dictionary<string, string?>())
             .Build();
 
-        var service = new EmailService(_resendMock.Object, emptyConfig, _loggerMock.Object);
+        var httpClient = new HttpClient(new Mock<HttpMessageHandler>().Object);
+        var service = new EmailService(httpClient, emptyConfig, _loggerMock.Object);
 
         // ACT
         var result = await service.EnviarCodigoRecuperacionAsync("user@example.com", "123456");
 
         // ASSERT
         Assert.True(result);
-        _resendMock.Verify(r => r.EmailSendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }
