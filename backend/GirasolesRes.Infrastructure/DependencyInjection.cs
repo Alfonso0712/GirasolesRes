@@ -8,7 +8,7 @@ using GirasolesRes.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Resend;
+
 
 namespace GirasolesRes.Infrastructure;
 
@@ -46,9 +46,9 @@ public static class DependencyInjection
         services.AddScoped<IJwtGenerator, JwtGenerator>();
 
         // Resend SDK oficial para despacho de correos
-        var resendApiKey = configuration["Resend:ApiKey"] ?? string.Empty;
-        services.AddTransient<IResend>(_ => ResendClient.Create(resendApiKey));
-        services.AddScoped<IEmailService, EmailService>();
+        // Servicio de despacho de correos (Mailjet API v3.1)
+
+        services.AddHttpClient<IEmailService, EmailService>();
 
         services.AddScoped<IPdfCierreService, PdfCierreService>();
         services.AddScoped<IPdfReporteService, ReportePdfService>();

@@ -1,48 +1,49 @@
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Resend;
 
 namespace GirasolesRes.Infrastructure.Services;
 
 public class EmailService : IEmailService
 {
-    private readonly IResend _resend;
+    private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly ILogger<EmailService> _logger;
 
     public EmailService(
-        IResend resend,
+        HttpClient httpClient,
         IConfiguration configuration,
         ILogger<EmailService> logger)
     {
-        _resend = resend;
+        _httpClient = httpClient;
         _configuration = configuration;
         _logger = logger;
     }
 
     public async Task<bool> EnviarCodigoRecuperacionAsync(string correo, string codigo, CancellationToken cancellationToken = default)
     {
-        var apiKey = _configuration["Resend:ApiKey"];
-        var from = _configuration["Resend:From"] ?? "Restaurante Girasoles <onboarding@resend.dev>";
+        var apiKey = _configuration["Mailjet:ApiKey"] ?? _configuration["Resend:ApiKey"];
+        var secretKey = _configuration["Mailjet:SecretKey"];
+        var fromEmail = _configuration["Mailjet:FromEmail"] ?? "no-reply@girasolesres.pp.ua";
+        var fromName = _configuration["Mailjet:FromName"] ?? "Restaurante Girasoles";
 
-        // En capa gratuita de Resend sin dominio propio verificado, Resend solo permite enviar a la cuenta registrada.
-        // Si el correo solicitado es del dominio corporativo ficticio (@girasoles.com), se redirige a cjazztin7@gmail.com.
         var destinatarioReal = correo.EndsWith("@girasoles.com", StringComparison.OrdinalIgnoreCase)
             ? "cjazztin7@gmail.com"
             : correo;
 
-        // Log de respaldo en consola para trazabilidad técnica
         _logger.LogInformation("==================================================");
         _logger.LogInformation(" [SISTEMA GIRASOLES] Código de Recuperación: {Codigo}", codigo);
         _logger.LogInformation(" Correo Solicitado: {Correo}", correo);
-        _logger.LogInformation(" Destinatario Resend: {DestinatarioReal}", destinatarioReal);
-        _logger.LogInformation(" Remitente: {From}", from);
+        _logger.LogInformation(" Destinatario Mailjet: {DestinatarioReal}", destinatarioReal);
+        _logger.LogInformation(" Remitente: {FromName} <{FromEmail}>", fromName, fromEmail);
         _logger.LogInformation("==================================================");
 
-        if (string.IsNullOrWhiteSpace(apiKey))
+        if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(secretKey))
         {
-            _logger.LogWarning("No se encontró 'Resend:ApiKey' configurada. Omitiendo despacho HTTP.");
+            _logger.LogWarning("No se encontraron 'Mailjet:ApiKey' o 'Mailjet:SecretKey' configuradas. Omitiendo despacho HTTP.");
             return true;
         }
 
@@ -88,21 +89,44 @@ public class EmailService : IEmailService
 </body>
 </html>";
 
-            var message = new EmailMessage
+            var payload = new
             {
-                From = from,
-                To = { destinatarioReal },
-                Subject = "Código de Recuperación - Restaurante Girasoles",
-                HtmlBody = htmlBody
+                Messages = new[]
+                {
+                    new
+                    {
+                        From = new { Email = fromEmail, Name = fromName },
+                        To = new[] { new { Email = destinatarioReal, Name = "Usuario" } },
+                        Subject = "Código de Recuperación - Restaurante Girasoles",
+                        HTMLPart = htmlBody
+                    }
+                }
             };
 
-            var resp = await _resend.EmailSendAsync(message, cancellationToken);
-            _logger.LogInformation("Correo de recuperación despachado con éxito vía Resend SDK a {DestinatarioReal}. Respuesta: {Respuesta}", destinatarioReal, resp.Content);
-            return true;
+            var jsonContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var authHeader = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{apiKey}:{secretKey}"));
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.mailjet.com/v3.1/send")
+            {
+                Content = jsonContent
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _logger.LogInformation("Correo de recuperación despachado con éxito vía Mailjet API a {DestinatarioReal}. Respuesta: {Respuesta}", destinatarioReal, responseBody);
+                return true;
+            }
+
+            _logger.LogError("Fallo al enviar correo vía Mailjet API a {DestinatarioReal}. Código HTTP {StatusCode}. Respuesta: {Respuesta}", destinatarioReal, response.StatusCode, responseBody);
+            return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Excepción no controlada al enviar correo vía Resend SDK a {DestinatarioReal}", destinatarioReal);
+            _logger.LogError(ex, "Excepción no controlada al enviar correo vía Mailjet API a {DestinatarioReal}", destinatarioReal);
             return false;
         }
     }
