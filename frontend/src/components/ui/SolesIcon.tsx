@@ -5,14 +5,13 @@ export interface SolesIconProps extends React.SVGAttributes<SVGSVGElement> {
   className?: string;
   color?: string;
   strokeWidth?: number | string;
-  fontSize?: number | string;
+  absoluteStrokeWidth?: boolean;
 }
 
 /**
  * Ícono institucional de moneda peruana (Soles - S/)
- * Diseñado como drop-in replacement para íconos de Lucide (DollarSign, BadgeDollarSign).
- * Proporción óptica optimizada (fontSize=20 en viewBox de 24x24) para igualar la altura visual
- * y peso de los íconos Lucide estándar (16px, 20px, 24px) en modo claro y modo oscuro.
+ * Dibujado con paths vectoriales de trazo uniforme (strokeWidth=2, round/round)
+ * siguiendo las especificaciones geométricas de Lucide en viewBox 0 0 24 24.
  */
 export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
   (
@@ -21,11 +20,15 @@ export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
       className = '',
       color = 'currentColor',
       strokeWidth = 2,
-      fontSize = 22,
+      absoluteStrokeWidth = false,
       ...props
     },
     ref
   ) => {
+    const calculatedStrokeWidth = absoluteStrokeWidth
+      ? (Number(strokeWidth) * 24) / Number(size)
+      : strokeWidth;
+
     return (
       <svg
         ref={ref}
@@ -35,27 +38,15 @@ export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
         viewBox="0 0 24 24"
         fill="none"
         stroke={color}
-        strokeWidth={strokeWidth}
+        strokeWidth={calculatedStrokeWidth}
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden="true"
         className={className}
         {...props}
       >
-        <text
-          x="12"
-          y="12.2"
-          textAnchor="middle"
-          dominantBaseline="central"
-          fill={color}
-          stroke="none"
-          fontFamily="var(--font-sans, system-ui, -apple-system, sans-serif)"
-          fontSize={fontSize}
-          fontWeight="800"
-          letterSpacing="-1.2px"
-        >
-          S/
-        </text>
+        <path d="M11.5 4.5H6.75a3.75 3.75 0 0 0 0 7.5h1.5a3.75 3.75 0 0 1 0 7.5H3" />
+        <path d="M20.5 4L14.5 20" />
       </svg>
     );
   }
