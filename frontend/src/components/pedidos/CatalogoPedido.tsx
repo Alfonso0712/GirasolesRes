@@ -115,7 +115,7 @@ export const CatalogoPedido: React.FC<CatalogoPedidoProps> = ({
       />
 
       {/* Grilla con Scroll Interno Confinado */}
-      <div className="flex-1 overflow-y-auto min-h-0 pr-1 pt-1 scroll-thin">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto min-h-0 pr-1 pt-1 scroll-thin">
         {cargando ? (
           <div className={CATALOGO_GRID_CLASS}>
             {[1, 2, 3, 4, 5, 6].map((i) => (

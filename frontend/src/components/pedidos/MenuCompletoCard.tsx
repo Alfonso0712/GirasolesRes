@@ -43,20 +43,14 @@ export const MenuCompletoCard: React.FC<MenuCompletoCardProps> = ({
 
   return (
     <div
-      className={`bg-canvas border rounded-xl p-3.5 flex flex-col justify-between transition-all relative ${
+      className={`bg-canvas border rounded-xl p-3.5 flex flex-col justify-between transition-colors relative ${
         !disponible
           ? 'border-neutral-300/80 text-neutral-500 select-none opacity-65'
           : cantEnBorrador > 0
-          ? 'border-accent shadow-xs ring-1 ring-accent/20'
-          : 'border-amber-300/80 hover:border-accent shadow-2xs hover:shadow-sm'
+          ? 'border-accent ring-1 ring-inset ring-accent/30'
+          : 'border-amber-300/80 hover:border-accent'
       }`}
     >
-      {cantEnBorrador > 0 && disponible && (
-        <span className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-xs z-10 tabular-nums">
-          {cantEnBorrador}
-        </span>
-      )}
-
       <div>
         <div className="flex items-start justify-between gap-2">
           <Tooltip content={esTruncado ? menu.nombre : null}>
@@ -68,9 +62,16 @@ export const MenuCompletoCard: React.FC<MenuCompletoCardProps> = ({
               {menu.nombre}
             </h4>
           </Tooltip>
-          <span className="font-sans text-base font-bold text-accent tabular-nums whitespace-nowrap shrink-0">
-            S/ {menu.precio.toFixed(2)}
-          </span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="font-sans text-base font-bold text-accent tabular-nums whitespace-nowrap">
+              S/ {menu.precio.toFixed(2)}
+            </span>
+            {cantEnBorrador > 0 && disponible && (
+              <span className="bg-primary text-white text-xs font-bold min-w-6 h-6 px-1.5 -my-0.5 rounded-full flex items-center justify-center tabular-nums">
+                {cantEnBorrador}
+              </span>
+            )}
+          </div>
         </div>
 
         {menu.incluye && (
