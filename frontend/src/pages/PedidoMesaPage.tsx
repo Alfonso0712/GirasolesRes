@@ -199,15 +199,15 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             </div>
           }
           actions={
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
               <Button
                 type="button"
                 variant="secondary"
                 onClick={solicitarDescarte}
                 disabled={lineasBorrador.length === 0}
-                className="text-xs px-3.5 py-2 min-h-[40px]"
+                className="w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
               >
-                <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                <RotateCcw className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                 Limpiar borrador
               </Button>
 
@@ -215,9 +215,9 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
                 type="button"
                 variant="secondary"
                 onClick={onVolverAMesas}
-                className="text-xs px-3.5 py-2 min-h-[40px]"
+                className="w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
               >
-                <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                <ArrowLeft className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                 Volver a mesas
               </Button>
             </div>

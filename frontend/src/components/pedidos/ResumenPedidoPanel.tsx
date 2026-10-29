@@ -78,7 +78,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
 
   const renderEstadoVacio = () => (
     <div className="h-full min-h-[220px] flex flex-col items-center justify-center text-center p-6 text-neutral-500">
-      <div className="w-12 h-12 rounded-2xl bg-canvas dark:bg-surface-raised border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-400 dark:text-neutral-500 mb-3 shadow-2xs">
+      <div className="w-12 h-12 rounded-2xl bg-canvas dark:bg-surface-raised border border-neutral-200 dark:border-neutral-200/80 flex items-center justify-center text-neutral-400 dark:text-neutral-500 mb-3 shadow-2xs">
         <ShoppingBag className="w-6 h-6 stroke-[1.75]" />
       </div>
       <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-300">
@@ -101,7 +101,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
           className={`p-3 rounded-xl border transition-all ${
             tieneError
               ? 'bg-rose-50/70 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 shadow-2xs'
-              : 'bg-canvas dark:bg-surface-raised border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 shadow-2xs'
+              : 'bg-canvas dark:bg-surface-raised border-neutral-200 dark:border-neutral-200/80 hover:border-neutral-300 dark:hover:border-neutral-300/60 shadow-2xs'
           }`}
         >
           {/* Fila 1: Nombre del plato y Subtotal */}
@@ -236,9 +236,9 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
   return (
     <>
       {/* PANEL DERECHO: Resumen del Pedido (Desktop) */}
-      <div className="hidden lg:flex w-full lg:w-[300px] xl:w-[360px] 2xl:w-[400px] shrink-0 flex-col min-h-0 bg-surface rounded-2xl border border-neutral-300 dark:border-neutral-700 shadow-md overflow-hidden">
+      <div className="hidden lg:flex w-full lg:w-[300px] xl:w-[360px] 2xl:w-[400px] shrink-0 flex-col min-h-0 bg-surface rounded-2xl border border-neutral-300 dark:border-neutral-200/80 shadow-md overflow-hidden">
         {/* Cabecera del Ticket */}
-        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 bg-brand-tint border-t-4 border-t-primary shrink-0">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-200/80 bg-brand-tint border-t-4 border-t-primary shrink-0">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 min-w-0">
               <ShoppingBag className="w-5 h-5 text-accent shrink-0 mt-0.5" />
@@ -252,7 +252,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
               </div>
             </div>
 
-            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-surface dark:bg-surface-raised text-ink border border-neutral-200 dark:border-neutral-700 shrink-0 max-w-[140px] truncate shadow-2xs">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-surface dark:bg-surface-raised text-ink border border-neutral-200 dark:border-neutral-200/80 shrink-0 max-w-[140px] truncate shadow-2xs">
               {etiquetaContexto}
             </span>
           </div>
@@ -273,7 +273,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
         </div>
 
         {/* Pie Fijo con Notas, Totales y Botón de Envío */}
-        <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-canvas dark:bg-surface-warm/30 shrink-0 space-y-3">
+        <div className="p-4 border-t border-neutral-200 dark:border-neutral-200/80 bg-canvas dark:bg-surface-warm/30 shrink-0 space-y-3">
           {modo === 'nuevo' && onNotasChange && (
             <div>
               <label
@@ -289,7 +289,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
                 value={notas}
                 onChange={(e) => onNotasChange(e.target.value)}
                 placeholder="Ej: Servir todo junto, sin cubiertos..."
-                className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-surface text-ink focus:outline-none focus:ring-1 focus:ring-accent"
+                className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-200/80 bg-surface text-ink focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
               />
             </div>
           )}
@@ -305,7 +305,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
                 <span className="tabular-nums">S/ {pedidoExistente.total.toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between items-baseline pt-2 mt-1 border-t border-neutral-200 dark:border-neutral-700">
+            <div className="flex justify-between items-baseline pt-2 mt-1 border-t border-neutral-200 dark:border-neutral-200/80">
               <span className="text-sm font-bold text-ink uppercase tracking-wide">
                 Total a Cobrar
               </span>
@@ -376,8 +376,8 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
       {/* DRAWER MÓVIL PARA VER Y EDITAR LÍNEAS DEL PEDIDO */}
       {drawerMovilAbierto && (
         <div className="lg:hidden fixed inset-0 z-50 bg-fill-strong/60 backdrop-blur-xs flex flex-col justify-end animate-in fade-in duration-200">
-          <div className="bg-surface rounded-t-2xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t border-neutral-200 dark:border-neutral-700">
-            <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-brand-tint border-t-4 border-t-primary">
+          <div className="bg-surface rounded-t-2xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t border-neutral-200 dark:border-neutral-200/80">
+            <div className="p-4 border-b border-neutral-200 dark:border-neutral-200/80 flex justify-between items-center bg-brand-tint border-t-4 border-t-primary">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-accent" />
                 <div>
@@ -401,7 +401,7 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
               {lineasBorrador.length === 0 ? renderEstadoVacio() : renderLineas(true)}
             </div>
 
-            <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-canvas dark:bg-surface-warm/30 shrink-0 space-y-3">
+            <div className="p-4 border-t border-neutral-200 dark:border-neutral-200/80 bg-canvas dark:bg-surface-warm/30 shrink-0 space-y-3">
               {modo === 'nuevo' && onNotasChange && (
                 <div>
                   <label
@@ -417,12 +417,12 @@ export const ResumenPedidoPanel: React.FC<ResumenPedidoPanelProps> = ({
                     value={notas}
                     onChange={(e) => onNotasChange(e.target.value)}
                     placeholder="Ej: Servir todo junto, sin cubiertos..."
-                    className="w-full px-3 py-1.5 text-xs bg-surface border border-neutral-200 dark:border-neutral-700 rounded-lg text-ink placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
+                    className="w-full px-3 py-1.5 text-xs bg-surface border border-neutral-200 dark:border-neutral-200/80 rounded-lg text-ink placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
                   />
                 </div>
               )}
 
-              <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700">
+              <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-200/80">
                 <div>
                   <span className="text-xs font-bold text-ink uppercase tracking-wide block">
                     Total a Cobrar:
