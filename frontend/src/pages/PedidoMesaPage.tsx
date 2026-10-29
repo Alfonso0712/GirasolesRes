@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import {
-  RotateCcw,
-  ArrowLeft,
-  AlertCircle
-} from 'lucide-react';
+import { RotateCcw, ArrowLeft, AlertCircle } from 'lucide-react';
 import { usePedidoMesaManagement } from '../hooks/usePedidoMesaManagement';
 import {
   NotaObservacionModal,
   PedidoDescartarModal,
   PedidoConfirmacionModal,
-  PedidoCatalogoPanel,
-  PedidoTicketSidebar,
-  PedidoMobileDrawer
+  CatalogoPedido,
+  ResumenPedidoPanel,
 } from '../components/pedidos';
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
-import { Button } from '../components/ui';
+import { Button, Select } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
@@ -81,7 +76,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     totalGeneralConExistente,
     cantidadTotalProductos,
     registrarPedido,
-    menuDefinido
+    menuDefinido,
   } = usePedidoMesaManagement({
     token: session.token,
     mesaIdInicial,
@@ -98,32 +93,53 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     }
   }, [sinMesaInicial, mesaInvalida, onVolverAMesas]);
 
-  // Modal para armado de Menú Completo paso a paso
   const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDia | null>(null);
   const [modalArmarOpen, setModalArmarOpen] = useState(false);
 
-  // Visibilidad del resumen en dispositivos móviles (drawer / bottom sheet)
-  const [drawerMovilAbierto, setDrawerMovilAbierto] = useState(false);
+  // Atajo de teclado: Escape para descartar borrador si hay líneas y no hay modal abierto
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === 'Escape' &&
+        !modalNotaOpen &&
+        !modalExitoOpen &&
+        !modalDescartarOpen &&
+        !modalArmarOpen
+      ) {
+        if (lineasBorrador.length > 0) {
+          setModalDescartarOpen(true);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    lineasBorrador.length,
+    modalNotaOpen,
+    modalExitoOpen,
+    modalDescartarOpen,
+    modalArmarOpen,
+    setModalDescartarOpen,
+  ]);
 
-  // Categorías presentes en el catálogo
   const categorias = [
     'Todas',
     ...(menusCompletos.length > 0 ? ['Menús Completos'] : []),
-    ...Array.from(new Set(catalogo.map((p) => p.categoria)))
+    ...Array.from(new Set(catalogo.map((p) => p.categoria).filter(Boolean))),
   ];
 
-  // Lista de mesas para el selector garantizando que la mesa seleccionada esté incluida
   const opcionesMesas = React.useMemo(() => {
     if (
       mesaSeleccionada &&
-      !mesasLibres.some((m) => String(m.id).toLowerCase() === String(mesaSeleccionada.id).toLowerCase())
+      !mesasLibres.some(
+        (m) => String(m.id).toLowerCase() === String(mesaSeleccionada.id).toLowerCase()
+      )
     ) {
       return [mesaSeleccionada, ...mesasLibres];
     }
     return mesasLibres;
   }, [mesasLibres, mesaSeleccionada]);
 
-  // Catálogo filtrado por categoría y búsqueda
   const catalogoFiltrado = catalogo.filter((prod) => {
     const coincideCat = categoriaActiva === 'Todas' || prod.categoria === categoriaActiva;
     const coincideBusqueda =
@@ -132,22 +148,38 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     return coincideCat && coincideBusqueda;
   });
 
-  // Agrupación por categoría si está en "Todas"
-  const productosPorCategoria: Record<string, typeof catalogo> = {};
-  catalogoFiltrado.forEach((prod) => {
-    if (!productosPorCategoria[prod.categoria]) {
-      productosPorCategoria[prod.categoria] = [];
-    }
-    productosPorCategoria[prod.categoria].push(prod);
-  });
-
   if (sinMesaInicial || mesaInvalida || (cargando && !mesaSeleccionada)) {
     return null;
   }
 
+  const campoContextualMesa =
+    modo === 'nuevo' ? (
+      <Select
+        value={mesaSeleccionada?.id || ''}
+        onChange={(e) => {
+          const m = opcionesMesas.find(
+            (item) => String(item.id).toLowerCase() === e.target.value.toLowerCase()
+          );
+          setMesaSeleccionada(m || null);
+        }}
+        options={opcionesMesas.map((m) => ({
+          value: String(m.id),
+          label: `${m.nombre} (Libre)`,
+        }))}
+        placeholder="-- Seleccione Mesa Libre --"
+        aria-label="Seleccionar mesa libre"
+        selectClassName="!min-h-[42px] !py-2 !text-xs sm:!text-sm !rounded-xl !border-neutral-200 !font-medium"
+      />
+    ) : (
+      <div className="w-full min-h-[42px] flex items-center gap-2 px-3.5 py-2 bg-amber-50 border border-amber-200 rounded-xl text-xs font-semibold text-amber-900 shadow-2xs">
+        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 animate-pulse" />
+        <span className="truncate">Mesa: {mesaSeleccionada?.nombre || 'Mesa'}</span>
+      </div>
+    );
+
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">
-      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10">
+      <PageContainer maxWidth="max-w-[1600px]" className="lg:px-5 xl:px-8 2xl:px-10">
         {/* 1. Encabezado Unificado */}
         <PageHeader
           title="Pedido de Mesa"
@@ -198,6 +230,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               <span>{errorGeneral}</span>
             </div>
             <button
+              type="button"
               onClick={() => setErrorGeneral(null)}
               className="text-rose-500 hover:text-rose-800 text-base leading-none p-1 cursor-pointer"
             >
@@ -206,19 +239,17 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           </div>
         )}
 
-        {/* 2. CUERPO PRINCIPAL: VISTA DIVIDIDA */}
-        <div className="flex-1 flex flex-col lg:flex-row min-h-0 gap-4 lg:min-h-[640px] lg:h-[calc(100vh-140px)]">
-          {/* PANEL IZQUIERDO: Catálogo */}
-          <PedidoCatalogoPanel
+        {/* 2. CUERPO PRINCIPAL: VISTA DIVIDIDA (CATÁLOGO + RESUMEN) */}
+        <div className="flex flex-col lg:flex-row min-h-0 gap-4 lg:h-[calc(100vh-196px)] lg:min-h-[500px]">
+          <CatalogoPedido
             busqueda={busqueda}
             onBusquedaChange={setBusqueda}
-            modo={modo}
-            mesaSeleccionada={mesaSeleccionada}
-            opcionesMesas={opcionesMesas}
-            onMesaSeleccionadaChange={setMesaSeleccionada}
+            campoContextual={campoContextualMesa}
             cargando={cargando}
             menuDefinido={menuDefinido}
             esAdmin={session.rol === 'Administrador'}
+            textoMenuNoDefinidoAdmin="Para habilitar la toma de pedidos en las mesas del salón, primero debe configurar y publicar el menú del día de hoy."
+            textoMenuNoDefinidoOperador="No es posible abrir comandas hasta que el menú diario esté activo."
             onNavigateToMenuDia={onNavigateToMenuDia}
             categorias={categorias}
             categoriaActiva={categoriaActiva}
@@ -229,16 +260,15 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
               setModalArmarOpen(true);
             }}
             catalogoFiltrado={catalogoFiltrado}
-            productosPorCategoria={productosPorCategoria}
             lineasBorrador={lineasBorrador}
             onAgregarProducto={agregarProducto}
             onDisminuirProducto={disminuirProducto}
           />
 
-          {/* PANEL DERECHO: Resumen del Pedido (Desktop) */}
-          <PedidoTicketSidebar
+          <ResumenPedidoPanel
+            titulo={modo === 'ampliacion' ? 'Ampliación de pedido' : 'Pedido de mesa'}
+            etiquetaContexto={mesaSeleccionada?.nombre || 'Sin Mesa'}
             modo={modo}
-            mesaSeleccionada={mesaSeleccionada}
             pedidoExistente={pedidoExistente}
             lineasBorrador={lineasBorrador}
             erroresLineas={erroresLineas}
@@ -248,6 +278,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
             totalCalculado={totalCalculado}
             totalGeneralConExistente={totalGeneralConExistente}
             registrando={registrando}
+            deshabilitarConfirmar={!mesaSeleccionada}
             onAbrirNota={abrirModalNota}
             onRepetirLinea={repetirLinea}
             onDisminuirLinea={disminuirLinea}
@@ -256,28 +287,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
           />
         </div>
 
-        {/* 3. BARRA INFERIOR / DRAWER MÓVIL */}
-        <PedidoMobileDrawer
-          isOpen={drawerMovilAbierto}
-          onOpenChange={setDrawerMovilAbierto}
-          modo={modo}
-          mesaSeleccionada={mesaSeleccionada}
-          cantidadTotalProductos={cantidadTotalProductos}
-          totalCalculado={totalCalculado}
-          totalGeneralConExistente={totalGeneralConExistente}
-          registrando={registrando}
-          lineasBorrador={lineasBorrador}
-          erroresLineas={erroresLineas}
-          notas={notas}
-          onNotasChange={setNotas}
-          onAbrirNota={abrirModalNota}
-          onRepetirLinea={repetirLinea}
-          onDisminuirLinea={disminuirLinea}
-          onQuitarLinea={quitarLineaByIndex}
-          onRegistrarPedido={() => registrarPedido(onVolverAMesas)}
-        />
-
-        {/* 4. MODALES DE APOYO */}
+        {/* 3. MODALES DE APOYO */}
         <NotaObservacionModal
           isOpen={modalNotaOpen}
           onClose={() => setModalNotaOpen(false)}

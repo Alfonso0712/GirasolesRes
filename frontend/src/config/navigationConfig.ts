@@ -42,7 +42,7 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
         label: 'Mesas y Salón',
         icon: LayoutGrid,
         roles: ['Administrador', 'Mozo', 'Cajero'],
-        matchPaths: ['mesas', 'pedidos-mesa', 'pedidos-llevar', 'pedido-mesa', 'pedido-llevar'],
+        matchPaths: ['mesas'],
       },
       {
         id: 'pedidos',
@@ -134,38 +134,49 @@ export interface BreadcrumbResolution {
   page: string;
 }
 
+export interface NavigationResolution extends BreadcrumbResolution {
+  groupId: string | null;
+  activeItemId: string | null;
+}
+
 /**
- * Resuelve la sección y la página para la cabecera a partir de la ruta activa,
- * soportando rutas dinámicas y casos especiales como "Inicio" sin prefijo de grupo.
+ * Resuelve de forma unificada el grupo, ítem activo del menú lateral y breadcrumb
+ * de la cabecera a partir de la ruta activa.
  */
-export function resolveBreadcrumbs(paginaActiva: string): BreadcrumbResolution {
-  // Caso especial: "Inicio" / Dashboard sin grupo en el breadcrumb
-  if (paginaActiva === 'inicio' || paginaActiva === 'dashboard') {
+export function resolveNavigation(paginaActiva: string): NavigationResolution {
+  if (!paginaActiva || paginaActiva === 'inicio' || paginaActiva === 'dashboard') {
     return {
+      groupId: null,
+      activeItemId: 'inicio',
       section: null,
       page: 'Inicio',
     };
   }
 
-  // Rutas dinámicas de pedido de mesa / llevar
   if (paginaActiva === 'pedidos-mesa' || paginaActiva === 'pedido-mesa') {
     return {
+      groupId: 'salon-pedidos',
+      activeItemId: null,
       section: 'Salón y Pedidos',
       page: 'Pedido de Mesa',
     };
   }
+
   if (paginaActiva === 'pedidos-llevar' || paginaActiva === 'pedido-llevar') {
     return {
+      groupId: 'salon-pedidos',
+      activeItemId: null,
       section: 'Salón y Pedidos',
       page: 'Pedido para Llevar',
     };
   }
 
-  // Buscar en los grupos canónicos
   for (const group of NAVIGATION_GROUPS) {
     for (const item of group.items) {
       if (item.id === paginaActiva || item.matchPaths?.includes(paginaActiva)) {
         return {
+          groupId: group.id,
+          activeItemId: item.id,
           section: group.title,
           page: item.label,
         };
@@ -174,7 +185,22 @@ export function resolveBreadcrumbs(paginaActiva: string): BreadcrumbResolution {
   }
 
   return {
+    groupId: null,
+    activeItemId: 'inicio',
     section: null,
     page: 'Inicio',
   };
+}
+
+export function isNavigationItemActive(item: NavigationItem, paginaActiva: string): boolean {
+  return resolveNavigation(paginaActiva).activeItemId === item.id;
+}
+
+/**
+ * Resuelve la sección y la página para la cabecera a partir de la ruta activa,
+ * soportando rutas dinámicas y casos especiales como "Inicio" sin prefijo de grupo.
+ */
+export function resolveBreadcrumbs(paginaActiva: string): BreadcrumbResolution {
+  const { section, page } = resolveNavigation(paginaActiva);
+  return { section, page };
 }

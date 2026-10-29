@@ -6,7 +6,11 @@ import {
   X
 } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
-import { NAVIGATION_GROUPS, type NavigationItem } from '../../config/navigationConfig';
+import {
+  NAVIGATION_GROUPS,
+  resolveNavigation,
+  isNavigationItemActive,
+} from '../../config/navigationConfig';
 import logoGirasoles from '../../assets/LOGO_GIRASOLES.png';
 
 interface SidebarProps {
@@ -93,12 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       .filter((grupo) => grupo.items.length > 0);
   }, [gruposConfig, rol]);
 
-  // Determina si un elemento o ruta secundaria (ej: pedidos-mesa, pedidos-llevar) activa la opción de Mesas
-  const isItemActive = (item: NavigationItem, activePage: string) => {
-    if (activePage === item.id) return true;
-    if (item.matchPaths && item.matchPaths.includes(activePage)) return true;
-    return false;
-  };
+  const navState = useMemo(() => resolveNavigation(paginaActiva), [paginaActiva]);
 
   // Estado de apertura de acordeones (ISO 9241 - Eficiencia operativa):
   // - Roles con pocas opciones (Cajero, Mozo, Cocinero): grupos expandidos por defecto para ahorrar clics en hora pico.
@@ -119,9 +118,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       'carta-menu': false,
       'administracion': false,
     };
-    const activeGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i, paginaActiva)));
-    if (activeGroup) {
-      initial[activeGroup.id] = true;
+    const activeGroupId = resolveNavigation(paginaActiva).groupId;
+    if (activeGroupId) {
+      initial[activeGroupId] = true;
     }
     return initial;
   });
@@ -129,14 +128,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Auto-apertura inteligente cuando cambia la ruta activa
   useEffect(() => {
     if (!paginaActiva || paginaActiva === 'inicio') return;
-    const parentGroup = gruposConfig.find((g) => g.items.some((i) => isItemActive(i, paginaActiva)));
-    if (parentGroup) {
+    if (navState.groupId) {
+      const gid = navState.groupId;
       setGruposAbiertos((prev) => ({
         ...prev,
-        [parentGroup.id]: true,
+        [gid]: true,
       }));
     }
-  }, [paginaActiva, gruposConfig]);
+  }, [paginaActiva, navState.groupId]);
 
   const toggleGrupo = (grupoId: string) => {
     setGruposAbiertos((prev) => ({
@@ -202,7 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* 4 Secciones Jerárquicas Desplegables (Acordeón) */}
           {gruposVisibles.map((grupo) => {
             const isOpen = Boolean(gruposAbiertos[grupo.id]);
-            const tieneItemActivo = grupo.items.some((i) => isItemActive(i, paginaActiva));
+            const tieneItemActivo = navState.groupId === grupo.id;
 
             return (
               <div key={grupo.id} className="pt-1.5 first:pt-0">
@@ -250,7 +249,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <div className="pl-3 border-l border-white/10 ml-3.5 space-y-1 mt-1 mb-2 animate-in fade-in duration-150">
                     {grupo.items.map((item) => {
                       const Icon = item.icon;
-                      const esActivo = isItemActive(item, paginaActiva);
+                      const esActivo = isNavigationItemActive(item, paginaActiva);
                       return (
                         <button
                           key={item.id}

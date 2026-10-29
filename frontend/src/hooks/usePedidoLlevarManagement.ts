@@ -31,6 +31,7 @@ export function usePedidoLlevarManagement({
   // Referencia opcional del cliente (RV-73: máx 30 caracteres)
   const [referencia, setReferencia] = useState('');
   const [errorReferencia, setErrorReferencia] = useState<string | null>(null);
+  const [notas, setNotas] = useState('');
 
   // Líneas del pedido en armado (borrador)
   const [lineasBorrador, setLineasBorrador] = useState<LineaBorrador[]>([]);
@@ -450,6 +451,7 @@ export function usePedidoLlevarManagement({
   const confirmarDescarte = () => {
     setLineasBorrador([]);
     setReferencia('');
+    setNotas('');
     setErrorReferencia(null);
     setErrorGeneral(null);
     setErroresLineas({});
@@ -460,6 +462,7 @@ export function usePedidoLlevarManagement({
   const reiniciarParaNuevoPedido = () => {
     setLineasBorrador([]);
     setReferencia('');
+    setNotas('');
     setErrorReferencia(null);
     setErrorGeneral(null);
     setErroresLineas({});
@@ -581,6 +584,7 @@ export function usePedidoLlevarManagement({
   // Filtrado de catálogo
   const categorias = [
     'Todas',
+    ...(menusCompletos.length > 0 ? ['Menús Completos'] : []),
     ...Array.from(new Set(catalogo.map((p) => p.categoria).filter(Boolean)))
   ];
 
@@ -609,6 +613,8 @@ export function usePedidoLlevarManagement({
     referencia,
     handleCambioReferencia,
     errorReferencia,
+    notas,
+    setNotas,
     lineasBorrador,
     agregarProducto,
     agregarMenuCompleto,

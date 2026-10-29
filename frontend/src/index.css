@@ -717,14 +717,27 @@ input::placeholder, textarea::placeholder {
 
 
 /* Scrollbars globales accesibles */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #8A8179 transparent;
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #8A8179 transparent;
+  }
+
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #8A8179 transparent;
+  }
 }
 
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 *::-webkit-scrollbar-track {
@@ -740,15 +753,16 @@ input::placeholder, textarea::placeholder {
   background-color: #78716C;
 }
 
-/* Utilidad scroll-thin (w-1.5 h-1.5) */
-.scroll-thin {
-  scrollbar-width: thin;
-  scrollbar-color: #8A8179 transparent;
-}
-
+/* Utilidad scroll-thin (w-1.5 h-1.5, sin flechas nativas) */
 .scroll-thin::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+}
+
+.scroll-thin::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .scroll-thin::-webkit-scrollbar-track {
