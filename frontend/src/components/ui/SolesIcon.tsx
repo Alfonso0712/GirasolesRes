@@ -5,12 +5,14 @@ export interface SolesIconProps extends React.SVGAttributes<SVGSVGElement> {
   className?: string;
   color?: string;
   strokeWidth?: number | string;
+  fontSize?: number | string;
 }
 
 /**
  * Ícono institucional de moneda peruana (Soles - S/)
  * Diseñado como drop-in replacement para íconos de Lucide (DollarSign, BadgeDollarSign).
- * Compatible con modo claro, modo oscuro (currentColor) y diferentes escalas (12px, 16px, 20px, 24px).
+ * Proporción óptica optimizada (fontSize=20 en viewBox de 24x24) para igualar la altura visual
+ * y peso de los íconos Lucide estándar (16px, 20px, 24px) en modo claro y modo oscuro.
  */
 export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
   (
@@ -19,6 +21,7 @@ export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
       className = '',
       color = 'currentColor',
       strokeWidth = 2,
+      fontSize = 20,
       ...props
     },
     ref
@@ -41,15 +44,15 @@ export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
       >
         <text
           x="12"
-          y="12.5"
+          y="12.2"
           textAnchor="middle"
           dominantBaseline="central"
           fill={color}
           stroke="none"
-          fontFamily="var(--font-sans, system-ui, sans-serif)"
-          fontSize="13"
+          fontFamily="var(--font-sans, system-ui, -apple-system, sans-serif)"
+          fontSize={fontSize}
           fontWeight="800"
-          letterSpacing="-0.5px"
+          letterSpacing="-1px"
         >
           S/
         </text>
