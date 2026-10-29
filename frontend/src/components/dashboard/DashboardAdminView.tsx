@@ -391,7 +391,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 {/* Por cobrar */}
                 <button
                   type="button"
-                  onClick={() => onNavigate('cobros')}
+                  onClick={() => onNavigate('pedidos', { estado: 'listo' })}
                   className="p-3 rounded-xl border border-neutral-200 hover:border-purple-400 hover:bg-purple-50/50 transition-all text-left cursor-pointer group"
                 >
                   <span className="text-xs font-medium text-neutral-500 block">Por Cobrar</span>

@@ -82,7 +82,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
             <button
               type="button"
               disabled={!cajaAbierta}
-              onClick={() => onNavigate('cobros')}
+              onClick={() => onNavigate('caja')}
               className={`w-full p-4 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all min-h-[48px] ${
                 cajaAbierta
                   ? 'bg-primary text-white shadow-md hover:bg-primary-hover cursor-pointer'
@@ -180,7 +180,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
           renderBloqueError('porCobrar')
         ) : (
           <div
-            onClick={() => onNavigate('cobros')}
+            onClick={() => onNavigate('caja')}
             className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:border-accent hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
           >
             <div>

@@ -367,6 +367,21 @@ export const HomePage: React.FC<HomePageProps> = ({
     if (pagina === 'pedidos') {
       setFiltroEstadoPedidos(params?.estado || '');
     }
+    if (pagina === 'caja' || pagina === 'cobros') {
+      if (session.rol === 'Cajero') {
+        if (params?.pedidoId) {
+          setPedidoIdParaCobro(params.pedidoId);
+        }
+        if (params?.mesa) {
+          setMesaParaCobro(params.mesa);
+        }
+        setPaginaActiva('caja');
+      } else {
+        setFiltroEstadoPedidos('listo');
+        setPaginaActiva('pedidos');
+      }
+      return;
+    }
     if (pagina === 'pedido-mesa' || pagina === 'pedidos-mesa') {
       if (!params?.mesaId) {
         setMesaSeleccionadaParaPedido(null);
@@ -397,6 +412,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         if (p === 'pedido-mesa' || p === 'pedidos-mesa') {
           setMesaSeleccionadaParaPedido(null);
           setPaginaActiva('mesas');
+          return;
+        }
+        if (p === 'cobros') {
+          setMesaSeleccionadaParaPedido(null);
+          setPaginaActiva('caja');
           return;
         }
         setMesaSeleccionadaParaPedido(null);
@@ -470,7 +490,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             setPaginaActiva('caja');
           }}
         />
-      ) : paginaActiva === 'caja' && session.rol === 'Cajero' ? (
+      ) : (paginaActiva === 'caja' || paginaActiva === 'cobros') && session.rol === 'Cajero' ? (
         <CobrosPage
           session={session}
           onLogout={onLogout}
