@@ -144,12 +144,8 @@ public class AuthService : IAuthService
             return Result<string>.Fallido(MensajesCatalogo.MSG_12);
         }
 
-        // Solo la Administradora General (@admin) tiene habilitada la recuperación.
+        // Solo la Administradora General (@admin) tiene habilitada la recuperación (100% gobernado por BD).
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
-        if (usuario == null && (correo == "cjazztin7@gmail.com" || correo == "chuquijazztin@gmail.com"))
-        {
-            usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
-        }
 
         if (usuario == null)
         {
@@ -167,17 +163,17 @@ public class AuthService : IAuthService
         }
 
         var codigo = Random.Shared.Next(100000, 999999).ToString();
-            await _codigoRecuperacionRepository.InvalidarCodigosActivosPorCorreoAsync(correo, cancellationToken);
+        await _codigoRecuperacionRepository.InvalidarCodigosActivosPorCorreoAsync(correo, cancellationToken);
 
-            var codigoEntidad = new CodigoRecuperacion(correo, codigo, minutosValidez: 15);
-            await _codigoRecuperacionRepository.AgregarAsync(codigoEntidad, cancellationToken);
-            await _codigoRecuperacionRepository.GuardarCambiosAsync(cancellationToken);
+        var codigoEntidad = new CodigoRecuperacion(correo, codigo, minutosValidez: 15);
+        await _codigoRecuperacionRepository.AgregarAsync(codigoEntidad, cancellationToken);
+        await _codigoRecuperacionRepository.GuardarCambiosAsync(cancellationToken);
 
-            var enviado = await _emailService.EnviarCodigoRecuperacionAsync(correo, codigo, cancellationToken);
-            if (!enviado)
-            {
-                return Result<string>.Fallido(MensajesCatalogo.MSG_18);
-            }
+        var enviado = await _emailService.EnviarCodigoRecuperacionAsync(correo, codigo, cancellationToken);
+        if (!enviado)
+        {
+            return Result<string>.Fallido(MensajesCatalogo.MSG_18);
+        }
 
         return Result<string>.Exitoso(MensajesCatalogo.MSG_11, MensajesCatalogo.MSG_11);
     }
@@ -206,10 +202,6 @@ public class AuthService : IAuthService
         }
 
         var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo, cancellationToken);
-        if (usuario == null && (correo == "cjazztin7@gmail.com" || correo == "chuquijazztin@gmail.com"))
-        {
-            usuario = await _usuarioRepository.ObtenerPorNombreUsuarioAsync("admin", cancellationToken);
-        }
 
         if (usuario == null)
         {
