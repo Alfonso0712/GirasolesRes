@@ -143,7 +143,7 @@ export function resolveBreadcrumbs(paginaActiva: string): BreadcrumbResolution {
   if (paginaActiva === 'inicio' || paginaActiva === 'dashboard') {
     return {
       section: null,
-      page: 'Panel Principal',
+      page: 'Inicio',
     };
   }
 
@@ -175,6 +175,6 @@ export function resolveBreadcrumbs(paginaActiva: string): BreadcrumbResolution {
 
   return {
     section: null,
-    page: 'Panel Principal',
+    page: 'Inicio',
   };
 }
