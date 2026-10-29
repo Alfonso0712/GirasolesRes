@@ -129,7 +129,7 @@ builder.Services.AddCors(options =>
     {
         policy.SetIsOriginAllowed(origin =>
         {
-            if (string.IsNullOrWhiteSpace(origin)) return false;
+            if (string.IsNullOrWhiteSpace(origin) || origin == "null") return true;
             if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri)) return false;
 
             var host = uri.Host.ToLowerInvariant();

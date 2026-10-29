@@ -251,6 +251,29 @@ public class ProductosController : ControllerBase
         return Ok(resultado.Data);
     }
 
+
+    /// <summary>
+    /// Consulta pública en tiempo real de productos activos de la carta para la Landing Page
+    /// </summary>
+    [HttpGet("carta-publica")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ListarCartaPublica(
+        [FromQuery] string? categoria,
+        CancellationToken cancellationToken = default)
+    {
+        var resultado = await _productoService.ListarDisponiblesAsync(categoria, null, null, cancellationToken);
+        if (!resultado.IsSuccess)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new
+            {
+                success = false,
+                message = resultado.Message
+            });
+        }
+
+        return Ok(resultado.Data);
+    }
+
     private string ObtenerNombreAdmin()
     {
         return User.FindFirst(ClaimTypes.Name)?.Value 

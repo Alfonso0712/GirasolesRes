@@ -1,3 +1,5 @@
+SET client_encoding = 'UTF8';
+
 -- ==============================================================================
 -- RESTAURANTE GIRASOLES
 -- Script de Migración y Sembrado: CUS04 - Ampliación de Categorías y Carta Peruana

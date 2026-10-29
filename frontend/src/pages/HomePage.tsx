@@ -16,6 +16,8 @@ import { DashboardPage } from './DashboardPage';
 import { LogoutModal } from '../components/layout';
 import { InactivityModal } from '../components/layout';
 import { ChangePasswordModal } from '../components/usuarios';
+import { ConfiguracionModal } from '../components/configuracion';
+import { ConfiguracionPage } from './ConfiguracionPage';
 import { AvisoComandaModal, AvisoNuevoPedidoCocinaModal, type NuevoPedidoCocinaInfo } from '../components/cocina';
 import { logoutService, renovarTokenService } from '../services/authService';
 import { validateJwtToken, SESSION_EXPIRED_MESSAGE } from '../services/apiClient';
@@ -128,6 +130,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   const [mostrarModalInactividad, setMostrarModalInactividad] = useState(false);
   const [mostrarModalPassword, setMostrarModalPassword] = useState(false);
+  const [mostrarModalConfiguracion, setMostrarModalConfiguracion] = useState(false);
 
   // RV-28: Mensaje flotante de confirmación (Toast) durante 4 segundos
   const [toastMensaje, setToastMensaje] = useState<string | null>(null);
@@ -364,8 +367,27 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Navegación contextual desde Dashboard (CUS15)
   const handleDashboardNavigate = (pagina: string, params?: any) => {
+    if (pagina === 'cobros' || pagina === 'caja') {
+      if (session.rol === 'Cajero') {
+        setPaginaActiva('caja');
+      } else {
+        setFiltroEstadoPedidos('Listo');
+        setPaginaActiva('pedidos');
+      }
+      return;
+    }
     if (pagina === 'pedidos') {
-      setFiltroEstadoPedidos(params?.estado || '');
+      const est = params?.estado;
+      const normalizado = est
+        ? est.toLowerCase() === 'listo'
+          ? 'Listo'
+          : est.toLowerCase() === 'pendiente'
+          ? 'Pendiente'
+          : est.toLowerCase() === 'en_proceso' || est.toLowerCase() === 'enpreparacion'
+          ? 'EnPreparacion'
+          : est
+        : '';
+      setFiltroEstadoPedidos(normalizado);
     }
     if (pagina === 'caja' || pagina === 'cobros') {
       if (session.rol === 'Cajero') {
@@ -402,6 +424,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       session={session}
       onLogout={() => setMostrarModalLogout(true)}
       onCambiarPassword={() => setMostrarModalPassword(true)}
+      onAbrirConfiguracion={() => setPaginaActiva('configuracion')}
       paginaActiva={paginaActiva}
       pedidosListosCount={avisosPendientes.length}
       cajaEstado={cajaGlobal?.estado}
@@ -587,6 +610,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           onLogout={onLogout}
           onUpdateSession={onUpdateSession}
         />
+      ) : paginaActiva === 'configuracion' ? (
+        <ConfiguracionPage
+          session={session}
+          onLogout={onLogout}
+        />
       ) : (
         <DashboardPage
           session={session}
@@ -616,6 +644,13 @@ export const HomePage: React.FC<HomePageProps> = ({
         token={session.token}
         onSuccess={handlePasswordSuccess}
         onForceLogoutDueToFailedAttempts={handleForceLogoutDueToFailedAttempts}
+      />
+
+      {/* Modal de Configuración y Ergonomía (Modo Zurdo / Diestro / Tema) */}
+      <ConfiguracionModal
+        isOpen={mostrarModalConfiguracion}
+        onClose={() => setMostrarModalConfiguracion(false)}
+        token={session.token}
       />
 
       {/* CUS09.3: Modal emergente de aviso de comanda lista (HU27 / RF-27 / RN-71 / RV-83) */}

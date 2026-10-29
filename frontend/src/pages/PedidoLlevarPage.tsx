@@ -11,6 +11,7 @@ import {
 import { ArmarMenuCompletoModal } from '../components/menu-dia';
 import { Button } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
+import { useHandedness } from '../hooks/useHandedness';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
 
@@ -29,6 +30,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   onNavigateToCobro,
   onNavigateToMenuDia,
 }) => {
+  const { isLeftHanded } = useHandedness();
   const {
     cargando,
     registrando,
@@ -184,7 +186,7 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
         )}
 
         {/* 2. CUERPO PRINCIPAL: VISTA DIVIDIDA (CATÁLOGO + RESUMEN) */}
-        <div className="flex flex-col lg:flex-row min-h-0 gap-4 lg:h-[calc(100vh-196px)] lg:min-h-[500px]">
+        <div className={`flex flex-col ${isLeftHanded ? 'lg:flex-row-reverse' : 'lg:flex-row'} min-h-0 gap-4 lg:h-[calc(100vh-196px)] lg:min-h-[500px]`}>
           <CatalogoPedido
             busqueda={busqueda}
             onBusquedaChange={setBusqueda}

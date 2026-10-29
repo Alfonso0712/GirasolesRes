@@ -163,4 +163,33 @@ public class PerfilService : IPerfilService
         await _usuarioRepository.ActualizarAsync(usuario, cancellationToken);
         await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
     }
+    public async Task<string> ObtenerOrientacionAsync(Guid usuarioId, CancellationToken cancellationToken = default)
+    {
+        var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId, cancellationToken);
+        if (usuario == null)
+        {
+            return OrientacionUsuario.Diestro;
+        }
+
+        return usuario.Usu_Orientacion;
+    }
+
+    public async Task ActualizarOrientacionAsync(Guid usuarioId, string orientacion, CancellationToken cancellationToken = default)
+    {
+        var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId, cancellationToken);
+        if (usuario == null)
+        {
+            throw new RecursoNoEncontradoException("Usuario no encontrado.");
+        }
+
+        if (!usuario.Usu_Activo)
+        {
+            throw new ConflictoException("Cuenta desactivada.");
+        }
+
+        usuario.ActualizarOrientacion(orientacion);
+
+        await _usuarioRepository.ActualizarAsync(usuario, cancellationToken);
+        await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
+    }
 }

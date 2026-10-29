@@ -21,6 +21,7 @@ public class LoginResponse
     public string Nombre { get; set; } = string.Empty;
     public string Usuario { get; set; } = string.Empty;
     public string Tema { get; set; } = "light";
+    public string Orientacion { get; set; } = "right";
 }
 
 public class ForgotPasswordRequest

@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { KeyRound, LogOut, ChevronDown, Menu } from 'lucide-react';
+import { KeyRound, LogOut, ChevronDown, Menu, Settings } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 
 import { obtenerIniciales } from '../../utils/avatar';
 import { ThemeToggle } from './ThemeToggle';
+import { useHandedness } from '../../hooks/useHandedness';
 
 interface HeaderProps {
   session?: UserSession | null;
   onLogout?: () => void;
   onCambiarPassword?: () => void;
+  onAbrirConfiguracion?: () => void;
   breadcrumbSection?: string | null;
   breadcrumbPage?: string;
   onToggleSidebar?: () => void;
@@ -18,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   session,
   onLogout,
   onCambiarPassword,
+  onAbrirConfiguracion,
   breadcrumbSection = null,
   breadcrumbPage = 'Usuarios',
   onToggleSidebar
@@ -26,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isLeftHanded } = useHandedness();
 
   // Cerrar menú al hacer clic afuera
   useEffect(() => {
@@ -77,9 +81,13 @@ export const Header: React.FC<HeaderProps> = ({
   const esAdmin = session?.rol === 'Administrador';
 
   return (
-    <header className="bg-surface border-b border-neutral-200 dark:border-neutral-700/60 px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center shadow-xs relative shrink-0">
-      {/* Left side: Hamburger (mobile/tablet) + Breadcrumbs */}
-      <div className="flex items-center gap-2 sm:gap-3">
+    <header
+      className={`bg-surface border-b border-neutral-200 dark:border-neutral-700/60 px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex ${
+        isLeftHanded ? 'flex-row-reverse' : ''
+      } justify-between items-center shadow-xs relative shrink-0`}
+    >
+      {/* Sección Breadcrumbs y Hamburguesa */}
+      <div className={`flex items-center gap-2 sm:gap-3 ${isLeftHanded ? 'flex-row-reverse' : ''}`}>
         {onToggleSidebar && (
           <button
             type="button"
@@ -103,8 +111,8 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right side: Modo oscuro + Menú desplegable de usuario */}
-      <div className="flex items-center gap-2 sm:gap-4">
+      {/* Sección Controles de Usuario y Tema */}
+      <div className={`flex items-center gap-2 sm:gap-4 ${isLeftHanded ? 'flex-row-reverse' : ''}`}>
         <ThemeToggle />
 
         <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700/60" />
@@ -150,8 +158,26 @@ export const Header: React.FC<HeaderProps> = ({
               role="menu"
               aria-orientation="vertical"
               aria-label="Opciones de usuario"
-              className="absolute right-0 top-full mt-2 w-52 bg-surface rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-700/80 p-1.5 z-50 animate-in fade-in slide-in-from-top-1"
+              className={`absolute ${
+                isLeftHanded ? 'left-0' : 'right-0'
+              } top-full mt-2 w-52 bg-surface rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-700/80 p-1.5 z-50 animate-in fade-in slide-in-from-top-1`}
             >
+              {/* Opción: Configuración y Ergonomía (Modo Zurdo/Diestro y Tema) */}
+              {onAbrirConfiguracion && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenuAbierto(false);
+                    onAbrirConfiguracion();
+                  }}
+                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-ink hover:text-ink hover:bg-neutral-100 dark:hover:bg-white/10 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 focus:bg-neutral-100 dark:focus:bg-white/10"
+                >
+                  <Settings className="w-4 h-4 text-ink-muted shrink-0" />
+                  <span>Configuración</span>
+                </button>
+              )}
+
               {/* RN-16: Solo Administrador puede cambiar contraseña */}
               {esAdmin && onCambiarPassword && (
                 <button

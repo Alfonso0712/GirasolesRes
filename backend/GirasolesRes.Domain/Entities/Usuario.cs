@@ -16,6 +16,7 @@ public class Usuario
     public DateTime Usu_FechaCreacionUtc { get; private set; }
     public DateTime? Usu_FechaActualizacionUtc { get; private set; }
     public string Usu_Tema { get; private set; } = TemaUsuario.Claro;
+    public string Usu_Orientacion { get; private set; } = OrientacionUsuario.Diestro;
 
     // Constructor privado para EF Core
     private Usuario() { }
@@ -97,7 +98,16 @@ public class Usuario
         {
             throw new ArgumentException("El tema debe ser 'light' o 'dark'.", nameof(tema));
         }
-
         Usu_Tema = temaNormalizado;
+    }
+    public void ActualizarOrientacion(string orientacion)
+    {
+        var orientacionNormalizada = (orientacion ?? string.Empty).Trim().ToLowerInvariant();
+        if (!OrientacionUsuario.EsValido(orientacionNormalizada))
+        {
+            throw new ArgumentException("La orientación debe ser 'right' o 'left'.", nameof(orientacion));
+        }
+
+        Usu_Orientacion = orientacionNormalizada;
     }
 }

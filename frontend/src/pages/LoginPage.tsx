@@ -10,12 +10,14 @@ interface LoginPageProps {
   onSuccess: (session: UserSession) => void;
   onForgotPasswordClick: () => void;
   initialBanner?: { type: 'success' | 'error' | 'info' | 'warning'; message: string } | null;
+  onBackToLanding?: () => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({
   onSuccess,
   onForgotPasswordClick,
   initialBanner,
+  onBackToLanding,
 }) => {
   const [formData, setFormData] = useState({
     usuario: '',
@@ -307,6 +309,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             </button>
           </div>
         </div>
+
+        {onBackToLanding && (
+          <div className="text-center pt-3 border-t border-line mt-4">
+            <button
+              type="button"
+              onClick={onBackToLanding}
+              className="text-xs font-semibold text-accent hover:underline inline-flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <span>← Volver a la Carta del Restaurante</span>
+            </button>
+          </div>
+        )}
     </AuthLayout>
   );
 };

@@ -68,7 +68,8 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                 RESTAURANTE GIRASOLES
               </h3>
               <p className="text-xs text-neutral-500">RUC: 20481234567</p>
-              <p className="text-xs text-neutral-500">Av. Principal 123 - Ayacucho</p>
+              <p className="text-xs text-neutral-500">Jr. Mariscal Castilla N° 1023</p>
+              <p className="text-xs text-neutral-500">Tel: 934127923</p>
               {comprobante.esCopia && (
                 <div className="mt-1 inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-xs font-bold">
                   *** COPIA ***

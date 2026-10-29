@@ -1,6 +1,7 @@
 import type { Theme } from '../hooks/useTheme';
+import type { Handedness } from '../hooks/useHandedness';
 
-export type { Theme };
+export type { Theme, Handedness };
 export type RolUsuario = 'Administrador' | 'Cajero' | 'Mozo' | 'Cocinero';
 
 export interface UserSession {
@@ -9,6 +10,7 @@ export interface UserSession {
   nombre: string;
   usuario: string;
   tema?: Theme;
+  orientacion?: Handedness;
 }
 
 export interface LoginErrorResponse {

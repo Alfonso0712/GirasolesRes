@@ -15,4 +15,6 @@ public interface IPerfilService
 
     Task<string> ObtenerTemaAsync(Guid usuarioId, CancellationToken cancellationToken = default);
     Task ActualizarTemaAsync(Guid usuarioId, string tema, CancellationToken cancellationToken = default);
+    Task<string> ObtenerOrientacionAsync(Guid usuarioId, CancellationToken cancellationToken = default);
+    Task ActualizarOrientacionAsync(Guid usuarioId, string orientacion, CancellationToken cancellationToken = default);
 }

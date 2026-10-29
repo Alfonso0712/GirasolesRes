@@ -129,7 +129,8 @@ public class AuthService : IAuthService
             Rol = usuario.Usu_Rol.ToString(),
             Nombre = usuario.Usu_Nombre,
             Usuario = usuario.Usu_Usuario,
-            Tema = usuario.Usu_Tema
+            Tema = usuario.Usu_Tema,
+            Orientacion = usuario.Usu_Orientacion
         };
 
         return Result<LoginResponse>.Exitoso(responseData, MensajesCatalogo.MSG_08);

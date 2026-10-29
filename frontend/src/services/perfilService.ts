@@ -1,1 +1,6 @@
-export { actualizarTema, obtenerTemaActual } from './authService';
+export {
+  actualizarTema,
+  obtenerTemaActual,
+  actualizarOrientacion,
+  obtenerOrientacionActual,
+} from './authService';

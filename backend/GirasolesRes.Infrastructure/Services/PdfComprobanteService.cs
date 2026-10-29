@@ -18,8 +18,8 @@ public class PdfComprobanteService : IPdfComprobanteService
 
         // 2. Encabezado de la Empresa (Izquierda)
         builder.DrawText("RESTAURANTE GIRASOLES", 28f, curY + 14f, "/F2", 16f, 0.282f, 0.157f, 0.075f);
-        builder.DrawText("RUC: 20481234567 | Av. Principal 123 - Ayacucho", 28f, curY + 28f, "/F1", 8f, 0.40f, 0.40f, 0.40f);
-        builder.DrawText("Teléfono: (066) 31-2345 | Email: contacto@girasoles.com", 28f, curY + 39f, "/F1", 7.5f, 0.45f, 0.45f, 0.45f);
+        builder.DrawText("RUC: 20481234567 | Jr. Mariscal Castilla N° 1023", 28f, curY + 28f, "/F1", 8f, 0.40f, 0.40f, 0.40f);
+        builder.DrawText("Teléfono: 934127923 | Email: contacto@girasoles.com", 28f, curY + 39f, "/F1", 7.5f, 0.45f, 0.45f, 0.45f);
 
         // 3. Tarjeta Oficial del Comprobante (Derecha)
         var tipoTitulo = detalle.TipoComprobante switch

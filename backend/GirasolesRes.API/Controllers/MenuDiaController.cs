@@ -22,6 +22,27 @@ public class MenuDiaController : ControllerBase
     }
 
     /// <summary>
+    /// Consulta pública en tiempo real del menú del día para la Landing Page
+    /// </summary>
+    [HttpGet("publico")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ObtenerMenuPublico(CancellationToken cancellationToken)
+    {
+        var resultado = await _menuDiaService.ObtenerMenuHoyAsync(cancellationToken);
+        if (!resultado.IsSuccess)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new
+            {
+                success = false,
+                message = resultado.Message,
+                detail = resultado.Detail
+            });
+        }
+
+        return Ok(resultado.Data);
+    }
+
+    /// <summary>
     /// CUS05 / RF-14, RF-15: Consultar menú del día actual (hora de Lima).
     /// Accesible para Administrador, Cocinero, Mozo y Cajero (CUS07 y CUS08).
     /// </summary>

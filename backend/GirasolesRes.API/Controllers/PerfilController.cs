@@ -176,4 +176,43 @@ public class PerfilController : ControllerBase
             }
         });
     }
+
+    /// <summary>
+    /// Actualizar preferencia de orientación de interfaz (right / left) del usuario autenticado
+    /// </summary>
+    [Authorize]
+    [HttpPatch("orientacion")]
+    public async Task<IActionResult> ActualizarOrientacion(
+        [FromBody] ActualizarOrientacionRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Datos de orientación inválidos.",
+                errors = ModelState
+            });
+        }
+
+        var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(usuarioIdClaim, out var usuarioId))
+        {
+            return Unauthorized(new { message = "Token inválido o expirado." });
+        }
+
+        var orientacionNormalizada = (request.Orientacion ?? string.Empty).Trim().ToLowerInvariant();
+        await _perfilService.ActualizarOrientacionAsync(usuarioId, orientacionNormalizada, cancellationToken);
+
+        return Ok(new
+        {
+            success = true,
+            message = "Orientación actualizada.",
+            data = new
+            {
+                orientacion = orientacionNormalizada
+            }
+        });
+    }
 }

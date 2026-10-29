@@ -161,10 +161,12 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Me(CancellationToken cancellationToken)
     {
         var tema = "light";
+        var orientacion = "right";
         var usuarioIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (Guid.TryParse(usuarioIdClaim, out var usuarioId))
         {
             tema = await _perfilService.ObtenerTemaAsync(usuarioId, cancellationToken);
+            orientacion = await _perfilService.ObtenerOrientacionAsync(usuarioId, cancellationToken);
         }
 
         return Ok(new
@@ -174,7 +176,8 @@ public class AuthController : ControllerBase
             nombre = User.FindFirstValue("nombreCompleto"),
             rol = User.FindFirstValue(ClaimTypes.Role),
             email = User.FindFirstValue(ClaimTypes.Email),
-            tema
+            tema,
+            orientacion
         });
     }
 

@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ShieldCheck,
   X
+,  Settings,
 } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import {
@@ -12,6 +13,7 @@ import {
   isNavigationItemActive,
 } from '../../config/navigationConfig';
 import logoGirasoles from '../../assets/LOGO_GIRASOLES.png';
+import { useHandedness } from '../../hooks/useHandedness';
 
 interface SidebarProps {
   session?: UserSession | null;
@@ -35,6 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   cajaEstado,
 }) => {
   const rol = session?.rol;
+  const { isLeftHanded } = useHandedness();
   // Guard estricto RN-106: rol === 'Administrador' && (
 
   // Cerrar drawer con tecla Escape en móvil
@@ -157,8 +160,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Aside (Fixed drawer en móvil/tablet, estático en desktop) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-sidebar text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
-          isOpenMobile ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed lg:static inset-y-0 ${
+          isLeftHanded ? 'right-0' : 'left-0'
+        } z-50 w-60 xl:w-64 2xl:w-72 bg-sidebar text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out ${
+          isOpenMobile
+            ? 'translate-x-0'
+            : isLeftHanded
+            ? 'translate-x-full lg:translate-x-0'
+            : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Bloque 1: Cabecera Fija con Logo y botón cerrar móvil (shrink-0) */}
@@ -274,6 +283,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             );
           })}
+          {/* Módulo de Configuración */}
+          <div className="pt-2 mt-2 border-t border-sidebar-line/60">
+            <button
+              type="button"
+              onClick={() => handleNavigate('configuracion')}
+              className={`w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer ${
+                paginaActiva === 'configuracion'
+                  ? 'bg-primary text-white shadow-md font-semibold'
+                  : 'text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Settings className="w-4 h-4 xl:w-5 xl:h-5 shrink-0" />
+              <span>Configuración</span>
+            </button>
+          </div>
         </nav>
 
         {/* Bloque 3: Pie Fijo de "Acceso protegido" (shrink-0) */}

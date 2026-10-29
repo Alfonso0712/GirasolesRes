@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient';
-import type { UserSession, Theme } from '../types/auth';
+import type { UserSession, Theme, Handedness } from '../types/auth';
 
 const BASE_URL = '/api/auth';
 
@@ -110,6 +110,41 @@ export async function obtenerTemaActual(token?: string): Promise<Theme | null> {
     );
     if (body && (body.tema === 'light' || body.tema === 'dark')) {
       return body.tema;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function actualizarOrientacion(
+  orientacion: Handedness,
+  token?: string
+): Promise<Handedness> {
+  const authToken = token || getStoredToken();
+  if (!authToken) {
+    return orientacion;
+  }
+  const body = await apiClient.patch<ApiResponse<{ orientacion: Handedness }>>(
+    '/api/perfil/orientacion',
+    { orientacion },
+    authToken
+  );
+  return body.data?.orientacion ?? orientacion;
+}
+
+export async function obtenerOrientacionActual(token?: string): Promise<Handedness | null> {
+  try {
+    const authToken = token || getStoredToken();
+    if (!authToken) {
+      return null;
+    }
+    const body = await apiClient.get<{ success?: boolean; orientacion?: Handedness }>(
+      '/api/auth/me',
+      authToken
+    );
+    if (body && (body.orientacion === 'right' || body.orientacion === 'left')) {
+      return body.orientacion;
     }
     return null;
   } catch {

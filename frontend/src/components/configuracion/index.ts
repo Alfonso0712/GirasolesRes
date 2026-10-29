@@ -1,0 +1,1 @@
+export { ConfiguracionModal } from './ConfiguracionModal';

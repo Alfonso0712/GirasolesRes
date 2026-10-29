@@ -69,7 +69,7 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
         label: 'Caja y Cobros',
         icon: SolesIcon,
         roles: ['Cajero'],
-        matchPaths: ['caja'],
+        matchPaths: ['caja', 'cobros'],
       },
       {
         id: 'ventas',
@@ -168,6 +168,15 @@ export function resolveNavigation(paginaActiva: string): NavigationResolution {
       activeItemId: null,
       section: 'Salón y Pedidos',
       page: 'Pedido para Llevar',
+    };
+  }
+
+  if (paginaActiva === 'configuracion') {
+    return {
+      groupId: null,
+      activeItemId: 'configuracion',
+      section: null,
+      page: 'Configuración',
     };
   }
 

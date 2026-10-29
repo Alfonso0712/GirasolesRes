@@ -19,7 +19,7 @@ public class ReportePdfService : IPdfReporteService
 
         // Encabezado
         builder.DrawText("RESTAURANTE GIRASOLES", 28f, curY + 14f, "/F2", 15f, 0.282f, 0.157f, 0.075f);
-        builder.DrawText("RUC: 20481234567 | Av. Principal 123 - Ayacucho", 28f, curY + 27f, "/F1", 7.5f, 0.40f, 0.40f, 0.40f);
+        builder.DrawText("RUC: 20481234567 | Jr. Mariscal Castilla N° 1023", 28f, curY + 27f, "/F1", 7.5f, 0.40f, 0.40f, 0.40f);
 
         // Tarjeta derecha
         builder.DrawFilledRect(340f, curY, 227.28f, 38f, 0.980f, 0.969f, 0.957f, 0.282f, 0.157f, 0.075f, 0.8f);
@@ -137,7 +137,7 @@ public class ReportePdfService : IPdfReporteService
 
         // Encabezado
         builder.DrawText("RESTAURANTE GIRASOLES", 28f, curY + 14f, "/F2", 15f, 0.282f, 0.157f, 0.075f);
-        builder.DrawText("RUC: 20481234567 | Av. Principal 123 - Ayacucho", 28f, curY + 27f, "/F1", 7.5f, 0.40f, 0.40f, 0.40f);
+        builder.DrawText("RUC: 20481234567 | Jr. Mariscal Castilla N° 1023", 28f, curY + 27f, "/F1", 7.5f, 0.40f, 0.40f, 0.40f);
 
         // Tarjeta derecha
         builder.DrawFilledRect(340f, curY, 227.28f, 38f, 0.980f, 0.969f, 0.957f, 0.282f, 0.157f, 0.075f, 0.8f);

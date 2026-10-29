@@ -77,7 +77,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
         <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3">
           Operaciones de Caja y Mostrador
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
+<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
           <QuickActionCard
             label="Cobrar Pedido"
             icon={SolesIcon}

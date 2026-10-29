@@ -27,6 +27,45 @@ public static class DatabaseSeeder
                 logger.LogWarning(ex, "Aviso al verificar o crear la columna pref_tema.");
             }
 
+            // Migración automática de pref_orientacion para modo zurdo/diestro
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(@"
+                    ALTER TABLE public.usuarios
+                        ADD COLUMN IF NOT EXISTS pref_orientacion VARCHAR(10) NOT NULL DEFAULT 'right';
+                ");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Aviso al verificar o crear la columna pref_orientacion.");
+            }
+
+            // Saneamiento automático de codificación UTF-8 para bases de datos importadas con terminales Windows no-UTF8
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(@"
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'Caf?', 'Café') WHERE nom_producto LIKE '%Caf?%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'T?', 'Té') WHERE nom_producto LIKE '%T?%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'chicharr?n', 'chicharrón') WHERE nom_producto LIKE '%chicharr?n%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'Chicharr?n', 'Chicharrón') WHERE nom_producto LIKE '%Chicharr?n%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'arequipe?a', 'arequipeña') WHERE nom_producto LIKE '%arequipe?a%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'huanca?na', 'huancaína') WHERE nom_producto LIKE '%huanca?na%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'Aj?', 'Ají') WHERE nom_producto LIKE '%Aj?%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'lime?o', 'limeño') WHERE nom_producto LIKE '%lime?o%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'lime?a', 'limeña') WHERE nom_producto LIKE '%lime?a%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'Tallar?n', 'Tallarín') WHERE nom_producto LIKE '%Tallar?n%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'pl?tano', 'plátano') WHERE nom_producto LIKE '%pl?tano%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'Porci?n', 'Porción') WHERE nom_producto LIKE '%Porci?n%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'reci?n', 'recién') WHERE nom_producto LIKE '%reci?n%';
+                    UPDATE public.productos SET nom_producto = REPLACE(nom_producto, 'diet?tico', 'dietético') WHERE nom_producto LIKE '%diet?tico%';
+                    UPDATE public.menus_completos SET nom_menu_completo = REPLACE(nom_menu_completo, 'chicharr?n', 'chicharrón') WHERE nom_menu_completo LIKE '%chicharr?n%';
+                ");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Aviso al ejecutar saneamiento preventivo de caracteres UTF-8.");
+            }
+
             if (!await context.Usuarios.AnyAsync())
             {
                 logger.LogInformation("Iniciando sembrado inicial de usuarios para el Restaurante Girasoles...");

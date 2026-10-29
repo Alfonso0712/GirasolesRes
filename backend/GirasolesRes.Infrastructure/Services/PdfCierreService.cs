@@ -144,7 +144,7 @@ public class PdfCierreService : IPdfCierreService
 
         // Título del Restaurante y Datos Fiscales
         builder.DrawText("RESTAURANTE GIRASOLES", 28f, curY + 14f, "/F2", 16f, 0.282f, 0.157f, 0.075f);
-        builder.DrawText("RUC: 20481234567 | Av. Principal 123 - Ayacucho | Tel: (066) 31-2345", 28f, curY + 28f, "/F1", 7.5f, 0.40f, 0.40f, 0.40f);
+        builder.DrawText("RUC: 20481234567 | Jr. Mariscal Castilla N° 1023 | Tel: 934127923", 28f, curY + 28f, "/F1", 7.5f, 0.40f, 0.40f, 0.40f);
 
         // Tarjeta de Título de Comprobante (Lado derecho)
         builder.DrawFilledRect(340f, curY, 227.28f, 38f, 0.980f, 0.969f, 0.957f, 0.282f, 0.157f, 0.075f, 0.8f);
