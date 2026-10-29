@@ -146,18 +146,8 @@ export const Header: React.FC<HeaderProps> = ({
               role="menu"
               aria-orientation="vertical"
               aria-label="Opciones de usuario"
-              className="absolute right-0 top-full mt-2 w-56 bg-surface rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-700/80 p-1.5 z-50 animate-in fade-in slide-in-from-top-1"
+              className="absolute right-0 top-full mt-2 w-52 bg-surface rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-700/80 p-1.5 z-50 animate-in fade-in slide-in-from-top-1"
             >
-              {/* Encabezado con datos del usuario */}
-              <div className="px-3 py-2 border-b border-neutral-100 dark:border-neutral-800 mb-1 select-none">
-                <p className="text-xs font-bold text-neutral-900 dark:text-ink truncate">
-                  {session?.nombre}
-                </p>
-                <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-                  {session?.rol}
-                </p>
-              </div>
-
               {/* RN-16: Solo Administrador puede cambiar contraseña */}
               {esAdmin && onCambiarPassword && (
                 <button
