@@ -5,11 +5,26 @@ import { CategoriaChips } from './CategoriaChips';
 import { MenuCompletoCard } from './MenuCompletoCard';
 import { ProductoCard } from './ProductoCard';
 import { formatCategoriaLabel } from '../../utils/formatCategory';
+import { ROLES_COMPONENTE } from '../../types/producto';
 import type { MenuCompletoDia } from '../../types/menuDia';
 import type { ProductoMenuPedido, LineaBorrador } from '../../types/pedido';
 
 const CATALOGO_GRID_CLASS =
   'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3';
+
+const ROLES_COMPONENTE_SET = new Set<string>(
+  ROLES_COMPONENTE.map((r) => r.valor.toLowerCase())
+);
+
+/**
+ * Filtra únicamente categorías y productos de carta, excluyendo los componentes
+ * de menú (BebidaDesayuno, PlatoDesayuno, Sopa, Entrada, Segundo).
+ */
+export function esCategoriaDeCarta(categoria?: string | null, rol?: string | null): boolean {
+  if (rol && rol.trim() !== '') return false;
+  if (!categoria) return false;
+  return !ROLES_COMPONENTE_SET.has(categoria.trim().toLowerCase());
+}
 
 export interface CatalogoPedidoProps {
   busqueda: string;
@@ -52,6 +67,11 @@ export const CatalogoPedido: React.FC<CatalogoPedidoProps> = ({
   onAgregarProducto,
   onDisminuirProducto,
 }) => {
+  const categoriasCarta = useMemo(
+    () => categorias.filter((cat) => esCategoriaDeCarta(cat)),
+    [categorias]
+  );
+
   const menusFiltrados = useMemo(() => {
     if (categoriaActiva !== 'Todas' && categoriaActiva !== 'Menús Completos') {
       return [];
@@ -66,12 +86,14 @@ export const CatalogoPedido: React.FC<CatalogoPedidoProps> = ({
       return {} as Record<string, ProductoMenuPedido[]>;
     }
     const agrupados: Record<string, ProductoMenuPedido[]> = {};
-    catalogoFiltrado.forEach((prod) => {
-      if (!agrupados[prod.categoria]) {
-        agrupados[prod.categoria] = [];
-      }
-      agrupados[prod.categoria].push(prod);
-    });
+    catalogoFiltrado
+      .filter((prod) => esCategoriaDeCarta(prod.categoria, prod.rol))
+      .forEach((prod) => {
+        if (!agrupados[prod.categoria]) {
+          agrupados[prod.categoria] = [];
+        }
+        agrupados[prod.categoria].push(prod);
+      });
     return agrupados;
   }, [catalogoFiltrado, categoriaActiva]);
 
@@ -109,7 +131,7 @@ export const CatalogoPedido: React.FC<CatalogoPedidoProps> = ({
 
       {/* Chips de Categorías */}
       <CategoriaChips
-        categorias={categorias}
+        categorias={categoriasCarta}
         categoriaActiva={categoriaActiva}
         onSelectCategoria={onCategoriaActivaChange}
       />
