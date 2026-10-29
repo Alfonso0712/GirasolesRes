@@ -19,25 +19,27 @@ function getInitialTheme(): Theme {
 let currentTheme: Theme = getInitialTheme();
 const listeners = new Set<() => void>();
 
-export function isLandingPath(): boolean {
-  if (typeof window === 'undefined') return false;
-  const path = window.location.pathname;
-  return path === '/' || path === '' || path === '/index.html';
-}
-
-export function applyThemeClass(theme: Theme, forceLight: boolean = false) {
+export function applyThemeClass(theme: Theme) {
   if (typeof document !== 'undefined') {
-    // La landing page pública siempre debe mantenerse aislada del modo oscuro del POS
-    if (forceLight || isLandingPath()) {
-      document.documentElement.classList.remove('dark');
-      return;
-    }
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }
 }
 
-// Ensure theme class is applied on module load
-applyThemeClass(currentTheme);
+// En carga inicial, solo aplicamos la clase si no es un visitante de la landing sin sesión activa
+function initThemeClass() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const isPublicLanding =
+    (window.location.pathname === '/' || window.location.pathname === '' || window.location.pathname === '/index.html') &&
+    !localStorage.getItem('girasoles_session_v1');
+
+  if (isPublicLanding) {
+    document.documentElement.classList.remove('dark');
+  } else {
+    applyThemeClass(currentTheme);
+  }
+}
+
+initThemeClass();
 
 function emitChange() {
   for (const listener of listeners) {
