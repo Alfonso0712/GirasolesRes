@@ -19,8 +19,19 @@ function getInitialTheme(): Theme {
 let currentTheme: Theme = getInitialTheme();
 const listeners = new Set<() => void>();
 
-function applyThemeClass(theme: Theme) {
+export function isLandingPath(): boolean {
+  if (typeof window === 'undefined') return false;
+  const path = window.location.pathname;
+  return path === '/' || path === '' || path === '/index.html';
+}
+
+export function applyThemeClass(theme: Theme, forceLight: boolean = false) {
   if (typeof document !== 'undefined') {
+    // La landing page pública siempre debe mantenerse aislada del modo oscuro del POS
+    if (forceLight || isLandingPath()) {
+      document.documentElement.classList.remove('dark');
+      return;
+    }
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }
 }

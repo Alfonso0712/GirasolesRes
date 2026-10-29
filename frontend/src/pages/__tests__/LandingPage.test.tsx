@@ -123,4 +123,13 @@ describe('LandingPage - Vista de Bienvenida y Carta Pública', () => {
     expect(screen.getAllByText('Jr. Mariscal Castilla N° 1023').length).toBeGreaterThan(0);
     expect(screen.getAllByText('934 127 923').length).toBeGreaterThan(0);
   });
+
+  it('debe aislar la landing page del modo oscuro removiendo la clase dark del documentElement', () => {
+    document.documentElement.classList.add('dark');
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+
+    render(<LandingPage onGoToLogin={vi.fn()} />);
+
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+  });
 });

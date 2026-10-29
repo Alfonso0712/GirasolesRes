@@ -71,6 +71,11 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
   const [seleccionAlmuerzoSegundo, setSeleccionAlmuerzoSegundo] = useState<string>('');
   const [mensajeModalFeedback, setMensajeModalFeedback] = useState<string | null>(null);
 
+  // Asegurar que la landing page pública permanezca siempre en modo claro e inmune al tema del POS
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+  }, []);
+
   // Carga de datos en vivo desde el backend
   const cargarDatosEnVivo = async () => {
     try {
@@ -247,7 +252,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
           </a>
 
           {/* Menú de navegación desktop */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-stone-200">
+          <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-white/80">
             <a href="#inicio" className="hover:text-amber-400 transition-colors">
               Inicio
             </a>
@@ -282,7 +287,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
             {/* Botón menú móvil */}
             <button
               onClick={() => setMobileMenuAbierto(!mobileMenuAbierto)}
-              className="lg:hidden p-2 rounded-xl text-stone-200 hover:bg-white/10"
+              className="lg:hidden p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10"
               aria-label="Abrir menú de navegación"
             >
               <MenuIcon className="w-6 h-6" />
@@ -296,42 +301,42 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
             <a
               href="#inicio"
               onClick={() => setMobileMenuAbierto(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-stone-200 hover:bg-white/10"
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:text-amber-400 hover:bg-white/10"
             >
               Inicio
             </a>
             <a
               href="#menus-del-dia"
               onClick={() => setMobileMenuAbierto(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-stone-200 hover:bg-white/10"
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:text-amber-400 hover:bg-white/10"
             >
               Menús del Día
             </a>
             <a
               href="#carta"
               onClick={() => setMobileMenuAbierto(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-stone-200 hover:bg-white/10"
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:text-amber-400 hover:bg-white/10"
             >
               Carta Completa
             </a>
             <a
               href="#nosotros"
               onClick={() => setMobileMenuAbierto(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-stone-200 hover:bg-white/10"
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:text-amber-400 hover:bg-white/10"
             >
               Nosotros
             </a>
             <a
               href="#servicios"
               onClick={() => setMobileMenuAbierto(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-stone-200 hover:bg-white/10"
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:text-amber-400 hover:bg-white/10"
             >
               Servicios & Pagos
             </a>
             <a
               href="#contacto"
               onClick={() => setMobileMenuAbierto(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-stone-200 hover:bg-white/10"
+              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-white/80 hover:text-amber-400 hover:bg-white/10"
             >
               Horarios y Ubicación
             </a>
@@ -381,7 +386,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-stone-200 max-w-2xl leading-relaxed">
+              <p className="text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed">
                 Comida criolla y gastronomía peruana preparada cada mañana con insumos frescos. Revisa
                 nuestra oferta del día sincronizada en tiempo real con nuestra cocina o realiza tus
                 pedidos en salón y para llevar.
@@ -412,19 +417,19 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                   <p className="text-amber-400 font-extrabold text-xl sm:text-2xl tabular-nums">
                     S/ 7.00
                   </p>
-                  <p className="text-xs text-stone-300">Desayunos completos</p>
+                  <p className="text-xs text-amber-100/80">Desayunos completos</p>
                 </div>
                 <div>
                   <p className="text-amber-400 font-extrabold text-xl sm:text-2xl tabular-nums">
                     S/ 8.00
                   </p>
-                  <p className="text-xs text-stone-300">Almuerzo criollo del día</p>
+                  <p className="text-xs text-amber-100/80">Almuerzo criollo del día</p>
                 </div>
                 <div>
                   <p className="text-amber-400 font-extrabold text-xl sm:text-2xl tabular-nums">
                     {idsDefinidosEnMenu.size > 0 ? `${idsDefinidosEnMenu.size}` : (productos.length > 0 ? `${productos.length}` : '34')}
                   </p>
-                  <p className="text-xs text-stone-300">Platos en menú de hoy</p>
+                  <p className="text-xs text-amber-100/80">Platos en menú de hoy</p>
                 </div>
               </div>
             </div>
@@ -604,15 +609,15 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                 </div>
 
                 <div className="mt-5 space-y-2.5 text-sm">
-                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                  <div className="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]">
                     <p className="font-bold text-xs uppercase text-[#D35400]">1. Bebida de Desayuno</p>
-                    <p className="text-xs text-stone-600 mt-0.5">
+                    <p className="text-xs text-[#5C4A3E] mt-0.5">
                       Café pasado, Jugo de papaya, Quinua carretillera o Quaker con leche.
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                  <div className="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]">
                     <p className="font-bold text-xs uppercase text-[#D35400]">2. Sánguche o Plato</p>
-                    <p className="text-xs text-stone-600 mt-0.5">
+                    <p className="text-xs text-[#5C4A3E] mt-0.5">
                       Pan con chicharrón, Pan con pollo deshilachado, Pan con palta o queso fresco.
                     </p>
                   </div>
@@ -621,7 +626,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
 
               <button
                 onClick={() => abrirArmador('desayuno')}
-                className="mt-6 w-full py-3 rounded-xl bg-amber-50 hover:bg-[#D35400] hover:text-white text-[#D35400] border border-[#D35400]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="mt-6 w-full py-3 rounded-xl bg-[#FFF6ED] hover:bg-[#D35400] hover:text-white text-[#D35400] border border-[#D35400]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" /> Probar combinaciones
               </button>
@@ -648,8 +653,8 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                   </span>
                 </div>
 
-                <div className="mt-5 p-4 rounded-xl bg-orange-50/70 border border-orange-200 flex items-baseline justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
+                <div className="mt-5 p-4 rounded-xl bg-[#FFF6ED] border border-[#FDBA74] flex items-baseline justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#6B5E55]">
                     Precio
                   </span>
                   <span className="text-3xl font-extrabold text-[#D35400] tabular-nums">S/ 8.00</span>
@@ -661,19 +666,19 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                 </div>
 
                 <div className="mt-5 space-y-2.5 text-sm">
-                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                  <div className="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]">
                     <p className="font-bold text-xs uppercase text-[#D35400]">
                       1. Sopa o Entrada del Día
                     </p>
-                    <p className="text-xs text-stone-600 mt-0.5">
+                    <p className="text-xs text-[#5C4A3E] mt-0.5">
                       Sopa criolla, Sopa a la minuta, Papa a la huancaína u Ocopa arequipeña.
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                  <div className="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]">
                     <p className="font-bold text-xs uppercase text-[#D35400]">
                       2. Plato de Fondo (Segundo)
                     </p>
-                    <p className="text-xs text-stone-600 mt-0.5">
+                    <p className="text-xs text-[#5C4A3E] mt-0.5">
                       Bistec a lo pobre, Arroz chaufa de pollo, Seco de pollo con frejoles o Lomo saltado.
                     </p>
                   </div>
@@ -719,11 +724,11 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                 </div>
 
                 <div className="mt-5 space-y-2.5 text-sm">
-                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                  <div className="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]">
                     <p className="font-bold text-xs uppercase text-[#D35400]">
                       1. Plato de Fondo del Día
                     </p>
-                    <p className="text-xs text-stone-600 mt-0.5">
+                    <p className="text-xs text-[#5C4A3E] mt-0.5">
                       Elige directamente cualquiera de nuestros segundos criollos preparados hoy en cocina.
                     </p>
                   </div>
@@ -732,7 +737,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
 
               <button
                 onClick={() => abrirArmador('segundo')}
-                className="mt-6 w-full py-3 rounded-xl bg-amber-50 hover:bg-[#D35400] hover:text-white text-[#D35400] border border-[#D35400]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="mt-6 w-full py-3 rounded-xl bg-[#FFF6ED] hover:bg-[#D35400] hover:text-white text-[#D35400] border border-[#D35400]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" /> Probar combinaciones
               </button>
@@ -1104,7 +1109,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                     <select
                       value={seleccionDesayunoBebida}
                       onChange={(e) => setSeleccionDesayunoBebida(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-stone-50 border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+                      className="w-full p-2.5 rounded-xl bg-[#FAF7F4] border border-stone-300 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
                     >
                       {bebidasDesayuno.map((p) => (
                         <option key={p.id} value={p.nombre}>
@@ -1120,7 +1125,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                     <select
                       value={seleccionDesayunoPlato}
                       onChange={(e) => setSeleccionDesayunoPlato(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-stone-50 border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+                      className="w-full p-2.5 rounded-xl bg-[#FAF7F4] border border-stone-300 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
                     >
                       {platosDesayuno.map((p) => (
                         <option key={p.id} value={p.nombre}>
@@ -1141,7 +1146,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                     <select
                       value={seleccionAlmuerzoEntrada}
                       onChange={(e) => setSeleccionAlmuerzoEntrada(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-stone-50 border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+                      className="w-full p-2.5 rounded-xl bg-[#FAF7F4] border border-stone-300 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
                     >
                       {entradasAlmuerzo.map((p) => (
                         <option key={p.id} value={p.nombre}>
@@ -1157,7 +1162,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                     <select
                       value={seleccionAlmuerzoSegundo}
                       onChange={(e) => setSeleccionAlmuerzoSegundo(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-stone-50 border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+                      className="w-full p-2.5 rounded-xl bg-[#FAF7F4] border border-stone-300 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
                     >
                       {segundosAlmuerzo.map((p) => (
                         <option key={p.id} value={p.nombre}>
@@ -1177,7 +1182,7 @@ export function LandingPage({ onGoToLogin }: LandingPageProps) {
                   <select
                     value={seleccionAlmuerzoSegundo}
                     onChange={(e) => setSeleccionAlmuerzoSegundo(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-stone-50 border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+                    className="w-full p-2.5 rounded-xl bg-[#FAF7F4] border border-stone-300 text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
                   >
                     {segundosAlmuerzo.map((p) => (
                       <option key={p.id} value={p.nombre}>

@@ -94,6 +94,16 @@ export function App() {
     };
   }, [handleLogout]);
 
+  // Aislar la landing page del modo oscuro interno del POS
+  useEffect(() => {
+    if (currentPage === 'landing') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      const savedTheme = localStorage.getItem('girasoles_theme');
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    }
+  }, [currentPage]);
+
   useEffect(() => {
     const isLoginPath = typeof window !== 'undefined' && window.location.pathname === '/login';
     const isForgotPath = typeof window !== 'undefined' && window.location.pathname === '/forgot-password';
