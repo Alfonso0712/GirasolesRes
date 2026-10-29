@@ -23,9 +23,9 @@ import {
   X,
   Check,
   ShoppingBag,
-  Utensils,
-  DollarSign
+  Utensils
 } from 'lucide-react';
+import { SolesIcon } from '../components/ui/SolesIcon';
 import { StatusBadge, IconActionButton, DataTable, TableHead, TableBody } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
 
@@ -495,7 +495,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
 
                             {session.rol === 'Cajero' && (
                               <IconActionButton
-                                icon={DollarSign}
+                                icon={SolesIcon}
                                 label="Cobrar pedido en caja"
                                 variant="activate"
                                 disabled={esPagado || esAnulado}

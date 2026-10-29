@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { SolesIcon } from '../ui/SolesIcon';
 import {
   FileText,
   Download,
@@ -9,7 +10,6 @@ import {
   Calendar,
   User,
   Clock,
-  DollarSign,
   Banknote,
   Smartphone,
   Loader2,
@@ -298,7 +298,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                 <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
                     <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
-                      <DollarSign className="w-4 h-4 text-accent" />
+                      <SolesIcon className="w-4 h-4 text-accent" />
                       Flujo de Ventas del Turno
                     </h3>
                   </div>

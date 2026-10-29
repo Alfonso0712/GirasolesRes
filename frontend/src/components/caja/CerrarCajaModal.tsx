@@ -11,8 +11,8 @@ import {
   X,
   CreditCard,
   Banknote,
-  DollarSign,
 } from 'lucide-react';
+import { SolesIcon } from '../ui/SolesIcon';
 import { cajaService } from '../../services/cajaService';
 import { ContadorDenominacionesModal } from './ContadorDenominacionesModal';
 import type { CierreResumenDto, CerrarCajaResponseDto } from '../../types/caja';
@@ -514,7 +514,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
 
                     <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
                       <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <DollarSign className="w-3 h-3 text-success" /> Total Ventas
+                        <SolesIcon className="w-3 h-3 text-success" /> Total Ventas
                       </span>
                       <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
                         S/ {resumen.totalVentas.toFixed(2)}

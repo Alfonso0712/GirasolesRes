@@ -1,10 +1,10 @@
 import type { LucideIcon } from 'lucide-react';
+import React from 'react';
+import { SolesIcon } from '../components/ui/SolesIcon';
 import {
   LayoutGrid,
   ReceiptText,
   ChefHat,
-  DollarSign,
-  BadgeDollarSign,
   Lock,
   CalendarCheck,
   UtensilsCrossed,
@@ -16,7 +16,7 @@ import type { RolUsuario } from '../types/usuario';
 export interface NavigationItem {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.ComponentType<{ className?: string; size?: number | string }>;
   roles: RolUsuario[];
   /** Sub-rutas o rutas dinámicas que activan este ítem */
   matchPaths?: string[];
@@ -67,14 +67,14 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
       {
         id: 'caja',
         label: 'Caja y Cobros',
-        icon: DollarSign,
+        icon: SolesIcon,
         roles: ['Cajero'],
         matchPaths: ['caja'],
       },
       {
         id: 'ventas',
         label: 'Historial de Ventas',
-        icon: BadgeDollarSign,
+        icon: SolesIcon,
         roles: ['Administrador', 'Cajero'],
         matchPaths: ['ventas'],
       },

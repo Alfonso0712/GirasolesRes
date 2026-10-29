@@ -4,10 +4,10 @@ import type {
   BloquePorCobrar,
   BloqueListos
 } from '../../types/inicio';
+import { SolesIcon } from '../ui/SolesIcon';
 import {
   AlertTriangle,
   CheckCircle2,
-  DollarSign,
   ShoppingBag,
   Receipt,
   ChevronRight
@@ -90,7 +90,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
                   : 'bg-neutral-100 text-neutral-500 border border-neutral-200 cursor-not-allowed'
               }`}
             >
-              <DollarSign className="w-5 h-5" />
+              <SolesIcon className="w-5 h-5" />
               <span>COBRAR PEDIDO</span>
             </button>
             {!cajaAbierta && (
@@ -116,7 +116,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
             onClick={() => onNavigate('caja')}
             className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <DollarSign className="w-5 h-5 text-neutral-600" />
+            <SolesIcon className="w-5 h-5 text-neutral-600" />
             <span>GESTIONAR TURNO DE CAJA</span>
           </button>
 
@@ -190,7 +190,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
                   Pedidos por Cobrar
                 </span>
                 <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-                  <DollarSign className="w-4 h-4" />
+                  <SolesIcon className="w-4 h-4" />
                 </div>
               </div>
               <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mb-1">

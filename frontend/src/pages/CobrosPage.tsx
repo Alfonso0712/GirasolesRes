@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import { SolesIcon } from '../components/ui/SolesIcon';
 import {
-  DollarSign,
   Receipt,
   RotateCcw,
   Search,
@@ -223,7 +223,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                     onClick={() => setAbrirCajaModalOpen(true)}
                     className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
                   >
-                    <DollarSign className="w-4 h-4" />
+                    <SolesIcon className="w-4 h-4" />
                     <span>Abrir caja</span>
                   </button>
                 )}
@@ -443,7 +443,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                               aria-label={`Cobrar pedido #${p.numero}`}
                               className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
                             >
-                              <DollarSign className="w-4 h-4" />
+                              <SolesIcon className="w-4 h-4" />
                               <span>Cobrar</span>
                             </button>
                           ) : (

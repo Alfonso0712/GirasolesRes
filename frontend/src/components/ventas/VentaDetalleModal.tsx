@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
+import { SolesIcon } from '../ui/SolesIcon';
 import {
   Receipt,
   X,
   Download,
   Ban,
   Utensils,
-  DollarSign,
   Smartphone,
   AlertTriangle,
   CheckCircle2
@@ -261,7 +261,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                     <span className="font-bold text-ink flex items-center gap-1 mt-0.5">
                       {venta.metodo === 'Efectivo' ? (
                         <>
-                          <DollarSign className="w-3.5 h-3.5 text-emerald-700" />
+                          <SolesIcon className="w-3.5 h-3.5 text-emerald-700" />
                           <span>Efectivo</span>
                         </>
                       ) : (

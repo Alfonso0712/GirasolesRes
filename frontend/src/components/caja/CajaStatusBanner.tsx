@@ -3,8 +3,8 @@ import {
   Lock,
   Unlock,
   AlertTriangle,
-  DollarSign,
 } from 'lucide-react';
+import { SolesIcon } from '../ui/SolesIcon';
 import type {
   EstadoOperativoCaja,
   AperturaCajaDto,
@@ -218,7 +218,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
           disabled={loading}
           className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer shrink-0 min-h-[44px] flex items-center justify-center gap-2 active:scale-[0.98]"
         >
-          <DollarSign className="w-4 h-4" />
+          <SolesIcon className="w-4 h-4" />
           <span>ABRIR CAJA</span>
         </button>
       )}

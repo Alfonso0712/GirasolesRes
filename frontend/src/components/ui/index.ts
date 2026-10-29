@@ -14,3 +14,5 @@ export * from './TablePagination';
 export * from './DataTable';
 export * from './Select';
 export * from './Tooltip';
+export * from './SolesIcon';
+export * from './SolesIcon';

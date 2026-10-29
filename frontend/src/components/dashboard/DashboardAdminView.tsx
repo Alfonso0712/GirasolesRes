@@ -9,12 +9,12 @@ import type {
   BloqueUltimoCierre,
   AlertaInicio
 } from '../../types/inicio';
+import { SolesIcon } from '../ui/SolesIcon';
 import {
   AlertTriangle,
   CheckCircle2,
   Utensils,
   UtensilsCrossed,
-  DollarSign,
   ClipboardList,
   ShoppingBag,
   Receipt,
@@ -119,8 +119,8 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
         )}
       </div>
 
-      {/* ACCESOS RÁPIDOS EN MÓVIL (RV-153: en móvil van primero) */}
-      <div className="block lg:hidden">
+      {/* ACCESOS RÁPIDOS A MÓDULOS (RV-151, RV-153) */}
+      <div>
         {renderAdminQuickActions(onNavigate)}
       </div>
 
@@ -140,7 +140,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                   Ventas de Hoy
                 </span>
                 <div className="w-8 h-8 rounded-xl bg-amber-50 text-accent flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                  <DollarSign className="w-4 h-4" />
+                  <SolesIcon className="w-4 h-4" />
                 </div>
               </div>
               <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mb-1">
@@ -540,11 +540,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
         </div>
       </div>
 
-      {/* ACCESOS RÁPIDOS EN DESKTOP (RV-151) */}
-      <div className="hidden lg:block pt-2">
-        {renderAdminQuickActions(onNavigate)}
       </div>
-    </div>
   );
 };
 
@@ -553,7 +549,7 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
     { label: 'Nuevo Pedido de Mesa', pagina: 'pedido-mesa', icon: UtensilsCrossed },
     { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
     { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
-    { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: DollarSign },
+    { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: SolesIcon },
     { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: Receipt },
     { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: TrendingUp },
     { label: 'Menú del Día', pagina: 'menu-dia', icon: ClipboardList },

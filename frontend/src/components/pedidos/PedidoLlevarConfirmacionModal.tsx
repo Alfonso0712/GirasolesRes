@@ -1,5 +1,6 @@
 ﻿import React from 'react';
-import { CheckCircle2, ShoppingBag, Plus, DollarSign, ListOrdered } from 'lucide-react';
+import { CheckCircle2, ShoppingBag, Plus, ListOrdered } from 'lucide-react';
+import { SolesIcon } from '../ui/SolesIcon';
 import { Button } from '../ui/Button';
 
 interface PedidoLlevarConfirmacionModalProps {
@@ -91,7 +92,7 @@ export const PedidoLlevarConfirmacionModal: React.FC<PedidoLlevarConfirmacionMod
             onClick={onCobrarAhora}
             className="w-full flex items-center justify-center gap-2 py-3 min-h-[44px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm"
           >
-            <DollarSign className="w-4 h-4 stroke-[2.5]" />
+            <SolesIcon className="w-4 h-4 stroke-[2.5]" />
             COBRAR AHORA
           </Button>
 

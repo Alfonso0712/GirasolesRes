@@ -6,9 +6,9 @@ import {
   PowerOff,
   Edit2,
   PlusCircle,
-  ShoppingBag,
-  DollarSign
+  ShoppingBag
 } from 'lucide-react';
+import { SolesIcon } from '../ui/SolesIcon';
 import type { MesaItem } from '../../types/mesa';
 
 interface MesaCardProps {
@@ -211,7 +211,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
                 }}
                 className="w-full min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold bg-ink-fill hover:bg-sidebar text-white flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
-                <DollarSign className="w-4 h-4" />
+                <SolesIcon className="w-4 h-4" />
                 <span>Cobrar mesa</span>
               </button>
             ) : (

@@ -15,9 +15,9 @@ import {
   Soup,
   Sparkles,
   X,
-  Loader2,
-  DollarSign
+  Loader2
 } from 'lucide-react';
+import { SolesIcon } from '../components/ui/SolesIcon';
 import type { UserSession } from '../types/auth';
 import {
   CATEGORIAS_PRODUCTO,
@@ -717,7 +717,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
                         onClick={() => handleAbrirModalPrecio(m)}
                         className="flex-1 py-2 px-3 rounded-xl bg-surface border border-neutral-200 text-neutral-800 hover:bg-neutral-50 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:border-accent"
                       >
-                        <DollarSign className="w-3.5 h-3.5 text-accent" />
+                        <SolesIcon className="w-3.5 h-3.5 text-accent" />
                         <span>Modificar precio</span>
                       </button>
 
@@ -769,7 +769,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-amber-50 text-accent flex items-center justify-center">
-                  <DollarSign className="w-4 h-4" />
+                  <SolesIcon className="w-4 h-4" />
                 </div>
                 <h3 className="font-sans font-bold text-base text-ink">
                   Modificar Precio

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { SolesIcon } from '../ui/SolesIcon';
 import {
-  DollarSign,
   Smartphone,
   X,
   AlertCircle,
@@ -553,7 +553,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
                     : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
                 }`}
               >
-                <DollarSign className="w-5 h-5 shrink-0" />
+                <SolesIcon className="w-5 h-5 shrink-0" />
                 <span>Efectivo</span>
               </button>
 

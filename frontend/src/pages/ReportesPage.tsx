@@ -1,4 +1,5 @@
 import React from 'react';
+import { SolesIcon } from '../components/ui/SolesIcon';
 import {
   FileText,
   FileSpreadsheet,
@@ -9,7 +10,6 @@ import {
   AlertTriangle,
   AlertCircle,
   TrendingUp,
-  DollarSign,
   Smartphone,
   Utensils,
   Receipt,
@@ -517,7 +517,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                     Total en Efectivo
                   </span>
                   <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                    <DollarSign className="w-4 h-4" />
+                    <SolesIcon className="w-4 h-4" />
                   </div>
                 </div>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-emerald-700 tabular-nums mt-2">

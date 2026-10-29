@@ -1,5 +1,6 @@
 import React from 'react';
-import { Utensils, ShoppingBag, CheckCircle2, ChefHat, DollarSign } from 'lucide-react';
+import { Utensils, ShoppingBag, CheckCircle2, ChefHat } from 'lucide-react';
+import { SolesIcon } from '../ui/SolesIcon';
 import type { PedidoPendienteCobro } from '../../types/cobro';
 
 export interface CobroPedidoCardProps {
@@ -70,7 +71,7 @@ export const CobroPedidoCard: React.FC<CobroPedidoCardProps> = ({
             onClick={() => onCobrar(p)}
             className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
           >
-            <DollarSign className="w-4 h-4" />
+            <SolesIcon className="w-4 h-4" />
             <span>Cobrar pedido</span>
           </button>
         ) : (
