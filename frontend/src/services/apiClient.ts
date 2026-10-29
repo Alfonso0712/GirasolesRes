@@ -1,19 +1,101 @@
 /**
  * Cliente HTTP base centralizado (Clean Frontend Architecture).
  * Encapsula la configuración de cabeceras, serialización JSON,
- * adjunción de tokens JWT y mapeo homogéneo de errores HTTP (incluyendo 401).
+ * adjunción de tokens JWT y mapeo homogéneo de errores HTTP (incluyendo 401 y red).
  */
+
+export const SESSION_STORAGE_KEY = 'girasoles_session';
+export const SESSION_EXPIRED_MESSAGE = 'Su sesión expiró. Ingrese nuevamente.';
+export const CONNECTION_ERROR_MESSAGE =
+  'No se pudo conectar con el servidor. Verifique que esté en ejecución.';
 
 export interface ApiClientError extends Error {
   status?: number;
   errors?: Record<string, string>;
   field?: string;
   detail?: string;
+  isConnectionError?: boolean;
 }
 
 export interface RequestOptions extends Omit<RequestInit, 'body'> {
   token?: string;
   body?: any;
+}
+
+export interface JwtValidationResult {
+  valid: boolean;
+  reason?: 'missing' | 'malformed' | 'expired';
+  expMs?: number;
+}
+
+/**
+ * Decodifica el payload del JWT con atob y verifica que exista y que su claim exp
+ * no haya vencido (con margen de seguridad configurable, por defecto 10 s).
+ */
+export function validateJwtToken(
+  token: string | undefined | null,
+  marginSeconds = 10
+): JwtValidationResult {
+  if (!token || typeof token !== 'string' || !token.trim()) {
+    return { valid: false, reason: 'missing' };
+  }
+
+  try {
+    const parts = token.trim().split('.');
+    if (parts.length !== 3 || !parts[1]) {
+      return { valid: false, reason: 'malformed' };
+    }
+
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+    const decoded = atob(padded);
+    const payload = JSON.parse(decoded);
+
+    if (!payload || typeof payload.exp !== 'number') {
+      return { valid: false, reason: 'malformed' };
+    }
+
+    const nowSeconds = Date.now() / 1000;
+    if (payload.exp <= nowSeconds + marginSeconds) {
+      return { valid: false, reason: 'expired', expMs: payload.exp * 1000 };
+    }
+
+    return { valid: true, expMs: payload.exp * 1000 };
+  } catch {
+    return { valid: false, reason: 'malformed' };
+  }
+}
+
+/**
+ * Limpia el token, datos de usuario y cualquier caché de sesión.
+ */
+export function clearStoredSession(): void {
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch {
+    // ignore storage access errors
+  }
+  try {
+    sessionStorage.clear();
+  } catch {
+    // ignore storage access errors
+  }
+}
+
+type UnauthorizedHandler = (banner: {
+  type: 'success' | 'error' | 'info' | 'warning';
+  message: string;
+}) => void;
+
+let onUnauthorizedCallback: UnauthorizedHandler | null = null;
+let isLoggingOut401 = false;
+
+export function registerUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
+  onUnauthorizedCallback = handler;
+}
+
+export function resetUnauthorizedGuard(): void {
+  isLoggingOut401 = false;
 }
 
 export const API_BASE_URL =
@@ -25,6 +107,30 @@ export function resolveApiUrl(endpoint: string): string {
     return endpoint;
   }
   return `${API_BASE_URL}${endpoint}`;
+}
+
+function isPublicAuthEndpoint(endpoint: string): boolean {
+  return (
+    endpoint.includes('/api/auth/login') ||
+    endpoint.includes('/api/auth/forgot-password') ||
+    endpoint.includes('/api/auth/reset-password') ||
+    endpoint.includes('/api/auth/logout')
+  );
+}
+
+function triggerGlobalUnauthorized(): void {
+  if (isLoggingOut401) return;
+  isLoggingOut401 = true;
+  clearStoredSession();
+  if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+    window.history.replaceState(null, '', '/login');
+  }
+  if (onUnauthorizedCallback) {
+    onUnauthorizedCallback({
+      type: 'warning',
+      message: SESSION_EXPIRED_MESSAGE,
+    });
+  }
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -39,22 +145,60 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(resolveApiUrl(endpoint), {
-    ...restOptions,
-    headers,
-    body: body !== undefined ? (typeof body === 'string' ? body : JSON.stringify(body)) : undefined,
-  });
+  let response: Response;
+  try {
+    response = await fetch(resolveApiUrl(endpoint), {
+      ...restOptions,
+      headers,
+      body: body !== undefined ? (typeof body === 'string' ? body : JSON.stringify(body)) : undefined,
+    });
+  } catch {
+    const netErr: ApiClientError = new Error(CONNECTION_ERROR_MESSAGE);
+    netErr.status = 0;
+    netErr.isConnectionError = true;
+    throw netErr;
+  }
 
   if (response.status === 204) {
     return {} as T;
   }
 
-  const responseBody = await response.json().catch(() => ({}));
+  const contentType = response.headers.get('content-type') || '';
+  const isJson =
+    contentType.includes('application/json') || contentType.includes('application/problem+json');
+  const responseBody = isJson ? await response.json().catch(() => ({})) : {};
 
   if (!response.ok || (responseBody && responseBody.success === false)) {
-    const defaultMsg = response.status === 401
-      ? 'Su sesión expiró. Ingrese nuevamente.'
-      : 'Error de comunicación con el servidor.';
+    const isAuthRequest = Boolean(token) && !isPublicAuthEndpoint(endpoint);
+
+    if (response.status === 401 && isAuthRequest) {
+      triggerGlobalUnauthorized();
+      const err401: ApiClientError = new Error(SESSION_EXPIRED_MESSAGE);
+      err401.status = 401;
+      throw err401;
+    }
+
+    const isGatewayOrBackendDown =
+      response.status === 502 ||
+      response.status === 503 ||
+      response.status === 504 ||
+      (response.status >= 500 &&
+        !isJson &&
+        !responseBody?.message &&
+        !responseBody?.title &&
+        !responseBody?.detail);
+
+    if (isGatewayOrBackendDown) {
+      const connErr: ApiClientError = new Error(CONNECTION_ERROR_MESSAGE);
+      connErr.status = response.status;
+      connErr.isConnectionError = true;
+      throw connErr;
+    }
+
+    const defaultMsg =
+      response.status === 401
+        ? SESSION_EXPIRED_MESSAGE
+        : 'Error de comunicación con el servidor.';
 
     const err: ApiClientError = new Error(responseBody.message || defaultMsg);
     err.status = response.status;

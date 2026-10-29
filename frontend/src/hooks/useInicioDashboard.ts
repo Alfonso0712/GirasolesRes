@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { inicioService } from '../services/inicioService';
+import { CONNECTION_ERROR_MESSAGE, validateJwtToken } from '../services/apiClient';
 import type { InicioDashboardData } from '../types/inicio';
 
 interface UseInicioDashboardOptions {
@@ -27,7 +28,7 @@ export function useInicioDashboard({ token, rol }: UseInicioDashboardOptions) {
 
   const ejecutarCarga = useCallback(async () => {
     const currentToken = tokenRef.current;
-    if (!currentToken) return;
+    if (!currentToken || !validateJwtToken(currentToken, 0).valid) return;
     if (enVueloRef.current) return;
 
     enVueloRef.current = true;
@@ -46,9 +47,16 @@ export function useInicioDashboard({ token, rol }: UseInicioDashboardOptions) {
       ultimaActualizacionRef.current = Date.now();
       setSegundosDesdeActualizacion(0);
     } catch (err: any) {
+      if (err?.status === 401) {
+        return;
+      }
       console.error('Error al cargar dashboard de inicio:', err);
       if (!tieneDatosRef.current) {
-        setErrorGeneral(err.message || 'No se pudo cargar el panel. Intente nuevamente.');
+        setErrorGeneral(
+          err?.isConnectionError
+            ? CONNECTION_ERROR_MESSAGE
+            : err?.message || CONNECTION_ERROR_MESSAGE
+        );
       } else {
         setSinConexion(true);
       }

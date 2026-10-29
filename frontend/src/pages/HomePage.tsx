@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { UsersPage } from './UsersPage';
 import { MesasPage } from './MesasPage';
@@ -18,6 +18,7 @@ import { InactivityModal } from '../components/layout';
 import { ChangePasswordModal } from '../components/usuarios';
 import { AvisoComandaModal, AvisoNuevoPedidoCocinaModal, type NuevoPedidoCocinaInfo } from '../components/cocina';
 import { logoutService, renovarTokenService } from '../services/authService';
+import { validateJwtToken, SESSION_EXPIRED_MESSAGE } from '../services/apiClient';
 import { pedidoService } from '../services/pedidoService';
 import { cajaService } from '../services/cajaService';
 import { comandaService } from '../services/comandaService';
@@ -260,6 +261,16 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     // Verificación periódica cada segundo
     const interval = setInterval(() => {
+      if (!validateJwtToken(session.token, 0).valid) {
+        setMostrarModalInactividad(false);
+        setMostrarModalLogout(false);
+        onLogout({
+          type: 'warning',
+          message: SESSION_EXPIRED_MESSAGE
+        });
+        return;
+      }
+
       if (paginaActiva === 'cocina' && session.rol === 'Cocinero') {
         ultimaActividadRef.current = Date.now();
         return;
@@ -278,7 +289,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       if (throttleTimeout) clearTimeout(throttleTimeout);
       clearInterval(interval);
     };
-  }, [mostrarModalInactividad, mostrarModalLogout, registrarActividad]);
+  }, [mostrarModalInactividad, mostrarModalLogout, registrarActividad, paginaActiva, session.rol, session.token, onLogout]);
 
   // Cierre de sesión manual (HU-08 / RF-02 / Vista 3.1)
   const handleConfirmLogout = async () => {
@@ -302,9 +313,18 @@ export const HomePage: React.FC<HomePageProps> = ({
     try {
       const nuevoToken = await renovarTokenService(session.token);
       onUpdateSession({ ...session, token: nuevoToken });
-    } catch (err) {
+      ultimaActividadRef.current = Date.now();
+      setMostrarModalInactividad(false);
+    } catch (err: any) {
+      if (err?.status === 401 || !validateJwtToken(session.token, 10).valid) {
+        setMostrarModalInactividad(false);
+        onLogout({
+          type: 'warning',
+          message: SESSION_EXPIRED_MESSAGE
+        });
+        return;
+      }
       console.warn('No se pudo renovar token, continuando con token actual:', err);
-    } finally {
       ultimaActividadRef.current = Date.now();
       setMostrarModalInactividad(false);
     }

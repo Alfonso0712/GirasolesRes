@@ -14,6 +14,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { PageHeader, PageContainer } from '../components/layout';
+import { ConnectionErrorState } from '../components/ui';
 
 export interface DashboardPageProps {
   session: UserSession;
@@ -51,25 +52,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ session, onNavigat
 
   if (errorGeneral && !data) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-danger mb-4">
-          <AlertCircle className="w-7 h-7" />
-        </div>
-        <h2 className="text-xl font-bold font-sans text-neutral-800 mb-2">
-          No se pudo cargar el panel
-        </h2>
-        <p className="text-sm text-neutral-600 max-w-md mb-6">
-          {errorGeneral}
-        </p>
-        <button
-          type="button"
-          onClick={() => refrescarManual()}
-          className="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-hover transition-colors cursor-pointer flex items-center gap-2"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Reintentar
-        </button>
-      </div>
+      <ConnectionErrorState
+        message={errorGeneral}
+        onRetry={() => refrescarManual()}
+        retrying={cargandoInicial || actualizando}
+      />
     );
   }
 
