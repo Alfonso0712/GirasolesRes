@@ -47,4 +47,14 @@ describe('useHandedness - Preferencia aislada por usuario', () => {
     expect(document.documentElement.classList.contains('left-handed')).toBe(false);
     expect(document.documentElement.getAttribute('data-handedness')).toBe('right');
   });
+
+  it('persiste la preferencia a nivel de dispositivo para pantallas públicas como el login', () => {
+    setHandedness('left');
+    expect(localStorage.getItem('girasoles_handedness')).toBe('left');
+    expect(getHandednessForUser()).toBe('left');
+
+    setHandedness('right');
+    expect(localStorage.getItem('girasoles_handedness')).toBe('right');
+    expect(getHandednessForUser()).toBe('right');
+  });
 });

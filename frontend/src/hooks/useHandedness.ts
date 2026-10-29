@@ -3,6 +3,19 @@ import { useSyncExternalStore } from 'react';
 export type Handedness = 'right' | 'left';
 
 const PREFIX = 'girasoles_handedness_';
+const DEVICE_KEY = 'girasoles_handedness';
+
+export function getDeviceHandedness(): Handedness {
+  try {
+    const saved = localStorage.getItem(DEVICE_KEY);
+    if (saved === 'left' || saved === 'right') {
+      return saved;
+    }
+  } catch {
+    // ignore
+  }
+  return 'right';
+}
 
 function getActiveUsername(): string | null {
   try {
@@ -22,7 +35,8 @@ function getActiveUsername(): string | null {
 export function getHandednessForUser(username?: string): Handedness {
   const user = (username || getActiveUsername())?.toLowerCase().trim();
   if (!user) {
-    return 'right';
+    // Pantalla pública sin usuario identificado (ej. Login)
+    return getDeviceHandedness();
   }
   try {
     const saved = localStorage.getItem(`${PREFIX}${user}`);
@@ -32,6 +46,7 @@ export function getHandednessForUser(username?: string): Handedness {
   } catch {
     // ignore
   }
+  // Un usuario específico sin configuración previa siempre inicia diestro
   return 'right';
 }
 
@@ -40,7 +55,7 @@ function getInitialHandedness(): Handedness {
   if (activeUser) {
     return getHandednessForUser(activeUser);
   }
-  return 'right';
+  return getDeviceHandedness();
 }
 
 let currentHandedness: Handedness = getInitialHandedness();
@@ -64,12 +79,13 @@ function emitChange() {
 
 export function setHandedness(handedness: Handedness, username?: string) {
   const user = (username || getActiveUsername())?.toLowerCase().trim();
-  if (user) {
-    try {
+  try {
+    localStorage.setItem(DEVICE_KEY, handedness);
+    if (user) {
       localStorage.setItem(`${PREFIX}${user}`, handedness);
-    } catch {
-      // ignore quota errors
     }
+  } catch {
+    // ignore quota errors
   }
 
   if (currentHandedness !== handedness) {
@@ -92,7 +108,7 @@ export function applyUserHandedness(username?: string) {
 }
 
 /**
- * Restablece a la orientación predeterminada (diestro) al cerrar sesión
+ * Restablece a la orientación predeterminada (diestro) al cerrar sesión o en tests
  */
 export function resetHandednessToDefault() {
   if (currentHandedness !== 'right') {

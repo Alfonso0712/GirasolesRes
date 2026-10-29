@@ -4,7 +4,7 @@ import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { HomePage } from './pages/HomePage';
 import { LandingPage } from './pages/LandingPage';
 import { setTheme } from './hooks/useTheme';
-import { setHandedness, applyUserHandedness, resetHandednessToDefault } from './hooks/useHandedness';
+import { setHandedness, applyUserHandedness } from './hooks/useHandedness';
 import { obtenerTemaActual, obtenerOrientacionActual } from './services/perfilService';
 import {
   SESSION_STORAGE_KEY,
@@ -57,7 +57,6 @@ export function App() {
 
   const handleLogout = useCallback((banner?: BannerState) => {
     clearStoredSession();
-    resetHandednessToDefault();
     setSession(null);
     setLogoutBanner(banner || null);
     setCurrentPage('login');
@@ -128,7 +127,6 @@ export function App() {
 
       if (!parsed || !parsed.usuario || !parsed.rol || !validation.valid) {
         clearStoredSession();
-        resetHandednessToDefault();
         setSession(null);
 
         // Si el usuario estaba explícitamente en /login, mostramos el banner de sesión expirada
@@ -179,7 +177,6 @@ export function App() {
         });
     } catch {
       clearStoredSession();
-      resetHandednessToDefault();
       setSession(null);
       if (isLoginPath) {
         setLogoutBanner({
