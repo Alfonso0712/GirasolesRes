@@ -40,7 +40,7 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
 
       <div>
         <div className="flex items-start justify-between gap-2">
-          <h4 className="font-sans font-semibold text-sm sm:text-base lg:text-lg text-ink leading-snug break-words">
+          <h4 className="font-sans font-bold text-sm sm:text-base text-ink leading-snug break-words">
             {nombre}
           </h4>
           {esAgotado && (
@@ -49,13 +49,13 @@ export const MenuItemSelectableCard: React.FC<MenuItemSelectableCardProps> = ({
             </span>
           )}
         </div>
-        <span className="block text-xs sm:text-sm text-ink-muted mt-0.5">
+        <span className="block text-xs text-ink-muted mt-0.5">
           {categoria}
         </span>
       </div>
 
       <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between gap-2">
-        <span className="whitespace-nowrap font-bold tabular-nums text-base xl:text-lg text-neutral-800">
+        <span className="whitespace-nowrap font-bold tabular-nums text-sm text-neutral-800">
           S/ {precio.toFixed(2)}
         </span>
 
