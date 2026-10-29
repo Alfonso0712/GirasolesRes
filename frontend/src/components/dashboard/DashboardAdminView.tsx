@@ -547,7 +547,6 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
 
 function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
   const actions = [
-    { label: 'Nuevo Pedido de Mesa', pagina: 'pedido-mesa', icon: UtensilsCrossed },
     { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
     { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
     { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: Lock },
@@ -563,7 +562,7 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
       <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
         Accesos Rápidos a Módulos
       </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {actions.map((act, idx) => {
           const Icon = act.icon;
           return (

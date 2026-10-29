@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SelectorPedidoModal } from '../SelectorPedidoModal';
 import { MesasPage } from '../../../pages/MesasPage';
+import { PedidoMesaPage } from '../../../pages/PedidoMesaPage';
 import type { PedidoAbiertoMesaDto } from '../../../types/pedido';
 import type { UserSession } from '../../../types/auth';
 import { pedidoService } from '../../../services/pedidoService';
@@ -137,5 +138,32 @@ describe('SelectorPedidoModal y Flujo de Selección en MesasPage', () => {
 
     // 6. Verificación: el modal selector de pedidos NO se muestra
     expect(screen.queryByText(/Seleccionar Pedido · Mesa 1/i)).not.toBeInTheDocument();
+  });
+
+  it('redirige a Mesas y Salón y no muestra el formulario ni el catálogo si PedidoMesaPage se abre sin mesa seleccionada', async () => {
+    const mockSession: UserSession = {
+      usuario: 'mozo1',
+      rol: 'Mozo',
+      nombre: 'Renzo Mozo',
+      token: 'jwt-token-mozo',
+    };
+
+    const onVolverAMesasMock = vi.fn();
+
+    render(
+      <PedidoMesaPage
+        session={mockSession}
+        mesaIdInicial={null}
+        onLogout={vi.fn()}
+        onVolverAMesas={onVolverAMesasMock}
+      />
+    );
+
+    await waitFor(() => {
+      expect(onVolverAMesasMock).toHaveBeenCalledTimes(1);
+    });
+
+    expect(screen.queryByText('Pedido de Mesa')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Buscar plato o bebida/i)).not.toBeInTheDocument();
   });
 });

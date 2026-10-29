@@ -49,6 +49,7 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     mesasLibres,
     mesaSeleccionada,
     setMesaSeleccionada,
+    mesaInvalida,
     modo,
     pedidoExistente,
     lineasBorrador,
@@ -88,6 +89,14 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     pedidoIdInicial,
     onLogout,
   });
+
+  const sinMesaInicial = !mesaIdInicial || !String(mesaIdInicial).trim();
+
+  React.useEffect(() => {
+    if (sinMesaInicial || mesaInvalida) {
+      onVolverAMesas();
+    }
+  }, [sinMesaInicial, mesaInvalida, onVolverAMesas]);
 
   // Modal para armado de Menú Completo paso a paso
   const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDia | null>(null);
@@ -131,6 +140,10 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     }
     productosPorCategoria[prod.categoria].push(prod);
   });
+
+  if (sinMesaInicial || mesaInvalida || (cargando && !mesaSeleccionada)) {
+    return null;
+  }
 
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">

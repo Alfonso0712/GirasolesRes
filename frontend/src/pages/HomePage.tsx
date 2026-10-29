@@ -102,8 +102,24 @@ export const HomePage: React.FC<HomePageProps> = ({
           ? 'cocina'
           : 'inicio';
       setPaginaActiva(defaultPage);
+      return;
     }
-  }, [paginaActiva, session.rol]);
+    if (paginaActiva === 'pedidos-mesa' || paginaActiva === 'pedido-mesa') {
+      if (session.rol !== 'Administrador' && session.rol !== 'Mozo') {
+        const defaultPage =
+          session.rol === 'Cajero'
+            ? 'pedidos-llevar'
+            : session.rol === 'Cocinero'
+            ? 'cocina'
+            : 'inicio';
+        setPaginaActiva(defaultPage);
+        return;
+      }
+      if (!mesaSeleccionadaParaPedido) {
+        setPaginaActiva('mesas');
+      }
+    }
+  }, [paginaActiva, session.rol, mesaSeleccionadaParaPedido]);
 
   // Estados de Modales del CUS-03
   const [mostrarModalLogout, setMostrarModalLogout] = useState(false);
@@ -332,7 +348,14 @@ export const HomePage: React.FC<HomePageProps> = ({
       setFiltroEstadoPedidos(params?.estado || '');
     }
     if (pagina === 'pedido-mesa' || pagina === 'pedidos-mesa') {
-      setMesaSeleccionadaParaPedido(null);
+      if (!params?.mesaId) {
+        setMesaSeleccionadaParaPedido(null);
+        setPaginaActiva('mesas');
+        return;
+      }
+      setMesaSeleccionadaParaPedido(params.mesaId);
+      setModoPedidoMesa(params.modo || 'nuevo');
+      setPedidoIdParaPedidoMesa(params.pedidoId || null);
       setPaginaActiva('pedidos-mesa');
       return;
     }
@@ -351,9 +374,12 @@ export const HomePage: React.FC<HomePageProps> = ({
         if (p === 'historial-cierres' && session.rol !== 'Administrador') {
           return;
         }
-        if (p !== 'pedidos-mesa') {
+        if (p === 'pedido-mesa' || p === 'pedidos-mesa') {
           setMesaSeleccionadaParaPedido(null);
+          setPaginaActiva('mesas');
+          return;
         }
+        setMesaSeleccionadaParaPedido(null);
         setPaginaActiva(p);
       }}
     >
@@ -389,19 +415,21 @@ export const HomePage: React.FC<HomePageProps> = ({
           }}
         />
       ) : paginaActiva === 'pedidos-mesa' && (session.rol === 'Administrador' || session.rol === 'Mozo') ? (
-        <PedidoMesaPage
-          session={session}
-          mesaIdInicial={mesaSeleccionadaParaPedido}
-          modoInicial={modoPedidoMesa}
-          pedidoIdInicial={pedidoIdParaPedidoMesa}
-          onLogout={onLogout}
-          onVolverAMesas={() => {
-            setMesaSeleccionadaParaPedido(null);
-            setPedidoIdParaPedidoMesa(null);
-            setPaginaActiva('mesas');
-          }}
-          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
-        />
+        mesaSeleccionadaParaPedido ? (
+          <PedidoMesaPage
+            session={session}
+            mesaIdInicial={mesaSeleccionadaParaPedido}
+            modoInicial={modoPedidoMesa}
+            pedidoIdInicial={pedidoIdParaPedidoMesa}
+            onLogout={onLogout}
+            onVolverAMesas={() => {
+              setMesaSeleccionadaParaPedido(null);
+              setPedidoIdParaPedidoMesa(null);
+              setPaginaActiva('mesas');
+            }}
+            onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
+          />
+        ) : null
       ) : paginaActiva === 'pedidos-llevar' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
         <PedidoLlevarPage
           session={session}

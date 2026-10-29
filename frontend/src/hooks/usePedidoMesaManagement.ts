@@ -40,6 +40,9 @@ export function usePedidoMesaManagement({
   const [menusCompletos, setMenusCompletos] = useState<MenuCompletoDia[]>([]);
   const [mesasLibres, setMesasLibres] = useState<MesaItem[]>([]);
   const [mesaSeleccionada, setMesaSeleccionada] = useState<MesaItem | null>(null);
+  const [mesaInvalida, setMesaInvalida] = useState<boolean>(
+    () => !mesaIdInicial || !String(mesaIdInicial).trim()
+  );
 
   // Modo de operación: nuevo pedido (CUS07.1) o ampliación (CUS07.2)
   const [modo, setModo] = useState<'nuevo' | 'ampliacion'>('nuevo');
@@ -86,8 +89,17 @@ export function usePedidoMesaManagement({
 
   // Carga inicial de datos
   const cargarDatos = useCallback(async () => {
+    const mesaIdLimpio = mesaIdInicial ? String(mesaIdInicial).trim() : '';
+    if (!mesaIdLimpio) {
+      setMesaSeleccionada(null);
+      setMesaInvalida(true);
+      setCargando(false);
+      return;
+    }
+
     setCargando(true);
     setErrorGeneral(null);
+    setMesaInvalida(false);
 
     try {
       const [prods, mesas, menuHoy, menusCompletosActivos] = await Promise.all([
@@ -130,79 +142,79 @@ export function usePedidoMesaManagement({
         })));
       }
 
-      if (mesaIdInicial) {
-        if (modoInicial === 'nuevo') {
-          setModo('nuevo');
-          let m = mesas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
-          if (!m) {
-            const todas = await getMesasService({}, token);
-            m = todas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
-          }
-          if (m) {
-            setMesaSeleccionada(m);
-            if (!mesas.some((item) => String(item.id).toLowerCase() === String(m!.id).toLowerCase())) {
-              setMesasLibres((prev) => [m!, ...prev]);
-            }
-          }
-        } else {
-          // Verificar si la mesa ya tiene un pedido activo (deriva a ampliación CUS07.2)
-          try {
-            if (pedidoIdInicial) {
-              const detalle = await pedidoService.obtenerPedidoPorId(pedidoIdInicial, token);
-              setModo('ampliacion');
-              setPedidoExistente(detalle);
-              setMesaSeleccionada({
-                id: mesaIdInicial,
-                nombre: detalle.mesaNombre || 'Mesa',
-                ocupacion: 'Ocupada',
-                activa: true
-              });
-            } else {
-              const pedidos = await pedidoService.obtenerPedidosActivosPorMesa(mesaIdInicial, token);
-              if (pedidos && pedidos.length > 0) {
-                const targetId = pedidos[0].id;
-                const detalle = await pedidoService.obtenerPedidoPorId(targetId, token);
-                setModo('ampliacion');
-                setPedidoExistente(detalle);
-                setMesaSeleccionada({
-                  id: mesaIdInicial,
-                  nombre: detalle.mesaNombre || 'Mesa',
-                  ocupacion: 'Ocupada',
-                  activa: true
-                });
-              } else {
-            let m = mesas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
-            if (!m) {
-              const todas = await getMesasService({}, token);
-              m = todas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
-            }
-            if (m) {
-              const mesaEncontrada = m;
-              if (!mesas.some((item) => String(item.id).toLowerCase() === String(mesaEncontrada.id).toLowerCase())) {
-                setMesasLibres((prev) => [mesaEncontrada, ...prev]);
-              }
-              setMesaSeleccionada(mesaEncontrada);
-            }
-          }
+      let m = mesas.find((item) => String(item.id).toLowerCase() === mesaIdLimpio.toLowerCase());
+      if (!m) {
+        const todas = await getMesasService({}, token);
+        m = todas.find((item) => String(item.id).toLowerCase() === mesaIdLimpio.toLowerCase());
+      }
+
+      if (!m || !m.activa) {
+        setMesaSeleccionada(null);
+        setMesaInvalida(true);
+        return;
+      }
+
+      if (modoInicial !== 'ampliacion') {
+        setModo('nuevo');
+        setMesaSeleccionada(m);
+        setMesaInvalida(false);
+        if (!mesas.some((item) => String(item.id).toLowerCase() === String(m!.id).toLowerCase())) {
+          setMesasLibres((prev) => [m!, ...prev]);
         }
-      } catch {
-          let m = mesas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
-          if (!m) {
-            try {
-              const todas = await getMesasService({}, token);
-              m = todas.find((item) => String(item.id).toLowerCase() === String(mesaIdInicial).toLowerCase());
-            } catch {
-              // fallback
-            }
-          }
-          if (m) {
-            const mesaEncontrada = m;
-            if (!mesas.some((item) => String(item.id).toLowerCase() === String(mesaEncontrada.id).toLowerCase())) {
-              setMesasLibres((prev) => [mesaEncontrada, ...prev]);
-            }
-            setMesaSeleccionada(mesaEncontrada);
-          }
+      } else {
+        if (m.ocupacion !== 'Ocupada') {
+          setMesaSeleccionada(null);
+          setMesaInvalida(true);
+          return;
         }
+        try {
+          if (pedidoIdInicial) {
+            const detalle = await pedidoService.obtenerPedidoPorId(pedidoIdInicial, token);
+            if (!detalle || detalle.estado === 'Pagado' || detalle.estado === 'Anulado') {
+              setMesaSeleccionada(null);
+              setMesaInvalida(true);
+              return;
+            }
+            setModo('ampliacion');
+            setPedidoExistente(detalle);
+            setMesaSeleccionada({
+              id: m.id,
+              nombre: detalle.mesaNombre || m.nombre,
+              ocupacion: 'Ocupada',
+              activa: true
+            });
+            setMesaInvalida(false);
+          } else {
+            const pedidos = await pedidoService.obtenerPedidosActivosPorMesa(mesaIdLimpio, token);
+            if (!pedidos || pedidos.length === 0) {
+              setMesaSeleccionada(null);
+              setMesaInvalida(true);
+              return;
+            }
+            const targetId = pedidos[0].id;
+            const detalle = await pedidoService.obtenerPedidoPorId(targetId, token);
+            if (!detalle || detalle.estado === 'Pagado' || detalle.estado === 'Anulado') {
+              setMesaSeleccionada(null);
+              setMesaInvalida(true);
+              return;
+            }
+            setModo('ampliacion');
+            setPedidoExistente(detalle);
+            setMesaSeleccionada({
+              id: m.id,
+              nombre: detalle.mesaNombre || m.nombre,
+              ocupacion: 'Ocupada',
+              activa: true
+            });
+            setMesaInvalida(false);
+          }
+        } catch (innerErr: any) {
+          if (esErrorSesionVencida(innerErr)) {
+            throw innerErr;
+          }
+          setMesaSeleccionada(null);
+          setMesaInvalida(true);
+          return;
         }
       }
     } catch (err: any) {
@@ -715,6 +727,7 @@ export function usePedidoMesaManagement({
     mesasLibres,
     mesaSeleccionada,
     setMesaSeleccionada,
+    mesaInvalida,
     modo,
     pedidoExistente,
     lineasBorrador,
