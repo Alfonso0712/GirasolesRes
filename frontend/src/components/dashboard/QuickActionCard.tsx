@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface QuickActionCardProps {
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; size?: number | string }>;
   onClick?: () => void;
   variant?: 'primary' | 'secondary';
   disabled?: boolean;
@@ -13,7 +13,7 @@ export interface QuickActionCardProps {
 
 /**
  * Componente unificado de accesos rápidos para todos los dashboards (RV-151).
- * Garantiza consistencia geométrica, tipográfica y de contraste (WCAG AA).
+ * Altura fija h-16 (64 px), padding px-4 py-2, contenedor de icono 32x32 y WCAG AA.
  */
 export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   label,
@@ -28,19 +28,19 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   const isPrimary = variant === 'primary';
 
   const baseStyles =
-    'relative group w-full h-full min-h-[88px] p-4 rounded-2xl border text-left transition-colors flex items-center gap-3.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+    'relative group w-full h-16 px-4 py-2 rounded-2xl border text-left transition-colors flex items-center gap-3 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 shrink-0';
 
   const stateStyles = disabled
-    ? 'bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed shadow-none focus-visible:ring-neutral-400'
+    ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 border-line cursor-not-allowed shadow-none focus-visible:ring-neutral-400'
     : isPrimary
     ? 'bg-primary text-white border-transparent shadow-xs hover:bg-primary-hover hover:shadow-sm cursor-pointer focus-visible:ring-primary'
-    : 'bg-surface text-neutral-800 border-neutral-200/80 shadow-xs hover:bg-canvas hover:border-accent/40 hover:text-neutral-900 hover:shadow-sm cursor-pointer focus-visible:ring-accent';
+    : 'bg-surface text-ink border-line shadow-xs hover:bg-canvas hover:border-accent/40 hover:shadow-sm cursor-pointer focus-visible:ring-accent';
 
   const iconContainerStyles = disabled
-    ? 'bg-neutral-200/70 text-neutral-400 border border-neutral-200'
+    ? 'bg-neutral-200/70 dark:bg-neutral-700/70 text-neutral-400 dark:text-neutral-500 border border-line'
     : isPrimary
     ? 'bg-white/20 text-white border border-white/25'
-    : 'bg-canvas text-accent border border-neutral-200/60 group-hover:border-accent/30 group-hover:bg-chip-accent-bg';
+    : 'bg-canvas text-accent border border-line group-hover:border-accent/40 group-hover:bg-chip-accent-bg';
 
   return (
     <button
@@ -51,13 +51,13 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
       className={`${baseStyles} ${stateStyles} ${className}`.trim()}
     >
       <div
-        className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center transition-colors ${iconContainerStyles}`}
+        className={`w-8 h-8 shrink-0 rounded-xl flex items-center justify-center transition-colors ${iconContainerStyles}`}
         aria-hidden="true"
       >
-        <Icon className="w-5 h-5 shrink-0" />
+        <Icon className="w-[18px] h-[18px] shrink-0" size={18} />
       </div>
 
-      <span className="flex-1 min-w-0 text-sm font-semibold uppercase tracking-wide leading-snug line-clamp-2 break-normal">
+      <span className="flex-1 min-w-0 text-sm font-semibold uppercase tracking-wide leading-tight line-clamp-2 break-words hyphens-none">
         {label}
       </span>
 
