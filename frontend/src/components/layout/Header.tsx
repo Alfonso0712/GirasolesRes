@@ -118,21 +118,25 @@ export const Header: React.FC<HeaderProps> = ({
             aria-haspopup="menu"
             aria-expanded={menuAbierto}
             aria-label={`Menú de usuario: ${session?.nombre ?? 'Perfil'}`}
-            className="flex items-center gap-2 sm:gap-3 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 hover:bg-neutral-100/70 dark:hover:bg-neutral-800/50 transition-all cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 min-h-[44px]"
+            className={`flex items-center gap-2 sm:gap-3 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border transition-all cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 min-h-[44px] ${
+              menuAbierto
+                ? 'bg-neutral-100 dark:bg-white/10 border-neutral-200 dark:border-neutral-700'
+                : 'border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 hover:bg-neutral-100/70 dark:hover:bg-white/10'
+            }`}
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-brand-tint text-accent font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
               {obtenerIniciales(session?.nombre)}
             </div>
             <div className="flex flex-col text-left max-w-[120px] sm:max-w-none">
-              <span className="text-xs sm:text-sm font-bold text-neutral-800 dark:text-ink leading-tight truncate">
+              <span className="text-xs sm:text-sm font-bold text-ink leading-tight truncate">
                 {session?.nombre}
               </span>
-              <span className="text-[11px] sm:text-xs text-neutral-500 dark:text-neutral-400 leading-tight">
+              <span className="text-[11px] sm:text-xs text-ink-muted leading-tight">
                 {session?.rol}
               </span>
             </div>
             <ChevronDown
-              className={`w-4 h-4 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 shrink-0 ${
+              className={`w-4 h-4 text-ink-muted transition-transform duration-200 shrink-0 ${
                 menuAbierto ? 'rotate-180' : ''
               }`}
               aria-hidden="true"
@@ -157,9 +161,9 @@ export const Header: React.FC<HeaderProps> = ({
                     setMenuAbierto(false);
                     onCambiarPassword();
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus:bg-neutral-100 dark:focus:bg-neutral-800"
+                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-ink hover:text-ink hover:bg-neutral-100 dark:hover:bg-white/10 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 focus:bg-neutral-100 dark:focus:bg-white/10"
                 >
-                  <KeyRound className="w-4 h-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
+                  <KeyRound className="w-4 h-4 text-ink-muted shrink-0" />
                   <span>Cambiar contraseña</span>
                 </button>
               )}
@@ -172,7 +176,7 @@ export const Header: React.FC<HeaderProps> = ({
                     setMenuAbierto(false);
                     onLogout();
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-danger hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus:bg-rose-50 dark:focus:bg-rose-950/30"
+                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-danger hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-danger/60 focus:bg-rose-50 dark:focus:bg-rose-950/40"
                 >
                   <LogOut className="w-4 h-4 text-danger shrink-0" />
                   <span>Cerrar sesión</span>
