@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import { QuickActionCard } from './QuickActionCard';
+import React from 'react';
 import type {
   BloqueMesas,
   BloqueSimpleCantidad
@@ -62,15 +63,13 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
         <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Acciones Operativas del Salón
         </h3>
-        <div>
-          <button
-            type="button"
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
+          <QuickActionCard
+            label="Ver Mesas y Salón"
+            icon={LayoutGrid}
+            variant="primary"
             onClick={() => onNavigate('mesas')}
-            className="w-full p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <LayoutGrid className="w-5 h-5" />
-            <span>VER MESAS Y SALÓN</span>
-          </button>
+          />
         </div>
       </div>
 

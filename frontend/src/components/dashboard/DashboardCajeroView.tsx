@@ -5,6 +5,7 @@ import type {
   BloqueListos
 } from '../../types/inicio';
 import { SolesIcon } from '../ui/SolesIcon';
+import { QuickActionCard } from './QuickActionCard';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -76,58 +77,33 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
         <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Operaciones de Caja y Mostrador
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Botón Cobrar (Deshabilitado con motivo si no hay caja abierta) */}
-          <div className="relative group">
-            <button
-              type="button"
-              disabled={!cajaAbierta}
-              onClick={() => onNavigate('caja')}
-              className={`w-full p-4 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all min-h-[48px] ${
-                cajaAbierta
-                  ? 'bg-primary text-white shadow-md hover:bg-primary-hover cursor-pointer'
-                  : 'bg-neutral-100 text-neutral-500 border border-neutral-200 cursor-not-allowed'
-              }`}
-            >
-              <SolesIcon className="w-5 h-5" />
-              <span>COBRAR PEDIDO</span>
-            </button>
-            {!cajaAbierta && (
-              <span className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-fill-strong text-white text-xs px-2.5 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-                Abra la caja primero
-              </span>
-            )}
-          </div>
-
-          {/* Botón Pedido para Llevar */}
-          <button
-            type="button"
-            onClick={() => onNavigate('pedidos-llevar')}
-            className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <ShoppingBag className="w-5 h-5 text-accent" />
-            <span>PEDIDO PARA LLEVAR</span>
-          </button>
-
-          {/* Botón Gestión de Caja */}
-          <button
-            type="button"
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
+          <QuickActionCard
+            label="Cobrar Pedido"
+            icon={SolesIcon}
+            variant="primary"
+            disabled={!cajaAbierta}
+            disabledTooltip="Abra la caja primero"
             onClick={() => onNavigate('caja')}
-            className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <SolesIcon className="w-5 h-5 text-neutral-600" />
-            <span>GESTIONAR TURNO DE CAJA</span>
-          </button>
-
-          {/* Botón Historial de Ventas */}
-          <button
-            type="button"
+          />
+          <QuickActionCard
+            label="Pedido para Llevar"
+            icon={ShoppingBag}
+            variant="secondary"
+            onClick={() => onNavigate('pedidos-llevar')}
+          />
+          <QuickActionCard
+            label="Gestionar Turno de Caja"
+            icon={SolesIcon}
+            variant="secondary"
+            onClick={() => onNavigate('caja')}
+          />
+          <QuickActionCard
+            label="Historial de Comprobantes"
+            icon={SolesIcon}
+            variant="secondary"
             onClick={() => onNavigate('ventas')}
-            className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <SolesIcon className="w-5 h-5 text-neutral-600" />
-            <span>HISTORIAL DE COMPROBANTES</span>
-          </button>
+          />
         </div>
       </div>
 

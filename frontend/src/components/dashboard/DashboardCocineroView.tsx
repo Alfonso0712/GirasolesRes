@@ -1,3 +1,4 @@
+import { QuickActionCard } from './QuickActionCard';
 import React from 'react';
 import type {
   BloqueComandasCocinero,
@@ -60,24 +61,19 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
         <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
           Operación de Cocina KDS
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            type="button"
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
+          <QuickActionCard
+            label="Pantalla de Comandas (KDS)"
+            icon={ChefHat}
+            variant="primary"
             onClick={() => onNavigate('cocina')}
-            className="p-4 bg-primary text-white hover:bg-primary-hover rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <ChefHat className="w-5 h-5" />
-            <span>PANTALLA DE COMANDAS (KDS)</span>
-          </button>
-
-          <button
-            type="button"
+          />
+          <QuickActionCard
+            label="Marcar Platos Agotados / Menú"
+            icon={CalendarCheck}
+            variant="secondary"
             onClick={() => onNavigate('menu-dia')}
-            className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
-          >
-            <CalendarCheck className="w-5 h-5 text-accent" />
-            <span>MARCAR PLATOS AGOTADOS / MENÚ</span>
-          </button>
+          />
         </div>
       </div>
 

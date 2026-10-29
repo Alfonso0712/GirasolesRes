@@ -10,6 +10,7 @@ import type {
   AlertaInicio
 } from '../../types/inicio';
 import { SolesIcon } from '../ui/SolesIcon';
+import { QuickActionCard } from './QuickActionCard';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -562,25 +563,16 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
       <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-4">
         Accesos Rápidos a Módulos
       </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {actions.map((act, idx) => {
-          const Icon = act.icon;
-          return (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => onNavigate(act.pagina)}
-              className="p-3 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/70 hover:border-accent rounded-xl text-left transition-all cursor-pointer group flex items-center gap-3 min-h-[44px]"
-            >
-              <div className="w-8 h-8 rounded-lg bg-surface border border-neutral-200 flex items-center justify-center text-neutral-600 group-hover:text-accent group-hover:border-accent shrink-0 transition-colors">
-                <Icon className="w-4 h-4" />
-              </div>
-              <span className="text-xs font-bold text-neutral-700 group-hover:text-neutral-900 leading-tight">
-                {act.label}
-              </span>
-            </button>
-          );
-        })}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
+        {actions.map((act, idx) => (
+          <QuickActionCard
+            key={idx}
+            label={act.label}
+            icon={act.icon}
+            variant="secondary"
+            onClick={() => onNavigate(act.pagina)}
+          />
+        ))}
       </div>
     </div>
   );
