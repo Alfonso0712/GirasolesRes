@@ -79,25 +79,25 @@ UPDATE public.menus_completos
 SET nom_menu_completo = REPLACE(nom_menu_completo, 'Chicharr?n', 'Chicharrón')
 WHERE nom_menu_completo LIKE '%Chicharr?n%';
 
--- 3. Reparación de Líneas de Pedido históricas si existieran
-UPDATE public.lineas_pedido
-SET lin_nombre_producto = REPLACE(lin_nombre_producto, 'Caf?', 'Café')
-WHERE lin_nombre_producto LIKE '%Caf?%';
+-- 3. Reparación de Detalles de Pedido si existen
+UPDATE public.detalles_pedido
+SET det_nombre = REPLACE(det_nombre, 'Caf?', 'Café')
+WHERE det_nombre LIKE '%Caf?%';
 
-UPDATE public.lineas_pedido
-SET lin_nombre_producto = REPLACE(lin_nombre_producto, 'T?', 'Té')
-WHERE lin_nombre_producto LIKE '%T?%';
+UPDATE public.detalles_pedido
+SET det_nombre = REPLACE(det_nombre, 'T?', 'Té')
+WHERE det_nombre LIKE '%T?%';
 
-UPDATE public.lineas_pedido
-SET lin_nombre_producto = REPLACE(lin_nombre_producto, 'chicharr?n', 'chicharrón')
-WHERE lin_nombre_producto LIKE '%chicharr?n%';
+UPDATE public.detalles_pedido
+SET det_nombre = REPLACE(det_nombre, 'chicharr?n', 'chicharrón')
+WHERE det_nombre LIKE '%chicharr?n%';
 
-UPDATE public.lineas_pedido
-SET lin_nombre_producto = REPLACE(lin_nombre_producto, 'arequipe?a', 'arequipeña')
-WHERE lin_nombre_producto LIKE '%arequipe?a%';
+UPDATE public.detalles_pedido
+SET det_nombre = REPLACE(det_nombre, 'arequipe?a', 'arequipeña')
+WHERE det_nombre LIKE '%arequipe?a%';
 
-UPDATE public.lineas_pedido
-SET lin_nombre_producto = REPLACE(lin_nombre_producto, 'huanca?na', 'huancaína')
-WHERE lin_nombre_producto LIKE '%huanca?na%';
+UPDATE public.detalles_pedido
+SET det_nombre = REPLACE(det_nombre, 'huanca?na', 'huancaína')
+WHERE det_nombre LIKE '%huanca?na%';
 
 COMMIT;
