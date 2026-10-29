@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   ShoppingBag,
-  Receipt,
   ChevronRight
 } from 'lucide-react';
 
@@ -126,7 +125,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
             onClick={() => onNavigate('ventas')}
             className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <Receipt className="w-5 h-5 text-neutral-600" />
+            <SolesIcon className="w-5 h-5 text-neutral-600" />
             <span>HISTORIAL DE COMPROBANTES</span>
           </button>
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { SolesIcon } from '../components/ui/SolesIcon';
 import {
-  Receipt,
+  ReceiptText,
   RotateCcw,
   Search,
   Filter,
@@ -257,7 +257,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
             </span>
           </div>
           <div className="w-9 h-9 rounded-lg bg-orange-50 text-accent flex items-center justify-center">
-            <Receipt className="w-4 h-4" />
+            <ReceiptText className="w-4 h-4" />
           </div>
         </div>
 

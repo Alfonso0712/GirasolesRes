@@ -21,7 +21,7 @@ export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
       className = '',
       color = 'currentColor',
       strokeWidth = 2,
-      fontSize = 20,
+      fontSize = 22,
       ...props
     },
     ref
@@ -52,7 +52,7 @@ export const SolesIcon = React.forwardRef<SVGSVGElement, SolesIconProps>(
           fontFamily="var(--font-sans, system-ui, -apple-system, sans-serif)"
           fontSize={fontSize}
           fontWeight="800"
-          letterSpacing="-1px"
+          letterSpacing="-1.2px"
         >
           S/
         </text>

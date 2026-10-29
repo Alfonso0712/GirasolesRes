@@ -4,8 +4,8 @@ import type {
   BloqueAgotadosCocinero
 } from '../../types/inicio';
 import {
+  CalendarCheck,
   ChefHat,
-  Utensils,
   Clock,
   ChevronRight
 } from 'lucide-react';
@@ -75,7 +75,7 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
             onClick={() => onNavigate('menu-dia')}
             className="p-4 bg-surface border border-neutral-200/80 hover:border-accent rounded-xl font-bold text-sm text-neutral-800 hover:text-accent shadow-xs hover:shadow-md flex items-center justify-center gap-3 transition-all cursor-pointer min-h-[48px]"
           >
-            <Utensils className="w-5 h-5 text-accent" />
+            <CalendarCheck className="w-5 h-5 text-accent" />
             <span>MARCAR PLATOS AGOTADOS / MENÚ</span>
           </button>
         </div>

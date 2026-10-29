@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { SolesIcon } from '../ui/SolesIcon';
 import {
-  Receipt,
+  ReceiptText,
   X,
   Download,
   Ban,
@@ -62,7 +62,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
               esAnulada ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-amber-50 text-accent border-amber-200'
             }`}>
-              <Receipt className="w-5 h-5" />
+              <ReceiptText className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">

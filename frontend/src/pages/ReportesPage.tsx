@@ -12,7 +12,7 @@ import {
   TrendingUp,
   Smartphone,
   Utensils,
-  Receipt,
+  ReceiptText,
   Check
 } from 'lucide-react';
 import { useReportesManagement } from '../hooks/useReportesManagement';
@@ -127,7 +127,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
               : 'bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
           }`}
         >
-          <Receipt className="w-4 h-4" />
+          <ReceiptText className="w-4 h-4" />
           <span>Reporte de Ventas</span>
         </button>
       </div>
@@ -547,7 +547,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                     Cantidad de Ventas
                   </span>
                   <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                    <Receipt className="w-4 h-4" />
+                    <ReceiptText className="w-4 h-4" />
                   </div>
                 </div>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-ink tabular-nums mt-2">

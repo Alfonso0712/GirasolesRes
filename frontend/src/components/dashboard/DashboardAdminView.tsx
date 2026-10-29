@@ -17,12 +17,13 @@ import {
   UtensilsCrossed,
   ClipboardList,
   ShoppingBag,
-  Receipt,
   Users,
   ChevronRight,
-  TrendingUp,
   ArrowRight,
-  LayoutGrid
+  LayoutGrid,
+  Lock,
+  BarChart3,
+  CalendarCheck
 } from 'lucide-react';
 
 export interface DashboardAdminViewProps {
@@ -549,10 +550,10 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
     { label: 'Nuevo Pedido de Mesa', pagina: 'pedido-mesa', icon: UtensilsCrossed },
     { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
     { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
-    { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: SolesIcon },
-    { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: Receipt },
-    { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: TrendingUp },
-    { label: 'Menú del Día', pagina: 'menu-dia', icon: ClipboardList },
+    { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: Lock },
+    { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: SolesIcon },
+    { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: BarChart3 },
+    { label: 'Menú del Día', pagina: 'menu-dia', icon: CalendarCheck },
     { label: 'Gestión de Productos', pagina: 'productos', icon: UtensilsCrossed },
     { label: 'Gestión de Usuarios', pagina: 'usuarios', icon: Users },
   ];

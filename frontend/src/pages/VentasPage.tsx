@@ -1,7 +1,7 @@
 import React from 'react';
 import { SolesIcon } from '../components/ui/SolesIcon';
 import {
-  Receipt,
+  ReceiptText,
   Filter,
   RotateCcw,
   Search,
@@ -144,7 +144,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           {/* KPI 1: Ventas Vigentes */}
           <div className="bg-surface rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center shrink-0 border border-amber-200">
-              <Receipt className="w-5 h-5" />
+              <ReceiptText className="w-5 h-5" />
             </div>
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
