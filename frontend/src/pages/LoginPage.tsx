@@ -162,7 +162,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout onLogoClick={onBackToLanding}>
       {/* Posición reservada para alinear exactamente con el enlace Volver de ForgotPasswordPage */}
       <div className="h-[clamp(0.5rem,1.5vh,1.5rem)] mb-[clamp(0.25rem,1vh,0.75rem)] pointer-events-none" aria-hidden="true" />
 
@@ -310,17 +310,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </div>
         </div>
 
-        {onBackToLanding && (
-          <div className="text-center pt-3 border-t border-line mt-4">
-            <button
-              type="button"
-              onClick={onBackToLanding}
-              className="text-xs font-semibold text-accent hover:underline inline-flex items-center justify-center gap-1 cursor-pointer"
-            >
-              <span>← Volver a la Carta del Restaurante</span>
-            </button>
-          </div>
-        )}
+
     </AuthLayout>
   );
 };

@@ -7,9 +7,10 @@ import { AuthLayout } from '../layouts/AuthLayout';
 
 interface ForgotPasswordPageProps {
   onBackToLogin: () => void;
+  onBackToLanding?: () => void;
 }
 
-export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackToLogin }) => {
+export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackToLogin, onBackToLanding }) => {
   const [paso, setPaso] = useState<'solicitar' | 'restablecer' | 'exito'>('solicitar');
   const [correo, setCorreo] = useState('');
   const [codigo, setCodigo] = useState('');
@@ -89,7 +90,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBackTo
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout onLogoClick={onBackToLanding}>
       {/* Botón Volver con altura reservada para match exacto con LoginPage */}
       <div className="h-[clamp(0.5rem,1.5vh,1.5rem)] mb-[clamp(0.25rem,1vh,0.75rem)] flex items-center">
         <button

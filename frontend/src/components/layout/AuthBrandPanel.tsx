@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const AuthBrandPanel: React.FC = () => {
+interface AuthBrandPanelProps {
+  onLogoClick?: () => void;
+}
+
+export const AuthBrandPanel: React.FC<AuthBrandPanelProps> = ({ onLogoClick }) => {
   return (
     <aside className="hidden lg:flex lg:w-[60%] lg:max-w-[60%] lg:basis-[60%] text-white p-12 xl:p-16 flex-col justify-between relative overflow-hidden shrink-0 grow-0 select-none h-full bg-ink-fill">
       {/* Fotografía gastronómica de fondo con imagen oficial del restaurante */}
@@ -20,19 +24,40 @@ export const AuthBrandPanel: React.FC = () => {
         aria-hidden="true"
       />
 
-      {/* Cabecera de Logo superior izquierda */}
-      <div className="relative z-10 flex items-center gap-3.5">
-        <img
-          src="/favicon.png"
-          alt="Isotipo Girasoles"
-          className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg ring-2 ring-white/20"
-        />
-        <img
-          src="/LOGO_GIRASOLES.png"
-          alt="Girasoles Restaurante"
-          className="h-8 w-auto object-contain drop-shadow-md"
-        />
-      </div>
+      {/* Cabecera de Logo superior izquierda (con affordance interactiva y accesibilidad) */}
+      {onLogoClick ? (
+        <button
+          type="button"
+          onClick={onLogoClick}
+          title="Volver a la carta del restaurante (Inicio)"
+          aria-label="Volver a la carta del restaurante"
+          className="relative z-10 flex items-center gap-3.5 p-2 -m-2 rounded-2xl transition-all duration-200 group cursor-pointer hover:bg-white/10 hover:backdrop-blur-xs border border-transparent hover:border-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary w-fit text-left active:scale-[0.98]"
+        >
+          <img
+            src="/favicon.png"
+            alt="Isotipo Girasoles"
+            className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg ring-2 ring-white/20 group-hover:ring-primary group-hover:scale-105 transition-all duration-200"
+          />
+          <img
+            src="/LOGO_GIRASOLES.png"
+            alt="Girasoles Restaurante"
+            className="h-8 w-auto object-contain drop-shadow-md group-hover:brightness-110 group-hover:drop-shadow-[0_2px_8px_rgba(243,156,18,0.4)] transition-all duration-200"
+          />
+        </button>
+      ) : (
+        <div className="relative z-10 flex items-center gap-3.5">
+          <img
+            src="/favicon.png"
+            alt="Isotipo Girasoles"
+            className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg ring-2 ring-white/20"
+          />
+          <img
+            src="/LOGO_GIRASOLES.png"
+            alt="Girasoles Restaurante"
+            className="h-8 w-auto object-contain drop-shadow-md"
+          />
+        </div>
+      )}
 
       {/* Textos Centrales alineados a la izquierda y centrados verticalmente */}
       <div className="relative z-10 my-auto py-8 max-w-xl text-left">

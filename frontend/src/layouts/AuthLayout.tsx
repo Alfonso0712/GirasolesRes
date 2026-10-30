@@ -4,9 +4,10 @@ import { useHandedness } from '../hooks/useHandedness';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
+  onLogoClick?: () => void;
 }
 
-export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, onLogoClick }) => {
   const { isLeftHanded } = useHandedness();
 
   return (
@@ -17,20 +18,43 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     >
       {/* Encabezado superior para pantallas móviles (< lg) */}
       <header className="lg:hidden bg-[#3A2211] px-5 py-3.5 flex items-center justify-center gap-3 shadow-sm border-b border-ink-fill shrink-0">
-        <img
-          src="/favicon.png"
-          alt="Isotipo Girasoles"
-          className="w-9 h-9 rounded-full object-cover shrink-0"
-        />
-        <img
-          src="/LOGO_GIRASOLES.png"
-          alt="Girasoles Restaurante"
-          className="h-6 w-auto object-contain"
-        />
+        {onLogoClick ? (
+          <button
+            type="button"
+            onClick={onLogoClick}
+            aria-label="Volver a la carta del restaurante"
+            title="Volver a la carta del restaurante"
+            className="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg transition-transform active:scale-95 cursor-pointer"
+          >
+            <img
+              src="/favicon.png"
+              alt="Isotipo Girasoles"
+              className="w-9 h-9 rounded-full object-cover shrink-0"
+            />
+            <img
+              src="/LOGO_GIRASOLES.png"
+              alt="Girasoles Restaurante"
+              className="h-6 w-auto object-contain"
+            />
+          </button>
+        ) : (
+          <div className="flex items-center gap-3">
+            <img
+              src="/favicon.png"
+              alt="Isotipo Girasoles"
+              className="w-9 h-9 rounded-full object-cover shrink-0"
+            />
+            <img
+              src="/LOGO_GIRASOLES.png"
+              alt="Girasoles Restaurante"
+              className="h-6 w-auto object-contain"
+            />
+          </div>
+        )}
       </header>
 
       {/* 1. Panel de Marca (60% en pantallas grandes) */}
-      <AuthBrandPanel />
+      <AuthBrandPanel onLogoClick={onLogoClick} />
 
       {/* 2. Panel de formulario: Contenedor con alineación vertical centrada */}
       <main className="w-full lg:w-[40%] lg:max-w-[40%] lg:basis-[40%] bg-surface flex flex-col items-center justify-center px-6 sm:px-10 lg:px-10 xl:px-14 py-[clamp(0.75rem,2vh,1.5rem)] h-full shrink-0 grow-0 overflow-y-auto lg:overflow-hidden">

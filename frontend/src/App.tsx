@@ -258,7 +258,7 @@ export function App() {
     );
   }
 
-  return <ForgotPasswordPage onBackToLogin={navigateToLogin} />;
+  return <ForgotPasswordPage onBackToLogin={navigateToLogin} onBackToLanding={navigateToLanding} />;
 }
 
 export default App;
