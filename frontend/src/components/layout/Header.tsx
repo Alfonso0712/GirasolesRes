@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className={`flex items-center gap-2 sm:gap-4 ${isLeftHanded ? 'flex-row-reverse' : ''}`}>
         <ThemeToggle />
 
-        <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-700/60" />
+        <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-200/80" />
 
         {/* Menú de usuario desplegable */}
         <div className="relative" ref={dropdownRef}>
@@ -128,8 +128,8 @@ export const Header: React.FC<HeaderProps> = ({
             aria-label={`Menú de usuario: ${session?.nombre ?? 'Perfil'}`}
             className={`flex items-center gap-2 sm:gap-3 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border transition-all cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 min-h-[44px] ${
               menuAbierto
-                ? 'bg-neutral-100 dark:bg-white/10 border-neutral-200 dark:border-neutral-700'
-                : 'border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 hover:bg-neutral-100/70 dark:hover:bg-white/10'
+                ? 'bg-neutral-100 dark:bg-surface-raised border-neutral-200 dark:border-neutral-200/80 shadow-2xs'
+                : 'border-transparent hover:border-neutral-200 dark:hover:border-neutral-200/80 hover:bg-neutral-100/70 dark:hover:bg-surface-raised/70'
             }`}
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-brand-tint text-accent font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
@@ -160,7 +160,7 @@ export const Header: React.FC<HeaderProps> = ({
               aria-label="Opciones de usuario"
               className={`absolute ${
                 isLeftHanded ? 'left-0' : 'right-0'
-              } top-full mt-2 w-52 bg-surface rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-700/80 p-1.5 z-50 animate-in fade-in slide-in-from-top-1`}
+              } top-full mt-2 w-52 bg-surface rounded-2xl shadow-xl dark:shadow-black/40 border border-neutral-200 dark:border-neutral-200/80 p-1.5 z-50 animate-in fade-in slide-in-from-top-1`}
             >
               {/* Opción: Configuración y Ergonomía (Modo Zurdo/Diestro y Tema) */}
               {onAbrirConfiguracion && (
@@ -171,7 +171,7 @@ export const Header: React.FC<HeaderProps> = ({
                     setMenuAbierto(false);
                     onAbrirConfiguracion();
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-ink hover:text-ink hover:bg-neutral-100 dark:hover:bg-white/10 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 focus:bg-neutral-100 dark:focus:bg-white/10"
+                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-ink hover:text-ink hover:bg-neutral-100 dark:hover:bg-surface-raised flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 focus:bg-neutral-100 dark:focus:bg-surface-raised"
                 >
                   <Settings className="w-4 h-4 text-ink-muted shrink-0" />
                   <span>Configuración</span>
@@ -187,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({
                     setMenuAbierto(false);
                     onCambiarPassword();
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-ink hover:text-ink hover:bg-neutral-100 dark:hover:bg-white/10 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 focus:bg-neutral-100 dark:focus:bg-white/10"
+                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-ink hover:text-ink hover:bg-neutral-100 dark:hover:bg-surface-raised flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 focus:bg-neutral-100 dark:focus:bg-surface-raised"
                 >
                   <KeyRound className="w-4 h-4 text-ink-muted shrink-0" />
                   <span>Cambiar contraseña</span>
@@ -195,18 +195,21 @@ export const Header: React.FC<HeaderProps> = ({
               )}
 
               {onLogout && (
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuAbierto(false);
-                    onLogout();
-                  }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-danger hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-danger/60 focus:bg-rose-50 dark:focus:bg-rose-950/40"
-                >
-                  <LogOut className="w-4 h-4 text-danger shrink-0" />
-                  <span>Cerrar sesión</span>
-                </button>
+                <>
+                  <div className="my-1 border-t border-neutral-200 dark:border-neutral-200/80" />
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setMenuAbierto(false);
+                      onLogout();
+                    }}
+                    className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-danger hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-2.5 min-h-[44px] cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-danger/60 focus:bg-rose-50 dark:focus:bg-rose-950/40"
+                  >
+                    <LogOut className="w-4 h-4 text-danger shrink-0" />
+                    <span>Cerrar sesión</span>
+                  </button>
+                </>
               )}
             </div>
           )}
