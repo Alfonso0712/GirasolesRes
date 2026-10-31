@@ -1,34 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { DetallePedidoModal } from '../components/pedidos';
-import { AnularPedidoModal } from '../components/pedidos';
+import { DetallePedidoModal, AnularPedidoModal, PedidosKpiResumen, PedidosFilterBar, PedidosTable } from '../components/pedidos';
 import { pedidoService } from '../services/pedidoService';
 import { getMesasService } from '../services/mesaService';
 import type { UserSession } from '../types/auth';
 import type {
   PedidoItemDto,
   ResumenEstadosDto,
-  DetallePedidoCompletoDto
+  DetallePedidoCompletoDto,
 } from '../types/pedido';
 import type { MesaItem } from '../types/mesa';
-import {
-  Clock,
-  ChefHat,
-  CheckCircle2,
-  AlertTriangle,
-  RotateCcw,
-  Filter,
-  Eye,
-  Trash2,
-  Calendar,
-  X,
-  Check,
-  ShoppingBag,
-  Utensils
-} from 'lucide-react';
-import { SolesIcon } from '../components/ui/SolesIcon';
-import { StatusBadge, IconActionButton, DataTable, TableHead, TableBody } from '../components/ui';
+import { RotateCcw, Check } from 'lucide-react';
 import { PageHeader, PageContainer } from '../components/layout';
-import { formatCurrency } from '../utils/formatters';
 
 interface PedidosPageProps {
   session: UserSession;
@@ -41,7 +23,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   session,
   onLogout,
   onNavigateToCobro,
-  filtroEstadoInicial = ''
+  filtroEstadoInicial = '',
 }) => {
   // Estado de lista y contadores
   const [pedidos, setPedidos] = useState<PedidoItemDto[]>([]);
@@ -50,7 +32,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
     enPreparacion: 0,
     listo: 0,
     pagado: 0,
-    anulado: 0
+    anulado: 0,
   });
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
@@ -69,8 +51,8 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
 
   // Temporizador de refresco (RNF-27: cada 15 segundos)
   const [segundosDesdeActualizacion, setSegundosDesdeActualizacion] = useState(0);
-  const intervalRef = useRef<any>(null);
-  const timerSegundosRef = useRef<any>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerSegundosRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Modales
   const [pedidoSeleccionadoDetalle, setPedidoSeleccionadoDetalle] = useState<DetallePedidoCompletoDto | null>(null);
@@ -104,7 +86,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           mesaId: filtroMesaId || undefined,
           soloMios: filtroSoloMios,
           pagina: 1,
-          tamano: 100
+          tamano: 100,
         },
         session.token
       );
@@ -112,12 +94,13 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
       setPedidos(res.items);
       setResumen(res.resumen);
       setSegundosDesdeActualizacion(0);
-    } catch (err: any) {
-      if (err.status === 401) {
+    } catch (err: unknown) {
+      const errorObj = err as { status?: number; message?: string };
+      if (errorObj?.status === 401) {
         onLogout();
         return;
       }
-      setErrorCarga(err.message || 'No se pudieron cargar los pedidos. Intente nuevamente.');
+      setErrorCarga(errorObj?.message || 'No se pudieron cargar los pedidos. Intente nuevamente.');
     } finally {
       if (!silencioso) setCargando(false);
     }
@@ -157,8 +140,9 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
       const detalle = await pedidoService.obtenerDetalleCompleto(pedidoId, session.token);
       setPedidoSeleccionadoDetalle(detalle);
       setAbrirModalDetalle(true);
-    } catch (err: any) {
-      alert(err.message || 'Error al obtener el detalle del pedido.');
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      alert(msg || 'Error al obtener el detalle del pedido.');
     }
   };
 
@@ -174,11 +158,12 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
     try {
       const solicitudId = `anulacion-${pedidoId}-${Date.now()}`;
       await pedidoService.anularPedido(pedidoId, { solicitudId, motivo }, session.token);
-      setToastMensaje(`Pedido anulado correctamente.`);
+      setToastMensaje('Pedido anulado correctamente.');
       setAbrirModalAnular(false);
       cargarPedidos(true);
-    } catch (err: any) {
-      alert(err.message || 'Error al anular el pedido.');
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      alert(msg || 'Error al anular el pedido.');
     } finally {
       setGuardandoAnulacion(false);
     }
@@ -227,349 +212,90 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           }
         />
 
-      {/* Contenedor sin confinamiento artificial */}
-      <div className="w-full">
-        {/* Contadores por Estado (actúan como filtro al tocarlos) */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-3">
-          <button
-            type="button"
-            onClick={() => setFiltroEstado(filtroEstado === 'Pendiente' ? '' : 'Pendiente')}
-            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-              filtroEstado === 'Pendiente'
-                ? 'bg-amber-100/80 border-amber-400 ring-2 ring-amber-300'
-                : 'bg-surface border-neutral-200/80 hover:border-amber-300 hover:shadow-xs'
-            }`}
-          >
-            <div className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" />
-              <span>Pendientes</span>
-            </div>
-            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
-              {resumen.pendiente}
-            </div>
-          </button>
+        {/* Contenedor sin confinamiento artificial */}
+        <div className="w-full">
+          {/* Contadores por Estado (actúan como filtro al tocarlos) */}
+          <PedidosKpiResumen
+            resumen={resumen}
+            filtroEstado={filtroEstado}
+            onSelectEstado={setFiltroEstado}
+          />
 
-          <button
-            type="button"
-            onClick={() => setFiltroEstado(filtroEstado === 'EnPreparacion' ? '' : 'EnPreparacion')}
-            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-              filtroEstado === 'EnPreparacion'
-                ? 'bg-blue-100/80 border-blue-400 ring-2 ring-blue-300'
-                : 'bg-surface border-neutral-200/80 hover:border-blue-300 hover:shadow-xs'
-            }`}
-          >
-            <div className="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
-              <ChefHat className="w-3.5 h-3.5" />
-              <span>En preparación</span>
-            </div>
-            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
-              {resumen.enPreparacion}
-            </div>
-          </button>
+          {/* Barra de Filtros Combinables (RV-81) */}
+          <PedidosFilterBar
+            filtroEstado={filtroEstado}
+            setFiltroEstado={setFiltroEstado}
+            filtroTipo={filtroTipo}
+            setFiltroTipo={setFiltroTipo}
+            filtroMesaId={filtroMesaId}
+            setFiltroMesaId={setFiltroMesaId}
+            filtroSoloMios={filtroSoloMios}
+            setFiltroSoloMios={setFiltroSoloMios}
+            filtroFecha={filtroFecha}
+            setFiltroFecha={setFiltroFecha}
+            mesas={mesas}
+            rolUsuario={session.rol}
+            hayFiltrosActivos={hayFiltrosActivos}
+            onLimpiarFiltros={handleLimpiarFiltros}
+          />
 
-          <button
-            type="button"
-            onClick={() => setFiltroEstado(filtroEstado === 'Listo' ? '' : 'Listo')}
-            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-              filtroEstado === 'Listo'
-                ? 'bg-emerald-100/80 border-emerald-400 ring-2 ring-emerald-300'
-                : 'bg-surface border-neutral-200/80 hover:border-emerald-300 hover:shadow-xs'
-            }`}
-          >
-            <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Listos</span>
-            </div>
-            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
-              {resumen.listo}
-            </div>
-          </button>
+          {/* Lista de Pedidos con DataTable */}
+          <PedidosTable
+            cargando={cargando}
+            errorCarga={errorCarga}
+            onRecargar={() => cargarPedidos()}
+            pedidos={pedidos}
+            hayFiltrosActivos={hayFiltrosActivos}
+            onLimpiarFiltros={handleLimpiarFiltros}
+            rolUsuario={session.rol}
+            onVerDetalle={handleVerDetalle}
+            onNavigateToCobro={onNavigateToCobro}
+            onAbrirAnular={handleAbrirAnular}
+          />
 
-          <button
-            type="button"
-            onClick={() => setFiltroEstado(filtroEstado === 'Pagado' ? '' : 'Pagado')}
-            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-              filtroEstado === 'Pagado'
-                ? 'bg-neutral-200 border-neutral-400 ring-2 ring-neutral-300'
-                : 'bg-surface border-neutral-200/80 hover:border-neutral-300 hover:shadow-xs'
-            }`}
-          >
-            <div className="text-xs font-bold text-neutral-600 uppercase tracking-wider flex items-center gap-1.5">
-              <span>Pagados</span>
-            </div>
-            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
-              {resumen.pagado}
-            </div>
-          </button>
+          {/* Modal de Detalle (Vista 9.2) */}
+          <DetallePedidoModal
+            pedido={pedidoSeleccionadoDetalle}
+            isOpen={abrirModalDetalle}
+            onClose={() => setAbrirModalDetalle(false)}
+            onAbrirAnular={(id) => {
+              const item = pedidos.find((p) => p.id === id);
+              if (item) handleAbrirAnular(item);
+            }}
+            puedeAnular={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.puedeAnular : false}
+            motivoDeshabilitado={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.motivoDeshabilitado : null}
+          />
 
-          <button
-            type="button"
-            onClick={() => setFiltroEstado(filtroEstado === 'Anulado' ? '' : 'Anulado')}
-            className={`col-span-2 sm:col-span-1 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-              filtroEstado === 'Anulado'
-                ? 'bg-rose-100/80 border-rose-400 ring-2 ring-rose-300'
-                : 'bg-surface border-neutral-200/80 hover:border-rose-300 hover:shadow-xs'
-            }`}
-          >
-            <div className="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              <span>Anulados</span>
-            </div>
-            <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1">
-              {resumen.anulado}
-            </div>
-          </button>
-        </div>
+          {/* Modal de Anulación (Vista 9.4) */}
+          <AnularPedidoModal
+            pedido={pedidoParaAnular}
+            isOpen={abrirModalAnular}
+            onClose={() => setAbrirModalAnular(false)}
+            onConfirmAnular={handleConfirmarAnular}
+            loading={guardandoAnulacion}
+          />
 
-        {/* Barra de Filtros Combinables (RV-81) */}
-        <div className="px-3.5 py-3 sm:p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs mb-3 flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-ink-muted">
-            <Filter className="w-3.5 h-3.5" />
-            <span>Filtros:</span>
-          </div>
-
-          {/* Filtro Estado */}
-          <select
-            value={filtroEstado}
-            onChange={(e) => setFiltroEstado(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
-          >
-            <option value="">Todos los estados</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="EnPreparacion">En preparación</option>
-            <option value="Listo">Listo</option>
-            <option value="Pagado">Pagado</option>
-            <option value="Anulado">Anulado</option>
-          </select>
-
-          {/* Filtro Tipo */}
-          <select
-            value={filtroTipo}
-            onChange={(e) => setFiltroTipo(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
-          >
-            <option value="">Todos los tipos</option>
-            <option value="Mesa">Mesa</option>
-            <option value="ParaLlevar">Para llevar</option>
-          </select>
-
-          {/* Filtro Mesa */}
-          <select
-            value={filtroMesaId}
-            onChange={(e) => setFiltroMesaId(e.target.value)}
-            className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
-          >
-            <option value="">Todas las mesas</option>
-            {mesas.map((m) => (
-              <option key={m.id} value={m.id}>{m.nombre}</option>
-            ))}
-          </select>
-
-          {/* Filtro Solo mis pedidos (Mozo y Cajero) */}
-          <label className="flex items-center gap-2 text-xs font-medium text-neutral-700 cursor-pointer select-none px-2 py-1.5 rounded-lg hover:bg-neutral-50">
-            <input
-              type="checkbox"
-              checked={filtroSoloMios}
-              onChange={(e) => setFiltroSoloMios(e.target.checked)}
-              className="w-4 h-4 rounded text-accent focus:ring-accent border-neutral-300 cursor-pointer"
-            />
-            <span>Solo mis pedidos</span>
-          </label>
-
-          {/* Filtro Fecha: Solo Administrador (RN-63) */}
-          {session.rol === 'Administrador' && (
-            <div className="flex items-center gap-1.5 ml-auto">
-              <Calendar className="w-4 h-4 text-neutral-500" />
-              <input
-                type="date"
-                value={filtroFecha}
-                onChange={(e) => setFiltroFecha(e.target.value)}
-                className="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
-              />
+          {/* Toast Notificación (MSG-119 / MSG-120) */}
+          {toastMensaje && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
+            >
+              <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300">
+                <Check className="w-4 h-4 stroke-[3]" />
+              </div>
+              <span className="text-xs font-semibold tracking-wide">{toastMensaje}</span>
+              <button
+                type="button"
+                onClick={() => setToastMensaje(null)}
+                className="ml-3 text-neutral-500 hover:text-white text-base leading-none p-1 cursor-pointer"
+                aria-label="Cerrar notificación"
+              >
+                ×
+              </button>
             </div>
           )}
-
-          {/* Botón Quitar Filtros */}
-          {hayFiltrosActivos && (
-            <button
-              type="button"
-              onClick={handleLimpiarFiltros}
-              className="text-xs font-bold text-accent hover:text-accent p-1.5 rounded-lg hover:bg-amber-50 flex items-center gap-1 cursor-pointer transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>Quitar filtros</span>
-            </button>
-          )}
-        </div>
-
-        {/* Lista de Pedidos con DataTable */}
-        <DataTable
-          loading={cargando}
-          error={errorCarga}
-          onRetry={() => cargarPedidos()}
-          isEmpty={pedidos.length === 0}
-          emptyTitle="No se encontraron pedidos"
-          emptyMessage={
-            hayFiltrosActivos
-              ? 'No hay pedidos que coincidan con los filtros aplicados. Pruebe con otro filtro o restablezca la búsqueda.'
-              : 'Todavía no hay pedidos hoy.'
-          }
-          emptyActionLabel={hayFiltrosActivos ? 'Quitar filtros' : undefined}
-          onEmptyAction={hayFiltrosActivos ? handleLimpiarFiltros : undefined}
-          minWidth="min-w-[850px]"
-        >
-          <TableHead>
-            <tr>
-              <th scope="col" className="py-3 px-4">N.º</th>
-              <th scope="col" className="py-3 px-4">Destino</th>
-              <th scope="col" className="py-3 px-4">Hora</th>
-              <th scope="col" className="py-3 px-4">Registrado por</th>
-              <th scope="col" className="py-3 px-4">Estado</th>
-              <th scope="col" className="py-3 px-4 text-right">Total</th>
-              <th scope="col" className="py-3 px-4 text-center">Acciones</th>
-            </tr>
-          </TableHead>
-          <TableBody>
-                  {pedidos.map((p) => {
-                    const esAnulado = p.estado.toLowerCase().includes('anulado');
-                    const esPagado = p.estado.toLowerCase().includes('pagado');
-                    const esListo = p.estado.toLowerCase() === 'listo';
-
-                    return (
-                      <tr
-                        key={p.id}
-                        className={`transition-colors border-b border-line-soft ${
-                          esAnulado
-                            ? 'opacity-60 bg-neutral-50/70'
-                            : p.esMio
-                            ? 'bg-amber-50/20 hover:bg-amber-50/40'
-                            : 'hover:bg-neutral-50/60'
-                        } ${esListo ? 'ring-1 ring-emerald-300' : ''}`}
-                      >
-                        <td className="py-3 px-4 font-semibold tabular-nums text-sm text-ink">
-                          #{p.numero}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
-                            {p.tipo === 'Mesa' ? (
-                              <Utensils className="w-4 h-4 text-accent" />
-                            ) : (
-                              <ShoppingBag className="w-4 h-4 text-orange-600" />
-                            )}
-                            <span className="font-semibold text-sm text-ink">
-                              {p.tipo === 'Mesa' ? (p.mesa || 'Mesa') : 'Para llevar'}
-                            </span>
-                          </div>
-                          {p.tipo !== 'Mesa' && p.referencia && (
-                            <span className="text-xs text-stone-500 italic block">
-                              Ref: {p.referencia}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-stone-600 text-xs tabular-nums">
-                          {p.hora}
-                        </td>
-                        <td className="py-3 px-4 text-stone-700 text-xs">
-                          <div className="flex items-center gap-1.5">
-                            <span>{p.registradoPor}</span>
-                            {p.esMio && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-accent font-semibold text-xs">
-                                Mío
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          <StatusBadge status={p.estado} />
-                        </td>
-                        <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-ink">
-                          {formatCurrency(p.total)}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                            <IconActionButton
-                              icon={Eye}
-                              label="Ver detalle del pedido"
-                              variant="view"
-                              onClick={() => handleVerDetalle(p.id)}
-                            />
-
-                            {session.rol === 'Cajero' && (
-                              <IconActionButton
-                                icon={SolesIcon}
-                                label="Cobrar pedido en caja"
-                                variant="activate"
-                                disabled={esPagado || esAnulado}
-                                disabledReason={
-                                  esPagado
-                                    ? 'El pedido ya fue pagado'
-                                    : esAnulado
-                                    ? 'El pedido está anulado'
-                                    : 'Cobrar pedido en caja'
-                                }
-                                onClick={() => onNavigateToCobro?.(p.id)}
-                              />
-                            )}
-
-                            <IconActionButton
-                              icon={Trash2}
-                              label="Anular pedido"
-                              variant="delete"
-                              disabled={!p.puedeAnular}
-                              disabledReason={p.motivoDeshabilitado || 'Anular pedido'}
-                              onClick={() => handleAbrirAnular(p)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-          </TableBody>
-        </DataTable>
-
-        {/* Modal de Detalle (Vista 9.2) */}
-        <DetallePedidoModal
-          pedido={pedidoSeleccionadoDetalle}
-          isOpen={abrirModalDetalle}
-          onClose={() => setAbrirModalDetalle(false)}
-          onAbrirAnular={(id) => {
-            const item = pedidos.find((p) => p.id === id);
-            if (item) handleAbrirAnular(item);
-          }}
-          puedeAnular={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.puedeAnular : false}
-          motivoDeshabilitado={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.motivoDeshabilitado : null}
-        />
-
-        {/* Modal de Anulación (Vista 9.4) */}
-        <AnularPedidoModal
-          pedido={pedidoParaAnular}
-          isOpen={abrirModalAnular}
-          onClose={() => setAbrirModalAnular(false)}
-          onConfirmAnular={handleConfirmarAnular}
-          loading={guardandoAnulacion}
-        />
-
-        {/* Toast Notificación (MSG-119 / MSG-120) */}
-        {toastMensaje && (
-          <div
-            role="status"
-            aria-live="polite"
-            className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-          >
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300">
-              <Check className="w-4 h-4 stroke-[3]" />
-            </div>
-            <span className="text-xs font-semibold tracking-wide">{toastMensaje}</span>
-            <button
-              type="button"
-              onClick={() => setToastMensaje(null)}
-              className="ml-3 text-neutral-500 hover:text-white text-base leading-none p-1 cursor-pointer"
-              aria-label="Cerrar notificación"
-            >
-              ×
-            </button>
-          </div>
-        )}
         </div>
       </PageContainer>
     </div>
@@ -577,4 +303,3 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
 };
 
 export default PedidosPage;
-

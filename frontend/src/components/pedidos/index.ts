@@ -10,3 +10,6 @@ export * from './CategoriaChips';
 export * from './MenuCompletoCard';
 export * from './ProductoCard';
 export * from './ResumenPedidoPanel';
+export * from './PedidosKpiResumen';
+export * from './PedidosFilterBar';
+export * from './PedidosTable';
