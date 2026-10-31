@@ -1,24 +1,17 @@
 import React, { useState } from 'react';
-import {
-  Plus,
-  RotateCcw,
-  AlertCircle,
-  Check,
-  ShoppingBag
-} from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import type { MesaItem } from '../types/mesa';
 import { useMesasManagement } from '../hooks/useMesasManagement';
 import { menuDiaService } from '../services/menuDiaService';
 import { pedidoService } from '../services/pedidoService';
 import {
-  MesaFormModal,
-  MesaConfirmModal,
-  SelectorPedidoModal,
   MesaFilterBar,
   MesaGrid,
-  MesaOcupadaModal,
-  MesaAccionRolModal
+  MenuDiaAlertaBanner,
+  MesasPageModals,
+  MesasHeaderActions,
+  MesasToastAvisos
 } from '../components/mesas';
 import type { PedidoAbiertoMesaDto } from '../types/pedido';
 import { PageHeader, PageContainer } from '../components/layout';
@@ -182,78 +175,24 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             </div>
           }
           actions={
-            <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-              <div className="flex items-center gap-3 text-xs text-neutral-500">
-                <span className="hidden sm:inline tabular-nums">
-                  Actualizado hace <span className="font-semibold text-neutral-700">{segundosTranscurridos}</span> s
-                </span>
-                <button
-                  type="button"
-                  onClick={() => cargarMesas(false)}
-                  disabled={refrescando}
-                  title="Actualizar mesas ahora"
-                  aria-label="Actualizar mesas ahora"
-                  className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
-                >
-                  <RotateCcw className={`w-3.5 h-3.5 text-accent ${refrescando ? 'animate-spin' : ''}`} />
-                  <span>Actualizar</span>
-                </button>
-              </div>
-
-              {esCajero && onNavigateToPedidoLlevar && (
-                <button
-                  type="button"
-                  onClick={onNavigateToPedidoLlevar}
-                  className="px-3.5 py-2 rounded-xl bg-surface border border-accent text-accent hover:bg-orange-50 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
-                >
-                  <ShoppingBag className="w-4 h-4 text-accent" />
-                  <span>Pedido para llevar</span>
-                </button>
-              )}
-
-              {esAdmin && (
-                <button
-                  type="button"
-                  onClick={handleAbrirCrear}
-                  className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-2 shadow-2xs hover:shadow transition-all cursor-pointer min-h-[40px]"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Nueva mesa</span>
-                </button>
-              )}
-            </div>
+            <MesasHeaderActions
+              segundosTranscurridos={segundosTranscurridos}
+              refrescando={refrescando}
+              onActualizar={() => cargarMesas(false)}
+              esCajero={esCajero}
+              onNavigateToPedidoLlevar={onNavigateToPedidoLlevar}
+              esAdmin={esAdmin}
+              onAbrirCrear={handleAbrirCrear}
+            />
           }
         />
 
         {/* Banner preventivo: Menú del día no definido aún (MSG-204 / Nielsen 5) */}
-        {!menuDefinido && (
-          <div className="shrink-0 p-3.5 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-100 text-accent flex items-center justify-center shrink-0">
-                <AlertCircle className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs sm:text-sm font-bold text-amber-950">
-                  El menú de hoy aún no está definido
-                </p>
-                <p className="text-xs text-amber-800 mt-0.5">
-                  {esAdmin
-                    ? 'Defina el menú diario para que el personal pueda registrar comandas de salón y para llevar.'
-                    : 'Solicite a la administración que publique el menú de hoy para comenzar a tomar pedidos.'}
-                </p>
-              </div>
-            </div>
-            {esAdmin && onNavigateToMenuDia && (
-              <button
-                type="button"
-                onClick={onNavigateToMenuDia}
-                className="shrink-0 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs self-start sm:self-auto"
-              >
-                Definir Menú
-              </button>
-            )}
-          </div>
-        )}
+        <MenuDiaAlertaBanner
+          menuDefinido={menuDefinido}
+          esAdmin={esAdmin}
+          onNavigateToMenuDia={onNavigateToMenuDia}
+        />
 
         {/* 2. Barra de Filtros Fija (shrink-0) */}
         <MesaFilterBar
@@ -299,20 +238,14 @@ export const MesasPage: React.FC<MesasPageProps> = ({
           onAccionRol={handleAccionRol}
         />
 
-        {/* Modal CUS06.1 / CUS06.3: Registrar / Editar Mesa */}
-        <MesaFormModal
-          isOpen={formModalOpen}
-          onClose={handleCerrarForm}
+        {/* Modales del Salón de Mesas */}
+        <MesasPageModals
+          formModalOpen={formModalOpen}
+          onCerrarForm={handleCerrarForm}
           mesaAEditar={mesaAEditar}
           todasLasMesas={todasLasMesas}
-          onSave={handleGuardarMesa}
-        />
-
-        {/* Modal MSG-95: Diálogo al elegir una mesa ocupada */}
-        <MesaOcupadaModal
-          isOpen={!!modalMesaOcupada}
-          mesa={modalMesaOcupada?.mesa || null}
-          cantidadPedidos={modalMesaOcupada?.cantidadPedidos || 1}
+          onGuardarMesa={handleGuardarMesa}
+          modalMesaOcupada={modalMesaOcupada}
           onPedidoNuevo={(mesaId) => {
             setModalMesaOcupada(null);
             onNavigateToPedido?.(mesaId, 'nuevo');
@@ -321,77 +254,32 @@ export const MesasPage: React.FC<MesasPageProps> = ({
             setModalMesaOcupada(null);
             await iniciarAgregarProductos(m);
           }}
-          onClose={() => setModalMesaOcupada(null)}
-        />
-
-        {/* Modal Selector de Pedido para Mesa con Múltiples Pedidos Abiertos */}
-        {pedidosSelector && (
-          <SelectorPedidoModal
-            isOpen={!!pedidosSelector}
-            mesaNombre={pedidosSelector.mesa.nombre}
-            pedidos={pedidosSelector.pedidos}
-            onSeleccionarPedido={(pedidoId) => {
-              const mesaId = pedidosSelector.mesa.id;
-              setPedidosSelector(null);
+          onCerrarMesaOcupada={() => setModalMesaOcupada(null)}
+          pedidosSelector={pedidosSelector}
+          onSeleccionarPedido={(pedidoId) => {
+            const mesaId = pedidosSelector?.mesa.id;
+            setPedidosSelector(null);
+            if (mesaId) {
               onNavigateToPedido?.(mesaId, 'ampliacion', pedidoId);
-            }}
-            onClose={() => setPedidosSelector(null)}
-          />
-        )}
-
-        {/* Modal CUS06.3 / Vista 6.4: Activar o Desactivar Mesa */}
-        <MesaConfirmModal
-          isOpen={confirmModalOpen}
-          onClose={handleCerrarConfirm}
-          onConfirm={handleConfirmarCambioEstado}
-          mesa={mesaAConfirmar}
-          accion={confirmAccion}
-          loading={procesandoConfirm}
+            }
+          }}
+          onCerrarSelectorPedido={() => setPedidosSelector(null)}
+          confirmModalOpen={confirmModalOpen}
+          onCerrarConfirm={handleCerrarConfirm}
+          onConfirmarCambioEstado={handleConfirmarCambioEstado}
+          mesaAConfirmar={mesaAConfirmar}
+          confirmAccion={confirmAccion}
+          procesandoConfirm={procesandoConfirm}
+          modalAccionRol={modalAccionRol}
+          onCerrarModalAccionRol={() => setModalAccionRol({ abierto: false, mesa: null, accion: '' })}
         />
 
-        {/* Modal Informativo de Flujo Alterno para Acciones de Mozo / Cajero (CUS07 y CUS11) */}
-        <MesaAccionRolModal
-          isOpen={modalAccionRol.abierto}
-          mesa={modalAccionRol.mesa}
-          accion={modalAccionRol.accion}
-          onClose={() => setModalAccionRol({ abierto: false, mesa: null, accion: '' })}
+        {/* Avisos Toast Flotantes */}
+        <MesasToastAvisos
+          avisoExito={avisoExito}
+          avisoError={avisoError}
+          onCerrarError={() => setAvisoError(null)}
         />
-
-        {/* Aviso Flotante Toast de Éxito (4 segundos) */}
-        {avisoExito && (
-          <div
-            role="status"
-            aria-live="polite"
-            className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-          >
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300">
-              <Check className="w-4 h-4 stroke-[3]" />
-            </div>
-            <span className="text-xs font-semibold tracking-wide">{avisoExito}</span>
-          </div>
-        )}
-
-        {/* Aviso Flotante Toast de Error */}
-        {avisoError && (
-          <div
-            role="alert"
-            aria-live="assertive"
-            className="fixed bottom-6 right-6 z-50 bg-rose-950 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-rose-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-          >
-            <div className="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-300">
-              <AlertCircle className="w-4 h-4" />
-            </div>
-            <span className="text-xs font-semibold tracking-wide">{avisoError}</span>
-            <button
-              type="button"
-              onClick={() => setAvisoError(null)}
-              className="ml-2 text-rose-300 hover:text-white text-base leading-none p-1 cursor-pointer"
-              aria-label="Cerrar aviso"
-            >
-              ×
-            </button>
-          </div>
-        )}
       </PageContainer>
     </div>
   );
