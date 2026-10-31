@@ -4,3 +4,7 @@ export * from './CerrarCajaDesgloseSection';
 export * from './ConfirmarCierreModal';
 export * from './CierreExitoSection';
 export * from './PedidosPendientesCierreAlert';
+export * from './CerrarCajaHeader';
+export * from './CerrarCajaFooter';
+export * from './CerrarCajaFormBody';
+export * from './useCerrarCajaModal';
