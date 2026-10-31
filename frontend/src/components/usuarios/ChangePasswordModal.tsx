@@ -1,6 +1,11 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, KeyRound, AlertCircle } from 'lucide-react';
 import { cambiarContrasenaPropiaService } from '../../services/authService';
+import {
+  validarChangePasswordForm,
+  ChangePasswordField,
+  ChangePasswordFooter
+} from './change-password';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -67,30 +72,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   if (!isOpen) return null;
 
   const validarFormulario = (): boolean => {
-    const nuevosErrores: Record<string, string> = {};
-
-    // RV-23: Contraseña actual obligatoria
-    if (!contrasenaActual) {
-      nuevosErrores.contrasenaActual = 'Ingrese su contraseña actual.'; // MSG-44
-    }
-
-    // RV-24: Nueva contraseña obligatoria y entre 8 y 64 caracteres
-    if (!nuevaContrasena) {
-      nuevosErrores.nuevaContrasena = 'La contraseña debe tener entre 8 y 64 caracteres.'; // MSG-14
-    } else if (nuevaContrasena.length < 8 || nuevaContrasena.length > 64) {
-      nuevosErrores.nuevaContrasena = 'La contraseña debe tener entre 8 y 64 caracteres.'; // MSG-14
-    } else if (contrasenaActual && nuevaContrasena === contrasenaActual) {
-      // RV-26: Nueva distinta de la actual
-      nuevosErrores.nuevaContrasena = 'La nueva contraseña debe ser distinta de la actual.'; // MSG-46
-    }
-
-    // RV-25: Confirmación igual a nueva contraseña
-    if (!confirmarContrasena) {
-      nuevosErrores.confirmarContrasena = 'Las contraseñas no coinciden.'; // MSG-15
-    } else if (confirmarContrasena !== nuevaContrasena) {
-      nuevosErrores.confirmarContrasena = 'Las contraseñas no coinciden.'; // MSG-15
-    }
-
+    const nuevosErrores = validarChangePasswordForm(contrasenaActual, nuevaContrasena, confirmarContrasena);
     setErrores(nuevosErrores);
 
     // RV-27: El foco va al primer campo con error
@@ -189,133 +171,50 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Contraseña actual */}
-          <div>
-            <label className="form-label-standard">
-              Contraseña actual <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                ref={contrasenaActualRef}
-                type={mostrarActual ? 'text' : 'password'}
-                value={contrasenaActual}
-                onChange={(e) => {
-                  setContrasenaActual(e.target.value);
-                  if (errores.contrasenaActual) setErrores({ ...errores, contrasenaActual: '' });
-                }}
-                placeholder="Ingrese su clave actual"
-                className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
-                  errores.contrasenaActual
-                    ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setMostrarActual(!mostrarActual)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
-              >
-                {mostrarActual ? 'Ocultar' : 'Mostrar'}
-              </button>
-            </div>
-            {errores.contrasenaActual && (
-              <p className="text-xs text-danger mt-1 font-medium">{errores.contrasenaActual}</p>
-            )}
-          </div>
+          <ChangePasswordField
+            label="Contraseña actual"
+            value={contrasenaActual}
+            onChange={(val) => {
+              setContrasenaActual(val);
+              if (errores.contrasenaActual) setErrores({ ...errores, contrasenaActual: '' });
+            }}
+            mostrar={mostrarActual}
+            onToggleMostrar={() => setMostrarActual(!mostrarActual)}
+            error={errores.contrasenaActual}
+            placeholder="Ingrese su clave actual"
+            inputRef={contrasenaActualRef}
+          />
 
-          {/* Nueva contraseña */}
-          <div>
-            <label className="form-label-standard">
-              Nueva contraseña <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={mostrarNueva ? 'text' : 'password'}
-                value={nuevaContrasena}
-                onChange={(e) => {
-                  setNuevaContrasena(e.target.value);
-                  if (errores.nuevaContrasena) setErrores({ ...errores, nuevaContrasena: '' });
-                }}
-                placeholder="Mínimo 8 caracteres"
-                className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
-                  errores.nuevaContrasena
-                    ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setMostrarNueva(!mostrarNueva)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
-              >
-                {mostrarNueva ? 'Ocultar' : 'Mostrar'}
-              </button>
-            </div>
-            {errores.nuevaContrasena && (
-              <p className="text-xs text-danger mt-1 font-medium">{errores.nuevaContrasena}</p>
-            )}
-          </div>
+          <ChangePasswordField
+            label="Nueva contraseña"
+            value={nuevaContrasena}
+            onChange={(val) => {
+              setNuevaContrasena(val);
+              if (errores.nuevaContrasena) setErrores({ ...errores, nuevaContrasena: '' });
+            }}
+            mostrar={mostrarNueva}
+            onToggleMostrar={() => setMostrarNueva(!mostrarNueva)}
+            error={errores.nuevaContrasena}
+            placeholder="Mínimo 8 caracteres"
+          />
 
-          {/* Confirmar nueva contraseña */}
-          <div>
-            <label className="form-label-standard">
-              Confirmar nueva contraseña <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={mostrarConfirmar ? 'text' : 'password'}
-                value={confirmarContrasena}
-                onChange={(e) => {
-                  setConfirmarContrasena(e.target.value);
-                  if (errores.confirmarContrasena) setErrores({ ...errores, confirmarContrasena: '' });
-                }}
-                placeholder="Repita la nueva contraseña"
-                className={`w-full pl-3.5 pr-10 py-2.5 rounded-xl border text-sm text-neutral-800 focus:outline-none transition-colors ${
-                  errores.confirmarContrasena
-                    ? 'border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20'
-                    : 'border-neutral-300 focus:border-accent focus:ring-2 focus:ring-amber-200'
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:text-accent px-2 py-1 rounded transition-colors cursor-pointer"
-              >
-                {mostrarConfirmar ? 'Ocultar' : 'Mostrar'}
-              </button>
-            </div>
-            {errores.confirmarContrasena && (
-              <p className="text-xs text-danger mt-1 font-medium">{errores.confirmarContrasena}</p>
-            )}
-          </div>
+          <ChangePasswordField
+            label="Confirmar nueva contraseña"
+            value={confirmarContrasena}
+            onChange={(val) => {
+              setConfirmarContrasena(val);
+              if (errores.confirmarContrasena) setErrores({ ...errores, confirmarContrasena: '' });
+            }}
+            mostrar={mostrarConfirmar}
+            onToggleMostrar={() => setMostrarConfirmar(!mostrarConfirmar)}
+            error={errores.confirmarContrasena}
+            placeholder="Repita la nueva contraseña"
+          />
 
-          {/* Action buttons */}
-          <div className="flex items-center justify-end gap-3 pt-5 border-t border-neutral-100 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={guardando}
-              className="px-5 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={guardando}
-              className={`px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-md transition-all flex items-center gap-2 cursor-pointer ${
-                guardando ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            >
-              {guardando ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Guardando…</span>
-                </>
-              ) : (
-                'Guardar'
-              )}
-            </button>
-          </div>
+          <ChangePasswordFooter
+            guardando={guardando}
+            onClose={onClose}
+          />
         </form>
       </div>
     </div>
@@ -323,4 +222,3 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 };
 
 export default ChangePasswordModal;
-
