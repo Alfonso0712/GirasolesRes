@@ -5,12 +5,20 @@ export interface DiscardChangesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  title?: string;
+  description?: React.ReactNode;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
   isOpen,
   onClose,
-  onConfirm
+  onConfirm,
+  title = 'Tiene cambios sin guardar',
+  description = '¿Desea descartarlos? Se restablecerán las selecciones de productos no guardadas.',
+  confirmText = 'Descartar cambios',
+  cancelText = 'Continuar editando',
 }) => {
   const confirmBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -64,11 +72,11 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
             id="discard-modal-title"
             className="text-xl font-sans font-bold text-ink mb-2"
           >
-            Tiene cambios sin guardar
+            {title}
           </h3>
 
           <p className="text-sm text-neutral-600 leading-relaxed">
-            ¿Desea descartarlos? Se restablecerán las selecciones de productos no guardadas.
+            {description}
           </p>
         </div>
 
@@ -78,7 +86,7 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
             onClick={onClose}
             className="px-4 py-2.5 rounded-xl border border-neutral-300 text-sm font-semibold text-neutral-700 bg-surface hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
           >
-            Continuar editando
+            {cancelText}
           </button>
 
           <button
@@ -87,7 +95,7 @@ export const DiscardChangesModal: React.FC<DiscardChangesModalProps> = ({
             onClick={onConfirm}
             className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-sm transition-all cursor-pointer min-h-[44px]"
           >
-            Descartar cambios
+            {confirmText}
           </button>
         </div>
       </div>

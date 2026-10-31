@@ -13,6 +13,10 @@ export interface StatCardProps {
   onClick?: () => void;
   className?: string;
   accentColor?: string;
+  layout?: 'vertical' | 'horizontal';
+  iconBg?: string;
+  iconColor?: string;
+  children?: React.ReactNode;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -23,6 +27,10 @@ export const StatCard: React.FC<StatCardProps> = ({
   badge,
   onClick,
   className = '',
+  layout = 'vertical',
+  iconBg,
+  iconColor,
+  children,
 }) => {
   const badgeColors = {
     positive: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -30,6 +38,41 @@ export const StatCard: React.FC<StatCardProps> = ({
     negative: 'bg-rose-50 text-rose-700 border-rose-200',
     neutral: 'bg-neutral-100 text-neutral-600 border-neutral-200',
   };
+
+  if (layout === 'horizontal') {
+    return (
+      <div
+        onClick={onClick}
+        className={`bg-surface rounded-2xl p-4 border border-neutral-200/90 shadow-2xs flex items-center gap-3.5 transition-all ${
+          onClick ? 'cursor-pointer hover:border-amber-400 hover:shadow-xs' : ''
+        } ${className}`}
+      >
+        {Icon && (
+          <div
+            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
+              iconBg || 'bg-amber-50 border-amber-200'
+            } ${iconColor || 'text-accent'}`}
+          >
+            <Icon className="w-5 h-5" />
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
+            {title}
+          </span>
+          <div className="flex items-baseline gap-1 mt-0.5">
+            <span className="font-sans font-bold text-2xl text-ink tabular-nums">
+              {value}
+            </span>
+            {subtitle && (
+              <span className="text-xs text-neutral-500 font-medium">{subtitle}</span>
+            )}
+          </div>
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -43,7 +86,11 @@ export const StatCard: React.FC<StatCardProps> = ({
           {title}
         </span>
         {Icon && (
-          <div className="w-8 h-8 rounded-xl bg-amber-50 text-accent flex items-center justify-center shrink-0 border border-amber-200/50">
+          <div
+            className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
+              iconBg || 'bg-amber-50 border-amber-200/50'
+            } ${iconColor || 'text-accent'}`}
+          >
             <Icon className="w-4 h-4" />
           </div>
         )}
@@ -69,6 +116,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           {subtitle}
         </span>
       )}
+      {children}
     </div>
   );
 };
