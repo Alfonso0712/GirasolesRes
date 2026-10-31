@@ -1,28 +1,18 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
-  Search,
   Plus,
   AlertCircle,
   CheckCircle2,
   ShieldAlert,
-  Edit2,
-  PowerOff,
-  Power,
-  UtensilsCrossed,
   Layers,
-  BookOpen
+  BookOpen,
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
-import {
-  CATEGORIAS_PRODUCTO,
-  CATEGORIA_BADGE_LABELS,
-  ROL_LABELS
-} from '../types/producto';
 import type { MenuCompletoItem } from '../types/menuCompleto';
 import {
   getMenusCompletosService,
   actualizarPrecioMenuCompletoService,
-  cambiarEstadoMenuCompletoService
+  cambiarEstadoMenuCompletoService,
 } from '../services/menuCompletoService';
 import { useProductsManagement } from '../hooks/useProductsManagement';
 import {
@@ -30,9 +20,11 @@ import {
   ProductConfirmModal,
   MenuPrecioModal,
   MenuEstadoModal,
-  MenuCatalogoCard
+  ProductTable,
+  ProductFilterBar,
+  MenusCompletosTab,
 } from '../components/productos';
-import { StatusBadge, IconActionButton, TablePagination, DataTable, TableHead, TableBody } from '../components/ui';
+import { TablePagination } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
 
 export interface ProductsPageProps {
@@ -80,7 +72,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     handleAbrirEditar,
     handleGuardarProducto,
     handleAbrirConfirmacion,
-    handleConfirmarAccion
+    handleConfirmarAccion,
   } = useProductsManagement({ session, onLogout });
 
   const nuevoBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -113,8 +105,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     try {
       const data = await getMenusCompletosService(false, session.token);
       setMenusCompletos(data || []);
-    } catch (err: any) {
-      setErrorMenus(err.message || 'No se pudieron cargar los menús completos.');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'No se pudieron cargar los menús completos.';
+      setErrorMenus(msg);
     } finally {
       setCargandoMenus(false);
     }
@@ -161,8 +154,10 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       setModalPrecioOpen(false);
       setAvisoExito('Menú completo actualizado correctamente.');
       await cargarMenusCompletos();
-    } catch (err: any) {
-      setErrorPrecio(err.message || 'No se pudo actualizar el precio del menú completo.');
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : 'No se pudo actualizar el precio del menú completo.';
+      setErrorPrecio(msg);
     } finally {
       setGuardandoPrecio(false);
     }
@@ -188,34 +183,12 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
       setModalEstadoMenuOpen(false);
       setAvisoExito('Menú completo actualizado correctamente.');
       await cargarMenusCompletos();
-    } catch (err: any) {
-      setAvisoError(err.message || 'No se pudo cambiar el estado del menú completo.');
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : 'No se pudo cambiar el estado del menú completo.';
+      setAvisoError(msg);
     } finally {
       setGuardandoEstadoMenu(false);
-    }
-  };
-
-  // Estandarización de badges de categoría (w-28 h-7 exactos)
-  const obtenerEstiloCategoria = (categoria: string) => {
-    switch (categoria) {
-      case 'Desayuno':
-        return 'bg-amber-50 text-amber-900 border-amber-200/90';
-      case 'Almuerzo':
-        return 'bg-orange-50 text-orange-900 border-orange-200/90';
-      case 'PlatosExtras':
-      case 'Platos Extras':
-      case 'Platos Extras / A la Carta':
-        return 'bg-rose-50 text-rose-900 border-rose-200/90';
-      case 'Combinados':
-        return 'bg-purple-50 text-purple-900 border-purple-200/90';
-      case 'Bebidas':
-      case 'Bebidas y Refrescos':
-        return 'bg-emerald-50 text-emerald-900 border-emerald-200/90';
-      case 'Otro':
-      case 'Otros':
-        return 'bg-sky-50 text-sky-900 border-sky-200/90';
-      default:
-        return 'bg-neutral-100 text-neutral-700 border-neutral-200';
     }
   };
 
@@ -246,434 +219,215 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
   return (
     <div className="flex-1 overflow-y-auto w-full [scrollbar-width:thin]">
       <PageContainer>
-      {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
-      {avisoExito && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-emerald-800 text-sm shadow-xs animate-in fade-in duration-200"
-        >
-          <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-            <span className="font-medium">{avisoExito}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAvisoExito(null)}
-            className="text-emerald-700 hover:text-emerald-900 text-xs font-semibold px-2 py-1 rounded-lg hover:bg-emerald-100/60 transition-colors cursor-pointer"
+        {/* Toast / Alerta de Éxito (H-01 / RV-28) */}
+        {avisoExito && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="shrink-0 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-emerald-800 text-sm shadow-xs animate-in fade-in duration-200"
           >
-            Cerrar
-          </button>
-        </div>
-      )}
-
-      {/* Toast / Alerta de Error Temporal */}
-      {avisoError && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="shrink-0 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between gap-3 text-rose-800 text-sm shadow-xs animate-in fade-in duration-200"
-        >
-          <div className="flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-danger shrink-0" />
-            <span className="font-medium">{avisoError}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAvisoError(null)}
-            className="text-rose-700 hover:text-rose-900 text-xs font-semibold px-2 py-1 rounded-lg hover:bg-rose-100/60 transition-colors cursor-pointer"
-          >
-            Cerrar
-          </button>
-        </div>
-      )}
-
-      {/* 1. Encabezado Unificado */}
-      <PageHeader
-        title="Carta y Menús"
-        subtitle="Administre productos de carta, componentes y los menús completos del restaurante."
-        count={total}
-        countLabel="ítems registrados"
-        actions={
-          pestañaActiva === 'catalogo' && (
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
+              <span className="font-medium">{avisoExito}</span>
+            </div>
             <button
-              ref={nuevoBtnRef}
               type="button"
-              onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
+              onClick={() => setAvisoExito(null)}
+              className="text-emerald-700 hover:text-emerald-900 text-xs font-semibold px-2 py-1 rounded-lg hover:bg-emerald-100/60 transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
-              <span>Nuevo producto</span>
+              Cerrar
             </button>
-          )
-        }
-      />
-
-      {/* Navegación por pestañas (Tabs): Catálogo vs Menús Completos */}
-      <div className="shrink-0 border-b border-neutral-200 flex items-center gap-2 sm:gap-4">
-        <button
-          type="button"
-          onClick={() => setPestañaActiva('catalogo')}
-          className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
-            pestañaActiva === 'catalogo'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-neutral-500 hover:text-neutral-900'
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          <span>Productos y Componentes</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-600 tabular-nums">
-            {total}
-          </span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setPestañaActiva('menus_completos')}
-          className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
-            pestañaActiva === 'menus_completos'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-neutral-500 hover:text-neutral-900'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span>Menús completos</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-900 font-semibold">
-            3 configurados
-          </span>
-        </button>
-      </div>
-
-      {/* ============================================================== */}
-      {/* PESTAÑA 1: CATÁLOGO DE PRODUCTOS Y COMPONENTES                */}
-      {/* ============================================================== */}
-      {pestañaActiva === 'catalogo' && (
-        <>
-          {/* Barra de Filtros y Búsqueda */}
-          <div className="shrink-0 bg-surface rounded-2xl border border-neutral-200/80 px-3.5 py-2 shadow-xs flex flex-col sm:flex-row gap-2.5 items-center">
-            {/* Search Input */}
-            <div className="relative flex-1 w-full">
-              <Search className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={busqueda}
-                maxLength={50}
-                onChange={(e) => {
-                  setBusqueda(e.target.value);
-                  setPagina(1);
-                }}
-                placeholder="Buscar por nombre de producto o componente..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors"
-              />
-            </div>
-
-            {/* Filter Tipo (Carta vs Componente) */}
-            <div className="w-full sm:w-auto min-w-[170px]">
-              <select
-                value={filtroTipo}
-                onChange={(e) => {
-                  setFiltroTipo(e.target.value);
-                  setPagina(1);
-                }}
-                aria-label="Filtrar por tipo"
-                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
-              >
-                <option value="Todos">Todos los tipos</option>
-                <option value="Carta">Productos de carta</option>
-                <option value="Componente">Componentes de menú</option>
-              </select>
-            </div>
-
-            {/* Filter Category */}
-            <div className="w-full sm:w-auto min-w-[170px]">
-              <select
-                value={filtroCategoria}
-                onChange={(e) => {
-                  setFiltroCategoria(e.target.value);
-                  setPagina(1);
-                }}
-                disabled={filtroTipo === 'Componente'}
-                aria-label="Filtrar por categoría"
-                className={`w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer ${
-                  filtroTipo === 'Componente' ? 'opacity-50 cursor-not-allowed bg-neutral-50' : ''
-                }`}
-              >
-                <option value="Todas">Todas las categorías</option>
-                {CATEGORIAS_PRODUCTO.map((cat) => (
-                  <option key={cat.valor} value={cat.valor}>
-                    {cat.etiqueta}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Filter Status */}
-            <div className="w-full sm:w-auto min-w-[170px]">
-              <select
-                value={filtroEstado}
-                onChange={(e) => {
-                  setFiltroEstado(e.target.value);
-                  setPagina(1);
-                }}
-                aria-label="Filtrar por estado"
-                className="w-full sm:w-auto min-w-[170px] pr-9 px-3 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-amber-200 transition-colors cursor-pointer"
-              >
-                <option value="Todos">Todos los estados</option>
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-              </select>
-            </div>
           </div>
+        )}
 
-          {/* Contenedor de la Tabla con DataTable */}
-          <DataTable
-            loading={cargando}
-            error={errorCarga}
-            onRetry={cargarProductos}
-            isEmpty={productos.length === 0}
-            emptyTitle="No se encontraron productos o componentes"
-            emptyMessage={
-              hayFiltrosActivos
-                ? 'No hay registros que coincidan con los filtros aplicados. Pruebe con otro nombre o quite los filtros.'
-                : 'Aún no se han registrado productos ni componentes en el sistema.'
-            }
-            emptyActionLabel={hayFiltrosActivos ? 'Quitar filtros' : undefined}
-            onEmptyAction={hayFiltrosActivos ? handleQuitarFiltros : undefined}
-            minWidth="min-w-[800px]"
+        {/* Toast / Alerta de Error Temporal */}
+        {avisoError && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="shrink-0 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between gap-3 text-rose-800 text-sm shadow-xs animate-in fade-in duration-200"
           >
-            <TableHead>
-              <tr>
-                <th scope="col" className="py-3 px-4">PRODUCTO / COMPONENTE</th>
-                <th scope="col" className="py-3 px-4">TIPO</th>
-                <th scope="col" className="py-3 px-4">ROL / CATEGORÍA</th>
-                <th scope="col" className="py-3 px-4 text-right">PRECIO</th>
-                <th scope="col" className="py-3 px-4">ESTADO</th>
-                <th scope="col" className="py-3 px-4 text-right">ACCIONES</th>
-              </tr>
-            </TableHead>
-            <TableBody>
-                        {productos.map((prod) => {
-                          const estaResaltado = prod.id === productoResaltadoId;
-                          const esComponente = prod.tipo === 'Componente';
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 text-danger shrink-0" />
+              <span className="font-medium">{avisoError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAvisoError(null)}
+              className="text-rose-700 hover:text-rose-900 text-xs font-semibold px-2 py-1 rounded-lg hover:bg-rose-100/60 transition-colors cursor-pointer"
+            >
+              Cerrar
+            </button>
+          </div>
+        )}
 
-                          return (
-                            <tr
-                              key={prod.id}
-                              className={`transition-colors border-b border-line-soft hover:bg-neutral-50/60 ${
-                                estaResaltado
-                                  ? 'bg-amber-50/70 ring-2 ring-inset ring-accent/40'
-                                  : ''
-                              }`}
-                            >
-                              <td className="py-3 px-4 font-medium text-neutral-900">
-                                <div className="flex items-center gap-3">
-                                  <div
-                                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                                      esComponente
-                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                        : 'bg-amber-50 text-accent border border-amber-200'
-                                    }`}
-                                  >
-                                    {esComponente ? (
-                                      <Layers className="w-4 h-4" />
-                                    ) : (
-                                      <UtensilsCrossed className="w-4 h-4" />
-                                    )}
-                                  </div>
-                                  <span className="font-semibold text-ink text-sm break-words">
-                                    {prod.nombre}
-                                  </span>
-                                </div>
-                              </td>
-
-                              <td className="py-3 px-4">
-                                <span
-                                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${
-                                    esComponente
-                                      ? 'bg-emerald-100 text-emerald-800'
-                                      : 'bg-neutral-100 text-neutral-800'
-                                  }`}
-                                >
-                                  {esComponente ? 'Componente' : 'Carta'}
-                                </span>
-                              </td>
-
-                              <td className="py-3 px-4">
-                                {esComponente ? (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90">
-                                    Rol: {ROL_LABELS[prod.rol || ''] || prod.rol || 'Segundo'}
-                                  </span>
-                                ) : (
-                                  <span
-                                    className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border ${obtenerEstiloCategoria(
-                                      prod.categoria || 'Otro'
-                                    )} text-center shadow-2xs`}
-                                  >
-                                    {CATEGORIA_BADGE_LABELS[prod.categoria || ''] ||
-                                      prod.categoria ||
-                                      'Otro'}
-                                  </span>
-                                )}
-                              </td>
-
-                              <td className="py-3 px-4 text-right font-medium">
-                                {prod.precio != null ? (
-                                  <span className="text-ink font-semibold text-sm tabular-nums whitespace-nowrap">
-                                    S/ {prod.precio.toFixed(2)}
-                                  </span>
-                                ) : (
-                                  <span className="text-xs text-stone-500 italic">
-                                    En menú completo
-                                  </span>
-                                )}
-                              </td>
-
-                              <td className="py-3 px-4 whitespace-nowrap">
-                                <StatusBadge
-                                  status={prod.activo}
-                                  activeLabel="Activo"
-                                  inactiveLabel="Inactivo"
-                                />
-                              </td>
-
-                              <td className="py-3 px-4 text-center whitespace-nowrap">
-                                <div className="inline-flex items-center justify-center gap-1.5">
-                                  <IconActionButton
-                                    icon={Edit2}
-                                    label="Editar producto o componente"
-                                    variant="edit"
-                                    onClick={(e) => handleAbrirEditar(prod, e.currentTarget)}
-                                  />
-
-                                  {prod.activo ? (
-                                    <IconActionButton
-                                      icon={PowerOff}
-                                      label="Desactivar producto"
-                                      variant="deactivate"
-                                      onClick={(e) =>
-                                        handleAbrirConfirmacion(
-                                          prod,
-                                          'desactivar',
-                                          e.currentTarget
-                                        )
-                                      }
-                                    />
-                                  ) : (
-                                    <IconActionButton
-                                      icon={Power}
-                                      label="Activar producto"
-                                      variant="activate"
-                                      onClick={(e) =>
-                                        handleAbrirConfirmacion(
-                                          prod,
-                                          'activar',
-                                          e.currentTarget
-                                        )
-                                      }
-                                    />
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-            </TableBody>
-          </DataTable>
-
-          {/* Paginación Unificada */}
-          <TablePagination
-            currentPage={pagina}
-            totalPages={totalPaginas}
-            totalItems={total}
-            itemsPerPage={tamano}
-            entityName="ítems"
-            onPageChange={setPagina}
-          />
-        </>
-      )}
-
-      {/* ============================================================== */}
-      {/* PESTAÑA 2: MENÚS COMPLETOS                                     */}
-      {/* ============================================================== */}
-      {pestañaActiva === 'menus_completos' && (
-        <div className="space-y-4">
-          {errorMenus ? (
-            <div className="p-8 text-center bg-surface rounded-2xl border border-neutral-200">
-              <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-              <p className="text-sm text-neutral-700 font-medium">{errorMenus}</p>
+        {/* 1. Encabezado Unificado */}
+        <PageHeader
+          title="Carta y Menús"
+          subtitle="Administre productos de carta, componentes y los menús completos del restaurante."
+          count={total}
+          countLabel="ítems registrados"
+          actions={
+            pestañaActiva === 'catalogo' && (
               <button
+                ref={nuevoBtnRef}
                 type="button"
-                onClick={cargarMenusCompletos}
-                className="mt-3 px-4 py-2 bg-fill-strong text-white rounded-xl text-xs font-semibold"
+                onClick={() => handleAbrirNuevo(nuevoBtnRef.current)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer min-h-[40px]"
               >
-                Reintentar
+                <Plus className="w-4 h-4" />
+                <span>Nuevo producto</span>
               </button>
-            </div>
-          ) : cargandoMenus ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 xl:gap-6">
-              {[1, 2, 3].map((i) => (
-                <div key={`menus-skeleton-${i}`} className="h-64 bg-surface rounded-2xl border border-neutral-200 p-6 animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 xl:gap-6">
-              {menusCompletos.map((m) => (
-                <MenuCatalogoCard
-                  key={m.id}
-                  menu={m}
-                  onModificarPrecio={handleAbrirModalPrecio}
-                  onCambiarEstado={handleAbrirModalEstadoMenu}
-                />
-              ))}
-            </div>
-          )}
+            )
+          }
+        />
+
+        {/* Navegación por pestañas (Tabs): Catálogo vs Menús Completos */}
+        <div className="shrink-0 border-b border-neutral-200 flex items-center gap-2 sm:gap-4">
+          <button
+            type="button"
+            onClick={() => setPestañaActiva('catalogo')}
+            className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+              pestañaActiva === 'catalogo'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-neutral-500 hover:text-neutral-900'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Productos y Componentes</span>
+            <span className="px-2 py-0.5 rounded-full text-xs bg-neutral-100 text-neutral-600 tabular-nums">
+              {total}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setPestañaActiva('menus_completos')}
+            className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+              pestañaActiva === 'menus_completos'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-neutral-500 hover:text-neutral-900'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span>Menús completos</span>
+            <span className="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-900 font-semibold">
+              3 configurados
+            </span>
+          </button>
         </div>
-      )}
 
-      {/* Modales del CUS04 */}
-      <ProductFormModal
-        isOpen={formModalOpen}
-        onClose={() => setFormModalOpen(false)}
-        onSubmit={handleGuardarProducto}
-        producto={productoAEditar}
-      />
+        {/* ============================================================== */}
+        {/* PESTAÑA 1: CATÁLOGO DE PRODUCTOS Y COMPONENTES                */}
+        {/* ============================================================== */}
+        {pestañaActiva === 'catalogo' && (
+          <>
+            {/* Barra de Filtros y Búsqueda */}
+            <ProductFilterBar
+              busqueda={busqueda}
+              onBusquedaChange={(val) => {
+                setBusqueda(val);
+                setPagina(1);
+              }}
+              filtroTipo={filtroTipo}
+              onFiltroTipoChange={(val) => {
+                setFiltroTipo(val);
+                setPagina(1);
+              }}
+              filtroCategoria={filtroCategoria}
+              onFiltroCategoriaChange={(val) => {
+                setFiltroCategoria(val);
+                setPagina(1);
+              }}
+              filtroEstado={filtroEstado}
+              onFiltroEstadoChange={(val) => {
+                setFiltroEstado(val);
+                setPagina(1);
+              }}
+            />
 
-      <ProductConfirmModal
-        isOpen={confirmModalOpen}
-        onClose={() => setConfirmModalOpen(false)}
-        onConfirm={handleConfirmarAccion}
-        producto={productoAConfirmar}
-        tipo={confirmTipo}
-        procesando={procesandoConfirm}
-      />
+            {/* Contenedor de la Tabla con DataTable */}
+            <ProductTable
+              productos={productos}
+              cargando={cargando}
+              errorCarga={errorCarga}
+              onRetry={cargarProductos}
+              hayFiltrosActivos={hayFiltrosActivos}
+              onQuitarFiltros={handleQuitarFiltros}
+              productoResaltadoId={productoResaltadoId}
+              onAbrirEditar={handleAbrirEditar}
+              onAbrirConfirmacion={handleAbrirConfirmacion}
+            />
 
-      {/* Modal para Modificar Precio de Men? Completo (CUS04.5 / RV-160) */}
-      <MenuPrecioModal
-        isOpen={modalPrecioOpen}
-        onClose={() => setModalPrecioOpen(false)}
-        menu={menuParaPrecio}
-        nuevoPrecioStr={nuevoPrecioStr}
-        onPrecioChange={(val) => {
-          setNuevoPrecioStr(val);
-          if (errorPrecio) setErrorPrecio(null);
-        }}
-        errorPrecio={errorPrecio}
-        guardando={guardandoPrecio}
-        onSubmit={handleGuardarPrecioMenu}
-      />
+            {/* Paginación Unificada */}
+            <TablePagination
+              currentPage={pagina}
+              totalPages={totalPaginas}
+              totalItems={total}
+              itemsPerPage={tamano}
+              entityName="ítems"
+              onPageChange={setPagina}
+            />
+          </>
+        )}
 
-      {/* Modal para Confirmar Cambio de Estado de Men? Completo (MSG-218) */}
-      <MenuEstadoModal
-        isOpen={modalEstadoMenuOpen}
-        onClose={() => setModalEstadoMenuOpen(false)}
-        menu={menuParaEstado}
-        guardando={guardandoEstadoMenu}
-        onConfirm={handleConfirmarEstadoMenu}
-      />
+        {/* ============================================================== */}
+        {/* PESTAÑA 2: MENÚS COMPLETOS                                     */}
+        {/* ============================================================== */}
+        {pestañaActiva === 'menus_completos' && (
+          <MenusCompletosTab
+            errorMenus={errorMenus}
+            cargandoMenus={cargandoMenus}
+            menusCompletos={menusCompletos}
+            onReintentar={cargarMenusCompletos}
+            onAbrirModalPrecio={handleAbrirModalPrecio}
+            onAbrirModalEstadoMenu={handleAbrirModalEstadoMenu}
+          />
+        )}
+
+        {/* Modales del CUS04 */}
+        <ProductFormModal
+          isOpen={formModalOpen}
+          onClose={() => setFormModalOpen(false)}
+          onSubmit={handleGuardarProducto}
+          producto={productoAEditar}
+        />
+
+        <ProductConfirmModal
+          isOpen={confirmModalOpen}
+          onClose={() => setConfirmModalOpen(false)}
+          onConfirm={handleConfirmarAccion}
+          producto={productoAConfirmar}
+          tipo={confirmTipo}
+          procesando={procesandoConfirm}
+        />
+
+        {/* Modal para Modificar Precio de Menú Completo (CUS04.5 / RV-160) */}
+        <MenuPrecioModal
+          isOpen={modalPrecioOpen}
+          onClose={() => setModalPrecioOpen(false)}
+          menu={menuParaPrecio}
+          nuevoPrecioStr={nuevoPrecioStr}
+          onPrecioChange={(val) => {
+            setNuevoPrecioStr(val);
+            if (errorPrecio) setErrorPrecio(null);
+          }}
+          errorPrecio={errorPrecio}
+          guardando={guardandoPrecio}
+          onSubmit={handleGuardarPrecioMenu}
+        />
+
+        {/* Modal para Confirmar Cambio de Estado de Menú Completo (MSG-218) */}
+        <MenuEstadoModal
+          isOpen={modalEstadoMenuOpen}
+          onClose={() => setModalEstadoMenuOpen(false)}
+          menu={menuParaEstado}
+          guardando={guardandoEstadoMenu}
+          onConfirm={handleConfirmarEstadoMenu}
+        />
       </PageContainer>
     </div>
   );
 };
 
 export default ProductsPage;
-
