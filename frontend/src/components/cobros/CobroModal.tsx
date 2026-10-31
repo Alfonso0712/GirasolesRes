@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { SolesIcon } from '../ui/SolesIcon';
-import {
-  Smartphone,
-  X,
-  AlertCircle,
-  CheckCircle2,
-  ArrowRight,
-  Search,
-  Loader2,
-} from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { cobroService } from '../../services/cobroService';
 import type { PedidoPendienteCobro, CobroRequest, TipoComprobante } from '../../types/cobro';
+import {
+  CobroBannerTotal,
+  CobroTipoComprobanteSelector,
+  CobroDocumentoClienteSection,
+  CobroMetodoPagoSelector,
+  CobroEfectivoSection,
+  CobroYapeSection,
+} from './cobro-modal';
 
 interface CobroModalProps {
   isOpen: boolean;
@@ -101,7 +100,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
         const res = await cobroService.consultarDni(docLimpio, token);
         setRazonSocial(res.nombreCompleto);
         setDocFeedback({ tipo: 'ok', texto: `Titular verificado: ${res.nombreCompleto}` });
-      } catch (err: any) {
+      } catch {
         setDocFeedback({
           tipo: 'error',
           texto: 'No se encontró el DNI o hubo un problema de conexión. Puede escribir el nombre manualmente.',
@@ -122,7 +121,7 @@ export const CobroModal: React.FC<CobroModalProps> = ({
           setDireccion(res.direccion);
         }
         setDocFeedback({ tipo: 'ok', texto: `Razón Social: ${res.razonSocial}` });
-      } catch (err: any) {
+      } catch {
         setDocFeedback({
           tipo: 'error',
           texto: 'No se encontró el RUC o hubo un problema de conexión. Puede ingresar los datos manualmente.',
@@ -221,8 +220,9 @@ export const CobroModal: React.FC<CobroModalProps> = ({
 
     try {
       await onConfirmarCobro(payload);
-    } catch (err: any) {
-      setErrorLocal(err.message || 'Error al procesar el cobro.');
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      setErrorLocal(msg || 'Error al procesar el cobro.');
     }
   };
 
@@ -284,429 +284,61 @@ export const CobroModal: React.FC<CobroModalProps> = ({
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
-          {/* Total Banner */}
-          <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-transparent border border-amber-200/70 flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                Total a Cobrar
-              </span>
-              <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums text-accent tracking-tight">
-                S/ {total.toFixed(2)}
-              </div>
-              {tipoComprobante !== 'Ticket' && (
-                <div className="text-xs text-neutral-600 mt-0.5 font-medium">
-                  Op. Gravada: S/ {(total / 1.18).toFixed(2)} · IGV (18%): S/ {(total - total / 1.18).toFixed(2)}
-                </div>
-              )}
-            </div>
-            <div className="text-right">
-              <span
-                className={`text-xs px-2.5 py-1 rounded-lg font-semibold inline-flex items-center gap-1 ${
-                  pedido.estaListo
-                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                    : 'bg-amber-100 text-amber-900 border border-amber-200'
-                }`}
-              >
-                {pedido.estaListo ? 'Listo para entrega' : 'En cocina / Salón'}
-              </span>
-            </div>
-          </div>
+          <CobroBannerTotal
+            pedido={pedido}
+            total={total}
+            tipoComprobante={tipoComprobante}
+            errorLocal={errorLocal}
+          />
 
-          {!pedido.estaListo && (
-            <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-amber-700" />
-              <span>
-                <strong>Esperando a cocina:</strong> Este pedido aún no ha sido marcado como <strong>Listo</strong>. No se puede emitir el cobro hasta que cocina termine la preparación.
-              </span>
-            </div>
-          )}
+          <CobroTipoComprobanteSelector
+            tipoComprobante={tipoComprobante}
+            setTipoComprobante={setTipoComprobante}
+          />
 
-          {errorLocal && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{errorLocal}</span>
-            </div>
-          )}
+          <CobroDocumentoClienteSection
+            tipoComprobante={tipoComprobante}
+            modoBoleta={modoBoleta}
+            setModoBoleta={setModoBoleta}
+            esExigidoDocumentoPorMonto={esExigidoDocumentoPorMonto}
+            numDoc={numDoc}
+            setNumDoc={setNumDoc}
+            razonSocial={razonSocial}
+            setRazonSocial={setRazonSocial}
+            direccion={direccion}
+            setDireccion={setDireccion}
+            buscandoDoc={buscandoDoc}
+            docFeedback={docFeedback}
+            onConsultarDocumento={handleConsultarDocumento}
+          />
 
-          {/* Selector de Tipo de Comprobante */}
-          <div>
-            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
-              Tipo de Comprobante
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setTipoComprobante('Ticket')}
-                className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
-                  tipoComprobante === 'Ticket'
-                    ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
-                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
-                }`}
-              >
-                <div className="font-bold">Ticket</div>
-                <div className="text-xs opacity-75 font-normal">Sin validez fiscal</div>
-              </button>
+          <CobroMetodoPagoSelector
+            metodo={metodo}
+            setMetodo={setMetodo}
+          />
 
-              <button
-                type="button"
-                onClick={() => setTipoComprobante('Boleta')}
-                className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
-                  tipoComprobante === 'Boleta'
-                    ? 'bg-primary text-white border-accent shadow-2xs'
-                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
-                }`}
-              >
-                <div className="font-bold">Boleta</div>
-                <div className="text-xs opacity-75 font-normal">Persona Natural</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setTipoComprobante('Factura')}
-                className={`p-2.5 rounded-xl border text-center font-semibold text-xs transition-all cursor-pointer ${
-                  tipoComprobante === 'Factura'
-                    ? 'bg-[#1E3A8A] text-white border-[#1E3A8A] shadow-2xs'
-                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
-                }`}
-              >
-                <div className="font-bold">Factura</div>
-                <div className="text-xs opacity-75 font-normal">Con RUC (Empresa)</div>
-              </button>
-            </div>
-          </div>
-
-          {/* Campos específicos de Boleta */}
-          {tipoComprobante === 'Boleta' && (
-            <div className="p-3.5 bg-neutral-50/80 rounded-xl border border-neutral-200/80 space-y-3 animate-in fade-in duration-150">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-ink">Modalidad de Boleta:</span>
-                <div className="flex items-center gap-1 bg-surface p-1 rounded-lg border border-neutral-200 text-xs">
-                  <button
-                    type="button"
-                    disabled={esExigidoDocumentoPorMonto}
-                    onClick={() => setModoBoleta('simple')}
-                    className={`px-2.5 py-1 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
-                      modoBoleta === 'simple'
-                        ? 'bg-amber-100 text-amber-900 font-bold'
-                        : 'text-neutral-600 hover:text-neutral-900'
-                    } ${esExigidoDocumentoPorMonto ? 'opacity-40 cursor-not-allowed' : ''}`}
-                  >
-                    Simple
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModoBoleta('dni')}
-                    className={`px-2.5 py-1 rounded-md font-semibold text-xs transition-colors cursor-pointer ${
-                      modoBoleta === 'dni'
-                        ? 'bg-amber-100 text-amber-900 font-bold'
-                        : 'text-neutral-600 hover:text-neutral-900'
-                    }`}
-                  >
-                    Con DNI
-                  </button>
-                </div>
-              </div>
-
-              {esExigidoDocumentoPorMonto && (
-                <div className="p-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg flex items-center gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-700" />
-                  <span>Por normativa tributaria (SUNAT), ventas iguales o superiores a S/ 700.00 requieren DNI o RUC.</span>
-                </div>
-              )}
-
-              {(modoBoleta === 'dni' || esExigidoDocumentoPorMonto) && (
-                <div className="space-y-2.5 pt-1">
-                  <div>
-                    <label className="form-label-standard">
-                      Número de DNI (8 dígitos)
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        maxLength={8}
-                        value={numDoc}
-                        onChange={(e) => setNumDoc(e.target.value.replace(/\D/g, ''))}
-                        placeholder="Ej. 44444444"
-                        className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent text-sm tabular-nums"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleConsultarDocumento}
-                        disabled={buscandoDoc || numDoc.trim().length !== 8}
-                        className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {buscandoDoc ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-                        <span>Consultar</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="form-label-standard">
-                      Nombre o Titular
-                    </label>
-                    <input
-                      type="text"
-                      value={razonSocial}
-                      onChange={(e) => setRazonSocial(e.target.value)}
-                      placeholder="Nombres y Apellidos"
-                      className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent text-sm bg-surface"
-                    />
-                  </div>
-
-                  {docFeedback && (
-                    <div
-                      className={`text-xs p-2 rounded-lg ${
-                        docFeedback.tipo === 'ok'
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-rose-50 text-rose-800 border border-rose-200'
-                      }`}
-                    >
-                      {docFeedback.texto}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Campos específicos de Factura */}
-          {tipoComprobante === 'Factura' && (
-            <div className="p-3.5 bg-neutral-50/80 rounded-xl border border-neutral-200/80 space-y-2.5 animate-in fade-in duration-150">
-              <div>
-                <label className="form-label-standard">
-                  Número de RUC (11 dígitos, inicia con 10 o 20)
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    maxLength={11}
-                    value={numDoc}
-                    onChange={(e) => setNumDoc(e.target.value.replace(/\D/g, ''))}
-                    placeholder="Ej. 20131312955"
-                    className="flex-1 px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-sm tabular-nums"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleConsultarDocumento}
-                    disabled={buscandoDoc || numDoc.trim().length !== 11}
-                    className="px-3.5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {buscandoDoc ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-                    <span>Consultar</span>
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="form-label-standard">
-                  Razón Social <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={razonSocial}
-                  onChange={(e) => setRazonSocial(e.target.value)}
-                  placeholder="Razón Social de la Empresa"
-                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-sm bg-surface"
-                />
-              </div>
-
-              <div>
-                <label className="form-label-standard">
-                  Dirección Fiscal
-                </label>
-                <input
-                  type="text"
-                  value={direccion}
-                  onChange={(e) => setDireccion(e.target.value)}
-                  placeholder="Dirección Fiscal (Opcional)"
-                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-[#1E3A8A] text-xs bg-surface"
-                />
-              </div>
-
-              {docFeedback && (
-                <div
-                  className={`text-xs p-2 rounded-lg ${
-                    docFeedback.tipo === 'ok'
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                      : 'bg-rose-50 text-rose-800 border border-rose-200'
-                  }`}
-                >
-                  {docFeedback.texto}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Método de Pago Selector */}
-          <div>
-            <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
-              Seleccione Medio de Pago
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setMetodo('efectivo')}
-                className={`p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer ${
-                  metodo === 'efectivo'
-                    ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
-                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
-                }`}
-              >
-                <SolesIcon className="w-5 h-5 shrink-0" />
-                <span>Efectivo</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setMetodo('yape')}
-                className={`p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer ${
-                  metodo === 'yape'
-                    ? 'bg-[#732282] text-white border-[#732282] shadow-sm'
-                    : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
-                }`}
-              >
-                <Smartphone className="w-5 h-5 shrink-0" />
-                <span>Yape / QR</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Sección Efectivo */}
           {metodo === 'efectivo' && (
-            <div className="space-y-4 pt-1 animate-in fade-in duration-150">
-              <div>
-                <label
-                  htmlFor="monto-recibido-input"
-                  className="block text-xs font-semibold text-ink mb-1.5"
-                >
-                  Monto Recibido del Cliente (S/) <span className="text-accent">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold text-neutral-500">
-                    S/
-                  </span>
-                  <input
-                    id="monto-recibido-input"
-                    type="number"
-                    step="0.10"
-                    min="0"
-                    max="9999.99"
-                    value={montoRecibidoStr}
-                    onChange={(e) => setMontoRecibidoStr(e.target.value)}
-                    autoFocus
-                    disabled={loading}
-                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 text-ink text-xl font-bold font-sans tabular-nums"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-
-              {/* Botones de sugerencia rápida */}
-              <div className="space-y-1.5">
-                <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                  Acceso rápido:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickAmount(total)}
-                    className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-xs font-semibold font-sans tabular-nums text-neutral-700 shadow-2xs transition-colors cursor-pointer"
-                  >
-                    Exacto (S/ {total.toFixed(2)})
-                  </button>
-                  {[20, 50, 100].map((b) => (
-                    <button
-                      key={b}
-                      type="button"
-                      disabled={b < total}
-                      onClick={() => handleQuickAmount(b)}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-semibold font-sans tabular-nums transition-colors cursor-pointer ${
-                        b < total
-                          ? 'border-neutral-100 bg-neutral-100/50 text-neutral-500 cursor-not-allowed'
-                          : 'border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs'
-                      }`}
-                    >
-                      S/ {b}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Resumen de Vuelto */}
-              <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
-                    Vuelto a entregar
-                  </span>
-                  <div
-                    className={`text-xl font-bold font-sans tabular-nums tracking-tight ${
-                      montoRecibido < total ? 'text-danger' : 'text-emerald-700'
-                    }`}
-                  >
-                    S/ {vuelto.toFixed(2)}
-                  </div>
-                </div>
-                {montoRecibido < total && (
-                  <span className="text-xs text-danger font-semibold">
-                    Faltan S/ {faltante.toFixed(2)}
-                  </span>
-                )}
-                {montoRecibido >= total && (
-                  <span className="text-xs text-emerald-700 font-semibold inline-flex items-center gap-1">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Pago cubierto
-                  </span>
-                )}
-              </div>
-            </div>
+            <CobroEfectivoSection
+              total={total}
+              montoRecibidoStr={montoRecibidoStr}
+              setMontoRecibidoStr={setMontoRecibidoStr}
+              loading={loading}
+              onQuickAmount={handleQuickAmount}
+              montoRecibido={montoRecibido}
+              vuelto={vuelto}
+              faltante={faltante}
+            />
           )}
 
-          {/* Sección Yape */}
           {metodo === 'yape' && (
-            <div className="space-y-4 pt-1 animate-in fade-in duration-150">
-              <div className="p-4 rounded-xl bg-purple-50 border border-purple-200/80 space-y-3">
-                <div className="flex items-start gap-3">
-                  <input
-                    id="yape-confirm-check"
-                    type="checkbox"
-                    checked={yapeConfirmado}
-                    onChange={(e) => setYapeConfirmado(e.target.checked)}
-                    className="mt-1 w-4 h-4 text-[#732282] border-neutral-300 rounded-sm focus:ring-[#732282] cursor-pointer"
-                  />
-                  <label
-                    htmlFor="yape-confirm-check"
-                    className="text-xs font-medium text-purple-950 leading-relaxed cursor-pointer"
-                  >
-                    <span className="font-bold text-[#732282]">
-                      Confirmación de recepción en Yape:
-                    </span>{' '}
-                    Verifiqué que el monto de{' '}
-                    <span className="font-bold">S/ {total.toFixed(2)}</span> fue acreditado
-                    correctamente en la cuenta del restaurante.
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="yape-ref-input"
-                  className="block text-xs font-bold text-ink uppercase tracking-wider mb-1"
-                >
-                  Número de operación / Referencia (Opcional)
-                </label>
-                <input
-                  id="yape-ref-input"
-                  type="text"
-                  maxLength={20}
-                  value={yapeReferencia}
-                  onChange={(e) => setYapeReferencia(e.target.value)}
-                  disabled={loading}
-                  placeholder="Ej. 128492"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent text-neutral-900 text-sm tabular-nums"
-                />
-              </div>
-            </div>
+            <CobroYapeSection
+              total={total}
+              yapeConfirmado={yapeConfirmado}
+              setYapeConfirmado={setYapeConfirmado}
+              yapeReferencia={yapeReferencia}
+              setYapeReferencia={setYapeReferencia}
+              loading={loading}
+            />
           )}
 
           {/* Footer Controls */}
@@ -748,4 +380,3 @@ export const CobroModal: React.FC<CobroModalProps> = ({
     </div>
   );
 };
-
