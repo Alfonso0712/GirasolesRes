@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { DetallePedidoModal, AnularPedidoModal, PedidosKpiResumen, PedidosFilterBar, PedidosTable } from '../components/pedidos';
+import {
+  PedidosKpiResumen,
+  PedidosFilterBar,
+  PedidosTable,
+  PedidosModals,
+  PedidosToast,
+} from '../components/pedidos';
 import { pedidoService } from '../services/pedidoService';
 import { getMesasService } from '../services/mesaService';
 import type { UserSession } from '../types/auth';
@@ -9,7 +15,7 @@ import type {
   DetallePedidoCompletoDto,
 } from '../types/pedido';
 import type { MesaItem } from '../types/mesa';
-import { RotateCcw, Check } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import { PageHeader, PageContainer } from '../components/layout';
 
 interface PedidosPageProps {
@@ -253,49 +259,25 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
             onAbrirAnular={handleAbrirAnular}
           />
 
-          {/* Modal de Detalle (Vista 9.2) */}
-          <DetallePedidoModal
-            pedido={pedidoSeleccionadoDetalle}
-            isOpen={abrirModalDetalle}
-            onClose={() => setAbrirModalDetalle(false)}
-            onAbrirAnular={(id) => {
-              const item = pedidos.find((p) => p.id === id);
-              if (item) handleAbrirAnular(item);
-            }}
-            puedeAnular={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.puedeAnular : false}
-            motivoDeshabilitado={pedidoSeleccionadoDetalle ? pedidos.find(p => p.id === pedidoSeleccionadoDetalle.id)?.motivoDeshabilitado : null}
-          />
-
-          {/* Modal de Anulación (Vista 9.4) */}
-          <AnularPedidoModal
-            pedido={pedidoParaAnular}
-            isOpen={abrirModalAnular}
-            onClose={() => setAbrirModalAnular(false)}
-            onConfirmAnular={handleConfirmarAnular}
-            loading={guardandoAnulacion}
+          {/* Modales de Detalle y Anulación */}
+          <PedidosModals
+            pedidoSeleccionadoDetalle={pedidoSeleccionadoDetalle}
+            abrirModalDetalle={abrirModalDetalle}
+            onCloseDetalle={() => setAbrirModalDetalle(false)}
+            pedidos={pedidos}
+            onAbrirAnular={handleAbrirAnular}
+            pedidoParaAnular={pedidoParaAnular}
+            abrirModalAnular={abrirModalAnular}
+            onCloseAnular={() => setAbrirModalAnular(false)}
+            onConfirmarAnular={handleConfirmarAnular}
+            guardandoAnulacion={guardandoAnulacion}
           />
 
           {/* Toast Notificación (MSG-119 / MSG-120) */}
-          {toastMensaje && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-            >
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300">
-                <Check className="w-4 h-4 stroke-[3]" />
-              </div>
-              <span className="text-xs font-semibold tracking-wide">{toastMensaje}</span>
-              <button
-                type="button"
-                onClick={() => setToastMensaje(null)}
-                className="ml-3 text-neutral-500 hover:text-white text-base leading-none p-1 cursor-pointer"
-                aria-label="Cerrar notificación"
-              >
-                ×
-              </button>
-            </div>
-          )}
+          <PedidosToast
+            mensaje={toastMensaje}
+            onClose={() => setToastMensaje(null)}
+          />
         </div>
       </PageContainer>
     </div>

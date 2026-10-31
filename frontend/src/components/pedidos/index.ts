@@ -13,3 +13,5 @@ export * from './ResumenPedidoPanel';
 export * from './PedidosKpiResumen';
 export * from './PedidosFilterBar';
 export * from './PedidosTable';
+export * from './PedidosModals';
+export * from './PedidosToast';
