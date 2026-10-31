@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import { SolesIcon } from '../components/ui/SolesIcon';
-import { RotateCcw, Lock, Check, AlertCircle } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import { useCobrosManagement } from '../hooks/useCobrosManagement';
-import { AbrirCajaModal, CerrarCajaModal, CajaStatusBanner } from '../components/caja';
+import { CajaStatusBanner } from '../components/caja';
 import {
-  CobroModal,
-  TicketComprobanteModal,
   CobrosKpiCards,
   CobrosFilterBar,
   CobrosTable,
+  CobrosModals,
+  CobrosToasts,
+  CobrosCajaActionButton,
 } from '../components/cobros';
 import { StatusBadge } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
@@ -183,42 +183,12 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
                   </button>
                 </div>
 
-                {session.rol === 'Cajero' && (
-                  <>
-                    {cajaEstado?.estadoOperativo === 'abierta' && (
-                      <button
-                        type="button"
-                        onClick={() => setCerrarCajaModalOpen(true)}
-                        className="px-3.5 py-2 rounded-xl bg-fill-strong hover:bg-fill-strong-soft text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
-                      >
-                        <Lock className="w-4 h-4" />
-                        <span>Cerrar caja</span>
-                      </button>
-                    )}
-
-                    {cajaEstado?.estadoOperativo === 'anteriorSinCerrar' && (
-                      <button
-                        type="button"
-                        onClick={() => setCerrarCajaModalOpen(true)}
-                        className="px-3.5 py-2 rounded-xl bg-rose-700 hover:bg-rose-800 text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
-                      >
-                        <Lock className="w-4 h-4" />
-                        <span>Cerrar caja anterior</span>
-                      </button>
-                    )}
-
-                    {cajaEstado?.estadoOperativo === 'sinCaja' && (
-                      <button
-                        type="button"
-                        onClick={() => setAbrirCajaModalOpen(true)}
-                        className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
-                      >
-                        <SolesIcon className="w-4 h-4" />
-                        <span>Abrir caja</span>
-                      </button>
-                    )}
-                  </>
-                )}
+                <CobrosCajaActionButton
+                  rol={session.rol}
+                  estadoOperativo={cajaEstado?.estadoOperativo}
+                  onAbrirCaja={() => setAbrirCajaModalOpen(true)}
+                  onCerrarCaja={() => setCerrarCajaModalOpen(true)}
+                />
               </div>
             }
           />
@@ -262,82 +232,41 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
           />
 
           {/* Modales */}
-          <AbrirCajaModal
-            isOpen={abrirCajaModalOpen}
-            onClose={() => {
+          <CobrosModals
+            abrirCajaModalOpen={abrirCajaModalOpen}
+            onCloseAbrirCaja={() => {
               setAbrirCajaModalOpen(false);
               onClearMesaInicial?.();
             }}
             onCajaAbierta={handleCajaAbierta}
             token={session.token}
             sugerenciaInicial={cajaActual?.sugerenciaMontoInicial ?? null}
-          />
-
-          <CerrarCajaModal
-            isOpen={cerrarCajaModalOpen}
-            onClose={() => {
+            cerrarCajaModalOpen={cerrarCajaModalOpen}
+            onCloseCerrarCaja={() => {
               setCerrarCajaModalOpen(false);
               onClearMesaInicial?.();
             }}
             onCierreCompletado={handleCierreCompletado}
-            token={session.token}
-            onCobrarPedido={(pedidoId) => {
-              const p = pedidos.find((item) => item.pedidoId === pedidoId);
-              if (p) handleIniciarCobro(p);
-            }}
-          />
-
-          <CobroModal
-            isOpen={cobroModalOpen}
-            onClose={() => setCobroModalOpen(false)}
-            pedido={pedidoParaCobro}
+            pedidos={pedidos}
+            onIniciarCobro={handleIniciarCobro}
+            cobroModalOpen={cobroModalOpen}
+            onCloseCobro={() => setCobroModalOpen(false)}
+            pedidoParaCobro={pedidoParaCobro}
             onConfirmarCobro={handleConfirmarCobro}
-            loading={procesandoCobro}
-            token={session.token}
-          />
-
-          <TicketComprobanteModal
-            isOpen={ticketModalOpen}
-            onClose={() => setTicketModalOpen(false)}
-            comprobante={comprobanteActual}
+            procesandoCobro={procesandoCobro}
+            ticketModalOpen={ticketModalOpen}
+            onCloseTicket={() => setTicketModalOpen(false)}
+            comprobanteActual={comprobanteActual}
             onDescargarTxt={handleDescargarTxt}
-            descargando={descargandoTxt}
+            descargandoTxt={descargandoTxt}
           />
 
           {/* Toasts Flotantes */}
-          {avisoExito && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-            >
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300">
-                <Check className="w-4 h-4 stroke-[3]" />
-              </div>
-              <span className="text-xs font-semibold tracking-wide">{avisoExito}</span>
-            </div>
-          )}
-
-          {avisoError && (
-            <div
-              role="alert"
-              aria-live="assertive"
-              className="fixed bottom-6 right-6 z-50 bg-rose-950 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-rose-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-            >
-              <div className="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-300">
-                <AlertCircle className="w-4 h-4" />
-              </div>
-              <span className="text-xs font-semibold tracking-wide">{avisoError}</span>
-              <button
-                type="button"
-                onClick={() => setAvisoError(null)}
-                className="ml-2 text-rose-300 hover:text-white text-base leading-none p-1 cursor-pointer"
-                aria-label="Cerrar aviso"
-              >
-                ×
-              </button>
-            </div>
-          )}
+          <CobrosToasts
+            avisoExito={avisoExito}
+            avisoError={avisoError}
+            onClearAvisoError={() => setAvisoError(null)}
+          />
         </PageContainer>
       </div>
     </div>
