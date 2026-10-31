@@ -3,3 +3,4 @@ export * from './CajaStatusBanner';
 export * from './CerrarCajaModal';
 export * from './CierreDetalleModal';
 export * from './ContadorDenominacionesModal';
+export * from './historial-cierres';
