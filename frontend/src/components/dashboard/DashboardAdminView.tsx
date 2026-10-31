@@ -9,23 +9,14 @@ import type {
   BloqueUltimoCierre,
   AlertaInicio
 } from '../../types/inicio';
-import { SolesIcon } from '../ui/SolesIcon';
-import { QuickActionCard } from './QuickActionCard';
 import {
   AlertTriangle,
   CheckCircle2,
-  Utensils,
   UtensilsCrossed,
   ClipboardList,
-  ShoppingBag,
-  Users,
-  ChevronRight,
   ArrowRight,
-  LayoutGrid,
-  Lock,
-  BarChart3,
-  CalendarCheck
 } from 'lucide-react';
+import { AdminQuickActions, AdminKpiCards } from './admin';
 
 export interface DashboardAdminViewProps {
   bloques: Record<string, any>;
@@ -123,172 +114,22 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
 
       {/* ACCESOS RÁPIDOS A MÓDULOS (RV-151, RV-153) */}
       <div>
-        {renderAdminQuickActions(onNavigate)}
+        <AdminQuickActions onNavigate={onNavigate} />
       </div>
 
       {/* 2. CUATRO TARJETAS GRANDES DE RESUMEN (RV-145, RV-146, RV-150) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Tarjeta 1: Ventas de Hoy */}
-        {ventasHoyRes?.estado === 'error' ? (
-          renderBloqueError('ventasHoy')
-        ) : (
-          <div
-            onClick={() => onNavigate('reportes')}
-            className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-accent transition-all cursor-pointer group flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                  Ventas de Hoy
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-accent flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                  <SolesIcon className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mb-1">
-                S/ {(ventasHoy?.total ?? 0).toFixed(2)}
-              </div>
-              {ventasHoy?.nVentas === 0 ? (
-                <p className="text-xs text-neutral-500 italic mt-1">
-                  Todavía no hay ventas registradas hoy.
-                </p>
-              ) : (
-                <div className="text-xs text-neutral-600 space-y-0.5 mt-2">
-                  <div className="flex justify-between">
-                    <span>Efectivo:</span>
-                    <span className="font-semibold tabular-nums">S/ {(ventasHoy?.efectivo ?? 0).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Yape / Digital:</span>
-                    <span className="font-semibold tabular-nums">S/ {(ventasHoy?.yape ?? 0).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between pt-1 border-t border-neutral-100 text-xs text-neutral-500">
-                    <span>Total ventas:</span>
-                    <span className="font-medium">{ventasHoy?.nVentas ?? 0}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-accent font-semibold">
-              <span>Ver reporte de hoy</span>
-              <ChevronRight className="w-4 h-4 group-hover:text-accent transition-colors" />
-            </div>
-          </div>
-        )}
-
-        {/* Tarjeta 2: Platos Vendidos */}
-        {platosHoyRes?.estado === 'error' ? (
-          renderBloqueError('platosHoy')
-        ) : (
-          <div
-            onClick={() => onNavigate('reportes')}
-            className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-accent transition-all cursor-pointer group flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                  Platos Vendidos Hoy
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-orange-50 text-accent flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                  <UtensilsCrossed className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mb-1">
-                {platosHoy?.total ?? 0} <span className="text-sm font-normal text-neutral-500">unidades</span>
-              </div>
-              <p className="text-xs text-neutral-600 mt-2">
-                {platosHoy?.principales && platosHoy.principales.length > 0
-                  ? `Plato líder: ${platosHoy.principales[0].producto} (${platosHoy.principales[0].cantidad})`
-                  : 'Sin platos servidos aún hoy.'}
-              </p>
-            </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-accent font-semibold">
-              <span>Ver detalle de platos</span>
-              <ChevronRight className="w-4 h-4 group-hover:text-accent transition-colors" />
-            </div>
-          </div>
-        )}
-
-        {/* Tarjeta 3: Pedidos por Estado */}
-        {pedidosRes?.estado === 'error' ? (
-          renderBloqueError('pedidosPorEstado')
-        ) : (
-          <div
-            onClick={() => onNavigate('pedidos')}
-            className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-accent transition-all cursor-pointer group flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                  Pedidos de Hoy
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                  <ClipboardList className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mb-1">
-                {(pedidos?.pendiente ?? 0) + (pedidos?.enPreparacion ?? 0) + (pedidos?.listo ?? 0) + (pedidos?.pagado ?? 0)} <span className="text-sm font-normal text-neutral-500">total</span>
-              </div>
-              <div className="text-xs text-neutral-600 space-y-0.5 mt-2">
-                <div className="flex justify-between">
-                  <span>En curso / Cocina:</span>
-                  <span className="font-semibold tabular-nums text-amber-700">
-                    {(pedidos?.pendiente ?? 0) + (pedidos?.enPreparacion ?? 0)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Listos / Por cobrar:</span>
-                  <span className="font-semibold tabular-nums text-blue-700">
-                    {pedidos?.porCobrar ?? 0}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-accent font-semibold">
-              <span>Gestionar pedidos</span>
-              <ChevronRight className="w-4 h-4 group-hover:text-accent transition-colors" />
-            </div>
-          </div>
-        )}
-
-        {/* Tarjeta 4: Mesas del Salón */}
-        {mesasRes?.estado === 'error' ? (
-          renderBloqueError('mesas')
-        ) : (
-          <div
-            onClick={() => onNavigate('mesas')}
-            className="p-5 bg-surface border border-neutral-200/80 rounded-2xl shadow-xs hover:shadow-md hover:border-accent transition-all cursor-pointer group flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                  Mesas y Salón
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                  <Utensils className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-2xl font-bold font-sans tabular-nums text-neutral-900 mb-1">
-                {mesas?.libres ?? 0} <span className="text-sm font-normal text-emerald-700">libres</span>
-              </div>
-              <div className="text-xs text-neutral-600 space-y-0.5 mt-2">
-                <div className="flex justify-between">
-                  <span>Mesas ocupadas:</span>
-                  <span className="font-semibold tabular-nums text-rose-700">{mesas?.ocupadas ?? 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Total mesas:</span>
-                  <span className="font-semibold tabular-nums">{(mesas?.libres ?? 0) + (mesas?.ocupadas ?? 0)}</span>
-                </div>
-              </div>
-            </div>
-            <div className="pt-3 mt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-accent font-semibold">
-              <span>Ver salón de mesas</span>
-              <ChevronRight className="w-4 h-4 group-hover:text-accent transition-colors" />
-            </div>
-          </div>
-        )}
-      </div>
+      <AdminKpiCards
+        ventasHoyRes={ventasHoyRes}
+        platosHoyRes={platosHoyRes}
+        pedidosRes={pedidosRes}
+        mesasRes={mesasRes}
+        ventasHoy={ventasHoy}
+        platosHoy={platosHoy}
+        pedidos={pedidos}
+        mesas={mesas}
+        onNavigate={onNavigate}
+        renderBloqueError={renderBloqueError}
+      />
 
       {/* 3. BLOQUES DE DETALLE (TOP 5 PLATOS, PEDIDOS POR ESTADO, CAJA Y MENÚ) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -545,37 +386,5 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
       </div>
   );
 };
-
-function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
-  const actions = [
-    { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
-    { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
-    { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: Lock },
-    { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: SolesIcon },
-    { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: BarChart3 },
-    { label: 'Menú del Día', pagina: 'menu-dia', icon: CalendarCheck },
-    { label: 'Gestión de Productos', pagina: 'productos', icon: UtensilsCrossed },
-    { label: 'Gestión de Usuarios', pagina: 'usuarios', icon: Users },
-  ];
-
-  return (
-    <div className="bg-surface border border-neutral-200/80 rounded-2xl p-4 shadow-xs">
-        <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3">
-        Accesos Rápidos a Módulos
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
-        {actions.map((act) => (
-          <QuickActionCard
-            key={act.pagina}
-            label={act.label}
-            icon={act.icon}
-            variant="secondary"
-            onClick={() => onNavigate(act.pagina)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default DashboardAdminView;

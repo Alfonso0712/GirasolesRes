@@ -5,3 +5,5 @@ export * from './SeccionComponentesRol';
 export * from './CardMenuCompletoDia';
 export * from './SeccionCartaCategoria';
 export * from './AgotadoItemCard';
+export * from './MenuDiaDisponibilidadTab';
+export * from './MenuDiaStickyFooter';

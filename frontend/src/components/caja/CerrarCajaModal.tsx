@@ -1,22 +1,23 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   Lock,
-  Coins,
   AlertCircle,
   AlertTriangle,
   CheckCircle2,
   Printer,
   Download,
-  Utensils,
   X,
-  CreditCard,
-  Banknote,
 } from 'lucide-react';
-import { SolesIcon } from '../ui/SolesIcon';
 import { cajaService } from '../../services/cajaService';
 import { ContadorDenominacionesModal } from './ContadorDenominacionesModal';
 import type { CierreResumenDto, CerrarCajaResponseDto } from '../../types/caja';
 import { formatCurrency } from '../../utils/formatters';
+import {
+  ResumenContableCards,
+  ArqueoEfectivoSection,
+  CerrarCajaDesgloseSection,
+  ConfirmarCierreModal,
+} from './cerrar-caja';
 
 
 export interface CerrarCajaModalProps {
@@ -472,387 +473,42 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
               )}
 
               {/* Tarjetas de Resumen Contable (5 Métricas Clave, RV-123) */}
-              {resumen && (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-600">
-                      Resumen de Ventas Vigentes del Turno
-                    </h3>
-                    <span className="text-xs text-neutral-500">
-                      Total ventas registradas: <strong>{resumen.cantidadVentas}</strong>
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block">
-                        Monto Inicial
-                      </span>
-                      <span className="text-base font-bold text-ink tabular-nums mt-0.5 block">
-                        {formatCurrency(resumen.montoInicial)}
-                      </span>
-                      <span className="text-xs text-stone-500 block">Fondo turno</span>
-                    </div>
-
-                    <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <Banknote className="w-3 h-3 text-accent" /> Ventas Efectivo
-                      </span>
-                      <span className="text-base font-bold text-ink tabular-nums mt-0.5 block">
-                        {formatCurrency(resumen.ventasEfectivo)}
-                      </span>
-                      <span className="text-xs text-stone-500 block">Gaveta física</span>
-                    </div>
-
-                    <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <CreditCard className="w-3 h-3 text-purple-600" /> Ventas Yape / QR
-                      </span>
-                      <span className="text-base font-bold text-purple-900 tabular-nums mt-0.5 block">
-                        {formatCurrency(resumen.ventasYape)}
-                      </span>
-                      <span className="text-xs text-stone-500 block">Cuenta digital</span>
-                    </div>
-
-                    <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1">
-                        <SolesIcon className="w-3 h-3 text-success" /> Total Ventas
-                      </span>
-                      <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
-                        {formatCurrency(resumen.totalVentas)}
-                      </span>
-                      <span className="text-xs text-stone-500 block">Efectivo + Yape</span>
-                    </div>
-
-                    <div className="p-3 bg-amber-50/70 border border-amber-300 rounded-xl col-span-2 sm:col-span-1">
-                      <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block">
-                        Efectivo Esperado
-                      </span>
-                      <span className="text-lg font-bold text-accent tabular-nums mt-0.5 block">
-                        {formatCurrency(resumen.efectivoEsperado)}
-                      </span>
-                      <span className="text-xs text-neutral-500 block">
-                        (Inicial + Efectivo)
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {resumen && <ResumenContableCards resumen={resumen} />}
 
               {/* Conteo de Efectivo y Diferencia (RV-124, RV-125) */}
-              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <label
-                      htmlFor="efectivo-contado"
-                      className="block text-xs font-bold uppercase tracking-wider text-neutral-700"
-                    >
-                      Efectivo Contado en Gaveta (S/) <span className="text-red-600">*</span>
-                    </label>
-                    <p className="text-xs text-neutral-500">
-                      Cuente el dinero físico o use el contador de billetes y monedas.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    disabled={tienePedidosPendientes}
-                    onClick={() => setContadorModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#5C341A] hover:bg-sidebar disabled:bg-neutral-300 rounded-xl shadow-sm transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
-                  >
-                    <Coins className="w-4 h-4 text-[#F39C12]" />
-                    CONTAR BILLETES Y MONEDAS
-                  </button>
-                </div>
-
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-bold">
-                    S/
-                  </div>
-                  <input
-                    ref={inputContadoRef}
-                    id="efectivo-contado"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="99999.99"
-                    disabled={tienePedidosPendientes}
-                    value={efectivoContadoInput}
-                    onChange={(e) => {
-                      setEfectivoContadoInput(e.target.value);
-                      if (errorServidor) setErrorServidor(null);
-                    }}
-                    placeholder="0.00"
-                    className="block w-full pl-10 pr-4 py-3 bg-surface border border-neutral-200 rounded-xl text-xl font-bold tabular-nums text-ink focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent disabled:bg-stone-100 disabled:cursor-not-allowed"
-                  />
-                </div>
-
-                {/* Indicador de Diferencia (RV-125, MSG-176, MSG-177, MSG-178) */}
-                {diferenciaCalculada !== null && (
-                  <div
-                    className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 animate-in fade-in duration-200 ${
-                      diferenciaCalculada === 0
-                        ? 'bg-green-50 border-green-300 text-green-900'
-                        : diferenciaCalculada > 0
-                        ? 'bg-amber-50 border-amber-300 text-amber-900'
-                        : 'bg-red-50 border-red-300 text-red-900'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      {diferenciaCalculada === 0 ? (
-                        <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                      ) : (
-                        <AlertTriangle
-                          className={`w-5 h-5 shrink-0 ${
-                            diferenciaCalculada > 0 ? 'text-warning' : 'text-red-600'
-                          }`}
-                        />
-                      )}
-                      <div>
-                        <p className="font-bold text-sm">
-                          {diferenciaCalculada === 0 ? (
-                            'Cuadra: el efectivo contado coincide con el esperado.' // MSG-176
-                          ) : diferenciaCalculada > 0 ? (
-                            <span className="tabular-nums">{`Sobrante de S/ ${diferenciaCalculada.toFixed(2)}. Se recomienda indicar una observación.`}</span> // MSG-177
-                          ) : (
-                            <span className="tabular-nums">{`Faltante de S/ ${Math.abs(diferenciaCalculada).toFixed(2)}. Se recomienda indicar una observación.`}</span> // MSG-178
-                          )}
-                        </p>
-                        <p className="text-xs opacity-80 tabular-nums">
-                          Esperado: <span className="tabular-nums">S/ {resumen?.efectivoEsperado.toFixed(2)}</span> | Contado: <span className="tabular-nums">S/ {contadoNumerico?.toFixed(2)}</span>
-                        </p>
-                      </div>
-                    </div>
-                    <span className="font-bold text-lg tabular-nums shrink-0">
-                      {diferenciaCalculada === 0
-                        ? 'Cuadra'
-                        : `${diferenciaCalculada > 0 ? '+' : '-'}S/ ${Math.abs(
-                            diferenciaCalculada
-                          ).toFixed(2)}`}
-                    </span>
-                  </div>
-                )}
-
-                {/* Observación Opcional (RV-126) */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label
-                      htmlFor="observacion-cierre"
-                      className="block text-xs font-bold uppercase tracking-wider text-neutral-700"
-                    >
-                      Observación {diferenciaCalculada !== null && diferenciaCalculada !== 0 && '(Recomendada)'}
-                    </label>
-                    <span
-                      className={`text-xs tabular-nums font-semibold ${
-                        observacion.length > 200 ? 'text-red-600 font-bold' : 'text-stone-500'
-                      }`}
-                    >
-                      {observacion.length}/200
-                    </span>
-                  </div>
-                  <textarea
-                    id="observacion-cierre"
-                    rows={2}
-                    maxLength={250}
-                    disabled={tienePedidosPendientes}
-                    value={observacion}
-                    onChange={(e) => setObservacion(e.target.value)}
-                    placeholder="Detalles de sobrante, faltante o incidencias del turno..."
-                    className="block w-full px-3 py-2 bg-surface border border-neutral-200 rounded-xl text-xs text-ink focus:outline-hidden focus:ring-1 focus:ring-accent focus:border-accent disabled:bg-stone-100"
-                  />
-                  {observacion.length > 200 && (
-                    <p className="text-xs text-red-600 font-bold mt-1">
-                      La observación no puede superar los 200 caracteres.
-                    </p>
-                  )}
-                </div>
-              </div>
+              <ArqueoEfectivoSection
+                tienePedidosPendientes={tienePedidosPendientes}
+                onAbrirContador={() => setContadorModalOpen(true)}
+                inputContadoRef={inputContadoRef}
+                efectivoContadoInput={efectivoContadoInput}
+                onEfectivoChange={(val) => {
+                  setEfectivoContadoInput(val);
+                  if (errorServidor) setErrorServidor(null);
+                }}
+                diferenciaCalculada={diferenciaCalculada}
+                contadoNumerico={contadoNumerico}
+                efectivoEsperado={resumen?.efectivoEsperado}
+                observacion={observacion}
+                onObservacionChange={setObservacion}
+              />
 
               {/* Desglose en 3 Bloques (D-017, RN-138, E-401): Carta, Menús Completos y Componentes */}
-              {resumen && (
-                <div className="space-y-3">
-                  {/* Bloque 1: Productos de Carta */}
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface">
-                    <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Utensils className="w-3.5 h-3.5 text-accent" />
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                          1. Productos de Carta
-                        </h4>
-                      </div>
-                      <span className="text-xs text-neutral-500 font-medium">
-                        {(resumen.platosVendidos ?? []).reduce((a, b) => a + b.cantidad, 0)} unidades
-                      </span>
-                    </div>
-                    <div className="max-h-36 overflow-y-auto divide-y divide-stone-100 text-xs">
-                      {(resumen.platosVendidos?.length ?? 0) === 0 ? (
-                        <div className="px-4 py-2 text-neutral-400 italic text-center">Sin productos de carta vendidos</div>
-                      ) : (
-                        resumen.platosVendidos.map((p, idx) => (
-                          <div key={p.productoId || `${p.nombre}-${idx}`} className="px-4 py-2 flex items-center justify-between">
-                            <span className="text-neutral-700 font-medium">
-                              {p.cantidad}x {p.nombre}
-                            </span>
-                            <span className="font-semibold text-neutral-600 tabular-nums">
-                              {formatCurrency(p.total)}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Bloque 2: Menús Completos */}
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface">
-                    <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Utensils className="w-3.5 h-3.5 text-amber-600" />
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                          2. Menús Completos
-                        </h4>
-                      </div>
-                      <span className="text-xs text-neutral-500 font-medium">
-                        {(resumen.menusCompletos ?? []).reduce((a, b) => a + b.cantidad, 0)} unidades
-                      </span>
-                    </div>
-                    <div className="max-h-36 overflow-y-auto divide-y divide-stone-100 text-xs">
-                      {(resumen.menusCompletos?.length ?? 0) === 0 ? (
-                        <div className="px-4 py-2 text-neutral-400 italic text-center">Sin menús completos vendidos</div>
-                      ) : (
-                        resumen.menusCompletos!.map((m, idx) => (
-                          <div key={`${m.menuCompletoId}-${idx}`} className="px-4 py-2 flex items-center justify-between">
-                            <span className="text-neutral-700 font-medium">
-                              {m.cantidad}x {m.nombre}
-                            </span>
-                            <span className="font-semibold text-neutral-600 tabular-nums">
-                              {formatCurrency(m.monto ?? m.total)}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Bloque 3: Componentes Elegidos en Menús */}
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface">
-                    <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Utensils className="w-3.5 h-3.5 text-emerald-600" />
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                          3. Componentes de Menú
-                        </h4>
-                      </div>
-                      <span className="text-xs text-neutral-500 font-medium">
-                        {(resumen.componentes ?? []).reduce((a, b) => a + b.cantidad, 0)} elecciones
-                      </span>
-                    </div>
-                    <div className="max-h-36 overflow-y-auto divide-y divide-stone-100 text-xs">
-                      {(resumen.componentes?.length ?? 0) === 0 ? (
-                        <div className="px-4 py-2 text-neutral-400 italic text-center">Sin componentes elegidos</div>
-                      ) : (
-                        resumen.componentes!.map((c, idx) => (
-                          <div key={`${c.productoId}-${idx}`} className="px-4 py-2 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <span className="text-neutral-700 font-medium">
-                                {c.cantidad}x {c.producto}
-                              </span>
-                              <span className="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-mono">
-                                {c.rol}
-                              </span>
-                            </div>
-                            <span className="text-neutral-400 text-[11px] italic">
-                              Incluido
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
+              {resumen && <CerrarCajaDesgloseSection resumen={resumen} />}
             </>
           )}
 
           {/* Diálogo Modal de Confirmación MSG-180 (RV-127 / E-306) */}
-          {pasoConfirmacion && (
-            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200">
-              <div
-                ref={confirmDialogRef}
-                className="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-ink space-y-4 animate-in zoom-in-95 duration-200"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
-                    <AlertTriangle className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-sans text-base font-bold text-red-950">
-                      ¿Confirmar Cierre de Caja?
-                    </h3>
-                    <p className="text-xs text-neutral-600 mt-1">
-                      ¿Cerrar la caja? No podrá cobrar hasta abrir una nueva y el cierre no se puede deshacer.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs space-y-1.5 tabular-nums">
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Efectivo esperado:</span>
-                    <span className="font-bold tabular-nums">{formatCurrency(resumen?.efectivoEsperado)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Efectivo contado:</span>
-                    <span className="font-bold tabular-nums">{formatCurrency(contadoNumerico)}</span>
-                  </div>
-                  <div className="flex justify-between pt-1 border-t border-neutral-200">
-                    <span className="font-bold">Diferencia:</span>
-                    <span
-                      className={`font-bold tabular-nums ${
-                        diferenciaCalculada === 0
-                          ? 'text-green-700'
-                          : diferenciaCalculada! > 0
-                          ? 'text-amber-700'
-                          : 'text-red-700'
-                      }`}
-                    >
-                      {diferenciaCalculada === 0
-                        ? 'Cuadra'
-                        : <span className="tabular-nums">{`${diferenciaCalculada! > 0 ? '+' : ''}S/ ${diferenciaCalculada?.toFixed(2)}`}</span>}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Botones con Foco inicial en CANCELAR (RV-127 / E-306) */}
-                <div className="pt-2 flex items-center justify-end gap-3">
-                  <button
-                    ref={cancelBtnRef}
-                    type="button"
-                    disabled={procesandoCierre}
-                    onClick={() => setPasoConfirmacion(false)}
-                    className="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="button"
-                    disabled={procesandoCierre}
-                    onClick={handleConfirmarCierre}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C0392B] hover:bg-[#962D22] disabled:bg-neutral-400 rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
-                  >
-                    {procesandoCierre ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Cerrando...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="w-4 h-4" />
-                        <span>CONFIRMAR CIERRE</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          <ConfirmarCierreModal
+            isOpen={pasoConfirmacion}
+            resumen={resumen}
+            contadoNumerico={contadoNumerico}
+            diferenciaCalculada={diferenciaCalculada}
+            procesandoCierre={procesandoCierre}
+            onCancel={() => setPasoConfirmacion(false)}
+            onConfirm={handleConfirmarCierre}
+            confirmDialogRef={confirmDialogRef}
+            cancelBtnRef={cancelBtnRef}
+          />
         </div>
 
         {/* Footer principal del modal */}

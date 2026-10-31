@@ -1,22 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SolesIcon } from '../ui/SolesIcon';
 import {
   FileText,
   Download,
   Printer,
-  Utensils,
   AlertTriangle,
   X,
   Calendar,
   User,
   Clock,
-  Banknote,
-  Smartphone,
   Loader2,
 } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import type { CierreDetalleDto } from '../../types/caja';
 import { formatCurrency, formatLimaFecha } from '../../utils/formatters';
+import {
+  CierreMetricasSection,
+  CierreProductosConsolidadoSection,
+  CierreAnulacionesSection,
+} from './cierre-detalle';
 
 
 interface CierreDetalleModalProps {
@@ -277,127 +278,11 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               </div>
 
               {/* Sección 2: Desglose Financiero Completo (8 Métricas Clave) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid">
-                {/* Tarjeta A: Resumen de Ventas Facturadas */}
-                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
-                      <SolesIcon className="w-4 h-4 text-accent" />
-                      Flujo de Ventas del Turno
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Monto Inicial (Apertura):</span>
-                      <span className="font-bold text-neutral-800 tabular-nums">
-                        {formatCurrency(detalle.montoInicial)}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span className="flex items-center gap-1">
-                        <Banknote className="w-3.5 h-3.5 text-stone-500" />
-                        Ventas en Efectivo:
-                      </span>
-                      <span className="font-bold text-ink tabular-nums">
-                        {formatCurrency(detalle.ventasEfectivo)}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span className="flex items-center gap-1">
-                        <Smartphone className="w-3.5 h-3.5 text-purple-600" />
-                        Ventas por Yape / QR:
-                      </span>
-                      <span className="font-bold text-purple-900 tabular-nums">
-                        {formatCurrency(detalle.ventasYape)}
-                      </span>
-                    </div>
-
-                    <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
-                      <span className="text-ink">Total de ventas facturadas:</span>
-                      <span className="text-accent text-base tabular-nums">
-                        {formatCurrency(detalle.totalVentas)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tarjeta B: Arqueo Físico y Cuadratura de Efectivo */}
-                <div className="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
-                      <Banknote className="w-4 h-4 text-accent" />
-                      Arqueo y Cuadratura de Efectivo
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Efectivo Físico Esperado:</span>
-                      <span className="font-bold text-ink tabular-nums">
-                        {formatCurrency(detalle.efectivoEsperado ?? (detalle.montoInicial + detalle.ventasEfectivo))}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Efectivo Físico Contado:</span>
-                      <span className="font-bold text-stone-900 tabular-nums">
-                        {esAbierta ? (
-                          <span className="text-stone-500 font-normal">—</span>
-                        ) : detalle.efectivoContado !== null && detalle.efectivoContado !== undefined ? (
-                          <span className="tabular-nums">{formatCurrency(Number(detalle.efectivoContado))}</span>
-                        ) : (
-                          '—'
-                        )}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center text-neutral-600">
-                      <span>Diferencia de Cuadre:</span>
-                      <span className="font-bold tabular-nums">
-                        {esAbierta ? (
-                          <span className="text-stone-500 font-normal">—</span>
-                        ) : diferenciaNum === null ? (
-                          '—'
-                        ) : diferenciaNum === 0 ? (
-                          <span className="tabular-nums">S/ 0.00</span>
-                        ) : (
-                          <span className="tabular-nums">{`${diferenciaNum > 0 ? '+' : ''}S/ ${diferenciaNum.toFixed(2)}`}</span>
-                        )}
-                      </span>
-                    </div>
-
-                    {/* Badge de Estado de Cuadre */}
-                    <div className="pt-2 border-t border-neutral-200">
-                      <div
-                        className={`p-2.5 rounded-lg border text-center font-bold text-xs tracking-wider uppercase tabular-nums ${
-                          esAbierta
-                            ? 'bg-stone-50 border-neutral-200 text-neutral-500'
-                            : diferenciaNum === null
-                            ? 'bg-stone-50 border-neutral-200 text-neutral-500'
-                            : diferenciaNum === 0
-                            ? 'bg-emerald-100 border-emerald-300 text-emerald-900'
-                            : diferenciaNum > 0
-                            ? 'bg-amber-100 border-amber-300 text-amber-900'
-                            : 'bg-rose-100 border-rose-300 text-rose-900'
-                        }`}
-                      >
-                        {esAbierta
-                          ? 'Estado: Turno en curso (Sin Arqueo)'
-                          : diferenciaNum === null
-                          ? 'Estado: Sin Arqueo'
-                          : diferenciaNum === 0
-                          ? 'Estado: Cuadra (S/ 0.00)'
-                          : diferenciaNum > 0
-                          ? <span className="tabular-nums">{`Estado: Sobrante (+S/ ${diferenciaNum.toFixed(2)})`}</span>
-                          : <span className="tabular-nums">{`Estado: Faltante (-S/ ${Math.abs(diferenciaNum).toFixed(2)})`}</span>}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <CierreMetricasSection
+                detalle={detalle}
+                esAbierta={esAbierta}
+                diferenciaNum={diferenciaNum}
+              />
 
               {/* Sección 3: Observación (Omitida limpiamente si está vacía) */}
               {detalle.observacion && detalle.observacion.trim().length > 0 && (
@@ -410,224 +295,11 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               )}
 
               {/* Sección 4: Consolidado en Tres Bloques (D-017, RN-138, E-401) */}
-              <div className="space-y-4">
-                {/* 4A. Productos de Carta */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
-                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-accent" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                        1. Productos de Carta
-                      </h4>
-                    </div>
-                    <span className="text-xs text-neutral-500 font-semibold">
-                      {detalle.platosVendidos?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} unidades
-                    </span>
-                  </div>
-
-                  {detalle.platosVendidos && detalle.platosVendidos.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Plato / Producto</th>
-                            <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
-                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line-soft text-sm">
-                          {detalle.platosVendidos.map((p, idx) => (
-                            <tr key={p.productoId || `${p.nombre}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
-                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{p.nombre}</td>
-                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
-                                {p.cantidad}
-                              </td>
-                              <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
-                                S/ {(p.total ?? 0).toFixed(2)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
-                          <tr>
-                            <td className="px-4 py-2.5 text-ink">Subtotal Carta</td>
-                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
-                              {detalle.platosVendidos.reduce((acc, p) => acc + p.cantidad, 0)}
-                            </td>
-                            <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
-                              S/ {detalle.platosVendidos.reduce((acc, p) => acc + (p.total ?? 0), 0).toFixed(2)}
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="py-4 text-center text-xs text-neutral-500 italic">
-                      Sin productos de carta vendidos en este turno.
-                    </div>
-                  )}
-                </div>
-
-                {/* 4B. Menús Completos */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
-                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-amber-600" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                        2. Menús Completos
-                      </h4>
-                    </div>
-                    <span className="text-xs text-neutral-500 font-semibold">
-                      {detalle.menusCompletos?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} unidades
-                    </span>
-                  </div>
-
-                  {detalle.menusCompletos && detalle.menusCompletos.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Menú Completo</th>
-                            <th className="px-4 py-2.5 text-center w-24">Cantidad</th>
-                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Subtotal (S/)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line-soft text-sm">
-                          {detalle.menusCompletos.map((m, idx) => (
-                            <tr key={`${m.menuCompletoId}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
-                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{m.nombre}</td>
-                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
-                                {m.cantidad}
-                              </td>
-                              <td className="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums">
-                                S/ {(m.monto ?? m.total ?? 0).toFixed(2)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
-                          <tr>
-                            <td className="px-4 py-2.5 text-ink">Subtotal Menús</td>
-                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
-                              {detalle.menusCompletos.reduce((acc, m) => acc + m.cantidad, 0)}
-                            </td>
-                            <td className="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm">
-                              S/ {detalle.menusCompletos.reduce((acc, m) => acc + (m.monto ?? m.total ?? 0), 0).toFixed(2)}
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="py-4 text-center text-xs text-neutral-500 italic">
-                      Sin menús completos vendidos en este turno.
-                    </div>
-                  )}
-                </div>
-
-                {/* 4C. Componentes de Menú */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs">
-                  <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-emerald-600" />
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-ink">
-                        3. Componentes Elegidos en Menús
-                      </h4>
-                    </div>
-                    <span className="text-xs text-neutral-500 font-semibold">
-                      {detalle.componentes?.reduce((acc, curr) => acc + curr.cantidad, 0) || 0} elecciones
-                    </span>
-                  </div>
-
-                  {detalle.componentes && detalle.componentes.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead className="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Componente / Insumo</th>
-                            <th className="px-4 py-2.5 text-center w-28">Rol / Parte</th>
-                            <th className="px-4 py-2.5 text-center w-24">Veces Elegida</th>
-                            <th className="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap">Monto</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line-soft text-sm">
-                          {detalle.componentes.map((c, idx) => (
-                            <tr key={`${c.productoId}-${idx}`} className="hover:bg-neutral-50/40 transition-colors border-b border-line-soft">
-                              <td className="px-4 py-2.5 font-semibold text-sm text-ink">{c.producto}</td>
-                              <td className="px-4 py-2.5 text-center font-mono text-xs text-neutral-600">
-                                {c.rol}
-                              </td>
-                              <td className="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums">
-                                {c.cantidad}
-                              </td>
-                              <td className="px-4 py-2.5 text-right font-medium text-xs text-neutral-400 italic">
-                                S/ 0.00 (Incluido)
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot className="bg-canvas border-t border-line font-semibold text-xs">
-                          <tr>
-                            <td className="px-4 py-2.5 text-ink" colSpan={2}>Total Elecciones Componentes</td>
-                            <td className="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold">
-                              {detalle.componentes.reduce((acc, c) => acc + c.cantidad, 0)}
-                            </td>
-                            <td className="px-4 py-2.5 text-right text-neutral-500 tabular-nums font-medium text-xs">
-                              S/ 0.00
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="py-4 text-center text-xs text-neutral-500 italic">
-                      Sin componentes de menú elegidos en este turno.
-                    </div>
-                  )}
-                </div>
-              </div>
+              <CierreProductosConsolidadoSection detalle={detalle} />
 
               {/* Sección 5: Ventas anuladas después del cierre */}
-              {tieneAjustes && detalle.ajustesPosteriores && detalle.ajustesPosteriores.length > 0 && (
-                <div className="border border-amber-200 bg-amber-50/40 rounded-xl overflow-hidden break-inside-avoid">
-                  <div className="bg-amber-100/70 px-4 py-2.5 border-b border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                    <span className="font-bold text-xs uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-700" />
-                      Ventas anuladas después del cierre ({detalle.ajustesPosteriores.length})
-                    </span>
-                    <span className="text-xs text-amber-800 font-semibold">
-                      Arqueo original protegido
-                    </span>
-                  </div>
-
-                  <div className="p-3 bg-amber-100/30 border-b border-amber-200/60 text-xs text-amber-900 leading-normal">
-                    <strong>Nota de auditoría:</strong> El arqueo y balance original de la caja no se modifican. Estas ventas fueron anuladas después de cerrar el turno.
-                  </div>
-
-                  <div className="divide-y divide-amber-200/60 text-xs">
-                    {detalle.ajustesPosteriores.map((a) => (
-                      <div key={a.ventaId} className="p-3.5 hover:bg-amber-100/30 transition-colors space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-ink">
-                            {a.comprobante || a.numeroComprobante || 'Comprobante'}
-                          </span>
-                          <span className="font-bold text-red-600 tabular-nums">
-                            -S/ {Number(a.montoAnulado ?? a.total ?? 0).toFixed(2)} ({a.metodoPago})
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap items-center justify-between text-xs text-neutral-600 gap-2">
-                          <p>
-                            Motivo: <em className="text-neutral-800 font-medium">"{a.motivo || 'Sin motivo'}"</em>
-                          </p>
-                          <p className="text-neutral-500">
-                            Anulado por: <strong>{a.usuarioAnulacion || 'Mozo/Admin'}</strong> ·{' '}
-                            {a.fechaAnulacionLocal || formatLimaFecha(a.fechaAnulacion || a.fechaAnulacionUtc)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              {tieneAjustes && (
+                <CierreAnulacionesSection ajustesPosteriores={detalle.ajustesPosteriores} />
               )}
             </>
           ) : null}
