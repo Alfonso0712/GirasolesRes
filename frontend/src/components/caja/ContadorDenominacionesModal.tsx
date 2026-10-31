@@ -1,34 +1,16 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Coins, Banknote, RotateCcw, Check, X } from 'lucide-react';
+import { Coins, Banknote, X } from 'lucide-react';
+import {
+  DENOMINACIONES,
+  DenominacionRow,
+  ContadorFooterBar
+} from './contador';
 
 export interface ContadorDenominacionesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAplicarTotal: (total: number) => void;
 }
-
-interface DenominacionDef {
-  id: string;
-  valor: number;
-  etiqueta: string;
-  tipo: 'billete' | 'moneda';
-}
-
-const DENOMINACIONES: DenominacionDef[] = [
-  // Billetes
-  { id: 'b200', valor: 200, etiqueta: 'S/ 200', tipo: 'billete' },
-  { id: 'b100', valor: 100, etiqueta: 'S/ 100', tipo: 'billete' },
-  { id: 'b50', valor: 50, etiqueta: 'S/ 50', tipo: 'billete' },
-  { id: 'b20', valor: 20, etiqueta: 'S/ 20', tipo: 'billete' },
-  { id: 'b10', valor: 10, etiqueta: 'S/ 10', tipo: 'billete' },
-  // Monedas
-  { id: 'm5', valor: 5, etiqueta: 'S/ 5.00', tipo: 'moneda' },
-  { id: 'm2', valor: 2, etiqueta: 'S/ 2.00', tipo: 'moneda' },
-  { id: 'm1', valor: 1, etiqueta: 'S/ 1.00', tipo: 'moneda' },
-  { id: 'm050', valor: 0.50, etiqueta: 'S/ 0.50', tipo: 'moneda' },
-  { id: 'm020', valor: 0.20, etiqueta: 'S/ 0.20', tipo: 'moneda' },
-  { id: 'm010', valor: 0.10, etiqueta: 'S/ 0.10', tipo: 'moneda' },
-];
 
 export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalProps> = ({
   isOpen,
@@ -204,48 +186,16 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               </h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {billetes.map((b) => {
-                const cant = cantidades[b.id] ?? '';
-                const cantNum = typeof cant === 'number' ? cant : 0;
-                const subtotal = cantNum > 0 ? (cantNum * Math.round(b.valor * 100)) / 100 : 0;
-                const err = errores[b.id];
-
-                return (
-                  <div
-                    key={b.id}
-                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
-                  >
-                    <div className="w-20">
-                      <span className="font-bold text-sm text-ink">{b.etiqueta}</span>
-                    </div>
-                    <div className="flex-1 flex flex-col items-end">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-neutral-500">Cant:</span>
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          min="0"
-                          max="999"
-                          step="1"
-                          value={cant}
-                          onChange={(e) => handleCantidadChange(b.id, e.target.value)}
-                          placeholder="0"
-                          className={`w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
-                            err
-                              ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                              : 'border-neutral-200 focus:ring-accent'
-                          }`}
-                        />
-                      </div>
-                      <span className="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5">
-                        = S/ {subtotal.toFixed(2)}
-                      </span>
-                      {err && <span className="text-xs text-red-600 mt-0.5">{err}</span>}
-                    </div>
-                  </div>
-                );
-              })}
+              {billetes.map((b, idx) => (
+                <DenominacionRow
+                  key={b.id}
+                  denom={b}
+                  cantidad={cantidades[b.id] ?? ''}
+                  error={errores[b.id]}
+                  onChange={handleCantidadChange}
+                  inputRef={idx === 0 ? firstInputRef : undefined}
+                />
+              ))}
             </div>
           </div>
 
@@ -258,92 +208,27 @@ export const ContadorDenominacionesModal: React.FC<ContadorDenominacionesModalPr
               </h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {monedas.map((m) => {
-                const cant = cantidades[m.id] ?? '';
-                const cantNum = typeof cant === 'number' ? cant : 0;
-                const subtotal = cantNum > 0 ? (cantNum * Math.round(m.valor * 100)) / 100 : 0;
-                const err = errores[m.id];
-
-                return (
-                  <div
-                    key={m.id}
-                    className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
-                  >
-                    <div className="w-20">
-                      <span className="font-bold text-sm text-ink">{m.etiqueta}</span>
-                    </div>
-                    <div className="flex-1 flex flex-col items-end">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-neutral-500">Cant:</span>
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          min="0"
-                          max="999"
-                          step="1"
-                          value={cant}
-                          onChange={(e) => handleCantidadChange(m.id, e.target.value)}
-                          placeholder="0"
-                          className={`w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 ${
-                            err
-                              ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                              : 'border-neutral-200 focus:ring-accent'
-                          }`}
-                        />
-                      </div>
-                      <span className="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5">
-                        = S/ {subtotal.toFixed(2)}
-                      </span>
-                      {err && <span className="text-xs text-red-600 mt-0.5">{err}</span>}
-                    </div>
-                  </div>
-                );
-              })}
+              {monedas.map((m) => (
+                <DenominacionRow
+                  key={m.id}
+                  denom={m}
+                  cantidad={cantidades[m.id] ?? ''}
+                  error={errores[m.id]}
+                  onChange={handleCantidadChange}
+                />
+              ))}
             </div>
           </div>
         </div>
 
         {/* Barra de Total y Acciones */}
-        <div className="bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
-            <button
-              type="button"
-              onClick={handleLimpiar}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Limpiar
-            </button>
-            <div className="text-right sm:text-left">
-              <span className="text-xs uppercase font-bold tracking-wider text-neutral-500 block">
-                Total Contado
-              </span>
-              <span className="font-sans text-2xl font-bold text-ink tabular-nums whitespace-nowrap">
-                S/ {totalCalculado.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              disabled={hayErrores}
-              onClick={handleConfirmar}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary-hover disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
-            >
-              <Check className="w-4 h-4" />
-              USAR ESTE TOTAL
-            </button>
-          </div>
-        </div>
+        <ContadorFooterBar
+          totalCalculado={totalCalculado}
+          hayErrores={hayErrores}
+          onLimpiar={handleLimpiar}
+          onClose={onClose}
+          onConfirmar={handleConfirmar}
+        />
       </div>
     </div>
   );

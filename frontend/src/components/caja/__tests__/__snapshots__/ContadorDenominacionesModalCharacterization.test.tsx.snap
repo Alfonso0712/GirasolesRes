@@ -1,0 +1,747 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ContadorDenominacionesModal - Pruebas de Caracterización y Cálculo de Denominaciones > debe renderizar billetes y monedas con snapshot fiel 1`] = `
+<div>
+  <div
+    aria-labelledby="contador-title"
+    aria-modal="true"
+    class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+    role="dialog"
+  >
+    <div
+      class="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50"
+      >
+        <div
+          class="flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-amber-50 text-accent border border-amber-200/80 flex items-center justify-center shadow-xs"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-coins w-5 h-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.744 17.736a6 6 0 1 1-7.48-7.48"
+              />
+              <path
+                d="M15 6h1v4"
+              />
+              <path
+                d="m6.134 14.768.866-.5 2 3.464"
+              />
+              <circle
+                cx="16"
+                cy="8"
+                r="6"
+              />
+            </svg>
+          </div>
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-wider text-accent"
+            >
+              Herramienta de Arqueo
+            </p>
+            <h2
+              class="font-sans text-xl font-bold text-ink tracking-tight"
+              id="contador-title"
+            >
+              Contador de Billetes y Monedas
+            </h2>
+          </div>
+        </div>
+        <button
+          aria-label="Cerrar modal"
+          class="modal-close-btn"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-x w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="p-6 overflow-y-auto space-y-6 flex-1 text-ink"
+      >
+        <p
+          class="text-sm text-neutral-600"
+        >
+          Ingrese la cantidad de unidades por cada denominación. El total se suma en tiempo real y no se guarda el desglose individual.
+        </p>
+        <div>
+          <div
+            class="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-banknote w-4 h-4 text-accent"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="12"
+                rx="2"
+                width="20"
+                x="2"
+                y="6"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="2"
+              />
+              <path
+                d="M6 12h.01M18 12h.01"
+              />
+            </svg>
+            <h3
+              class="font-bold text-xs uppercase tracking-wider text-neutral-700"
+            >
+              Billetes (S/)
+            </h3>
+          </div>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+          >
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 200
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 100
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 50
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 20
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 10
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex items-center gap-2 mb-3 pb-1 border-b border-neutral-200"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-coins w-4 h-4 text-accent"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.744 17.736a6 6 0 1 1-7.48-7.48"
+              />
+              <path
+                d="M15 6h1v4"
+              />
+              <path
+                d="m6.134 14.768.866-.5 2 3.464"
+              />
+              <circle
+                cx="16"
+                cy="8"
+                r="6"
+              />
+            </svg>
+            <h3
+              class="font-bold text-xs uppercase tracking-wider text-neutral-700"
+            >
+              Monedas (S/)
+            </h3>
+          </div>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+          >
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 5.00
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 2.00
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 1.00
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 0.50
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 0.20
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 focus-within:border-accent transition-colors"
+            >
+              <div
+                class="w-20"
+              >
+                <span
+                  class="font-bold text-sm text-ink"
+                >
+                  S/ 0.10
+                </span>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-end"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <span
+                    class="text-xs text-neutral-500"
+                  >
+                    Cant:
+                  </span>
+                  <input
+                    class="w-20 text-right px-2 py-1 bg-surface border rounded-lg text-sm font-semibold tabular-nums focus:outline-hidden focus:ring-1 border-neutral-200 focus:ring-accent"
+                    inputmode="numeric"
+                    max="999"
+                    min="0"
+                    pattern="[0-9]*"
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <span
+                  class="text-xs font-semibold text-neutral-500 tabular-nums mt-0.5"
+                >
+                  = S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <div
+          class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start"
+        >
+          <button
+            class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-rotate-ccw w-3.5 h-3.5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+              />
+              <path
+                d="M3 3v5h5"
+              />
+            </svg>
+            Limpiar
+          </button>
+          <div
+            class="text-right sm:text-left"
+          >
+            <span
+              class="text-xs uppercase font-bold tracking-wider text-neutral-500 block"
+            >
+              Total Contado
+            </span>
+            <span
+              class="font-sans text-2xl font-bold text-ink tabular-nums whitespace-nowrap"
+            >
+              S/ 
+              0.00
+            </span>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-2 w-full sm:w-auto"
+        >
+          <button
+            class="flex-1 sm:flex-initial px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+            type="button"
+          >
+            Cancelar
+          </button>
+          <button
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary-hover disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-check w-4 h-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20 6 9 17l-5-5"
+              />
+            </svg>
+            USAR ESTE TOTAL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
