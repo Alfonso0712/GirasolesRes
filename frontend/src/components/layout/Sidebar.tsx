@@ -1,19 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  Home,
-  ChevronDown,
-  ShieldCheck,
-  X
-,  Settings,
-} from 'lucide-react';
+import { Home, Settings } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import {
   NAVIGATION_GROUPS,
   resolveNavigation,
-  isNavigationItemActive,
 } from '../../config/navigationConfig';
-import logoGirasoles from '../../assets/LOGO_GIRASOLES.png';
 import { useHandedness } from '../../hooks/useHandedness';
+import { SidebarHeader } from './sidebar/SidebarHeader';
+import { SidebarNavGroup } from './sidebar/SidebarNavGroup';
+import { SidebarFooter } from './sidebar/SidebarFooter';
 
 interface SidebarProps {
   session?: UserSession | null;
@@ -26,7 +21,6 @@ interface SidebarProps {
   cajaEstado?: string;
 }
 
-
 export const Sidebar: React.FC<SidebarProps> = ({
   session,
   paginaActiva = 'usuarios',
@@ -38,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const rol = session?.rol;
   const { isLeftHanded } = useHandedness();
-  // Guard estricto RN-106: rol === 'Administrador' && (
 
   // Cerrar drawer con tecla Escape en móvil
   useEffect(() => {
@@ -55,37 +48,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const handleNavigate = (pagina: string) => {
     onSelectPagina?.(pagina);
     onCloseMobile?.();
-  };
-
-  // Helper para renderizar badges dinámicos sobre ítems de navegación
-  const renderItemBadge = (itemId: string) => {
-    if (itemId === 'pedidos' && pedidosListosCount !== undefined && pedidosListosCount > 0) {
-      return (
-        <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse">
-          {pedidosListosCount}
-        </span>
-      );
-    }
-    if (itemId === 'caja' && cajaEstado) {
-      return (
-        <span
-          className={`px-1.5 py-0.5 text-xs font-bold rounded-full shrink-0 ${
-            cajaEstado === 'abierta'
-              ? 'bg-emerald-500 text-white'
-              : cajaEstado === 'anteriorSinCerrar'
-              ? 'bg-rose-500 text-white animate-pulse'
-              : 'bg-[#57534E] text-[#FDE68A]'
-          }`}
-        >
-          {cajaEstado === 'abierta'
-            ? 'Abierta'
-            : cajaEstado === 'anteriorSinCerrar'
-            ? 'Cierre pend.'
-            : 'Cerrada'}
-        </span>
-      );
-    }
-    return null;
   };
 
   const gruposConfig = NAVIGATION_GROUPS;
@@ -171,25 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }`}
       >
         {/* Bloque 1: Cabecera Fija con Logo y botón cerrar móvil (shrink-0) */}
-        <div className="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-sidebar-line mb-2">
-          <div className="flex-1 flex items-center py-1">
-            <img
-              src={logoGirasoles}
-              alt="Girasoles Restaurante"
-              className="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
-            />
-          </div>
-          {onCloseMobile && (
-            <button
-              type="button"
-              onClick={onCloseMobile}
-              aria-label="Cerrar menú"
-              className="lg:hidden p-2 text-[#FDE68A]/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
-        </div>
+        <SidebarHeader onCloseMobile={onCloseMobile} />
 
         {/* Bloque 2: Navegación Central Jerárquica con Acordeón y Scroll Invisible */}
         <nav className="flex-1 overflow-y-auto py-1 xl:py-2 space-y-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -208,81 +152,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
 
           {/* 4 Secciones Jerárquicas Desplegables (Acordeón) */}
-          {gruposVisibles.map((grupo) => {
-            const isOpen = Boolean(gruposAbiertos[grupo.id]);
-            const tieneItemActivo = navState.groupId === grupo.id;
+          {gruposVisibles.map((grupo) => (
+            <SidebarNavGroup
+              key={grupo.id}
+              grupo={grupo}
+              isOpen={Boolean(gruposAbiertos[grupo.id])}
+              tieneItemActivo={navState.groupId === grupo.id}
+              cajaEstado={cajaEstado}
+              paginaActiva={paginaActiva}
+              pedidosListosCount={pedidosListosCount}
+              onToggle={() => toggleGrupo(grupo.id)}
+              onNavigate={handleNavigate}
+            />
+          ))}
 
-            return (
-              <div key={grupo.id} className="pt-1.5 first:pt-0">
-                {/* Cabecera del Grupo Desplegable */}
-                <button
-                  type="button"
-                  aria-expanded={isOpen}
-                  onClick={() => toggleGrupo(grupo.id)}
-                  className="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="truncate">{grupo.title}</span>
-
-                    {/* Indicador de módulo activo cuando el grupo está colapsado (Nielsen 1) */}
-                    {!isOpen && tieneItemActivo && (
-                      <span
-                        className="w-2 h-2 rounded-full bg-primary shrink-0 shadow-2xs"
-                        title="Módulo activo dentro de esta sección"
-                      />
-                    )}
-
-                    {/* Indicador de estado de caja en la cabecera colapsada de Caja y Ventas */}
-                    {!isOpen && grupo.id === 'caja-ventas' && cajaEstado && (
-                      <span
-                        className={`w-2 h-2 rounded-full shrink-0 ${
-                          cajaEstado === 'abierta'
-                            ? 'bg-emerald-400'
-                            : cajaEstado === 'anteriorSinCerrar'
-                            ? 'bg-rose-400 animate-pulse'
-                            : 'bg-[#A8A29E]'
-                        }`}
-                        title={`Caja: ${cajaEstado}`}
-                      />
-                    )}
-                  </div>
-                  <ChevronDown
-                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-white' : 'text-[#D9C5B2]/60'
-                    }`}
-                  />
-                </button>
-
-                {/* Sub-elementos con indentación y línea guía vertical sutil */}
-                {isOpen && (
-                  <div className="pl-3 border-l border-white/10 ml-3.5 space-y-1 mt-1 mb-2 animate-in fade-in duration-150">
-                    {grupo.items.map((item) => {
-                      const Icon = item.icon;
-                      const esActivo = isNavigationItemActive(item, paginaActiva);
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => handleNavigate(item.id)}
-                          className={`w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer ${
-                            esActivo
-                              ? 'bg-primary text-white shadow-md font-semibold'
-                              : 'text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <Icon className="w-4 h-4 xl:w-4.5 xl:h-4.5 shrink-0" />
-                            <span className="truncate">{item.label}</span>
-                          </div>
-                          {renderItemBadge(item.id)}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
           {/* Módulo de Configuración */}
           <div className="pt-2 mt-2 border-t border-sidebar-line/60">
             <button
@@ -301,17 +184,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Bloque 3: Pie Fijo de "Acceso protegido" (shrink-0) */}
-        <div className="shrink-0 pt-3 xl:pt-3.5 border-t border-sidebar-line flex items-center gap-3 mt-1">
-          <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
-          <div>
-            <p className="text-xs font-semibold text-white tracking-wide">Acceso protegido</p>
-            <p className="text-xs text-[#FDE68A]/70">Sesión segura y activa</p>
-          </div>
-        </div>
+        <SidebarFooter />
       </aside>
     </>
   );
 };
 
 export default Sidebar;
-

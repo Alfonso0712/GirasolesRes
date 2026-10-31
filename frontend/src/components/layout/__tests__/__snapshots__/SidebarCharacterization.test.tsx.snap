@@ -1,0 +1,568 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Sidebar - Pruebas de Caracterización y Navegación > debe renderizar grupos expandidos para Mozo y mostrar badges 1`] = `
+<div>
+  <div
+    aria-hidden="true"
+    class="fixed inset-0 z-40 bg-fill-strong/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
+  />
+  <aside
+    class="fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-sidebar text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out translate-x-0"
+  >
+    <div
+      class="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-sidebar-line mb-2"
+    >
+      <div
+        class="flex-1 flex items-center py-1"
+      >
+        <img
+          alt="Girasoles Restaurante"
+          class="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
+          src="/src/assets/LOGO_GIRASOLES.png"
+        />
+      </div>
+      <button
+        aria-label="Cerrar menú"
+        class="lg:hidden p-2 text-[#FDE68A]/70 hover:text-white rounded-xl hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 ml-2"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-x w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 6 6 18"
+          />
+          <path
+            d="m6 6 12 12"
+          />
+        </svg>
+      </button>
+    </div>
+    <nav
+      class="flex-1 overflow-y-auto py-1 xl:py-2 space-y-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+    >
+      <button
+        class="w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-house lucide-home w-4 h-4 xl:w-5 xl:h-5 shrink-0"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+          />
+          <path
+            d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          />
+        </svg>
+        <span>
+          Inicio
+        </span>
+      </button>
+      <div
+        class="pt-1.5 first:pt-0"
+      >
+        <button
+          aria-expanded="true"
+          class="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+          type="button"
+        >
+          <div
+            class="flex items-center gap-2 min-w-0"
+          >
+            <span
+              class="truncate"
+            >
+              Salón y Pedidos
+            </span>
+          </div>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down w-4 h-4 shrink-0 transition-transform duration-200 rotate-180 text-white"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+        <div
+          class="pl-3 border-l border-white/10 ml-3.5 space-y-1 mt-1 mb-2 animate-in fade-in duration-150"
+        >
+          <button
+            class="w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer bg-primary text-white shadow-md font-semibold"
+            type="button"
+          >
+            <div
+              class="flex items-center gap-2.5 min-w-0"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-layout-grid w-4 h-4 xl:w-4.5 xl:h-4.5 shrink-0"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="7"
+                  rx="1"
+                  width="7"
+                  x="3"
+                  y="3"
+                />
+                <rect
+                  height="7"
+                  rx="1"
+                  width="7"
+                  x="14"
+                  y="3"
+                />
+                <rect
+                  height="7"
+                  rx="1"
+                  width="7"
+                  x="14"
+                  y="14"
+                />
+                <rect
+                  height="7"
+                  rx="1"
+                  width="7"
+                  x="3"
+                  y="14"
+                />
+              </svg>
+              <span
+                class="truncate"
+              >
+                Mesas y Salón
+              </span>
+            </div>
+          </button>
+          <button
+            class="w-full text-left pl-3 pr-2 py-2 rounded-xl text-xs xl:text-sm font-medium flex items-center justify-between transition-all cursor-pointer text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white"
+            type="button"
+          >
+            <div
+              class="flex items-center gap-2.5 min-w-0"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-receipt-text w-4 h-4 xl:w-4.5 xl:h-4.5 shrink-0"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13 16H8"
+                />
+                <path
+                  d="M14 8H8"
+                />
+                <path
+                  d="M16 12H8"
+                />
+                <path
+                  d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"
+                />
+              </svg>
+              <span
+                class="truncate"
+              >
+                Gestión de Pedidos
+              </span>
+            </div>
+            <span
+              class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white animate-pulse"
+            >
+              5
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="pt-2 mt-2 border-t border-sidebar-line/60"
+      >
+        <button
+          class="w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-settings w-4 h-4 xl:w-5 xl:h-5 shrink-0"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+            />
+          </svg>
+          <span>
+            Configuración
+          </span>
+        </button>
+      </div>
+    </nav>
+    <div
+      class="shrink-0 pt-3 xl:pt-3.5 border-t border-sidebar-line flex items-center gap-3 mt-1"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-shield-check w-5 h-5 text-amber-400 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+        />
+        <path
+          d="m9 12 2 2 4-4"
+        />
+      </svg>
+      <div>
+        <p
+          class="text-xs font-semibold text-white tracking-wide"
+        >
+          Acceso protegido
+        </p>
+        <p
+          class="text-xs text-[#FDE68A]/70"
+        >
+          Sesión segura y activa
+        </p>
+      </div>
+    </div>
+  </aside>
+</div>
+`;
+
+exports[`Sidebar - Pruebas de Caracterización y Navegación > debe renderizar la barra lateral para Administrador y coincidir con snapshot 1`] = `
+<div>
+  <aside
+    class="fixed lg:static inset-y-0 left-0 z-50 w-60 xl:w-64 2xl:w-72 bg-sidebar text-white h-full p-3.5 sm:p-4 xl:p-5 flex flex-col justify-between shrink-0 shadow-2xl lg:shadow-xl select-none transition-transform duration-200 ease-in-out -translate-x-full lg:translate-x-0"
+  >
+    <div
+      class="shrink-0 flex items-center justify-between pb-3 xl:pb-4 border-b border-sidebar-line mb-2"
+    >
+      <div
+        class="flex-1 flex items-center py-1"
+      >
+        <img
+          alt="Girasoles Restaurante"
+          class="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
+          src="/src/assets/LOGO_GIRASOLES.png"
+        />
+      </div>
+    </div>
+    <nav
+      class="flex-1 overflow-y-auto py-1 xl:py-2 space-y-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+    >
+      <button
+        class="w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer mb-2 bg-primary text-white shadow-md font-semibold"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-house lucide-home w-4 h-4 xl:w-5 xl:h-5 shrink-0"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+          />
+          <path
+            d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          />
+        </svg>
+        <span>
+          Inicio
+        </span>
+      </button>
+      <div
+        class="pt-1.5 first:pt-0"
+      >
+        <button
+          aria-expanded="false"
+          class="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+          type="button"
+        >
+          <div
+            class="flex items-center gap-2 min-w-0"
+          >
+            <span
+              class="truncate"
+            >
+              Salón y Pedidos
+            </span>
+          </div>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down w-4 h-4 shrink-0 transition-transform duration-200 text-[#D9C5B2]/60"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="pt-1.5 first:pt-0"
+      >
+        <button
+          aria-expanded="false"
+          class="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+          type="button"
+        >
+          <div
+            class="flex items-center gap-2 min-w-0"
+          >
+            <span
+              class="truncate"
+            >
+              Caja y Ventas
+            </span>
+            <span
+              class="w-2 h-2 rounded-full shrink-0 bg-emerald-400"
+              title="Caja: abierta"
+            />
+          </div>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down w-4 h-4 shrink-0 transition-transform duration-200 text-[#D9C5B2]/60"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="pt-1.5 first:pt-0"
+      >
+        <button
+          aria-expanded="false"
+          class="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+          type="button"
+        >
+          <div
+            class="flex items-center gap-2 min-w-0"
+          >
+            <span
+              class="truncate"
+            >
+              Carta y Menú
+            </span>
+          </div>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down w-4 h-4 shrink-0 transition-transform duration-200 text-[#D9C5B2]/60"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="pt-1.5 first:pt-0"
+      >
+        <button
+          aria-expanded="false"
+          class="w-full text-xs xl:text-nav-sm font-bold uppercase tracking-wider text-[#D9C5B2]/80 hover:text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+          type="button"
+        >
+          <div
+            class="flex items-center gap-2 min-w-0"
+          >
+            <span
+              class="truncate"
+            >
+              Administración
+            </span>
+          </div>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down w-4 h-4 shrink-0 transition-transform duration-200 text-[#D9C5B2]/60"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="pt-2 mt-2 border-t border-sidebar-line/60"
+      >
+        <button
+          class="w-full text-left px-3 xl:px-3.5 py-2 2xl:py-2.5 rounded-xl text-sm xl:text-nav font-medium flex items-center gap-3 transition-all cursor-pointer text-[#FEF3C7]/80 hover:bg-white/10 hover:text-white"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-settings w-4 h-4 xl:w-5 xl:h-5 shrink-0"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+            />
+          </svg>
+          <span>
+            Configuración
+          </span>
+        </button>
+      </div>
+    </nav>
+    <div
+      class="shrink-0 pt-3 xl:pt-3.5 border-t border-sidebar-line flex items-center gap-3 mt-1"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-shield-check w-5 h-5 text-amber-400 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+        />
+        <path
+          d="m9 12 2 2 4-4"
+        />
+      </svg>
+      <div>
+        <p
+          class="text-xs font-semibold text-white tracking-wide"
+        >
+          Acceso protegido
+        </p>
+        <p
+          class="text-xs text-[#FDE68A]/70"
+        >
+          Sesión segura y activa
+        </p>
+      </div>
+    </div>
+  </aside>
+</div>
+`;
