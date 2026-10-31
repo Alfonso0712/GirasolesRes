@@ -1,0 +1,545 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PedidoLlevarPage - Pruebas de Caracterización y Pedidos para Llevar > debe renderizar el catálogo para llevar con campo de referencia y coincidir con snapshot 1`] = `
+<div>
+  <div
+    class="flex-1 overflow-y-auto w-full scroll-thin"
+  >
+    <div
+      class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 2xl:px-8 pt-4 sm:pt-5 pb-6 flex flex-col gap-4 2xl:gap-5 text-ink lg:px-5 xl:px-8 2xl:px-10"
+    >
+      <header
+        class="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 "
+      >
+        <div>
+          <div
+            class="flex items-center gap-3 flex-wrap"
+          >
+            <h1
+              class="text-2xl font-bold font-sans text-ink tracking-tight"
+            >
+              Pedido para Llevar
+            </h1>
+            <div
+              class="flex items-center gap-2"
+            >
+              <span
+                class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs"
+              >
+                Para llevar
+              </span>
+            </div>
+          </div>
+          <p
+            class="text-xs sm:text-sm text-neutral-500 mt-1 font-normal"
+          >
+            Registre el pedido para llevar del cliente y envíe la comanda a cocina.
+          </p>
+        </div>
+        <div
+          class="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0"
+        >
+          <div
+            class="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap"
+          >
+            <button
+              class="font-semibold transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer  min-h-[44px] py-2.5 px-4 text-sm rounded-xl bg-surface hover:bg-neutral-50 text-ink border border-line-strong focus:ring-neutral-400 shadow-2xs w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-rotate-ccw w-3.5 h-3.5 mr-1.5 shrink-0"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+                />
+                <path
+                  d="M3 3v5h5"
+                />
+              </svg>
+              Limpiar borrador
+            </button>
+            <button
+              class="font-semibold transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer  min-h-[44px] py-2.5 px-4 text-sm rounded-xl bg-surface hover:bg-neutral-50 text-ink border border-line-strong focus:ring-neutral-400 shadow-2xs w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-arrow-left w-3.5 h-3.5 mr-1.5 shrink-0"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12 19-7-7 7-7"
+                />
+                <path
+                  d="M19 12H5"
+                />
+              </svg>
+              Volver a mesas
+            </button>
+          </div>
+        </div>
+      </header>
+      <div
+        class="flex flex-col lg:flex-row min-h-0 gap-4 lg:h-[calc(100vh-196px)] lg:min-h-[500px]"
+      >
+        <div
+          class="flex-1 flex flex-col min-h-0 overflow-hidden bg-surface rounded-2xl border border-neutral-200/80 p-4 sm:p-5 shadow-2xs"
+        >
+          <div
+            class="shrink-0 flex flex-col sm:flex-row gap-3 mb-4"
+          >
+            <div
+              class="relative flex-1 min-w-0"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-search w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m21 21-4.34-4.34"
+                />
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="8"
+                />
+              </svg>
+              <input
+                aria-label="Buscar plato o bebida"
+                class="w-full min-h-[42px] pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-neutral-200 bg-surface text-ink placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                placeholder="Buscar plato o bebida..."
+                type="text"
+                value=""
+              />
+            </div>
+            <div
+              class="w-full sm:w-48 xl:w-64 shrink-0"
+            >
+              <div
+                class="relative w-full"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-user w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                  />
+                  <circle
+                    cx="12"
+                    cy="7"
+                    r="4"
+                  />
+                </svg>
+                <input
+                  aria-label="Referencia cliente (opcional)"
+                  class="w-full min-h-[42px] pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-xl border bg-surface text-ink placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 transition-all border-neutral-200 focus:ring-accent/20 focus:border-accent"
+                  id="referencia-cliente"
+                  maxlength="30"
+                  placeholder="Referencia cliente (opcional)..."
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class="relative shrink-0 mb-3"
+          >
+            <div
+              class="flex items-center gap-1.5 overflow-x-auto pb-2 scroll-thin"
+            >
+              <button
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all cursor-pointer bg-sidebar text-white shadow-xs"
+                type="button"
+              >
+                Todas
+              </button>
+              <button
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all cursor-pointer bg-neutral-100 hover:bg-neutral-200 text-ink-muted hover:text-ink"
+                type="button"
+              >
+                Segundos
+              </button>
+            </div>
+          </div>
+          <div
+            class="flex-1 overflow-x-hidden overflow-y-auto min-h-0 pr-1 pt-1 scroll-thin"
+          >
+            <div
+              class="space-y-6 pb-4"
+            >
+              <div>
+                <h3
+                  class="text-xs uppercase font-bold tracking-wider text-neutral-500 mb-2.5 flex items-center gap-2 font-sans"
+                >
+                  <span>
+                    Segundos
+                  </span>
+                  <div
+                    class="h-px bg-neutral-200 flex-1"
+                  />
+                </h3>
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3"
+                >
+                  <div
+                    class="p-3.5 rounded-xl border transition-colors flex flex-col justify-between relative bg-surface border-neutral-200 hover:border-neutral-300"
+                  >
+                    <div>
+                      <div
+                        class="flex items-start justify-between gap-2 pr-7"
+                      >
+                        <h4
+                          class="font-sans text-base font-semibold text-ink leading-snug line-clamp-2 break-words min-w-0 flex-1"
+                        >
+                          Arroz con Pollo
+                        </h4>
+                      </div>
+                    </div>
+                    <div
+                      class="mt-auto pt-3 border-t border-neutral-100 flex items-center justify-between gap-2"
+                    >
+                      <span
+                        class="font-sans text-base font-bold text-accent tabular-nums whitespace-nowrap shrink-0"
+                      >
+                        S/ 
+                        28.00
+                      </span>
+                      <div
+                        class="flex items-center gap-1.5 shrink-0 h-9"
+                      >
+                        <button
+                          aria-disabled="false"
+                          aria-label="Agregar Arroz con Pollo"
+                          class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors bg-primary hover:bg-primary-hover text-white cursor-pointer"
+                          title="Agregar plato al pedido"
+                          type="button"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="lucide lucide-plus w-4 h-4 stroke-[2.5]"
+                            fill="none"
+                            height="24"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M5 12h14"
+                            />
+                            <path
+                              d="M12 5v14"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="hidden lg:flex w-full lg:w-[300px] xl:w-[360px] 2xl:w-[400px] shrink-0 flex-col min-h-0 bg-surface rounded-2xl border border-neutral-300 dark:border-neutral-200/80 shadow-md overflow-hidden"
+        >
+          <div
+            class="p-4 border-b border-neutral-200 dark:border-neutral-200/80 bg-brand-tint border-t-4 border-t-primary shrink-0"
+          >
+            <div
+              class="flex items-start justify-between gap-2"
+            >
+              <div
+                class="flex items-start gap-2 min-w-0"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-shopping-bag w-5 h-5 text-accent shrink-0 mt-0.5"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M16 10a4 4 0 0 1-8 0"
+                  />
+                  <path
+                    d="M3.103 6.034h17.794"
+                  />
+                  <path
+                    d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"
+                  />
+                </svg>
+                <div
+                  class="min-w-0"
+                >
+                  <h3
+                    class="font-sans font-bold text-base text-ink leading-tight"
+                  >
+                    Pedido para llevar
+                  </h3>
+                  <p
+                    class="text-xs text-ink-muted mt-0.5 tabular-nums"
+                  >
+                    0
+                     items · 
+                    0
+                     platos
+                  </p>
+                </div>
+              </div>
+              <span
+                class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-surface dark:bg-surface-raised text-ink border border-neutral-200 dark:border-neutral-200/80 shrink-0 max-w-[140px] truncate shadow-2xs"
+              >
+                Para llevar
+              </span>
+            </div>
+          </div>
+          <div
+            class="flex-1 overflow-y-auto p-4 min-h-0 space-y-3 scroll-thin bg-surface"
+          >
+            <div
+              class="h-full min-h-[220px] flex flex-col items-center justify-center text-center p-6 text-neutral-500"
+            >
+              <div
+                class="w-12 h-12 rounded-2xl bg-canvas dark:bg-surface-raised border border-neutral-200 dark:border-neutral-200/80 flex items-center justify-center text-neutral-400 dark:text-neutral-500 mb-3 shadow-2xs"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-shopping-bag w-6 h-6 stroke-[1.75]"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M16 10a4 4 0 0 1-8 0"
+                  />
+                  <path
+                    d="M3.103 6.034h17.794"
+                  />
+                  <path
+                    d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"
+                  />
+                </svg>
+              </div>
+              <p
+                class="text-xs font-semibold text-neutral-600 dark:text-neutral-300"
+              >
+                Aún no hay productos en el pedido
+              </p>
+              <p
+                class="text-xs text-neutral-500 dark:text-neutral-400 mt-1 max-w-[220px]"
+              >
+                Toque + en cualquier producto para agregarlo
+              </p>
+            </div>
+          </div>
+          <div
+            class="p-4 border-t border-neutral-200 dark:border-neutral-200/80 bg-canvas dark:bg-surface-warm/30 shrink-0 space-y-3"
+          >
+            <div>
+              <label
+                class="block text-xs font-semibold text-ink-muted mb-1"
+                for="notas-pedido-desktop"
+              >
+                Notas generales del pedido (opcional):
+              </label>
+              <input
+                class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-200/80 bg-surface text-ink focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors"
+                id="notas-pedido-desktop"
+                maxlength="100"
+                placeholder="Ej: Servir todo junto, sin cubiertos..."
+                type="text"
+                value=""
+              />
+            </div>
+            <div
+              class="space-y-1"
+            >
+              <div
+                class="flex justify-between text-xs text-ink-muted"
+              >
+                <span>
+                  Productos nuevos (
+                  0
+                  )
+                </span>
+                <span
+                  class="tabular-nums font-semibold"
+                >
+                  S/ 
+                  0.00
+                </span>
+              </div>
+              <div
+                class="flex justify-between items-baseline pt-2 mt-1 border-t border-neutral-200 dark:border-neutral-200/80"
+              >
+                <span
+                  class="text-sm font-bold text-ink uppercase tracking-wide"
+                >
+                  Total a Cobrar
+                </span>
+                <span
+                  class="text-lg sm:text-xl font-extrabold text-emerald-700 dark:text-emerald-400 tabular-nums"
+                >
+                  S/ 
+                  0.00
+                </span>
+              </div>
+            </div>
+            <button
+              class="font-semibold transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer  min-h-[44px] py-2.5 px-4 text-sm rounded-xl bg-primary hover:bg-primary-hover active:bg-[#9E3B00] text-white focus:ring-accent shadow-md shadow-orange-900/15 w-full min-h-[44px] py-3 text-sm font-bold bg-primary hover:bg-primary-hover text-white shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-circle-check lucide-check-circle-2 w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="m16 9-5.5 5.5L8 12"
+                />
+              </svg>
+              <span>
+                REGISTRAR PEDIDO
+              </span>
+            </button>
+          </div>
+        </div>
+        <div
+          class="lg:hidden shrink-0 bg-surface border-t border-neutral-200/80 p-3 shadow-lg flex items-center justify-between gap-3"
+        >
+          <div
+            class="flex-1 min-w-0 cursor-pointer"
+          >
+            <div
+              class="flex items-center gap-1.5 truncate"
+            >
+              <span
+                class="text-xs font-bold text-accent"
+              >
+                0
+                 productos
+              </span>
+              <span
+                class="text-neutral-300"
+              >
+                •
+              </span>
+              <span
+                class="text-xs text-neutral-500 truncate"
+              >
+                Para llevar
+              </span>
+            </div>
+            <div
+              class="text-base font-bold text-ink tabular-nums"
+            >
+              Total S/ 
+              0.00
+            </div>
+          </div>
+          <button
+            class="font-semibold transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer  min-h-[44px] py-2.5 px-4 text-sm rounded-xl bg-primary hover:bg-primary-hover active:bg-[#9E3B00] text-white focus:ring-accent shadow-md shadow-orange-900/15 min-h-[44px] px-5 py-2.5 text-xs font-bold bg-primary hover:bg-primary-hover text-white shadow-md shrink-0 flex items-center gap-1.5"
+            disabled=""
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-circle-check lucide-check-circle-2 w-4 h-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <path
+                d="m16 9-5.5 5.5L8 12"
+              />
+            </svg>
+            <span>
+              REGISTRAR PEDIDO
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

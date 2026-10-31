@@ -1,0 +1,1928 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LandingPage - Vista de Bienvenida y Carta Pública > debe coincidir con el snapshot de caracterizaci?n previa al refactor 1`] = `
+<div>
+  <div
+    class="min-h-screen bg-[#FAF7F4] text-[#26150A] font-sans selection:bg-[#D35400] selection:text-white"
+  >
+    <header
+      class="bg-[#3A2211] text-white shadow-lg border-b border-white/10 sticky top-0 z-40 backdrop-blur-md bg-[#3A2211]/95"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3 sm:p-4"
+      >
+        <a
+          class="flex items-center gap-3.5 group focus:outline-none"
+          href="#inicio"
+        >
+          <img
+            alt="Isotipo Girasoles"
+            class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl object-cover shrink-0 shadow-md ring-2 ring-amber-400/30 group-hover:scale-105 transition-transform"
+            src="/favicon.png"
+          />
+          <div
+            class="flex flex-col"
+          >
+            <img
+              alt="Restaurante Girasoles"
+              class="h-8 sm:h-9 md:h-10 w-auto object-contain drop-shadow-md"
+              src="/src/assets/LOGO_GIRASOLES.png"
+            />
+            <span
+              class="text-[10px] sm:text-[11px] text-amber-200/80 tracking-wide font-medium -mt-1 hidden sm:block"
+            >
+              Sabor Tradicional & Calidad
+            </span>
+          </div>
+        </a>
+        <nav
+          class="hidden lg:flex items-center gap-7 text-sm font-semibold text-white/80"
+        >
+          <a
+            class="hover:text-amber-400 transition-colors"
+            href="#inicio"
+          >
+            Inicio
+          </a>
+          <a
+            class="hover:text-amber-400 transition-colors"
+            href="#menus-del-dia"
+          >
+            Menús del Día
+          </a>
+          <a
+            class="hover:text-amber-400 transition-colors"
+            href="#carta"
+          >
+            Carta Completa
+          </a>
+          <a
+            class="hover:text-amber-400 transition-colors"
+            href="#nosotros"
+          >
+            Nosotros
+          </a>
+          <a
+            class="hover:text-amber-400 transition-colors"
+            href="#servicios"
+          >
+            Servicios & Pagos
+          </a>
+          <a
+            class="hover:text-amber-400 transition-colors"
+            href="#contacto"
+          >
+            Horarios y Local
+          </a>
+        </nav>
+        <div
+          class="flex items-center gap-3"
+        >
+          <button
+            class="min-h-[42px] sm:min-h-[44px] px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-[#D35400] to-amber-600 hover:from-[#B84700] hover:to-amber-700 text-white font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5 sm:gap-2 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 shrink-0"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-log-in w-4 h-4 shrink-0"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m10 17 5-5-5-5"
+              />
+              <path
+                d="M15 12H3"
+              />
+              <path
+                d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+              />
+            </svg>
+            <span
+              class="hidden sm:inline"
+            >
+              Iniciar Sesión
+            </span>
+            <span
+              class="sm:hidden"
+            >
+              Iniciar Sesión
+            </span>
+          </button>
+          <button
+            aria-label="Abrir menú de navegación"
+            class="lg:hidden p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-menu w-6 h-6"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 5h16"
+              />
+              <path
+                d="M4 12h16"
+              />
+              <path
+                d="M4 19h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <section
+      class="relative overflow-hidden bg-gradient-to-b from-[#3A2211] via-[#2E1A0C] to-[#26150A] text-white py-16 lg:py-24"
+      id="inicio"
+    >
+      <div
+        class="absolute inset-0 opacity-20 bg-cover bg-center pointer-events-none"
+        style="background-image: url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=80");"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-[#26150A] via-[#3A2211]/90 to-[#3A2211]/80 pointer-events-none"
+      />
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+      >
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+        >
+          <div
+            class="lg:col-span-7 space-y-6"
+          >
+            <div
+              class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-amber-400/30 text-amber-300 text-xs font-semibold tracking-wide uppercase"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-flame w-3.5 h-3.5 text-amber-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
+                />
+              </svg>
+              Tradición, Sazón Criolla y Calidad Garantizada
+            </div>
+            <h1
+              class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.12]"
+            >
+              El auténtico sabor peruano en 
+              <br />
+              <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-[#D35400] font-serif italic"
+              >
+                Restaurante Girasoles.
+              </span>
+            </h1>
+            <p
+              class="text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed"
+            >
+              Comida criolla y gastronomía peruana preparada cada mañana con insumos frescos. Revisa nuestra oferta del día sincronizada en tiempo real con nuestra cocina o realiza tus pedidos en salón y para llevar.
+            </p>
+            <div
+              class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2"
+            >
+              <a
+                class="w-full sm:w-auto min-h-[50px] px-6 sm:px-7 py-3.5 rounded-xl bg-[#D35400] hover:bg-[#B84700] text-white font-bold text-sm sm:text-base shadow-xl flex items-center justify-center gap-3 transition-all cursor-pointer group text-center"
+                href="#carta"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils-crossed lucide-fork-knife-crossed w-5 h-5 group-hover:rotate-12 transition-transform shrink-0"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"
+                  />
+                  <path
+                    d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"
+                  />
+                  <path
+                    d="m2.1 21.8 6.4-6.3"
+                  />
+                  <path
+                    d="m19 5-7 7"
+                  />
+                </svg>
+                <span>
+                  EXPLORAR CARTA DE HOY
+                </span>
+              </a>
+              <a
+                class="w-full sm:w-auto min-h-[50px] px-6 sm:px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all cursor-pointer text-center"
+                href="#menus-del-dia"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-calendar w-5 h-5 text-amber-400 shrink-0"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8 2v3"
+                  />
+                  <path
+                    d="M16 2v3"
+                  />
+                  <rect
+                    height="18"
+                    rx="2"
+                    width="18"
+                    x="3"
+                    y="3"
+                  />
+                  <path
+                    d="M3 9h18"
+                  />
+                </svg>
+                <span>
+                  VER MENÚ DEL DÍA
+                </span>
+              </a>
+            </div>
+            <div
+              class="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 max-w-lg"
+            >
+              <div>
+                <p
+                  class="text-amber-400 font-extrabold text-xl sm:text-2xl tabular-nums"
+                >
+                  S/ 7.00
+                </p>
+                <p
+                  class="text-xs text-amber-100/80"
+                >
+                  Desayunos completos
+                </p>
+              </div>
+              <div>
+                <p
+                  class="text-amber-400 font-extrabold text-xl sm:text-2xl tabular-nums"
+                >
+                  S/ 8.00
+                </p>
+                <p
+                  class="text-xs text-amber-100/80"
+                >
+                  Almuerzo criollo del día
+                </p>
+              </div>
+              <div>
+                <p
+                  class="text-amber-400 font-extrabold text-xl sm:text-2xl tabular-nums"
+                >
+                  2
+                </p>
+                <p
+                  class="text-xs text-amber-100/80"
+                >
+                  Platos en menú de hoy
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="lg:col-span-5"
+          >
+            <div
+              class="bg-white text-[#26150A] rounded-3xl shadow-2xl border border-stone-200 overflow-hidden p-5 sm:p-6 space-y-4"
+            >
+              <div
+                class="flex items-center justify-between border-b border-stone-200 pb-3"
+              >
+                <div>
+                  <span
+                    class="text-[11px] font-bold uppercase tracking-wider text-[#D35400] flex items-center gap-1.5"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-sparkles lucide-stars w-3.5 h-3.5 text-amber-500"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+                      />
+                      <path
+                        d="M20 2v4"
+                      />
+                      <path
+                        d="M22 4h-4"
+                      />
+                      <circle
+                        cx="4"
+                        cy="20"
+                        r="2"
+                      />
+                    </svg>
+                    Atención en Salón y Para Llevar
+                  </span>
+                  <h2
+                    class="text-lg sm:text-xl font-extrabold text-[#3A2211]"
+                  >
+                    Visítanos o Haz tu Pedido
+                  </h2>
+                </div>
+                <span
+                  class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-200 shrink-0"
+                >
+                  Lun a Sáb
+                </span>
+              </div>
+              <div
+                class="bg-[#FAF7F4] p-3.5 rounded-2xl border border-stone-200 flex items-center gap-3.5 shadow-xs hover:border-amber-300 transition-colors"
+              >
+                <div
+                  class="w-11 h-11 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-clock w-5 h-5"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                    />
+                    <path
+                      d="M12 6v6l4 2"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="min-w-0 flex-1"
+                >
+                  <span
+                    class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-900"
+                  >
+                    Horario de Atención
+                  </span>
+                  <h3
+                    class="font-bold text-[#3A2211] text-sm sm:text-base mt-0.5"
+                  >
+                    7:00 AM – 4:00 PM
+                  </h3>
+                  <p
+                    class="text-xs text-stone-500"
+                  >
+                    Desayunos y almuerzos criollos de lunes a sábado
+                  </p>
+                </div>
+              </div>
+              <div
+                class="bg-[#FAF7F4] p-3.5 rounded-2xl border border-stone-200 flex items-center justify-between gap-3 shadow-xs hover:border-amber-300 transition-colors"
+              >
+                <div
+                  class="flex items-center gap-3.5 min-w-0"
+                >
+                  <div
+                    class="w-11 h-11 rounded-xl bg-orange-100 text-[#D35400] flex items-center justify-center shrink-0"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-map-pin w-5 h-5"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+                      />
+                      <circle
+                        cx="12"
+                        cy="10"
+                        r="3"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="min-w-0"
+                  >
+                    <span
+                      class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-orange-100 text-[#D35400]"
+                    >
+                      Dirección
+                    </span>
+                    <h3
+                      class="font-bold text-[#3A2211] text-sm sm:text-base mt-0.5 truncate"
+                    >
+                      Jr. Mariscal Castilla N° 1023
+                    </h3>
+                    <p
+                      class="text-xs text-stone-500 truncate"
+                    >
+                      Mesas cómodas en salón y recojo en mostrador
+                    </p>
+                  </div>
+                </div>
+                <a
+                  class="px-3 py-1.5 rounded-xl bg-white border border-stone-300 hover:border-amber-400 text-[#3A2211] hover:text-[#D35400] text-xs font-bold shrink-0 transition-colors cursor-pointer text-center"
+                  href="https://www.google.com/maps/search/?api=1&query=Jr.+Mariscal+Castilla+N%C2%B0+1023"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Ver mapa
+                </a>
+              </div>
+              <div
+                class="bg-[#FAF7F4] p-3.5 rounded-2xl border border-stone-200 flex items-center justify-between gap-3 shadow-xs hover:border-amber-300 transition-colors"
+              >
+                <div
+                  class="flex items-center gap-3.5 min-w-0"
+                >
+                  <div
+                    class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-phone w-5 h-5"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="min-w-0"
+                  >
+                    <span
+                      class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800"
+                    >
+                      Teléfono & Consultas
+                    </span>
+                    <h3
+                      class="font-bold text-[#3A2211] text-sm sm:text-base mt-0.5 tabular-nums"
+                    >
+                      934 127 923
+                    </h3>
+                    <p
+                      class="text-xs text-stone-500 truncate"
+                    >
+                      Consultas sobre platos del día o pedidos
+                    </p>
+                  </div>
+                </div>
+                <a
+                  class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shrink-0 shadow-xs transition-colors cursor-pointer text-center"
+                  href="tel:934127923"
+                >
+                  Llamar
+                </a>
+              </div>
+              <p
+                class="text-[11px] text-stone-500 text-center pt-1 font-medium"
+              >
+                Aceptamos efectivo, Yape y Plin • Porciones generosas y atención rápida
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="py-16 lg:py-24 bg-[#FAF7F4]"
+      id="menus-del-dia"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div
+          class="text-center max-w-3xl mx-auto mb-10"
+        >
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100 text-[#D35400] text-xs font-bold uppercase tracking-wider"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-calendar w-3.5 h-3.5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 2v3"
+              />
+              <path
+                d="M16 2v3"
+              />
+              <rect
+                height="18"
+                rx="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+              <path
+                d="M3 9h18"
+              />
+            </svg>
+             Oferta del Día
+          </span>
+          <h2
+            class="text-3xl sm:text-4xl font-extrabold text-[#3A2211] mt-3"
+          >
+            Menús Completos del Día
+          </h2>
+          <p
+            class="text-stone-600 mt-2 text-sm sm:text-base"
+          >
+            Opciones nutritivas y balanceadas para desayuno y almuerzo. Revisa las opciones y disponibilidad de cocina en este momento.
+          </p>
+        </div>
+        <div
+          class="mb-8 p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center justify-between gap-4 flex-wrap"
+        >
+          <div
+            class="flex items-center gap-3"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-chef-hat w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"
+                />
+                <path
+                  d="M6 17h12"
+                />
+              </svg>
+            </div>
+            <div>
+              <span
+                class="text-xs font-bold uppercase text-stone-500"
+              >
+                Fecha Operativa:
+              </span>
+              <p
+                class="text-sm font-bold text-[#3A2211]"
+              >
+                Hoy, jueves, 29 de octubre de 2026
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-2"
+          >
+            <span
+              class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"
+            >
+              Cocina en marcha
+            </span>
+            <button
+              class="px-3.5 py-1.5 rounded-lg border border-stone-300 hover:bg-stone-50 text-xs font-semibold text-stone-700 flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-rotate-ccw w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+                />
+                <path
+                  d="M3 3v5h5"
+                />
+              </svg>
+              <span>
+                Actualizar
+              </span>
+            </button>
+          </div>
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          <div
+            class="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-xl transition-all p-6 flex flex-col justify-between"
+          >
+            <div>
+              <div
+                class="flex items-start justify-between gap-2"
+              >
+                <div
+                  class="flex items-center gap-3"
+                >
+                  <div
+                    class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-coffee w-6 h-6"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10 2v2"
+                      />
+                      <path
+                        d="M14 2v2"
+                      />
+                      <path
+                        d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"
+                      />
+                      <path
+                        d="M6 2v2"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3
+                      class="text-lg font-bold text-[#3A2211]"
+                    >
+                      Desayuno completo
+                    </h3>
+                    <p
+                      class="text-xs text-stone-500"
+                    >
+                      Nutritivo y tradicional
+                    </p>
+                  </div>
+                </div>
+                <span
+                  class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"
+                >
+                  Disponible
+                </span>
+              </div>
+              <div
+                class="mt-5 p-4 rounded-xl bg-[#FAF7F4] border border-stone-200 flex items-baseline justify-between"
+              >
+                <span
+                  class="text-xs font-bold uppercase tracking-wider text-stone-500"
+                >
+                  Precio
+                </span>
+                <span
+                  class="text-3xl font-extrabold text-[#D35400] tabular-nums"
+                >
+                  S/ 7.00
+                </span>
+              </div>
+              <div
+                class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 w-full"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-circle-check lucide-check-circle-2 w-4 h-4 text-emerald-600 shrink-0"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                  />
+                  <path
+                    d="m16 9-5.5 5.5L8 12"
+                  />
+                </svg>
+                <span>
+                  Incluye Pan del día
+                </span>
+              </div>
+              <div
+                class="mt-5 space-y-2.5 text-sm"
+              >
+                <div
+                  class="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]"
+                >
+                  <p
+                    class="font-bold text-xs uppercase text-[#D35400]"
+                  >
+                    1. Bebida de Desayuno
+                  </p>
+                  <p
+                    class="text-xs text-[#5C4A3E] mt-0.5"
+                  >
+                    Café pasado, Jugo de papaya, Quinua carretillera o Quaker con leche.
+                  </p>
+                </div>
+                <div
+                  class="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]"
+                >
+                  <p
+                    class="font-bold text-xs uppercase text-[#D35400]"
+                  >
+                    2. Sánguche o Plato
+                  </p>
+                  <p
+                    class="text-xs text-[#5C4A3E] mt-0.5"
+                  >
+                    Pan con chicharrón, Pan con pollo deshilachado, Pan con palta o queso fresco.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <button
+              class="mt-6 w-full py-3 rounded-xl bg-[#FFF6ED] hover:bg-[#D35400] hover:text-white text-[#D35400] border border-[#D35400]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-sparkles lucide-stars w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+                />
+                <path
+                  d="M20 2v4"
+                />
+                <path
+                  d="M22 4h-4"
+                />
+                <circle
+                  cx="4"
+                  cy="20"
+                  r="2"
+                />
+              </svg>
+               Probar combinaciones
+            </button>
+          </div>
+          <div
+            class="bg-white rounded-2xl border-2 border-[#D35400] shadow-lg hover:shadow-xl transition-all p-6 flex flex-col justify-between relative"
+          >
+            <div
+              class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#D35400] text-white text-[11px] font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md"
+            >
+              El Favorito del Salón
+            </div>
+            <div>
+              <div
+                class="flex items-start justify-between gap-2"
+              >
+                <div
+                  class="flex items-center gap-3"
+                >
+                  <div
+                    class="w-11 h-11 rounded-xl bg-orange-100 text-[#D35400] flex items-center justify-center"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-utensils lucide-fork-knife w-6 h-6"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                      />
+                      <path
+                        d="M7 2v20"
+                      />
+                      <path
+                        d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3
+                      class="text-lg font-bold text-[#3A2211]"
+                    >
+                      Almuerzo completo
+                    </h3>
+                    <p
+                      class="text-xs text-stone-500"
+                    >
+                      Menú criollo completo
+                    </p>
+                  </div>
+                </div>
+                <span
+                  class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"
+                >
+                  Disponible
+                </span>
+              </div>
+              <div
+                class="mt-5 p-4 rounded-xl bg-[#FFF6ED] border border-[#FDBA74] flex items-baseline justify-between"
+              >
+                <span
+                  class="text-xs font-bold uppercase tracking-wider text-[#6B5E55]"
+                >
+                  Precio
+                </span>
+                <span
+                  class="text-3xl font-extrabold text-[#D35400] tabular-nums"
+                >
+                  S/ 8.00
+                </span>
+              </div>
+              <div
+                class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 w-full"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-circle-check lucide-check-circle-2 w-4 h-4 text-emerald-600 shrink-0"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                  />
+                  <path
+                    d="m16 9-5.5 5.5L8 12"
+                  />
+                </svg>
+                <span>
+                  Incluye vaso de Refresco del día
+                </span>
+              </div>
+              <div
+                class="mt-5 space-y-2.5 text-sm"
+              >
+                <div
+                  class="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]"
+                >
+                  <p
+                    class="font-bold text-xs uppercase text-[#D35400]"
+                  >
+                    1. Sopa o Entrada del Día
+                  </p>
+                  <p
+                    class="text-xs text-[#5C4A3E] mt-0.5"
+                  >
+                    Sopa criolla, Sopa a la minuta, Papa a la huancaína u Ocopa arequipeña.
+                  </p>
+                </div>
+                <div
+                  class="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]"
+                >
+                  <p
+                    class="font-bold text-xs uppercase text-[#D35400]"
+                  >
+                    2. Plato de Fondo (Segundo)
+                  </p>
+                  <p
+                    class="text-xs text-[#5C4A3E] mt-0.5"
+                  >
+                    Bistec a lo pobre, Arroz chaufa de pollo, Seco de pollo con frejoles o Lomo saltado.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <button
+              class="mt-6 w-full py-3 rounded-xl bg-[#D35400] hover:bg-[#B84700] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-sparkles lucide-stars w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+                />
+                <path
+                  d="M20 2v4"
+                />
+                <path
+                  d="M22 4h-4"
+                />
+                <circle
+                  cx="4"
+                  cy="20"
+                  r="2"
+                />
+              </svg>
+               Probar combinaciones
+            </button>
+          </div>
+          <div
+            class="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-xl transition-all p-6 flex flex-col justify-between"
+          >
+            <div>
+              <div
+                class="flex items-start justify-between gap-2"
+              >
+                <div
+                  class="flex items-center gap-3"
+                >
+                  <div
+                    class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-flame w-6 h-6"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3
+                      class="text-lg font-bold text-[#3A2211]"
+                    >
+                      Solo segundo
+                    </h3>
+                    <p
+                      class="text-xs text-stone-500"
+                    >
+                      Práctico y contundente
+                    </p>
+                  </div>
+                </div>
+                <span
+                  class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"
+                >
+                  Disponible
+                </span>
+              </div>
+              <div
+                class="mt-5 p-4 rounded-xl bg-[#FAF7F4] border border-stone-200 flex items-baseline justify-between"
+              >
+                <span
+                  class="text-xs font-bold uppercase tracking-wider text-stone-500"
+                >
+                  Precio
+                </span>
+                <span
+                  class="text-3xl font-extrabold text-[#D35400] tabular-nums"
+                >
+                  S/ 7.00
+                </span>
+              </div>
+              <div
+                class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 w-full"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-circle-check lucide-check-circle-2 w-4 h-4 text-emerald-600 shrink-0"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                  />
+                  <path
+                    d="m16 9-5.5 5.5L8 12"
+                  />
+                </svg>
+                <span>
+                  Incluye vaso de Refresco del día
+                </span>
+              </div>
+              <div
+                class="mt-5 space-y-2.5 text-sm"
+              >
+                <div
+                  class="p-3 rounded-xl bg-[#FAF7F4] border border-[#E8E2DC]"
+                >
+                  <p
+                    class="font-bold text-xs uppercase text-[#D35400]"
+                  >
+                    1. Plato de Fondo del Día
+                  </p>
+                  <p
+                    class="text-xs text-[#5C4A3E] mt-0.5"
+                  >
+                    Elige directamente cualquiera de nuestros segundos criollos preparados hoy en cocina.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <button
+              class="mt-6 w-full py-3 rounded-xl bg-[#FFF6ED] hover:bg-[#D35400] hover:text-white text-[#D35400] border border-[#D35400]/40 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-sparkles lucide-stars w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+                />
+                <path
+                  d="M20 2v4"
+                />
+                <path
+                  d="M22 4h-4"
+                />
+                <circle
+                  cx="4"
+                  cy="20"
+                  r="2"
+                />
+              </svg>
+               Probar combinaciones
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="py-16 lg:py-24 bg-white border-y border-stone-200"
+      id="carta"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8"
+        >
+          <div>
+            <span
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold uppercase tracking-wider"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-utensils lucide-fork-knife w-3.5 h-3.5 text-amber-700"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                />
+                <path
+                  d="M7 2v20"
+                />
+                <path
+                  d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                />
+              </svg>
+               Carta en Vivo
+            </span>
+            <h2
+              class="text-3xl sm:text-4xl font-extrabold text-[#3A2211] mt-2"
+            >
+              Nuestra Carta del Día
+            </h2>
+            <p
+              class="text-stone-600 mt-1 text-sm sm:text-base"
+            >
+              Platos disponibles definidos para el menú de hoy. Si un plato se agota en cocina, se refleja aquí al instante.
+            </p>
+          </div>
+          <div
+            class="relative w-full md:w-80"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-search w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m21 21-4.34-4.34"
+              />
+              <circle
+                cx="11"
+                cy="11"
+                r="8"
+              />
+            </svg>
+            <input
+              class="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#FAF7F4] border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#D35400]"
+              placeholder="Buscar por nombre (ej. Lomo, Café)..."
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="flex flex-wrap items-center justify-between gap-4 mb-8"
+        >
+          <div
+            class="flex flex-wrap gap-2"
+          >
+            <button
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5 bg-[#3A2211] text-white shadow-xs"
+            >
+              <span>
+                Todos los platos
+              </span>
+            </button>
+            <button
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5 bg-[#FAF7F4] hover:bg-stone-200 text-stone-700 border border-stone-200"
+            >
+              <span>
+                ☕
+              </span>
+              <span>
+                Desayunos
+              </span>
+            </button>
+            <button
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5 bg-[#FAF7F4] hover:bg-stone-200 text-stone-700 border border-stone-200"
+            >
+              <span>
+                🍲
+              </span>
+              <span>
+                Almuerzos & Extras
+              </span>
+            </button>
+            <button
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5 bg-[#FAF7F4] hover:bg-stone-200 text-stone-700 border border-stone-200"
+            >
+              <span>
+                🥩
+              </span>
+              <span>
+                Platos a la Carta
+              </span>
+            </button>
+            <button
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5 bg-[#FAF7F4] hover:bg-stone-200 text-stone-700 border border-stone-200"
+            >
+              <span>
+                🍛
+              </span>
+              <span>
+                Combinados
+              </span>
+            </button>
+            <button
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5 bg-[#FAF7F4] hover:bg-stone-200 text-stone-700 border border-stone-200"
+            >
+              <span>
+                🍹
+              </span>
+              <span>
+                Bebidas & Jarras
+              </span>
+            </button>
+          </div>
+          <span
+            class="text-xs font-semibold text-stone-500 tabular-nums"
+          >
+            Mostrando 2 productos
+          </span>
+        </div>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
+          <div
+            class="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div
+                class="flex items-center justify-between gap-2 mb-2"
+              >
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-stone-100 text-stone-700"
+                >
+                  Platos extras
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full"
+                >
+                  <span
+                    class="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                  />
+                  Disponible
+                </span>
+              </div>
+              <h4
+                class="font-bold text-stone-900 text-sm group-hover:text-[#D35400] transition-colors line-clamp-2"
+              >
+                Ceviche Mixto Especial Criollo
+              </h4>
+            </div>
+            <div
+              class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span
+                class="text-xs text-stone-400 font-medium"
+              >
+                Precio
+              </span>
+              <span
+                class="text-base font-extrabold text-[#D35400] tabular-nums"
+              >
+                S/ 30.00
+              </span>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div
+                class="flex items-center justify-between gap-2 mb-2"
+              >
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-stone-100 text-stone-700"
+                >
+                  Desayuno
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full"
+                >
+                  <span
+                    class="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                  />
+                  Disponible
+                </span>
+              </div>
+              <h4
+                class="font-bold text-stone-900 text-sm group-hover:text-[#D35400] transition-colors line-clamp-2"
+              >
+                Café pasado tradicional
+              </h4>
+            </div>
+            <div
+              class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span
+                class="text-xs text-stone-400 font-medium"
+              >
+                Precio
+              </span>
+              <span
+                class="text-base font-extrabold text-[#D35400] tabular-nums"
+              >
+                S/ 4.00
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="py-16 lg:py-24 bg-[#FAF7F4] border-b border-stone-200"
+      id="nosotros"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+        >
+          <div
+            class="lg:col-span-6 space-y-6"
+          >
+            <span
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold uppercase tracking-wider"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-heart w-3.5 h-3.5 text-[#D35400]"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                />
+              </svg>
+               Nuestra Historia
+            </span>
+            <h2
+              class="text-3xl sm:text-4xl font-extrabold text-[#3A2211] leading-tight"
+            >
+              Pasión por la comida casera y la tradición culinaria peruana.
+            </h2>
+            <p
+              class="text-stone-600 leading-relaxed text-base"
+            >
+              En 
+              <strong>
+                Restaurante Girasoles
+              </strong>
+               creemos que la buena comida empieza con ingredientes de calidad, cariño en la sazón y un servicio atento. Desde nuestros desayunos con café recién pasado hasta nuestros almuerzos y combinados marinos, cada plato se prepara pensando en hacerte sentir como en casa.
+            </p>
+            <div
+              class="grid grid-cols-2 gap-4 pt-2"
+            >
+              <div
+                class="p-4 rounded-xl bg-white border border-stone-200 shadow-2xs"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-shield-check w-6 h-6 text-emerald-600 mb-2"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                  />
+                  <path
+                    d="m9 12 2 2 4-4"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-[#3A2211] text-sm"
+                >
+                  Higiene y Frescura
+                </h4>
+                <p
+                  class="text-xs text-stone-500 mt-1"
+                >
+                  Insumos seleccionados cada mañana del mercado local.
+                </p>
+              </div>
+              <div
+                class="p-4 rounded-xl bg-white border border-stone-200 shadow-2xs"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-clock w-6 h-6 text-amber-600 mb-2"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                  />
+                  <path
+                    d="M12 6v6l4 2"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-[#3A2211] text-sm"
+                >
+                  Atención Rápida
+                </h4>
+                <p
+                  class="text-xs text-stone-500 mt-1"
+                >
+                  Servicio ágil tanto en salón como en pedidos para llevar.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="lg:col-span-6"
+          >
+            <div
+              class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white"
+            >
+              <img
+                alt="Ambiente del Restaurante Girasoles"
+                class="w-full h-[380px] object-cover hover:scale-105 transition-transform duration-500"
+                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1000&q=80"
+              />
+              <div
+                class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#26150A]/90 via-[#26150A]/40 to-transparent p-6 text-white"
+              >
+                <p
+                  class="font-bold text-lg"
+                >
+                  Un rincón acogedor para compartir
+                </p>
+                <p
+                  class="text-xs text-stone-300"
+                >
+                  Salón principal y patio exterior climatizado
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="py-16 lg:py-24 bg-white"
+      id="servicios"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div
+          class="text-center max-w-3xl mx-auto mb-12"
+        >
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 text-[#3A2211] text-xs font-bold uppercase tracking-wider"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-credit-card w-3.5 h-3.5 text-[#D35400]"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="14"
+                rx="2"
+                width="20"
+                x="2"
+                y="5"
+              />
+              <line
+                x1="2"
+                x2="22"
+                y1="10"
+                y2="10"
+              />
+              <path
+                d="M6 14h2"
+              />
+            </svg>
+             Facilidades para el Cliente
+          </span>
+          <h2
+            class="text-3xl sm:text-4xl font-extrabold text-[#3A2211] mt-3"
+          >
+            Comodidad, Rapidez y Pagos Simples
+          </h2>
+          <p
+            class="text-stone-600 mt-2 text-sm sm:text-base"
+          >
+            Pensado para que disfrutes tu comida sin complicaciones al momento de pagar.
+          </p>
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+        >
+          <div
+            class="p-6 rounded-2xl bg-[#FAF7F4] border border-stone-200"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-smartphone w-6 h-6"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="20"
+                  rx="2"
+                  ry="2"
+                  width="14"
+                  x="5"
+                  y="2"
+                />
+                <path
+                  d="M12 18h.01"
+                />
+              </svg>
+            </div>
+            <h3
+              class="text-lg font-bold text-[#3A2211] mb-2"
+            >
+              Yape, Plin & Efectivo
+            </h3>
+            <p
+              class="text-xs text-stone-600 leading-relaxed"
+            >
+              Aceptamos pagos digitales mediante Yape y Plin escaneando el código QR en caja, o efectivo con cambio exacto.
+            </p>
+          </div>
+          <div
+            class="p-6 rounded-2xl bg-[#FAF7F4] border border-stone-200"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-shopping-bag w-6 h-6"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16 10a4 4 0 0 1-8 0"
+                />
+                <path
+                  d="M3.103 6.034h17.794"
+                />
+                <path
+                  d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"
+                />
+              </svg>
+            </div>
+            <h3
+              class="text-lg font-bold text-[#3A2211] mb-2"
+            >
+              Para Llevar y Salón
+            </h3>
+            <p
+              class="text-xs text-stone-600 leading-relaxed"
+            >
+              Empaques térmicos seguros y ecológicos para llevar tu comida caliente o mesas cómodas para almorzar en el local.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="py-16 lg:py-20 bg-[#3A2211] text-white"
+      id="contacto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left"
+        >
+          <div
+            class="space-y-3"
+          >
+            <div
+              class="flex items-center justify-center md:justify-start gap-2 text-amber-400 font-bold text-base"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-map-pin w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+                />
+                <circle
+                  cx="12"
+                  cy="10"
+                  r="3"
+                />
+              </svg>
+              <span>
+                Ubicación de Nuestro Local
+              </span>
+            </div>
+            <p
+              class="text-stone-300 text-sm leading-relaxed"
+            >
+              Jr. Mariscal Castilla N° 1023
+            </p>
+          </div>
+          <div
+            class="space-y-3"
+          >
+            <div
+              class="flex items-center justify-center md:justify-start gap-2 text-amber-400 font-bold text-base"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-clock w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="M12 6v6l4 2"
+                />
+              </svg>
+              <span>
+                Horarios de Atención
+              </span>
+            </div>
+            <p
+              class="text-stone-300 text-sm leading-relaxed"
+            >
+              <strong>
+                Lunes a Sábado:
+              </strong>
+               07:00 AM – 04:00 PM
+              <br />
+              <strong>
+                Domingos:
+              </strong>
+               Cerrado
+            </p>
+          </div>
+          <div
+            class="space-y-3"
+          >
+            <div
+              class="flex items-center justify-center md:justify-start gap-2 text-amber-400 font-bold text-base"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-phone w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+                />
+              </svg>
+              <span>
+                Pedidos y Consultas
+              </span>
+            </div>
+            <p
+              class="text-stone-300 text-sm leading-relaxed"
+            >
+              Teléfono / WhatsApp: 934127923
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer
+      class="bg-[#26150A] text-stone-400 text-xs py-8 border-t border-white/10"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <div
+          class="flex items-center gap-3.5"
+        >
+          <img
+            alt="Isotipo Girasoles"
+            class="w-10 h-10 rounded-2xl object-cover shrink-0 shadow-md ring-1 ring-white/20"
+            src="/favicon.png"
+          />
+          <div
+            class="flex flex-col"
+          >
+            <img
+              alt="Restaurante Girasoles"
+              class="h-6 sm:h-7 w-auto object-contain drop-shadow-xs mb-1"
+              src="/src/assets/LOGO_GIRASOLES.png"
+            />
+            <p
+              class="font-semibold text-stone-200"
+            >
+              Restaurante Girasoles © 2026 • RUC 20481234567
+            </p>
+            <p
+              class="text-stone-400 text-[11px]"
+            >
+              Comida criolla preparada con cariño y servida con calidad.
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-4"
+        >
+          <button
+            class="text-amber-400 hover:text-white font-semibold underline underline-offset-2 flex items-center gap-1.5 cursor-pointer"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-lock w-3.5 h-3.5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="11"
+                rx="2"
+                ry="2"
+                width="18"
+                x="3"
+                y="11"
+              />
+              <path
+                d="M7 11V7a5 5 0 0 1 10 0v4"
+              />
+            </svg>
+            <span>
+              Ingreso al Sistema POS GirasolesRes
+            </span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+`;

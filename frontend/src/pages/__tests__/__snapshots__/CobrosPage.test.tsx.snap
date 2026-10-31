@@ -1,0 +1,745 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe renderizar el listado de pedidos por cobrar con caja abierta y coincidir con snapshot 1`] = `
+<div>
+  <div
+    class="h-full flex flex-col overflow-hidden w-full"
+  >
+    <div
+      class="flex-1 overflow-y-auto min-h-0 w-full scroll-thin"
+    >
+      <div
+        class="w-full max-w-7xl 2xl:max-w-screen-2xl mx-auto px-4 sm:px-6 2xl:px-8 pt-4 sm:pt-5 pb-6 flex flex-col gap-4 2xl:gap-5 text-ink select-none"
+      >
+        <header
+          class="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 "
+        >
+          <div>
+            <div
+              class="flex items-center gap-3 flex-wrap"
+            >
+              <h1
+                class="text-2xl font-bold font-sans text-ink tracking-tight"
+              >
+                Cobro de Pedidos
+              </h1>
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200 tabular-nums shadow-2xs"
+              >
+                1
+                 
+                pedidos por cobrar
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-2xs whitespace-nowrap transition-colors bg-emerald-50 text-emerald-800 border-emerald-300 "
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-circle-check lucide-check-circle-2 w-3.5 h-3.5 shrink-0 text-emerald-700"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                  />
+                  <path
+                    d="m16 9-5.5 5.5L8 12"
+                  />
+                </svg>
+                <span>
+                  Caja abierta · Elena Cajera
+                </span>
+              </span>
+            </div>
+            <p
+              class="text-xs sm:text-sm text-neutral-500 mt-1 font-normal"
+            >
+              Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real.
+            </p>
+          </div>
+          <div
+            class="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0"
+          >
+            <div
+              class="flex items-center gap-2.5 sm:gap-3 shrink-0"
+            >
+              <div
+                class="flex items-center gap-3 text-xs text-neutral-500"
+              >
+                <span
+                  class="hidden sm:inline tabular-nums"
+                >
+                  Actualizado hace 
+                  <span
+                    class="font-semibold text-neutral-700"
+                  >
+                    0
+                  </span>
+                   s
+                </span>
+                <button
+                  aria-label="Actualizar pedidos ahora"
+                  class="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+                  title="Actualizar pedidos ahora"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-rotate-ccw w-3.5 h-3.5 text-accent"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+                    />
+                    <path
+                      d="M3 3v5h5"
+                    />
+                  </svg>
+                  <span>
+                    Actualizar
+                  </span>
+                </button>
+              </div>
+              <button
+                class="px-3.5 py-2 rounded-xl bg-fill-strong hover:bg-fill-strong-soft text-white text-xs font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer min-h-[40px]"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-lock w-4 h-4"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    height="11"
+                    rx="2"
+                    ry="2"
+                    width="18"
+                    x="3"
+                    y="11"
+                  />
+                  <path
+                    d="M7 11V7a5 5 0 0 1 10 0v4"
+                  />
+                </svg>
+                <span>
+                  Cerrar caja
+                </span>
+              </button>
+            </div>
+          </div>
+        </header>
+        <div
+          aria-label="Estado de caja operativa"
+          class="shrink-0 p-4 sm:p-5 rounded-2xl bg-surface-success border border-emerald-200/90 text-emerald-950 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-in fade-in duration-200"
+          role="region"
+        >
+          <div
+            class="flex items-start sm:items-center gap-3.5"
+          >
+            <div
+              class="w-11 h-11 rounded-xl bg-emerald-100 text-[#2E7D32] flex items-center justify-center shrink-0 border border-emerald-200 shadow-2xs"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-lock-open lucide-unlock w-5 h-5 stroke-[2.2]"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+                <path
+                  d="M7 11V7a5 5 0 0 1 9.9-1"
+                />
+              </svg>
+            </div>
+            <div>
+              <div
+                class="flex items-center gap-2 flex-wrap"
+              >
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                >
+                  <span
+                    class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+                  />
+                  Caja Abierta
+                </span>
+                <span
+                  class="text-xs text-neutral-500"
+                >
+                  · Turno vigente
+                </span>
+              </div>
+              <p
+                class="text-xs sm:text-sm font-medium text-emerald-900 mt-1 flex items-center gap-2 flex-wrap"
+              >
+                <span>
+                  Caja abierta desde las 
+                  <strong>
+                    30/10/2026 03:00
+                  </strong>
+                   por 
+                  <strong>
+                    Elena Cajera
+                  </strong>
+                  .
+                </span>
+                <span
+                  class="text-neutral-600"
+                >
+                  (Fondo inicial: 
+                  <strong
+                    class="tabular-nums"
+                  >
+                    S/ 
+                    100.00
+                  </strong>
+                  )
+                </span>
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-4 flex-wrap justify-between lg:justify-end"
+          >
+            <div
+              class="flex items-center gap-3 text-xs bg-surface/80 px-3.5 py-2 rounded-xl border border-emerald-200 shadow-2xs tabular-nums"
+            >
+              <div>
+                <span
+                  class="text-neutral-500 block text-xs uppercase font-bold"
+                >
+                  Ventas (
+                  5
+                  )
+                </span>
+                <span
+                  class="font-bold text-ink"
+                >
+                  S/ 
+                  250.00
+                </span>
+              </div>
+              <div
+                class="h-6 w-px bg-neutral-200"
+              />
+              <div>
+                <span
+                  class="text-neutral-500 block text-xs uppercase font-bold"
+                >
+                  Efectivo
+                </span>
+                <span
+                  class="font-bold text-neutral-700"
+                >
+                  S/ 
+                  150.00
+                </span>
+              </div>
+              <div
+                class="h-6 w-px bg-neutral-200"
+              />
+              <div>
+                <span
+                  class="text-neutral-500 block text-xs uppercase font-bold"
+                >
+                  Yape
+                </span>
+                <span
+                  class="font-bold text-neutral-700"
+                >
+                  S/ 
+                  100.00
+                </span>
+              </div>
+            </div>
+            <button
+              class="px-4 py-2.5 rounded-xl border border-stone-300 bg-surface hover:bg-stone-50 text-stone-700 text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer min-h-[44px] flex items-center gap-1.5"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-lock w-4 h-4 text-stone-500"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+                <path
+                  d="M7 11V7a5 5 0 0 1 10 0v4"
+                />
+              </svg>
+              <span>
+                Cerrar caja
+              </span>
+            </button>
+          </div>
+        </div>
+        <div
+          class="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-3"
+        >
+          <div
+            class="p-3.5 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs flex items-center justify-between"
+          >
+            <div>
+              <span
+                class="text-xs font-bold text-neutral-500 uppercase tracking-wider block"
+              >
+                Por Cobrar
+              </span>
+              <span
+                class="text-xl font-bold font-sans tabular-nums text-ink"
+              >
+                1
+                 
+                pedido
+              </span>
+            </div>
+            <div
+              class="w-9 h-9 rounded-lg bg-orange-50 text-accent flex items-center justify-center"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-receipt-text w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13 16H8"
+                />
+                <path
+                  d="M14 8H8"
+                />
+                <path
+                  d="M16 12H8"
+                />
+                <path
+                  d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            class="p-3.5 bg-surface rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between"
+          >
+            <div>
+              <span
+                class="text-xs font-bold text-neutral-500 uppercase tracking-wider block"
+              >
+                Listos en Cocina
+              </span>
+              <span
+                class="text-xl font-bold font-sans tabular-nums text-ink"
+              >
+                1
+                 listos
+              </span>
+            </div>
+            <div
+              class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-circle-check lucide-check-circle-2 w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="m16 9-5.5 5.5L8 12"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            class="p-3.5 bg-surface rounded-xl border border-neutral-200/80 shadow-2xs flex items-center justify-between"
+          >
+            <div>
+              <span
+                class="text-xs font-bold text-neutral-500 uppercase tracking-wider block"
+              >
+                Monto Pendiente
+              </span>
+              <span
+                class="text-xl font-bold font-sans tabular-nums text-accent"
+              >
+                S/ 
+                65.50
+              </span>
+            </div>
+            <div
+              class="w-9 h-9 rounded-lg bg-amber-50 text-accent flex items-center justify-center"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-credit-card w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="14"
+                  rx="2"
+                  width="20"
+                  x="2"
+                  y="5"
+                />
+                <line
+                  x1="2"
+                  x2="22"
+                  y1="10"
+                  y2="10"
+                />
+                <path
+                  d="M6 14h2"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div
+          class="shrink-0 flex flex-wrap items-center justify-between gap-3 bg-surface p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-2xs"
+        >
+          <div
+            class="relative w-full sm:w-64"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-search w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m21 21-4.34-4.34"
+              />
+              <circle
+                cx="11"
+                cy="11"
+                r="8"
+              />
+            </svg>
+            <input
+              class="w-full pl-8 pr-8 py-2 rounded-xl border border-neutral-200 text-xs text-ink placeholder:text-neutral-500 focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors min-h-[38px]"
+              placeholder="Buscar mesa o n.º de pedido..."
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="flex items-center gap-1.5 flex-wrap"
+          >
+            <span
+              class="text-xs font-semibold text-ink-muted flex items-center gap-1 mr-1"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-funnel lucide-filter w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+                />
+              </svg>
+              Estado:
+            </span>
+            <button
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] bg-ink-fill text-white font-semibold shadow-2xs"
+              type="button"
+            >
+              Todos
+            </button>
+            <button
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
+              type="button"
+            >
+              Salón
+            </button>
+            <button
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
+              type="button"
+            >
+              Para Llevar
+            </button>
+            <button
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
+              type="button"
+            >
+              Listos
+            </button>
+          </div>
+        </div>
+        <div
+          class="w-full overflow-hidden bg-surface rounded-2xl border border-neutral-200/90 shadow-2xs "
+        >
+          <div
+            class="overflow-x-auto [scrollbar-width:thin]"
+          >
+            <table
+              class="w-full text-left border-collapse min-w-[850px]"
+            >
+              <thead
+                class="sticky top-0 z-10 bg-canvas text-ink-muted text-xs uppercase font-semibold tracking-wider border-b border-line select-none "
+              >
+                <tr>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    N.º Pedido
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Destino
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Hora
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Estado Cocina
+                  </th>
+                  <th
+                    class="py-3 px-4 text-right"
+                    scope="col"
+                  >
+                    Total a Cobrar
+                  </th>
+                  <th
+                    class="py-3 px-4 text-center"
+                    scope="col"
+                  >
+                    Acción
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-line-soft text-sm text-ink "
+              >
+                <tr
+                  class="transition-colors border-b border-line-soft hover:bg-neutral-50/70 bg-emerald-50/25"
+                >
+                  <td
+                    class="py-3 px-4 font-semibold font-sans tabular-nums text-sm text-ink"
+                  >
+                    #
+                    12
+                  </td>
+                  <td
+                    class="py-3 px-4"
+                  >
+                    <div
+                      class="flex items-center gap-2"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-utensils lucide-fork-knife w-4 h-4 text-accent"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                        />
+                        <path
+                          d="M7 2v20"
+                        />
+                        <path
+                          d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                        />
+                      </svg>
+                      <span
+                        class="font-semibold text-sm text-ink"
+                      >
+                        Mesa 4
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    class="py-3 px-4 text-xs font-sans tabular-nums text-stone-600"
+                  >
+                    13:45
+                  </td>
+                  <td
+                    class="py-3 px-4"
+                  >
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-circle-check lucide-check-circle-2 w-3.5 h-3.5"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                        />
+                        <path
+                          d="m16 9-5.5 5.5L8 12"
+                        />
+                      </svg>
+                      Listo
+                    </span>
+                  </td>
+                  <td
+                    class="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent"
+                  >
+                    S/ 
+                    65.50
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-center"
+                  >
+                    <button
+                      aria-label="Cobrar pedido #12"
+                      class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer mx-auto min-h-[44px]"
+                      title="Cobrar pedido #12"
+                      type="button"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="w-4 h-4"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M11.5 4.5H6.75a3.75 3.75 0 0 0 0 7.5h1.5a3.75 3.75 0 0 1 0 7.5H3"
+                        />
+                        <path
+                          d="M20.5 4L14.5 20"
+                        />
+                      </svg>
+                      <span>
+                        Cobrar
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

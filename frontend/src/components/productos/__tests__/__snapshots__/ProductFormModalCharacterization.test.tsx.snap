@@ -1,0 +1,660 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProductFormModal - Pruebas de Caracterización y Formularios > debe renderizar en modo edición con datos precargados y enviar cambios 1`] = `
+<div>
+  <div
+    aria-labelledby="modal-title"
+    aria-modal="true"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
+    role="dialog"
+  >
+    <div
+      class="bg-surface rounded-2xl max-w-lg w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-gradient-to-r from-amber-50/50 to-transparent"
+      >
+        <div
+          class="flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-canvas border border-amber-900/10 flex items-center justify-center text-accent"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-utensils lucide-fork-knife w-5 h-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+              />
+              <path
+                d="M7 2v20"
+              />
+              <path
+                d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2
+              class="text-lg sm:text-xl font-sans font-bold text-ink leading-tight"
+              id="modal-title"
+            >
+              Editar Producto
+            </h2>
+            <p
+              class="text-xs text-ink-muted"
+            >
+              Modifique el nombre, categoría, rol o precio del ítem.
+            </p>
+          </div>
+        </div>
+        <button
+          aria-label="Cerrar ventana"
+          class="modal-close-btn"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-x w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <form
+        class="flex-1 flex flex-col min-h-0"
+      >
+        <div
+          class="flex-1 overflow-y-auto p-5 space-y-4 min-h-0 scroll-thin"
+        >
+          <div>
+            <label
+              class="form-label-standard"
+            >
+              Tipo de producto 
+              <span
+                class="text-accent"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80"
+            >
+              <button
+                class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all bg-surface text-accent shadow-sm border border-neutral-200/60 opacity-80 cursor-not-allowed"
+                disabled=""
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-book-open w-3.5 h-3.5"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 5v16"
+                  />
+                  <path
+                    d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"
+                  />
+                </svg>
+                <span>
+                  Producto de carta
+                </span>
+              </button>
+              <button
+                class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all text-neutral-600 hover:text-neutral-900 opacity-80 cursor-not-allowed"
+                disabled=""
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-layers lucide-layers-3 w-3.5 h-3.5"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"
+                  />
+                  <path
+                    d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"
+                  />
+                  <path
+                    d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"
+                  />
+                </svg>
+                <span>
+                  Componente de menú
+                </span>
+              </button>
+            </div>
+            <p
+              class="mt-1 text-xs text-neutral-500 italic"
+            >
+              El tipo no se puede modificar en productos existentes para preservar el historial.
+            </p>
+          </div>
+          <div>
+            <div
+              class="flex items-center justify-between mb-1.5"
+            >
+              <label
+                class="form-label-standard !mb-0"
+                for="prod-nombre"
+              >
+                Nombre 
+                del producto
+                 
+                <span
+                  class="text-accent"
+                >
+                  *
+                </span>
+              </label>
+              <span
+                class="text-xs text-ink-muted tabular-nums"
+              >
+                20
+                /50
+              </span>
+            </div>
+            <input
+              class="w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden border-neutral-200 bg-surface text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200"
+              id="prod-nombre"
+              maxlength="50"
+              placeholder="Ej. Lomo saltado, Jarra de chicha morada 1L"
+              type="text"
+              value="Lomo Saltado Clásico"
+            />
+            <p
+              class="mt-1 text-xs text-ink-muted"
+            >
+              De 3 a 50 caracteres.
+            </p>
+          </div>
+          <div>
+            <label
+              class="form-label-standard"
+              for="prod-categoria"
+            >
+              Categoría de carta 
+              <span
+                class="text-accent"
+              >
+                *
+              </span>
+            </label>
+            <select
+              class="w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-surface border-neutral-200 text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200"
+              id="prod-categoria"
+            >
+              <option
+                value="Desayuno"
+              >
+                Desayuno
+              </option>
+              <option
+                value="Almuerzo"
+              >
+                Almuerzo
+              </option>
+              <option
+                value="PlatosExtras"
+              >
+                Platos Extras / A la Carta
+              </option>
+              <option
+                value="Combinados"
+              >
+                Combinados
+              </option>
+              <option
+                value="Bebidas"
+              >
+                Bebidas y Refrescos
+              </option>
+              <option
+                value="Otro"
+              >
+                Otro
+              </option>
+            </select>
+            <p
+              class="mt-1 text-xs text-ink-muted"
+            >
+              Lomo saltado, ceviche, bistec, pollo a la plancha, chaufa, etc.
+            </p>
+          </div>
+          <div>
+            <label
+              class="form-label-standard"
+              for="prod-precio"
+            >
+              Precio de venta (S/) 
+              <span
+                class="text-accent"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="relative"
+            >
+              <span
+                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm"
+              >
+                S/
+              </span>
+              <input
+                class="w-full pl-9 pr-3.5 py-2.5 rounded-xl border text-sm font-sans font-medium transition-all outline-hidden border-neutral-200 bg-surface text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200"
+                id="prod-precio"
+                inputmode="decimal"
+                placeholder="0.00"
+                type="text"
+                value="42.00"
+              />
+            </div>
+            <div
+              class="mt-2 p-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl flex items-start gap-2 text-xs text-amber-900 animate-in fade-in duration-200"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-info w-4 h-4 text-accent shrink-0 mt-0.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="M12 16v-4"
+                />
+                <path
+                  d="M12 8h.01"
+                />
+              </svg>
+              <span>
+                El nuevo precio se aplicará solo a los pedidos nuevos. Los pedidos y ventas ya registrados no cambian.
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="shrink-0 p-4 sm:p-5 border-t border-neutral-100 flex items-center justify-end gap-3 bg-neutral-50/50"
+        >
+          <button
+            class="px-4 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 bg-surface hover:bg-neutral-50 font-medium text-sm transition-colors cursor-pointer min-h-[44px]"
+            type="button"
+          >
+            Cancelar
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed min-h-[44px]"
+            type="submit"
+          >
+            Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ProductFormModal - Pruebas de Caracterización y Formularios > debe renderizar en modo nuevo producto con snapshot representativo 1`] = `
+<div>
+  <div
+    aria-labelledby="modal-title"
+    aria-modal="true"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
+    role="dialog"
+  >
+    <div
+      class="bg-surface rounded-2xl max-w-lg w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden shadow-2xl border border-neutral-200 animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="shrink-0 p-5 border-b border-neutral-100 flex justify-between items-center bg-gradient-to-r from-amber-50/50 to-transparent"
+      >
+        <div
+          class="flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-canvas border border-amber-900/10 flex items-center justify-center text-accent"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-utensils lucide-fork-knife w-5 h-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+              />
+              <path
+                d="M7 2v20"
+              />
+              <path
+                d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2
+              class="text-lg sm:text-xl font-sans font-bold text-ink leading-tight"
+              id="modal-title"
+            >
+              Nuevo Producto o Componente
+            </h2>
+            <p
+              class="text-xs text-ink-muted"
+            >
+              Defina un producto independiente de carta o un componente de menú.
+            </p>
+          </div>
+        </div>
+        <button
+          aria-label="Cerrar ventana"
+          class="modal-close-btn"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-x w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <form
+        class="flex-1 flex flex-col min-h-0"
+      >
+        <div
+          class="flex-1 overflow-y-auto p-5 space-y-4 min-h-0 scroll-thin"
+        >
+          <div>
+            <label
+              class="form-label-standard"
+            >
+              Tipo de producto 
+              <span
+                class="text-accent"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="grid grid-cols-2 gap-2.5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/80"
+            >
+              <button
+                class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all bg-surface text-accent shadow-sm border border-neutral-200/60 cursor-pointer"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-book-open w-3.5 h-3.5"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 5v16"
+                  />
+                  <path
+                    d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"
+                  />
+                </svg>
+                <span>
+                  Producto de carta
+                </span>
+              </button>
+              <button
+                class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all text-neutral-600 hover:text-neutral-900 cursor-pointer"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-layers lucide-layers-3 w-3.5 h-3.5"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"
+                  />
+                  <path
+                    d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"
+                  />
+                  <path
+                    d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"
+                  />
+                </svg>
+                <span>
+                  Componente de menú
+                </span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <div
+              class="flex items-center justify-between mb-1.5"
+            >
+              <label
+                class="form-label-standard !mb-0"
+                for="prod-nombre"
+              >
+                Nombre 
+                del producto
+                 
+                <span
+                  class="text-accent"
+                >
+                  *
+                </span>
+              </label>
+              <span
+                class="text-xs text-ink-muted tabular-nums"
+              >
+                0
+                /50
+              </span>
+            </div>
+            <input
+              class="w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden border-neutral-200 bg-surface text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200"
+              id="prod-nombre"
+              maxlength="50"
+              placeholder="Ej. Lomo saltado, Jarra de chicha morada 1L"
+              type="text"
+              value=""
+            />
+            <p
+              class="mt-1 text-xs text-ink-muted"
+            >
+              De 3 a 50 caracteres.
+            </p>
+          </div>
+          <div>
+            <label
+              class="form-label-standard"
+              for="prod-categoria"
+            >
+              Categoría de carta 
+              <span
+                class="text-accent"
+              >
+                *
+              </span>
+            </label>
+            <select
+              class="w-full px-3.5 py-2.5 rounded-xl border text-sm font-sans transition-all outline-hidden bg-surface border-neutral-200 text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200"
+              id="prod-categoria"
+            >
+              <option
+                value="Desayuno"
+              >
+                Desayuno
+              </option>
+              <option
+                value="Almuerzo"
+              >
+                Almuerzo
+              </option>
+              <option
+                value="PlatosExtras"
+              >
+                Platos Extras / A la Carta
+              </option>
+              <option
+                value="Combinados"
+              >
+                Combinados
+              </option>
+              <option
+                value="Bebidas"
+              >
+                Bebidas y Refrescos
+              </option>
+              <option
+                value="Otro"
+              >
+                Otro
+              </option>
+            </select>
+            <p
+              class="mt-1 text-xs text-ink-muted"
+            >
+              Menú del día, sopas y entradas
+            </p>
+          </div>
+          <div>
+            <label
+              class="form-label-standard"
+              for="prod-precio"
+            >
+              Precio de venta (S/) 
+              <span
+                class="text-accent"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="relative"
+            >
+              <span
+                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-semibold text-sm"
+              >
+                S/
+              </span>
+              <input
+                class="w-full pl-9 pr-3.5 py-2.5 rounded-xl border text-sm font-sans font-medium transition-all outline-hidden border-neutral-200 bg-surface text-neutral-900 focus:border-accent focus:ring-2 focus:ring-amber-200"
+                id="prod-precio"
+                inputmode="decimal"
+                placeholder="0.00"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="shrink-0 p-4 sm:p-5 border-t border-neutral-100 flex items-center justify-end gap-3 bg-neutral-50/50"
+        >
+          <button
+            class="px-4 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 bg-surface hover:bg-neutral-50 font-medium text-sm transition-colors cursor-pointer min-h-[44px]"
+            type="button"
+          >
+            Cancelar
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed min-h-[44px]"
+            type="submit"
+          >
+            Guardar producto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;

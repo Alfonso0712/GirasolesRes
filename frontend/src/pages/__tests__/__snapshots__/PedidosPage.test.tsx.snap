@@ -1,0 +1,602 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PedidosPage - Pruebas de Caracterización y Lista de Pedidos > debe renderizar el listado de pedidos y coincidir con snapshot 1`] = `
+<div>
+  <div
+    class="flex-1 overflow-y-auto w-full [scrollbar-width:thin]"
+  >
+    <div
+      class="w-full max-w-7xl 2xl:max-w-screen-2xl mx-auto px-4 sm:px-6 2xl:px-8 pt-4 sm:pt-5 pb-6 flex flex-col gap-4 2xl:gap-5 text-ink "
+    >
+      <header
+        class="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 "
+      >
+        <div>
+          <div
+            class="flex items-center gap-3 flex-wrap"
+          >
+            <h1
+              class="text-2xl font-bold font-sans text-ink tracking-tight"
+            >
+              Pedidos
+            </h1>
+            <span
+              class="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-surface border border-neutral-200"
+            >
+              Actualizado hace 
+              0
+               s
+            </span>
+          </div>
+          <p
+            class="text-xs sm:text-sm text-neutral-500 mt-1 font-normal"
+          >
+            Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar.
+          </p>
+        </div>
+        <div
+          class="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0"
+        >
+          <button
+            aria-label="Refrescar lista de pedidos"
+            class="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60 shrink-0"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-rotate-ccw w-3.5 h-3.5 text-accent"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+              />
+              <path
+                d="M3 3v5h5"
+              />
+            </svg>
+            <span>
+              Actualizar
+            </span>
+          </button>
+        </div>
+      </header>
+      <div
+        class="w-full"
+      >
+        <div
+          class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-3"
+        >
+          <button
+            class="p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-surface border-neutral-200/80 hover:border-amber-300 hover:shadow-xs"
+            type="button"
+          >
+            <div
+              class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-clock w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="M12 6v6l4 2"
+                />
+              </svg>
+              <span>
+                Pendientes
+              </span>
+            </div>
+            <div
+              class="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1"
+            >
+              0
+            </div>
+          </button>
+          <button
+            class="p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-surface border-neutral-200/80 hover:border-blue-300 hover:shadow-xs"
+            type="button"
+          >
+            <div
+              class="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-chef-hat w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"
+                />
+                <path
+                  d="M6 17h12"
+                />
+              </svg>
+              <span>
+                En preparación
+              </span>
+            </div>
+            <div
+              class="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1"
+            >
+              1
+            </div>
+          </button>
+          <button
+            class="p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-surface border-neutral-200/80 hover:border-emerald-300 hover:shadow-xs"
+            type="button"
+          >
+            <div
+              class="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-circle-check lucide-check-circle-2 w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="m16 9-5.5 5.5L8 12"
+                />
+              </svg>
+              <span>
+                Listos
+              </span>
+            </div>
+            <div
+              class="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1"
+            >
+              0
+            </div>
+          </button>
+          <button
+            class="p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-surface border-neutral-200/80 hover:border-neutral-300 hover:shadow-xs"
+            type="button"
+          >
+            <div
+              class="text-xs font-bold text-neutral-600 uppercase tracking-wider flex items-center gap-1.5"
+            >
+              <span>
+                Pagados
+              </span>
+            </div>
+            <div
+              class="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1"
+            >
+              0
+            </div>
+          </button>
+          <button
+            class="col-span-2 sm:col-span-1 p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-surface border-neutral-200/80 hover:border-rose-300 hover:shadow-xs"
+            type="button"
+          >
+            <div
+              class="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-triangle-alert lucide-alert-triangle w-3.5 h-3.5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+                />
+                <path
+                  d="M12 9v4"
+                />
+                <path
+                  d="M12 17h.01"
+                />
+              </svg>
+              <span>
+                Anulados
+              </span>
+            </div>
+            <div
+              class="text-2xl font-bold font-sans tabular-nums text-neutral-900 mt-1"
+            >
+              0
+            </div>
+          </button>
+        </div>
+        <div
+          class="px-3.5 py-3 sm:p-4 bg-surface rounded-2xl border border-neutral-200/80 shadow-2xs mb-3 flex flex-wrap items-center gap-3"
+        >
+          <div
+            class="flex items-center gap-1.5 text-xs font-semibold text-ink-muted"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-funnel lucide-filter w-3.5 h-3.5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+              />
+            </svg>
+            <span>
+              Filtros:
+            </span>
+          </div>
+          <select
+            class="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
+          >
+            <option
+              value=""
+            >
+              Todos los estados
+            </option>
+            <option
+              value="Pendiente"
+            >
+              Pendiente
+            </option>
+            <option
+              value="EnPreparacion"
+            >
+              En preparación
+            </option>
+            <option
+              value="Listo"
+            >
+              Listo
+            </option>
+            <option
+              value="Pagado"
+            >
+              Pagado
+            </option>
+            <option
+              value="Anulado"
+            >
+              Anulado
+            </option>
+          </select>
+          <select
+            class="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
+          >
+            <option
+              value=""
+            >
+              Todos los tipos
+            </option>
+            <option
+              value="Mesa"
+            >
+              Mesa
+            </option>
+            <option
+              value="ParaLlevar"
+            >
+              Para llevar
+            </option>
+          </select>
+          <select
+            class="text-xs p-2 rounded-xl border border-neutral-200 bg-surface focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none cursor-pointer min-h-[38px]"
+          >
+            <option
+              value=""
+            >
+              Todas las mesas
+            </option>
+            <option
+              value="m-1"
+            >
+              Mesa 1
+            </option>
+          </select>
+          <label
+            class="flex items-center gap-2 text-xs font-medium text-neutral-700 cursor-pointer select-none px-2 py-1.5 rounded-lg hover:bg-neutral-50"
+          >
+            <input
+              class="w-4 h-4 rounded text-accent focus:ring-accent border-neutral-300 cursor-pointer"
+              type="checkbox"
+            />
+            <span>
+              Solo mis pedidos
+            </span>
+          </label>
+        </div>
+        <div
+          class="w-full overflow-hidden bg-surface rounded-2xl border border-neutral-200/90 shadow-2xs "
+        >
+          <div
+            class="overflow-x-auto [scrollbar-width:thin]"
+          >
+            <table
+              class="w-full text-left border-collapse min-w-[850px]"
+            >
+              <thead
+                class="sticky top-0 z-10 bg-canvas text-ink-muted text-xs uppercase font-semibold tracking-wider border-b border-line select-none "
+              >
+                <tr>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    N.º
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Destino
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Hora
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Registrado por
+                  </th>
+                  <th
+                    class="py-3 px-4"
+                    scope="col"
+                  >
+                    Estado
+                  </th>
+                  <th
+                    class="py-3 px-4 text-right"
+                    scope="col"
+                  >
+                    Total
+                  </th>
+                  <th
+                    class="py-3 px-4 text-center"
+                    scope="col"
+                  >
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-line-soft text-sm text-ink "
+              >
+                <tr
+                  class="transition-colors border-b border-line-soft bg-amber-50/20 hover:bg-amber-50/40 "
+                >
+                  <td
+                    class="py-3 px-4 font-semibold tabular-nums text-sm text-ink"
+                  >
+                    #
+                    15
+                  </td>
+                  <td
+                    class="py-3 px-4"
+                  >
+                    <div
+                      class="flex items-center gap-2"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-utensils lucide-fork-knife w-4 h-4 text-accent"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                        />
+                        <path
+                          d="M7 2v20"
+                        />
+                        <path
+                          d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                        />
+                      </svg>
+                      <span
+                        class="font-semibold text-sm text-ink"
+                      >
+                        Mesa 1
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    class="py-3 px-4 text-stone-600 text-xs tabular-nums"
+                  >
+                    14:20
+                  </td>
+                  <td
+                    class="py-3 px-4 text-stone-700 text-xs"
+                  >
+                    <div
+                      class="flex items-center gap-1.5"
+                    >
+                      <span>
+                        Mario Mozo
+                      </span>
+                      <span
+                        class="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-accent font-semibold text-xs"
+                      >
+                        Mío
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    class="py-3 px-4 whitespace-nowrap"
+                  >
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-2xs whitespace-nowrap transition-colors bg-stone-100 text-stone-700 border-stone-300 "
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-clock w-3.5 h-3.5 shrink-0 text-stone-600"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                        />
+                        <path
+                          d="M12 6v6l4 2"
+                        />
+                      </svg>
+                      <span>
+                        enPreparacion
+                      </span>
+                    </span>
+                  </td>
+                  <td
+                    class="py-3 px-4 text-right font-semibold tabular-nums text-sm text-ink"
+                  >
+                    S/ 
+                    84.00
+                  </td>
+                  <td
+                    class="py-3 px-4"
+                  >
+                    <div
+                      class="flex items-center justify-center gap-1.5 whitespace-nowrap"
+                    >
+                      <button
+                        aria-label="Ver detalle del pedido"
+                        class="inline-flex items-center justify-center rounded-xl transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-accent/25 w-10 h-10 min-h-[40px] min-w-[40px] bg-action-info-bg hover:bg-action-info-hover-bg text-action-info-text border border-action-info-border hover:border-action-info-hover-border shadow-2xs "
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="lucide lucide-eye w-4 h-4 shrink-0"
+                          fill="none"
+                          height="24"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="3"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        aria-label="Anular pedido"
+                        class="inline-flex items-center justify-center rounded-xl transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-accent/25 w-10 h-10 min-h-[40px] min-w-[40px] bg-action-disabled-bg text-action-disabled-text border border-action-disabled-border cursor-not-allowed shadow-none "
+                        disabled=""
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="lucide lucide-trash lucide-trash-2 w-4 h-4 shrink-0"
+                          fill="none"
+                          height="24"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10 11v6"
+                          />
+                          <path
+                            d="M14 11v6"
+                          />
+                          <path
+                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+                          />
+                          <path
+                            d="M3 6h18"
+                          />
+                          <path
+                            d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

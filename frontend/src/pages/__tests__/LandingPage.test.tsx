@@ -132,4 +132,12 @@ describe('LandingPage - Vista de Bienvenida y Carta Pública', () => {
 
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
+
+  it('debe coincidir con el snapshot de caracterizaci?n previa al refactor', async () => {
+    const { container } = render(<LandingPage onGoToLogin={vi.fn()} />);
+    await waitFor(() => {
+      expect(screen.getByText('Ceviche Mixto Especial Criollo')).toBeInTheDocument();
+    });
+    expect(container).toMatchSnapshot();
+  });
 });

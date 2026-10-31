@@ -1,0 +1,1821 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Caja Modals - Pruebas de Caracterización y Red de Seguridad > AbrirCajaModal > debe renderizar con sugerencia inicial y snapshot idéntico 1`] = `
+<div>
+  <div
+    aria-labelledby="abrir-caja-title"
+    aria-modal="true"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs animate-in fade-in duration-200"
+    role="dialog"
+  >
+    <div
+      class="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transition-all animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50"
+      >
+        <div
+          class="flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-amber-50 text-accent flex items-center justify-center border border-amber-200/80 shadow-xs"
+          >
+            <svg
+              aria-hidden="true"
+              class="w-5 h-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11.5 4.5H6.75a3.75 3.75 0 0 0 0 7.5h1.5a3.75 3.75 0 0 1 0 7.5H3"
+              />
+              <path
+                d="M20.5 4L14.5 20"
+              />
+            </svg>
+          </div>
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-wider text-accent"
+            >
+              Gestión de Caja
+            </p>
+            <h2
+              class="font-sans text-xl font-bold text-ink tracking-tight"
+              id="abrir-caja-title"
+            >
+              Apertura de Caja
+            </h2>
+          </div>
+        </div>
+        <button
+          aria-label="Cerrar ventana"
+          class="modal-close-btn"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-x w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="p-6 text-ink"
+      >
+        <form
+          class="space-y-4"
+        >
+          <p
+            class="text-sm text-neutral-600"
+          >
+            Ingrese el sencillo o fondo inicial en efectivo con el que iniciará el turno para habilitar el cobro de pedidos.
+          </p>
+          <div
+            class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between gap-3 text-xs"
+          >
+            <div
+              class="flex items-center gap-2 text-neutral-600"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-circle-question-mark lucide-help-circle lucide-circle-help w-4 h-4 text-accent shrink-0"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+                />
+                <path
+                  d="M12 17h.01"
+                />
+              </svg>
+              <span>
+                Sugerido del último cierre:
+              </span>
+            </div>
+            <button
+              class="font-bold text-accent hover:underline cursor-pointer tabular-nums"
+              type="button"
+            >
+              <span
+                class="tabular-nums"
+              >
+                S/ 
+                120.00
+              </span>
+               (Usar)
+            </button>
+          </div>
+          <div>
+            <label
+              class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1"
+              for="monto-inicial"
+            >
+              Monto Inicial (S/) 
+              <span
+                class="text-red-600"
+              >
+                *
+              </span>
+            </label>
+            <div
+              class="relative rounded-xl shadow-2xs"
+            >
+              <div
+                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-bold"
+              >
+                S/
+              </div>
+              <input
+                class="block w-full pl-10 pr-4 py-3 bg-surface border rounded-xl text-lg font-bold tabular-nums text-ink focus:outline-hidden focus:ring-2 border-neutral-200 focus:border-accent focus:ring-accent/20"
+                id="monto-inicial"
+                max="99999.99"
+                min="0"
+                placeholder="0.00"
+                step="0.01"
+                type="number"
+                value="120.00"
+              />
+            </div>
+            <p
+              class="text-xs text-neutral-500 mt-1"
+            >
+              Permitido: S/ 0.00 a S/ 99,999.99 con hasta 2 decimales.
+            </p>
+          </div>
+          <div
+            class="flex gap-2 pt-1"
+          >
+            <button
+              class="flex-1 py-1.5 text-xs font-semibold font-sans tabular-nums rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+              type="button"
+            >
+              S/ 
+              0
+            </button>
+            <button
+              class="flex-1 py-1.5 text-xs font-semibold font-sans tabular-nums rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+              type="button"
+            >
+              S/ 
+              50
+            </button>
+            <button
+              class="flex-1 py-1.5 text-xs font-semibold font-sans tabular-nums rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+              type="button"
+            >
+              S/ 
+              100
+            </button>
+            <button
+              class="flex-1 py-1.5 text-xs font-semibold font-sans tabular-nums rounded-lg border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs transition-colors cursor-pointer min-h-[44px]"
+              type="button"
+            >
+              S/ 
+              200
+            </button>
+          </div>
+          <div
+            class="pt-2 flex items-center justify-end gap-3"
+          >
+            <button
+              class="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+              type="button"
+            >
+              Cancelar
+            </button>
+            <button
+              class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary-hover rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+              type="submit"
+            >
+              Continuar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Caja Modals - Pruebas de Caracterización y Red de Seguridad > CerrarCajaModal > debe calcular correctamente efectivo esperado, descuadre y vuelto en el arqueo 1`] = `
+<div>
+  <div
+    aria-labelledby="cerrar-caja-title"
+    aria-modal="true"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+    role="dialog"
+  >
+    <div
+      class="bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50"
+      >
+        <div
+          class="flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-rose-50 text-[#C0392B] border border-rose-200 flex items-center justify-center shadow-xs"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-lock w-5 h-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="11"
+                rx="2"
+                ry="2"
+                width="18"
+                x="3"
+                y="11"
+              />
+              <path
+                d="M7 11V7a5 5 0 0 1 10 0v4"
+              />
+            </svg>
+          </div>
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-wider text-accent"
+            >
+              Gestión de Caja
+            </p>
+            <h2
+              class="font-sans text-xl font-bold text-ink tracking-tight"
+              id="cerrar-caja-title"
+            >
+              Cierre de Caja y Cuadre de Turno
+            </h2>
+          </div>
+        </div>
+        <button
+          aria-label="Cerrar modal"
+          class="modal-close-btn"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-x w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="p-6 overflow-y-auto space-y-6 flex-1 text-ink"
+      >
+        <div>
+          <div
+            class="flex items-center justify-between mb-2"
+          >
+            <h3
+              class="font-bold text-xs uppercase tracking-wider text-neutral-600"
+            >
+              Resumen de Ventas Vigentes del Turno
+            </h3>
+            <span
+              class="text-xs text-neutral-500"
+            >
+              Total ventas registradas: 
+              <strong>
+                12
+              </strong>
+            </span>
+          </div>
+          <div
+            class="grid grid-cols-2 sm:grid-cols-4 gap-3"
+          >
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-neutral-500 block"
+              >
+                Monto Inicial
+              </span>
+              <span
+                class="text-base font-bold text-ink tabular-nums mt-0.5 block"
+              >
+                S/ 
+                100.00
+              </span>
+              <span
+                class="text-xs text-stone-500 block"
+              >
+                Fondo turno
+              </span>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-banknote w-3 h-3 text-accent"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    height="12"
+                    rx="2"
+                    width="20"
+                    x="2"
+                    y="6"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="2"
+                  />
+                  <path
+                    d="M6 12h.01M18 12h.01"
+                  />
+                </svg>
+                 Ventas Efectivo
+              </span>
+              <span
+                class="text-base font-bold text-ink tabular-nums mt-0.5 block"
+              >
+                S/ 
+                250.00
+              </span>
+              <span
+                class="text-xs text-stone-500 block"
+              >
+                Gaveta física
+              </span>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-credit-card w-3 h-3 text-purple-600"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    height="14"
+                    rx="2"
+                    width="20"
+                    x="2"
+                    y="5"
+                  />
+                  <line
+                    x1="2"
+                    x2="22"
+                    y1="10"
+                    y2="10"
+                  />
+                  <path
+                    d="M6 14h2"
+                  />
+                </svg>
+                 Ventas Yape / QR
+              </span>
+              <span
+                class="text-base font-bold text-purple-900 tabular-nums mt-0.5 block"
+              >
+                S/ 
+                150.00
+              </span>
+              <span
+                class="text-xs text-stone-500 block"
+              >
+                Cuenta digital
+              </span>
+            </div>
+            <div
+              class="p-3 bg-neutral-50 border border-neutral-200 rounded-xl"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-neutral-500 block flex items-center gap-1"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-3 h-3 text-success"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11.5 4.5H6.75a3.75 3.75 0 0 0 0 7.5h1.5a3.75 3.75 0 0 1 0 7.5H3"
+                  />
+                  <path
+                    d="M20.5 4L14.5 20"
+                  />
+                </svg>
+                 Total Ventas
+              </span>
+              <span
+                class="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block"
+              >
+                S/ 
+                400.00
+              </span>
+              <span
+                class="text-xs text-stone-500 block"
+              >
+                Efectivo + Yape
+              </span>
+            </div>
+            <div
+              class="p-3 bg-amber-50/70 border border-amber-300 rounded-xl col-span-2 sm:col-span-1"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-wider text-amber-800 block"
+              >
+                Efectivo Esperado
+              </span>
+              <span
+                class="text-lg font-bold text-accent tabular-nums mt-0.5 block"
+              >
+                S/ 
+                350.00
+              </span>
+              <span
+                class="text-xs text-neutral-500 block"
+              >
+                (Inicial + Efectivo)
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl space-y-4"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
+            <div>
+              <label
+                class="block text-xs font-bold uppercase tracking-wider text-neutral-700"
+                for="efectivo-contado"
+              >
+                Efectivo Contado en Gaveta (S/) 
+                <span
+                  class="text-red-600"
+                >
+                  *
+                </span>
+              </label>
+              <p
+                class="text-xs text-neutral-500"
+              >
+                Cuente el dinero físico o use el contador de billetes y monedas.
+              </p>
+            </div>
+            <button
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#5C341A] hover:bg-sidebar disabled:bg-neutral-300 rounded-xl shadow-sm transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-coins w-4 h-4 text-[#F39C12]"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.744 17.736a6 6 0 1 1-7.48-7.48"
+                />
+                <path
+                  d="M15 6h1v4"
+                />
+                <path
+                  d="m6.134 14.768.866-.5 2 3.464"
+                />
+                <circle
+                  cx="16"
+                  cy="8"
+                  r="6"
+                />
+              </svg>
+              CONTAR BILLETES Y MONEDAS
+            </button>
+          </div>
+          <div
+            class="relative"
+          >
+            <div
+              class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 font-bold"
+            >
+              S/
+            </div>
+            <input
+              class="block w-full pl-10 pr-4 py-3 bg-surface border border-neutral-200 rounded-xl text-xl font-bold tabular-nums text-ink focus:outline-hidden focus:ring-2 focus:ring-accent/20 focus:border-accent disabled:bg-stone-100 disabled:cursor-not-allowed"
+              id="efectivo-contado"
+              max="99999.99"
+              min="0"
+              placeholder="0.00"
+              step="0.01"
+              type="number"
+              value="380.00"
+            />
+          </div>
+          <div
+            class="p-3.5 rounded-xl border flex items-center justify-between gap-3 animate-in fade-in duration-200 bg-amber-50 border-amber-300 text-amber-900"
+          >
+            <div
+              class="flex items-center gap-2.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-triangle-alert lucide-alert-triangle w-5 h-5 shrink-0 text-warning"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+                />
+                <path
+                  d="M12 9v4"
+                />
+                <path
+                  d="M12 17h.01"
+                />
+              </svg>
+              <div>
+                <p
+                  class="font-bold text-sm"
+                >
+                  <span
+                    class="tabular-nums"
+                  >
+                    Sobrante de S/ 30.00. Se recomienda indicar una observación.
+                  </span>
+                </p>
+                <p
+                  class="text-xs opacity-80 tabular-nums"
+                >
+                  Esperado: 
+                  <span
+                    class="tabular-nums"
+                  >
+                    S/ 
+                    350.00
+                  </span>
+                   | Contado: 
+                  <span
+                    class="tabular-nums"
+                  >
+                    S/ 
+                    380.00
+                  </span>
+                </p>
+              </div>
+            </div>
+            <span
+              class="font-bold text-lg tabular-nums shrink-0"
+            >
+              +S/ 30.00
+            </span>
+          </div>
+          <div>
+            <div
+              class="flex items-center justify-between mb-1"
+            >
+              <label
+                class="block text-xs font-bold uppercase tracking-wider text-neutral-700"
+                for="observacion-cierre"
+              >
+                Observación 
+                (Recomendada)
+              </label>
+              <span
+                class="text-xs tabular-nums font-semibold text-stone-500"
+              >
+                0
+                /200
+              </span>
+            </div>
+            <textarea
+              class="block w-full px-3 py-2 bg-surface border border-neutral-200 rounded-xl text-xs text-ink focus:outline-hidden focus:ring-1 focus:ring-accent focus:border-accent disabled:bg-stone-100"
+              id="observacion-cierre"
+              maxlength="250"
+              placeholder="Detalles de sobrante, faltante o incidencias del turno..."
+              rows="2"
+            />
+          </div>
+        </div>
+        <div
+          class="space-y-3"
+        >
+          <div
+            class="border border-neutral-200 rounded-xl overflow-hidden bg-surface"
+          >
+            <div
+              class="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils lucide-fork-knife w-3.5 h-3.5 text-accent"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                  />
+                  <path
+                    d="M7 2v20"
+                  />
+                  <path
+                    d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-xs uppercase tracking-wider text-ink"
+                >
+                  1. Productos de Carta
+                </h4>
+              </div>
+              <span
+                class="text-xs text-neutral-500 font-medium"
+              >
+                7
+                 unidades
+              </span>
+            </div>
+            <div
+              class="max-h-36 overflow-y-auto divide-y divide-stone-100 text-xs"
+            >
+              <div
+                class="px-4 py-2 flex items-center justify-between"
+              >
+                <span
+                  class="text-neutral-700 font-medium"
+                >
+                  4
+                  x 
+                  Ceviche Mixto
+                </span>
+                <span
+                  class="font-semibold text-neutral-600 tabular-nums"
+                >
+                  S/ 
+                  120.00
+                </span>
+              </div>
+              <div
+                class="px-4 py-2 flex items-center justify-between"
+              >
+                <span
+                  class="text-neutral-700 font-medium"
+                >
+                  3
+                  x 
+                  Arroz con Mariscos
+                </span>
+                <span
+                  class="font-semibold text-neutral-600 tabular-nums"
+                >
+                  S/ 
+                  90.00
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="border border-neutral-200 rounded-xl overflow-hidden bg-surface"
+          >
+            <div
+              class="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils lucide-fork-knife w-3.5 h-3.5 text-amber-600"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                  />
+                  <path
+                    d="M7 2v20"
+                  />
+                  <path
+                    d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-xs uppercase tracking-wider text-ink"
+                >
+                  2. Menús Completos
+                </h4>
+              </div>
+              <span
+                class="text-xs text-neutral-500 font-medium"
+              >
+                0
+                 unidades
+              </span>
+            </div>
+            <div
+              class="max-h-36 overflow-y-auto divide-y divide-stone-100 text-xs"
+            >
+              <div
+                class="px-4 py-2 text-neutral-400 italic text-center"
+              >
+                Sin menús completos vendidos
+              </div>
+            </div>
+          </div>
+          <div
+            class="border border-neutral-200 rounded-xl overflow-hidden bg-surface"
+          >
+            <div
+              class="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils lucide-fork-knife w-3.5 h-3.5 text-emerald-600"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                  />
+                  <path
+                    d="M7 2v20"
+                  />
+                  <path
+                    d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-xs uppercase tracking-wider text-ink"
+                >
+                  3. Componentes de Menú
+                </h4>
+              </div>
+              <span
+                class="text-xs text-neutral-500 font-medium"
+              >
+                0
+                 elecciones
+              </span>
+            </div>
+            <div
+              class="max-h-36 overflow-y-auto divide-y divide-stone-100 text-xs"
+            >
+              <div
+                class="px-4 py-2 text-neutral-400 italic text-center"
+              >
+                Sin componentes elegidos
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-neutral-50/80 border-t border-neutral-200 p-4 flex items-center justify-end gap-3"
+      >
+        <button
+          class="px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+          type="button"
+        >
+          Cancelar
+        </button>
+        <button
+          class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C0392B] hover:bg-[#A93226] disabled:bg-neutral-300 disabled:cursor-not-allowed rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[44px]"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-lock w-4 h-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              height="11"
+              rx="2"
+              ry="2"
+              width="18"
+              x="3"
+              y="11"
+            />
+            <path
+              d="M7 11V7a5 5 0 0 1 10 0v4"
+            />
+          </svg>
+          <span>
+            CERRAR CAJA
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Caja Modals - Pruebas de Caracterización y Red de Seguridad > CierreDetalleModal > debe renderizar detalle histórico con valores numéricos y snapshot consistente 1`] = `
+<div>
+  <div
+    aria-labelledby="detalle-cierre-title"
+    aria-modal="true"
+    class="cierre-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-fill-strong/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+    role="dialog"
+  >
+    <style>
+      
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .cierre-modal-container, .cierre-modal-container * {
+            visibility: visible;
+          }
+          .cierre-modal-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-shadow: none !important;
+            border: none !important;
+            max-height: none !important;
+            overflow: visible !important;
+          }
+          .cierre-modal-overlay {
+            position: static !important;
+            background: none !important;
+            padding: 0 !important;
+            overflow: visible !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .break-inside-avoid {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+        }
+      
+    </style>
+    <div
+      class="cierre-modal-container bg-surface border border-neutral-200 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden text-ink animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="shrink-0 p-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50"
+      >
+        <div
+          class="flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-amber-50 text-accent border border-amber-200/80 flex items-center justify-center shadow-xs"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-file-text w-5 h-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+              />
+              <path
+                d="M14 2v5a1 1 0 0 0 1 1h5"
+              />
+              <path
+                d="M10 9H8"
+              />
+              <path
+                d="M16 13H8"
+              />
+              <path
+                d="M16 17H8"
+              />
+            </svg>
+          </div>
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-wider text-accent"
+            >
+              Historial de Caja
+            </p>
+            <h2
+              class="font-sans text-xl font-bold text-ink tracking-tight"
+              id="detalle-cierre-title"
+            >
+              Detalle de Cierre de Caja
+            </h2>
+          </div>
+        </div>
+        <button
+          aria-label="Cerrar modal"
+          class="no-print modal-close-btn"
+          title="Cerrar modal"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-x w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="p-6 overflow-y-auto space-y-5 flex-1 text-ink"
+      >
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid"
+        >
+          <div
+            class="space-y-1.5 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 sm:pr-3"
+          >
+            <span
+              class="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-calendar w-3.5 h-3.5 text-accent"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8 2v3"
+                />
+                <path
+                  d="M16 2v3"
+                />
+                <rect
+                  height="18"
+                  rx="2"
+                  width="18"
+                  x="3"
+                  y="3"
+                />
+                <path
+                  d="M3 9h18"
+                />
+              </svg>
+               Apertura del Turno
+            </span>
+            <p
+              class="font-bold text-stone-900 text-sm mt-0.5"
+            >
+              29/10/2026, 03:00
+            </p>
+            <p
+              class="text-neutral-600 flex items-center gap-1"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-user w-3 h-3 text-stone-500"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                />
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4"
+                />
+              </svg>
+              Cajero(a): 
+              <strong>
+                Carlos Cajero
+              </strong>
+            </p>
+            <p
+              class="text-neutral-500 text-xs"
+            >
+              Fondo inicial: 
+              <strong
+                class="text-neutral-800 tabular-nums"
+              >
+                S/ 
+                100.00
+              </strong>
+            </p>
+          </div>
+          <div
+            class="space-y-1.5 pt-1 sm:pt-0 sm:pl-2"
+          >
+            <span
+              class="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-clock w-3.5 h-3.5 text-accent"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+                <path
+                  d="M12 6v6l4 2"
+                />
+              </svg>
+               Cierre y Cuadre
+            </span>
+            <p
+              class="font-bold text-stone-900 text-sm mt-0.5"
+            >
+              29/10/2026, 11:00
+            </p>
+            <p
+              class="text-neutral-600 flex items-center gap-1"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-user w-3 h-3 text-stone-500"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                />
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4"
+                />
+              </svg>
+              Cerrado por: 
+              <strong>
+                Carlos Cajero
+              </strong>
+            </p>
+            <p
+              class="text-neutral-500 text-xs"
+            >
+              Transacciones: 
+              <strong
+                class="text-neutral-800"
+              >
+                15
+                 ventas emitidas
+              </strong>
+            </p>
+          </div>
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid"
+        >
+          <div
+            class="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3"
+          >
+            <div
+              class="flex items-center justify-between border-b border-neutral-200 pb-2"
+            >
+              <h3
+                class="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-4 h-4 text-accent"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11.5 4.5H6.75a3.75 3.75 0 0 0 0 7.5h1.5a3.75 3.75 0 0 1 0 7.5H3"
+                  />
+                  <path
+                    d="M20.5 4L14.5 20"
+                  />
+                </svg>
+                Flujo de Ventas del Turno
+              </h3>
+            </div>
+            <div
+              class="space-y-2 text-xs"
+            >
+              <div
+                class="flex justify-between items-center text-neutral-600"
+              >
+                <span>
+                  Monto Inicial (Apertura):
+                </span>
+                <span
+                  class="font-bold text-neutral-800 tabular-nums"
+                >
+                  S/ 
+                  100.00
+                </span>
+              </div>
+              <div
+                class="flex justify-between items-center text-neutral-600"
+              >
+                <span
+                  class="flex items-center gap-1"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-banknote w-3.5 h-3.5 text-stone-500"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      height="12"
+                      rx="2"
+                      width="20"
+                      x="2"
+                      y="6"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="2"
+                    />
+                    <path
+                      d="M6 12h.01M18 12h.01"
+                    />
+                  </svg>
+                  Ventas en Efectivo:
+                </span>
+                <span
+                  class="font-bold text-ink tabular-nums"
+                >
+                  S/ 
+                  300.00
+                </span>
+              </div>
+              <div
+                class="flex justify-between items-center text-neutral-600"
+              >
+                <span
+                  class="flex items-center gap-1"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-smartphone w-3.5 h-3.5 text-purple-600"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      height="20"
+                      rx="2"
+                      ry="2"
+                      width="14"
+                      x="5"
+                      y="2"
+                    />
+                    <path
+                      d="M12 18h.01"
+                    />
+                  </svg>
+                  Ventas por Yape / QR:
+                </span>
+                <span
+                  class="font-bold text-purple-900 tabular-nums"
+                >
+                  S/ 
+                  200.00
+                </span>
+              </div>
+              <div
+                class="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm"
+              >
+                <span
+                  class="text-ink"
+                >
+                  Total de ventas facturadas:
+                </span>
+                <span
+                  class="text-accent text-base tabular-nums"
+                >
+                  S/ 
+                  500.00
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="p-4 bg-surface border border-neutral-200 rounded-xl shadow-xs space-y-3"
+          >
+            <div
+              class="flex items-center justify-between border-b border-neutral-200 pb-2"
+            >
+              <h3
+                class="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-banknote w-4 h-4 text-accent"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    height="12"
+                    rx="2"
+                    width="20"
+                    x="2"
+                    y="6"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="2"
+                  />
+                  <path
+                    d="M6 12h.01M18 12h.01"
+                  />
+                </svg>
+                Arqueo y Cuadratura de Efectivo
+              </h3>
+            </div>
+            <div
+              class="space-y-2 text-xs"
+            >
+              <div
+                class="flex justify-between items-center text-neutral-600"
+              >
+                <span>
+                  Efectivo Físico Esperado:
+                </span>
+                <span
+                  class="font-bold text-ink tabular-nums"
+                >
+                  S/ 
+                  400.00
+                </span>
+              </div>
+              <div
+                class="flex justify-between items-center text-neutral-600"
+              >
+                <span>
+                  Efectivo Físico Contado:
+                </span>
+                <span
+                  class="font-bold text-stone-900 tabular-nums"
+                >
+                  <span
+                    class="tabular-nums"
+                  >
+                    S/ 
+                    400.00
+                  </span>
+                </span>
+              </div>
+              <div
+                class="flex justify-between items-center text-neutral-600"
+              >
+                <span>
+                  Diferencia de Cuadre:
+                </span>
+                <span
+                  class="font-bold tabular-nums"
+                >
+                  <span
+                    class="tabular-nums"
+                  >
+                    S/ 0.00
+                  </span>
+                </span>
+              </div>
+              <div
+                class="pt-2 border-t border-neutral-200"
+              >
+                <div
+                  class="p-2.5 rounded-lg border text-center font-bold text-xs tracking-wider uppercase tabular-nums bg-emerald-100 border-emerald-300 text-emerald-900"
+                >
+                  Estado: Cuadra (S/ 0.00)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="p-3.5 bg-stone-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid"
+        >
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-neutral-500 block mb-1"
+          >
+            Observación del cierre
+          </span>
+          <p
+            class="text-neutral-800 italic font-medium"
+          >
+            "
+            Turno sin incidentes.
+            "
+          </p>
+        </div>
+        <div
+          class="space-y-4"
+        >
+          <div
+            class="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs"
+          >
+            <div
+              class="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils lucide-fork-knife w-4 h-4 text-accent"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                  />
+                  <path
+                    d="M7 2v20"
+                  />
+                  <path
+                    d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-xs uppercase tracking-wider text-ink"
+                >
+                  1. Productos de Carta
+                </h4>
+              </div>
+              <span
+                class="text-xs text-neutral-500 font-semibold"
+              >
+                5
+                 unidades
+              </span>
+            </div>
+            <div
+              class="overflow-x-auto"
+            >
+              <table
+                class="w-full text-left border-collapse"
+              >
+                <thead
+                  class="bg-canvas border-b border-line text-xs uppercase font-semibold text-ink-muted tracking-wider"
+                >
+                  <tr>
+                    <th
+                      class="px-4 py-2.5"
+                    >
+                      Plato / Producto
+                    </th>
+                    <th
+                      class="px-4 py-2.5 text-center w-24"
+                    >
+                      Cantidad
+                    </th>
+                    <th
+                      class="px-4 py-2.5 text-right w-28 tabular-nums whitespace-nowrap"
+                    >
+                      Subtotal (S/)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="divide-y divide-line-soft text-sm"
+                >
+                  <tr
+                    class="hover:bg-neutral-50/40 transition-colors border-b border-line-soft"
+                  >
+                    <td
+                      class="px-4 py-2.5 font-semibold text-sm text-ink"
+                    >
+                      Lomo Saltado
+                    </td>
+                    <td
+                      class="px-4 py-2.5 text-center font-medium text-sm text-neutral-700 tabular-nums"
+                    >
+                      5
+                    </td>
+                    <td
+                      class="px-4 py-2.5 text-right font-semibold text-sm text-ink tabular-nums"
+                    >
+                      S/ 
+                      150.00
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot
+                  class="bg-canvas border-t border-line font-semibold text-xs"
+                >
+                  <tr>
+                    <td
+                      class="px-4 py-2.5 text-ink"
+                    >
+                      Subtotal Carta
+                    </td>
+                    <td
+                      class="px-4 py-2.5 text-center text-neutral-800 tabular-nums font-semibold"
+                    >
+                      5
+                    </td>
+                    <td
+                      class="px-4 py-2.5 text-right text-accent tabular-nums font-bold text-sm"
+                    >
+                      S/ 
+                      150.00
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <div
+            class="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs"
+          >
+            <div
+              class="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils lucide-fork-knife w-4 h-4 text-amber-600"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                  />
+                  <path
+                    d="M7 2v20"
+                  />
+                  <path
+                    d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-xs uppercase tracking-wider text-ink"
+                >
+                  2. Menús Completos
+                </h4>
+              </div>
+              <span
+                class="text-xs text-neutral-500 font-semibold"
+              >
+                0
+                 unidades
+              </span>
+            </div>
+            <div
+              class="py-4 text-center text-xs text-neutral-500 italic"
+            >
+              Sin menús completos vendidos en este turno.
+            </div>
+          </div>
+          <div
+            class="border border-neutral-200 rounded-xl overflow-hidden bg-surface break-inside-avoid shadow-xs"
+          >
+            <div
+              class="bg-neutral-50 px-4 py-2.5 border-b border-neutral-200 flex items-center justify-between"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-utensils lucide-fork-knife w-4 h-4 text-emerald-600"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"
+                  />
+                  <path
+                    d="M7 2v20"
+                  />
+                  <path
+                    d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"
+                  />
+                </svg>
+                <h4
+                  class="font-bold text-xs uppercase tracking-wider text-ink"
+                >
+                  3. Componentes Elegidos en Menús
+                </h4>
+              </div>
+              <span
+                class="text-xs text-neutral-500 font-semibold"
+              >
+                0
+                 elecciones
+              </span>
+            </div>
+            <div
+              class="py-4 text-center text-xs text-neutral-500 italic"
+            >
+              Sin componentes de menú elegidos en este turno.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="no-print bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-wrap items-center justify-between gap-3 shrink-0"
+      >
+        <button
+          class="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+          type="button"
+        >
+          Cerrar
+        </button>
+        <div
+          class="flex items-center gap-2"
+        >
+          <button
+            class="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 hover:bg-neutral-50 disabled:opacity-40 rounded-xl transition-colors cursor-pointer min-h-[44px]"
+            title="Imprimir resumen mediante diálogo del navegador"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-printer w-4 h-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+              />
+              <path
+                d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"
+              />
+              <rect
+                height="8"
+                rx="1"
+                width="12"
+                x="6"
+                y="14"
+              />
+            </svg>
+            Imprimir
+          </button>
+          <button
+            class="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-primary hover:bg-primary-hover disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
+            title="Descargar comprobante oficial en formato PDF"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-download w-4 h-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 15V3"
+              />
+              <path
+                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+              />
+              <path
+                d="m7 10 5 5 5-5"
+              />
+            </svg>
+            Descargar comprobante PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
