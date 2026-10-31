@@ -1,502 +1,284 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { MainLayout } from '../layouts/MainLayout';
-import { UsersPage } from './UsersPage';
-import { MesasPage } from './MesasPage';
-import { ProductsPage } from './ProductsPage';
-import { MenuDiaPage } from './MenuDiaPage';
-import { PedidoMesaPage } from './PedidoMesaPage';
-import { PedidoLlevarPage } from './PedidoLlevarPage';
-import { PedidosPage } from './PedidosPage';
-import { CocinaPage } from './CocinaPage';
-import { CobrosPage } from './CobrosPage';
-import { VentasPage } from './VentasPage';
-import { HistorialCierresPage } from './HistorialCierresPage';
-import { ReportesPage } from './ReportesPage';
-import { DashboardPage } from './DashboardPage';
-import { LogoutModal } from '../components/layout';
-import { InactivityModal } from '../components/layout';
-import { ChangePasswordModal } from '../components/usuarios';
-import { ConfiguracionModal } from '../components/configuracion';
-import { ConfiguracionPage } from './ConfiguracionPage';
-import { AvisoComandaModal, AvisoNuevoPedidoCocinaModal } from '../components/cocina';
-import { cajaService } from '../services/cajaService';
-import { useKitchenNotifications } from '../hooks/useKitchenNotifications';
-import { useSessionLifecycle } from '../hooks/useSessionLifecycle';
-import { Check, ShieldAlert } from 'lucide-react';
-import type { UserSession } from '../types/auth';
-import type { CajaActualResponseDto } from '../types/caja';
-
-interface HomePageProps {
-  session: UserSession;
-  onLogout: (banner?: {
-    type: 'success' | 'error' | 'info' | 'warning';
-    message: string;
-  }) => void;
-  onUpdateSession: (session: UserSession) => void;
-}
-
-export const HomePage: React.FC<HomePageProps> = ({
-  session,
-  onLogout,
-  onUpdateSession
-}) => {
-  // RN-124, RV-144, E-346: Todo usuario llega a su pantalla de inicio tras iniciar sesión
-  const [paginaActiva, setPaginaActiva] = useState('inicio');
-
-  // Filtro de estado para navegación hacia Pedidos (RV-146, E-350)
-  const [filtroEstadoPedidos, setFiltroEstadoPedidos] = useState<string>('');
-
-  // Estado de mesa seleccionada para pedido (CUS07)
-  const [mesaSeleccionadaParaPedido, setMesaSeleccionadaParaPedido] = useState<string | null>(null);
-  const [modoPedidoMesa, setModoPedidoMesa] = useState<'nuevo' | 'ampliacion'>('nuevo');
-  const [pedidoIdParaPedidoMesa, setPedidoIdParaPedidoMesa] = useState<string | null>(null);
-
-  // Estados para navegación contextual hacia Cobros (CUS11)
-  const [mesaParaCobro, setMesaParaCobro] = useState<{ id: string; nombre: string } | null>(null);
-  const [pedidoIdParaCobro, setPedidoIdParaCobro] = useState<string | null>(null);
-
-  // Sincronización compartida del estado de caja (CUS 13)
-  const [cajaGlobal, setCajaGlobal] = useState<CajaActualResponseDto | null>(null);
-
-  const consultarCajaGlobal = useCallback(async () => {
-    if (session.rol !== 'Cajero' && session.rol !== 'Administrador') return;
-    try {
-      const data = await cajaService.obtenerActual(session.token);
-      setCajaGlobal(data);
-    } catch {
-      // ignore network errors
-    }
-  }, [session.rol, session.token]);
-
-  useEffect(() => {
-    consultarCajaGlobal();
-    const interval = setInterval(consultarCajaGlobal, 30000);
-    return () => clearInterval(interval);
-  }, [consultarCajaGlobal]);
-
-  // RN-106 / RN-116: Redirección automática si un rol no autorizado intenta acceder a Historial de Cierres o Reportes
-  useEffect(() => {
-    if (paginaActiva === 'historial-cierres' && session.rol !== 'Administrador') {
-      const defaultPage =
-        session.rol === 'Cajero'
-          ? 'pedidos-llevar'
-          : session.rol === 'Mozo'
-          ? 'mesas'
-          : session.rol === 'Cocinero'
-          ? 'cocina'
-          : 'inicio';
-      setPaginaActiva(defaultPage);
-      return;
-    }
-    if (paginaActiva === 'reportes' && session.rol !== 'Administrador') {
-      const defaultPage =
-        session.rol === 'Cajero'
-          ? 'pedidos-llevar'
-          : session.rol === 'Mozo'
-          ? 'mesas'
-          : session.rol === 'Cocinero'
-          ? 'cocina'
-          : 'inicio';
-      setPaginaActiva(defaultPage);
-      return;
-    }
-    if (paginaActiva === 'pedidos-mesa' || paginaActiva === 'pedido-mesa') {
-      if (session.rol !== 'Administrador' && session.rol !== 'Mozo') {
-        const defaultPage =
-          session.rol === 'Cajero'
-            ? 'pedidos-llevar'
-            : session.rol === 'Cocinero'
-            ? 'cocina'
-            : 'inicio';
-        setPaginaActiva(defaultPage);
-        return;
-      }
-      if (!mesaSeleccionadaParaPedido) {
-        setPaginaActiva('mesas');
-      }
-    }
-  }, [paginaActiva, session.rol, mesaSeleccionadaParaPedido]);
-
-  // Estados de Modales del CUS-03
-  const [mostrarModalPassword, setMostrarModalPassword] = useState(false);
-  const [mostrarModalConfiguracion, setMostrarModalConfiguracion] = useState(false);
-
-  // RV-28: Mensaje flotante de confirmación (Toast) durante 4 segundos
-  const [toastMensaje, setToastMensaje] = useState<string | null>(null);
-
-  const {
-    mostrarModalLogout,
-    setMostrarModalLogout,
-    cerrandoLogout,
-    mostrarModalInactividad,
-    handleConfirmLogout,
-    handleContinuarSesion,
-    handleTimeoutInactividad,
-  } = useSessionLifecycle({
-    session,
-    paginaActiva,
-    onLogout,
-    onUpdateSession,
-  });
-
-  const {
-    avisosPendientes,
-    cerrandoAviso,
-    handleCerrarAviso,
-    avisoNuevaComandaCocinero,
-    setAvisoNuevaComandaCocinero,
-  } = useKitchenNotifications({
-    session,
-    paginaActiva,
-  });
-
-  // Éxito al cambiar contraseña (HU-09 / RF-07 / Vista 3.2)
-  const handlePasswordSuccess = (nuevoToken: string, mensaje: string) => {
-    onUpdateSession({ ...session, token: nuevoToken });
-    setToastMensaje(mensaje || 'Contraseña actualizada correctamente.');
-    setTimeout(() => {
-      setToastMensaje(null);
-    }, 4000);
-  };
-
-  // Bloqueo por 5 intentos fallidos consecutivos (RN-17 / E-51)
-  const handleForceLogoutDueToFailedAttempts = () => {
-    setMostrarModalPassword(false);
-    onLogout({
-      type: 'error',
-      message: 'Por seguridad se cerró su sesión. Superó los 5 intentos fallidos.'
-    });
-  };
-
-  // Navegación contextual desde Dashboard (CUS15)
-  const handleDashboardNavigate = (pagina: string, params?: any) => {
-    if (pagina === 'cobros' || pagina === 'caja') {
-      if (session.rol === 'Cajero') {
-        setPaginaActiva('caja');
-      } else {
-        setFiltroEstadoPedidos('Listo');
-        setPaginaActiva('pedidos');
-      }
-      return;
-    }
-    if (pagina === 'pedidos') {
-      const est = params?.estado;
-      const normalizado = est
-        ? est.toLowerCase() === 'listo'
-          ? 'Listo'
-          : est.toLowerCase() === 'pendiente'
-          ? 'Pendiente'
-          : est.toLowerCase() === 'en_proceso' || est.toLowerCase() === 'enpreparacion'
-          ? 'EnPreparacion'
-          : est
-        : '';
-      setFiltroEstadoPedidos(normalizado);
-    }
-    if (pagina === 'caja' || pagina === 'cobros') {
-      if (session.rol === 'Cajero') {
-        if (params?.pedidoId) {
-          setPedidoIdParaCobro(params.pedidoId);
-        }
-        if (params?.mesa) {
-          setMesaParaCobro(params.mesa);
-        }
-        setPaginaActiva('caja');
-      } else {
-        setFiltroEstadoPedidos('listo');
-        setPaginaActiva('pedidos');
-      }
-      return;
-    }
-    if (pagina === 'pedido-mesa' || pagina === 'pedidos-mesa') {
-      if (!params?.mesaId) {
-        setMesaSeleccionadaParaPedido(null);
-        setPaginaActiva('mesas');
-        return;
-      }
-      setMesaSeleccionadaParaPedido(params.mesaId);
-      setModoPedidoMesa(params.modo || 'nuevo');
-      setPedidoIdParaPedidoMesa(params.pedidoId || null);
-      setPaginaActiva('pedidos-mesa');
-      return;
-    }
-    setPaginaActiva(pagina);
-  };
-
-  return (
-    <MainLayout
-      session={session}
-      onLogout={() => setMostrarModalLogout(true)}
-      onCambiarPassword={() => setMostrarModalPassword(true)}
-      onAbrirConfiguracion={() => setPaginaActiva('configuracion')}
-      paginaActiva={paginaActiva}
-      pedidosListosCount={avisosPendientes.length}
-      cajaEstado={cajaGlobal?.estado}
-      onSelectPagina={(p) => {
-        if (p === 'historial-cierres' && session.rol !== 'Administrador') {
-          return;
-        }
-        if (p === 'pedido-mesa' || p === 'pedidos-mesa') {
-          setMesaSeleccionadaParaPedido(null);
-          setPaginaActiva('mesas');
-          return;
-        }
-        if (p === 'cobros') {
-          setMesaSeleccionadaParaPedido(null);
-          setPaginaActiva('caja');
-          return;
-        }
-        setMesaSeleccionadaParaPedido(null);
-        setPaginaActiva(p);
-      }}
-    >
-      {paginaActiva === 'productos' && session.rol === 'Administrador' ? (
-        <ProductsPage session={session} onLogout={onLogout} />
-      ) : paginaActiva === 'menu-dia' && (session.rol === 'Administrador' || session.rol === 'Cocinero') ? (
-        <MenuDiaPage
-          session={session}
-          onLogout={onLogout}
-          onNavigateToProductos={() => setPaginaActiva('productos')}
-        />
-      ) : paginaActiva === 'usuarios' && session.rol === 'Administrador' ? (
-        <UsersPage session={session} onLogout={onLogout} />
-      ) : paginaActiva === 'mesas' && (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') ? (
-        <MesasPage
-          session={session}
-          onLogout={onLogout}
-          onNavigateToPedido={(mesaId, modo, pedidoId) => {
-            setMesaSeleccionadaParaPedido(mesaId);
-            setModoPedidoMesa(modo || 'nuevo');
-            setPedidoIdParaPedidoMesa(pedidoId || null);
-            setPaginaActiva('pedidos-mesa');
-          }}
-          onNavigateToCobro={(mesa) => {
-            setMesaParaCobro(mesa);
-            setPaginaActiva('caja');
-          }}
-          onNavigateToPedidoLlevar={() => {
-            setPaginaActiva('pedidos-llevar');
-          }}
-          onNavigateToMenuDia={() => {
-            setPaginaActiva('menu-dia');
-          }}
-        />
-      ) : paginaActiva === 'pedidos-mesa' && (session.rol === 'Administrador' || session.rol === 'Mozo') ? (
-        mesaSeleccionadaParaPedido ? (
-          <PedidoMesaPage
-            session={session}
-            mesaIdInicial={mesaSeleccionadaParaPedido}
-            modoInicial={modoPedidoMesa}
-            pedidoIdInicial={pedidoIdParaPedidoMesa}
-            onLogout={onLogout}
-            onVolverAMesas={() => {
-              setMesaSeleccionadaParaPedido(null);
-              setPedidoIdParaPedidoMesa(null);
-              setPaginaActiva('mesas');
-            }}
-            onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
-          />
-        ) : null
-      ) : paginaActiva === 'pedidos-llevar' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
-        <PedidoLlevarPage
-          session={session}
-          onLogout={onLogout}
-          onVolver={() => setPaginaActiva('mesas')}
-          onNavigateToCobro={() => {
-            setPaginaActiva('caja');
-          }}
-          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
-        />
-      ) : paginaActiva === 'pedidos' && (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero') ? (
-        <PedidosPage
-          session={session}
-          onLogout={onLogout}
-          filtroEstadoInicial={filtroEstadoPedidos}
-          onNavigateToCobro={(pedidoId) => {
-            setPedidoIdParaCobro(pedidoId);
-            setPaginaActiva('caja');
-          }}
-        />
-      ) : (paginaActiva === 'caja' || paginaActiva === 'cobros') && session.rol === 'Cajero' ? (
-        <CobrosPage
-          session={session}
-          onLogout={onLogout}
-          mesaSeleccionadaInicial={mesaParaCobro}
-          pedidoIdInicial={pedidoIdParaCobro}
-          onClearMesaInicial={() => {
-            setMesaParaCobro(null);
-            setPedidoIdParaCobro(null);
-          }}
-          onCajaEstadoChange={consultarCajaGlobal}
-        />
-      ) : paginaActiva === 'ventas' && (session.rol === 'Administrador' || session.rol === 'Cajero') ? (
-        <VentasPage
-          session={session}
-          onLogout={onLogout}
-        />
-      ) : paginaActiva === 'historial-cierres' ? (
-        // RN-106: session.rol === 'Administrador' && (
-        session.rol === 'Administrador' ? (
-          <HistorialCierresPage
-            session={session}
-            onLogout={onLogout}
-          />
-        ) : (
-          <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-            <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
-              <ShieldAlert className="w-8 h-8" />
-            </div>
-            <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
-              Acceso Restringido
-            </h2>
-            <p className="text-neutral-600 max-w-md mx-auto text-sm">
-              No tiene permiso para acceder al Historial de Cierres. Este módulo está reservado exclusivamente para el rol Administrador.
-            </p>
-            <button
-              type="button"
-              onClick={() =>
-                setPaginaActiva(
-                  session.rol === 'Cajero'
-                    ? 'pedidos-llevar'
-                    : session.rol === 'Mozo'
-                    ? 'mesas'
-                    : session.rol === 'Cocinero'
-                    ? 'cocina'
-                    : 'inicio'
-                )
-              }
-              className="mt-6 px-4 py-2 bg-primary text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-primary-hover transition-colors cursor-pointer"
-            >
-              Ir al módulo principal
-            </button>
-          </div>
-        )
-      ) : paginaActiva === 'reportes' ? (
-        session.rol === 'Administrador' ? (
-          <ReportesPage
-            session={session}
-            onLogout={onLogout}
-            onNavigateToCierres={() => setPaginaActiva('historial-cierres')}
-          />
-        ) : (
-          <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-            <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
-              <ShieldAlert className="w-8 h-8" />
-            </div>
-            <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
-              Acceso Restringido
-            </h2>
-            <p className="text-neutral-600 max-w-md mx-auto text-sm">
-              No tiene permiso para acceder a Reportes. Este módulo está restringido exclusivamente para el rol Administrador.
-            </p>
-            <button
-              type="button"
-              onClick={() =>
-                setPaginaActiva(
-                  session.rol === 'Cajero'
-                    ? 'pedidos-llevar'
-                    : session.rol === 'Mozo'
-                    ? 'mesas'
-                    : session.rol === 'Cocinero'
-                    ? 'cocina'
-                    : 'inicio'
-                )
-              }
-              className="mt-6 px-4 py-2 bg-primary text-white rounded-xl font-semibold text-xs shadow-sm hover:bg-primary-hover transition-colors cursor-pointer"
-            >
-              Ir al módulo principal
-            </button>
-          </div>
-        )
-      ) : paginaActiva === 'cocina' && session.rol === 'Cocinero' ? (
-        <CocinaPage
-          session={session}
-          onLogout={onLogout}
-          onUpdateSession={onUpdateSession}
-        />
-      ) : paginaActiva === 'configuracion' ? (
-        <ConfiguracionPage
-          session={session}
-          onLogout={onLogout}
-        />
-      ) : (
-        <DashboardPage
-          session={session}
-          onNavigate={handleDashboardNavigate}
-        />
-      )}
-
-      {/* Vista 3.1: Modal de confirmación para cerrar sesión (MSG-40 / RV-31) */}
-      <LogoutModal
-        isOpen={mostrarModalLogout}
-        onClose={() => setMostrarModalLogout(false)}
-        onConfirm={handleConfirmLogout}
-        loading={cerrandoLogout}
-      />
-
-      {/* Vista 3.1b: Modal de aviso de inactividad (MSG-42 / RV-32 / RN-20) */}
-      <InactivityModal
-        isOpen={mostrarModalInactividad}
-        onContinue={handleContinuarSesion}
-        onTimeout={handleTimeoutInactividad}
-      />
-
-      {/* Vista 3.2: Modal de cambio de contraseña propia (HU-09 / RF-07) */}
-      <ChangePasswordModal
-        isOpen={mostrarModalPassword}
-        onClose={() => setMostrarModalPassword(false)}
-        token={session.token}
-        onSuccess={handlePasswordSuccess}
-        onForceLogoutDueToFailedAttempts={handleForceLogoutDueToFailedAttempts}
-      />
-
-      {/* Modal de Configuración y Ergonomía (Modo Zurdo / Diestro / Tema) */}
-      <ConfiguracionModal
-        isOpen={mostrarModalConfiguracion}
-        onClose={() => setMostrarModalConfiguracion(false)}
-        token={session.token}
-      />
-
-      {/* CUS09.3: Modal emergente de aviso de comanda lista (HU27 / RF-27 / RN-71 / RV-83) */}
-      <AvisoComandaModal
-        aviso={avisosPendientes.length > 0 ? avisosPendientes[0] : null}
-        onCerrar={handleCerrarAviso}
-        cargando={cerrandoAviso}
-      />
-
-      {/* Modal emergente de nueva comanda para cocinero */}
-      <AvisoNuevoPedidoCocinaModal
-        aviso={avisoNuevaComandaCocinero}
-        onCerrar={() => setAvisoNuevaComandaCocinero(null)}
-        onIrACocina={() => {
-          setAvisoNuevaComandaCocinero(null);
-          setPaginaActiva('cocina');
-        }}
-      />
-
-      {/* Notificación flotante de confirmación (MSG-47 / RV-28 - 4 segundos) */}
-      {toastMensaje && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 bg-[#1B4332] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 animate-in slide-in-from-bottom-4 fade-in duration-200"
-        >
-          <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300">
-            <Check className="w-4 h-4 stroke-[3]" />
-          </div>
-          <span className="text-xs font-semibold tracking-wide">{toastMensaje}</span>
-          <button
-            type="button"
-            onClick={() => setToastMensaje(null)}
-            className="ml-3 text-neutral-500 hover:text-white text-base leading-none p-1 cursor-pointer"
-            aria-label="Cerrar notificación"
-          >
-            ×
-          </button>
-        </div>
-      )}
-    </MainLayout>
-  );
-};
-
-export default HomePage;
-
+import React, { useState, useEffect, useCallback } from 'react';
+import { MainLayout } from '../layouts/MainLayout';
+import { cajaService } from '../services/cajaService';
+import { useKitchenNotifications } from '../hooks/useKitchenNotifications';
+import { useSessionLifecycle } from '../hooks/useSessionLifecycle';
+import type { UserSession } from '../types/auth';
+import type { CajaActualResponseDto } from '../types/caja';
+import { HomeActiveView, HomePageModals } from './home';
+
+interface HomePageProps {
+  session: UserSession;
+  onLogout: (banner?: {
+    type: 'success' | 'error' | 'info' | 'warning';
+    message: string;
+  }) => void;
+  onUpdateSession: (session: UserSession) => void;
+}
+
+export const HomePage: React.FC<HomePageProps> = ({
+  session,
+  onLogout,
+  onUpdateSession
+}) => {
+  // RN-124, RV-144, E-346: Todo usuario llega a su pantalla de inicio tras iniciar sesión
+  const [paginaActiva, setPaginaActiva] = useState('inicio');
+
+  // Filtro de estado para navegación hacia Pedidos (RV-146, E-350)
+  const [filtroEstadoPedidos, setFiltroEstadoPedidos] = useState<string>('');
+
+  // Estado de mesa seleccionada para pedido (CUS07)
+  const [mesaSeleccionadaParaPedido, setMesaSeleccionadaParaPedido] = useState<string | null>(null);
+  const [modoPedidoMesa, setModoPedidoMesa] = useState<'nuevo' | 'ampliacion'>('nuevo');
+  const [pedidoIdParaPedidoMesa, setPedidoIdParaPedidoMesa] = useState<string | null>(null);
+
+  // Estados para navegación contextual hacia Cobros (CUS11)
+  const [mesaParaCobro, setMesaParaCobro] = useState<{ id: string; nombre: string } | null>(null);
+  const [pedidoIdParaCobro, setPedidoIdParaCobro] = useState<string | null>(null);
+
+  // Sincronización compartida del estado de caja (CUS 13)
+  const [cajaGlobal, setCajaGlobal] = useState<CajaActualResponseDto | null>(null);
+
+  const consultarCajaGlobal = useCallback(async () => {
+    if (session.rol !== 'Cajero' && session.rol !== 'Administrador') return;
+    try {
+      const data = await cajaService.obtenerActual(session.token);
+      setCajaGlobal(data);
+    } catch {
+      // ignore network errors
+    }
+  }, [session.rol, session.token]);
+
+  useEffect(() => {
+    consultarCajaGlobal();
+    const interval = setInterval(consultarCajaGlobal, 30000);
+    return () => clearInterval(interval);
+  }, [consultarCajaGlobal]);
+
+  // RN-106 / RN-116: Redirección automática si un rol no autorizado intenta acceder a Historial de Cierres o Reportes
+  useEffect(() => {
+    if (paginaActiva === 'historial-cierres' && session.rol !== 'Administrador') {
+      const defaultPage =
+        session.rol === 'Cajero'
+          ? 'pedidos-llevar'
+          : session.rol === 'Mozo'
+          ? 'mesas'
+          : session.rol === 'Cocinero'
+          ? 'cocina'
+          : 'inicio';
+      setPaginaActiva(defaultPage);
+      return;
+    }
+    if (paginaActiva === 'reportes' && session.rol !== 'Administrador') {
+      const defaultPage =
+        session.rol === 'Cajero'
+          ? 'pedidos-llevar'
+          : session.rol === 'Mozo'
+          ? 'mesas'
+          : session.rol === 'Cocinero'
+          ? 'cocina'
+          : 'inicio';
+      setPaginaActiva(defaultPage);
+      return;
+    }
+    if (paginaActiva === 'pedidos-mesa' || paginaActiva === 'pedido-mesa') {
+      if (session.rol !== 'Administrador' && session.rol !== 'Mozo') {
+        const defaultPage =
+          session.rol === 'Cajero'
+            ? 'pedidos-llevar'
+            : session.rol === 'Cocinero'
+            ? 'cocina'
+            : 'inicio';
+        setPaginaActiva(defaultPage);
+        return;
+      }
+      if (!mesaSeleccionadaParaPedido) {
+        setPaginaActiva('mesas');
+      }
+    }
+  }, [paginaActiva, session.rol, mesaSeleccionadaParaPedido]);
+
+  // Estados de Modales del CUS-03
+  const [mostrarModalPassword, setMostrarModalPassword] = useState(false);
+  const [mostrarModalConfiguracion, setMostrarModalConfiguracion] = useState(false);
+
+  // RV-28: Mensaje flotante de confirmación (Toast) durante 4 segundos
+  const [toastMensaje, setToastMensaje] = useState<string | null>(null);
+
+  const {
+    mostrarModalLogout,
+    setMostrarModalLogout,
+    cerrandoLogout,
+    mostrarModalInactividad,
+    handleConfirmLogout,
+    handleContinuarSesion,
+    handleTimeoutInactividad,
+  } = useSessionLifecycle({
+    session,
+    paginaActiva,
+    onLogout,
+    onUpdateSession,
+  });
+
+  const {
+    avisosPendientes,
+    cerrandoAviso,
+    handleCerrarAviso,
+    avisoNuevaComandaCocinero,
+    setAvisoNuevaComandaCocinero,
+  } = useKitchenNotifications({
+    session,
+    paginaActiva,
+  });
+
+  // Éxito al cambiar contraseña (HU-09 / RF-07 / Vista 3.2)
+  const handlePasswordSuccess = (nuevoToken: string, mensaje: string) => {
+    onUpdateSession({ ...session, token: nuevoToken });
+    setToastMensaje(mensaje || 'Contraseña actualizada correctamente.');
+    setTimeout(() => {
+      setToastMensaje(null);
+    }, 4000);
+  };
+
+  // Bloqueo por 5 intentos fallidos consecutivos (RN-17 / E-51)
+  const handleForceLogoutDueToFailedAttempts = () => {
+    setMostrarModalPassword(false);
+    onLogout({
+      type: 'error',
+      message: 'Por seguridad se cerró su sesión. Superó los 5 intentos fallidos.'
+    });
+  };
+
+  // Navegación contextual desde Dashboard (CUS15)
+  const handleDashboardNavigate = (pagina: string, params?: Record<string, unknown>) => {
+    if (pagina === 'cobros' || pagina === 'caja') {
+      if (session.rol === 'Cajero') {
+        setPaginaActiva('caja');
+      } else {
+        setFiltroEstadoPedidos('Listo');
+        setPaginaActiva('pedidos');
+      }
+      return;
+    }
+    if (pagina === 'pedidos') {
+      const est = typeof params?.estado === 'string' ? params.estado : '';
+      const normalizado = est
+        ? est.toLowerCase() === 'listo'
+          ? 'Listo'
+          : est.toLowerCase() === 'pendiente'
+          ? 'Pendiente'
+          : est.toLowerCase() === 'en_proceso' || est.toLowerCase() === 'enpreparacion'
+          ? 'EnPreparacion'
+          : est
+        : '';
+      setFiltroEstadoPedidos(normalizado);
+    }
+    if (pagina === 'caja' || pagina === 'cobros') {
+      if (session.rol === 'Cajero') {
+        if (typeof params?.pedidoId === 'string') {
+          setPedidoIdParaCobro(params.pedidoId);
+        }
+        if (params?.mesa && typeof params.mesa === 'object') {
+          setMesaParaCobro(params.mesa as { id: string; nombre: string });
+        }
+        setPaginaActiva('caja');
+      } else {
+        setFiltroEstadoPedidos('listo');
+        setPaginaActiva('pedidos');
+      }
+      return;
+    }
+    if (pagina === 'pedido-mesa' || pagina === 'pedidos-mesa') {
+      const mesaId = typeof params?.mesaId === 'string' ? params.mesaId : null;
+      if (!mesaId) {
+        setMesaSeleccionadaParaPedido(null);
+        setPaginaActiva('mesas');
+        return;
+      }
+      setMesaSeleccionadaParaPedido(mesaId);
+      setModoPedidoMesa((params?.modo as 'nuevo' | 'ampliacion') || 'nuevo');
+      setPedidoIdParaPedidoMesa(typeof params?.pedidoId === 'string' ? params.pedidoId : null);
+      setPaginaActiva('pedidos-mesa');
+      return;
+    }
+    setPaginaActiva(pagina);
+  };
+
+  return (
+    <MainLayout
+      session={session}
+      onLogout={() => setMostrarModalLogout(true)}
+      onCambiarPassword={() => setMostrarModalPassword(true)}
+      onAbrirConfiguracion={() => setPaginaActiva('configuracion')}
+      paginaActiva={paginaActiva}
+      pedidosListosCount={avisosPendientes.length}
+      cajaEstado={cajaGlobal?.estado}
+      onSelectPagina={(p) => {
+        if (p === 'historial-cierres' && session.rol !== 'Administrador') {
+          return;
+        }
+        if (p === 'pedido-mesa' || p === 'pedidos-mesa') {
+          setMesaSeleccionadaParaPedido(null);
+          setPaginaActiva('mesas');
+          return;
+        }
+        if (p === 'cobros') {
+          setMesaSeleccionadaParaPedido(null);
+          setPaginaActiva('caja');
+          return;
+        }
+        setMesaSeleccionadaParaPedido(null);
+        setPaginaActiva(p);
+      }}
+    >
+      <HomeActiveView
+        paginaActiva={paginaActiva}
+        session={session}
+        onLogout={onLogout}
+        onUpdateSession={onUpdateSession}
+        setPaginaActiva={setPaginaActiva}
+        mesaSeleccionadaParaPedido={mesaSeleccionadaParaPedido}
+        setMesaSeleccionadaParaPedido={setMesaSeleccionadaParaPedido}
+        modoPedidoMesa={modoPedidoMesa}
+        setModoPedidoMesa={setModoPedidoMesa}
+        pedidoIdParaPedidoMesa={pedidoIdParaPedidoMesa}
+        setPedidoIdParaPedidoMesa={setPedidoIdParaPedidoMesa}
+        mesaParaCobro={mesaParaCobro}
+        setMesaParaCobro={setMesaParaCobro}
+        pedidoIdParaCobro={pedidoIdParaCobro}
+        setPedidoIdParaCobro={setPedidoIdParaCobro}
+        filtroEstadoPedidos={filtroEstadoPedidos}
+        consultarCajaGlobal={consultarCajaGlobal}
+        handleDashboardNavigate={handleDashboardNavigate}
+      />
+
+      <HomePageModals
+        session={session}
+        mostrarModalLogout={mostrarModalLogout}
+        setMostrarModalLogout={setMostrarModalLogout}
+        cerrandoLogout={cerrandoLogout}
+        handleConfirmLogout={handleConfirmLogout}
+        mostrarModalInactividad={mostrarModalInactividad}
+        handleContinuarSesion={handleContinuarSesion}
+        handleTimeoutInactividad={handleTimeoutInactividad}
+        mostrarModalPassword={mostrarModalPassword}
+        setMostrarModalPassword={setMostrarModalPassword}
+        handlePasswordSuccess={handlePasswordSuccess}
+        handleForceLogoutDueToFailedAttempts={handleForceLogoutDueToFailedAttempts}
+        mostrarModalConfiguracion={mostrarModalConfiguracion}
+        setMostrarModalConfiguracion={setMostrarModalConfiguracion}
+        avisosPendientes={avisosPendientes}
+        handleCerrarAviso={handleCerrarAviso}
+        cerrandoAviso={cerrandoAviso}
+        avisoNuevaComandaCocinero={avisoNuevaComandaCocinero}
+        setAvisoNuevaComandaCocinero={setAvisoNuevaComandaCocinero}
+        setPaginaActiva={setPaginaActiva}
+        toastMensaje={toastMensaje}
+        setToastMensaje={setToastMensaje}
+      />
+    </MainLayout>
+  );
+};
+
+export default HomePage;
+

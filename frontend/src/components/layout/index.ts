@@ -5,4 +5,5 @@ export * from './Sidebar';
 export * from './InactivityModal';
 export * from './LogoutModal';
 export * from './AuthBrandPanel';
+export * from './AccesoRestringidoView';
 
