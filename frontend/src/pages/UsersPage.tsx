@@ -1,28 +1,21 @@
 import React from 'react';
 import {
-  Search,
   Plus,
   AlertCircle,
   CheckCircle2,
   ShieldAlert,
-  Edit2,
-  PowerOff,
-  Power,
-  Trash2,
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
-import { UserFormModal } from '../components/usuarios';
+import {
+  UserFormModal,
+  UsersFilterBar,
+  UsersTable,
+} from '../components/usuarios';
 import {
   ConfirmModal,
-  StatusBadge,
-  IconActionButton,
   TablePagination,
-  DataTable,
-  TableHead,
-  TableBody,
 } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
-import { obtenerIniciales } from '../utils/avatar';
 import { useUsersManagement } from '../hooks/useUsersManagement';
 
 export interface UsersPageProps {
@@ -74,20 +67,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
     handleDesactivarDirectoDesdeModal,
   } = useUsersManagement({ session, onLogout });
 
-  const obtenerEstiloRol = (rol: string) => {
-    switch (rol) {
-      case 'Administrador':
-        return 'bg-amber-50 text-amber-900 border-amber-200/90';
-      case 'Cajero':
-        return 'bg-emerald-50 text-emerald-900 border-emerald-200/90';
-      case 'Mozo':
-        return 'bg-role-mozo-bg text-role-mozo-text border-role-mozo-border';
-      case 'Cocinero':
-        return 'bg-role-cocinero-bg text-role-cocinero-text border-role-cocinero-border';
-      default:
-        return 'bg-neutral-100 text-neutral-700 border-neutral-200';
-    }
-  };
 
   if (!esAdmin) {
     return (
@@ -164,192 +143,39 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
         />
 
         {/* 2. Barra de Filtros y Búsqueda */}
-        <div className="bg-surface rounded-2xl border border-neutral-200/90 p-4 shadow-2xs flex flex-col sm:flex-row gap-3 items-center">
-          {/* Búsqueda por Nombre o Usuario */}
-          <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={busqueda}
-              maxLength={50}
-              onChange={(e) => {
-                setBusqueda(e.target.value);
-                setPagina(1);
-              }}
-              placeholder="Buscar por nombre o usuario..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-800 placeholder-neutral-400 bg-neutral-50/50 hover:bg-surface focus:bg-surface focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-all"
-            />
-          </div>
+        <UsersFilterBar
+          busqueda={busqueda}
+          onBusquedaChange={(val) => {
+            setBusqueda(val);
+            setPagina(1);
+          }}
+          filtroRol={filtroRol}
+          onFiltroRolChange={(val) => {
+            setFiltroRol(val);
+            setPagina(1);
+          }}
+          filtroEstado={filtroEstado}
+          onFiltroEstadoChange={(val) => {
+            setFiltroEstado(val);
+            setPagina(1);
+          }}
+          tieneFiltros={tieneFiltros}
+          onQuitarFiltros={handleQuitarFiltros}
+        />
 
-          {/* Filtro Rol */}
-          <div className="w-full sm:w-52">
-            <select
-              value={filtroRol}
-              onChange={(e) => {
-                setFiltroRol(e.target.value);
-                setPagina(1);
-              }}
-              aria-label="Filtrar por rol"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface hover:border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-colors cursor-pointer"
-            >
-              <option value="Todos">Todos los roles</option>
-              <option value="Administrador">Administrador</option>
-              <option value="Cajero">Cajero</option>
-              <option value="Mozo">Mozo</option>
-              <option value="Cocinero">Cocinero</option>
-            </select>
-          </div>
-
-          {/* Filtro Estado */}
-          <div className="w-full sm:w-52">
-            <select
-              value={filtroEstado}
-              onChange={(e) => {
-                setFiltroEstado(e.target.value);
-                setPagina(1);
-              }}
-              aria-label="Filtrar por estado"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-700 bg-surface hover:border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 min-h-[40px] transition-colors cursor-pointer"
-            >
-              <option value="Todos">Todos los estados</option>
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-            </select>
-          </div>
-
-          {tieneFiltros && (
-            <button
-              type="button"
-              onClick={handleQuitarFiltros}
-              className="text-xs font-semibold text-accent hover:text-accent p-2 rounded-xl hover:bg-amber-50 cursor-pointer whitespace-nowrap transition-colors"
-            >
-              Quitar filtros
-            </button>
-          )}
-        </div>
-
-        {/* 3. Tabla Principal con DataTable */}
-        <DataTable
-          loading={cargando}
-          error={errorCarga}
+        {/* 3. Tabla Principal */}
+        <UsersTable
+          usuarios={usuarios}
+          cargando={cargando}
+          errorCarga={errorCarga}
           onRetry={cargarUsuarios}
-          isEmpty={usuarios.length === 0}
-          emptyTitle="No se encontraron usuarios"
-          emptyMessage={
-            tieneFiltros
-              ? 'No hay usuarios que coincidan con los filtros aplicados. Pruebe con otro nombre o quite los filtros.'
-              : 'Aún no se han registrado usuarios en el sistema.'
-          }
-          emptyActionLabel={tieneFiltros ? 'Quitar filtros' : undefined}
-          onEmptyAction={tieneFiltros ? handleQuitarFiltros : undefined}
-          minWidth="min-w-[700px]"
-        >
-          <TableHead>
-            <tr>
-              <th scope="col" className="py-3.5 px-4">Nombre</th>
-              <th scope="col" className="py-3.5 px-4">Usuario</th>
-              <th scope="col" className="py-3.5 px-4">Rol</th>
-              <th scope="col" className="py-3.5 px-4">Estado</th>
-              <th scope="col" className="py-3.5 px-4 text-center">Acciones</th>
-            </tr>
-          </TableHead>
-          <TableBody>
-                    {usuarios.map((u) => {
-                      const esResaltado = usuarioResaltadoId === u.id;
-                      const esPropiaCuenta = u.usuario.toLowerCase() === session.usuario.toLowerCase();
-
-                      return (
-                        <tr
-                          key={u.id}
-                          className={`transition-colors border-b border-line-soft ${
-                            esResaltado
-                              ? 'bg-amber-100/60 font-medium'
-                              : 'hover:bg-neutral-50/70'
-                          }`}
-                        >
-                          {/* Nombre */}
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-brand-tint text-accent font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
-                                {obtenerIniciales(u.nombre)}
-                              </div>
-                              <span className="font-semibold text-ink text-sm break-words">
-                                {u.nombre}
-                              </span>
-                            </div>
-                          </td>
-
-                          {/* Usuario */}
-                          <td className="py-3 px-4 text-neutral-500 font-normal text-xs">
-                            @{u.usuario}
-                          </td>
-
-                          {/* Rol Pill */}
-                          <td className="py-3 px-4">
-                            <span
-                              className={`inline-flex items-center justify-center rounded-lg text-xs font-semibold py-1 px-2.5 border ${obtenerEstiloRol(
-                                u.rol
-                              )} text-center shadow-2xs whitespace-nowrap`}
-                            >
-                              {u.rol}
-                            </span>
-                          </td>
-
-                          {/* Estado con StatusBadge */}
-                          <td className="py-3 px-4 whitespace-nowrap">
-                            <StatusBadge
-                              status={u.activo}
-                              activeLabel="Activo"
-                              inactiveLabel="Inactivo"
-                            />
-                          </td>
-
-                          {/* Acciones con IconActionButton */}
-                          <td className="py-3 px-4 text-center whitespace-nowrap">
-                            <div className="inline-flex items-center justify-center gap-1.5">
-                              {/* Botón Editar */}
-                              <IconActionButton
-                                icon={Edit2}
-                                label="Editar usuario"
-                                variant="edit"
-                                onClick={(e) => handleAbrirEditar(u, e)}
-                              />
-
-                              {/* Botón Estado (Activar / Desactivar) */}
-                              {u.activo ? (
-                                <IconActionButton
-                                  icon={PowerOff}
-                                  label="Desactivar usuario"
-                                  variant="deactivate"
-                                  disabled={esPropiaCuenta}
-                                  disabledReason="No puede desactivar ni eliminar su propia cuenta."
-                                  onClick={(e) => handleAbrirConfirmacion(u, 'desactivar', e)}
-                                />
-                              ) : (
-                                <IconActionButton
-                                  icon={Power}
-                                  label="Activar usuario"
-                                  variant="activate"
-                                  onClick={(e) => handleAbrirConfirmacion(u, 'activar', e)}
-                                />
-                              )}
-
-                              {/* Botón Eliminar */}
-                              <IconActionButton
-                                icon={Trash2}
-                                label="Eliminar usuario"
-                                variant="delete"
-                                disabled={esPropiaCuenta}
-                                disabledReason="No puede desactivar ni eliminar su propia cuenta."
-                                onClick={(e) => handleAbrirConfirmacion(u, 'eliminar', e)}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-          </TableBody>
-        </DataTable>
+          tieneFiltros={tieneFiltros}
+          onQuitarFiltros={handleQuitarFiltros}
+          usuarioResaltadoId={usuarioResaltadoId}
+          currentUsername={session.usuario}
+          onAbrirEditar={handleAbrirEditar}
+          onAbrirConfirmacion={handleAbrirConfirmacion}
+        />
 
         {/* 4. Paginación Unificada */}
         <TablePagination
