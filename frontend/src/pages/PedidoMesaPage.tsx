@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { RotateCcw, ArrowLeft, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { usePedidoMesaManagement } from '../hooks/usePedidoMesaManagement';
 import {
-  NotaObservacionModal,
-  PedidoDescartarModal,
-  PedidoConfirmacionModal,
   CatalogoPedido,
   ResumenPedidoPanel,
+  PedidoMesaSelector,
+  PedidoMesaModals,
+  PedidoMesaHeader,
 } from '../components/pedidos';
-import { ArmarMenuCompletoModal } from '../components/menu-dia';
-import { Button, Select } from '../components/ui';
-import { PageHeader, PageContainer } from '../components/layout';
+import { PageContainer } from '../components/layout';
 import { useHandedness } from '../hooks/useHandedness';
 import type { UserSession } from '../types/auth';
 import type { MenuCompletoDia } from '../types/menuDia';
@@ -154,74 +152,25 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
     return null;
   }
 
-  const campoContextualMesa =
-    modo === 'nuevo' ? (
-      <Select
-        value={mesaSeleccionada?.id || ''}
-        onChange={(e) => {
-          const m = opcionesMesas.find(
-            (item) => String(item.id).toLowerCase() === e.target.value.toLowerCase()
-          );
-          setMesaSeleccionada(m || null);
-        }}
-        options={opcionesMesas.map((m) => ({
-          value: String(m.id),
-          label: `${m.nombre} (Libre)`,
-        }))}
-        placeholder="-- Seleccione Mesa Libre --"
-        aria-label="Seleccionar mesa libre"
-        selectClassName="!min-h-[42px] !py-2 !text-xs sm:!text-sm !rounded-xl !border-neutral-200 !font-medium"
-      />
-    ) : (
-      <div className="w-full min-h-[42px] flex items-center gap-2 px-3.5 py-2 bg-amber-50 border border-amber-200 rounded-xl text-xs font-semibold text-amber-900 shadow-2xs">
-        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 animate-pulse" />
-        <span className="truncate">Mesa: {mesaSeleccionada?.nombre || 'Mesa'}</span>
-      </div>
-    );
+  const campoContextualMesa = (
+    <PedidoMesaSelector
+      modo={modo}
+      mesaSeleccionada={mesaSeleccionada}
+      opcionesMesas={opcionesMesas}
+      onSelectMesa={setMesaSeleccionada}
+    />
+  );
 
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-5 xl:px-8 2xl:px-10">
         {/* 1. Encabezado Unificado */}
-        <PageHeader
-          title="Pedido de Mesa"
-          subtitle="Seleccione la mesa y los productos de la carta para generar la comanda a cocina."
-          badge={
-            <div className="flex items-center gap-2">
-              {mesaSeleccionada && (
-                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
-                  {mesaSeleccionada.nombre}
-                </span>
-              )}
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
-                {modo === 'ampliacion' ? 'Ampliación' : 'Nuevo pedido'}
-              </span>
-            </div>
-          }
-          actions={
-            <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={solicitarDescarte}
-                disabled={lineasBorrador.length === 0}
-                className="w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
-              >
-                <RotateCcw className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                Limpiar borrador
-              </Button>
-
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={onVolverAMesas}
-                className="w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                Volver a mesas
-              </Button>
-            </div>
-          }
+        <PedidoMesaHeader
+          mesaSeleccionada={mesaSeleccionada}
+          modo={modo}
+          lineasBorradorCount={lineasBorrador.length}
+          onLimpiarBorrador={solicitarDescarte}
+          onVolverAMesas={onVolverAMesas}
         />
 
         {/* Alerta de Error General si existiera */}
@@ -290,45 +239,32 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
         </div>
 
         {/* 3. MODALES DE APOYO */}
-        <NotaObservacionModal
-          isOpen={modalNotaOpen}
-          onClose={() => setModalNotaOpen(false)}
-          productoNombre={lineaParaNota?.nombre || 'Plato'}
-          observacionActual={lineaParaNota?.observacion || ''}
-          onGuardar={guardarNota}
-        />
-
-        <PedidoDescartarModal
-          isOpen={modalDescartarOpen}
-          onClose={() => setModalDescartarOpen(false)}
+        <PedidoMesaModals
+          modalNotaOpen={modalNotaOpen}
+          onCloseNota={() => setModalNotaOpen(false)}
+          productoNombre={lineaParaNota?.nombre}
+          observacionActual={lineaParaNota?.observacion}
+          onGuardarNota={guardarNota}
+          modalDescartarOpen={modalDescartarOpen}
+          onCloseDescartar={() => setModalDescartarOpen(false)}
           onConfirmarDescarte={confirmarDescarte}
-        />
-
-        <ArmarMenuCompletoModal
-          isOpen={modalArmarOpen}
-          onClose={() => {
+          modalArmarOpen={modalArmarOpen}
+          menuParaArmar={menuParaArmar}
+          onCloseArmar={() => {
             setModalArmarOpen(false);
             setMenuParaArmar(null);
           }}
-          menu={menuParaArmar}
-          onConfirm={(elecciones, obs) => {
+          onConfirmarArmar={(elecciones, obs) => {
             if (menuParaArmar) {
               agregarMenuCompleto(menuParaArmar, elecciones, obs);
             }
           }}
+          modalExitoOpen={modalExitoOpen}
+          exitoData={exitoData}
+          modo={modo}
+          onNuevoPedido={reiniciarParaNuevoPedido}
+          onVerMesas={onVolverAMesas}
         />
-
-        {exitoData && (
-          <PedidoConfirmacionModal
-            isOpen={modalExitoOpen}
-            modo={modo}
-            numeroPedido={exitoData.numeroPedido}
-            mesaNombre={exitoData.mesaNombre}
-            total={exitoData.total}
-            onNuevoPedido={reiniciarParaNuevoPedido}
-            onVerMesas={onVolverAMesas}
-          />
-        )}
       </PageContainer>
     </div>
   );

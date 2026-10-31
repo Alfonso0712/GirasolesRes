@@ -15,3 +15,6 @@ export * from './PedidosFilterBar';
 export * from './PedidosTable';
 export * from './PedidosModals';
 export * from './PedidosToast';
+export * from './PedidoMesaSelector';
+export * from './PedidoMesaModals';
+export * from './PedidoMesaHeader';
