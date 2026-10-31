@@ -210,8 +210,7 @@ exports[`VentasPage - Pruebas de Caracterización y Lista de Ventas > debe rende
             <span
               class="font-sans font-bold text-base sm:text-lg text-ink tabular-nums block mt-0.5"
             >
-              S/ 
-              58.00
+              S/ 58.00
             </span>
           </div>
           <div
@@ -252,8 +251,7 @@ exports[`VentasPage - Pruebas de Caracterización y Lista de Ventas > debe rende
             <span
               class="font-sans font-bold text-base sm:text-lg text-purple-900 tabular-nums block mt-0.5"
             >
-              S/ 
-              0.00
+              S/ 0.00
             </span>
           </div>
         </div>
@@ -702,8 +700,7 @@ exports[`VentasPage - Pruebas de Caracterización y Lista de Ventas > debe rende
                   <span
                     class="text-ink"
                   >
-                    S/ 
-                    58.00
+                    S/ 58.00
                   </span>
                 </td>
                 <td

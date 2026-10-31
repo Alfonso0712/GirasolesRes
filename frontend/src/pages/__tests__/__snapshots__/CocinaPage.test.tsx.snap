@@ -282,15 +282,13 @@ exports[`CocinaPage - Pruebas de Caracterización y Pantalla KDS > debe renderiz
                           />
                         </svg>
                         <span>
-                          5
-                           min
+                          5 min
                         </span>
                       </div>
                       <span
                         class="text-xs text-neutral-500"
                       >
-                        Llegó: 
-                        13:30
+                        Llegó: 13:30
                       </span>
                     </div>
                   </div>

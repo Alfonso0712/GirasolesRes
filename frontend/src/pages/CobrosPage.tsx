@@ -22,6 +22,7 @@ import { CajaStatusBanner } from '../components/caja';
 import { CobroModal, TicketComprobanteModal } from '../components/cobros';
 import { StatusBadge, DataTable, TableHead, TableBody } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
+import { formatCurrency } from '../utils/formatters';
 import type { UserSession } from '../types/auth';
 
 interface CobrosPageProps {
@@ -281,7 +282,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
               Monto Pendiente
             </span>
             <span className="text-xl font-bold font-sans tabular-nums text-accent">
-              S/ {totalPorCobrar.toFixed(2)}
+              {formatCurrency(totalPorCobrar)}
             </span>
           </div>
           <div className="w-9 h-9 rounded-lg bg-amber-50 text-accent flex items-center justify-center">
@@ -430,7 +431,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
 
                         {/* Total a Cobrar */}
                         <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent">
-                          S/ {p.total.toFixed(2)}
+                          {formatCurrency(p.total)}
                         </td>
 
                         {/* Acción */}

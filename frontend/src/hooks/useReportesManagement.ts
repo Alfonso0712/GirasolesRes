@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { reporteService } from '../services/reporteService';
 import { getProductosService } from '../services/productoService';
+import { formatDateIso } from '../utils/formatters';
 import type {
   ReporteVentasResponse,
   ReportePlatosResponse,
@@ -9,16 +10,8 @@ import type {
 } from '../types/reporte';
 import type { ProductoItem } from '../types/producto';
 
-function toDateString(d: Date): string {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+const getHoyString = (): string => formatDateIso(new Date());
 
-function getHoyString(): string {
-  return toDateString(new Date());
-}
 
 export function useReportesManagement(token: string, onLogout?: () => void) {
   const hoyStr = getHoyString();
@@ -200,22 +193,22 @@ export function useReportesManagement(token: string, onLogout?: () => void) {
     } else if (tipo === 'ayer') {
       const ayer = new Date(now);
       ayer.setDate(now.getDate() - 1);
-      nDesde = toDateString(ayer);
-      nHasta = toDateString(ayer);
+      nDesde = formatDateIso(ayer);
+      nHasta = formatDateIso(ayer);
     } else if (tipo === 'ultimos7') {
       const hace7 = new Date(now);
       hace7.setDate(now.getDate() - 6);
-      nDesde = toDateString(hace7);
+      nDesde = formatDateIso(hace7);
       nHasta = hoyStr;
     } else if (tipo === 'esteMes') {
       const inicioMes = new Date(now.getFullYear(), now.getMonth(), 1);
-      nDesde = toDateString(inicioMes);
+      nDesde = formatDateIso(inicioMes);
       nHasta = hoyStr;
     } else if (tipo === 'mesAnterior') {
       const inicioMesAnt = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const finMesAnt = new Date(now.getFullYear(), now.getMonth(), 0);
-      nDesde = toDateString(inicioMesAnt);
-      nHasta = toDateString(finMesAnt);
+      nDesde = formatDateIso(inicioMesAnt);
+      nHasta = formatDateIso(finMesAnt);
     }
 
     setDesde(nDesde);

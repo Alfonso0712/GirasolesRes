@@ -16,6 +16,8 @@ import { SolesIcon } from '../ui/SolesIcon';
 import { cajaService } from '../../services/cajaService';
 import { ContadorDenominacionesModal } from './ContadorDenominacionesModal';
 import type { CierreResumenDto, CerrarCajaResponseDto } from '../../types/caja';
+import { formatCurrency } from '../../utils/formatters';
+
 
 export interface CerrarCajaModalProps {
   isOpen: boolean;
@@ -324,7 +326,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     Monto Inicial
                   </p>
                   <p className="text-base font-bold text-ink tabular-nums mt-0.5">
-                    S/ {resultadoCierre.montoInicial.toFixed(2)}
+                    {formatCurrency(resultadoCierre.montoInicial)}
                   </p>
                 </div>
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
@@ -332,7 +334,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     Efectivo Esperado
                   </p>
                   <p className="text-base font-bold text-ink tabular-nums mt-0.5">
-                    S/ {resultadoCierre.efectivoEsperado.toFixed(2)}
+                    {formatCurrency(resultadoCierre.efectivoEsperado)}
                   </p>
                 </div>
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
@@ -340,7 +342,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                     Efectivo Contado
                   </p>
                   <p className="text-base font-bold text-ink tabular-nums mt-0.5">
-                    S/ {resultadoCierre.efectivoContado.toFixed(2)}
+                    {formatCurrency(resultadoCierre.efectivoContado)}
                   </p>
                 </div>
                 <div
@@ -448,7 +450,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-bold text-red-600 tabular-nums">
-                            S/ {p.total.toFixed(2)}
+                            {formatCurrency(p.total)}
                           </span>
                           {onCobrarPedido && (
                             <button
@@ -487,7 +489,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         Monto Inicial
                       </span>
                       <span className="text-base font-bold text-ink tabular-nums mt-0.5 block">
-                        S/ {resumen.montoInicial.toFixed(2)}
+                        {formatCurrency(resumen.montoInicial)}
                       </span>
                       <span className="text-xs text-stone-500 block">Fondo turno</span>
                     </div>
@@ -497,7 +499,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         <Banknote className="w-3 h-3 text-accent" /> Ventas Efectivo
                       </span>
                       <span className="text-base font-bold text-ink tabular-nums mt-0.5 block">
-                        S/ {resumen.ventasEfectivo.toFixed(2)}
+                        {formatCurrency(resumen.ventasEfectivo)}
                       </span>
                       <span className="text-xs text-stone-500 block">Gaveta física</span>
                     </div>
@@ -507,7 +509,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         <CreditCard className="w-3 h-3 text-purple-600" /> Ventas Yape / QR
                       </span>
                       <span className="text-base font-bold text-purple-900 tabular-nums mt-0.5 block">
-                        S/ {resumen.ventasYape.toFixed(2)}
+                        {formatCurrency(resumen.ventasYape)}
                       </span>
                       <span className="text-xs text-stone-500 block">Cuenta digital</span>
                     </div>
@@ -517,7 +519,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         <SolesIcon className="w-3 h-3 text-success" /> Total Ventas
                       </span>
                       <span className="text-base font-bold text-emerald-900 tabular-nums mt-0.5 block">
-                        S/ {resumen.totalVentas.toFixed(2)}
+                        {formatCurrency(resumen.totalVentas)}
                       </span>
                       <span className="text-xs text-stone-500 block">Efectivo + Yape</span>
                     </div>
@@ -527,7 +529,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                         Efectivo Esperado
                       </span>
                       <span className="text-lg font-bold text-accent tabular-nums mt-0.5 block">
-                        S/ {resumen.efectivoEsperado.toFixed(2)}
+                        {formatCurrency(resumen.efectivoEsperado)}
                       </span>
                       <span className="text-xs text-neutral-500 block">
                         (Inicial + Efectivo)
@@ -691,7 +693,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                               {p.cantidad}x {p.nombre}
                             </span>
                             <span className="font-semibold text-neutral-600 tabular-nums">
-                              S/ {p.total.toFixed(2)}
+                              {formatCurrency(p.total)}
                             </span>
                           </div>
                         ))
@@ -722,7 +724,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                               {m.cantidad}x {m.nombre}
                             </span>
                             <span className="font-semibold text-neutral-600 tabular-nums">
-                              S/ {(m.monto ?? m.total ?? 0).toFixed(2)}
+                              {formatCurrency(m.monto ?? m.total)}
                             </span>
                           </div>
                         ))
@@ -794,11 +796,11 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
                 <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs space-y-1.5 tabular-nums">
                   <div className="flex justify-between">
                     <span className="text-neutral-500">Efectivo esperado:</span>
-                    <span className="font-bold tabular-nums">S/ {resumen?.efectivoEsperado.toFixed(2)}</span>
+                    <span className="font-bold tabular-nums">{formatCurrency(resumen?.efectivoEsperado)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-neutral-500">Efectivo contado:</span>
-                    <span className="font-bold tabular-nums">S/ {contadoNumerico?.toFixed(2)}</span>
+                    <span className="font-bold tabular-nums">{formatCurrency(contadoNumerico)}</span>
                   </div>
                   <div className="flex justify-between pt-1 border-t border-neutral-200">
                     <span className="font-bold">Diferencia:</span>

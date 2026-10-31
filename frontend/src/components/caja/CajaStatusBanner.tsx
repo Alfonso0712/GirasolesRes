@@ -5,6 +5,8 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { SolesIcon } from '../ui/SolesIcon';
+import { formatCurrency, formatearHoraApertura } from '../../utils/formatters';
+
 import type {
   EstadoOperativoCaja,
   AperturaCajaDto,
@@ -44,17 +46,6 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
   const esCajero = rolUsuario === 'Cajero';
   const esCajeroOAdmin = rolUsuario === 'Cajero' || rolUsuario === 'Administrador';
 
-  // Formato amigable de hora
-  const formatearHoraApertura = (isoDate?: string, localStr?: string) => {
-    if (localStr) return localStr;
-    if (!isoDate) return '--:--';
-    try {
-      const d = new Date(isoDate);
-      return d.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-    } catch {
-      return isoDate;
-    }
-  };
 
   // --------------------------------------------------------------------------
   // ESTADO 1: ANTERIOR SIN CERRAR (MSG-168) - BLOQUEO CRÍTICO
@@ -137,7 +128,7 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
               <span>Caja abierta desde las <strong>{hora}</strong> por <strong>{usuario}</strong>.</span>
               {apertura?.montoInicial !== undefined && (
                 <span className="text-neutral-600">
-                  (Fondo inicial: <strong className="tabular-nums">S/ {apertura.montoInicial.toFixed(2)}</strong>)
+                  (Fondo inicial: <strong className="tabular-nums">{formatCurrency(apertura.montoInicial)}</strong>)
                 </span>
               )}
             </p>
@@ -150,17 +141,17 @@ export const CajaStatusBanner: React.FC<CajaStatusBannerProps> = ({
             <div className="flex items-center gap-3 text-xs bg-surface/80 px-3.5 py-2 rounded-xl border border-emerald-200 shadow-2xs tabular-nums">
               <div>
                 <span className="text-neutral-500 block text-xs uppercase font-bold">Ventas ({resumen.cantidadVentas})</span>
-                <span className="font-bold text-ink">S/ {resumen.totalVentas.toFixed(2)}</span>
+                <span className="font-bold text-ink">{formatCurrency(resumen.totalVentas)}</span>
               </div>
               <div className="h-6 w-px bg-neutral-200" />
               <div>
                 <span className="text-neutral-500 block text-xs uppercase font-bold">Efectivo</span>
-                <span className="font-bold text-neutral-700">S/ {resumen.totalEfectivo.toFixed(2)}</span>
+                <span className="font-bold text-neutral-700">{formatCurrency(resumen.totalEfectivo)}</span>
               </div>
               <div className="h-6 w-px bg-neutral-200" />
               <div>
                 <span className="text-neutral-500 block text-xs uppercase font-bold">Yape</span>
-                <span className="font-bold text-neutral-700">S/ {resumen.totalYape.toFixed(2)}</span>
+                <span className="font-bold text-neutral-700">{formatCurrency(resumen.totalYape)}</span>
               </div>
             </div>
           )}

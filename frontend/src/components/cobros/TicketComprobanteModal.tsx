@@ -1,6 +1,8 @@
 import React from 'react';
 import { Printer, Download, X, CheckCircle2 } from 'lucide-react';
 import type { ComprobanteDetalle } from '../../types/cobro';
+import { formatCurrency, formatDecimal } from '../../utils/formatters';
+
 
 interface TicketComprobanteModalProps {
   isOpen: boolean;
@@ -148,8 +150,8 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                     <div className="flex justify-between text-xs">
                       <span className="w-8 font-semibold">{l.cantidad}</span>
                       <span className="flex-1 px-1 truncate font-medium">{l.productoNombre}</span>
-                      <span className="w-12 text-right">{l.precioUnitario.toFixed(2)}</span>
-                      <span className="w-14 text-right font-semibold">{l.subtotal.toFixed(2)}</span>
+                      <span className="w-12 text-right">{formatDecimal(l.precioUnitario)}</span>
+                      <span className="w-14 text-right font-semibold">{formatDecimal(l.subtotal)}</span>
                     </div>
                     {l.elecciones && (
                       <div className="text-xs text-neutral-500 pl-8 italic">
@@ -172,17 +174,17 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                 <>
                   <div className="flex justify-between text-xs text-neutral-600">
                     <span>OP. GRAVADA:</span>
-                    <span>S/ {(comprobante.opGravada ?? (comprobante.total / 1.18)).toFixed(2)}</span>
+                    <span>{formatCurrency(comprobante.opGravada ?? (comprobante.total / 1.18))}</span>
                   </div>
                   <div className="flex justify-between text-xs text-neutral-600">
                     <span>I.G.V. (18%):</span>
-                    <span>S/ {(comprobante.igv ?? (comprobante.total - comprobante.total / 1.18)).toFixed(2)}</span>
+                    <span>{formatCurrency(comprobante.igv ?? (comprobante.total - comprobante.total / 1.18))}</span>
                   </div>
                 </>
               )}
               <div className="flex justify-between font-bold text-sm text-neutral-900 pt-0.5">
                 <span>TOTAL A PAGAR:</span>
-                <span>S/ {comprobante.total.toFixed(2)}</span>
+                <span>{formatCurrency(comprobante.total)}</span>
               </div>
               <div className="flex justify-between text-xs text-neutral-600">
                 <span>MÉTODO DE PAGO:</span>
@@ -192,11 +194,11 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
                 <>
                   <div className="flex justify-between text-xs text-neutral-500">
                     <span>MONTO RECIBIDO:</span>
-                    <span>S/ {comprobante.montoRecibido.toFixed(2)}</span>
+                    <span>{formatCurrency(comprobante.montoRecibido)}</span>
                   </div>
                   <div className="flex justify-between text-xs text-emerald-700 font-bold">
                     <span>VUELTO ENTREGADO:</span>
-                    <span>S/ {(comprobante.vuelto ?? 0).toFixed(2)}</span>
+                    <span>{formatCurrency(comprobante.vuelto)}</span>
                   </div>
                 </>
               )}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AlertCircle, HelpCircle, Check, X, ShieldAlert } from 'lucide-react';
 import { SolesIcon } from '../ui/SolesIcon';
 import { cajaService } from '../../services/cajaService';
+import { formatCurrency } from '../../utils/formatters';
 
 export interface AbrirCajaModalProps {
   isOpen: boolean;
@@ -165,7 +166,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
         token
       );
 
-      const msgExito = `Caja abierta con S/ ${monto.toFixed(2)}.`; // MSG-173 tabular-nums
+      const msgExito = `Caja abierta con ${formatCurrency(monto)}.`; // MSG-173 tabular-nums
       onCajaAbierta(monto, res.mensaje || msgExito);
       onClose();
     } catch (err: any) {
@@ -249,7 +250,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                     }}
                     className="font-bold text-accent hover:underline cursor-pointer tabular-nums"
                   >
-                    <span className="tabular-nums">S/ {sugerenciaInicial.toFixed(2)}</span> (Usar)
+                    <span className="tabular-nums">{formatCurrency(sugerenciaInicial)}</span> (Usar)
                   </button>
                 </div>
               )}

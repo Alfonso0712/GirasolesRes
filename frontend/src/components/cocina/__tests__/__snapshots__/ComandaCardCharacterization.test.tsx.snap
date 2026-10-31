@@ -100,15 +100,13 @@ exports[`ComandaCard - Pruebas de Caracterización y Estados KDS > debe renderiz
               />
             </svg>
             <span>
-              16
-               min
+              16 min
             </span>
           </div>
           <span
             class="text-xs text-neutral-500"
           >
-            Llegó: 
-            13:45
+            Llegó: 13:45
           </span>
         </div>
       </div>
@@ -238,15 +236,13 @@ exports[`ComandaCard - Pruebas de Caracterización y Estados KDS > debe renderiz
               />
             </svg>
             <span>
-              8
-               min
+              8 min
             </span>
           </div>
           <span
             class="text-xs text-neutral-500"
           >
-            Llegó: 
-            13:45
+            Llegó: 13:45
           </span>
         </div>
       </div>

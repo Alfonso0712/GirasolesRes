@@ -29,6 +29,8 @@ import {
 } from '../components/menu-dia';
 import { DiscardChangesModal, StatusBadge } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
+import { formatCurrency, formatFechaLarga } from '../utils/formatters';
+
 
 export interface MenuDiaPageProps {
   session: UserSession;
@@ -132,19 +134,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   const cartaOtros = cartaActiva.filter((c) => c.categoria === 'Otro' || c.categoria === 'Otros');
 
   // Fecha legible
-  const fechaHoyFormateada = (() => {
-    try {
-      const hoy = new Date();
-      return hoy.toLocaleDateString('es-PE', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-    } catch {
-      return 'Fecha actual';
-    }
-  })();
+  const fechaHoyFormateada = formatFechaLarga();
 
   // Resumen de disponibilidad consolidada
   const itemsDisponibilidad: ItemDisponibilidad[] = [
@@ -179,7 +169,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
 
   const formatearBadgeClasificacion = (item: { tipo: string; clasificacion: string; precio?: number }) => {
     if (item.tipo === 'Carta') {
-      return item.precio != null ? `Carta · S/ ${item.precio.toFixed(2)}` : 'Carta';
+      return item.precio != null ? `Carta · ${formatCurrency(item.precio)}` : 'Carta';
     }
     const rol = item.clasificacion || '';
     const MAPEO_ROLES: Record<string, string> = {

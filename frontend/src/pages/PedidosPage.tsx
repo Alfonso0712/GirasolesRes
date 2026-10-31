@@ -28,6 +28,7 @@ import {
 import { SolesIcon } from '../components/ui/SolesIcon';
 import { StatusBadge, IconActionButton, DataTable, TableHead, TableBody } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
+import { formatCurrency } from '../utils/formatters';
 
 interface PedidosPageProps {
   session: UserSession;
@@ -482,7 +483,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
                           <StatusBadge status={p.estado} />
                         </td>
                         <td className="py-3 px-4 text-right font-semibold tabular-nums text-sm text-ink">
-                          S/ {p.total.toFixed(2)}
+                          {formatCurrency(p.total)}
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">

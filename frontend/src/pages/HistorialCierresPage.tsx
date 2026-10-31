@@ -20,6 +20,7 @@ import {
   TableHead,
   TableBody,
 } from '../components/ui';
+import { formatCurrency, getFechaActualLimaStr, restarDiasLimaStr } from '../utils/formatters';
 import { PageHeader, PageContainer } from '../components/layout';
 import type { HistorialCierresItemDto, HistorialCierresPaginadoDto } from '../types/caja';
 import type { UserSession } from '../types/auth';
@@ -29,31 +30,6 @@ interface HistorialCierresPageProps {
   onLogout: () => void;
 }
 
-/**
- * Retorna la fecha actual en la zona horaria de Lima (UTC-5) en formato "YYYY-MM-DD".
- */
-const getFechaActualLimaStr = (): string => {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Lima',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-};
-
-/**
- * Retorna una fecha restando días en la zona horaria de Lima en formato "YYYY-MM-DD".
- */
-const restarDiasLimaStr = (diasAtras: number): string => {
-  const d = new Date();
-  d.setDate(d.getDate() - diasAtras);
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Lima',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(d);
-};
 
 /**
  * Detecta defensivamente si el registro de caja corresponde a una caja actualmente abierta.
@@ -454,22 +430,22 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
 
                   {/* Monto Inicial */}
                   <td className="px-3 py-3 text-right font-medium text-sm text-neutral-700 tabular-nums whitespace-nowrap">
-                    S/ {(c.montoInicial ?? 0).toFixed(2)}
+                    {formatCurrency(c.montoInicial)}
                   </td>
 
                   {/* Efectivo */}
                   <td className="px-3 py-3 text-right font-medium text-sm text-ink tabular-nums whitespace-nowrap">
-                    S/ {(c.ventasEfectivo ?? c.efectivo ?? 0).toFixed(2)}
+                    {formatCurrency(c.ventasEfectivo ?? c.efectivo)}
                   </td>
 
                   {/* Yape */}
                   <td className="px-3 py-3 text-right font-medium text-sm text-purple-900 tabular-nums whitespace-nowrap">
-                    S/ {(c.ventasYape ?? c.yape ?? 0).toFixed(2)}
+                    {formatCurrency(c.ventasYape ?? c.yape)}
                   </td>
 
                   {/* Total Ventas */}
                   <td className="px-3 py-3 text-right font-semibold text-sm text-accent tabular-nums whitespace-nowrap">
-                    S/ {(c.totalVentas ?? c.total ?? 0).toFixed(2)}
+                    {formatCurrency(c.totalVentas ?? c.total)}
                   </td>
 
                   {/* Contado */}
@@ -477,7 +453,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                     {abierta ? (
                       <span className="text-neutral-400 font-normal">—</span>
                     ) : c.efectivoContado !== null && c.efectivoContado !== undefined ? (
-                      <span className="tabular-nums font-semibold">{`S/ ${Number(c.efectivoContado).toFixed(2)}`}</span>
+                      <span className="tabular-nums font-semibold">{formatCurrency(Number(c.efectivoContado))}</span>
                     ) : (
                       '—'
                     )}
@@ -492,9 +468,9 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
                     ) : diferenciaNum === 0 ? (
                       <StatusBadge status="Cuadra" label="Cuadra · S/ 0.00" intent="success" />
                     ) : diferenciaNum > 0 ? (
-                      <StatusBadge status="Sobrante" label={`+ S/ ${diferenciaNum.toFixed(2)}`} intent="warning" />
+                      <StatusBadge status="Sobrante" label={`+ ${formatCurrency(diferenciaNum)}`} intent="warning" />
                     ) : (
-                      <StatusBadge status="Faltante" label={`- S/ ${Math.abs(diferenciaNum).toFixed(2)}`} intent="danger" />
+                      <StatusBadge status="Faltante" label={`- ${formatCurrency(Math.abs(diferenciaNum))}`} intent="danger" />
                     )}
                   </td>
 

@@ -26,6 +26,7 @@ import {
   TableBody,
 } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
+import { formatCurrency, formatDecimal, formatDateIso } from '../utils/formatters';
 import type { UserSession } from '../types/auth';
 
 interface VentasPageProps {
@@ -86,30 +87,24 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
   });
 
   const esFiltroRapidoActivo = (tipo: 'hoy' | 'ayer' | 'semana' | 'mes') => {
-    const format = (d: Date) => {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    };
     const hoy = new Date();
-    const hoyStr = format(hoy);
+    const hoyStr = formatDateIso(hoy);
     if (tipo === 'hoy') return desde === hoyStr && hasta === hoyStr;
     if (tipo === 'ayer') {
       const ayer = new Date(hoy);
       ayer.setDate(ayer.getDate() - 1);
-      const aStr = format(ayer);
+      const aStr = formatDateIso(ayer);
       return desde === aStr && hasta === aStr;
     }
     if (tipo === 'semana') {
       const hace7 = new Date(hoy);
       hace7.setDate(hace7.getDate() - 7);
-      return desde === format(hace7) && hasta === hoyStr;
+      return desde === formatDateIso(hace7) && hasta === hoyStr;
     }
     if (tipo === 'mes') {
       const hace30 = new Date(hoy);
       hace30.setDate(hace30.getDate() - 30);
-      return desde === format(hace30) && hasta === hoyStr;
+      return desde === formatDateIso(hace30) && hasta === hoyStr;
     }
     return false;
   };
@@ -171,7 +166,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
               <div className="flex items-baseline gap-1 mt-0.5">
                 <span className="text-xs font-semibold text-emerald-800">S/</span>
                 <span className="font-sans font-bold text-2xl text-emerald-950 tabular-nums">
-                  {resumen.totalVigente.toFixed(2)}
+                  {formatDecimal(resumen.totalVigente)}
                 </span>
               </div>
             </div>
@@ -185,7 +180,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 <span>Efectivo</span>
               </span>
               <span className="font-sans font-bold text-base sm:text-lg text-ink tabular-nums block mt-0.5">
-                S/ {resumen.efectivo.toFixed(2)}
+                {formatCurrency(resumen.efectivo)}
               </span>
             </div>
             <div className="flex-1 pl-2">
@@ -194,7 +189,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                 <span>Yape</span>
               </span>
               <span className="font-sans font-bold text-base sm:text-lg text-purple-900 tabular-nums block mt-0.5">
-                S/ {resumen.yape.toFixed(2)}
+                {formatCurrency(resumen.yape)}
               </span>
             </div>
           </div>
@@ -481,7 +476,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
                         {/* Total con alto contraste WCAG AA */}
                         <td className="py-3 px-4 text-right tabular-nums font-semibold text-sm whitespace-nowrap">
                           <span className={esAnulada ? 'text-stone-700 font-semibold' : 'text-ink'}>
-                            S/ {v.total.toFixed(2)}
+                            {formatCurrency(v.total)}
                           </span>
                         </td>
 

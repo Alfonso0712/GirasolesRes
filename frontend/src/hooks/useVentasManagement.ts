@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ventaService } from '../services/ventaService';
+import { formatDateIso } from '../utils/formatters';
 import type {
   VentaItem,
   ResumenVentas,
@@ -34,13 +35,7 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
   const [filtroTipoComprobante, setFiltroTipoComprobante] = useState<'todos' | 'ticket' | 'boleta' | 'factura'>('todos');
 
   // Formato YYYY-MM-DD en hora local Perú
-  const getHoyString = () => {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const getHoyString = () => formatDateIso(new Date());
 
   const [desde, setDesde] = useState<string>(getHoyString());
   const [hasta, setHasta] = useState<string>(getHoyString());
@@ -170,36 +165,30 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
   // Filtros rápidos de fecha
   const setFiltroRapido = (tipo: 'hoy' | 'ayer' | 'semana' | 'mes') => {
     const hoy = new Date();
-    const format = (d: Date) => {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    };
 
     if (tipo === 'hoy') {
-      const hStr = format(hoy);
+      const hStr = formatDateIso(hoy);
       setDesde(hStr);
       setHasta(hStr);
       setPagina(1);
     } else if (tipo === 'ayer') {
       const ayer = new Date(hoy);
       ayer.setDate(ayer.getDate() - 1);
-      const aStr = format(ayer);
+      const aStr = formatDateIso(ayer);
       setDesde(aStr);
       setHasta(aStr);
       setPagina(1);
     } else if (tipo === 'semana') {
       const hace7 = new Date(hoy);
       hace7.setDate(hace7.getDate() - 7);
-      setDesde(format(hace7));
-      setHasta(format(hoy));
+      setDesde(formatDateIso(hace7));
+      setHasta(formatDateIso(hoy));
       setPagina(1);
     } else if (tipo === 'mes') {
       const hace30 = new Date(hoy);
       hace30.setDate(hace30.getDate() - 30);
-      setDesde(format(hace30));
-      setHasta(format(hoy));
+      setDesde(formatDateIso(hace30));
+      setHasta(formatDateIso(hoy));
       setPagina(1);
     }
   };

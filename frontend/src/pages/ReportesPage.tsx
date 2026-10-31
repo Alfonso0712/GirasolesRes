@@ -19,6 +19,7 @@ import { useReportesManagement } from '../hooks/useReportesManagement';
 import type { UserSession } from '../types/auth';
 import type { TipoAtajoFecha, CriterioOrdenPlatos } from '../types/reporte';
 import { CATEGORIA_LABELS, CATEGORIA_BADGE_LABELS } from '../types/producto';
+import { formatCurrency } from '../utils/formatters';
 import { PageHeader, PageContainer } from '../components/layout';
 import { DataTable, TableHead, TableBody } from '../components/ui';
 
@@ -293,7 +294,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                     </p>
                     <p className="text-sm font-semibold mt-0.5">
                       {reportePlatos.coincide
-                        ? `Cuadra con ventas: el monto de los platos coincide con el total vendido (S/ ${reportePlatos.totalVentas.toFixed(2)}).`
+                        ? `Cuadra con ventas: el monto de los platos coincide con el total vendido (${formatCurrency(reportePlatos.totalVentas)}).`
                         : `El monto de los platos (S/ ${reportePlatos.totalMonto.toFixed(2)}) no coincide con el total vendido (S/ ${reportePlatos.totalVentas.toFixed(2)}). Diferencia: S/ ${Math.abs(reportePlatos.totalMonto - reportePlatos.totalVentas).toFixed(2)}. Informe al equipo técnico.`}
                     </p>
                   </div>
@@ -302,7 +303,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <div className="text-right sm:self-auto shrink-0 pl-12 sm:pl-0">
                   <span className="text-xs text-neutral-500 font-sans block">Total Platos / Ventas</span>
                   <span className="font-sans font-bold tabular-nums text-sm text-ink">
-                    S/ {reportePlatos.totalMonto.toFixed(2)}
+                    {formatCurrency(reportePlatos.totalMonto)}
                   </span>
                 </div>
               </div>
@@ -325,7 +326,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   Monto Total de Platos
                 </span>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-accent tabular-nums mt-1">
-                  S/ {reportePlatos ? reportePlatos.totalMonto.toFixed(2) : '0.00'}
+                  {formatCurrency(reportePlatos?.totalMonto)}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Calculado por precio en comanda</span>
               </div>
@@ -335,7 +336,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   Total en Ventas Registradas
                 </span>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-neutral-800 tabular-nums mt-1">
-                  S/ {reportePlatos ? reportePlatos.totalVentas.toFixed(2) : '0.00'}
+                  {formatCurrency(reportePlatos?.totalVentas)}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Ventas vigentes del período</span>
               </div>
@@ -362,7 +363,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                         </span>
                       </div>
                       <span className="font-sans font-bold text-sm text-accent tabular-nums">
-                        S/ {sub.monto.toFixed(2)}
+                        {formatCurrency(sub.monto)}
                       </span>
                     </div>
                   ))}
@@ -480,7 +481,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                       {item.cantidad}
                     </td>
                     <td className="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent">
-                      S/ {item.monto.toFixed(2)}
+                      {formatCurrency(item.monto)}
                     </td>
                   </tr>
                 ))}
@@ -506,7 +507,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   </div>
                 </div>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-accent tabular-nums mt-2">
-                  S/ {reporteVentas ? reporteVentas.total.toFixed(2) : '0.00'}
+                  {formatCurrency(reporteVentas?.total)}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Ingresos brutos vigentes</span>
               </div>
@@ -521,7 +522,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   </div>
                 </div>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-emerald-700 tabular-nums mt-2">
-                  S/ {reporteVentas ? reporteVentas.efectivo.toFixed(2) : '0.00'}
+                  {formatCurrency(reporteVentas?.efectivo)}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Cobros en caja física</span>
               </div>
@@ -536,7 +537,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                   </div>
                 </div>
                 <span className="font-sans font-bold text-2xl sm:text-3xl text-purple-700 tabular-nums mt-2">
-                  S/ {reporteVentas ? reporteVentas.yape.toFixed(2) : '0.00'}
+                  {formatCurrency(reporteVentas?.yape)}
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">Billeteras electrónicas</span>
               </div>
@@ -563,7 +564,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                 <AlertCircle className="w-4 h-4 text-danger shrink-0" />
                 <span>
                   <strong>Ventas Anuladas:</strong> Incluye {reporteVentas.anuladas.cantidad} venta(s)
-                  anulada(s) por S/ {reporteVentas.anuladas.monto.toFixed(2)} que no se suman a los
+                  anulada(s) por {formatCurrency(reporteVentas.anuladas.monto)} que no se suman a los
                   totales.
                 </span>
               </div>
@@ -601,13 +602,13 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
                       {d.nVentas}
                     </td>
                     <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-emerald-700">
-                      S/ {d.efectivo.toFixed(2)}
+                      {formatCurrency(d.efectivo)}
                     </td>
                     <td className="py-3 px-4 text-right font-sans font-medium text-sm tabular-nums text-purple-700">
-                      S/ {d.yape.toFixed(2)}
+                      {formatCurrency(d.yape)}
                     </td>
                     <td className="py-3 px-4 text-right font-sans font-semibold text-sm tabular-nums text-accent">
-                      S/ {d.total.toFixed(2)}
+                      {formatCurrency(d.total)}
                     </td>
                     <td className="py-3 px-4 text-center">
                       {d.conAjustes ? (

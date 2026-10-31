@@ -1,6 +1,8 @@
 import React from 'react';
 import { Clock, Flame, RotateCw, Check, ChefHat } from 'lucide-react';
 import type { ComandaKdsItem } from '../../types/comanda';
+import { formatMinutosEspera, formatHoraLlegada } from '../../utils/formatters';
+
 
 export interface ComandaCardProps {
   comanda: ComandaKdsItem;
@@ -69,9 +71,9 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
                 }`}
               >
                 <Clock className="w-4 h-4" />
-                <span>{c.minutosEspera} min</span>
+                <span>{formatMinutosEspera(c.minutosEspera)}</span>
               </div>
-              <span className="text-xs text-neutral-500">Llegó: {c.horaLlegada}</span>
+              <span className="text-xs text-neutral-500">{formatHoraLlegada(c.horaLlegada)}</span>
             </div>
           </div>
 
@@ -171,9 +173,9 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
               }`}
             >
               <Clock className="w-4 h-4" />
-              <span>{c.minutosEspera} min</span>
+              <span>{formatMinutosEspera(c.minutosEspera)}</span>
             </div>
-            <span className="text-xs text-neutral-500">Llegó: {c.horaLlegada}</span>
+            <span className="text-xs text-neutral-500">{formatHoraLlegada(c.horaLlegada)}</span>
           </div>
         </div>
 

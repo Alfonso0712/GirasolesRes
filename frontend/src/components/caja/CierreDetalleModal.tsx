@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import type { CierreDetalleDto } from '../../types/caja';
+import { formatCurrency, formatLimaFecha } from '../../utils/formatters';
+
 
 interface CierreDetalleModalProps {
   cajaId: string | null;
@@ -114,24 +116,6 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
     window.print();
   };
 
-  const formatLimaFecha = (fechaUtc?: string | null): string => {
-    if (!fechaUtc) return '—';
-    try {
-      const d = new Date(fechaUtc);
-      if (isNaN(d.getTime())) return fechaUtc;
-      return new Intl.DateTimeFormat('es-PE', {
-        timeZone: 'America/Lima',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }).format(d);
-    } catch {
-      return fechaUtc;
-    }
-  };
 
   const tieneAjustes = Boolean(
     detalle?.tieneAjustesPosteriores ||
@@ -268,7 +252,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     Cajero(a): <strong>{detalle.cajeroApertura || 'Cajero'}</strong>
                   </p>
                   <p className="text-neutral-500 text-xs">
-                    Fondo inicial: <strong className="text-neutral-800 tabular-nums">S/ {(detalle.montoInicial ?? 0).toFixed(2)}</strong>
+                    Fondo inicial: <strong className="text-neutral-800 tabular-nums">{formatCurrency(detalle.montoInicial)}</strong>
                   </p>
                 </div>
 
@@ -307,7 +291,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     <div className="flex justify-between items-center text-neutral-600">
                       <span>Monto Inicial (Apertura):</span>
                       <span className="font-bold text-neutral-800 tabular-nums">
-                        S/ {(detalle.montoInicial ?? 0).toFixed(2)}
+                        {formatCurrency(detalle.montoInicial)}
                       </span>
                     </div>
 
@@ -317,7 +301,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                         Ventas en Efectivo:
                       </span>
                       <span className="font-bold text-ink tabular-nums">
-                        S/ {(detalle.ventasEfectivo ?? 0).toFixed(2)}
+                        {formatCurrency(detalle.ventasEfectivo)}
                       </span>
                     </div>
 
@@ -327,14 +311,14 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                         Ventas por Yape / QR:
                       </span>
                       <span className="font-bold text-purple-900 tabular-nums">
-                        S/ {(detalle.ventasYape ?? 0).toFixed(2)}
+                        {formatCurrency(detalle.ventasYape)}
                       </span>
                     </div>
 
                     <div className="pt-2 border-t border-neutral-200 flex justify-between items-center font-bold text-sm">
                       <span className="text-ink">Total de ventas facturadas:</span>
                       <span className="text-accent text-base tabular-nums">
-                        S/ {(detalle.totalVentas ?? 0).toFixed(2)}
+                        {formatCurrency(detalle.totalVentas)}
                       </span>
                     </div>
                   </div>
@@ -353,7 +337,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                     <div className="flex justify-between items-center text-neutral-600">
                       <span>Efectivo Físico Esperado:</span>
                       <span className="font-bold text-ink tabular-nums">
-                        S/ {(detalle.efectivoEsperado ?? (detalle.montoInicial + detalle.ventasEfectivo)).toFixed(2)}
+                        {formatCurrency(detalle.efectivoEsperado ?? (detalle.montoInicial + detalle.ventasEfectivo))}
                       </span>
                     </div>
 
@@ -363,7 +347,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
                         {esAbierta ? (
                           <span className="text-stone-500 font-normal">—</span>
                         ) : detalle.efectivoContado !== null && detalle.efectivoContado !== undefined ? (
-                          <span className="tabular-nums">S/ {Number(detalle.efectivoContado).toFixed(2)}</span>
+                          <span className="tabular-nums">{formatCurrency(Number(detalle.efectivoContado))}</span>
                         ) : (
                           '—'
                         )}

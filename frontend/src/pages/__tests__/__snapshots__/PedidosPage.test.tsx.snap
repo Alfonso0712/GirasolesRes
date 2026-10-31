@@ -515,8 +515,7 @@ exports[`PedidosPage - Pruebas de Caracterización y Lista de Pedidos > debe ren
                   <td
                     class="py-3 px-4 text-right font-semibold tabular-nums text-sm text-ink"
                   >
-                    S/ 
-                    84.00
+                    S/ 84.00
                   </td>
                   <td
                     class="py-3 px-4"

@@ -402,8 +402,7 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
             <span
               class="font-sans font-bold tabular-nums text-sm text-ink"
             >
-              S/ 
-              450.00
+              S/ 450.00
             </span>
           </div>
         </div>
@@ -440,8 +439,7 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
             <span
               class="font-sans font-bold text-2xl sm:text-3xl text-accent tabular-nums mt-1"
             >
-              S/ 
-              450.00
+              S/ 450.00
             </span>
             <span
               class="text-xs text-neutral-500 mt-1"
@@ -460,8 +458,7 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
             <span
               class="font-sans font-bold text-2xl sm:text-3xl text-neutral-800 tabular-nums mt-1"
             >
-              S/ 
-              450.00
+              S/ 450.00
             </span>
             <span
               class="text-xs text-neutral-500 mt-1"
@@ -594,8 +591,7 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
                   <td
                     class="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent"
                   >
-                    S/ 
-                    450.00
+                    S/ 450.00
                   </td>
                 </tr>
               </tbody>

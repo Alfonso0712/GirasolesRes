@@ -229,8 +229,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
                   <strong
                     class="tabular-nums"
                   >
-                    S/ 
-                    100.00
+                    S/ 100.00
                   </strong>
                   )
                 </span>
@@ -254,8 +253,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
                 <span
                   class="font-bold text-ink"
                 >
-                  S/ 
-                  250.00
+                  S/ 250.00
                 </span>
               </div>
               <div
@@ -270,8 +268,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
                 <span
                   class="font-bold text-neutral-700"
                 >
-                  S/ 
-                  150.00
+                  S/ 150.00
                 </span>
               </div>
               <div
@@ -286,8 +283,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
                 <span
                   class="font-bold text-neutral-700"
                 >
-                  S/ 
-                  100.00
+                  S/ 100.00
                 </span>
               </div>
             </div>
@@ -432,8 +428,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
               <span
                 class="text-xl font-bold font-sans tabular-nums text-accent"
               >
-                S/ 
-                65.50
+                S/ 65.50
               </span>
             </div>
             <div
@@ -696,8 +691,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
                   <td
                     class="py-3 px-4 text-right font-sans font-semibold tabular-nums text-sm text-accent"
                   >
-                    S/ 
-                    65.50
+                    S/ 65.50
                   </td>
                   <td
                     class="py-3.5 px-4 text-center"

@@ -11,6 +11,8 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import type { VentaDetalle } from '../../types/venta';
+import { formatCurrency } from '../../utils/formatters';
+
 
 interface VentaDetalleModalProps {
   isOpen: boolean;
@@ -218,10 +220,10 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                             )}
                           </td>
                           <td className="py-2.5 px-3 text-right tabular-nums text-sm text-stone-600">
-                            S/ {linea.precioUnitario.toFixed(2)}
+                            {formatCurrency(linea.precioUnitario)}
                           </td>
                           <td className="py-2.5 px-3 text-right tabular-nums font-semibold text-sm text-ink">
-                            S/ {linea.subtotal.toFixed(2)}
+                            {formatCurrency(linea.subtotal)}
                           </td>
                         </tr>
                       ))}
@@ -237,19 +239,19 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                   <div className="flex items-center justify-between text-neutral-600">
                     <span>Op. Gravada (Base imponible):</span>
                     <span className="tabular-nums font-semibold text-neutral-800">
-                      S/ {(venta.opGravada ?? Number((venta.total / 1.18).toFixed(2))).toFixed(2)}
+                      {formatCurrency(venta.opGravada ?? Number((venta.total / 1.18).toFixed(2)))}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-neutral-600">
                     <span>I.G.V. (18%):</span>
                     <span className="tabular-nums font-semibold text-neutral-800">
-                      S/ {(venta.igv ?? Number((venta.total - (venta.total / 1.18)).toFixed(2))).toFixed(2)}
+                      {formatCurrency(venta.igv ?? Number((venta.total - (venta.total / 1.18)).toFixed(2)))}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm pt-1 border-t border-amber-200/30">
                     <span className="font-bold text-ink">TOTAL COBRADO:</span>
                     <span className="font-sans font-bold text-lg text-accent tabular-nums whitespace-nowrap">
-                      S/ {venta.total.toFixed(2)}
+                      {formatCurrency(venta.total)}
                     </span>
                   </div>
                 </div>
@@ -277,13 +279,13 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                       <div>
                         <span className="text-neutral-500 block uppercase font-medium">Monto Recibido</span>
                         <span className="font-semibold text-neutral-800 tabular-nums">
-                          S/ {(venta.montoRecibido ?? venta.total).toFixed(2)}
+                          {formatCurrency(venta.montoRecibido ?? venta.total)}
                         </span>
                       </div>
                       <div>
                         <span className="text-neutral-500 block uppercase font-medium">Vuelto Entregado</span>
                         <span className="font-semibold text-neutral-800 tabular-nums">
-                          S/ {(venta.vuelto ?? 0).toFixed(2)}
+                          {formatCurrency(venta.vuelto)}
                         </span>
                       </div>
                     </>
