@@ -7,3 +7,7 @@ export * from './SeccionCartaCategoria';
 export * from './AgotadoItemCard';
 export * from './MenuDiaDisponibilidadTab';
 export * from './MenuDiaStickyFooter';
+export * from './MenuDiaOpcionesTab';
+export * from './MenuDiaMenusCompletosTab';
+export * from './MenuDiaCartaTab';
+export * from './MenuDiaTabsNav';
