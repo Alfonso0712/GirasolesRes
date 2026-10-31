@@ -11,3 +11,6 @@ export * from './MenuDiaOpcionesTab';
 export * from './MenuDiaMenusCompletosTab';
 export * from './MenuDiaCartaTab';
 export * from './MenuDiaTabsNav';
+export * from './MenuDiaAvisos';
+export * from './MenuDiaModals';
+export * from './menuDiaHelpers';

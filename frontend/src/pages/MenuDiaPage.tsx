@@ -1,28 +1,26 @@
-import React, { useState } from 'react';
-import {
-  CheckCircle2,
-  AlertCircle,
-  ShieldAlert,
-  Calendar,
-} from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { ShieldAlert, Calendar } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import {
   useMenuDiaManagement,
   type ItemDisponibilidad,
 } from '../hooks/useMenuDiaManagement';
 import {
-  MenuDisponibilidadConfirmModal,
   MenuDiaDisponibilidadTab,
   MenuDiaStickyFooter,
   MenuDiaOpcionesTab,
   MenuDiaMenusCompletosTab,
   MenuDiaCartaTab,
   MenuDiaTabsNav,
+  MenuDiaAvisos,
+  MenuDiaModals,
+  formatearBadgeClasificacion,
+  agruparCandidatos,
   type TabMenuPrincipal,
 } from '../components/menu-dia';
-import { DiscardChangesModal, StatusBadge } from '../components/ui';
+import { StatusBadge } from '../components/ui';
 import { PageHeader, PageContainer } from '../components/layout';
-import { formatCurrency, formatFechaLarga } from '../utils/formatters';
+import { formatFechaLarga } from '../utils/formatters';
 
 export interface MenuDiaPageProps {
   session: UserSession;
@@ -91,47 +89,25 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
   const [busquedaDisp, setBusquedaDisp] = useState('');
   const [filtroTipoDisp, setFiltroTipoDisp] = useState<'Todos' | 'Componente' | 'Carta' | 'Agotados'>('Todos');
 
-  if (!tienePermiso) {
-    return (
-      <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
-          <ShieldAlert className="w-8 h-8" />
-        </div>
-        <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
-          Acceso Restringido
-        </h2>
-        <p className="text-neutral-600 max-w-md mx-auto text-sm">
-          No tiene permiso para acceder a este módulo. Esta pantalla está reservada para administración y cocina.
-        </p>
-      </div>
-    );
-  }
-
-  // Agrupamiento de candidatos: Componentes por Rol
-  const componentesActivos = candidatos.filter((c) => c.tipo === 'Componente');
-  const compBebidasDesayuno = componentesActivos.filter((c) => c.rol === 'BebidaDesayuno');
-  const compPlatosDesayuno = componentesActivos.filter((c) => c.rol === 'PlatoDesayuno');
-  const compSopas = componentesActivos.filter((c) => c.rol === 'Sopa');
-  const compEntradas = componentesActivos.filter((c) => c.rol === 'Entrada');
-  const compSegundos = componentesActivos.filter((c) => c.rol === 'Segundo');
-
-  // Agrupamiento de candidatos: Carta por Categoría
-  const cartaActiva = candidatos.filter((c) => c.tipo === 'Carta');
-  const cartaDesayunos = cartaActiva.filter((c) => c.categoria === 'Desayuno');
-  const cartaAlmuerzos = cartaActiva.filter(
-    (c) => c.categoria === 'Almuerzo' || c.categoria === 'PlatosExtras' || c.categoria === 'Platos Extras'
-  );
-  const cartaCombinados = cartaActiva.filter((c) => c.categoria === 'Combinados');
-  const cartaBebidas = cartaActiva.filter(
-    (c) => c.categoria === 'Bebidas' || c.categoria === 'Bebidas y Refrescos'
-  );
-  const cartaOtros = cartaActiva.filter((c) => c.categoria === 'Otro' || c.categoria === 'Otros');
+  // Agrupamiento de candidatos: Componentes y Carta
+  const {
+    compBebidasDesayuno,
+    compPlatosDesayuno,
+    compSopas,
+    compEntradas,
+    compSegundos,
+    cartaDesayunos,
+    cartaAlmuerzos,
+    cartaCombinados,
+    cartaBebidas,
+    cartaOtros,
+  } = useMemo(() => agruparCandidatos(candidatos), [candidatos]);
 
   // Fecha legible
   const fechaHoyFormateada = formatFechaLarga();
 
   // Resumen de disponibilidad consolidada
-  const itemsDisponibilidad: ItemDisponibilidad[] = [
+  const itemsDisponibilidad: ItemDisponibilidad[] = useMemo(() => [
     ...(menu?.opciones?.map((o) => ({
       productoId: o.productoId,
       nombre: o.nombre,
@@ -147,7 +123,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
       precio: p.precio,
       agotado: p.agotado,
     })) || []),
-  ];
+  ], [menu]);
 
   const itemsDispFiltrados = itemsDisponibilidad.filter((item) => {
     if (busquedaDisp.trim()) {
@@ -161,31 +137,21 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
     return true;
   });
 
-  const formatearBadgeClasificacion = (item: { tipo: string; clasificacion: string; precio?: number }) => {
-    if (item.tipo === 'Carta') {
-      return item.precio != null ? `Carta · ${formatCurrency(item.precio)}` : 'Carta';
-    }
-    const rol = item.clasificacion || '';
-    const MAPEO_ROLES: Record<string, string> = {
-      BebidaDesayuno: 'Bebida desayuno',
-      PlatoDesay: 'Plato desayuno',
-      PlatoDesayuno: 'Plato desayuno',
-      Sopa: 'Sopa',
-      Entrada: 'Entrada',
-      Segundo: 'Segundo',
-      Postre: 'Postre',
-      Refresco: 'Refresco',
-      Bebida: 'Bebida',
-    };
-    if (MAPEO_ROLES[rol]) return MAPEO_ROLES[rol];
+  if (!tienePermiso) {
     return (
-      rol
-        .replace(/([A-Z])/g, ' $1')
-        .trim()
-        .toLowerCase()
-        .replace(/^\w/, (c) => c.toUpperCase()) || 'Opción'
+      <div className="max-w-4xl mx-auto py-12 px-4 text-center">
+        <div className="w-16 h-16 bg-rose-50 text-danger rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-200">
+          <ShieldAlert className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-sans font-bold text-neutral-800 mb-2">
+          Acceso Restringido
+        </h2>
+        <p className="text-neutral-600 max-w-md mx-auto text-sm">
+          No tiene permiso para acceder a este módulo. Esta pantalla está reservada para administración y cocina.
+        </p>
+      </div>
     );
-  };
+  }
 
   return (
     <div className="flex-1 overflow-y-auto w-full relative scroll-thin">
@@ -210,35 +176,11 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         />
 
         {/* AVISOS DE VALIDACIÓN Y RETROALIMENTACIÓN */}
-        {errorValidacionGuardar && (
-          <div
-            role="alert"
-            className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3"
-          >
-            <AlertCircle className="w-5 h-5 shrink-0 text-danger mt-0.5" />
-            <div className="flex-1 font-medium">{errorValidacionGuardar}</div>
-          </div>
-        )}
-
-        {avisoExito && (
-          <div
-            role="status"
-            className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3 animate-in fade-in"
-          >
-            <CheckCircle2 className="w-5 h-5 shrink-0 text-success" />
-            <span className="font-medium">{avisoExito}</span>
-          </div>
-        )}
-
-        {avisoError && (
-          <div
-            role="alert"
-            className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3"
-          >
-            <AlertCircle className="w-5 h-5 shrink-0 text-danger mt-0.5" />
-            <span className="font-medium">{avisoError}</span>
-          </div>
-        )}
+        <MenuDiaAvisos
+          errorValidacionGuardar={errorValidacionGuardar}
+          avisoExito={avisoExito}
+          avisoError={avisoError}
+        />
 
         {/* PESTAÑAS PRINCIPALES */}
         <MenuDiaTabsNav
@@ -333,21 +275,17 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
         onSave={handleGuardarMenu}
       />
 
-      {/* MODAL DE CONFIRMACIÓN DE DISPONIBILIDAD (CUS05.2 / RV-49) */}
-      <MenuDisponibilidadConfirmModal
-        isOpen={dispModalOpen}
-        onClose={() => setDispModalOpen(false)}
-        onConfirm={handleConfirmarDisponibilidad}
-        plato={itemAConfirmar}
+      {/* MODALES DE DISPONIBILIDAD Y DESCARTE */}
+      <MenuDiaModals
+        dispModalOpen={dispModalOpen}
+        onCloseDisp={() => setDispModalOpen(false)}
+        onConfirmDisp={handleConfirmarDisponibilidad}
+        itemAConfirmar={itemAConfirmar}
         nuevoEstadoAgotado={nuevoEstadoAgotado}
-        procesando={procesandoDisp}
-      />
-
-      {/* MODAL DE DESCARTE DE CAMBIOS (RV-48 / MSG-72) */}
-      <DiscardChangesModal
-        isOpen={discardModalOpen}
-        onClose={() => setDiscardModalOpen(false)}
-        onConfirm={handleDescartarCambios}
+        procesandoDisp={procesandoDisp}
+        discardModalOpen={discardModalOpen}
+        onCloseDiscard={() => setDiscardModalOpen(false)}
+        onConfirmDiscard={handleDescartarCambios}
       />
     </div>
   );
