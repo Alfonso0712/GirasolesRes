@@ -1,19 +1,22 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Volume2,
   VolumeX,
-  RotateCcw, RotateCw,
-  CheckCircle2,
-  AlertTriangle,
+  RotateCcw,
   UtensilsCrossed,
-  Undo2,
-  AlertCircle
 } from 'lucide-react';
 import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
 import { comandaService } from '../services/comandaService';
 import { renovarTokenService } from '../services/authService';
 import { PlatosAgotadosModal } from '../components/menu-dia';
-import { ComandaCard, CocinaResumenBar, AvisoNuevoPedidoCocinaModal } from '../components/cocina';
+import {
+  CocinaResumenBar,
+  AvisoNuevoPedidoCocinaModal,
+  CocinaDesconexionBanner,
+  CocinaAvisoDeshacer,
+  CocinaZonasBoard,
+  type AvisoDeshacerInfo,
+} from '../components/cocina';
 import { PageHeader, PageContainer } from '../components/layout';
 import type { UserSession } from '../types/auth';
 import type { ComandaKdsItem, ResumenProducto } from '../types/comanda';
@@ -22,13 +25,6 @@ interface CocinaPageProps {
   session: UserSession;
   onLogout: () => void;
   onUpdateSession?: (session: UserSession) => void;
-}
-
-interface AvisoDeshacer {
-  comandaId: string;
-  pedidoNumero: number;
-  mensaje: string;
-  segundosRestantes: number;
 }
 
 export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpdateSession }) => {
@@ -41,9 +37,15 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         if (nuevoToken && onUpdateSession) {
           onUpdateSession({ ...session, token: nuevoToken });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.warn('Error al renovar token periódico de cocina:', err);
-        if ((err?.status === 401 || err?.message?.toLowerCase().includes('sesión expiró') || err?.message?.toLowerCase().includes('vencida')) && onLogout) {
+        const errorObj = err as { status?: number; message?: string };
+        if (
+          (errorObj?.status === 401 ||
+            errorObj?.message?.toLowerCase().includes('sesión expiró') ||
+            errorObj?.message?.toLowerCase().includes('vencida')) &&
+          onLogout
+        ) {
           onLogout();
         }
       }
@@ -72,8 +74,8 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
   const comandasPreviasRef = useRef<Set<string>>(new Set());
 
   // Aviso con DESHACER (RV-88 / 10 segundos)
-  const [avisoDeshacer, setAvisoDeshacer] = useState<AvisoDeshacer | null>(null);
-  const avisoTimerRef = useRef<any>(null);
+  const [avisoDeshacer, setAvisoDeshacer] = useState<AvisoDeshacerInfo | null>(null);
+  const avisoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Detección de primera carga y notificación de comanda nueva
   const esPrimeraCargaRef = useRef<boolean>(true);
@@ -83,7 +85,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
     itemsCount: number;
     hora?: string;
   } | null>(null);
-  
+
   // Desbloqueo de AudioContext ante interacción del usuario en la pantalla
   useEffect(() => {
     const handleInteraccion = () => {
@@ -104,8 +106,8 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
 
   // Temporizador de refresco (RNF-31: cada 5 segundos)
   const [segundosDesdeActualizacion, setSegundosDesdeActualizacion] = useState(0);
-  const intervalRef = useRef<any>(null);
-  const timerSegundosRef = useRef<any>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerSegundosRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Estabilidad de interacción táctil (RV-94)
   const tocandoTarjetaRef = useRef<boolean>(false);
@@ -169,7 +171,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
               pedidoNumero: primeraNueva.pedidoNumero,
               destino: destinoStr,
               itemsCount: primeraNueva.lineas.reduce((acc, l) => acc + l.cantidad, 0),
-              hora: primeraNueva.horaLlegada
+              hora: primeraNueva.horaLlegada,
             });
           }
 
@@ -184,12 +186,13 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         }
 
         comandasPreviasRef.current = actualesIds;
-      } catch (err: any) {
-        if (err.status === 401) {
+      } catch (err: unknown) {
+        const status = (err as { status?: number })?.status;
+        if (status === 401) {
           onLogout();
           return;
         }
-        if (err.status === 403) {
+        if (status === 403) {
           setErrorCarga('Acceso denegado. Solo el rol Cocinero puede gestionar comandas.');
           return;
         }
@@ -238,7 +241,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
       setAvisoDeshacer((prev) => {
         if (!prev) return null;
         if (prev.segundosRestantes <= 1) {
-          clearInterval(avisoTimerRef.current);
+          if (avisoTimerRef.current) clearInterval(avisoTimerRef.current);
           return null;
         }
         return { ...prev, segundosRestantes: prev.segundosRestantes - 1 };
@@ -271,10 +274,11 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         comandaId: comanda.id,
         pedidoNumero: comanda.pedidoNumero,
         mensaje: res.mensaje || `Comanda N.º ${comanda.pedidoNumero} en preparación.`,
-        segundosRestantes: 10
+        segundosRestantes: 10,
       });
-    } catch (err: any) {
-      alert(err.message || 'No se pudo iniciar la preparación de la comanda.');
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      alert(msg || 'No se pudo iniciar la preparación de la comanda.');
       cargarComandas(true);
     } finally {
       setProcesandoIds((prev) => {
@@ -304,13 +308,14 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
         comandaId: comanda.id,
         pedidoNumero: comanda.pedidoNumero,
         mensaje: res.mensaje || `Comanda N.º ${comanda.pedidoNumero} marcada como lista.`,
-        segundosRestantes: 10
+        segundosRestantes: 10,
       });
 
       // Refrescar resumen superior de por preparar
       cargarComandas(true);
-    } catch (err: any) {
-      alert(err.message || 'No se pudo marcar la comanda como lista.');
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      alert(msg || 'No se pudo marcar la comanda como lista.');
       cargarComandas(true);
     } finally {
       setProcesandoIds((prev) => {
@@ -330,8 +335,9 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
     try {
       await comandaService.deshacerEstado(comandaId, session.token);
       cargarComandas(true);
-    } catch (err: any) {
-      alert(err.message || 'No se pudo deshacer el cambio de comanda.');
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      alert(msg || 'No se pudo deshacer el cambio de comanda.');
       cargarComandas(true);
     }
   };
@@ -343,262 +349,112 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-8 2xl:px-10 bg-canvas text-neutral-900 select-none">
-      {/* Franja superior de desconexión (MSG-132) */}
-      {sinConexion && (
-        <div
-          role="alert"
-          className="bg-amber-600 text-white px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center justify-between shadow-md animate-in slide-in-from-top-2 duration-200"
-        >
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" />
-            <span>
-              Sin conexión: las comandas pueden estar desactualizadas (datos de hace{' '}
-              {segundosSinConexion} s).
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => cargarComandas(false)}
-            className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors cursor-pointer"
-          >
-            Reintentar
-          </button>
-        </div>
-      )}
+        {/* Franja superior de desconexión (MSG-132) */}
+        <CocinaDesconexionBanner
+          sinConexion={sinConexion}
+          segundosSinConexion={segundosSinConexion}
+          onReintentar={() => cargarComandas(false)}
+        />
 
-      {/* 1. Encabezado Unificado */}
-      <PageHeader
-        title="Cocina (KDS)"
-        subtitle="Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real."
-        count={resumen.reduce((acc, r) => acc + r.cantidad, 0)}
-        countLabel="porciones por preparar"
-        actions={
-          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
-            {/* Botón PLATOS AGOTADOS */}
-            <button
-              type="button"
-              onClick={() => setAbrirModalPlatosAgotados(true)}
-              className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-accent text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[40px]"
-              title="Abrir disponibilidad de platos del menú"
-            >
-              <UtensilsCrossed className="w-4 h-4 text-accent" />
-              <span>Platos agotados</span>
-            </button>
-
-            {/* Botón SONIDO */}
-            <button
-              type="button"
-              onClick={toggleSonido}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer min-h-[40px] shadow-2xs ${
-                sonidoActivado
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                  : 'bg-surface text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
-              }`}
-              title="Activar o desactivar sonido de nueva comanda"
-            >
-              {sonidoActivado ? (
-                <>
-                  <Volume2 className="w-4 h-4 text-success" />
-                  <span>Sonido: ON</span>
-                </>
-              ) : (
-                <>
-                  <VolumeX className="w-4 h-4 text-neutral-500" />
-                  <span>Sonido: OFF</span>
-                </>
-              )}
-            </button>
-
-            {/* Contador y Actualizar Manual */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
-                Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
-              </span>
+        {/* 1. Encabezado Unificado */}
+        <PageHeader
+          title="Cocina (KDS)"
+          subtitle="Gestión operativa de comandas de cocina y despacho de pedidos en tiempo real."
+          count={resumen.reduce((acc, r) => acc + r.cantidad, 0)}
+          countLabel="porciones por preparar"
+          actions={
+            <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+              {/* Botón PLATOS AGOTADOS */}
               <button
                 type="button"
-                onClick={() => cargarComandas(false)}
-                disabled={cargando}
-                className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
-                title="Actualizar comandas manualmente"
+                onClick={() => setAbrirModalPlatosAgotados(true)}
+                className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-accent text-xs font-semibold flex items-center gap-2 border border-amber-200 shadow-2xs transition-all cursor-pointer min-h-[40px]"
+                title="Abrir disponibilidad de platos del menú"
               >
-                <RotateCcw className={`w-3.5 h-3.5 text-accent ${cargando ? 'animate-spin' : ''}`} />
-                <span>Actualizar</span>
+                <UtensilsCrossed className="w-4 h-4 text-accent" />
+                <span>Platos agotados</span>
               </button>
-            </div>
-          </div>
-        }
-      />
 
-      {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
-      {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
-      <CocinaResumenBar resumen={resumen} />
+              {/* Botón SONIDO */}
+              <button
+                type="button"
+                onClick={toggleSonido}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer min-h-[40px] shadow-2xs ${
+                  sonidoActivado
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                    : 'bg-surface text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+                }`}
+                title="Activar o desactivar sonido de nueva comanda"
+              >
+                {sonidoActivado ? (
+                  <>
+                    <Volume2 className="w-4 h-4 text-success" />
+                    <span>Sonido: ON</span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className="w-4 h-4 text-neutral-500" />
+                    <span>Sonido: OFF</span>
+                  </>
+                )}
+              </button>
 
-      {/* Contenido Principal: Zonas "Pendientes" y "En preparación" (RV-85) */}
-      <div className="w-full">
-        {cargando && comandas.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-neutral-500 gap-3">
-            <RotateCw className="w-8 h-8 animate-spin text-accent" />
-            <span className="text-base font-semibold">Cargando comandas de cocina…</span>
-          </div>
-        ) : errorCarga && comandas.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6">
-            <AlertCircle className="w-12 h-12 text-rose-500 mb-3" />
-            <h2 className="text-lg font-bold text-neutral-800 mb-1">{errorCarga}</h2>
-            <button
-              type="button"
-              onClick={() => cargarComandas(false)}
-              className="mt-4 px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-hover transition-colors cursor-pointer"
-            >
-              Reintentar
-            </button>
-          </div>
-        ) : comandas.length === 0 ? (
-          /* Estado sin comandas (MSG-124 / Sección 7) */
-          <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-surface/70 rounded-3xl border border-dashed border-amber-300 my-auto">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-50 text-success flex items-center justify-center mb-4 shadow-xs">
-              <CheckCircle2 className="w-10 h-10" />
-            </div>
-            <h2 className="text-2xl font-bold font-sans text-neutral-800 mb-1">
-              No hay comandas pendientes
-            </h2>
-            <p className="text-sm text-neutral-500 max-w-md">
-              Todo al día en cocina. Las nuevas comandas registradas por los mozos o en
-              caja aparecerán aquí automáticamente en 5 segundos.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start">
-            {/* ZONA 1: PENDIENTES */}
-            <section
-              aria-label="Comandas Pendientes"
-              className="flex flex-col gap-3.5"
-              onPointerDown={() => {
-                tocandoTarjetaRef.current = true;
-              }}
-              onPointerUp={() => {
-                tocandoTarjetaRef.current = false;
-              }}
-            >
-              <div className="flex items-center justify-between px-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-amber-500 animate-ping" />
-                  <h2 className="text-lg font-bold font-sans text-neutral-800 uppercase tracking-wide">
-                    Pendientes
-                  </h2>
-                </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-200 text-amber-900 border border-amber-300">
-                  {comandasPendientes.length} comanda
-                  {comandasPendientes.length === 1 ? '' : 's'}
+              {/* Contador y Actualizar Manual */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline">
+                  Actualizado hace <span className="font-semibold text-neutral-700">{segundosDesdeActualizacion}</span> s
                 </span>
+                <button
+                  type="button"
+                  onClick={() => cargarComandas(false)}
+                  disabled={cargando}
+                  className="px-3.5 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-2 transition-colors cursor-pointer min-h-[40px] disabled:opacity-60"
+                  title="Actualizar comandas manualmente"
+                >
+                  <RotateCcw className={`w-3.5 h-3.5 text-accent ${cargando ? 'animate-spin' : ''}`} />
+                  <span>Actualizar</span>
+                </button>
               </div>
+            </div>
+          }
+        />
 
-              {comandasPendientes.length === 0 ? (
-                <div className="p-8 text-center bg-surface/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
-                  No hay comandas en espera de preparación.
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3.5">
-                  {comandasPendientes.map((c) => (
-                    <ComandaCard
-                      key={c.id}
-                      comanda={c}
-                      esNueva={Boolean(comandasNuevas[c.id])}
-                      estaProcesando={Boolean(procesandoIds[c.id])}
-                      tipoZona="pendiente"
-                      onAccionPrincipal={handleIniciarPreparacion}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-            {/* ZONA 2: EN PREPARACIÓN */}
-            <section
-              aria-label="Comandas En Preparación"
-              className="flex flex-col gap-3.5"
-              onPointerDown={() => {
-                tocandoTarjetaRef.current = true;
-              }}
-              onPointerUp={() => {
-                tocandoTarjetaRef.current = false;
-              }}
-            >
-              <div className="flex items-center justify-between px-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-blue-600 animate-pulse" />
-                  <h2 className="text-lg font-bold font-sans text-neutral-800 uppercase tracking-wide">
-                    En Preparación
-                  </h2>
-                </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-900 border border-blue-200">
-                  {comandasEnPreparacion.length} comanda
-                  {comandasEnPreparacion.length === 1 ? '' : 's'}
-                </span>
-              </div>
+        {/* Banda Superior "Por preparar" (RV-86, Nielsen 8) */}
+        <CocinaResumenBar resumen={resumen} />
 
-              {comandasEnPreparacion.length === 0 ? (
-                <div className="p-8 text-center bg-surface/60 rounded-3xl border border-neutral-200 text-neutral-500 text-sm">
-                  No hay comandas en preparación en este momento.
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3.5">
-                  {comandasEnPreparacion.map((c) => (
-                    <ComandaCard
-                      key={c.id}
-                      comanda={c}
-                      estaProcesando={Boolean(procesandoIds[c.id])}
-                      tipoZona="en_preparacion"
-                      onAccionPrincipal={handleMarcarComoLista}
-                    />
-                  ))}
-                </div>
-              )}            </section>
-          </div>
-        )}
-      </div>
+        {/* Contenido Principal: Zonas "Pendientes" y "En preparación" (RV-85) */}
+        <CocinaZonasBoard
+          cargando={cargando}
+          comandas={comandas}
+          errorCarga={errorCarga}
+          onReintentar={() => cargarComandas(false)}
+          comandasPendientes={comandasPendientes}
+          comandasEnPreparacion={comandasEnPreparacion}
+          comandasNuevas={comandasNuevas}
+          procesandoIds={procesandoIds}
+          onIniciarPreparacion={handleIniciarPreparacion}
+          onMarcarComoLista={handleMarcarComoLista}
+          tocandoTarjetaRef={tocandoTarjetaRef}
+        />
 
-      {/* Aviso Inferior Flotante con Botón DESHACER (RV-88, RN-78, RN-79 - 10s) */}
-      {avisoDeshacer && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-fill-strong/95 text-white px-5 sm:px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 sm:gap-6 border border-neutral-700 animate-in slide-in-from-bottom-4 duration-200 max-w-lg w-[90%]"
-        >
-          <div className="flex-1">
-            <p className="text-sm font-semibold">{avisoDeshacer.mensaje}</p>
-            <p className="text-xs text-neutral-500 mt-0.5">
-              Puede corregir esta acción en los próximos{' '}
-              <strong className="text-amber-400">{avisoDeshacer.segundosRestantes} s</strong>
-            </p>
-          </div>
+        {/* Aviso Inferior Flotante con Botón DESHACER (RV-88, RN-78, RN-79 - 10s) */}
+        <CocinaAvisoDeshacer aviso={avisoDeshacer} onDeshacer={handleDeshacer} />
 
-          <button
-            type="button"
-            onClick={handleDeshacer}
-            className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer shrink-0 min-h-[44px]"
-          >
-            <Undo2 className="w-4 h-4 stroke-[2.5]" />
-            <span>DESHACER</span>
-          </button>
-        </div>
-      )}
+        {/* Modal emergente de NUEVA COMANDA (CUS10 / RV-92) */}
+        <AvisoNuevoPedidoCocinaModal
+          aviso={notificacionNueva}
+          onCerrar={() => setNotificacionNueva(null)}
+        />
 
-      {/* Modal emergente de NUEVA COMANDA (CUS10 / RV-92) */}
-      <AvisoNuevoPedidoCocinaModal
-        aviso={notificacionNueva}
-        onCerrar={() => setNotificacionNueva(null)}
-      />
-
-      {/* Modal PLATOS AGOTADOS (CUS05.2 / RN-83) */}
-      <PlatosAgotadosModal
-        isOpen={abrirModalPlatosAgotados}
-        onClose={() => setAbrirModalPlatosAgotados(false)}
-        token={session.token}
-      />
+        {/* Modal PLATOS AGOTADOS (CUS05.2 / RN-83) */}
+        <PlatosAgotadosModal
+          isOpen={abrirModalPlatosAgotados}
+          onClose={() => setAbrirModalPlatosAgotados(false)}
+          token={session.token}
+        />
       </PageContainer>
     </div>
   );
 };
 
 export default CocinaPage;
-
-
