@@ -1,22 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   FileText,
-  Download,
-  Printer,
   AlertTriangle,
   X,
-  Calendar,
-  User,
-  Clock,
   Loader2,
 } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import type { CierreDetalleDto } from '../../types/caja';
-import { formatCurrency, formatLimaFecha } from '../../utils/formatters';
 import {
+  CierreTurnoMetadatosSection,
   CierreMetricasSection,
   CierreProductosConsolidadoSection,
   CierreAnulacionesSection,
+  CierreDetalleFooter,
 } from './cierre-detalle';
 
 
@@ -240,42 +236,7 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
               )}
 
               {/* Sección 1: Metadatos del Turno (Apertura y Cierre en formato Lima) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-xs break-inside-avoid">
-                <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-neutral-200 pb-3 sm:pb-0 sm:pr-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-accent" /> Apertura del Turno
-                  </span>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">
-                    {detalle.fechaAperturaLocal || formatLimaFecha(detalle.fechaApertura)}
-                  </p>
-                  <p className="text-neutral-600 flex items-center gap-1">
-                    <User className="w-3 h-3 text-stone-500" />
-                    Cajero(a): <strong>{detalle.cajeroApertura || 'Cajero'}</strong>
-                  </p>
-                  <p className="text-neutral-500 text-xs">
-                    Fondo inicial: <strong className="text-neutral-800 tabular-nums">{formatCurrency(detalle.montoInicial)}</strong>
-                  </p>
-                </div>
-
-                <div className="space-y-1.5 pt-1 sm:pt-0 sm:pl-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-accent" /> Cierre y Cuadre
-                  </span>
-                  <p className="font-bold text-stone-900 text-sm mt-0.5">
-                    {detalle.fechaCierreLocal ||
-                      (detalle.fechaCierre
-                        ? formatLimaFecha(detalle.fechaCierre)
-                        : 'Turno en curso (Abierta)')}
-                  </p>
-                  <p className="text-neutral-600 flex items-center gap-1">
-                    <User className="w-3 h-3 text-stone-500" />
-                    Cerrado por: <strong>{detalle.cajeroCierre || '—'}</strong>
-                  </p>
-                  <p className="text-neutral-500 text-xs">
-                    Transacciones: <strong className="text-neutral-800">{detalle.cantidadVentas ?? 0} ventas emitidas</strong>
-                  </p>
-                </div>
-              </div>
+              <CierreTurnoMetadatosSection detalle={detalle} />
 
               {/* Sección 2: Desglose Financiero Completo (8 Métricas Clave) */}
               <CierreMetricasSection
@@ -306,48 +267,15 @@ export const CierreDetalleModal: React.FC<CierreDetalleModalProps> = ({
         </div>
 
         {/* Footer con Botones de Acción */}
-        <div className="no-print bg-neutral-50/80 border-t border-neutral-200 p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
-          >
-            Cerrar
-          </button>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrint}
-              disabled={cargando || !detalle}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-surface border border-neutral-200 hover:bg-neutral-50 disabled:opacity-40 rounded-xl transition-colors cursor-pointer min-h-[44px]"
-              title="Imprimir resumen mediante diálogo del navegador"
-            >
-              <Printer className="w-4 h-4" />
-              Imprimir
-            </button>
-
-            <button
-              type="button"
-              onClick={handleDescargarPdf}
-              disabled={cargando || !detalle || descargandoPdf || esAbierta}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-primary hover:bg-primary-hover disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
-              title={esAbierta ? 'No disponible mientras la caja esté abierta' : 'Descargar comprobante oficial en formato PDF'}
-            >
-              {descargandoPdf ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Generando PDF…
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  Descargar comprobante PDF
-                </>
-              )}
-            </button>
-          </div>
-        </div>
+        <CierreDetalleFooter
+          onClose={onClose}
+          onPrint={handlePrint}
+          onDescargarPdf={handleDescargarPdf}
+          cargando={cargando}
+          tieneDetalle={detalle !== null}
+          descargandoPdf={descargandoPdf}
+          esAbierta={esAbierta}
+        />
       </div>
     </div>
   );
