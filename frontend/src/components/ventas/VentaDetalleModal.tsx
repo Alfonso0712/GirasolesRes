@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
-import { SolesIcon } from '../ui/SolesIcon';
 import {
   ReceiptText,
   X,
-  Download,
   Ban,
-  Utensils,
-  Smartphone,
   AlertTriangle,
   CheckCircle2
 } from 'lucide-react';
 import type { VentaDetalle } from '../../types/venta';
-import { formatCurrency } from '../../utils/formatters';
+import {
+  VentaDatosGenerales,
+  VentaLineasTable,
+  VentaDesgloseFiscal,
+  VentaDetalleFooter
+} from './detalle';
 
 
 interface VentaDetalleModalProps {
@@ -127,219 +128,25 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                 </div>
               )}
 
-              {/* Tarjeta de Datos Generales */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-neutral-50/70 rounded-xl border border-neutral-200/70 text-xs">
-                <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Fecha y Hora</span>
-                  <span className="font-semibold text-neutral-800 tabular-nums">{venta.fechaHoraFormateada}</span>
-                </div>
-                <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Pedido N.º</span>
-                  <span className="font-semibold text-neutral-800 tabular-nums">#{venta.pedidoNumero}</span>
-                </div>
-                <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Destino</span>
-                  <span className="font-semibold text-neutral-800">
-                    {venta.tipo} {venta.mesa ? `· ${venta.mesa}` : ''}
-                  </span>
-                  {venta.referencia && (
-                    <span className="text-xs text-neutral-500 block truncate" title={venta.referencia}>
-                      Ref: {venta.referencia}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <span className="text-xs font-semibold uppercase text-neutral-500 block">Cajero(a)</span>
-                  <span className="font-semibold text-neutral-800">{venta.cajero}</span>
-                </div>
-              </div>
+              <VentaDatosGenerales venta={venta} />
 
-              {/* Receptor Fiscal (SUNAT / RENIEC) */}
-              {(venta.numDocReceptor || venta.razonSocialReceptor) && (
-                <div className="p-3.5 bg-blue-50/50 rounded-xl border border-blue-200/80 text-xs space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
-                      Datos del Receptor Fiscal ({venta.tipoDocReceptor || (venta.numDocReceptor?.length === 11 ? 'RUC' : 'DNI')})
-                    </span>
-                    <span className="px-2 py-0.2 bg-blue-100 text-blue-800 text-xs font-bold rounded-md">
-                      {venta.comprobante.startsWith('F') ? 'Factura' : venta.comprobante.startsWith('B') ? 'Boleta' : 'Comprobante'}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs text-neutral-800">
-                    <div>
-                      <span className="text-neutral-500 font-medium">N.º Documento: </span>
-                      <span className="tabular-nums font-bold text-neutral-900">{venta.numDocReceptor}</span>
-                    </div>
-                    <div>
-                      <span className="text-neutral-500 font-medium">Nombre / Razón Social: </span>
-                      <span className="font-semibold text-neutral-900">{venta.razonSocialReceptor || 'No especificado'}</span>
-                    </div>
-                  </div>
-                  {venta.direccionReceptor && (
-                    <div className="pt-1 text-xs text-neutral-700">
-                      <span className="text-neutral-500 font-medium">Dirección Fiscal: </span>
-                      <span>{venta.direccionReceptor}</span>
-                    </div>
-                  )}
-                </div>
-              )}
+              <VentaLineasTable lineas={venta.lineas} />
 
-              {/* Tabla de Consumo (Líneas) */}
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-ink mb-2 flex items-center gap-1.5">
-                  <Utensils className="w-3.5 h-3.5 text-accent" />
-                  <span>Platos y Bebidas Consumidos</span>
-                </h3>
-                <div className="border border-neutral-200 rounded-xl overflow-hidden shadow-2xs">
-                  <table className="w-full text-left border-collapse">
-                    <thead className="bg-canvas text-ink-muted font-semibold text-xs uppercase tracking-wider border-b border-line">
-                      <tr>
-                        <th className="py-2.5 px-3 text-left w-14">Cant.</th>
-                        <th className="py-2.5 px-3 text-left">Descripción</th>
-                        <th className="py-2.5 px-3 text-right w-24">P. Unit.</th>
-                        <th className="py-2.5 px-3 text-right w-24">Importe</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-line-soft bg-surface text-sm">
-                      {venta.lineas.map((linea, idx) => (
-                        <tr key={`${linea.productoNombre}-${linea.precioUnitario}-${linea.cantidad}-${idx}`} className="hover:bg-neutral-50/50 border-b border-line-soft">
-                          <td className="py-2.5 px-3 tabular-nums font-semibold text-center text-ink text-sm">
-                            {linea.cantidad}
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <span className="font-semibold text-sm text-ink">{linea.productoNombre}</span>
-                            {linea.elecciones && (
-                              <span className="text-xs text-stone-500 italic block mt-0.5">
-                                {linea.elecciones}{linea.incluye ? ` (incluye ${linea.incluye})` : ''}
-                              </span>
-                            )}
-                            {linea.observacion && (
-                              <span className="text-xs text-stone-500 block mt-0.5">
-                                Obs: {linea.observacion}
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-2.5 px-3 text-right tabular-nums text-sm text-stone-600">
-                            {formatCurrency(linea.precioUnitario)}
-                          </td>
-                          <td className="py-2.5 px-3 text-right tabular-nums font-semibold text-sm text-ink">
-                            {formatCurrency(linea.subtotal)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Desglose Fiscal y de Pago */}
-              <div className="p-3.5 bg-amber-50/30 rounded-xl border border-amber-200/60 text-xs space-y-3">
-                {/* Desglose Tributario */}
-                <div className="space-y-1 pb-2 border-b border-amber-200/50 text-xs">
-                  <div className="flex items-center justify-between text-neutral-600">
-                    <span>Op. Gravada (Base imponible):</span>
-                    <span className="tabular-nums font-semibold text-neutral-800">
-                      {formatCurrency(venta.opGravada ?? Number((venta.total / 1.18).toFixed(2)))}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-neutral-600">
-                    <span>I.G.V. (18%):</span>
-                    <span className="tabular-nums font-semibold text-neutral-800">
-                      {formatCurrency(venta.igv ?? Number((venta.total - (venta.total / 1.18)).toFixed(2)))}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm pt-1 border-t border-amber-200/30">
-                    <span className="font-bold text-ink">TOTAL COBRADO:</span>
-                    <span className="font-sans font-bold text-lg text-accent tabular-nums whitespace-nowrap">
-                      {formatCurrency(venta.total)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Métodos de Pago */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-neutral-600">
-                  <div>
-                    <span className="text-neutral-500 block uppercase font-medium">Método de Pago</span>
-                    <span className="font-bold text-ink flex items-center gap-1 mt-0.5">
-                      {venta.metodo === 'Efectivo' ? (
-                        <>
-                          <SolesIcon className="w-3.5 h-3.5 text-emerald-700" />
-                          <span>Efectivo</span>
-                        </>
-                      ) : (
-                        <>
-                          <Smartphone className="w-3.5 h-3.5 text-purple-700" />
-                          <span>Yape / QR</span>
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  {venta.metodo === 'Efectivo' ? (
-                    <>
-                      <div>
-                        <span className="text-neutral-500 block uppercase font-medium">Monto Recibido</span>
-                        <span className="font-semibold text-neutral-800 tabular-nums">
-                          {formatCurrency(venta.montoRecibido ?? venta.total)}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-500 block uppercase font-medium">Vuelto Entregado</span>
-                        <span className="font-semibold text-neutral-800 tabular-nums">
-                          {formatCurrency(venta.vuelto)}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <div>
-                      <span className="text-neutral-500 block uppercase font-medium">Ref. Yape</span>
-                      <span className="font-semibold text-neutral-800 tabular-nums">
-                        {venta.yapeReferencia || 'No registrada'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <VentaDesgloseFiscal venta={venta} />
             </>
           )}
         </div>
 
         {/* Barra de Acciones del Detalle */}
-        <div className="pt-3 border-t border-neutral-200/80 flex flex-wrap items-center justify-between gap-2 shrink-0">
-          <div className="flex items-center gap-2">
-            {/* Botón Descargar PDF (RV-117, RN-104) */}
-            <button
-              type="button"
-              disabled={loading || !venta || descargandoTicket}
-              onClick={() => venta && onDescargarTicket(venta.ventaId, true)}
-              className="px-3 py-2 text-xs font-semibold rounded-xl border border-neutral-200 bg-surface hover:bg-neutral-50 text-neutral-700 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5 text-accent" />
-              <span>{descargandoTicket ? 'Descargando PDF...' : 'Descargar PDF (copia)'}</span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Botón Anular Venta (RV-112: Solo Admin en ventas Vigentes) */}
-            {esAdmin && venta && !esAnulada && (
-              <button
-                type="button"
-                onClick={onAbrirAnular}
-                className="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Ban className="w-3.5 h-3.5" />
-                <span>Anular venta</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition-colors cursor-pointer"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+        <VentaDetalleFooter
+          venta={venta}
+          loading={loading}
+          esAdmin={esAdmin}
+          descargandoTicket={descargandoTicket}
+          onDescargarTicket={onDescargarTicket}
+          onAbrirAnular={onAbrirAnular}
+          onClose={onClose}
+        />
       </div>
     </div>
   );
