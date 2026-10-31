@@ -1,4 +1,4 @@
-import { apiClient, resolveApiUrl } from './apiClient';
+import { apiClient } from './apiClient';
 import type { ReporteVentasResponse, ReportePlatosResponse } from '../types/reporte';
 
 export const reporteService = {
@@ -33,17 +33,11 @@ export const reporteService = {
     if (productoId && tipo === 'platos') params.append('productoId', productoId);
     params.append('formato', formato);
 
-    const res = await fetch(resolveApiUrl(`/api/reportes/${tipo}/exportar?${params.toString()}`), {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const blob = await apiClient.getBlob(
+      `/api/reportes/${tipo}/exportar?${params.toString()}`,
+      token
+    );
 
-    if (!res.ok) {
-      throw new Error('No se pudo descargar el archivo.');
-    }
-
-    const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

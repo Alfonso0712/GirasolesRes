@@ -4,10 +4,18 @@
  * adjunción de tokens JWT y mapeo homogéneo de errores HTTP (incluyendo 401 y red).
  */
 
-export const SESSION_STORAGE_KEY = 'girasoles_session';
-export const SESSION_EXPIRED_MESSAGE = 'Su sesión expiró. Ingrese nuevamente.';
-export const CONNECTION_ERROR_MESSAGE =
-  'No se pudo conectar con el servidor. Verifique que esté en ejecución.';
+import {
+  DEFAULT_CONNECTION_ERROR_MESSAGE,
+  SESSION_EXPIRED_MESSAGE,
+  SESSION_STORAGE_KEY,
+} from '../utils/constants';
+
+export {
+  DEFAULT_CONNECTION_ERROR_MESSAGE,
+  SESSION_EXPIRED_MESSAGE,
+  SESSION_STORAGE_KEY,
+};
+export const CONNECTION_ERROR_MESSAGE = DEFAULT_CONNECTION_ERROR_MESSAGE;
 
 export interface ApiClientError extends Error {
   status?: number;
@@ -15,11 +23,13 @@ export interface ApiClientError extends Error {
   field?: string;
   detail?: string;
   isConnectionError?: boolean;
+  [key: string]: any;
 }
 
 export interface RequestOptions extends Omit<RequestInit, 'body'> {
   token?: string;
   body?: any;
+  responseType?: 'json' | 'blob';
 }
 
 export interface JwtValidationResult {
@@ -134,10 +144,10 @@ function triggerGlobalUnauthorized(): void {
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const { token, body, headers: customHeaders, ...restOptions } = options;
+  const { token, body, headers: customHeaders, responseType = 'json', ...restOptions } = options;
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
     ...(customHeaders as Record<string, string>),
   };
 
@@ -161,6 +171,11 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
   if (response.status === 204) {
     return {} as T;
+  }
+
+  if (responseType === 'blob' && response.ok) {
+    const blobData = await response.blob();
+    return blobData as unknown as T;
   }
 
   const contentType = response.headers.get('content-type') || '';
@@ -200,11 +215,13 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         ? SESSION_EXPIRED_MESSAGE
         : 'Error de comunicación con el servidor.';
 
-    const err: ApiClientError = new Error(responseBody.message || defaultMsg);
+    const msg = responseBody.message || responseBody.mensaje || defaultMsg;
+    const err: ApiClientError = new Error(msg);
     err.status = response.status;
     err.field = responseBody.field;
     err.errors = responseBody.errors;
     err.detail = responseBody.detail;
+    Object.assign(err, responseBody);
     throw err;
   }
 
@@ -214,6 +231,9 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 export const apiClient = {
   get: <T>(endpoint: string, token?: string): Promise<T> =>
     request<T>(endpoint, { method: 'GET', token }),
+
+  getBlob: (endpoint: string, token?: string): Promise<Blob> =>
+    request<Blob>(endpoint, { method: 'GET', token, responseType: 'blob' }),
 
   post: <T>(endpoint: string, body?: any, token?: string): Promise<T> =>
     request<T>(endpoint, { method: 'POST', body, token }),

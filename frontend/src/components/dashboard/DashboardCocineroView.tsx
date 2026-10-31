@@ -148,9 +148,9 @@ export const DashboardCocineroView: React.FC<DashboardCocineroViewProps> = ({
                 <div className="space-y-1.5 mt-2">
                   <p className="text-xs text-neutral-500">Platos marcados como sin stock:</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {agotados.platos.map((plato, idx) => (
+                    {agotados.platos.map((plato) => (
                       <span
-                        key={idx}
+                        key={plato}
                         className="px-2 py-0.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-md text-xs font-semibold"
                       >
                         {plato}

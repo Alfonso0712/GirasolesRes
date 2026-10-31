@@ -200,7 +200,7 @@ export const VentaDetalleModal: React.FC<VentaDetalleModalProps> = ({
                     </thead>
                     <tbody className="divide-y divide-line-soft bg-surface text-sm">
                       {venta.lineas.map((linea, idx) => (
-                        <tr key={idx} className="hover:bg-neutral-50/50 border-b border-line-soft">
+                        <tr key={`${linea.productoNombre}-${linea.precioUnitario}-${linea.cantidad}-${idx}`} className="hover:bg-neutral-50/50 border-b border-line-soft">
                           <td className="py-2.5 px-3 tabular-nums font-semibold text-center text-ink text-sm">
                             {linea.cantidad}
                           </td>

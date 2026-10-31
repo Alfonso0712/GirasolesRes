@@ -83,7 +83,7 @@ export const CerrarCajaModal: React.FC<CerrarCajaModalProps> = ({
       setErrorServidor(null);
       setPasoConfirmacion(false);
     }
-  }, [isOpen]);
+  }, [isOpen, cargarResumen]);
 
   // Foco inicial en input de efectivo contado al abrir
   useEffect(() => {

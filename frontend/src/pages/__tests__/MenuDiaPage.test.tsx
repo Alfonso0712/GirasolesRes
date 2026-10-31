@@ -14,6 +14,7 @@ describe('MenuDiaPage - Pruebas de Caracterización y Menú Diario', () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.setSystemTime(new Date('2026-10-30T15:00:00-05:00'));
     vi.spyOn(menuDiaService, 'obtenerMenuHoy').mockResolvedValue({
       fecha: '2026-10-30',
       definido: true,

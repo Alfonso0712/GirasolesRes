@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Printer, Download, X, CheckCircle2 } from 'lucide-react';
 import type { ComprobanteDetalle } from '../../types/cobro';
 
@@ -144,7 +144,7 @@ export const TicketComprobanteModal: React.FC<TicketComprobanteModalProps> = ({
               </div>
               <div className="space-y-1">
                 {comprobante.lineas.map((l, idx) => (
-                  <div key={idx}>
+                  <div key={`${l.productoNombre}-${l.precioUnitario}-${l.cantidad}-${idx}`}>
                     <div className="flex justify-between text-xs">
                       <span className="w-8 font-semibold">{l.cantidad}</span>
                       <span className="flex-1 px-1 truncate font-medium">{l.productoNombre}</span>

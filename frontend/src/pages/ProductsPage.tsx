@@ -613,7 +613,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
           ) : cargandoMenus ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 xl:gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-64 bg-surface rounded-2xl border border-neutral-200 p-6 animate-pulse" />
+                <div key={`menus-skeleton-${i}`} className="h-64 bg-surface rounded-2xl border border-neutral-200 p-6 animate-pulse" />
               ))}
             </div>
           ) : (

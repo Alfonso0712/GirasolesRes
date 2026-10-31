@@ -142,7 +142,7 @@ export const CatalogoPedido: React.FC<CatalogoPedidoProps> = ({
           <div className={CATALOGO_GRID_CLASS}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
-                key={i}
+                key={`catalogo-skeleton-${i}`}
                 className="p-4 rounded-xl border border-neutral-200 bg-neutral-50/50 animate-pulse h-28 flex flex-col justify-between"
               >
                 <div className="h-4 bg-neutral-200 rounded-md w-3/4" />

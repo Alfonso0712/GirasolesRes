@@ -1,7 +1,7 @@
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Inbox, WifiOff, RefreshCw } from 'lucide-react';
-import { CONNECTION_ERROR_MESSAGE } from '../../services/apiClient';
+import { DEFAULT_CONNECTION_ERROR_MESSAGE } from '../../utils/constants';
 
 export interface EmptyStateProps {
   icon?: LucideIcon;
@@ -54,7 +54,7 @@ export interface ConnectionErrorStateProps {
 }
 
 export const ConnectionErrorState: React.FC<ConnectionErrorStateProps> = ({
-  message = CONNECTION_ERROR_MESSAGE,
+  message = DEFAULT_CONNECTION_ERROR_MESSAGE,
   onRetry,
   retrying = false,
   className = '',

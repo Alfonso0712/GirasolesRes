@@ -44,7 +44,7 @@ export const MesaGrid: React.FC<MesaGridProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3.5 sm:gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
               <div
-                key={i}
+                key={`mesa-skeleton-${i}`}
                 className="rounded-2xl border border-neutral-200/60 p-4 min-h-[140px] flex flex-col justify-between animate-pulse bg-neutral-50/70"
               >
                 <div className="flex justify-between items-start gap-2">

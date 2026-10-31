@@ -15,6 +15,7 @@ describe('PedidosPage - Pruebas de Caracterización y Lista de Pedidos', () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.setSystemTime(new Date('2026-10-30T15:00:00-05:00'));
     vi.spyOn(mesaService, 'getMesasService').mockResolvedValue([
       { id: 'm-1', nombre: 'Mesa 1', activa: true, ocupacion: 'Libre' },
     ]);

@@ -50,7 +50,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({ session, onLogout, onUpd
     }, INTERVALO_MS);
 
     return () => clearInterval(intervalId);
-  }, [session, onUpdateSession]);
+  }, [session, onLogout, onUpdateSession]);
 
   const [comandas, setComandas] = useState<ComandaKdsItem[]>([]);
   const [resumen, setResumen] = useState<ResumenProducto[]>([]);

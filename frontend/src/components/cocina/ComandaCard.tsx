@@ -84,7 +84,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
           {/* Líneas de Comanda con textos grandes y observaciones resaltadas */}
           <ul className="space-y-2.5 mb-2">
             {c.lineas.map((l, idx) => (
-              <li key={idx} className="flex items-start gap-3 text-neutral-900">
+              <li key={`${c.id}-${l.producto}-${idx}`} className="flex items-start gap-3 text-neutral-900">
                 <span className="w-7 h-7 rounded-lg bg-fill-strong text-white font-bold text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                   {l.cantidad}
                 </span>
@@ -186,7 +186,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
         {/* Líneas de Comanda con textos grandes y observaciones resaltadas */}
         <ul className="space-y-2.5 mb-2">
           {c.lineas.map((l, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-neutral-900">
+            <li key={`${c.id}-${l.producto}-${idx}`} className="flex items-start gap-3 text-neutral-900">
               <span className="w-7 h-7 rounded-lg bg-[#1E3A8A] text-white font-bold text-sm flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                 {l.cantidad}
               </span>

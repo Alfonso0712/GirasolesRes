@@ -10,25 +10,7 @@ import type {
   CajaEstado,
   AbrirCajaRequest,
 } from '../types/caja';
-import { resolveApiUrl } from './apiClient';
-
-const API_URL = resolveApiUrl('/api');
-
-async function parseApiError(res: Response, fallbackMessage: string): Promise<Error> {
-  const errData = await res.json().catch(() => ({}));
-  const msg = errData.message || errData.mensaje || fallbackMessage;
-  const err = new Error(msg);
-  (err as any).status = res.status;
-  (err as any).codigo = errData.codigo;
-  (err as any).campo = errData.campo;
-  (err as any).cajaIdExistente = errData.cajaIdExistente;
-  (err as any).cajaId = errData.cajaId;
-  (err as any).fechaApertura = errData.fechaApertura;
-  (err as any).cantidadPedidosPendientes = errData.cantidadPedidosPendientes;
-  (err as any).efectivoEsperadoActual = errData.efectivoEsperadoActual;
-  (err as any).efectivoEsperadoMostrado = errData.efectivoEsperadoMostrado;
-  return err;
-}
+import { apiClient } from './apiClient';
 
 export const cajaService = {
   /**
@@ -36,38 +18,14 @@ export const cajaService = {
    * ventas parciales acumuladas y sugerencia de monto inicial.
    */
   async obtenerActual(token: string): Promise<CajaActualResponseDto> {
-    const res = await fetch(`${API_URL}/caja/actual`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al consultar estado de caja.');
-    }
-
-    return res.json();
+    return apiClient.get<CajaActualResponseDto>('/api/caja/actual', token);
   },
 
   /**
    * CUS 13.1 / HU34: Apertura de caja con fondo inicial y token de idempotencia.
    */
   async abrirCaja(data: AbrirCajaRequestDto, token: string): Promise<AbrirCajaResponseDto> {
-    const res = await fetch(`${API_URL}/caja/abrir`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al abrir la caja.');
-    }
-
-    const json = await res.json();
+    const json = await apiClient.post<any>('/api/caja/abrir', data, token);
     return {
       ...json,
       usuarioApertura: json.usuarioApertura || json.nombreUsuarioApertura,
@@ -78,38 +36,14 @@ export const cajaService = {
    * CUS 13.2 / HU35: Consulta el resumen de ventas vigentes, pedidos pendientes y balance esperado.
    */
   async obtenerResumenCierre(token: string): Promise<CierreResumenDto> {
-    const res = await fetch(`${API_URL}/caja/cierre/resumen`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al obtener resumen de cierre.');
-    }
-
-    return res.json();
+    return apiClient.get<CierreResumenDto>('/api/caja/cierre/resumen', token);
   },
 
   /**
    * CUS 13.2 / HU35: Ejecuta el cierre definitivo y arqueo atómico de la caja.
    */
   async cerrarCaja(data: CerrarCajaRequestDto, token: string): Promise<CerrarCajaResponseDto> {
-    const res = await fetch(`${API_URL}/caja/cerrar`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al cerrar la caja.');
-    }
-
-    return res.json();
+    return apiClient.post<CerrarCajaResponseDto>('/api/caja/cerrar', data, token);
   },
 
   /**
@@ -124,54 +58,23 @@ export const cajaService = {
     if (params.hasta) query.append('hasta', params.hasta);
     if (params.pagina) query.append('pagina', params.pagina.toString());
     if (params.tamano) query.append('tamano', params.tamano.toString());
+    const qs = query.toString() ? `?${query.toString()}` : '';
 
-    const res = await fetch(`${API_URL}/caja/cierres?${query.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al consultar historial de cierres.');
-    }
-
-    return res.json();
+    return apiClient.get<ListarCierresResponseDto>(`/api/caja/cierres${qs}`, token);
   },
 
   /**
    * CUS 13.3 / HU36 / Vista 13.4: Obtiene el detalle modal completo de un cierre histórico con platos y ajustes posteriores.
    */
   async obtenerDetalleCierre(cajaId: string, token: string): Promise<CierreDetalleDto> {
-    const res = await fetch(`${API_URL}/caja/cierres/${cajaId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al obtener detalle del cierre.');
-    }
-
-    return res.json();
+    return apiClient.get<CierreDetalleDto>(`/api/caja/cierres/${cajaId}`, token);
   },
 
   /**
    * CUS 13.2 / HU35 / RNF-48: Descarga el comprobante PDF de 1 página del cierre.
    */
   async descargarCierrePdf(cajaId: string, token: string): Promise<void> {
-    const res = await fetch(`${API_URL}/caja/cierres/${cajaId}/pdf`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      throw await parseApiError(res, 'Error al descargar el PDF de cierre.');
-    }
-
-    const blob = await res.blob();
+    const blob = await apiClient.getBlob(`/api/caja/cierres/${cajaId}/pdf`, token);
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

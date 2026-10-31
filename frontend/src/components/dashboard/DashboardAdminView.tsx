@@ -72,7 +72,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
                 const esCaja = alerta.tipo === 'caja_anterior';
                 return (
                   <div
-                    key={idx}
+                    key={`${alerta.tipo}-${idx}`}
                     className={`p-3.5 sm:p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all ${
                       esCaja
                         ? 'bg-rose-50/90 border-rose-300 text-rose-900'
@@ -312,7 +312,7 @@ export const DashboardAdminView: React.FC<DashboardAdminViewProps> = ({
             ) : (
               <div className="space-y-3">
                 {platosHoy.principales.slice(0, 5).map((plato, idx) => (
-                  <div key={idx} className="flex items-center justify-between text-xs gap-2">
+                  <div key={plato.producto} className="flex items-center justify-between text-xs gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-xs shrink-0 ${
                         idx === 0 ? 'bg-amber-100 text-amber-900' : 'bg-neutral-100 text-neutral-600'
@@ -564,9 +564,9 @@ function renderAdminQuickActions(onNavigate: (pagina: string) => void) {
         Accesos Rápidos a Módulos
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
-        {actions.map((act, idx) => (
+        {actions.map((act) => (
           <QuickActionCard
-            key={idx}
+            key={act.pagina}
             label={act.label}
             icon={act.icon}
             variant="secondary"

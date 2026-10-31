@@ -14,6 +14,7 @@ describe('ReportesPage - Pruebas de Caracterización y Reportes Gerenciales', ()
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.setSystemTime(new Date('2026-10-30T15:00:00-05:00'));
     vi.spyOn(reporteService, 'obtenerReportePlatos').mockResolvedValue({
       totalPlatos: 15,
       totalMonto: 450.0,

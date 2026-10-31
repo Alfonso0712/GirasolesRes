@@ -1,4 +1,4 @@
-import { apiClient, resolveApiUrl } from './apiClient';
+import { apiClient } from './apiClient';
 import type {
   PedidoPendienteCobro,
   CobroRequest,
@@ -30,20 +30,10 @@ export const cobroService = {
     copia: boolean = false,
     token: string
   ): Promise<void> => {
-    const response = await fetch(
-      resolveApiUrl(`/api/cobros/comprobantes/${ventaId}/pdf?copia=${copia}`),
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const blob = await apiClient.getBlob(
+      `/api/cobros/comprobantes/${ventaId}/pdf?copia=${copia}`,
+      token
     );
-
-    if (!response.ok) {
-      throw new Error('Error al descargar el comprobante en PDF.');
-    }
-
-    const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
