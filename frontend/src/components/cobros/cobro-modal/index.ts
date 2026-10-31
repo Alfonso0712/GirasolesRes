@@ -4,3 +4,6 @@ export * from './CobroDocumentoClienteSection';
 export * from './CobroMetodoPagoSelector';
 export * from './CobroEfectivoSection';
 export * from './CobroYapeSection';
+export * from './CobroModalHeader';
+export * from './CobroModalFooter';
+export * from './validarCobroPayload';
