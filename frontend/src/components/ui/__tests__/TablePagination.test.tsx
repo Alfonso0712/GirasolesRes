@@ -123,7 +123,7 @@ describe('TablePagination y función pura calcularNumerosPaginacion', () => {
           totalPages={5}
           totalItems={100}
           pageSize={20}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={onPageSizeChange}
           entityName="ventas"
           onPageChange={vi.fn()}
@@ -134,12 +134,13 @@ describe('TablePagination y función pura calcularNumerosPaginacion', () => {
       expect(select).toBeInTheDocument();
       expect(select.value).toBe('20');
 
+      expect(screen.getByRole('option', { name: '5 por página' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: '10 por página' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: '20 por página' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: '50 por página' })).toBeInTheDocument();
 
-      fireEvent.change(select, { target: { value: '50' } });
-      expect(onPageSizeChange).toHaveBeenCalledWith(50);
+      fireEvent.change(select, { target: { value: '5' } });
+      expect(onPageSizeChange).toHaveBeenCalledWith(5);
     });
 
     it('asegura que el tamaño actual siempre esté incluido en las opciones del selector', () => {
@@ -149,7 +150,7 @@ describe('TablePagination y función pura calcularNumerosPaginacion', () => {
           totalPages={3}
           totalItems={45}
           pageSize={15}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={vi.fn()}
           onPageChange={vi.fn()}
         />
@@ -166,7 +167,7 @@ describe('TablePagination y función pura calcularNumerosPaginacion', () => {
           totalPages={5}
           totalItems={50}
           pageSize={10}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={vi.fn()}
           entityName="usuarios"
           onPageChange={onPageChange}
@@ -192,7 +193,7 @@ describe('TablePagination y función pura calcularNumerosPaginacion', () => {
           totalPages={1}
           totalItems={5}
           pageSize={10}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={vi.fn()}
           entityName="usuarios"
           onPageChange={vi.fn()}

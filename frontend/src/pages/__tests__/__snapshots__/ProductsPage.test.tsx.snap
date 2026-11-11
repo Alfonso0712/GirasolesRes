@@ -690,6 +690,12 @@ exports[`ProductsPage - Pruebas de Caracterización y Catálogo > debe renderiza
               id="table-page-size-ítems"
             >
               <option
+                value="5"
+              >
+                5
+                 por página
+              </option>
+              <option
                 value="10"
               >
                 10

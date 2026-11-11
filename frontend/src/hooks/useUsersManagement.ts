@@ -24,7 +24,7 @@ interface UseUsersManagementProps {
 
 const STORAGE_KEY_PAGE_SIZE = 'girasoles_pagesize_usuarios';
 const DEFAULT_PAGE_SIZE = 10;
-const VALID_PAGE_SIZES = [10, 20, 50];
+const VALID_PAGE_SIZES = [5, 10, 20, 50];
 
 const getStoredPageSize = (): number => {
   try {

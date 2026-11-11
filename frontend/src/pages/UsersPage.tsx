@@ -185,7 +185,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
           totalItems={total}
           itemsPerPage={tamano}
           pageSize={tamano}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={setTamano}
           entityName="usuarios"
           onPageChange={setPagina}

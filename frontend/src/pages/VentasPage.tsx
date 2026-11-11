@@ -165,7 +165,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           totalItems={total}
           itemsPerPage={tamano}
           pageSize={tamano}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={setTamano}
           entityName="ventas"
           onPageChange={setPagina}

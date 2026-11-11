@@ -551,6 +551,12 @@ exports[`HistorialCierresPage - Pruebas de Caracterización de Cierres > debe re
               id="table-page-size-cierres"
             >
               <option
+                value="5"
+              >
+                5
+                 por página
+              </option>
+              <option
                 value="10"
               >
                 10

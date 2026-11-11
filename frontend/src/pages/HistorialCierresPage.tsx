@@ -19,7 +19,7 @@ interface HistorialCierresPageProps {
 
 const STORAGE_KEY_PAGE_SIZE = 'girasoles_pagesize_cierres';
 const DEFAULT_PAGE_SIZE = 20;
-const VALID_PAGE_SIZES = [10, 20, 50];
+const VALID_PAGE_SIZES = [5, 10, 20, 50];
 
 const getStoredPageSize = (): number => {
   try {
@@ -268,7 +268,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           totalItems={totalItems}
           itemsPerPage={tamano}
           pageSize={tamano}
-          pageSizeOptions={[10, 20, 50]}
+          pageSizeOptions={[5, 10, 20, 50]}
           onPageSizeChange={handlePageSizeChange}
           entityName="cierres"
           onPageChange={setPagina}

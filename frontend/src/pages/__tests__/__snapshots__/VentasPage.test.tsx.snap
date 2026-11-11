@@ -802,6 +802,12 @@ exports[`VentasPage - Pruebas de Caracterización y Lista de Ventas > debe rende
               id="table-page-size-ventas"
             >
               <option
+                value="5"
+              >
+                5
+                 por página
+              </option>
+              <option
                 value="10"
               >
                 10

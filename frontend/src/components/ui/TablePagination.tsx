@@ -82,7 +82,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
   const end = Math.min(currentPage * effectivePageSize, totalItems);
 
   // Opciones del selector: siempre incluye el tamaño actual garantizado
-  const baseOptions = pageSizeOptions || [10, 20, 50];
+  const baseOptions = pageSizeOptions || [5, 10, 20, 50];
   const options = Array.from(new Set([...baseOptions, effectivePageSize])).sort(
     (a, b) => a - b
   );
