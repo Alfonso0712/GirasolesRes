@@ -100,7 +100,7 @@ export const MenuDiaDisponibilidadTab: React.FC<MenuDiaDisponibilidadTabProps> =
               key={tipo}
               type="button"
               onClick={() => setFiltroTipoDisp(tipo)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors cursor-pointer whitespace-nowrap ${
                 filtroTipoDisp === tipo
                   ? 'bg-ink-fill text-white font-semibold shadow-2xs'
                   : 'bg-surface text-ink-muted hover:bg-neutral-100 hover:text-ink border border-neutral-200'

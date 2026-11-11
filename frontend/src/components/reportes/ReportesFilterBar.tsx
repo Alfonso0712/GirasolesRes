@@ -49,7 +49,7 @@ export const ReportesFilterBar: React.FC<ReportesFilterBarProps> = ({
             key={a.id}
             type="button"
             onClick={() => aplicarAtajo(a.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
               atajoActivo === a.id
                 ? 'bg-ink-fill text-white font-semibold shadow-2xs'
                 : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60'

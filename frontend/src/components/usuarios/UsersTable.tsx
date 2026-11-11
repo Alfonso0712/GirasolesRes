@@ -92,7 +92,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
               {/* Nombre */}
               <td className="py-3 px-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-brand-tint text-accent font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
+                  <div className="w-8 h-8 rounded-full bg-brand-tint text-accent font-semibold text-xs flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
                     {obtenerIniciales(u.nombre)}
                   </div>
                   <span className="font-semibold text-ink text-sm break-words">

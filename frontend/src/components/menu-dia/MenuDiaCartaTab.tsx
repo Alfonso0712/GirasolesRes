@@ -69,7 +69,7 @@ export const MenuDiaCartaTab: React.FC<MenuDiaCartaTabProps> = ({
             key={cat.id}
             type="button"
             onClick={() => onSelectCategoria(cat.id)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors cursor-pointer whitespace-nowrap ${
               catCartaActiva === cat.id
                 ? 'bg-fill-strong text-white'
                 : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'

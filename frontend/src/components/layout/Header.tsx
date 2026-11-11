@@ -144,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'border-transparent hover:border-neutral-200 dark:hover:border-neutral-200/80 hover:bg-neutral-100/70 dark:hover:bg-surface-raised/70'
             }`}
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-brand-tint text-accent font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-brand-tint text-accent font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
               {obtenerIniciales(session?.nombre)}
             </div>
             <div className="flex flex-col text-left max-w-[120px] sm:max-w-none">

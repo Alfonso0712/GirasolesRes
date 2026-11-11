@@ -39,7 +39,7 @@ export const MesaFilterBar: React.FC<MesaFilterBarProps> = ({
               key={estado}
               type="button"
               onClick={() => onFiltroEstadoChange(estado)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer min-h-[38px] ${
                 activo
                   ? 'bg-ink-fill text-white font-semibold shadow-2xs'
                   : 'text-ink-muted hover:bg-neutral-100 hover:text-ink'

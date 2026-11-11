@@ -41,4 +41,10 @@ describe('SeccionPerfil Component', () => {
     rerender(<SeccionPerfil session={mozoSession} onCambiarPassword={handleCambiar} />);
     expect(screen.queryByRole('button', { name: /cambiar contraseña/i })).not.toBeInTheDocument();
   });
+
+  it('debe renderizar el avatar de iniciales con forma circular rounded-full', () => {
+    render(<SeccionPerfil session={adminSession} />);
+    const avatar = screen.getByText('CM');
+    expect(avatar).toHaveClass('rounded-full');
+  });
 });

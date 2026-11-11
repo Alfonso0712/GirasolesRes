@@ -104,7 +104,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
         <button
           type="button"
           onClick={() => cambiarTab('platos')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
+          className={`px-4 py-2.5 rounded-full text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
             tabActiva === 'platos'
               ? 'bg-primary text-white shadow-xs'
               : 'bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
@@ -117,7 +117,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
         <button
           type="button"
           onClick={() => cambiarTab('ventas')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
+          className={`px-4 py-2.5 rounded-full text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer ${
             tabActiva === 'ventas'
               ? 'bg-primary text-white shadow-xs'
               : 'bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'

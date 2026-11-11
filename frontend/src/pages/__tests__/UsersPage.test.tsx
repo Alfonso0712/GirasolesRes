@@ -47,4 +47,15 @@ describe('UsersPage - Pruebas de Caracterización y Gestión de Usuarios', () =>
     expect(screen.getByText('Nuevo usuario')).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
+
+  it('renderiza los avatares de usuario con forma circular rounded-full', async () => {
+    render(<UsersPage session={mockSession} onLogout={vi.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Elena Cajera')).toBeInTheDocument();
+    });
+
+    const avatar = screen.getByText('EC');
+    expect(avatar).toHaveClass('rounded-full');
+  });
 });

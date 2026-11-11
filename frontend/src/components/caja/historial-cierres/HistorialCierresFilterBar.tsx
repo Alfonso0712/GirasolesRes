@@ -99,7 +99,7 @@ export const HistorialCierresFilterBar: React.FC<HistorialCierresFilterBarProps>
           <button
             type="button"
             onClick={() => onAplicarFiltroRapido(0)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
               esRangoActivo(0)
                 ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                 : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
@@ -110,7 +110,7 @@ export const HistorialCierresFilterBar: React.FC<HistorialCierresFilterBarProps>
           <button
             type="button"
             onClick={() => onAplicarFiltroRapido(1)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
               esRangoActivo(1)
                 ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                 : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
@@ -121,7 +121,7 @@ export const HistorialCierresFilterBar: React.FC<HistorialCierresFilterBarProps>
           <button
             type="button"
             onClick={() => onAplicarFiltroRapido(7)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
               esRangoActivo(7)
                 ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                 : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
@@ -132,7 +132,7 @@ export const HistorialCierresFilterBar: React.FC<HistorialCierresFilterBarProps>
           <button
             type="button"
             onClick={() => onAplicarFiltroRapido(30)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
               esRangoActivo(30)
                 ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                 : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'

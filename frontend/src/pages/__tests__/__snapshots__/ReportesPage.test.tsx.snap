@@ -119,7 +119,7 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
         class="shrink-0 flex items-center gap-2 border-b border-neutral-200/80 pb-1"
       >
         <button
-          class="px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer bg-primary text-white shadow-xs"
+          class="px-4 py-2.5 rounded-full text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer bg-primary text-white shadow-xs"
           type="button"
         >
           <svg
@@ -150,7 +150,7 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
           </span>
         </button>
         <button
-          class="px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50"
+          class="px-4 py-2.5 rounded-full text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer bg-surface border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50"
           type="button"
         >
           <svg
@@ -226,31 +226,31 @@ exports[`ReportesPage - Pruebas de Caracterización y Reportes Gerenciales > deb
              Atajos:
           </span>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer bg-ink-fill text-white font-semibold shadow-2xs"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer bg-ink-fill text-white font-semibold shadow-2xs"
             type="button"
           >
             Hoy
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
             type="button"
           >
             Ayer
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
             type="button"
           >
             Últimos 7 días
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
             type="button"
           >
             Este mes
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
             type="button"
           >
             Mes anterior

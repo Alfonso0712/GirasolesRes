@@ -6,6 +6,7 @@ import {
   ConfirmModal,
   DiscardChangesModal,
   EmptyState,
+  ModalWrapper,
 } from '../index';
 import { SolesIcon } from '../SolesIcon';
 
@@ -168,6 +169,19 @@ describe('components/ui - Pruebas de Componentes Reutilizables', () => {
       const actionBtn = screen.getByRole('button', { name: /crear producto/i });
       fireEvent.click(actionBtn);
       expect(onAction).toHaveBeenCalled();
+    });
+  });
+
+  describe('ModalWrapper', () => {
+    it('renderiza el botón de cerrar modal con forma circular rounded-full', () => {
+      render(
+        <ModalWrapper isOpen={true} onClose={vi.fn()} title="Ventana de Prueba">
+          <div>Contenido</div>
+        </ModalWrapper>
+      );
+      const closeBtn = screen.getByRole('button', { name: /cerrar ventana/i });
+      expect(closeBtn).toHaveClass('rounded-full');
+      expect(closeBtn).toHaveClass('modal-close-btn');
     });
   });
 });

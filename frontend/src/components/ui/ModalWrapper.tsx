@@ -148,7 +148,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar ventana"
-                className="modal-close-btn w-9 h-9 min-h-[36px] min-w-[36px] text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-colors flex items-center justify-center cursor-pointer shrink-0"
+                className="modal-close-btn w-9 h-9 min-h-[36px] min-w-[36px] text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100 rounded-full transition-colors flex items-center justify-center cursor-pointer shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>

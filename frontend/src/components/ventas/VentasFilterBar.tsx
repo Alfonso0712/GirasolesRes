@@ -55,7 +55,7 @@ export const VentasFilterBar: React.FC<VentasFilterBarProps> = ({
               key={tipo}
               type="button"
               onClick={() => setFiltroTipoComprobante(tipo)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[36px] ${
                 activo
                   ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                   : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200'
@@ -114,7 +114,7 @@ export const VentasFilterBar: React.FC<VentasFilterBarProps> = ({
             <button
               type="button"
               onClick={() => setFiltroRapido('hoy')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
                 esFiltroRapidoActivo('hoy')
                   ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                   : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
@@ -125,7 +125,7 @@ export const VentasFilterBar: React.FC<VentasFilterBarProps> = ({
             <button
               type="button"
               onClick={() => setFiltroRapido('ayer')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
                 esFiltroRapidoActivo('ayer')
                   ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                   : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
@@ -136,7 +136,7 @@ export const VentasFilterBar: React.FC<VentasFilterBarProps> = ({
             <button
               type="button"
               onClick={() => setFiltroRapido('semana')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
                 esFiltroRapidoActivo('semana')
                   ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                   : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
@@ -148,7 +148,7 @@ export const VentasFilterBar: React.FC<VentasFilterBarProps> = ({
               <button
                 type="button"
                 onClick={() => setFiltroRapido('mes')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] ${
                   esFiltroRapidoActivo('mes')
                     ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
                     : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700'

@@ -336,25 +336,25 @@ exports[`VentasPage - Pruebas de Caracterización y Lista de Ventas > debe rende
             Comprobante:
           </span>
           <button
-            class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] bg-ink-fill text-white border-ink-fill shadow-2xs"
+            class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[36px] bg-ink-fill text-white border-ink-fill shadow-2xs"
             type="button"
           >
             Todos
           </button>
           <button
-            class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200"
+            class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[36px] bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200"
             type="button"
           >
             Tickets
           </button>
           <button
-            class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200"
+            class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[36px] bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200"
             type="button"
           >
             Boletas
           </button>
           <button
-            class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[36px] bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200"
+            class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[36px] bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-neutral-200"
             type="button"
           >
             Facturas
@@ -494,19 +494,19 @@ exports[`VentasPage - Pruebas de Caracterización y Lista de Ventas > debe rende
               class="flex items-center gap-1.5"
             >
               <button
-                class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] bg-ink-fill text-white border-ink-fill shadow-2xs"
+                class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] bg-ink-fill text-white border-ink-fill shadow-2xs"
                 type="button"
               >
                 Hoy
               </button>
               <button
-                class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700"
+                class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700"
                 type="button"
               >
                 Ayer
               </button>
               <button
-                class="px-3 py-1.5 text-xs font-semibold rounded-xl border transition-colors cursor-pointer min-h-[38px] bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700"
+                class="px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors cursor-pointer min-h-[38px] bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-700"
                 type="button"
               >
                 7 días

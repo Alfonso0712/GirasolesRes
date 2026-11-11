@@ -28,7 +28,7 @@ export const SeccionPerfil: React.FC<SeccionPerfilProps> = ({
     >
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-line bg-surface-raised/40">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-11 h-11 rounded-xl bg-brand-tint text-accent font-bold text-sm sm:text-base flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
+          <div className="w-11 h-11 rounded-full bg-brand-tint text-accent font-bold text-sm sm:text-base flex items-center justify-center shrink-0 border border-amber-200/60 shadow-xs">
             {obtenerIniciales(session.nombre)}
           </div>
           <div className="min-w-0">

@@ -621,7 +621,7 @@ input::placeholder, textarea::placeholder {
 .table-avatar-compact {
   width: 2rem;
   height: 2rem;
-  border-radius: 0.5rem;
+  border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -674,7 +674,7 @@ input::placeholder, textarea::placeholder {
 
 .modal-close-btn {
   padding: 0.5rem;
-  border-radius: 0.75rem;
+  border-radius: 9999px;
   color: #9CA3AF;
   transition-property: color, background-color;
   transition-duration: 150ms;

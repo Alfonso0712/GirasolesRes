@@ -165,19 +165,19 @@ exports[`MesasPage - Pruebas de Caracterización y Salón de Mesas > debe render
             Estado:
           </span>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] bg-ink-fill text-white font-semibold shadow-2xs"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer min-h-[38px] bg-ink-fill text-white font-semibold shadow-2xs"
             type="button"
           >
             Todas
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
             type="button"
           >
             Libres
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer min-h-[38px] text-ink-muted hover:bg-neutral-100 hover:text-ink"
             type="button"
           >
             Ocupadas

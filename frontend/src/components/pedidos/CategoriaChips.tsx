@@ -54,7 +54,7 @@ export const CategoriaChips: React.FC<CategoriaChipsProps> = ({
               key={cat}
               type="button"
               onClick={() => onSelectCategoria(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all cursor-pointer ${
                 activa
                   ? 'bg-sidebar text-white shadow-xs'
                   : 'bg-neutral-100 hover:bg-neutral-200 text-ink-muted hover:text-ink'
