@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
+import type { ApiClientError } from '../../services/apiClient';
 import type { UsuarioItem, CrearUsuarioData, ActualizarUsuarioData, RolUsuario } from '../../types/usuario';
 import {
   UserFormHeader,
@@ -181,16 +182,26 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
       }
       onClose();
     } catch (err: unknown) {
-      const errorObj = err as Error;
-      if (errorObj?.message) {
-        if (errorObj.message.includes('usuario ya está registrado')) {
-          setErrores(prev => ({ ...prev, usuario: errorObj.message }));
+      const apiErr = err as ApiClientError;
+      if (apiErr?.errors && typeof apiErr.errors === 'object') {
+        const fieldErrors: Record<string, string> = {};
+        for (const [key, val] of Object.entries(apiErr.errors)) {
+          fieldErrors[key] = Array.isArray(val) ? String(val[0]) : String(val);
+        }
+        setErrores(prev => ({ ...prev, ...fieldErrors }));
+        if (fieldErrors.usuario) usuarioInputRef.current?.focus();
+        else if (fieldErrors.correo) correoInputRef.current?.focus();
+        else if (fieldErrors.nombre) nombreInputRef.current?.focus();
+      } else if (apiErr?.message) {
+        const msgLower = apiErr.message.toLowerCase();
+        if (msgLower.includes('usuario ya está registrado') || msgLower.includes('usuario ya existe') || msgLower.includes('el nombre de usuario ya está')) {
+          setErrores(prev => ({ ...prev, usuario: apiErr.message }));
           usuarioInputRef.current?.focus();
-        } else if (errorObj.message.includes('correo ya está asignado')) {
-          setErrores(prev => ({ ...prev, correo: errorObj.message }));
+        } else if (msgLower.includes('correo ya está asignado') || msgLower.includes('correo ya existe') || msgLower.includes('correo ya registrado')) {
+          setErrores(prev => ({ ...prev, correo: apiErr.message }));
           correoInputRef.current?.focus();
         } else {
-          setErrorServidor(errorObj.message);
+          setErrorServidor(apiErr.message);
         }
       } else {
         setErrorServidor('No se pudo completar la operación. Intente nuevamente.');

@@ -215,7 +215,29 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         ? SESSION_EXPIRED_MESSAGE
         : 'Error de comunicación con el servidor.';
 
-    const msg = responseBody.message || responseBody.mensaje || defaultMsg;
+    // Extracción de mensaje respetando RFC 7807 (ProblemDetails), errores de validación y payloads estándar
+    let extractedMsg =
+      responseBody.message ||
+      responseBody.mensaje ||
+      responseBody.detail;
+
+    if (!extractedMsg && responseBody.errors && typeof responseBody.errors === 'object') {
+      const errorKeys = Object.keys(responseBody.errors);
+      if (errorKeys.length > 0) {
+        const firstVal = responseBody.errors[errorKeys[0]];
+        if (Array.isArray(firstVal) && firstVal.length > 0) {
+          extractedMsg = String(firstVal[0]);
+        } else if (typeof firstVal === 'string') {
+          extractedMsg = firstVal;
+        }
+      }
+    }
+
+    if (!extractedMsg) {
+      extractedMsg = responseBody.title;
+    }
+
+    const msg = extractedMsg || defaultMsg;
     const err: ApiClientError = new Error(msg);
     err.status = response.status;
     err.field = responseBody.field;
