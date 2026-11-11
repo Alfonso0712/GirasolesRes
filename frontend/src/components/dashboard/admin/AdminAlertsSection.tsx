@@ -9,6 +9,23 @@ export interface AdminAlertsSectionProps {
   renderBloqueError: (nombre: string) => React.ReactNode;
 }
 
+const obtenerTextoAlertaAdmin = (alerta: AlertaInicio): string => {
+  if (alerta.tipo === 'caja_anterior') {
+    if (alerta.texto.includes('Ciérrela antes de abrir una nueva o cobrar.')) {
+      return alerta.texto.replace(
+        'Ciérrela antes de abrir una nueva o cobrar.',
+        'El cajero debe cerrarla antes de abrir una nueva o cobrar.'
+      );
+    }
+    const matchFecha = alerta.texto.match(/(\d{2}\/\d{2}\/\d{4})/);
+    if (matchFecha) {
+      return `Hay una caja del ${matchFecha[1]} sin cerrar. El cajero debe cerrarla antes de abrir una nueva o cobrar.`;
+    }
+    return 'Hay una caja de un día anterior sin cerrar. El cajero debe cerrarla antes de abrir una nueva o cobrar.';
+  }
+  return alerta.texto;
+};
+
 export const AdminAlertsSection: React.FC<AdminAlertsSectionProps> = ({
   alertasRes,
   alertas,
@@ -27,9 +44,15 @@ export const AdminAlertsSection: React.FC<AdminAlertsSectionProps> = ({
           <div className="space-y-2">
             {alertas.map((alerta, idx) => {
               const esCaja = alerta.tipo === 'caja_anterior';
+              const textoPrincipal = obtenerTextoAlertaAdmin(alerta);
+              const textoSecundario = esCaja
+                ? `Prioridad ${alerta.prioridad} · Requiere acción del cajero`
+                : `Prioridad ${alerta.prioridad} · Requiere gestión del administrador`;
+
               return (
                 <div
                   key={`${alerta.tipo}-${idx}`}
+                  role="alert"
                   className={`p-3.5 sm:p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all ${
                     esCaja
                       ? 'bg-rose-50/90 border-rose-300 text-rose-900'
@@ -38,7 +61,7 @@ export const AdminAlertsSection: React.FC<AdminAlertsSectionProps> = ({
                       : 'bg-orange-50/70 border-orange-200 text-orange-900'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
                     <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
                       esCaja ? 'bg-rose-200/80 text-rose-700' : 'bg-amber-200/80 text-amber-700'
                     }`}>
@@ -48,25 +71,23 @@ export const AdminAlertsSection: React.FC<AdminAlertsSectionProps> = ({
                         <AlertTriangle className="w-4 h-4" />
                       )}
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold">{alerta.texto}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold">{textoPrincipal}</p>
                       <p className="text-xs opacity-75 mt-0.5">
-                        Prioridad {alerta.prioridad} · Requiere gestión del administrador
+                        {textoSecundario}
                       </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate(alerta.enlace)}
-                    className={`self-end sm:self-auto px-3.5 py-1.5 rounded-lg font-bold text-xs shadow-xs transition-colors cursor-pointer min-h-[36px] flex items-center gap-1.5 shrink-0 ${
-                      esCaja
-                        ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                        : 'bg-primary hover:bg-primary-hover text-white'
-                    }`}
-                  >
-                    <span>Resolver</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  {!esCaja && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigate(alerta.enlace)}
+                      className="self-end sm:self-auto px-3.5 py-1.5 rounded-lg font-bold text-xs shadow-xs transition-colors cursor-pointer min-h-[36px] flex items-center gap-1.5 shrink-0 bg-primary hover:bg-primary-hover text-white"
+                    >
+                      <span>Resolver</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               );
             })}
