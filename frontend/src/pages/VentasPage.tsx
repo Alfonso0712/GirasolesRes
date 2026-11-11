@@ -42,6 +42,7 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
     pagina,
     setPagina,
     tamano,
+    setTamano,
     cargarVentas,
     limpiarFiltros,
     setFiltroRapido,
@@ -163,6 +164,9 @@ export const VentasPage: React.FC<VentasPageProps> = ({ session, onLogout }) => 
           totalPages={totalPaginas}
           totalItems={total}
           itemsPerPage={tamano}
+          pageSize={tamano}
+          pageSizeOptions={[10, 20, 50]}
+          onPageSizeChange={setTamano}
           entityName="ventas"
           onPageChange={setPagina}
         />

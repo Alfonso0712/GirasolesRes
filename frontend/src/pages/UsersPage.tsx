@@ -33,6 +33,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
     pagina,
     setPagina,
     tamano,
+    setTamano,
     busqueda,
     setBusqueda,
     filtroRol,
@@ -183,6 +184,9 @@ export const UsersPage: React.FC<UsersPageProps> = ({ session, onLogout }) => {
           totalPages={totalPaginas}
           totalItems={total}
           itemsPerPage={tamano}
+          pageSize={tamano}
+          pageSizeOptions={[10, 20, 50]}
+          onPageSizeChange={setTamano}
           entityName="usuarios"
           onPageChange={setPagina}
         />

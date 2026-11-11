@@ -17,11 +17,41 @@ interface HistorialCierresPageProps {
   onLogout: () => void;
 }
 
+const STORAGE_KEY_PAGE_SIZE = 'girasoles_pagesize_cierres';
+const DEFAULT_PAGE_SIZE = 20;
+const VALID_PAGE_SIZES = [10, 20, 50];
+
+const getStoredPageSize = (): number => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_PAGE_SIZE);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (VALID_PAGE_SIZES.includes(parsed)) {
+        return parsed;
+      }
+    }
+  } catch {
+    // localStorage no accesible
+  }
+  return DEFAULT_PAGE_SIZE;
+};
+
 export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ session }) => {
   // Estado del historial y paginación
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [pagina, setPagina] = useState<number>(1);
+  const [tamano, setTamanoState] = useState<number>(getStoredPageSize);
+
+  const handlePageSizeChange = useCallback((nuevoTamano: number) => {
+    setTamanoState(nuevoTamano);
+    setPagina(1);
+    try {
+      localStorage.setItem(STORAGE_KEY_PAGE_SIZE, String(nuevoTamano));
+    } catch {
+      // Ignorar errores en localStorage
+    }
+  }, []);
   const [totalPaginas, setTotalPaginas] = useState<number>(1);
   const [cargando, setCargando] = useState<boolean>(true);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
@@ -111,7 +141,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           desde: desde || undefined,
           hasta: hasta || undefined,
           pagina,
-          tamano: 20,
+          tamano,
         },
         session.token
       );
@@ -126,7 +156,7 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
     } finally {
       setCargando(false);
     }
-  }, [desde, hasta, pagina, session.rol, session.token, validarRangoFechas]);
+  }, [desde, hasta, pagina, tamano, session.rol, session.token, validarRangoFechas]);
 
   useEffect(() => {
     cargarCierres();
@@ -236,7 +266,10 @@ export const HistorialCierresPage: React.FC<HistorialCierresPageProps> = ({ sess
           currentPage={pagina}
           totalPages={totalPaginas}
           totalItems={totalItems}
-          itemsPerPage={20}
+          itemsPerPage={tamano}
+          pageSize={tamano}
+          pageSizeOptions={[10, 20, 50]}
+          onPageSizeChange={handlePageSizeChange}
           entityName="cierres"
           onPageChange={setPagina}
         />

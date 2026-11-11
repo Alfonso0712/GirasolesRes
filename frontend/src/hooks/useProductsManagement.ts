@@ -21,12 +21,41 @@ interface UseProductsManagementProps {
   }) => void;
 }
 
+const STORAGE_KEY_PAGE_SIZE = 'girasoles_pagesize_productos';
+const DEFAULT_PAGE_SIZE = 10;
+const VALID_PAGE_SIZES = [10, 20, 50];
+
+const getStoredPageSize = (): number => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_PAGE_SIZE);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (VALID_PAGE_SIZES.includes(parsed)) {
+        return parsed;
+      }
+    }
+  } catch {
+    // localStorage no accesible
+  }
+  return DEFAULT_PAGE_SIZE;
+};
+
 export function useProductsManagement({ session, onLogout }: UseProductsManagementProps) {
   // Estado de lista y paginación (RF-11 / RNF-11)
   const [productos, setProductos] = useState<ProductoItem[]>([]);
   const [total, setTotal] = useState(0);
   const [pagina, setPagina] = useState(1);
-  const tamano = 10;
+  const [tamano, setTamanoState] = useState<number>(getStoredPageSize);
+
+  const setTamano = useCallback((nuevoTamano: number) => {
+    setTamanoState(nuevoTamano);
+    setPagina(1);
+    try {
+      localStorage.setItem(STORAGE_KEY_PAGE_SIZE, String(nuevoTamano));
+    } catch {
+      // Ignorar errores en localStorage
+    }
+  }, []);
 
   // Filtros (RF-11 / RV-40)
   const [busqueda, setBusqueda] = useState('');
@@ -206,6 +235,7 @@ export function useProductsManagement({ session, onLogout }: UseProductsManageme
     pagina,
     setPagina,
     tamano,
+    setTamano,
     busqueda,
     setBusqueda,
     filtroCategoria,

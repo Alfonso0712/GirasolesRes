@@ -29,6 +29,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
     pagina,
     setPagina,
     tamano,
+    setTamano,
     busqueda,
     setBusqueda,
     filtroCategoria,
@@ -208,6 +209,9 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               totalPages={totalPaginas}
               totalItems={total}
               itemsPerPage={tamano}
+              pageSize={tamano}
+              pageSizeOptions={[10, 20, 50]}
+              onPageSizeChange={setTamano}
               entityName="ítems"
               onPageChange={setPagina}
             />

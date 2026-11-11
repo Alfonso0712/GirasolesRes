@@ -14,6 +14,25 @@ interface UseVentasManagementProps {
   esCajero: boolean;
 }
 
+const STORAGE_KEY_PAGE_SIZE = 'girasoles_pagesize_ventas';
+const DEFAULT_PAGE_SIZE = 20;
+const VALID_PAGE_SIZES = [10, 20, 50];
+
+const getStoredPageSize = (): number => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_PAGE_SIZE);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (VALID_PAGE_SIZES.includes(parsed)) {
+        return parsed;
+      }
+    }
+  } catch {
+    // localStorage no accesible
+  }
+  return DEFAULT_PAGE_SIZE;
+};
+
 export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManagementProps) {
   const [ventas, setVentas] = useState<VentaItem[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -41,7 +60,17 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
   const [hasta, setHasta] = useState<string>(getHoyString());
   const [errorFechas, setErrorFechas] = useState<string | null>(null);
   const [pagina, setPagina] = useState<number>(1);
-  const tamano = 20;
+  const [tamano, setTamanoState] = useState<number>(getStoredPageSize);
+
+  const setTamano = useCallback((nuevoTamano: number) => {
+    setTamanoState(nuevoTamano);
+    setPagina(1);
+    try {
+      localStorage.setItem(STORAGE_KEY_PAGE_SIZE, String(nuevoTamano));
+    } catch {
+      // Ignorar errores en localStorage
+    }
+  }, []);
 
   // Modales
   const [detalleModalOpen, setDetalleModalOpen] = useState<boolean>(false);
@@ -280,6 +309,7 @@ export function useVentasManagement({ token, esAdmin, esCajero }: UseVentasManag
     pagina,
     setPagina,
     tamano,
+    setTamano,
     cargarVentas,
     limpiarFiltros,
     setFiltroRapido,
