@@ -57,7 +57,7 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
         <Icon className="w-[18px] h-[18px] shrink-0" size={18} />
       </div>
 
-      <span className="flex-1 min-w-0 text-sm font-semibold uppercase tracking-wide leading-tight line-clamp-2 break-words hyphens-none">
+      <span className="flex-1 min-w-0 text-sm font-semibold leading-tight line-clamp-2 break-words hyphens-none">
         {label}
       </span>
 

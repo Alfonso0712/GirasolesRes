@@ -38,8 +38,8 @@ export const AdminAlertsSection: React.FC<AdminAlertsSectionProps> = ({
         renderBloqueError('alertas')
       ) : alertas.length > 0 ? (
         <div className="space-y-2.5">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">
-            Alertas de Atención Inmediata ({alertas.length})
+          <h2 className="text-xs font-bold text-neutral-500 mb-2">
+            Alertas de atención inmediata ({alertas.length})
           </h2>
           <div className="space-y-2">
             {alertas.map((alerta, idx) => {

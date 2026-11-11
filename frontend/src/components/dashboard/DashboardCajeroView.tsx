@@ -74,8 +74,8 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
 
       {/* ACCESOS RÁPIDOS PRINCIPALES DEL CAJERO (RV-151) */}
       <div className="bg-surface border border-neutral-200/80 rounded-2xl p-4 shadow-xs">
-        <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3">
-          Operaciones de Caja y Mostrador
+        <h3 className="font-sans text-xs font-bold text-neutral-500 mb-3">
+          Operaciones de caja y mostrador
         </h3>
 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
           <QuickActionCard

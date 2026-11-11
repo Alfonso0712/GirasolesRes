@@ -182,4 +182,29 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     unmount();
     expect(document.title).toBe('Restaurante Girasoles');
   });
+
+  it('las tarjetas de accesos rápidos no tienen la clase uppercase', async () => {
+    const validToken = `${btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))}.${btoa(
+      JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })
+    )}.signature`;
+    const adminSession: UserSession = {
+      ...mockSession,
+      token: validToken,
+    };
+    const { container } = render(
+      <HomePage
+        session={adminSession}
+        onLogout={vi.fn()}
+        onUpdateSession={vi.fn()}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+    });
+    const quickActionSpans = container.querySelectorAll('button > span.font-semibold');
+    expect(quickActionSpans.length).toBeGreaterThan(0);
+    quickActionSpans.forEach((span) => {
+      expect(span.className).not.toContain('uppercase');
+    });
+  });
 });

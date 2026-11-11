@@ -79,7 +79,7 @@ describe('AdminAlertsSection - Alertas Informativas vs Accionables', () => {
       />
     );
 
-    expect(screen.getByText('Alertas de Atención Inmediata (2)')).toBeInTheDocument();
+    expect(screen.getByText('Alertas de atención inmediata (2)')).toBeInTheDocument();
   });
 });
 
