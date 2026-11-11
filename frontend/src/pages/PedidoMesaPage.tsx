@@ -164,6 +164,19 @@ export const PedidoMesaPage: React.FC<PedidoMesaPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-5 xl:px-8 2xl:px-10">
+        {/* Miga de pan de orientación (Heurística 3 de Nielsen) */}
+        <nav aria-label="Miga de pan" className="mb-2 flex items-center gap-1.5 text-xs text-neutral-500 font-medium select-none">
+          <button
+            type="button"
+            onClick={onVolverAMesas}
+            className="hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-1"
+          >
+            Mesas y Salón
+          </button>
+          <span>/</span>
+          <span className="text-ink font-semibold">Pedido de Mesa</span>
+        </nav>
+
         {/* 1. Encabezado Unificado */}
         <PedidoMesaHeader
           mesaSeleccionada={mesaSeleccionada}

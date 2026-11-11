@@ -52,10 +52,11 @@ export const PedidoMesaHeader: React.FC<PedidoMesaHeaderProps> = ({
             type="button"
             variant="secondary"
             onClick={onVolverAMesas}
+            title="Volver a Salón de Mesas"
             className="w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-            Volver a mesas
+            Volver a Salón de Mesas
           </Button>
         </div>
       }

@@ -46,4 +46,24 @@ describe('PedidoLlevarPage - Pruebas de Caracterización y Pedidos para Llevar',
     expect(screen.getByText('Arroz con Pollo')).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
+
+  it('el botón y la miga de pan permiten retornar al Inicio', async () => {
+    const onVolverMock = vi.fn();
+    render(
+      <PedidoLlevarPage session={mockSession} onLogout={vi.fn()} onVolver={onVolverMock} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Pedido para Llevar' })).toBeInTheDocument();
+    });
+
+    // Miga de pan
+    expect(screen.getByRole('navigation', { name: /Miga de pan/i })).toBeInTheDocument();
+
+    // Botón explícito en cabecera
+    const btnVolver = screen.getByRole('button', { name: /Volver al Inicio/i });
+    expect(btnVolver).toBeInTheDocument();
+    btnVolver.click();
+    expect(onVolverMock).toHaveBeenCalled();
+  });
 });
