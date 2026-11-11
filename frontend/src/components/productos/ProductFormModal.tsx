@@ -175,12 +175,16 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     } catch (err: unknown) {
       const apiErr = err as ApiClientError;
       if (apiErr?.errors && typeof apiErr.errors === 'object') {
-        setErrores(apiErr.errors);
-        if (apiErr.errors.nombre) nombreInputRef.current?.focus();
-        else if (apiErr.errors.tipo) modalRef.current?.focus();
-        else if (apiErr.errors.rol) rolSelectRef.current?.focus();
-        else if (apiErr.errors.categoria) categoriaSelectRef.current?.focus();
-        else if (apiErr.errors.precio) precioInputRef.current?.focus();
+        const normalizedErrors: Record<string, string> = {};
+        for (const [key, val] of Object.entries(apiErr.errors)) {
+          normalizedErrors[key] = Array.isArray(val) ? String(val[0]) : String(val);
+        }
+        setErrores(normalizedErrors);
+        if (normalizedErrors.nombre) nombreInputRef.current?.focus();
+        else if (normalizedErrors.tipo) modalRef.current?.focus();
+        else if (normalizedErrors.rol) rolSelectRef.current?.focus();
+        else if (normalizedErrors.categoria) categoriaSelectRef.current?.focus();
+        else if (normalizedErrors.precio) precioInputRef.current?.focus();
       } else {
         // MSG-53, MSG-216 u otros mensajes devueltos por el backend
         setErrorServidor(apiErr?.message || 'No se pudo completar la operación. Intente nuevamente.');
