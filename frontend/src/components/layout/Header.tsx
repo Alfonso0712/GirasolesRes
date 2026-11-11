@@ -1,9 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { KeyRound, LogOut, ChevronDown, Menu, Settings } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 
 import { obtenerIniciales } from '../../utils/avatar';
 import { ThemeToggle } from './ThemeToggle';
+import { GuiaButton } from './GuiaButton';
+import { GuiaModal } from './GuiaModal';
+import { guiaService } from '../../services/guiaService';
 import { useHandedness } from '../../hooks/useHandedness';
 
 interface HeaderProps {
@@ -30,6 +33,14 @@ export const Header: React.FC<HeaderProps> = ({
   const userButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { isLeftHanded } = useHandedness();
+  const [guiaAbierta, setGuiaAbierta] = useState(false);
+  const rolSesion = session?.rol;
+  const guia = useMemo(
+    () => (rolSesion ? guiaService.obtenerGuiaPorRol(rolSesion) : null),
+    [rolSesion]
+  );
+  const abrirGuia = useCallback(() => setGuiaAbierta(true), []);
+  const cerrarGuia = useCallback(() => setGuiaAbierta(false), []);
 
   // Cerrar menú al hacer clic afuera
   useEffect(() => {
@@ -113,6 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Sección Controles de Usuario y Tema */}
       <div className={`flex items-center gap-2 sm:gap-4 ${isLeftHanded ? 'flex-row-reverse' : ''}`}>
+        {guia && <GuiaButton variant="desktop" onClick={abrirGuia} />}
         <ThemeToggle />
 
         <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-200/80" />
@@ -215,6 +227,8 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
       </div>
+
+      {guia && <GuiaModal isOpen={guiaAbierta} onClose={cerrarGuia} guia={guia} />}
     </header>
   );
 };
