@@ -605,7 +605,7 @@ exports[`Caja Modals - Pruebas de Caracterización y Red de Seguridad > CerrarCa
             >
               <svg
                 aria-hidden="true"
-                class="lucide lucide-triangle-alert lucide-alert-triangle w-5 h-5 shrink-0 text-warning"
+                class="lucide lucide-circle-arrow-up lucide-arrow-up-circle w-5 h-5 text-warning shrink-0"
                 fill="none"
                 height="24"
                 stroke="currentColor"
@@ -616,14 +616,16 @@ exports[`Caja Modals - Pruebas de Caracterización y Red de Seguridad > CerrarCa
                 width="24"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
                 />
                 <path
-                  d="M12 9v4"
+                  d="m16 12-4-4-4 4"
                 />
                 <path
-                  d="M12 17h.01"
+                  d="M12 16V8"
                 />
               </svg>
               <div>

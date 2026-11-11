@@ -64,4 +64,15 @@ describe('CobrosPage - Pruebas de Caracterización y Módulo de Cobros', () => {
     expect(screen.getByText(/Caja abierta · Elena Cajera/i)).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
+
+  it('renderiza los badges de estado con forma de píldora rounded-full', async () => {
+    render(<CobrosPage session={mockSession} onLogout={vi.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Listo')).toBeInTheDocument();
+    });
+
+    const badgeListo = screen.getByText('Listo').closest('span');
+    expect(badgeListo).toHaveClass('rounded-full');
+  });
 });

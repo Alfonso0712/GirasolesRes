@@ -257,7 +257,7 @@ exports[`MesasPage - Pruebas de Caracterización y Salón de Mesas > debe render
                     Mesa 1
                   </h3>
                   <span
-                    class="px-2 py-0.5 text-xs font-semibold rounded-lg border shadow-2xs inline-flex items-center gap-1 w-fit bg-emerald-100/80 text-emerald-800 border-emerald-200"
+                    class="px-2 py-0.5 text-xs font-semibold rounded-full border shadow-2xs inline-flex items-center gap-1 w-fit bg-emerald-100/80 text-emerald-800 border-emerald-200"
                   >
                     <svg
                       aria-hidden="true"
@@ -414,7 +414,7 @@ exports[`MesasPage - Pruebas de Caracterización y Salón de Mesas > debe render
                     Mesa 2
                   </h3>
                   <span
-                    class="px-2 py-0.5 text-xs font-semibold rounded-lg border shadow-2xs inline-flex items-center gap-1 w-fit bg-amber-100/80 text-accent border-amber-200"
+                    class="px-2 py-0.5 text-xs font-semibold rounded-full border shadow-2xs inline-flex items-center gap-1 w-fit bg-amber-100/80 text-accent border-amber-200"
                   >
                     <svg
                       aria-hidden="true"

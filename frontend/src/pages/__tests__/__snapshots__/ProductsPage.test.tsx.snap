@@ -373,7 +373,7 @@ exports[`ProductsPage - Pruebas de Caracterización y Catálogo > debe renderiza
                   class="py-3 px-4"
                 >
                   <span
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-neutral-100 text-neutral-800"
+                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-800"
                   >
                     Carta
                   </span>
@@ -382,7 +382,7 @@ exports[`ProductsPage - Pruebas de Caracterización y Catálogo > debe renderiza
                   class="py-3 px-4"
                 >
                   <span
-                    class="inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border bg-rose-50 text-rose-900 border-rose-200/90 text-center shadow-2xs"
+                    class="inline-flex items-center justify-center rounded-full text-xs font-medium py-1 px-2.5 border bg-rose-50 text-rose-900 border-rose-200/90 text-center shadow-2xs"
                   >
                     Platos Extras
                   </span>
@@ -541,7 +541,7 @@ exports[`ProductsPage - Pruebas de Caracterización y Catálogo > debe renderiza
                   class="py-3 px-4"
                 >
                   <span
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800"
+                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800"
                   >
                     Componente
                   </span>
@@ -550,7 +550,7 @@ exports[`ProductsPage - Pruebas de Caracterización y Catálogo > debe renderiza
                   class="py-3 px-4"
                 >
                   <span
-                    class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90"
+                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90"
                   >
                     Rol: 
                     Entrada

@@ -95,7 +95,7 @@ export const MesaCard: React.FC<MesaCardProps> = ({
             {mesa.nombre}
           </h3>
           <span
-            className={`px-2 py-0.5 text-xs font-semibold rounded-lg border shadow-2xs inline-flex items-center gap-1 w-fit ${badgeColor}`}
+            className={`px-2 py-0.5 text-xs font-semibold rounded-full border shadow-2xs inline-flex items-center gap-1 w-fit ${badgeColor}`}
           >
             <IconoEstado className="w-3 h-3 shrink-0" />
             <span>{esInactiva ? 'Inactiva' : mesa.ocupacion}</span>

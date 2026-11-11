@@ -117,7 +117,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
 
               <td className="py-3 px-4">
                 <span
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
                     esComponente
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-neutral-100 text-neutral-800'
@@ -129,12 +129,12 @@ export const ProductTable: React.FC<ProductTableProps> = ({
 
               <td className="py-3 px-4">
                 {esComponente ? (
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/90">
                     Rol: {ROL_LABELS[prod.rol || ''] || prod.rol || 'Segundo'}
                   </span>
                 ) : (
                   <span
-                    className={`inline-flex items-center justify-center rounded-lg text-xs font-medium py-1 px-2.5 border ${obtenerEstiloCategoria(
+                    className={`inline-flex items-center justify-center rounded-full text-xs font-medium py-1 px-2.5 border ${obtenerEstiloCategoria(
                       prod.categoria || 'Otro'
                     )} text-center shadow-2xs`}
                   >

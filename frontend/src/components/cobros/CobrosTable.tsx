@@ -93,12 +93,12 @@ export const CobrosTable: React.FC<CobrosTableProps> = ({
               {/* Estado Cocina */}
               <td className="py-3 px-4">
                 {p.estaListo ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Listo
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-300">
                     <ChefHat className="w-3.5 h-3.5" />
                     En preparación
                   </span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
 import type { AlertaInicio } from '../../../types/inicio';
 
 export interface AdminAlertsSectionProps {
@@ -42,7 +42,11 @@ export const AdminAlertsSection: React.FC<AdminAlertsSectionProps> = ({
                     <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
                       esCaja ? 'bg-rose-200/80 text-rose-700' : 'bg-amber-200/80 text-amber-700'
                     }`}>
-                      <AlertTriangle className="w-4 h-4" />
+                      {esCaja ? (
+                        <ShieldAlert className="w-4 h-4" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4" />
+                      )}
                     </div>
                     <div>
                       <p className="text-sm font-semibold">{alerta.texto}</p>

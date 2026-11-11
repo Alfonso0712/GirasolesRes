@@ -23,7 +23,7 @@ export const CocinaResumenBar: React.FC<CocinaResumenBarProps> = ({ resumen }) =
           {resumen.map((r) => (
             <div
               key={r.producto}
-              className="px-3 py-1 rounded-xl bg-amber-100/90 text-amber-900 text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 border border-amber-300/60 shadow-2xs"
+              className="px-3 py-1 rounded-full bg-amber-100/90 text-amber-900 text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 border border-amber-300/60 shadow-2xs"
             >
               <span className="text-accent text-sm">{r.cantidad} ×</span>
               <span className="max-w-[280px] break-words text-wrap">{r.producto}</span>

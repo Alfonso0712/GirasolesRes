@@ -70,7 +70,7 @@ export const VentasTable: React.FC<VentasTableProps> = ({
                 <div className="flex flex-col gap-0.5 items-start">
                   <div className="flex items-center gap-1.5">
                     <span
-                      className={`px-1.5 py-0.5 text-xs font-semibold rounded uppercase tracking-wider ${
+                      className={`px-1.5 py-0.5 text-xs font-semibold rounded-full uppercase tracking-wider ${
                         v.comprobante.startsWith('F')
                           ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
                           : v.comprobante.startsWith('B')
@@ -124,7 +124,7 @@ export const VentasTable: React.FC<VentasTableProps> = ({
               {/* Método de Pago */}
               <td className="py-3 px-4">
                 <span
-                  className={`px-2.5 py-1 text-xs font-medium rounded-lg inline-flex items-center gap-1 border ${
+                  className={`px-2.5 py-1 text-xs font-medium rounded-full inline-flex items-center gap-1 border ${
                     v.metodo === 'Efectivo'
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                       : 'bg-purple-50 text-purple-800 border-purple-200'

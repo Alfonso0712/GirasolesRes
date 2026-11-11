@@ -119,10 +119,14 @@ describe('Caja Modals - Pruebas de Caracterización y Red de Seguridad', () => {
       // 2. Caso Faltante (S/ 320 contado -> Faltante S/ 30.00)
       fireEvent.change(inputContado, { target: { value: '320.00' } });
       expect(screen.getByText(/Faltante de S\/ 30\.00/i)).toBeInTheDocument();
+      expect(container.querySelector('.lucide-alert-triangle')).toBeInTheDocument();
+      expect(container.querySelector('.lucide-arrow-up-circle')).not.toBeInTheDocument();
 
       // 3. Caso Sobrante (S/ 380 contado -> Sobrante S/ 30.00)
       fireEvent.change(inputContado, { target: { value: '380.00' } });
       expect(screen.getByText(/Sobrante de S\/ 30\.00/i)).toBeInTheDocument();
+      expect(container.querySelector('.lucide-arrow-up-circle')).toBeInTheDocument();
+      expect(container.querySelector('.lucide-alert-triangle')).not.toBeInTheDocument();
 
       expect(container).toMatchSnapshot();
     });

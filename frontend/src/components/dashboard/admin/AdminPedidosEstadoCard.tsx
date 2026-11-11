@@ -1,5 +1,14 @@
 import React from 'react';
-import { ClipboardList, ArrowRight } from 'lucide-react';
+import {
+  ClipboardList,
+  ArrowRight,
+  Clock,
+  ChefHat,
+  CheckCircle2,
+  Check,
+  Ban,
+} from 'lucide-react';
+import { SolesIcon } from '../../ui/SolesIcon';
 import type { BloquePedidosPorEstado } from '../../../types/inicio';
 
 export interface AdminPedidosEstadoCardProps {
@@ -36,7 +45,10 @@ export const AdminPedidosEstadoCard: React.FC<AdminPedidosEstadoCardProps> = ({
               onClick={() => onNavigate('pedidos', { estado: 'pendiente' })}
               className="p-3 rounded-xl border border-neutral-200 hover:border-amber-400 hover:bg-amber-50/50 transition-all text-left cursor-pointer group"
             >
-              <span className="text-xs font-medium text-neutral-500 block">Pendientes</span>
+              <span className="text-xs font-medium text-neutral-500 flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" aria-hidden="true" />
+                <span>Pendientes</span>
+              </span>
               <span className="text-lg font-bold tabular-nums text-amber-700">
                 {pedidos?.pendiente ?? 0}
               </span>
@@ -48,7 +60,10 @@ export const AdminPedidosEstadoCard: React.FC<AdminPedidosEstadoCardProps> = ({
               onClick={() => onNavigate('pedidos', { estado: 'en_preparacion' })}
               className="p-3 rounded-xl border border-neutral-200 hover:border-orange-400 hover:bg-orange-50/50 transition-all text-left cursor-pointer group"
             >
-              <span className="text-xs font-medium text-neutral-500 block">En Cocina</span>
+              <span className="text-xs font-medium text-neutral-500 flex items-center gap-1">
+                <ChefHat className="w-3.5 h-3.5 text-accent shrink-0" aria-hidden="true" />
+                <span>En Cocina</span>
+              </span>
               <span className="text-lg font-bold tabular-nums text-accent">
                 {pedidos?.enPreparacion ?? 0}
               </span>
@@ -60,7 +75,10 @@ export const AdminPedidosEstadoCard: React.FC<AdminPedidosEstadoCardProps> = ({
               onClick={() => onNavigate('pedidos', { estado: 'listo' })}
               className="p-3 rounded-xl border border-neutral-200 hover:border-blue-400 hover:bg-blue-50/50 transition-all text-left cursor-pointer group"
             >
-              <span className="text-xs font-medium text-neutral-500 block">Listos</span>
+              <span className="text-xs font-medium text-neutral-500 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" aria-hidden="true" />
+                <span>Listos</span>
+              </span>
               <span className="text-lg font-bold tabular-nums text-blue-700">
                 {pedidos?.listo ?? 0}
               </span>
@@ -72,7 +90,10 @@ export const AdminPedidosEstadoCard: React.FC<AdminPedidosEstadoCardProps> = ({
               onClick={() => onNavigate('pedidos', { estado: 'listo' })}
               className="p-3 rounded-xl border border-neutral-200 hover:border-purple-400 hover:bg-purple-50/50 transition-all text-left cursor-pointer group"
             >
-              <span className="text-xs font-medium text-neutral-500 block">Por Cobrar</span>
+              <span className="text-xs font-medium text-neutral-500 flex items-center gap-1">
+                <SolesIcon className="w-3.5 h-3.5 text-purple-600 shrink-0" aria-hidden="true" />
+                <span>Por Cobrar</span>
+              </span>
               <span className="text-lg font-bold tabular-nums text-purple-700">
                 {pedidos?.porCobrar ?? 0}
               </span>
@@ -84,7 +105,10 @@ export const AdminPedidosEstadoCard: React.FC<AdminPedidosEstadoCardProps> = ({
               onClick={() => onNavigate('pedidos', { estado: 'pagado' })}
               className="p-3 rounded-xl border border-neutral-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all text-left cursor-pointer group"
             >
-              <span className="text-xs font-medium text-neutral-500 block">Pagados</span>
+              <span className="text-xs font-medium text-neutral-500 flex items-center gap-1">
+                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" aria-hidden="true" />
+                <span>Pagados</span>
+              </span>
               <span className="text-lg font-bold tabular-nums text-neutral-700">
                 {pedidos?.pagado ?? 0}
               </span>
@@ -96,7 +120,10 @@ export const AdminPedidosEstadoCard: React.FC<AdminPedidosEstadoCardProps> = ({
               onClick={() => onNavigate('pedidos', { estado: 'anulado' })}
               className="p-3 rounded-xl border border-neutral-200 hover:border-rose-400 hover:bg-rose-50/50 transition-all text-left cursor-pointer group"
             >
-              <span className="text-xs font-medium text-neutral-500 block">Anulados</span>
+              <span className="text-xs font-medium text-neutral-500 flex items-center gap-1">
+                <Ban className="w-3.5 h-3.5 text-rose-600 shrink-0" aria-hidden="true" />
+                <span>Anulados</span>
+              </span>
               <span className="text-lg font-bold tabular-nums text-rose-700">
                 {pedidos?.anulado ?? 0}
               </span>

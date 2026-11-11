@@ -46,17 +46,17 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
 
               {/* Etiquetas especiales */}
               {esNueva && (
-                <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-600 text-white uppercase tracking-wider animate-bounce">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white uppercase tracking-wider animate-bounce">
                   NUEVA
                 </span>
               )}
               {c.etiqueta && (
-                <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-500 text-white uppercase">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-white uppercase">
                   {c.etiqueta}
                 </span>
               )}
               {c.esDemora && (
-                <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   Demora
                 </span>
@@ -96,7 +96,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
                   </span>
                   {l.observacion && (
                     <div className="mt-1">
-                      <span className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300/80 inline-block">
+                      <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300/80 inline-block">
                         Obs: {l.observacion}
                       </span>
                     </div>
@@ -147,18 +147,18 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
               N.º {c.pedidoNumero}
             </span>
 
-            <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-600 text-white uppercase flex items-center gap-1">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-600 text-white uppercase flex items-center gap-1">
               <ChefHat className="w-3.5 h-3.5" />
               En cocina
             </span>
 
             {c.etiqueta && (
-              <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-500 text-white uppercase">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-white uppercase">
                 {c.etiqueta}
               </span>
             )}
             {c.esDemora && (
-              <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-600 text-white uppercase tracking-wider flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 Demora
               </span>
@@ -198,7 +198,7 @@ export const ComandaCard: React.FC<ComandaCardProps> = ({
                 </span>
                 {l.observacion && (
                   <div className="mt-1">
-                    <span className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300/80 inline-block">
+                    <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300/80 inline-block">
                       Obs: {l.observacion}
                     </span>
                   </div>

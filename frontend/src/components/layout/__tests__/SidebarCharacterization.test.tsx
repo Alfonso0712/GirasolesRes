@@ -53,4 +53,54 @@ describe('Sidebar - Pruebas de Caracterización y Navegación', () => {
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
+
+  it('renderiza el indicador de caja en menú colapsado con texto accesible e ícono para cada estado', () => {
+    // 1. Caja abierta
+    const { rerender } = render(
+      <Sidebar
+        session={adminSession}
+        paginaActiva="inicio"
+        onSelectPagina={vi.fn()}
+        isOpenMobile={false}
+        cajaEstado="abierta"
+      />
+    );
+
+    const indicadorAbierta = screen.getByLabelText('Caja: abierta');
+    expect(indicadorAbierta).toBeInTheDocument();
+    expect(indicadorAbierta).toHaveAttribute('title', 'Caja: abierta');
+    expect(indicadorAbierta.querySelector('.lucide-unlock')).toBeInTheDocument();
+
+    // 2. Caja anterior sin cerrar
+    rerender(
+      <Sidebar
+        session={adminSession}
+        paginaActiva="inicio"
+        onSelectPagina={vi.fn()}
+        isOpenMobile={false}
+        cajaEstado="anteriorSinCerrar"
+      />
+    );
+
+    const indicadorPendiente = screen.getByLabelText('Caja: cierre pendiente');
+    expect(indicadorPendiente).toBeInTheDocument();
+    expect(indicadorPendiente).toHaveAttribute('title', 'Caja: cierre pendiente');
+    expect(indicadorPendiente.querySelector('.lucide-alert-triangle')).toBeInTheDocument();
+
+    // 3. Caja cerrada
+    rerender(
+      <Sidebar
+        session={adminSession}
+        paginaActiva="inicio"
+        onSelectPagina={vi.fn()}
+        isOpenMobile={false}
+        cajaEstado="cerrada"
+      />
+    );
+
+    const indicadorCerrada = screen.getByLabelText('Caja: cerrada');
+    expect(indicadorCerrada).toBeInTheDocument();
+    expect(indicadorCerrada).toHaveAttribute('title', 'Caja: cerrada');
+    expect(indicadorCerrada.querySelector('.lucide-lock')).toBeInTheDocument();
+  });
 });

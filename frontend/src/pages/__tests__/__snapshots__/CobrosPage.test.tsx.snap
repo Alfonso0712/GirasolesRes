@@ -661,7 +661,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
                     class="py-3 px-4"
                   >
                     <span
-                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse"
                     >
                       <svg
                         aria-hidden="true"

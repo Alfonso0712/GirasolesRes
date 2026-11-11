@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coins, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Coins, CheckCircle2, AlertTriangle, ArrowUpCircle } from 'lucide-react';
 
 export interface ArqueoEfectivoSectionProps {
   tienePedidosPendientes: boolean;
@@ -84,12 +84,10 @@ export const ArqueoEfectivoSection: React.FC<ArqueoEfectivoSectionProps> = ({
           <div className="flex items-center gap-2.5">
             {diferenciaCalculada === 0 ? (
               <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+            ) : diferenciaCalculada > 0 ? (
+              <ArrowUpCircle className="w-5 h-5 text-warning shrink-0" />
             ) : (
-              <AlertTriangle
-                className={`w-5 h-5 shrink-0 ${
-                  diferenciaCalculada > 0 ? 'text-warning' : 'text-red-600'
-                }`}
-              />
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
             )}
             <div>
               <p className="font-bold text-sm">

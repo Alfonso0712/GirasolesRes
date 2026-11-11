@@ -185,7 +185,7 @@ exports[`CocinaPage - Pruebas de Caracterización y Pantalla KDS > debe renderiz
           class="flex items-center gap-2"
         >
           <div
-            class="px-3 py-1 rounded-xl bg-amber-100/90 text-amber-900 text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 border border-amber-300/60 shadow-2xs"
+            class="px-3 py-1 rounded-full bg-amber-100/90 text-amber-900 text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 border border-amber-300/60 shadow-2xs"
           >
             <span
               class="text-accent text-sm"
@@ -330,7 +330,7 @@ exports[`CocinaPage - Pruebas de Caracterización y Pantalla KDS > debe renderiz
                           class="mt-1"
                         >
                           <span
-                            class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300/80 inline-block"
+                            class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300/80 inline-block"
                           >
                             Obs: 
                             Sin aceituna

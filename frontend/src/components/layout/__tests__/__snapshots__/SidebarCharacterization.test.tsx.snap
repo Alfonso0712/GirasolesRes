@@ -397,9 +397,36 @@ exports[`Sidebar - Pruebas de Caracterización y Navegación > debe renderizar l
               Caja y Ventas
             </span>
             <span
-              class="w-2 h-2 rounded-full shrink-0 bg-emerald-400"
+              aria-label="Caja: abierta"
+              class="inline-flex items-center shrink-0"
               title="Caja: abierta"
-            />
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-lock-open lucide-unlock w-3 h-3 text-emerald-400 shrink-0"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+                <path
+                  d="M7 11V7a5 5 0 0 1 9.9-1"
+                />
+              </svg>
+            </span>
           </div>
           <svg
             aria-hidden="true"

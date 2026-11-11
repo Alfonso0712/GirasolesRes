@@ -137,13 +137,13 @@ export const ReporteVentasTab: React.FC<ReporteVentasTabProps> = ({
                     type="button"
                     onClick={onNavigateToCierres}
                     title="Este día incluye anulaciones posteriores al cierre de caja. Vea el historial de cierres."
-                    className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold px-2.5 py-1 bg-amber-50 text-accent border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-full text-xs font-semibold px-2.5 py-1 bg-amber-50 text-accent border border-amber-300 shadow-2xs hover:bg-amber-100 cursor-pointer transition-colors"
                   >
                     <AlertTriangle className="w-3.5 h-3.5 text-warning shrink-0" />
                     <span>Con ajustes</span>
                   </button>
                 ) : (
-                  <span className="inline-flex items-center justify-center rounded-lg text-xs font-medium px-2.5 py-1 bg-neutral-50 text-neutral-600 border border-neutral-200">
+                  <span className="inline-flex items-center justify-center rounded-full text-xs font-medium px-2.5 py-1 bg-neutral-50 text-neutral-600 border border-neutral-200">
                     Normal
                   </span>
                 )}

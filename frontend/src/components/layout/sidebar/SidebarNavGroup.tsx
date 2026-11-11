@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Lock, Unlock, AlertTriangle } from 'lucide-react';
 import type { NavigationGroup } from '../../../config/navigationConfig';
 import { isNavigationItemActive } from '../../../config/navigationConfig';
 
@@ -77,15 +77,30 @@ export const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
           {/* Indicador de estado de caja en la cabecera colapsada de Caja y Ventas */}
           {!isOpen && grupo.id === 'caja-ventas' && cajaEstado && (
             <span
-              className={`w-2 h-2 rounded-full shrink-0 ${
+              className="inline-flex items-center shrink-0"
+              title={
                 cajaEstado === 'abierta'
-                  ? 'bg-emerald-400'
+                  ? 'Caja: abierta'
                   : cajaEstado === 'anteriorSinCerrar'
-                  ? 'bg-rose-400 animate-pulse'
-                  : 'bg-[#A8A29E]'
-              }`}
-              title={`Caja: ${cajaEstado}`}
-            />
+                  ? 'Caja: cierre pendiente'
+                  : 'Caja: cerrada'
+              }
+              aria-label={
+                cajaEstado === 'abierta'
+                  ? 'Caja: abierta'
+                  : cajaEstado === 'anteriorSinCerrar'
+                  ? 'Caja: cierre pendiente'
+                  : 'Caja: cerrada'
+              }
+            >
+              {cajaEstado === 'abierta' ? (
+                <Unlock className="w-3 h-3 text-emerald-400 shrink-0" aria-hidden="true" />
+              ) : cajaEstado === 'anteriorSinCerrar' ? (
+                <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0 animate-pulse" aria-hidden="true" />
+              ) : (
+                <Lock className="w-3 h-3 text-[#A8A29E] shrink-0" aria-hidden="true" />
+              )}
+            </span>
           )}
         </div>
         <ChevronDown

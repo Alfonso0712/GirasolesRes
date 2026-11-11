@@ -109,7 +109,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
               {/* Rol Pill */}
               <td className="py-3 px-4">
                 <span
-                  className={`inline-flex items-center justify-center rounded-lg text-xs font-semibold py-1 px-2.5 border ${obtenerEstiloRol(
+                  className={`inline-flex items-center justify-center rounded-full text-xs font-semibold py-1 px-2.5 border ${obtenerEstiloRol(
                     u.rol
                   )} text-center shadow-2xs whitespace-nowrap`}
                 >
