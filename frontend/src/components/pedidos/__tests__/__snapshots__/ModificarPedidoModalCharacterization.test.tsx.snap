@@ -109,8 +109,10 @@ exports[`ModificarPedidoModal - Pruebas de Caracterización > debe renderizar el
                   class="flex items-center gap-2"
                 >
                   <button
+                    aria-label="Restar una unidad de Lomo Saltado"
                     class="w-7 h-7 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 cursor-pointer"
                     disabled=""
+                    title="Restar una unidad de Lomo Saltado"
                     type="button"
                   >
                     <svg
@@ -137,7 +139,9 @@ exports[`ModificarPedidoModal - Pruebas de Caracterización > debe renderizar el
                     1
                   </span>
                   <button
+                    aria-label="Aumentar una unidad de Lomo Saltado"
                     class="w-7 h-7 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 cursor-pointer"
+                    title="Aumentar una unidad de Lomo Saltado"
                     type="button"
                   >
                     <svg
@@ -164,6 +168,7 @@ exports[`ModificarPedidoModal - Pruebas de Caracterización > debe renderizar el
                   <button
                     aria-label="Eliminar Lomo Saltado"
                     class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 ml-1 transition-colors cursor-pointer"
+                    title="Eliminar Lomo Saltado"
                     type="button"
                   >
                     <svg

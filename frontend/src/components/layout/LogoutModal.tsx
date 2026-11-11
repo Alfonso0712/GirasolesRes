@@ -51,7 +51,9 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 modal-close-btn" aria-label="Cerrar modal"
+          className="absolute right-4 top-4 modal-close-btn"
+          aria-label="Cerrar modal"
+          title="Cerrar modal"
         >
           <X className="w-4 h-4" />
         </button>

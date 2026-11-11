@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { BookOpen, Layers } from 'lucide-react';
 
 interface ProductsTabsNavProps {
@@ -12,9 +12,36 @@ export const ProductsTabsNav: React.FC<ProductsTabsNavProps> = ({
   onTabChange,
   totalProductos,
 }) => {
+  const tabCatalogoRef = useRef<HTMLButtonElement>(null);
+  const tabMenusRef = useRef<HTMLButtonElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (pestañaActiva === 'catalogo') {
+        onTabChange('menus_completos');
+        tabMenusRef.current?.focus();
+      } else {
+        onTabChange('catalogo');
+        tabCatalogoRef.current?.focus();
+      }
+    }
+  };
+
   return (
-    <div className="shrink-0 border-b border-neutral-200 flex items-center gap-2 sm:gap-4">
+    <div
+      role="tablist"
+      aria-label="Pestañas de productos"
+      onKeyDown={handleKeyDown}
+      className="shrink-0 border-b border-neutral-200 flex items-center gap-2 sm:gap-4"
+    >
       <button
+        ref={tabCatalogoRef}
+        id="tab-catalogo"
+        role="tab"
+        aria-selected={pestañaActiva === 'catalogo'}
+        aria-controls="panel-catalogo"
+        tabIndex={pestañaActiva === 'catalogo' ? 0 : -1}
         type="button"
         onClick={() => onTabChange('catalogo')}
         className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
@@ -31,6 +58,12 @@ export const ProductsTabsNav: React.FC<ProductsTabsNavProps> = ({
       </button>
 
       <button
+        ref={tabMenusRef}
+        id="tab-menus_completos"
+        role="tab"
+        aria-selected={pestañaActiva === 'menus_completos'}
+        aria-controls="panel-menus_completos"
+        tabIndex={pestañaActiva === 'menus_completos' ? 0 : -1}
         type="button"
         onClick={() => onTabChange('menus_completos')}
         className={`pb-3 px-1 text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${

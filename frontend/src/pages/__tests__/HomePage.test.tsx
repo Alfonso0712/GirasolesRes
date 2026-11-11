@@ -5,6 +5,8 @@ import { cajaService } from '../../services/cajaService';
 import { comandaService } from '../../services/comandaService';
 import { pedidoService } from '../../services/pedidoService';
 import { inicioService } from '../../services/inicioService';
+import { DashboardMozoView } from '../../components/dashboard/DashboardMozoView';
+import { setReducedMotion } from '../../hooks/useReducedMotion';
 import type { UserSession } from '../../types/auth';
 
 describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
@@ -206,5 +208,39 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     quickActionSpans.forEach((span) => {
       expect(span.className).not.toContain('uppercase');
     });
+  });
+
+  it('la animación de aviso de pedidos listos en DashboardMozoView respeta Reducir animaciones', () => {
+    const bloquesMock = {
+      misListos: {
+        estado: 'ok',
+        datos: { cantidad: 2 },
+      },
+    };
+
+    // Caso 1: reducedMotion desactivado -> incluye motion-safe:animate-pulse
+    setReducedMotion(false, true);
+    const { unmount } = render(
+      <DashboardMozoView
+        bloques={bloquesMock}
+        onNavigate={vi.fn()}
+        renderBloqueError={() => null}
+      />
+    );
+    const avisoConAnimacion = screen.getByTestId('aviso-pedidos-listos-mozo');
+    expect(avisoConAnimacion.className).toContain('motion-safe:animate-pulse');
+    unmount();
+
+    // Caso 2: reducedMotion activado -> no incluye animate-pulse
+    setReducedMotion(true, true);
+    render(
+      <DashboardMozoView
+        bloques={bloquesMock}
+        onNavigate={vi.fn()}
+        renderBloqueError={() => null}
+      />
+    );
+    const avisoSinAnimacion = screen.getByTestId('aviso-pedidos-listos-mozo');
+    expect(avisoSinAnimacion.className).not.toContain('animate-pulse');
   });
 });

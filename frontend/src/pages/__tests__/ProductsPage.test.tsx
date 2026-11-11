@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import { ProductsPage } from '../ProductsPage';
 import * as productoService from '../../services/productoService';
 import * as menuCompletoService from '../../services/menuCompletoService';
@@ -62,5 +62,36 @@ describe('ProductsPage - Pruebas de Caracterización y Catálogo', () => {
     expect(screen.getByRole('heading', { name: 'Productos' })).toBeInTheDocument();
 
     expect(container).toMatchSnapshot();
+  });
+
+  it('las pestañas tienen roles ARIA, aria-selected y responden a las flechas del teclado', async () => {
+    render(<ProductsPage session={mockSession} onLogout={vi.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tablist', { name: /Pestañas de productos/i })).toBeInTheDocument();
+    });
+
+    const tabCatalogo = screen.getByRole('tab', { name: /Productos y Componentes/i });
+    const tabMenus = screen.getByRole('tab', { name: /Menús completos/i });
+
+    expect(tabCatalogo).toHaveAttribute('aria-selected', 'true');
+    expect(tabCatalogo).toHaveAttribute('tabindex', '0');
+    expect(tabMenus).toHaveAttribute('aria-selected', 'false');
+    expect(tabMenus).toHaveAttribute('tabindex', '-1');
+
+    // Navegación con flecha derecha
+    act(() => {
+      fireEvent.keyDown(tabCatalogo, { key: 'ArrowRight' });
+    });
+    expect(tabMenus).toHaveAttribute('aria-selected', 'true');
+    expect(tabMenus).toHaveAttribute('tabindex', '0');
+    expect(tabCatalogo).toHaveAttribute('aria-selected', 'false');
+    expect(tabCatalogo).toHaveAttribute('tabindex', '-1');
+
+    // Navegación con flecha izquierda
+    act(() => {
+      fireEvent.keyDown(tabMenus, { key: 'ArrowLeft' });
+    });
+    expect(tabCatalogo).toHaveAttribute('aria-selected', 'true');
   });
 });

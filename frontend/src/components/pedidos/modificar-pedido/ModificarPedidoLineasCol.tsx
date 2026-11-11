@@ -54,6 +54,8 @@ export const ModificarPedidoLineasCol: React.FC<ModificarPedidoLineasColProps> =
                     onClick={() => onCambiarCantidad(index, -1)}
                     disabled={l.cantidad <= 1}
                     className="w-7 h-7 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 cursor-pointer"
+                    aria-label={`Restar una unidad de ${l.nombre}`}
+                    title={`Restar una unidad de ${l.nombre}`}
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
@@ -65,6 +67,8 @@ export const ModificarPedidoLineasCol: React.FC<ModificarPedidoLineasColProps> =
                     onClick={() => onCambiarCantidad(index, 1)}
                     disabled={l.cantidad >= 20}
                     className="w-7 h-7 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 cursor-pointer"
+                    aria-label={`Aumentar una unidad de ${l.nombre}`}
+                    title={`Aumentar una unidad de ${l.nombre}`}
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
@@ -74,6 +78,7 @@ export const ModificarPedidoLineasCol: React.FC<ModificarPedidoLineasColProps> =
                     onClick={() => onEliminarLinea(index)}
                     className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 ml-1 transition-colors cursor-pointer"
                     aria-label={`Eliminar ${l.nombre}`}
+                    title={`Eliminar ${l.nombre}`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

@@ -32,6 +32,7 @@ export const CobrosFilterBar: React.FC<CobrosFilterBarProps> = ({
             onClick={() => onBusquedaChange('')}
             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-600 text-xs font-bold px-1 cursor-pointer"
             aria-label="Limpiar búsqueda"
+            title="Limpiar búsqueda"
           >
             <X className="w-3.5 h-3.5" />
           </button>

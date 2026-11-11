@@ -165,7 +165,12 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
         {/* PESTAÑA 1: CATÁLOGO DE PRODUCTOS Y COMPONENTES                */}
         {/* ============================================================== */}
         {pestañaActiva === 'catalogo' && (
-          <>
+          <div
+            id="panel-catalogo"
+            role="tabpanel"
+            aria-labelledby="tab-catalogo"
+            className="flex flex-col gap-4 2xl:gap-5"
+          >
             {/* Barra de Filtros y Búsqueda */}
             <ProductFilterBar
               busqueda={busqueda}
@@ -215,21 +220,27 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
               entityName="ítems"
               onPageChange={setPagina}
             />
-          </>
+          </div>
         )}
 
         {/* ============================================================== */}
         {/* PESTAÑA 2: MENÚS COMPLETOS                                     */}
         {/* ============================================================== */}
         {pestañaActiva === 'menus_completos' && (
-          <MenusCompletosTab
-            errorMenus={errorMenus}
-            cargandoMenus={cargandoMenus}
-            menusCompletos={menusCompletos}
-            onReintentar={cargarMenusCompletos}
-            onAbrirModalPrecio={handleAbrirModalPrecio}
-            onAbrirModalEstadoMenu={handleAbrirModalEstadoMenu}
-          />
+          <div
+            id="panel-menus_completos"
+            role="tabpanel"
+            aria-labelledby="tab-menus_completos"
+          >
+            <MenusCompletosTab
+              errorMenus={errorMenus}
+              cargandoMenus={cargandoMenus}
+              menusCompletos={menusCompletos}
+              onReintentar={cargarMenusCompletos}
+              onAbrirModalPrecio={handleAbrirModalPrecio}
+              onAbrirModalEstadoMenu={handleAbrirModalEstadoMenu}
+            />
+          </div>
         )}
 
         {/* Modales del CUS04 y CUS04.5 */}

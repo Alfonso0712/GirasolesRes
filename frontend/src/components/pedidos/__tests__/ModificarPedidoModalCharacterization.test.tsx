@@ -73,4 +73,27 @@ describe('ModificarPedidoModal - Pruebas de Caracterización', () => {
     expect(screen.getByText('Agotado')).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
+
+  it('los botones + y − tienen aria-label y title descriptivos', () => {
+    render(
+      <ModificarPedidoModal
+        pedido={mockPedido}
+        isOpen={true}
+        onClose={vi.fn()}
+        catalogoProductos={mockCatalogo}
+        onGuardarModificacion={vi.fn()}
+      />
+    );
+    const btnRestar = screen.getByRole('button', { name: /Restar una unidad de Lomo Saltado/i });
+    expect(btnRestar).toBeInTheDocument();
+    expect(btnRestar).toHaveAttribute('title', 'Restar una unidad de Lomo Saltado');
+
+    const btnAumentar = screen.getByRole('button', { name: /Aumentar una unidad de Lomo Saltado/i });
+    expect(btnAumentar).toBeInTheDocument();
+    expect(btnAumentar).toHaveAttribute('title', 'Aumentar una unidad de Lomo Saltado');
+
+    const btnEliminar = screen.getByRole('button', { name: /Eliminar Lomo Saltado/i });
+    expect(btnEliminar).toBeInTheDocument();
+    expect(btnEliminar).toHaveAttribute('title', 'Eliminar Lomo Saltado');
+  });
 });
