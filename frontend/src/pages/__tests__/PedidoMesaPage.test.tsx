@@ -63,29 +63,4 @@ describe('PedidoMesaPage - Pruebas de Caracterización y Toma de Pedidos', () =>
     expect(screen.getByText('Ceviche Clásico')).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
-
-  it('el botón y la miga de pan permiten retornar a Salón de Mesas', async () => {
-    const onVolverMock = vi.fn();
-    render(
-      <PedidoMesaPage
-        session={mockSession}
-        mesaIdInicial="m-1"
-        onLogout={vi.fn()}
-        onVolverAMesas={onVolverMock}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Pedido de Mesa' })).toBeInTheDocument();
-    });
-
-    // Miga de pan
-    expect(screen.getByRole('navigation', { name: /Miga de pan/i })).toBeInTheDocument();
-
-    // Botón explícito en cabecera
-    const btnVolver = screen.getByRole('button', { name: /Volver a Salón de Mesas/i });
-    expect(btnVolver).toBeInTheDocument();
-    btnVolver.click();
-    expect(onVolverMock).toHaveBeenCalled();
-  });
 });

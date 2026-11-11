@@ -148,7 +148,7 @@ export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
       <PedidoLlevarPage
         session={session}
         onLogout={onLogout}
-        onVolver={() => setPaginaActiva('inicio')}
+        onVolver={() => setPaginaActiva('mesas')}
         onNavigateToCobro={() => setPaginaActiva('caja')}
         onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
       />

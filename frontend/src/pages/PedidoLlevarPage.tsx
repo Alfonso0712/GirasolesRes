@@ -129,23 +129,6 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
   return (
     <div className="flex-1 overflow-y-auto w-full scroll-thin">
       <PageContainer maxWidth="max-w-[1600px]" className="lg:px-5 xl:px-8 2xl:px-10">
-        {/* Miga de pan de orientación (Heurística 3 de Nielsen) */}
-        <nav aria-label="Miga de pan" className="mb-2 flex items-center gap-1.5 text-xs text-neutral-500 font-medium select-none">
-          {onVolver ? (
-            <button
-              type="button"
-              onClick={onVolver}
-              className="hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-1"
-            >
-              Inicio
-            </button>
-          ) : (
-            <span>Inicio</span>
-          )}
-          <span>/</span>
-          <span className="text-ink font-semibold">Pedido para Llevar</span>
-        </nav>
-
         {/* 1. Encabezado Unificado */}
         <PageHeader
           title="Pedido para Llevar"
@@ -175,11 +158,10 @@ export const PedidoLlevarPage: React.FC<PedidoLlevarPageProps> = ({
                   type="button"
                   variant="secondary"
                   onClick={onVolver}
-                  title="Volver al Inicio"
                   className="w-auto shrink-0 whitespace-nowrap text-xs font-semibold px-3.5 py-2 min-h-[40px] h-10 inline-flex items-center justify-center"
                 >
                   <ArrowLeft className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                  Volver al Inicio
+                  Volver a mesas
                 </Button>
               )}
             </div>
