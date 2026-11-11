@@ -77,4 +77,93 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     expect(screen.getByText(/Salón y Pedidos/i)).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
+
+  it('Administrador y Mozo no ven accesos a Pedido para Llevar y el Cajero sí', async () => {
+    const validToken = `${btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))}.${btoa(
+      JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })
+    )}.signature`;
+
+    // 1. Administrador: no debe ver "Pedido para Llevar" en accesos rápidos
+    const adminSession: UserSession = {
+      ...mockSession,
+      token: validToken,
+    };
+    const { unmount: unmountAdmin } = render(
+      <HomePage
+        session={adminSession}
+        onLogout={vi.fn()}
+        onUpdateSession={vi.fn()}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Pedido para Llevar/i)).not.toBeInTheDocument();
+    unmountAdmin();
+
+    // 2. Mozo: no debe ver "Pedido para Llevar"
+    const mozoSession: UserSession = {
+      token: validToken,
+      usuario: 'mozo01',
+      nombre: 'Mario Mozo',
+      rol: 'Mozo',
+    };
+    vi.spyOn(inicioService, 'obtenerInicio').mockResolvedValue({
+      rol: 'Mozo',
+      fecha: '2026-10-30',
+      bloques: {},
+    });
+    const { unmount: unmountMozo } = render(
+      <HomePage
+        session={mozoSession}
+        onLogout={vi.fn()}
+        onUpdateSession={vi.fn()}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText(/Mario Mozo/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Pedido para Llevar/i)).not.toBeInTheDocument();
+    unmountMozo();
+
+    // 3. Cajero: sí debe ver "Pedido para Llevar" en accesos rápidos
+    const cajeroSession: UserSession = {
+      token: validToken,
+      usuario: 'cajero01',
+      nombre: 'Carla Cajera',
+      rol: 'Cajero',
+    };
+    vi.spyOn(inicioService, 'obtenerInicio').mockResolvedValue({
+      rol: 'Cajero',
+      fecha: '2026-10-30',
+      bloques: {},
+    });
+    render(
+      <HomePage
+        session={cajeroSession}
+        onLogout={vi.fn()}
+        onUpdateSession={vi.fn()}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText(/Carla Cajera/i)).toBeInTheDocument();
+    });
+    expect(await screen.findByText(/Pedido para Llevar/i)).toBeInTheDocument();
+  });
+
+  it('un rol no Cajero que intenta acceder a pedidos-llevar es redirigido a inicio', async () => {
+    render(
+      <HomePage
+        session={mockSession}
+        onLogout={vi.fn()}
+        onUpdateSession={vi.fn()}
+        paginaInicial="pedidos-llevar"
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Catálogo de Productos para Llevar/i)).not.toBeInTheDocument();
+  });
 });

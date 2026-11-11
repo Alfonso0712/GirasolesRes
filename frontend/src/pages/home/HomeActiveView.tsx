@@ -109,7 +109,11 @@ export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
           setMesaParaCobro(mesa);
           setPaginaActiva('caja');
         }}
-        onNavigateToPedidoLlevar={() => setPaginaActiva('pedidos-llevar')}
+        onNavigateToPedidoLlevar={
+          session.rol === 'Cajero'
+            ? () => setPaginaActiva('pedidos-llevar')
+            : undefined
+        }
         onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
       />
     );
@@ -138,7 +142,7 @@ export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
 
   if (
     paginaActiva === 'pedidos-llevar' &&
-    (session.rol === 'Administrador' || session.rol === 'Cajero')
+    session.rol === 'Cajero'
   ) {
     return (
       <PedidoLlevarPage

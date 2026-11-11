@@ -14,15 +14,17 @@ interface HomePageProps {
     message: string;
   }) => void;
   onUpdateSession: (session: UserSession) => void;
+  paginaInicial?: string;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   session,
   onLogout,
-  onUpdateSession
+  onUpdateSession,
+  paginaInicial,
 }) => {
   // RN-124, RV-144, E-346: Todo usuario llega a su pantalla de inicio tras iniciar sesión
-  const [paginaActiva, setPaginaActiva] = useState('inicio');
+  const [paginaActiva, setPaginaActiva] = useState(paginaInicial || 'inicio');
 
   // Filtro de estado para navegación hacia Pedidos (RV-146, E-350)
   const [filtroEstadoPedidos, setFiltroEstadoPedidos] = useState<string>('');
@@ -57,6 +59,13 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // RN-106 / RN-116: Redirección automática si un rol no autorizado intenta acceder a Historial de Cierres o Reportes
   useEffect(() => {
+    if (
+      (paginaActiva === 'pedidos-llevar' || paginaActiva === 'pedido-llevar') &&
+      session.rol !== 'Cajero'
+    ) {
+      setPaginaActiva('inicio');
+      return;
+    }
     if (paginaActiva === 'historial-cierres' && session.rol !== 'Administrador') {
       const defaultPage =
         session.rol === 'Cajero'

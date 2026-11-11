@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  ShoppingBag,
   LayoutGrid,
   Lock,
   UtensilsCrossed,
@@ -17,7 +16,6 @@ export interface AdminQuickActionsProps {
 
 export const AdminQuickActions: React.FC<AdminQuickActionsProps> = ({ onNavigate }) => {
   const actions = [
-    { label: 'Pedido para Llevar', pagina: 'pedidos-llevar', icon: ShoppingBag },
     { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
     { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: Lock },
     { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: SolesIcon },
