@@ -3,6 +3,7 @@ import { MainLayout } from '../layouts/MainLayout';
 import { cajaService } from '../services/cajaService';
 import { useKitchenNotifications } from '../hooks/useKitchenNotifications';
 import { useSessionLifecycle } from '../hooks/useSessionLifecycle';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import type { UserSession } from '../types/auth';
 import type { CajaActualResponseDto } from '../types/caja';
 import { HomeActiveView, HomePageModals } from './home';
@@ -25,6 +26,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 }) => {
   // RN-124, RV-144, E-346: Todo usuario llega a su pantalla de inicio tras iniciar sesión
   const [paginaActiva, setPaginaActiva] = useState(paginaInicial || 'inicio');
+
+  // Actualiza dinámicamente el título del navegador según la pantalla activa
+  useDocumentTitle(paginaActiva);
 
   // Filtro de estado para navegación hacia Pedidos (RV-146, E-350)
   const [filtroEstadoPedidos, setFiltroEstadoPedidos] = useState<string>('');

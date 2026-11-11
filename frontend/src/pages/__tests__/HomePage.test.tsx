@@ -166,4 +166,20 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     });
     expect(screen.queryByText(/Catálogo de Productos para Llevar/i)).not.toBeInTheDocument();
   });
+
+  it('los h1 coinciden con los nombres del menú lateral y document.title cambia con la pantalla y se restaura', async () => {
+    const { unmount } = render(
+      <HomePage
+        session={mockSession}
+        onLogout={vi.fn()}
+        onUpdateSession={vi.fn()}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+    });
+    expect(document.title).toBe('Inicio - Girasoles');
+    unmount();
+    expect(document.title).toBe('Restaurante Girasoles');
+  });
 });

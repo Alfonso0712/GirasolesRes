@@ -90,7 +90,7 @@ export const PedidoConfirmacionModal: React.FC<PedidoConfirmacionModalProps> = (
             className="w-full flex items-center justify-center gap-2 py-2.5 min-h-[44px]"
           >
             <LayoutGrid className="w-4 h-4" />
-            Ver Mesas
+            Ver Mesas y Salón
           </Button>
 
           <Button

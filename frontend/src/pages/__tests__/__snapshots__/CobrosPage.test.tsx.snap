@@ -21,7 +21,7 @@ exports[`CobrosPage - Pruebas de Caracterización y Módulo de Cobros > debe ren
               <h1
                 class="text-2xl font-bold font-sans text-ink tracking-tight"
               >
-                Cobro de Pedidos
+                Caja y Cobros
               </h1>
               <span
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200 tabular-nums shadow-2xs"

@@ -56,7 +56,7 @@ describe('CobrosPage - Pruebas de Caracterización y Módulo de Cobros', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Cobro de Pedidos' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Caja y Cobros' })).toBeInTheDocument();
     });
 
     expect(screen.getByText('Mesa 4')).toBeInTheDocument();

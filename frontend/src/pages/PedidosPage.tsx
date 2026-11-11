@@ -197,7 +197,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
       <PageContainer>
         {/* 1. Encabezado Unificado */}
         <PageHeader
-          title="Pedidos"
+          title="Gestión de Pedidos"
           subtitle="Visualización y seguimiento del flujo de pedidos del servicio en salón y para llevar."
           badge={
             <span className="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-surface border border-neutral-200">

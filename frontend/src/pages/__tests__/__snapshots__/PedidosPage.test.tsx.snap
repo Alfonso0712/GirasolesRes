@@ -18,7 +18,7 @@ exports[`PedidosPage - Pruebas de Caracterización y Lista de Pedidos > debe ren
             <h1
               class="text-2xl font-bold font-sans text-ink tracking-tight"
             >
-              Pedidos
+              Gestión de Pedidos
             </h1>
             <span
               class="text-xs text-neutral-500 tabular-nums hidden sm:inline px-2.5 py-0.5 rounded-full bg-surface border border-neutral-200"

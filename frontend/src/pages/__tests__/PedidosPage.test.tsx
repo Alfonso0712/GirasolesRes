@@ -56,7 +56,7 @@ describe('PedidosPage - Pruebas de Caracterización y Lista de Pedidos', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Pedidos' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Gestión de Pedidos' })).toBeInTheDocument();
     });
 
     expect(screen.getAllByText('Mesa 1').length).toBeGreaterThan(0);

@@ -158,7 +158,7 @@ export const MenuDiaPage: React.FC<MenuDiaPageProps> = ({
       <PageContainer className={esAdmin && tabActiva !== 'disponibilidad' && tieneCambiosSinGuardar ? 'pb-28' : 'pb-8'}>
         {/* 1. Encabezado Unificado */}
         <PageHeader
-          title="Menú del Día"
+          title="Menú del día"
           subtitle="Planificación diaria de opciones, menús completos, carta y disponibilidad del servicio."
           badge={
             <div className="flex items-center gap-2">

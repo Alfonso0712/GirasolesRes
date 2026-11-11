@@ -151,7 +151,7 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
         <PageContainer className="select-none">
           {/* 1. Encabezado Unificado */}
           <PageHeader
-            title="Cobro de Pedidos"
+            title="Caja y Cobros"
             subtitle="Registro de cobros, cálculo de cambio y emisión de comprobantes en tiempo real."
             count={totalPedidos}
             countLabel="pedidos por cobrar"

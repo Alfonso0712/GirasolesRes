@@ -153,7 +153,7 @@ export const MesasPage: React.FC<MesasPageProps> = ({
       <PageContainer>
         {/* 1. Encabezado Unificado */}
         <PageHeader
-          title="Mesas"
+          title="Mesas y Salón"
           subtitle="Supervise la disponibilidad del salón y asigne mesas en tiempo real."
           badge={
             <div className="px-3.5 py-1 bg-amber-50/80 rounded-full border border-amber-200/80 text-xs font-semibold text-ink flex items-center gap-2 shadow-2xs">

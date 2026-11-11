@@ -171,7 +171,7 @@ export const CatalogoPedido: React.FC<CatalogoPedidoProps> = ({
                     onClick={onNavigateToMenuDia}
                     className="mx-auto !w-auto px-6 py-2.5 text-xs font-bold shadow-md cursor-pointer"
                   >
-                    Ir a definir Menú del Día
+                    Ir a definir Menú del día
                   </Button>
                 )}
               </div>

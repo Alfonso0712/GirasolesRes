@@ -18,7 +18,7 @@ exports[`MenuDiaPage - Pruebas de Caracterización y Menú Diario > debe renderi
             <h1
               class="text-2xl font-bold font-sans text-ink tracking-tight"
             >
-              Menú del Día
+              Menú del día
             </h1>
             <div
               class="flex items-center gap-2"

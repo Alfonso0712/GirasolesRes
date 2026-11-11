@@ -135,7 +135,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ session, onLogout })
 
         {/* 1. Encabezado Unificado */}
         <PageHeader
-          title="Carta y Menús"
+          title="Productos"
           subtitle="Administre productos de carta, componentes y los menús completos del restaurante."
           count={total}
           countLabel="ítems registrados"

@@ -54,7 +54,7 @@ describe('MesasPage - Pruebas de Caracterización y Salón de Mesas', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Mesas' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Mesas y Salón' })).toBeInTheDocument();
     });
 
     expect(screen.getByText('Mesa 1')).toBeInTheDocument();

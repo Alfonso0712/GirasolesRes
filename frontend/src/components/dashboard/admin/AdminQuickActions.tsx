@@ -18,11 +18,11 @@ export const AdminQuickActions: React.FC<AdminQuickActionsProps> = ({ onNavigate
   const actions = [
     { label: 'Mesas y Salón', pagina: 'mesas', icon: LayoutGrid },
     { label: 'Historial de Cierres', pagina: 'historial-cierres', icon: Lock },
-    { label: 'Ventas y Anulaciones', pagina: 'ventas', icon: SolesIcon },
-    { label: 'Reportes y Estadísticas', pagina: 'reportes', icon: BarChart3 },
-    { label: 'Menú del Día', pagina: 'menu-dia', icon: CalendarCheck },
-    { label: 'Gestión de Productos', pagina: 'productos', icon: UtensilsCrossed },
-    { label: 'Gestión de Usuarios', pagina: 'usuarios', icon: Users },
+    { label: 'Historial de Ventas', pagina: 'ventas', icon: SolesIcon },
+    { label: 'Reportes', pagina: 'reportes', icon: BarChart3 },
+    { label: 'Menú del día', pagina: 'menu-dia', icon: CalendarCheck },
+    { label: 'Productos', pagina: 'productos', icon: UtensilsCrossed },
+    { label: 'Usuarios', pagina: 'usuarios', icon: Users },
   ];
 
   return (

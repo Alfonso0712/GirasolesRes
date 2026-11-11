@@ -59,7 +59,7 @@ describe('ProductsPage - Pruebas de Caracterización y Catálogo', () => {
     });
 
     expect(screen.getByText('Sopa de Casa')).toBeInTheDocument();
-    expect(screen.getByText('Carta y Menús')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Productos' })).toBeInTheDocument();
 
     expect(container).toMatchSnapshot();
   });

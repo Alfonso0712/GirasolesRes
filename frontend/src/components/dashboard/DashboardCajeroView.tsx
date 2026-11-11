@@ -99,7 +99,7 @@ export const DashboardCajeroView: React.FC<DashboardCajeroViewProps> = ({
             onClick={() => onNavigate('caja')}
           />
           <QuickActionCard
-            label="Historial de Comprobantes"
+            label="Historial de Ventas"
             icon={SolesIcon}
             variant="secondary"
             onClick={() => onNavigate('ventas')}

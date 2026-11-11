@@ -48,7 +48,7 @@ export const DashboardMozoView: React.FC<DashboardMozoViewProps> = ({
             onClick={() => onNavigate('pedidos', { estado: 'listo' })}
             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer shrink-0"
           >
-            Ver Pedidos
+            Ver Gestión de Pedidos
           </button>
         </div>
       ) : (
