@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
+import { DiscardChangesModal } from '../ui/DiscardChangesModal';
 import type {
   ProductoItem,
   TipoProducto,
@@ -42,6 +43,30 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [guardando, setGuardando] = useState(false);
   const [errorServidor, setErrorServidor] = useState<string | null>(null);
+  const [discardModalOpen, setDiscardModalOpen] = useState(false);
+
+  // Detección de cambios sin guardar para prevención de pérdida de datos (Nielsen #5 / Shneiderman #6)
+  const isDirty = isEditing
+    ? producto
+      ? nombre !== producto.nombre ||
+        tipo !== (producto.tipo || 'Carta') ||
+        rol !== (producto.rol || 'Segundo') ||
+        categoria !== (producto.categoria || 'Almuerzo') ||
+        precioStr !== (producto.precio != null ? producto.precio.toFixed(2) : '')
+      : false
+    : nombre.trim() !== '' ||
+      precioStr.trim() !== '' ||
+      tipo !== 'Carta' ||
+      rol !== 'Segundo' ||
+      categoria !== 'Almuerzo';
+
+  const handleAttemptClose = () => {
+    if (isDirty) {
+      setDiscardModalOpen(true);
+    } else {
+      onClose();
+    }
+  };
 
   // Referencias para accesibilidad y foco (RV-38 / RNF-13)
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -83,7 +108,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (!guardando) onClose();
+        if (!guardando) {
+          e.preventDefault();
+          handleAttemptClose();
+          return;
+        }
       }
 
       if (e.key === 'Tab' && modalRef.current) {
@@ -208,7 +237,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         {/* Encabezado fijo con marca visual */}
         <ProductFormHeader
           isEditing={isEditing}
-          onClose={onClose}
+          onClose={handleAttemptClose}
           guardando={guardando}
         />
 
@@ -290,13 +319,25 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
           {/* Pie de modal fijo con botones de acción */}
           <ProductFormFooter
-            onClose={onClose}
+            onClose={handleAttemptClose}
             guardando={guardando}
             isEditing={isEditing}
             tipo={tipo}
           />
         </form>
       </div>
+
+      {/* Modal de confirmación de descarte de cambios (Nielsen #5 / Shneiderman #6) */}
+      <DiscardChangesModal
+        isOpen={discardModalOpen}
+        onClose={() => setDiscardModalOpen(false)}
+        onConfirm={() => {
+          setDiscardModalOpen(false);
+          onClose();
+        }}
+        title="Tiene cambios sin guardar en el producto"
+        description="¿Desea descartarlos? Se perderán los datos ingresados en el formulario."
+      />
     </div>
   );
 };

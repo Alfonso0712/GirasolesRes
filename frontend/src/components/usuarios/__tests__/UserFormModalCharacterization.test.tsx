@@ -66,4 +66,32 @@ describe('UserFormModal - Pruebas de Caracterización y Formularios de Usuario',
 
     expect(container).toMatchSnapshot();
   });
+
+  it('previene pérdida de datos mostrando modal de descarte cuando el formulario tiene cambios', () => {
+    const onClose = vi.fn();
+    render(
+      <UserFormModal
+        isOpen={true}
+        onClose={onClose}
+        onSave={vi.fn()}
+      />
+    );
+
+    // Escribir un nombre
+    const inputNombre = screen.getByPlaceholderText(/Ej\. Ana Torres/i);
+    fireEvent.change(inputNombre, { target: { value: 'Carlos Mendoza' } });
+
+    // Intentar cerrar con botón Cancelar
+    const btnCancelar = screen.getByRole('button', { name: /Cancelar/i });
+    fireEvent.click(btnCancelar);
+
+    // Debe mostrar modal de confirmación de descarte
+    expect(screen.getByText(/Tiene cambios sin guardar en el usuario/i)).toBeInTheDocument();
+    expect(onClose).not.toHaveBeenCalled();
+
+    // Confirmar descarte
+    const btnDescartar = screen.getByRole('button', { name: /Descartar cambios/i });
+    fireEvent.click(btnDescartar);
+    expect(onClose).toHaveBeenCalled();
+  });
 });

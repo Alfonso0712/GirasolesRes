@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
+import { DiscardChangesModal } from '../ui/DiscardChangesModal';
 import type { ApiClientError } from '../../services/apiClient';
 import type { UsuarioItem, CrearUsuarioData, ActualizarUsuarioData, RolUsuario } from '../../types/usuario';
 import {
@@ -37,6 +38,32 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [guardando, setGuardando] = useState(false);
   const [errorServidor, setErrorServidor] = useState<string | null>(null);
+  const [discardModalOpen, setDiscardModalOpen] = useState(false);
+
+  // Detección de cambios sin guardar para prevención de pérdida de datos (Nielsen #5 / Shneiderman #6)
+  const isDirty = isEdit
+    ? usuarioAEditar
+      ? nombre !== usuarioAEditar.nombre ||
+        usuario !== usuarioAEditar.usuario ||
+        correo !== (usuarioAEditar.correo || '') ||
+        rol !== usuarioAEditar.rol ||
+        contrasena.length > 0 ||
+        confirmarContrasena.length > 0
+      : false
+    : nombre.trim() !== '' ||
+      usuario.trim() !== '' ||
+      correo.trim() !== '' ||
+      rol !== 'Mozo' ||
+      contrasena.length > 0 ||
+      confirmarContrasena.length > 0;
+
+  const handleAttemptClose = () => {
+    if (isDirty) {
+      setDiscardModalOpen(true);
+    } else {
+      onClose();
+    }
+  };
 
   const modalRef = useRef<HTMLDivElement>(null);
   const nombreInputRef = useRef<HTMLInputElement>(null);
@@ -81,7 +108,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onClose();
+        handleAttemptClose();
         return;
       }
 
@@ -224,7 +251,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
         <UserFormHeader
           isEdit={isEdit}
           usuarioNombre={usuarioAEditar?.nombre}
-          onClose={onClose}
+          onClose={handleAttemptClose}
         />
 
         {/* Global Error Banner (shrink-0) */}
@@ -291,12 +318,24 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
 
           {/* Action buttons (Sticky at bottom of modal) */}
           <UserFormFooter
-            onClose={onClose}
+            onClose={handleAttemptClose}
             guardando={guardando}
             isEdit={isEdit}
           />
         </form>
       </div>
+
+      {/* Modal de confirmación de descarte de cambios (Nielsen #5 / Shneiderman #6) */}
+      <DiscardChangesModal
+        isOpen={discardModalOpen}
+        onClose={() => setDiscardModalOpen(false)}
+        onConfirm={() => {
+          setDiscardModalOpen(false);
+          onClose();
+        }}
+        title="Tiene cambios sin guardar en el usuario"
+        description="¿Desea descartarlos? Se perderán los datos ingresados en el formulario."
+      />
     </div>
   );
 };

@@ -67,4 +67,33 @@ describe('ProductFormModal - Pruebas de Caracterización y Formularios', () => {
 
     expect(container).toMatchSnapshot();
   });
+
+  it('previene pérdida de datos mostrando modal de descarte cuando el formulario tiene cambios', () => {
+    const onClose = vi.fn();
+    render(
+      <ProductFormModal
+        isOpen={true}
+        onClose={onClose}
+        onSubmit={vi.fn()}
+        producto={null}
+      />
+    );
+
+    // Escribir un nombre de producto
+    const inputNombre = screen.getByLabelText(/Nombre del Producto/i);
+    fireEvent.change(inputNombre, { target: { value: 'Arroz Chaufa' } });
+
+    // Intentar cerrar con botón Cancelar
+    const btnCancelar = screen.getByRole('button', { name: /Cancelar/i });
+    fireEvent.click(btnCancelar);
+
+    // Debe mostrar modal de confirmación de descarte
+    expect(screen.getByText(/Tiene cambios sin guardar en el producto/i)).toBeInTheDocument();
+    expect(onClose).not.toHaveBeenCalled();
+
+    // Confirmar descarte
+    const btnDescartar = screen.getByRole('button', { name: /Descartar cambios/i });
+    fireEvent.click(btnDescartar);
+    expect(onClose).toHaveBeenCalled();
+  });
 });
