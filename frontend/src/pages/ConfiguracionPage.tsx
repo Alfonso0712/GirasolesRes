@@ -8,6 +8,8 @@ import {
 import type { UserSession } from '../types/auth';
 import { PageHeader, PageContainer } from '../components/layout';
 import { useHandedness, type Handedness } from '../hooks/useHandedness';
+import { useTextSize } from '../hooks/useTextSize';
+import { TextSizeSelector } from '../components/configuracion';
 import { actualizarOrientacion } from '../services/perfilService';
 
 export interface ConfiguracionPageProps {
@@ -17,6 +19,7 @@ export interface ConfiguracionPageProps {
 
 export const ConfiguracionPage: React.FC<ConfiguracionPageProps> = ({ session }) => {
   const { handedness, setHandedness } = useHandedness();
+  const { textSize, setTextSize } = useTextSize();
 
   const handleSelectHandedness = (newHandedness: Handedness) => {
     setHandedness(newHandedness, session.usuario);
@@ -36,10 +39,16 @@ export const ConfiguracionPage: React.FC<ConfiguracionPageProps> = ({ session })
       <PageContainer className="pb-12">
         <PageHeader
           title="Configuración"
-          subtitle="Elige cómo prefieres ubicar los controles del sistema según tu mano de uso."
+          subtitle="Personaliza la accesibilidad visual y la ergonomía de tu estación de trabajo."
         />
 
-        <div className="max-w-3xl mx-auto select-none">
+        <div className="max-w-3xl mx-auto select-none space-y-6">
+          {/* Opción Accesibilidad: Tamaño del texto */}
+          <section className="bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs">
+            <TextSizeSelector value={textSize} onChange={setTextSize} />
+          </section>
+
+          {/* Opción Ergonomía: Posición del menú y navegación */}
           <section className="bg-surface rounded-2xl border border-line p-5 sm:p-6 shadow-xs">
             {/* Cabecera */}
             <div className="flex items-center gap-3 pb-4 border-b border-line mb-5">
@@ -74,7 +83,7 @@ export const ConfiguracionPage: React.FC<ConfiguracionPageProps> = ({ session })
                     <span className="text-sm font-bold text-ink">Modo Diestro</span>
                   </div>
                   {!isLeft ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-accent text-white">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-accent text-white">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Activo
                     </span>
@@ -85,7 +94,7 @@ export const ConfiguracionPage: React.FC<ConfiguracionPageProps> = ({ session })
 
                 {/* Esquema universal de pantalla */}
                 <div className="my-1.5 p-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800/60 border border-line/60">
-                  <div className="flex gap-1.5 h-12 w-full text-[10px] font-bold">
+                  <div className="flex gap-1.5 h-12 w-full text-xs font-bold">
                     {/* Barra lateral a la izquierda */}
                     <div className="w-1/3 rounded bg-stone-300 dark:bg-stone-700 text-stone-700 dark:text-stone-300 flex items-center justify-center text-center px-1">
                       Menú
@@ -118,7 +127,7 @@ export const ConfiguracionPage: React.FC<ConfiguracionPageProps> = ({ session })
                     <span className="text-sm font-bold text-ink">Modo Zurdo</span>
                   </div>
                   {isLeft ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-accent text-white">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-accent text-white">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Activo
                     </span>
@@ -129,7 +138,7 @@ export const ConfiguracionPage: React.FC<ConfiguracionPageProps> = ({ session })
 
                 {/* Esquema universal de pantalla */}
                 <div className="my-1.5 p-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800/60 border border-line/60">
-                  <div className="flex gap-1.5 h-12 w-full text-[10px] font-bold">
+                  <div className="flex gap-1.5 h-12 w-full text-xs font-bold">
                     {/* Contenido principal */}
                     <div className="flex-1 rounded bg-white dark:bg-neutral-900 border border-line/40 flex items-center justify-center text-ink-muted text-center px-1 font-medium">
                       Pantalla principal
