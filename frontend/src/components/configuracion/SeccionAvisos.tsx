@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Volume2, VolumeX, Play } from 'lucide-react';
+import { Bell, Volume2, VolumeX, Play, CheckCircle2 } from 'lucide-react';
 import type { RolUsuario } from '../../types/auth';
 import {
   useNotificationPrefs,
@@ -7,6 +7,7 @@ import {
   type ModoAviso,
 } from '../../hooks/useNotificationPrefs';
 import { Switch } from './Switch';
+import { SettingsSection } from './SettingsSection';
 
 export interface SeccionAvisosProps {
   rol: RolUsuario;
@@ -32,26 +33,15 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
     : 'Se emite cuando la cocina marca un pedido o mesa listo para servir.';
 
   return (
-    <section className={`space-y-6 ${className}`} aria-labelledby="seccion-avisos-titulo">
-      <div className="flex items-center gap-2 pb-2 border-b border-line">
-        <div
-          className="w-8 h-8 rounded-lg bg-brand-tint text-accent flex items-center justify-center shrink-0"
-          aria-hidden="true"
-        >
-          <Bell className="w-4 h-4" />
-        </div>
-        <div>
-          <h3 id="seccion-avisos-titulo" className="text-sm font-bold text-ink">
-            Avisos y sonido
-          </h3>
-          <p className="text-xs text-ink-muted">
-            Configure las alertas visuales y auditivas correspondientes a su rol ({rol}).
-          </p>
-        </div>
-      </div>
-
+    <SettingsSection
+      id="seccion-avisos"
+      icon={Bell}
+      title="Avisos y sonido"
+      description={`Configure las alertas visuales y auditivas correspondientes a su rol (${rol}).`}
+      className={className}
+    >
       {/* Tarjeta descriptiva del aviso del rol */}
-      <div className="p-3.5 rounded-2xl bg-surface-raised border border-line">
+      <div className="p-3 rounded-xl bg-surface-raised/60 border border-line">
         <span className="text-xs font-bold text-ink block">{tituloAvisoRol}</span>
         <p className="text-[11px] text-ink-muted mt-0.5 leading-relaxed">
           {descripcionAvisoRol}
@@ -67,10 +57,12 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
         description="Reproduce tonos audibles al recibir nuevas alertas de comandas o pedidos listos."
       />
 
+      <div className="border-t border-line" />
+
       {/* Control deslizante de volumen */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label htmlFor="slider-volumen" className="text-xs font-bold text-ink flex items-center gap-1.5">
+          <label htmlFor="slider-volumen" className="text-sm font-semibold text-ink flex items-center gap-1.5 cursor-pointer">
             {prefs.sonidoActivado && prefs.volumen > 0 ? (
               <Volume2 className="w-4 h-4 text-accent" aria-hidden="true" />
             ) : (
@@ -101,7 +93,7 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
             type="button"
             disabled={!prefs.sonidoActivado || prefs.volumen === 0}
             onClick={() => probarSonido(tipoSonido)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-accent border border-accent/30 hover:bg-brand-tint/60 transition-colors cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-accent border border-accent/30 hover:bg-brand-tint/60 transition-colors cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent min-h-[40px]"
           >
             <Play className="w-3 h-3 fill-current" aria-hidden="true" />
             <span>Probar sonido</span>
@@ -112,18 +104,18 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
       <div className="border-t border-line" />
 
       {/* Modo de aviso */}
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-ink block">
-          Modo del aviso
-        </label>
-        <p className="text-[11px] text-ink-muted">
-          Seleccione cómo desea que se presenten las notificaciones en su pantalla.
-        </p>
+      <div className="space-y-2.5">
+        <div className="space-y-0.5">
+          <h3 className="text-sm font-semibold text-ink">Modo del aviso</h3>
+          <p className="text-xs text-ink-muted leading-relaxed">
+            Seleccione cómo desea que se presenten las notificaciones en su pantalla.
+          </p>
+        </div>
 
         <div
           role="radiogroup"
           aria-label="Modo del aviso"
-          className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1"
+          className="grid grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))] gap-2.5 pt-1"
         >
           {MODOS_AVISO_OPTIONS.map((opt) => {
             const isSelected = prefs.modoAviso === opt.id;
@@ -136,7 +128,7 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
                 aria-checked={isSelected}
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setModoAviso(opt.id as ModoAviso)}
-                className={`flex flex-col items-start p-3.5 rounded-2xl border-2 transition-all cursor-pointer relative text-left min-h-[88px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`flex flex-col justify-between p-3 rounded-xl border-2 transition-all cursor-pointer relative text-left min-h-[5.5rem] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
                   isSelected
                     ? 'border-accent bg-brand-tint text-accent shadow-xs ring-1 ring-accent/30'
                     : 'border-line hover:border-line-strong hover:bg-surface-raised bg-surface text-ink'
@@ -144,18 +136,13 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
               >
                 <div className="flex items-center justify-between w-full mb-1">
                   <span className="text-xs font-bold text-ink">{opt.label}</span>
-                  <span
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      isSelected
-                        ? 'border-accent bg-accent text-white'
-                        : 'border-line'
-                    }`}
-                    aria-hidden="true"
-                  >
-                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
-                  </span>
+                  {isSelected ? (
+                    <CheckCircle2 className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+                  ) : (
+                    <span className="w-4 h-4 rounded-full border border-line shrink-0" aria-hidden="true" />
+                  )}
                 </div>
-                <p className="text-[11px] text-ink-muted mt-1 leading-snug">
+                <p className="text-[11px] text-ink-muted leading-snug">
                   {opt.description}
                 </p>
               </button>
@@ -163,7 +150,7 @@ export const SeccionAvisos: React.FC<SeccionAvisosProps> = ({
           })}
         </div>
       </div>
-    </section>
+    </SettingsSection>
   );
 };
 

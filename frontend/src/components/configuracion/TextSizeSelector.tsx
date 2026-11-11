@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Type, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { TEXT_SIZE_OPTIONS, type TextSize, type TextSizeOption } from '../../hooks/useTextSize';
 
 export interface TextSizeSelectorProps {
@@ -39,26 +39,18 @@ export const TextSizeSelector: React.FC<TextSizeSelectorProps> = ({
   };
 
   return (
-    <div className={`space-y-3 ${className}`}>
-      <div className="flex items-center gap-2 mb-1">
-        <div
-          className="w-8 h-8 rounded-lg bg-brand-tint text-accent flex items-center justify-center shrink-0"
-          aria-hidden="true"
-        >
-          <Type className="w-4 h-4" />
-        </div>
-        <div>
-          <h3 className="text-sm font-bold text-ink">Tamaño del texto</h3>
-          <p className="text-xs text-ink-muted">
-            Ajusta el tamaño de las letras en todo el sistema.
-          </p>
-        </div>
+    <div className={`space-y-2.5 ${className}`}>
+      <div className="space-y-0.5">
+        <h3 className="text-sm font-semibold text-ink">Tamaño del texto</h3>
+        <p className="text-xs text-ink-muted leading-relaxed">
+          Ajusta el tamaño de las letras en todo el sistema.
+        </p>
       </div>
 
       <div
         role="radiogroup"
         aria-label="Tamaño del texto"
-        className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+        className="grid grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))] gap-2.5 pt-1"
       >
         {TEXT_SIZE_OPTIONS.map((opt: TextSizeOption, index: number) => {
           const isSelected = value === opt.id;
@@ -75,14 +67,14 @@ export const TextSizeSelector: React.FC<TextSizeSelectorProps> = ({
               tabIndex={isSelected ? 0 : -1}
               onClick={() => onChange(opt.id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className={`flex flex-col items-center justify-between p-3.5 rounded-2xl border-2 transition-all cursor-pointer relative text-center min-h-[96px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
+              className={`flex flex-col items-center justify-between p-3 rounded-xl border-2 transition-all cursor-pointer relative text-center min-h-[5.5rem] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
                 isSelected
                   ? 'border-accent bg-brand-tint text-accent shadow-xs ring-1 ring-accent/30'
                   : 'border-line hover:border-line-strong hover:bg-surface-raised bg-surface text-ink'
               }`}
             >
               <div className="flex items-center justify-between w-full mb-1">
-                <span className="text-xs text-ink-muted font-medium">{opt.porcentaje}</span>
+                <span className="text-[11px] text-ink-muted font-medium">{opt.porcentaje}</span>
                 {isSelected ? (
                   <CheckCircle2 className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
                 ) : (
@@ -91,13 +83,13 @@ export const TextSizeSelector: React.FC<TextSizeSelectorProps> = ({
               </div>
 
               <span
-                className={`${PREVIEW_SIZES[opt.id]} my-1 select-none leading-none`}
+                className={`${PREVIEW_SIZES[opt.id]} my-0.5 select-none leading-none`}
                 aria-hidden="true"
               >
                 {opt.previewLabel}
               </span>
 
-              <span className="text-xs font-bold text-ink mt-1">
+              <span className="text-xs font-bold text-ink mt-0.5">
                 {opt.label}
               </span>
             </button>

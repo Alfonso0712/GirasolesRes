@@ -5,6 +5,7 @@ import { useTextSize } from '../../hooks/useTextSize';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { TextSizeSelector } from './TextSizeSelector';
 import { Switch } from './Switch';
+import { SettingsSection } from './SettingsSection';
 
 export interface SeccionAparienciaProps {
   token?: string;
@@ -50,37 +51,26 @@ export const SeccionApariencia: React.FC<SeccionAparienciaProps> = ({
   };
 
   return (
-    <section className={`space-y-6 ${className}`} aria-labelledby="seccion-apariencia-titulo">
-      <div className="flex items-center gap-2 pb-2 border-b border-line">
-        <div
-          className="w-8 h-8 rounded-lg bg-brand-tint text-accent flex items-center justify-center shrink-0"
-          aria-hidden="true"
-        >
-          <Palette className="w-4 h-4" />
-        </div>
-        <div>
-          <h3 id="seccion-apariencia-titulo" className="text-sm font-bold text-ink">
-            Apariencia
-          </h3>
-          <p className="text-xs text-ink-muted">
-            Personalice el tema visual, tamaño del texto y movimiento de la pantalla.
+    <SettingsSection
+      id="seccion-apariencia"
+      icon={Palette}
+      title="Apariencia"
+      description="Personalice el tema visual, tamaño del texto y movimiento de la pantalla."
+      className={className}
+    >
+      {/* Subsección: Selector de tema */}
+      <div className="space-y-2.5">
+        <div className="space-y-0.5">
+          <h3 className="text-sm font-semibold text-ink">Tema del sistema</h3>
+          <p className="text-xs text-ink-muted leading-relaxed">
+            Elija entre tema claro, oscuro o sincronización automática con el sistema operativo.
           </p>
         </div>
-      </div>
-
-      {/* Subsección: Selector de tema */}
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-ink block">
-          Tema del sistema
-        </label>
-        <p className="text-[11px] text-ink-muted">
-          Elija entre tema claro, oscuro o sincronización automática con el sistema operativo.
-        </p>
 
         <div
           role="radiogroup"
           aria-label="Tema del sistema"
-          className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1"
+          className="grid grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))] gap-2.5 pt-1"
         >
           {THEME_MODE_OPTIONS.map((opt, index) => {
             const isSelected = mode === opt.id;
@@ -97,14 +87,14 @@ export const SeccionApariencia: React.FC<SeccionAparienciaProps> = ({
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setMode(opt.id)}
                 onKeyDown={(e) => handleThemeKeyDown(e, index)}
-                className={`flex flex-col items-start p-3.5 rounded-2xl border-2 transition-all cursor-pointer relative text-left min-h-[88px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`flex flex-col justify-between p-3 rounded-xl border-2 transition-all cursor-pointer relative text-left min-h-[5.5rem] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
                   isSelected
                     ? 'border-accent bg-brand-tint text-accent shadow-xs ring-1 ring-accent/30'
                     : 'border-line hover:border-line-strong hover:bg-surface-raised bg-surface text-ink'
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-1">
-                  <div className="flex items-center gap-2 text-xs font-bold">
+                  <div className="flex items-center gap-1.5 text-xs font-bold">
                     {getThemeIcon(opt.id)}
                     <span>{opt.label}</span>
                   </div>
@@ -114,7 +104,7 @@ export const SeccionApariencia: React.FC<SeccionAparienciaProps> = ({
                     <span className="w-4 h-4 rounded-full border border-line shrink-0" aria-hidden="true" />
                   )}
                 </div>
-                <p className="text-[11px] text-ink-muted mt-1 leading-snug">
+                <p className="text-[11px] text-ink-muted leading-snug">
                   {opt.description}
                 </p>
               </button>
@@ -138,7 +128,7 @@ export const SeccionApariencia: React.FC<SeccionAparienciaProps> = ({
         label="Reducir animaciones"
         description="Minimiza los movimientos y transiciones de la pantalla conservando indicadores de estado operativos."
       />
-    </section>
+    </SettingsSection>
   );
 };
 
