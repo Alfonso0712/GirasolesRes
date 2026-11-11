@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { pedidoService } from '../services/pedidoService';
 import { comandaService } from '../services/comandaService';
 import { desbloquearAudioKds, reproducirSonidoKds } from '../utils/audioKds';
+import { getInitialNotificationPrefs } from './useNotificationPrefs';
 import type { UserSession } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
 import type { NuevoPedidoCocinaInfo } from '../components/cocina';
@@ -41,7 +42,10 @@ export function useKitchenNotifications({ session, paginaActiva }: UseKitchenNot
         setAvisosPendientes(data);
         const hayNuevos = data.some((a) => !avisosPreviosRef.current.has(a.id));
         if (hayNuevos && avisosPreviosRef.current.size > 0) {
-          reproducirSonidoKds('lista', true);
+          const prefs = getInitialNotificationPrefs();
+          if (prefs.sonidoActivado && prefs.modoAviso !== 'solo-visual') {
+            reproducirSonidoKds('lista', true, prefs.volumen / 100);
+          }
         }
         avisosPreviosRef.current = new Set(data.map((a) => a.id));
       }
@@ -88,8 +92,10 @@ export function useKitchenNotifications({ session, paginaActiva }: UseKitchenNot
             (c) => !comandasPreviasCocineroRef.current.has(c.id) && c.estado === 'Pendiente'
           );
           if (nuevas.length > 0) {
-            const sonidoActivado = localStorage.getItem('kds_sonido_activado') !== 'false';
-            reproducirSonidoKds('pendiente', sonidoActivado);
+            const prefs = getInitialNotificationPrefs();
+            if (prefs.sonidoActivado && prefs.modoAviso !== 'solo-visual') {
+              reproducirSonidoKds('pendiente', true, prefs.volumen / 100);
+            }
 
             const n = nuevas[0];
             const destinoStr =

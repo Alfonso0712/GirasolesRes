@@ -1,34 +1,45 @@
 import React from 'react';
-import { Settings, CheckCircle2, Sliders } from 'lucide-react';
+import { Settings, Sliders, CheckCircle2 } from 'lucide-react';
 import { ModalWrapper, Button } from '../ui';
+import type { UserSession } from '../../types/auth';
 import { useHandedness, type Handedness } from '../../hooks/useHandedness';
-import { useTextSize } from '../../hooks/useTextSize';
-import { TextSizeSelector } from './TextSizeSelector';
 import { actualizarOrientacion } from '../../services/perfilService';
+import { SeccionPerfil } from './SeccionPerfil';
+import { SeccionApariencia } from './SeccionApariencia';
+import { SeccionAvisos } from './SeccionAvisos';
+import { SeccionAyuda } from './SeccionAyuda';
 
-interface ConfiguracionModalProps {
+export interface ConfiguracionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  session?: UserSession | null;
   token?: string;
+  onCambiarPassword?: () => void;
 }
 
 export const ConfiguracionModal: React.FC<ConfiguracionModalProps> = ({
   isOpen,
   onClose,
+  session,
   token,
+  onCambiarPassword,
 }) => {
   const { handedness, setHandedness } = useHandedness();
-  const { textSize, setTextSize } = useTextSize();
+  const effectiveToken = session?.token || token;
+  const rol = session?.rol || 'Administrador';
 
   const handleSelectHandedness = (newHandedness: Handedness) => {
-    setHandedness(newHandedness);
+    setHandedness(newHandedness, session?.usuario);
     try {
-      actualizarOrientacion(newHandedness, token).catch(() => {
-        // En caso de fallo de red o error de servidor, no revertir el estado visible
-      });
+      actualizarOrientacion(newHandedness, effectiveToken).catch(() => {});
     } catch {
       // Ignorar errores síncronos
     }
+  };
+
+  const handleAbrirPassword = () => {
+    onClose();
+    onCambiarPassword?.();
   };
 
   return (
@@ -36,9 +47,9 @@ export const ConfiguracionModal: React.FC<ConfiguracionModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Configuración"
-      subtitle="Personalice la accesibilidad y ergonomía de su estación de trabajo."
+      subtitle="Personalice la accesibilidad, apariencia y ergonomía de su estación de trabajo."
       icon={Settings}
-      maxWidth="md"
+      maxWidth="lg"
       footer={
         <div className="flex justify-end w-full">
           <Button
@@ -52,26 +63,29 @@ export const ConfiguracionModal: React.FC<ConfiguracionModalProps> = ({
         </div>
       }
     >
-      <div className="space-y-6 select-none">
-        {/* Opción Accesibilidad: Tamaño del texto */}
-        <TextSizeSelector value={textSize} onChange={setTextSize} />
+      <div className="space-y-6 select-none max-h-[calc(85vh-160px)] pr-1">
+        {session && (
+          <>
+            <SeccionPerfil session={session} onCambiarPassword={handleAbrirPassword} />
+            <div className="border-t border-line" />
+          </>
+        )}
 
+        <SeccionApariencia token={effectiveToken} />
         <div className="border-t border-line" />
 
-        {/* Opción Ergonomía: Modo para Zurdos */}
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Sliders className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-bold text-ink">
-              Modo para Zurdos
-            </h3>
+        <section className="space-y-3" aria-labelledby="seccion-uso-modal-titulo">
+          <div className="flex items-center gap-2 pb-2 border-b border-line">
+            <div className="w-8 h-8 rounded-lg bg-brand-tint text-accent flex items-center justify-center shrink-0" aria-hidden="true">
+              <Sliders className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 id="seccion-uso-modal-titulo" className="text-sm font-bold text-ink">Uso y ergonomía</h3>
+              <p className="text-xs text-ink-muted">Adapte la orientación de la barra de navegación para su mano dominante.</p>
+            </div>
           </div>
-          <p className="text-xs text-ink-muted mb-3">
-            Adapta la interfaz invirtiendo la barra lateral, comanda y paneles de acción para un alcance natural con la mano izquierda en pantallas táctiles y escritorios.
-          </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Tarjeta Diestro */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <button
               type="button"
               onClick={() => handleSelectHandedness('right')}
@@ -81,20 +95,13 @@ export const ConfiguracionModal: React.FC<ConfiguracionModalProps> = ({
                   : 'border-line hover:border-line-strong hover:bg-neutral-50 dark:hover:bg-neutral-800/40 bg-surface'
               }`}
             >
-              <div className="flex items-center justify-between w-full mb-2">
-                <span className="text-xs font-bold text-ink flex items-center gap-1.5">
-                  Modo Diestro
-                </span>
-                {handedness === 'right' && (
-                  <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
-                )}
+              <div className="flex items-center justify-between w-full mb-1">
+                <span className="text-xs font-bold text-ink">Modo Diestro</span>
+                {handedness === 'right' && <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />}
               </div>
-              <p className="text-xs text-ink-muted leading-relaxed">
-                Navegación a la izquierda y comanda/acciones primarias a la derecha. Predeterminado.
-              </p>
+              <p className="text-[11px] text-ink-muted leading-relaxed">Navegación a la izquierda y comanda a la derecha. Predeterminado.</p>
             </button>
 
-            {/* Tarjeta Zurdo */}
             <button
               type="button"
               onClick={() => handleSelectHandedness('left')}
@@ -104,23 +111,22 @@ export const ConfiguracionModal: React.FC<ConfiguracionModalProps> = ({
                   : 'border-line hover:border-line-strong hover:bg-neutral-50 dark:hover:bg-neutral-800/40 bg-surface'
               }`}
             >
-              <div className="flex items-center justify-between w-full mb-2">
+              <div className="flex items-center justify-between w-full mb-1">
                 <span className="text-xs font-bold text-ink flex items-center gap-1.5">
                   Modo Zurdo
-                  <span className="text-xs uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-accent/15 text-accent">
-                    Ergonómico
-                  </span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-accent/15 text-accent">Ergonómico</span>
                 </span>
-                {handedness === 'left' && (
-                  <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
-                )}
+                {handedness === 'left' && <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />}
               </div>
-              <p className="text-xs text-ink-muted leading-relaxed">
-                Barra lateral a la derecha, comanda de pedidos y botones de cobro a la izquierda.
-              </p>
+              <p className="text-[11px] text-ink-muted leading-relaxed">Barra lateral a la derecha, comanda y botones de cobro a la izquierda.</p>
             </button>
           </div>
-        </div>
+        </section>
+
+        <div className="border-t border-line" />
+        <SeccionAvisos rol={rol} />
+        <div className="border-t border-line" />
+        <SeccionAyuda rol={rol} />
       </div>
     </ModalWrapper>
   );

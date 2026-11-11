@@ -10,9 +10,16 @@
     <script>
       (function() {
         try {
-          if (localStorage.getItem('girasoles_theme') === 'dark') {
+          var mode = localStorage.getItem('girasoles_theme_mode');
+          var isDark = mode === 'auto'
+            ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            : (localStorage.getItem('girasoles_theme') === 'dark');
+          if (isDark) {
             document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
           }
+
           var size = localStorage.getItem('girasoles_text_size');
           if (size === 'grande') {
             document.documentElement.style.fontSize = '112.5%';
@@ -20,6 +27,16 @@
             document.documentElement.style.fontSize = '125%';
           } else {
             document.documentElement.style.fontSize = '100%';
+          }
+
+          var reduceMotion = localStorage.getItem('girasoles_reduce_motion');
+          var shouldReduce = reduceMotion !== null
+            ? (reduceMotion === 'true')
+            : (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+          if (shouldReduce) {
+            document.documentElement.setAttribute('data-reduce-motion', 'true');
+          } else {
+            document.documentElement.setAttribute('data-reduce-motion', 'false');
           }
         } catch (_) {}
       })();

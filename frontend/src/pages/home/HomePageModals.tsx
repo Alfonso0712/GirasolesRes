@@ -3,6 +3,7 @@ import { Check } from 'lucide-react';
 import { LogoutModal, InactivityModal } from '../../components/layout';
 import { ChangePasswordModal } from '../../components/usuarios';
 import { ConfiguracionModal } from '../../components/configuracion';
+import { useNotificationPrefs } from '../../hooks/useNotificationPrefs';
 import {
   AvisoComandaModal,
   AvisoNuevoPedidoCocinaModal,
@@ -60,6 +61,8 @@ export const HomePageModals: React.FC<HomePageModalsProps> = ({
   toastMensaje,
   setToastMensaje,
 }) => {
+  const { prefs } = useNotificationPrefs();
+  const permitirModalVisual = prefs.modoAviso !== 'solo-sonoro';
   return (
     <>
       {/* Vista 3.1: Modal de confirmación para cerrar sesión (MSG-40 / RV-31) */}
@@ -90,19 +93,20 @@ export const HomePageModals: React.FC<HomePageModalsProps> = ({
       <ConfiguracionModal
         isOpen={mostrarModalConfiguracion}
         onClose={() => setMostrarModalConfiguracion(false)}
-        token={session.token}
+        session={session}
+        onCambiarPassword={() => setMostrarModalPassword(true)}
       />
 
       {/* CUS09.3: Modal emergente de aviso de comanda lista (HU27 / RF-27 / RN-71 / RV-83) */}
       <AvisoComandaModal
-        aviso={avisosPendientes.length > 0 ? avisosPendientes[0] : null}
+        aviso={permitirModalVisual && avisosPendientes.length > 0 ? avisosPendientes[0] : null}
         onCerrar={handleCerrarAviso}
         cargando={cerrandoAviso}
       />
 
       {/* Modal emergente de nueva comanda para cocinero */}
       <AvisoNuevoPedidoCocinaModal
-        aviso={avisoNuevaComandaCocinero}
+        aviso={permitirModalVisual ? avisoNuevaComandaCocinero : null}
         onCerrar={() => setAvisoNuevaComandaCocinero(null)}
         onIrACocina={() => {
           setAvisoNuevaComandaCocinero(null);

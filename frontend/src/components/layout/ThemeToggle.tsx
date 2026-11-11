@@ -16,6 +16,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ inMobileMenu = false, 
 
   const handleClick = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem('girasoles_theme_mode', next);
+    } catch {}
     setTheme(next);
     onAction?.();
 

@@ -38,6 +38,7 @@ export interface HomeActiveViewProps {
   filtroEstadoPedidos: string;
   consultarCajaGlobal: () => void;
   handleDashboardNavigate: (pagina: string, params?: Record<string, unknown>) => void;
+  onCambiarPassword?: () => void;
 }
 
 export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
@@ -59,6 +60,7 @@ export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
   filtroEstadoPedidos,
   consultarCajaGlobal,
   handleDashboardNavigate,
+  onCambiarPassword,
 }) => {
   const irAModuloPrincipal = () =>
     setPaginaActiva(
@@ -217,7 +219,13 @@ export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
   }
 
   if (paginaActiva === 'configuracion') {
-    return <ConfiguracionPage session={session} onLogout={onLogout} />;
+    return (
+      <ConfiguracionPage
+        session={session}
+        onLogout={onLogout}
+        onCambiarPassword={onCambiarPassword}
+      />
+    );
   }
 
   return (

@@ -250,6 +250,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         filtroEstadoPedidos={filtroEstadoPedidos}
         consultarCajaGlobal={consultarCajaGlobal}
         handleDashboardNavigate={handleDashboardNavigate}
+        onCambiarPassword={() => setMostrarModalPassword(true)}
       />
 
       <HomePageModals

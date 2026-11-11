@@ -31,8 +31,9 @@ export function desbloquearAudioKds(): void {
  * - 'preparacion': Tono dinámico ascendente al iniciar preparación
  * - 'lista': Acorde alegre de 3 notas de servicio al marcar como lista
  */
-export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = true): void {
-  if (!activado) return;
+export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = true, volumenRatio = 1.0): void {
+  if (!activado || volumenRatio <= 0) return;
+  const vol = Math.max(0, Math.min(1, volumenRatio));
 
   try {
     const ctx = getAudioContext();
@@ -50,7 +51,7 @@ export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = true): void 
       const gain1 = ctx.createGain();
       osc1.type = 'sine';
       osc1.frequency.setValueAtTime(784, t);
-      gain1.gain.setValueAtTime(0.28, t);
+      gain1.gain.setValueAtTime(0.28 * vol, t);
       gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
       osc1.connect(gain1);
       gain1.connect(ctx.destination);
@@ -61,7 +62,7 @@ export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = true): void 
       const gain2 = ctx.createGain();
       osc2.type = 'sine';
       osc2.frequency.setValueAtTime(1046.5, t + 0.16);
-      gain2.gain.setValueAtTime(0.32, t + 0.16);
+      gain2.gain.setValueAtTime(0.32 * vol, t + 0.16);
       gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.58);
       osc2.connect(gain2);
       gain2.connect(ctx.destination);
@@ -74,7 +75,7 @@ export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = true): void 
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(440, t);
       osc.frequency.linearRampToValueAtTime(587.33, t + 0.18);
-      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.setValueAtTime(0.25 * vol, t);
       gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -89,7 +90,7 @@ export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = true): void 
         const gain = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, start);
-        gain.gain.setValueAtTime(0.24, start);
+        gain.gain.setValueAtTime(0.24 * vol, start);
         gain.gain.exponentialRampToValueAtTime(0.001, start + 0.38);
         osc.connect(gain);
         gain.connect(ctx.destination);
