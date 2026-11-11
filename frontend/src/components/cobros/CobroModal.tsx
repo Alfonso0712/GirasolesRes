@@ -81,6 +81,39 @@ export const CobroModal: React.FC<CobroModalProps> = ({
     }
   }, [esExigidoDocumentoPorMonto, tipoComprobante, modoBoleta]);
 
+  // Atajos de teclado en el modal de cobro (Shneiderman #7, Nielsen #7)
+  useEffect(() => {
+    if (!isOpen || !pedido) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // F2 o Alt+E: Cambiar a Efectivo
+      if (e.key === 'F2' || (e.altKey && (e.key === 'e' || e.key === 'E'))) {
+        e.preventDefault();
+        setMetodo('efectivo');
+        return;
+      }
+
+      // F4 o Alt+Y: Cambiar a Yape / QR
+      if (e.key === 'F4' || (e.altKey && (e.key === 'y' || e.key === 'Y'))) {
+        e.preventDefault();
+        setMetodo('yape');
+        return;
+      }
+
+      // Escape: Cerrar modal (si no está cargando)
+      if (e.key === 'Escape' && !loading) {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, pedido, loading, onClose]);
+
   if (!isOpen || !pedido) return null;
 
   const handleQuickAmount = (val: number) => {

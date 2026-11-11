@@ -43,6 +43,7 @@ export const CobroEfectivoSection: React.FC<CobroEfectivoSectionProps> = ({
             max="9999.99"
             value={montoRecibidoStr}
             onChange={(e) => setMontoRecibidoStr(e.target.value)}
+            onFocus={(e) => e.target.select()}
             autoFocus
             disabled={loading}
             className="w-full pl-9 pr-4 py-3 rounded-xl border border-neutral-300 focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent/20 text-ink text-xl font-bold font-sans tabular-nums"

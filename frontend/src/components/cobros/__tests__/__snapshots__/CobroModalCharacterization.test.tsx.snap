@@ -171,6 +171,7 @@ exports[`CobroModal - Pruebas de Caracterización y Cálculos Financieros > debe
           >
             <button
               class="p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer bg-ink-fill text-white border-ink-fill shadow-2xs"
+              title="Seleccionar pago en Efectivo (F2)"
               type="button"
             >
               <svg
@@ -196,9 +197,15 @@ exports[`CobroModal - Pruebas de Caracterización y Cálculos Financieros > debe
               <span>
                 Efectivo
               </span>
+              <kbd
+                class="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono rounded border bg-white/20 text-white border-white/30"
+              >
+                F2
+              </kbd>
             </button>
             <button
               class="p-3.5 rounded-xl border flex items-center justify-center gap-2.5 font-semibold text-sm transition-all cursor-pointer bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200"
+              title="Seleccionar pago con Yape / QR (F4)"
               type="button"
             >
               <svg
@@ -229,6 +236,11 @@ exports[`CobroModal - Pruebas de Caracterización y Cálculos Financieros > debe
               <span>
                 Yape / QR
               </span>
+              <kbd
+                class="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono rounded border bg-neutral-100 text-neutral-600 border-neutral-300"
+              >
+                F4
+              </kbd>
             </button>
           </div>
         </div>
@@ -361,18 +373,25 @@ exports[`CobroModal - Pruebas de Caracterización y Cálculos Financieros > debe
         >
           <button
             class="px-4 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 text-xs font-semibold hover:bg-neutral-50 transition-colors cursor-pointer min-h-[44px]"
+            title="Cancelar cobro (Esc)"
             type="button"
           >
             Cancelar
           </button>
           <button
             class="px-5 py-2.5 rounded-xl text-white text-xs font-semibold shadow-2xs transition-all flex items-center gap-2 min-h-[44px] bg-primary hover:bg-primary-hover cursor-pointer"
+            title="Emitir comprobante (Enter)"
             type="submit"
           >
             <span>
               Emitir 
               Ticket
             </span>
+            <kbd
+              class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-white/25 text-white border border-white/30"
+            >
+              ↵ Enter
+            </kbd>
             <svg
               aria-hidden="true"
               class="lucide lucide-arrow-right w-4 h-4"

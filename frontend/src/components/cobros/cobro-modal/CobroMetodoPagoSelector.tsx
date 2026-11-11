@@ -25,9 +25,19 @@ export const CobroMetodoPagoSelector: React.FC<CobroMetodoPagoSelectorProps> = (
               ? 'bg-ink-fill text-white border-ink-fill shadow-2xs'
               : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
           }`}
+          title="Seleccionar pago en Efectivo (F2)"
         >
           <SolesIcon className="w-5 h-5 shrink-0" />
           <span>Efectivo</span>
+          <kbd
+            className={`hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono rounded border ${
+              metodo === 'efectivo'
+                ? 'bg-white/20 text-white border-white/30'
+                : 'bg-neutral-100 text-neutral-600 border-neutral-300'
+            }`}
+          >
+            F2
+          </kbd>
         </button>
 
         <button
@@ -38,9 +48,19 @@ export const CobroMetodoPagoSelector: React.FC<CobroMetodoPagoSelectorProps> = (
               ? 'bg-[#732282] text-white border-[#732282] shadow-sm'
               : 'bg-surface hover:bg-neutral-50 text-neutral-700 border-neutral-200'
           }`}
+          title="Seleccionar pago con Yape / QR (F4)"
         >
           <Smartphone className="w-5 h-5 shrink-0" />
           <span>Yape / QR</span>
+          <kbd
+            className={`hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono rounded border ${
+              metodo === 'yape'
+                ? 'bg-white/20 text-white border-white/30'
+                : 'bg-neutral-100 text-neutral-600 border-neutral-300'
+            }`}
+          >
+            F4
+          </kbd>
         </button>
       </div>
     </div>

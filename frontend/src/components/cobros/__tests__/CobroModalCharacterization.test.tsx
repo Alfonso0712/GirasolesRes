@@ -109,4 +109,29 @@ describe('CobroModal - Pruebas de Caracterización y Cálculos Financieros', () 
       );
     });
   });
+
+  it('permite cambiar método con F2/F4 y cancelar con Escape', () => {
+    const onClose = vi.fn();
+    render(
+      <CobroModal
+        isOpen={true}
+        onClose={onClose}
+        pedido={mockPedido}
+        onConfirmarCobro={vi.fn()}
+        token="test-token"
+      />
+    );
+
+    // 1. Presionar F4 para cambiar a Yape
+    fireEvent.keyDown(window, { key: 'F4' });
+    expect(screen.getByText(/Confirmación de recepción en Yape/i)).toBeInTheDocument();
+
+    // 2. Presionar F2 para volver a Efectivo
+    fireEvent.keyDown(window, { key: 'F2' });
+    expect(screen.getByLabelText(/Monto Recibido del Cliente/i)).toBeInTheDocument();
+
+    // 3. Presionar Escape para cerrar
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onClose).toHaveBeenCalled();
+  });
 });
