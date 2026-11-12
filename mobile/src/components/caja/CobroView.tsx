@@ -19,6 +19,7 @@ import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { formatCurrency, pluralizar } from '../../utils/format';
 
 export const CobroView: React.FC = () => {
   const [pedidos, setPedidos] = useState<PedidoPendienteCobro[]>([]);
@@ -109,7 +110,7 @@ export const CobroView: React.FC = () => {
       });
 
       triggerSuccess();
-      const msg = res.mensaje || `Cobro de S/ ${total.toFixed(2)} registrado exitosamente.`;
+      const msg = res.mensaje || `Cobro de ${formatCurrency(total)} registrado exitosamente.`;
       setMensajeExito(msg);
       setMostrarConfirmacion(false);
       setPedidoSeleccionado(null);
@@ -135,7 +136,7 @@ export const CobroView: React.FC = () => {
           <div>
             <h2 className="text-base font-extrabold text-ink leading-tight">Caja y Cobro Rápido</h2>
             <p className="text-xs text-ink-muted">
-              {pedidos.length} {pedidos.length === 1 ? 'cuenta por cobrar' : 'cuentas por cobrar'}
+              {pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
             </p>
           </div>
         </div>
@@ -204,11 +205,11 @@ export const CobroView: React.FC = () => {
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
                 <span className="text-[11px] text-ink-muted">
-                  ({p.cantidadLineas} {p.cantidadLineas === 1 ? 'plato' : 'platos'})
+                  ({pluralizar(p.cantidadLineas, 'plato', 'platos')})
                 </span>
               </div>
               <p className="text-xs text-ink-muted mt-0.5">Atendido por: {p.mozoNombre}</p>
-              <p className="text-lg font-black text-primary mt-1">S/ {p.total.toFixed(2)}</p>
+              <p className="text-lg font-black text-primary mt-1">{formatCurrency(p.total)}</p>
             </div>
 
             <Button
@@ -242,7 +243,7 @@ export const CobroView: React.FC = () => {
             <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
               <div>
                 <p className="text-xs text-ink-muted">Total de la Cuenta</p>
-                <p className="text-2xl font-black text-primary">S/ {total.toFixed(2)}</p>
+                <p className="text-2xl font-black text-primary">{formatCurrency(total)}</p>
               </div>
 
               {/* Selector de comprobante: móvil solo emite Ticket */}
@@ -292,7 +293,7 @@ export const CobroView: React.FC = () => {
                   <div className="bg-canvas border border-line p-2 rounded-xl">
                     <span className="text-[11px] text-ink-muted block">Monto Recibido</span>
                     <span className="text-lg font-black text-ink">
-                      S/ {montoRecibido ? parseFloat(montoRecibido).toFixed(2) : '0.00'}
+                      {formatCurrency(parseFloat(montoRecibido) || 0)}
                     </span>
                   </div>
 
@@ -307,7 +308,7 @@ export const CobroView: React.FC = () => {
                       {saldoFaltante > 0 ? 'Falta Pagar' : 'Vuelto'}
                     </span>
                     <span className="text-lg font-black">
-                      S/ {saldoFaltante > 0 ? saldoFaltante.toFixed(2) : vuelto.toFixed(2)}
+                      {formatCurrency(saldoFaltante > 0 ? saldoFaltante : vuelto)}
                     </span>
                   </div>
                 </div>
@@ -328,7 +329,7 @@ export const CobroView: React.FC = () => {
               className="flex items-center justify-center gap-2 mt-2"
             >
               <Check className="w-5 h-5" />
-              <span>Continuar al Cobro (S/ {total.toFixed(2)})</span>
+              <span>Continuar al Cobro ({formatCurrency(total)})</span>
             </Button>
           </div>
         )}
@@ -348,14 +349,14 @@ export const CobroView: React.FC = () => {
 
             <div>
               <h3 className="text-base font-extrabold text-ink mb-1">
-                ¿Desea registrar el cobro de S/ {total.toFixed(2)} con método {metodoPago}?
+                ¿Desea registrar el cobro de {formatCurrency(total)} con método {metodoPago}?
               </h3>
               <p className="text-xs text-ink-muted">
                 {pedidoSeleccionado.mesaNombre} · Esta acción no se puede deshacer.
               </p>
               {metodoPago === 'Efectivo' && (
                 <p className="text-xs font-bold text-success mt-2">
-                  Vuelto a entregar: S/ {vuelto.toFixed(2)}
+                  Vuelto a entregar: {formatCurrency(vuelto)}
                 </p>
               )}
             </div>

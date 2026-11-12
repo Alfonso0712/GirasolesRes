@@ -7,6 +7,7 @@ import type { HistorialCierresItemDto } from '../../types/caja';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { formatCurrency, pluralizar } from '../../utils/format';
 
 export const AdminReportesView: React.FC = () => {
   const [periodo, setPeriodo] = useState<'hoy' | '7dias' | 'mes'>('hoy');
@@ -125,10 +126,10 @@ export const AdminReportesView: React.FC = () => {
                 </span>
               </div>
               <p className="text-3xl font-black text-primary">
-                S/ {reporteVentas.total.toFixed(2)}
+                {formatCurrency(reporteVentas.total)}
               </p>
               <p className="text-xs text-ink-muted mt-1">
-                {reporteVentas.nVentas} {reporteVentas.nVentas === 1 ? 'pedido registrado' : 'pedidos registrados'} en este período
+                {pluralizar(reporteVentas.nVentas, 'pedido registrado', 'pedidos registrados')} en este período
               </p>
             </div>
 
@@ -140,7 +141,7 @@ export const AdminReportesView: React.FC = () => {
                 </div>
                 <span className="text-xs text-ink-muted font-bold block">En Efectivo</span>
                 <span className="text-lg font-black text-ink mt-0.5 block">
-                  S/ {reporteVentas.efectivo.toFixed(2)}
+                  {formatCurrency(reporteVentas.efectivo)}
                 </span>
               </div>
 
@@ -150,7 +151,7 @@ export const AdminReportesView: React.FC = () => {
                 </div>
                 <span className="text-xs text-ink-muted font-bold block">En Yape / Plin</span>
                 <span className="text-lg font-black text-ink mt-0.5 block">
-                  S/ {reporteVentas.yape.toFixed(2)}
+                  {formatCurrency(reporteVentas.yape)}
                 </span>
               </div>
             </div>
@@ -182,10 +183,10 @@ export const AdminReportesView: React.FC = () => {
 
                   <div className="text-right">
                     <span className="text-xs font-black text-primary block">
-                      {plato.cantidad} unds.
+                      {pluralizar(plato.cantidad, 'und.', 'unds.')}
                     </span>
                     <span className="text-[11px] text-ink-muted">
-                      S/ {plato.monto.toFixed(2)}
+                      {formatCurrency(plato.monto)}
                     </span>
                   </div>
                 </div>
@@ -219,7 +220,7 @@ export const AdminReportesView: React.FC = () => {
 
                   <div className="text-right">
                     <span className="font-black text-ink block">
-                      S/ {cierre.totalVentas.toFixed(2)}
+                      {formatCurrency(cierre.totalVentas)}
                     </span>
                     <span
                       className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full uppercase ${

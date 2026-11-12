@@ -8,6 +8,7 @@ import { Button } from '../ui/Button';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface MesasViewProps {
   onAbrirPedidoMesa: (mesa: MesaItem) => void;
@@ -72,7 +73,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
           <div>
             <h2 className="text-base font-extrabold text-ink">Salón de Mesas</h2>
             <p className="text-xs text-ink-muted">
-              {libresCount} {libresCount === 1 ? 'libre' : 'libres'} · {ocupadasCount} {ocupadasCount === 1 ? 'ocupada' : 'ocupadas'}
+              {pluralizar(libresCount, 'libre', 'libres')} · {pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}
             </p>
           </div>
           <button
@@ -159,14 +160,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
                     {!esLibre && mesa.minutosOcupada && (
                       <span className="inline-flex items-center gap-1 font-bold text-danger shrink-0">
                         <Clock className="w-3.5 h-3.5" />
-                        <span>{mesa.minutosOcupada}m</span>
+                        <span>{pluralizar(mesa.minutosOcupada, 'min', 'mins')}</span>
                       </span>
                     )}
                   </div>
 
                   {!esLibre && typeof mesa.totalPendiente === 'number' && (
                     <div className="mt-1 text-right text-xs font-black text-primary">
-                      S/ {mesa.totalPendiente.toFixed(2)}
+                      {formatCurrency(mesa.totalPendiente)}
                     </div>
                   )}
                 </button>
@@ -188,13 +189,13 @@ export const MesasView: React.FC<MesasViewProps> = ({
               <div>
                 <p className="text-xs text-ink-muted">Total acumulado</p>
                 <p className="text-xl font-black text-primary">
-                  S/ {(mesaSeleccionada.totalPendiente || 0).toFixed(2)}
+                  {formatCurrency(mesaSeleccionada.totalPendiente || 0)}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-ink-muted">Tiempo en mesa</p>
                 <p className="text-sm font-bold text-ink">
-                  {mesaSeleccionada.minutosOcupada || 0} {mesaSeleccionada.minutosOcupada === 1 ? 'minuto' : 'minutos'}
+                  {pluralizar(mesaSeleccionada.minutosOcupada || 0, 'minuto', 'minutos')}
                 </p>
               </div>
             </div>

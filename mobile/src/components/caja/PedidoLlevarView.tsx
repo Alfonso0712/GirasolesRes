@@ -7,6 +7,7 @@ import { Button } from '../ui/Button';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface PedidoLlevarViewProps {
   onPedidoCreado: (mensaje: string) => void;
@@ -121,7 +122,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
       setLineas([]);
       setReferencia('');
       setMostrarResumen(false);
-      onPedidoCreado(`Pedido para llevar registrado (S/ ${total.toFixed(2)})`);
+      onPedidoCreado(`Pedido para llevar registrado (${formatCurrency(total)})`);
       if (onIrACobros) onIrACobros();
     } catch (err: unknown) {
       triggerError();
@@ -231,7 +232,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
               <div className="flex-1 pr-3">
                 <h3 className="text-sm font-bold text-ink">{prod.nombre}</h3>
                 <p className="text-xs font-extrabold text-primary mt-0.5">
-                  S/ {prod.precio.toFixed(2)}
+                  {formatCurrency(prod.precio)}
                 </p>
               </div>
 
@@ -285,10 +286,10 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                 {totalItems}
               </div>
               <span className="text-sm font-bold tracking-wide">
-                Ver Orden para Llevar
+                Ver Orden ({pluralizar(totalItems, 'producto', 'productos')})
               </span>
             </div>
-            <div className="text-sm font-black">S/ {total.toFixed(2)}</div>
+            <div className="text-sm font-black">{formatCurrency(total)}</div>
           </button>
         </div>
       )}
@@ -318,12 +319,12 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                 <div>
                   <h4 className="font-bold text-ink">{l.nombre}</h4>
                   <p className="text-ink-muted">
-                    S/ {l.precioUnitario.toFixed(2)} x {l.cantidad}
+                    {formatCurrency(l.precioUnitario)} x {l.cantidad}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-black text-ink">
-                    S/ {(l.precioUnitario * l.cantidad).toFixed(2)}
+                    {formatCurrency(l.precioUnitario * l.cantidad)}
                   </span>
                   <div className="flex items-center gap-1">
                     <button
@@ -348,7 +349,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
 
           <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
             <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-            <span className="text-xl font-black text-primary">S/ {total.toFixed(2)}</span>
+            <span className="text-xl font-black text-primary">{formatCurrency(total)}</span>
           </div>
 
           <Button

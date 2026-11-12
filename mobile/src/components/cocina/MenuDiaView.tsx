@@ -5,6 +5,7 @@ import type { PlatoMenuDiaDto } from '../../services/menuDiaService';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { pluralizar } from '../../utils/format';
 
 export const MenuDiaView: React.FC = () => {
   const [platos, setPlatos] = useState<PlatoMenuDiaDto[]>([]);
@@ -88,7 +89,7 @@ export const MenuDiaView: React.FC = () => {
             <h2 className="text-base font-extrabold text-ink leading-tight">Control de Platos (Cocina)</h2>
             <p className="text-xs text-ink-muted">
               {totalAgotados > 0
-                ? `${totalAgotados} ${totalAgotados === 1 ? 'plato agotado' : 'platos agotados'}`
+                ? pluralizar(totalAgotados, 'plato agotado', 'platos agotados')
                 : 'Todos los platos disponibles'}
             </p>
           </div>

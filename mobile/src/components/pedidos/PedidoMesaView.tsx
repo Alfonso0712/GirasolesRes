@@ -10,6 +10,7 @@ import { Badge } from '../ui/Badge';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface PedidoMesaViewProps {
   mesa: MesaItem;
@@ -139,8 +140,8 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
 
       triggerSuccess();
       const msg = esMozo
-        ? `Comanda de ${totalItems} ${totalItems === 1 ? 'plato enviada' : 'platos enviada'} a Cocina para ${mesa.nombre}`
-        : `Comanda enviada para ${mesa.nombre} (Total: S/ ${total.toFixed(2)})`;
+        ? `Comanda de ${pluralizar(totalItems, 'plato', 'platos')} enviada a Cocina para ${mesa.nombre}`
+        : `Comanda enviada para ${mesa.nombre} (Total: ${formatCurrency(total)})`;
       onPedidoExitoso(msg);
     } catch (err: unknown) {
       triggerError();
@@ -262,7 +263,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   </p>
                 ) : (
                   <p className="text-xs font-extrabold text-primary mt-1">
-                    S/ {prod.precio.toFixed(2)}
+                    {formatCurrency(prod.precio)}
                   </p>
                 )}
               </div>
@@ -323,7 +324,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             </div>
             {/* RV-154: Mozo ve cantidad de ítems, no monto monetario */}
             <div className="text-sm font-black">
-              {esMozo ? `${totalItems} ${totalItems === 1 ? 'plato' : 'platos'}` : `S/ ${total.toFixed(2)}`}
+              {esMozo ? pluralizar(totalItems, 'plato', 'platos') : formatCurrency(total)}
             </div>
           </button>
         </div>
@@ -352,9 +353,9 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                     {/* RV-154: Ocultar importes si es Mozo */}
                     {!esMozo && (
                       <p className="text-xs text-ink-muted">
-                        S/ {linea.precioUnitario.toFixed(2)} x {linea.cantidad} ={' '}
+                        {formatCurrency(linea.precioUnitario)} x {linea.cantidad} ={' '}
                         <span className="font-bold text-ink">
-                          S/ {(linea.precioUnitario * linea.cantidad).toFixed(2)}
+                          {formatCurrency(linea.precioUnitario * linea.cantidad)}
                         </span>
                       </p>
                     )}
@@ -396,13 +397,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           {!esMozo ? (
             <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
               <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-              <span className="text-xl font-black text-primary">S/ {total.toFixed(2)}</span>
+              <span className="text-xl font-black text-primary">{formatCurrency(total)}</span>
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">
               <span className="text-xs font-bold text-ink-muted">Cantidad total de ítems</span>
               <span className="text-sm font-black text-ink">
-                {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
+                {pluralizar(totalItems, 'producto', 'productos')}
               </span>
             </div>
           )}

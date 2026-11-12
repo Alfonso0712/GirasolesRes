@@ -4,6 +4,7 @@ import { pedidoService } from '../../services/pedidoService';
 import type { PedidoItemDto } from '../../types/pedido';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { formatCurrency } from '../../utils/format';
 
 export const MisPedidosView: React.FC = () => {
   const [pedidos, setPedidos] = useState<PedidoItemDto[]>([]);
@@ -93,7 +94,7 @@ export const MisPedidosView: React.FC = () => {
 
               <div className="text-right">
                 <span className="text-base font-black text-primary block">
-                  S/ {p.total.toFixed(2)}
+                  {formatCurrency(p.total)}
                 </span>
                 <span className="text-[10px] uppercase font-bold text-warning">
                   {p.estado}

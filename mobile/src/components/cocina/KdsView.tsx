@@ -5,6 +5,7 @@ import type { ComandaItem } from '../../types/comanda';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { pluralizar } from '../../utils/format';
 
 export const KdsView: React.FC = () => {
   const [comandas, setComandas] = useState<ComandaItem[]>([]);
@@ -66,7 +67,7 @@ export const KdsView: React.FC = () => {
           <div>
             <h2 className="text-base font-extrabold text-ink leading-tight">Pantalla KDS Cocina</h2>
             <p className="text-xs text-ink-muted">
-              {comandas.length} {comandas.length === 1 ? 'comanda en proceso' : 'comandas en proceso'}
+              {pluralizar(comandas.length, 'comanda en proceso', 'comandas en proceso')}
             </p>
           </div>
         </div>
@@ -169,7 +170,7 @@ export const KdsView: React.FC = () => {
 
                     <div className="text-right flex items-center gap-1 font-black text-sm">
                       <Clock className="w-4 h-4" />
-                      <span>{comanda.minutosEspera} min</span>
+                      <span>{pluralizar(comanda.minutosEspera, 'minuto', 'minutos')}</span>
                     </div>
                   </div>
 
