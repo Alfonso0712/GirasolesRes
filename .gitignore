@@ -55,6 +55,7 @@ Desktop.ini
 # ==============================
 # Scratch scripts & Figma tooling
 # ==============================
+*.apk
 *.zip
 *.bak
 *.cjs
