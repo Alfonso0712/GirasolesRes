@@ -9,8 +9,209 @@
     <meta name="theme-color" content="#482813" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <title>Girasoles Mobile</title>
+    <script>
+      window.__bootStartTime = performance.now();
+      try {
+        var theme = localStorage.getItem('girasoles_theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    </script>
+    <style>
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background-color: #482813;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .boot-sunflower {
+        width: 84px;
+        height: 84px;
+        animation: sunflower-spin 6s linear infinite;
+        transform-origin: center;
+      }
+
+      @keyframes sunflower-spin {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.06); }
+        100% { transform: rotate(360deg) scale(1); }
+      }
+
+      .boot-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #FFFFFF;
+        letter-spacing: -0.02em;
+        margin: 16px 0 0 0;
+        line-height: 1.2;
+      }
+
+      .boot-status {
+        position: relative;
+        margin-top: 8px;
+        min-height: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+      }
+
+      .boot-msg-1,
+      .boot-msg-2,
+      .boot-msg-3 {
+        font-size: 14px;
+        color: #FDE68A;
+        line-height: 1.4;
+        max-width: 280px;
+      }
+
+      .boot-msg-1 {
+        animation: boot-fade-out 0.3s forwards 4s;
+      }
+
+      .boot-msg-2 {
+        position: absolute;
+        top: 0;
+        opacity: 0;
+        pointer-events: none;
+        animation: boot-msg2-sequence 8s forwards 4s;
+      }
+
+      .boot-msg-3 {
+        position: absolute;
+        top: 0;
+        opacity: 0;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: boot-fade-in 0.3s forwards 12s;
+      }
+
+      @keyframes boot-fade-out {
+        0% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-4px); pointer-events: none; visibility: hidden; }
+      }
+
+      @keyframes boot-msg2-sequence {
+        0% { opacity: 0; transform: translateY(4px); }
+        4%, 94% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        100% { opacity: 0; transform: translateY(-4px); pointer-events: none; visibility: hidden; }
+      }
+
+      @keyframes boot-fade-in {
+        0% { opacity: 0; transform: translateY(4px); pointer-events: none; }
+        100% { opacity: 1; transform: translateY(0); pointer-events: auto; }
+      }
+
+      .boot-retry-btn {
+        margin-top: 12px;
+        min-height: 44px;
+        min-width: 130px;
+        padding: 10px 20px;
+        background-color: #F39C12;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        transition: transform 0.15s ease, background-color 0.15s ease;
+      }
+
+      .boot-retry-btn:active {
+        transform: scale(0.96);
+        background-color: #D68910;
+      }
+
+      .boot-progress-track {
+        width: 140px;
+        height: 3px;
+        background-color: rgba(253, 230, 138, 0.2);
+        border-radius: 9999px;
+        overflow: hidden;
+        position: relative;
+        margin-top: 16px;
+      }
+
+      .boot-progress-bar {
+        width: 40%;
+        height: 100%;
+        background-color: #F39C12;
+        border-radius: 9999px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        animation: boot-indeterminate 1.4s ease-in-out infinite;
+      }
+
+      @keyframes boot-indeterminate {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(250%); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .boot-sunflower {
+          animation: none;
+        }
+        .boot-progress-bar {
+          animation: none;
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body class="bg-canvas text-ink antialiased select-none overflow-hidden touch-manipulation">
+    <div id="boot">
+      <svg class="boot-sunflower" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="#F39C12">
+          <ellipse cx="50" cy="18" rx="5" ry="13" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(30 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(60 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(90 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(120 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(150 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(180 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(210 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(240 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(270 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(300 50 50)" />
+          <ellipse cx="50" cy="18" rx="5" ry="13" transform="rotate(330 50 50)" />
+        </g>
+        <circle cx="50" cy="50" r="16" fill="#2E1606" />
+        <circle cx="50" cy="50" r="13" fill="#3D1D09" />
+      </svg>
+      <h1 class="boot-title">Girasoles</h1>
+      <div class="boot-status" role="status" aria-live="polite">
+        <div class="boot-msg-1">Iniciando…</div>
+        <div class="boot-msg-2">Conectando con el servidor…</div>
+        <div class="boot-msg-3">
+          <span>Está tardando más de lo normal. Verifique su conexión.</span>
+          <button type="button" class="boot-retry-btn" onclick="location.reload()">Reintentar</button>
+        </div>
+      </div>
+      <div class="boot-progress-track">
+        <div class="boot-progress-bar"></div>
+      </div>
+    </div>
     <div id="root" class="h-full w-full"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

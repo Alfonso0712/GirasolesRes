@@ -40,7 +40,13 @@ export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(() => authService.getStoredSession());
   const [activeTab, setActiveTab] = useState<string>('salon');
   const [mesaEnPedido, setMesaEnPedido] = useState<MesaItem | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('girasoles_theme') === 'dark' || document.documentElement.classList.contains('dark');
+    } catch {
+      return false;
+    }
+  });
   const [toastMensaje, setToastMensaje] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
@@ -94,6 +100,9 @@ export const App: React.FC = () => {
   const toggleDarkMode = () => {
     setIsDark((prev) => {
       const next = !prev;
+      try {
+        localStorage.setItem('girasoles_theme', next ? 'dark' : 'light');
+      } catch {}
       if (next) {
         document.documentElement.classList.add('dark');
       } else {
