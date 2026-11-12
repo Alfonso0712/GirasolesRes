@@ -17,7 +17,19 @@ export interface LineaPedidoItem {
 }
 
 export interface RegistrarPedidoMesaRequest {
+  solicitudId?: string;
   mesaId: string;
+  lineas: {
+    productoId: string;
+    cantidad: number;
+    observaciones?: string;
+  }[];
+  notas?: string;
+}
+
+export interface RegistrarPedidoLlevarRequest {
+  solicitudId?: string;
+  referencia?: string;
   lineas: {
     productoId: string;
     cantidad: number;
@@ -28,6 +40,6 @@ export interface RegistrarPedidoMesaRequest {
 export interface RegistrarPedidoResultDto {
   pedidoId: string;
   numeroComanda: number;
-  total: number;
-  mensaje: string;
+  total?: number;
+  mensaje?: string;
 }

@@ -10,7 +10,8 @@ import {
   BarChart3,
   Lock,
   Clock,
-  CalendarCheck
+  CalendarCheck,
+  ShoppingBag
 } from 'lucide-react';
 import type { UserSession, RolUsuario } from './types/auth';
 import type { MesaItem } from './types/mesa';
@@ -23,6 +24,7 @@ import { KdsView } from './components/cocina/KdsView';
 import { MenuDiaView } from './components/cocina/MenuDiaView';
 import { CobroView } from './components/caja/CobroView';
 import { CajaTurnoView } from './components/caja/CajaTurnoView';
+import { PedidoLlevarView } from './components/caja/PedidoLlevarView';
 import { AdminReportesView } from './components/admin/AdminReportesView';
 import { PerfilView } from './components/perfil/PerfilView';
 import { useHaptics } from './hooks/useHaptics';
@@ -55,13 +57,14 @@ export const App: React.FC = () => {
       case 'Cocinero':
         return [
           { id: 'kds', label: 'Cocina KDS', icon: ChefHat },
-          { id: 'menu-dia', label: 'Menú Día', icon: CalendarCheck },
+          { id: 'menu-dia', label: 'Platos', icon: CalendarCheck },
           { id: 'perfil', label: 'Perfil', icon: User },
         ];
       case 'Cajero':
         return [
           { id: 'caja', label: 'Caja', icon: Lock },
           { id: 'cobros', label: 'Cobros', icon: Receipt },
+          { id: 'llevar', label: 'Llevar', icon: ShoppingBag },
           { id: 'salon', label: 'Salón', icon: Utensils },
           { id: 'perfil', label: 'Perfil', icon: User },
         ];
@@ -78,7 +81,7 @@ export const App: React.FC = () => {
 
   const tabsDisponibles = session ? getTabsForRole(session.rol) : [];
 
-  // Pestaña inicial por defecto al cambiar o iniciar sesión
+  // Pestaña inicial por defecto al iniciar sesión
   useEffect(() => {
     if (session) {
       if (session.rol === 'Cocinero') setActiveTab('kds');
@@ -108,7 +111,7 @@ export const App: React.FC = () => {
 
   const showToast = (mensaje: string) => {
     setToastMensaje(mensaje);
-    setTimeout(() => setToastMensaje(null), 3000);
+    setTimeout(() => setToastMensaje(null), 3500);
   };
 
   // Si no hay sesión activa -> mostrar pantalla de Login
@@ -163,6 +166,7 @@ export const App: React.FC = () => {
           mesaEnPedido ? (
             <PedidoMesaView
               mesa={mesaEnPedido}
+              rol={session.rol}
               onVolver={() => setMesaEnPedido(null)}
               onPedidoExitoso={(msg) => {
                 setMesaEnPedido(null);
@@ -183,7 +187,7 @@ export const App: React.FC = () => {
         {/* Vista Cocinero: KDS */}
         {activeTab === 'kds' && <KdsView />}
 
-        {/* Vista Cocinero: Menú del Día */}
+        {/* Vista Cocinero: Control de Menú y Platos Agotados */}
         {activeTab === 'menu-dia' && <MenuDiaView />}
 
         {/* Vista Cajero y Admin: Gestión de Caja */}
@@ -193,6 +197,14 @@ export const App: React.FC = () => {
 
         {/* Vista Cajero: Cobros de Mesas */}
         {activeTab === 'cobros' && <CobroView />}
+
+        {/* Vista Cajero: Pedido para Llevar */}
+        {activeTab === 'llevar' && (
+          <PedidoLlevarView
+            onPedidoCreado={(msg) => showToast(msg)}
+            onIrACobros={() => setActiveTab('cobros')}
+          />
+        )}
 
         {/* Vista Administrador: Reportes y KPIs */}
         {activeTab === 'reportes' && <AdminReportesView />}
@@ -210,7 +222,7 @@ export const App: React.FC = () => {
 
       {/* 3. Barra de Navegación Inferior Táctil Exclusiva por Rol */}
       {!mesaEnPedido && (
-        <nav className="h-16 bg-surface border-t border-line px-4 flex items-center justify-around shrink-0 shadow-lg select-none">
+        <nav className="h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none">
           {tabsDisponibles.map((tab) => {
             const Icon = tab.icon;
             const activo = activeTab === tab.id;
@@ -222,12 +234,12 @@ export const App: React.FC = () => {
                   triggerLight();
                   setActiveTab(tab.id);
                 }}
-                className={`flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] transition-colors ${
+                className={`flex flex-col items-center justify-center gap-1 min-w-[50px] min-h-[48px] px-1 transition-colors ${
                   activo ? 'text-primary font-bold' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-[10px]">{tab.label}</span>
+                <span className="text-[10px] truncate max-w-[64px]">{tab.label}</span>
               </button>
             );
           })}
