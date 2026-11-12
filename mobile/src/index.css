@@ -1,0 +1,95 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Colores Corporativos Girasoles */
+  --color-primary: #C74E00;
+  --color-primary-hover: #9A3A00;
+  --color-brand-dark: #482813;
+  --color-brand-surface: #5A351D;
+  --color-canvas: #FAF7F4;
+  --color-surface: #FFFFFF;
+
+  --color-ink: #2C1A0E;
+  --color-ink-muted: #574C45;
+  --color-ink-faint: #746B63;
+  --color-accent: #B84500;
+  --color-line: #E5E0DB;
+  --color-line-soft: #F0EBE6;
+  --color-sidebar: #482813;
+
+  /* Estados Semánticos Operativos */
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FDE68A;
+  --color-danger: #E11D48;
+  --color-danger-bg: #FFF1F2;
+  --color-danger-border: #FECDD3;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+  --color-info-border: #BFDBFE;
+
+  /* Superficies para Mobile */
+  --color-chip-accent-bg: #FFF6EE;
+  --color-chip-accent-border: #FAD8BE;
+  --color-chip-accent-hover: #FFEAD8;
+}
+
+@media screen {
+  html.dark {
+    color-scheme: dark;
+    --color-canvas: #1B1A19;
+    --color-surface: #252320;
+    --color-ink: #F5F5F5;
+    --color-ink-muted: #B0B0B0;
+    --color-ink-faint: #9A948F;
+    --color-line: #3A3634;
+    --color-line-soft: #2E2B28;
+    --color-accent: #E8B49A;
+    --color-success: #34D399;
+    --color-success-bg: #102418;
+    --color-success-border: #1F5238;
+    --color-warning: #FBBF24;
+    --color-warning-bg: #2A2412;
+    --color-warning-border: #5A4A1A;
+    --color-danger: #F87171;
+    --color-danger-bg: #2A1414;
+    --color-danger-border: #5C2626;
+    --color-info: #60A5FA;
+    --color-info-bg: #1E293B;
+  }
+}
+
+/* Soporte para Safe Areas en Android & iOS (Notch y Gestures Bar) */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right, 0px);
+}

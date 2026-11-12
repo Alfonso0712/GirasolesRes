@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Girasoles Mobile</string>
+    <string name="title_activity_main">Girasoles Mobile</string>
+    <string name="package_name">com.girasoles.restaurant</string>
+    <string name="custom_url_scheme">com.girasoles.restaurant</string>
+</resources>
