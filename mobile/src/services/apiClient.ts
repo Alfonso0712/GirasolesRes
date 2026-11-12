@@ -1,8 +1,5 @@
-import { Capacitor } from '@capacitor/core';
 
-export const DEFAULT_API_BASE = Capacitor.isNativePlatform()
-  ? 'http://10.0.2.2:5050/api'
-  : '/api';
+export const DEFAULT_API_BASE = 'https://girasoles.astrazynk.pp.ua/api';
 
 export function getApiBaseUrl(): string {
   const custom = localStorage.getItem('GIRASOLES_API_BASE');
