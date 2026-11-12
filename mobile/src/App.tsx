@@ -20,6 +20,7 @@ import { LoginView } from './components/auth/LoginView';
 import { ViewSkeleton } from './components/ui/ViewSkeleton';
 import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
+import { useAndroidBackButton } from './hooks/useAndroidBackButton';
 import logoGirasoles from './assets/logo-girasoles.png';
 
 // Carga diferida (lazy loading) para vistas de rol para acelerar el arranque
@@ -118,6 +119,24 @@ export const App: React.FC = () => {
     ? activeTab
     : (session ? getDefaultTabForRole(session.rol) : 'salon');
 
+  const initialTabForRole = session ? getDefaultTabForRole(session.rol) : 'salon';
+
+  const showToast = (mensaje: string) => {
+    setToastMensaje(mensaje);
+    setTimeout(() => setToastMensaje(null), 3500);
+  };
+
+  // Manejo del botón Atrás nativo de Android con prioridades
+  useAndroidBackButton({
+    currentTab,
+    initialTab: initialTabForRole,
+    onGoToInitialTab: () => {
+      triggerLight();
+      setActiveTab(initialTabForRole);
+    },
+    showToast,
+  });
+
   const toggleDarkMode = () => {
     setIsDark((prev) => {
       const next = !prev;
@@ -137,11 +156,6 @@ export const App: React.FC = () => {
     await authService.logout();
     setSession(null);
     setMesaEnPedido(null);
-  };
-
-  const showToast = (mensaje: string) => {
-    setToastMensaje(mensaje);
-    setTimeout(() => setToastMensaje(null), 3500);
   };
 
   // Si no hay sesión activa -> mostrar pantalla de Login

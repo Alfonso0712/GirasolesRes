@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useBackHandler } from '../../hooks/useBackHandler';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -28,12 +29,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     triggerLight();
     onClose();
-  };
+  }, [onClose, triggerLight]);
+
+  // Registro automático en la pila de botón Atrás de Android
+  useBackHandler(isOpen, handleClose);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">

@@ -7,6 +7,7 @@ import { Button } from '../ui/Button';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useBackHandler } from '../../hooks/useBackHandler';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface PedidoLlevarViewProps {
@@ -27,9 +28,27 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   const [busqueda, setBusqueda] = useState('');
   const [categoriaActiva, setCategoriaActiva] = useState('Todas');
   const [mostrarResumen, setMostrarResumen] = useState(false);
+  const [mostrarConfirmDescartar, setMostrarConfirmDescartar] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
+
+  // Control del botón Atrás cuando hay líneas agregadas en la orden para llevar
+  useBackHandler(lineas.length > 0 || mostrarConfirmDescartar, () => {
+    if (mostrarResumen) {
+      setMostrarResumen(false);
+      return true;
+    }
+    if (mostrarConfirmDescartar) {
+      setMostrarConfirmDescartar(false);
+      return true;
+    }
+    if (lineas.length > 0) {
+      setMostrarConfirmDescartar(true);
+      return true;
+    }
+    return false;
+  });
 
   const cargarCatalogo = async () => {
     setCargando(true);
@@ -364,6 +383,45 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
           </Button>
         </div>
       </BottomSheet>
+
+      {/* Diálogo de Confirmación para Descartar Pedido para Llevar */}
+      {mostrarConfirmDescartar && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs select-none animate-in fade-in">
+          <div className="bg-surface border border-line rounded-3xl p-5 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95">
+            <div className="w-12 h-12 rounded-2xl bg-warning-bg border border-warning-border text-warning flex items-center justify-center mx-auto">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div className="text-center space-y-1">
+              <h3 className="text-base font-extrabold text-ink">
+                Tiene un pedido sin registrar. ¿Desea descartarlo?
+              </h3>
+              <p className="text-xs text-ink-muted">
+                Los productos agregados a la orden para llevar no se registrarán.
+              </p>
+            </div>
+            <div className="flex gap-2.5 pt-2">
+              <Button
+                variant="outline"
+                fullWidth
+                onClick={() => setMostrarConfirmDescartar(false)}
+              >
+                Seguir editando
+              </Button>
+              <Button
+                variant="danger"
+                fullWidth
+                onClick={() => {
+                  setMostrarConfirmDescartar(false);
+                  setLineas([]);
+                  setReferencia('');
+                }}
+              >
+                Descartar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
