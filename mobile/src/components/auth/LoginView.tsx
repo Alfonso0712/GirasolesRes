@@ -28,9 +28,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       const session = await authService.login(user, pass);
       triggerSuccess();
       onLoginSuccess(session);
-    } catch (err: any) {
+    } catch (err: unknown) {
       triggerError();
-      setError(err?.message || 'Credenciales incorrectas');
+      const msg = err instanceof Error ? err.message : 'Credenciales incorrectas';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -108,87 +109,92 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           Ingresar al Sistema
         </Button>
 
-        {/* Separador */}
-        <div className="relative flex py-2 items-center">
-          <div className="flex-grow border-t border-line"></div>
-          <span className="shrink-0 px-3 text-[11px] font-bold text-ink-muted uppercase">
-            Acceso Rápido por Rol
-          </span>
-          <div className="flex-grow border-t border-line"></div>
-        </div>
-
-        {/* Botones de Acceso Rápido para Pruebas del Docente */}
-        <div className="grid grid-cols-4 gap-1.5">
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('admin', 'Password123!')}
-            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
-          >
-            <Shield className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[10px] font-bold block text-ink truncate">Admin</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('lperez', 'Password123!')}
-            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
-          >
-            <Utensils className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[10px] font-bold block text-ink truncate">Mozo</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('msoto', 'Password123!')}
-            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
-          >
-            <ChefHat className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[10px] font-bold block text-ink truncate">Cocinero</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('atorres', 'Password123!')}
-            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
-          >
-            <Receipt className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[10px] font-bold block text-ink truncate">Cajero</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Configuración de Conexión al Backend (IP Servidor) */}
-      <div className="pt-4 text-center">
-        {!mostrarConfigUrl ? (
-          <button
-            type="button"
-            onClick={() => setMostrarConfigUrl(true)}
-            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-muted hover:text-primary transition-colors"
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span>Servidor: {apiUrl}</span>
-          </button>
-        ) : (
-          <div className="bg-surface border border-line rounded-2xl p-3 text-left space-y-2 animate-in fade-in">
-            <label className="text-[11px] font-bold text-ink">URL de la API (.NET 8):</label>
-            <input
-              type="text"
-              value={apiUrl}
-              onChange={(e) => setApiUrl(e.target.value)}
-              placeholder="http://10.0.2.2:5050/api"
-              className="w-full px-3 py-2 rounded-lg border border-line text-xs font-mono bg-canvas"
-            />
-            <div className="flex gap-2">
-              <Button size="sm" fullWidth onClick={handleSaveApiUrl}>
-                Guardar URL
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => setMostrarConfigUrl(false)}>
-                Cancelar
-              </Button>
+        {/* Bloque exclusivo para entorno de desarrollo */}
+        {import.meta.env.DEV && (
+          <>
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-line"></div>
+              <span className="shrink-0 px-3 text-[11px] font-bold text-ink-muted uppercase">
+                Acceso Rápido por Rol
+              </span>
+              <div className="flex-grow border-t border-line"></div>
             </div>
-          </div>
+
+            <div className="grid grid-cols-4 gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('admin', 'Password123!')}
+                className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+              >
+                <Shield className="w-4 h-4 text-primary mx-auto mb-1" />
+                <span className="text-[10px] font-bold block text-ink truncate">Admin</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('lperez', 'Password123!')}
+                className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+              >
+                <Utensils className="w-4 h-4 text-primary mx-auto mb-1" />
+                <span className="text-[10px] font-bold block text-ink truncate">Mozo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('msoto', 'Password123!')}
+                className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+              >
+                <ChefHat className="w-4 h-4 text-primary mx-auto mb-1" />
+                <span className="text-[10px] font-bold block text-ink truncate">Cocinero</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('atorres', 'Password123!')}
+                className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+              >
+                <Receipt className="w-4 h-4 text-primary mx-auto mb-1" />
+                <span className="text-[10px] font-bold block text-ink truncate">Cajero</span>
+              </button>
+            </div>
+          </>
         )}
       </div>
+
+      {/* 3. Configuración de Conexión al Backend (Solo en desarrollo) */}
+      {import.meta.env.DEV && (
+        <div className="pt-4 text-center">
+          {!mostrarConfigUrl ? (
+            <button
+              type="button"
+              onClick={() => setMostrarConfigUrl(true)}
+              className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-muted hover:text-primary transition-colors"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>Servidor: {apiUrl}</span>
+            </button>
+          ) : (
+            <div className="bg-surface border border-line rounded-2xl p-3 text-left space-y-2 animate-in fade-in">
+              <label className="text-[11px] font-bold text-ink">URL de la API (.NET 8):</label>
+              <input
+                type="text"
+                value={apiUrl}
+                onChange={(e) => setApiUrl(e.target.value)}
+                placeholder="https://girasolesres.pp.ua/api"
+                className="w-full px-3 py-2 rounded-lg border border-line text-xs font-mono bg-canvas"
+              />
+              <div className="flex gap-2">
+                <Button size="sm" fullWidth onClick={handleSaveApiUrl}>
+                  Guardar URL
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setMostrarConfigUrl(false)}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
