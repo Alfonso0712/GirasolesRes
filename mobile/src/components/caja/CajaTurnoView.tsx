@@ -5,6 +5,7 @@ import type { CajaActualResponseDto, CierreResumenDto } from '../../types/caja';
 import { Button } from '../ui/Button';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Numpad } from '../ui/Numpad';
+import { ErrorState } from '../ui/ErrorState';
 import { useHaptics } from '../../hooks/useHaptics';
 
 interface CajaTurnoViewProps {
@@ -34,26 +35,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
     try {
       const data = await cajaService.obtenerActual();
       setCajaActual(data);
-    } catch (err: any) {
-      // Mock para pruebas si la API está desconectada
-      setCajaActual({
-        estado: 'abierta',
-        apertura: {
-          cajaId: 'caja-demo-1',
-          fechaApertura: new Date().toISOString(),
-          fechaAperturaLocal: '12/11/2026 08:00 AM',
-          montoInicial: 100.00,
-          idUsuarioApertura: 'u1',
-          nombreUsuarioApertura: 'Ana Torres (Cajero)'
-        },
-        resumenParcial: {
-          totalVentas: 345.50,
-          totalEfectivo: 210.00,
-          totalYape: 135.50,
-          cantidadVentas: 8
-        },
-        sugerenciaMontoInicial: 100
-      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al consultar el estado de la caja';
+      setError(msg);
+      setCajaActual(null);
     } finally {
       setCargando(false);
     }
@@ -77,9 +62,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
       setModalAbrir(false);
       setMensajeExito(`Caja abierta con éxito con fondo de S/ ${num.toFixed(2)}`);
       cargarCaja();
-    } catch (err: any) {
+    } catch (err: unknown) {
       triggerError();
-      setError(err?.message || 'Error al abrir caja');
+      const msg = err instanceof Error ? err.message : 'Error al abrir caja';
+      setError(msg);
     } finally {
       setProcesando(false);
     }
@@ -88,26 +74,16 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
   const iniciarCierre = async () => {
     triggerLight();
     setProcesando(true);
+    setError(null);
     try {
       const resumen = await cajaService.obtenerResumenCierre();
       setResumenCierre(resumen);
       setEfectivoContado(resumen.efectivoEsperado.toString());
       setModalCerrar(true);
-    } catch {
-      // Mock para cierre
-      const mockResumen: CierreResumenDto = {
-        cajaId: cajaActual?.apertura?.cajaId || 'caja-1',
-        fechaApertura: cajaActual?.apertura?.fechaApertura || new Date().toISOString(),
-        montoInicial: cajaActual?.apertura?.montoInicial || 100,
-        ventasEfectivo: cajaActual?.resumenParcial?.totalEfectivo || 210,
-        ventasYape: cajaActual?.resumenParcial?.totalYape || 135.50,
-        totalVentas: cajaActual?.resumenParcial?.totalVentas || 345.50,
-        efectivoEsperado: (cajaActual?.apertura?.montoInicial || 100) + (cajaActual?.resumenParcial?.totalEfectivo || 210),
-        cantidadVentas: cajaActual?.resumenParcial?.cantidadVentas || 8
-      };
-      setResumenCierre(mockResumen);
-      setEfectivoContado(mockResumen.efectivoEsperado.toString());
-      setModalCerrar(true);
+    } catch (err: unknown) {
+      triggerError();
+      const msg = err instanceof Error ? err.message : 'No se pudo obtener el resumen de cierre de caja';
+      setError(msg);
     } finally {
       setProcesando(false);
     }
@@ -127,9 +103,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
       setModalCerrar(false);
       setMensajeExito('Cierre de caja completado con éxito');
       cargarCaja();
-    } catch (err: any) {
+    } catch (err: unknown) {
       triggerError();
-      setError(err?.message || 'Error al cerrar caja');
+      const msg = err instanceof Error ? err.message : 'Error al cerrar caja';
+      setError(msg);
     } finally {
       setProcesando(false);
     }
@@ -155,7 +132,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
           type="button"
           onClick={cargarCaja}
           disabled={cargando}
-          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95"
+          aria-label="Actualizar caja"
+          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
         >
           <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
         </button>
@@ -166,7 +144,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
           <div className="p-4 rounded-2xl bg-success-bg border border-success-border text-success flex items-center justify-between">
             <span className="text-xs font-bold">{mensajeExito}</span>
             <button type="button" onClick={() => setMensajeExito(null)} className="text-xs font-bold underline">
-              OK
+              Aceptar
             </button>
           </div>
         )}
@@ -178,142 +156,157 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
           </div>
         )}
 
-        {/* 1. Tarjeta de Estado de Caja */}
-        <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                  estaAbierta ? 'bg-success-bg text-success' : 'bg-danger-bg text-danger'
-                }`}
-              >
-                {estaAbierta ? <Unlock className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
-              </div>
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
-                  Estado del Turno
-                </span>
-                <h3 className="text-lg font-black text-ink">
-                  {estaAbierta ? 'Caja Abierta y Operativa' : 'Caja Cerrada'}
-                </h3>
-              </div>
-            </div>
-
-            <span
-              className={`text-xs font-extrabold px-3 py-1 rounded-full uppercase ${
-                estaAbierta
-                  ? 'bg-success-bg text-success border border-success-border'
-                  : 'bg-danger-bg text-danger border border-danger-border'
-              }`}
-            >
-              {estaAbierta ? 'Abierta' : 'Cerrada'}
-            </span>
-          </div>
-
-          {estaAbierta && apertura && (
-            <div className="border-t border-line pt-3 text-xs space-y-1 text-ink-muted">
-              <p>
-                <span className="font-bold text-ink">Cajero:</span> {apertura.nombreUsuarioApertura}
-              </p>
-              <p>
-                <span className="font-bold text-ink">Fondo Inicial:</span> S/ {apertura.montoInicial.toFixed(2)}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* 2. Métricas del Turno Actual (Solo si está abierta) */}
-        {estaAbierta && parcial && (
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-              Ventas del Turno
-            </h3>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                <span className="text-xs text-ink-muted font-bold block">Total Facturado</span>
-                <span className="text-xl font-black text-primary block mt-1">
-                  S/ {parcial.totalVentas.toFixed(2)}
-                </span>
-                <span className="text-[11px] text-ink-muted mt-0.5 block">{parcial.cantidadVentas} comprobantes</span>
-              </div>
-
-              <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                <span className="text-xs text-ink-muted font-bold block">Efectivo en Caja</span>
-                <span className="text-xl font-black text-success block mt-1">
-                  S/ {(apertura!.montoInicial + parcial.totalEfectivo).toFixed(2)}
-                </span>
-                <span className="text-[11px] text-ink-muted mt-0.5 block">Incluye fondo inicial</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-chip-accent-bg text-primary flex items-center justify-center shrink-0">
-                  <DollarSign className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[11px] text-ink-muted block font-semibold">Ventas Efectivo</span>
-                  <span className="text-sm font-extrabold text-ink">S/ {parcial.totalEfectivo.toFixed(2)}</span>
-                </div>
-              </div>
-
-              <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-info-bg text-info flex items-center justify-center shrink-0">
-                  <Smartphone className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[11px] text-ink-muted block font-semibold">Ventas Yape / Plin</span>
-                  <span className="text-sm font-extrabold text-ink">S/ {parcial.totalYape.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Si no hay datos y hubo error de carga inicial */}
+        {!cajaActual && !cargando && error && (
+          <ErrorState
+            mensaje={error}
+            onRetry={cargarCaja}
+            className="my-4"
+          />
         )}
 
-        {/* 3. Acciones de Operación */}
-        <div className="space-y-3 pt-2">
-          {!estaAbierta ? (
-            <Button
-              fullWidth
-              size="lg"
-              onClick={() => {
-                triggerLight();
-                setModalAbrir(true);
-              }}
-              className="flex items-center justify-center gap-2"
-            >
-              <Unlock className="w-5 h-5" />
-              <span>Abrir Caja de Turno</span>
-            </Button>
-          ) : (
-            <div className="space-y-2.5">
-              {onNavigateToCobros && (
+        {/* 1. Tarjeta de Estado de Caja */}
+        {cajaActual && (
+          <>
+            <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                      estaAbierta ? 'bg-success-bg text-success' : 'bg-danger-bg text-danger'
+                    }`}
+                  >
+                    {estaAbierta ? <Unlock className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
+                      Estado del Turno
+                    </span>
+                    <h3 className="text-lg font-black text-ink">
+                      {estaAbierta ? 'Caja Abierta y Operativa' : 'Caja Cerrada'}
+                    </h3>
+                  </div>
+                </div>
+
+                <span
+                  className={`text-xs font-extrabold px-3 py-1 rounded-full uppercase ${
+                    estaAbierta
+                      ? 'bg-success-bg text-success border border-success-border'
+                      : 'bg-danger-bg text-danger border border-danger-border'
+                  }`}
+                >
+                  {estaAbierta ? 'Abierta' : 'Cerrada'}
+                </span>
+              </div>
+
+              {estaAbierta && apertura && (
+                <div className="border-t border-line pt-3 text-xs space-y-1 text-ink-muted">
+                  <p>
+                    <span className="font-bold text-ink">Cajero:</span> {apertura.nombreUsuarioApertura}
+                  </p>
+                  <p>
+                    <span className="font-bold text-ink">Fondo Inicial:</span> S/ {apertura.montoInicial.toFixed(2)}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Métricas del Turno Actual (Solo si está abierta) */}
+            {estaAbierta && parcial && (
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+                  Ventas del Turno
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
+                    <span className="text-xs text-ink-muted font-bold block">Total Facturado</span>
+                    <span className="text-xl font-black text-primary block mt-1">
+                      S/ {parcial.totalVentas.toFixed(2)}
+                    </span>
+                    <span className="text-[11px] text-ink-muted mt-0.5 block">
+                      {parcial.cantidadVentas} {parcial.cantidadVentas === 1 ? 'comprobante' : 'comprobantes'}
+                    </span>
+                  </div>
+
+                  <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
+                    <span className="text-xs text-ink-muted font-bold block">Efectivo en Caja</span>
+                    <span className="text-xl font-black text-success block mt-1">
+                      S/ {(apertura!.montoInicial + parcial.totalEfectivo).toFixed(2)}
+                    </span>
+                    <span className="text-[11px] text-ink-muted mt-0.5 block">Incluye fondo inicial</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-chip-accent-bg text-primary flex items-center justify-center shrink-0">
+                      <DollarSign className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-ink-muted block font-semibold">Ventas Efectivo</span>
+                      <span className="text-sm font-extrabold text-ink">S/ {parcial.totalEfectivo.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-info-bg text-info flex items-center justify-center shrink-0">
+                      <Smartphone className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-ink-muted block font-semibold">Ventas Yape / Plin</span>
+                      <span className="text-sm font-extrabold text-ink">S/ {parcial.totalYape.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 3. Acciones de Operación */}
+            <div className="space-y-3 pt-2">
+              {!estaAbierta ? (
                 <Button
                   fullWidth
                   size="lg"
-                  onClick={onNavigateToCobros}
+                  onClick={() => {
+                    triggerLight();
+                    setModalAbrir(true);
+                  }}
                   className="flex items-center justify-center gap-2"
                 >
-                  <span>Ir a Cobros Pendientes</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <Unlock className="w-5 h-5" />
+                  <span>Abrir Caja de Turno</span>
                 </Button>
-              )}
+              ) : (
+                <div className="space-y-2.5">
+                  {onNavigateToCobros && (
+                    <Button
+                      fullWidth
+                      size="lg"
+                      onClick={onNavigateToCobros}
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <span>Ir a Cobros Pendientes</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </Button>
+                  )}
 
-              <Button
-                fullWidth
-                size="lg"
-                variant="danger"
-                isLoading={procesando}
-                onClick={iniciarCierre}
-                className="flex items-center justify-center gap-2"
-              >
-                <Lock className="w-5 h-5" />
-                <span>Realizar Cierre de Caja / Arqueo</span>
-              </Button>
+                  <Button
+                    fullWidth
+                    size="lg"
+                    variant="danger"
+                    isLoading={procesando}
+                    onClick={iniciarCierre}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Lock className="w-5 h-5" />
+                    <span>Realizar Cierre de Caja / Arqueo</span>
+                  </Button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* Modal Apertura de Caja */}

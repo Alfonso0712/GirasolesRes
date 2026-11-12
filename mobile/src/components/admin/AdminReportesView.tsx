@@ -5,6 +5,8 @@ import { cajaService } from '../../services/cajaService';
 import type { ReporteVentasResponse, ItemPlatoVendido } from '../../types/reporte';
 import type { HistorialCierresItemDto } from '../../types/caja';
 import { useHaptics } from '../../hooks/useHaptics';
+import { ErrorState } from '../ui/ErrorState';
+import { EmptyState } from '../ui/EmptyState';
 
 export const AdminReportesView: React.FC = () => {
   const [periodo, setPeriodo] = useState<'hoy' | '7dias' | 'mes'>('hoy');
@@ -12,11 +14,13 @@ export const AdminReportesView: React.FC = () => {
   const [topPlatos, setTopPlatos] = useState<ItemPlatoVendido[]>([]);
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
   const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
 
   const cargarDatos = async () => {
     setCargando(true);
+    setError(null);
     try {
       const ventas = await reporteService.obtenerReporteVentas();
       setReporteVentas(ventas);
@@ -24,47 +28,12 @@ export const AdminReportesView: React.FC = () => {
       setTopPlatos(platos.items || []);
       const cierresRes = await cajaService.obtenerHistorialCierres();
       setCierres(cierresRes.items || []);
-    } catch {
-      // Mock realista para demostración ejecutiva si la API no responde
-      setReporteVentas({
-        desde: '2026-11-12',
-        hasta: '2026-11-12',
-        nVentas: 24,
-        total: 1248.50,
-        efectivo: 720.00,
-        yape: 528.50,
-      });
-
-      setTopPlatos([
-        { productoId: '1', producto: 'Lomo Saltado', categoria: 'Segundos', cantidad: 18, monto: 576.00 },
-        { productoId: '2', producto: 'Arroz con Mariscos', categoria: 'Segundos', cantidad: 14, monto: 490.00 },
-        { productoId: '3', producto: 'Ceviche Clásico', categoria: 'Entradas', cantidad: 12, monto: 360.00 },
-        { productoId: '4', producto: 'Chicha Morada Jarra', categoria: 'Bebidas', cantidad: 15, monto: 225.00 },
-        { productoId: '5', producto: 'Causa Rellena', categoria: 'Entradas', cantidad: 9, monto: 162.00 },
-      ]);
-
-      setCierres([
-        {
-          cajaId: 'c1',
-          fechaApertura: '2026-11-11T08:00:00',
-          fechaCierre: '2026-11-11T23:30:00',
-          cajero: 'Ana Torres',
-          montoInicial: 100.00,
-          totalVentas: 1580.00,
-          diferencia: 0.00,
-          estadoCuadre: 'Cuadra',
-        },
-        {
-          cajaId: 'c2',
-          fechaApertura: '2026-11-10T08:00:00',
-          fechaCierre: '2026-11-10T23:45:00',
-          cajero: 'Ana Torres',
-          montoInicial: 100.00,
-          totalVentas: 1420.50,
-          diferencia: 2.00,
-          estadoCuadre: 'Sobrante',
-        },
-      ]);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al cargar los reportes administrativos';
+      setError(msg);
+      setReporteVentas(null);
+      setTopPlatos([]);
+      setCierres([]);
     } finally {
       setCargando(false);
     }
@@ -73,6 +42,8 @@ export const AdminReportesView: React.FC = () => {
   useEffect(() => {
     cargarDatos();
   }, [periodo]);
+
+  const sinDatos = !reporteVentas || (reporteVentas.nVentas === 0 && topPlatos.length === 0);
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
@@ -92,7 +63,8 @@ export const AdminReportesView: React.FC = () => {
           type="button"
           onClick={cargarDatos}
           disabled={cargando}
-          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95"
+          aria-label="Actualizar datos"
+          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
         >
           <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
         </button>
@@ -102,14 +74,17 @@ export const AdminReportesView: React.FC = () => {
         {/* Filtros de Período */}
         <div className="grid grid-cols-3 gap-2 bg-surface border border-line p-1.5 rounded-2xl shadow-xs">
           {[
-            { id: 'hoy', label: 'Hoy' },
-            { id: '7dias', label: '7 Días' },
-            { id: 'mes', label: 'Este Mes' },
+            { id: 'hoy' as const, label: 'Hoy' },
+            { id: '7dias' as const, label: '7 Días' },
+            { id: 'mes' as const, label: 'Este Mes' },
           ].map((p) => (
             <button
               key={p.id}
               type="button"
-              onClick={() => { triggerLight(); setPeriodo(p.id as any); }}
+              onClick={() => {
+                triggerLight();
+                setPeriodo(p.id);
+              }}
               className={`py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] ${
                 periodo === p.id ? 'bg-primary text-white shadow-xs' : 'text-ink-muted'
               }`}
@@ -119,8 +94,24 @@ export const AdminReportesView: React.FC = () => {
           ))}
         </div>
 
+        {error && (
+          <ErrorState
+            mensaje={error}
+            onRetry={cargarDatos}
+            className="my-4"
+          />
+        )}
+
+        {!error && !cargando && sinDatos && (
+          <EmptyState
+            icon={BarChart3}
+            titulo="Sin ventas registradas"
+            subtitulo="No hay ventas registradas en el período seleccionado."
+          />
+        )}
+
         {/* 1. KPIs Destacados */}
-        {reporteVentas && (
+        {reporteVentas && !sinDatos && (
           <div className="space-y-3">
             {/* KPI Principal */}
             <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs relative overflow-hidden">
@@ -137,7 +128,7 @@ export const AdminReportesView: React.FC = () => {
                 S/ {reporteVentas.total.toFixed(2)}
               </p>
               <p className="text-xs text-ink-muted mt-1">
-                {reporteVentas.nVentas} pedidos registrados en este período
+                {reporteVentas.nVentas} {reporteVentas.nVentas === 1 ? 'pedido registrado' : 'pedidos registrados'} en este período
               </p>
             </div>
 
@@ -167,80 +158,84 @@ export const AdminReportesView: React.FC = () => {
         )}
 
         {/* 2. Platos Más Vendidos */}
-        <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4 text-primary" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-              Platos Más Vendidos
-            </h3>
-          </div>
+        {topPlatos.length > 0 && (
+          <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+                Platos Más Vendidos
+              </h3>
+            </div>
 
-          <div className="divide-y divide-line">
-            {topPlatos.slice(0, 5).map((plato, idx) => (
-              <div key={plato.productoId} className="py-2.5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-lg bg-canvas text-ink-muted font-extrabold text-xs flex items-center justify-center border border-line">
-                    #{idx + 1}
-                  </span>
-                  <div>
-                    <h4 className="text-xs font-bold text-ink">{plato.producto}</h4>
-                    <span className="text-[10px] text-ink-muted">{plato.categoria}</span>
+            <div className="divide-y divide-line">
+              {topPlatos.slice(0, 5).map((plato, idx) => (
+                <div key={plato.productoId} className="py-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-lg bg-canvas text-ink-muted font-extrabold text-xs flex items-center justify-center border border-line">
+                      #{idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-ink">{plato.producto}</h4>
+                      <span className="text-[10px] text-ink-muted">{plato.categoria}</span>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-xs font-black text-primary block">
+                      {plato.cantidad} unds.
+                    </span>
+                    <span className="text-[11px] text-ink-muted">
+                      S/ {plato.monto.toFixed(2)}
+                    </span>
                   </div>
                 </div>
-
-                <div className="text-right">
-                  <span className="text-xs font-black text-primary block">
-                    {plato.cantidad} unds.
-                  </span>
-                  <span className="text-[11px] text-ink-muted">
-                    S/ {plato.monto.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 3. Historial de Cierres de Caja */}
-        <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
-          <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-primary" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-              Cierres de Caja Recientes
-            </h3>
-          </div>
+        {cierres.length > 0 && (
+          <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+                Cierres de Caja Recientes
+              </h3>
+            </div>
 
-          <div className="space-y-2">
-            {cierres.slice(0, 3).map((cierre) => (
-              <div
-                key={cierre.cajaId}
-                className="bg-canvas border border-line rounded-2xl p-3 flex items-center justify-between text-xs"
-              >
-                <div>
-                  <span className="font-bold text-ink block">{cierre.cajero}</span>
-                  <span className="text-[10px] text-ink-muted">
-                    {new Date(cierre.fechaApertura).toLocaleDateString('es-PE')}
-                  </span>
-                </div>
+            <div className="space-y-2">
+              {cierres.slice(0, 3).map((cierre) => (
+                <div
+                  key={cierre.cajaId}
+                  className="bg-canvas border border-line rounded-2xl p-3 flex items-center justify-between text-xs"
+                >
+                  <div>
+                    <span className="font-bold text-ink block">{cierre.cajero}</span>
+                    <span className="text-[10px] text-ink-muted">
+                      {new Date(cierre.fechaApertura).toLocaleDateString('es-PE')}
+                    </span>
+                  </div>
 
-                <div className="text-right">
-                  <span className="font-black text-ink block">
-                    S/ {cierre.totalVentas.toFixed(2)}
-                  </span>
-                  <span
-                    className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full uppercase ${
-                      cierre.estadoCuadre === 'Cuadra'
-                        ? 'bg-success-bg text-success'
-                        : 'bg-warning-bg text-warning'
-                    }`}
-                  >
-                    {cierre.estadoCuadre}
-                  </span>
+                  <div className="text-right">
+                    <span className="font-black text-ink block">
+                      S/ {cierre.totalVentas.toFixed(2)}
+                    </span>
+                    <span
+                      className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full uppercase ${
+                        cierre.estadoCuadre === 'Cuadra'
+                          ? 'bg-success-bg text-success'
+                          : 'bg-warning-bg text-warning'
+                      }`}
+                    >
+                      {cierre.estadoCuadre}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

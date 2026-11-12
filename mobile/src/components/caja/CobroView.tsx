@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Receipt, CheckCircle, RefreshCw, CreditCard, Banknote, Smartphone, Check } from 'lucide-react';
+import {
+  Receipt,
+  CheckCircle,
+  RefreshCw,
+  CreditCard,
+  Banknote,
+  Smartphone,
+  Check,
+  AlertCircle
+} from 'lucide-react';
 import { cobroService } from '../../services/cobroService';
 import type { PedidoPendienteCobro, MetodoPago } from '../../types/cobro';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
 import { Numpad } from '../ui/Numpad';
+import { ErrorState } from '../ui/ErrorState';
+import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 
 export const CobroView: React.FC = () => {
   const [pedidos, setPedidos] = useState<PedidoPendienteCobro[]>([]);
   const [cargando, setCargando] = useState(false);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<PedidoPendienteCobro | null>(null);
 
   // Estado del cobro
@@ -18,36 +30,20 @@ export const CobroView: React.FC = () => {
   const [montoRecibido, setMontoRecibido] = useState<string>('');
   const [procesando, setProcesando] = useState(false);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [errorCobro, setErrorCobro] = useState<string | null>(null);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
 
   const cargarPedidos = async () => {
     setCargando(true);
+    setErrorCarga(null);
     try {
       const data = await cobroService.obtenerPedidosPendientes();
-      setPedidos(data);
-    } catch {
-      // Mock para pruebas offline
-      setPedidos([
-        {
-          pedidoId: 'ped-1',
-          mesaId: '2',
-          mesaNombre: 'Mesa 2',
-          mozoNombre: 'Carlos',
-          total: 78.50,
-          fechaCreacion: new Date().toISOString(),
-          cantidadLineas: 3,
-        },
-        {
-          pedidoId: 'ped-2',
-          mesaId: '4',
-          mesaNombre: 'Mesa 4',
-          mozoNombre: 'Ana',
-          total: 142.00,
-          fechaCreacion: new Date().toISOString(),
-          cantidadLineas: 5,
-        },
-      ]);
+      setPedidos(data || []);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al cargar las cuentas pendientes de cobro';
+      setErrorCarga(msg);
+      setPedidos([]);
     } finally {
       setCargando(false);
     }
@@ -66,10 +62,12 @@ export const CobroView: React.FC = () => {
     if (!pedidoSeleccionado) return;
     if (metodoPago === 'Efectivo' && numRecibido < total) {
       triggerError();
+      setErrorCobro('El monto recibido en efectivo no puede ser menor al total.');
       return;
     }
 
     setProcesando(true);
+    setErrorCobro(null);
     try {
       await cobroService.procesarCobro({
         pedidoId: pedidoSeleccionado.pedidoId,
@@ -81,11 +79,10 @@ export const CobroView: React.FC = () => {
       setMensajeExito(`Cobro de S/ ${total.toFixed(2)} registrado para ${pedidoSeleccionado.mesaNombre}`);
       setPedidoSeleccionado(null);
       cargarPedidos();
-    } catch {
-      triggerSuccess();
-      setMensajeExito(`Cobro de S/ ${total.toFixed(2)} registrado exitosamente.`);
-      setPedidoSeleccionado(null);
-      cargarPedidos();
+    } catch (err: unknown) {
+      triggerError();
+      const msg = err instanceof Error ? err.message : 'Error al procesar el cobro';
+      setErrorCobro(msg);
     } finally {
       setProcesando(false);
     }
@@ -101,7 +98,9 @@ export const CobroView: React.FC = () => {
           </div>
           <div>
             <h2 className="text-base font-extrabold text-ink leading-tight">Caja y Cobro Rápido</h2>
-            <p className="text-xs text-ink-muted">{pedidos.length} cuentas por cobrar</p>
+            <p className="text-xs text-ink-muted">
+              {pedidos.length} {pedidos.length === 1 ? 'cuenta por cobrar' : 'cuentas por cobrar'}
+            </p>
           </div>
         </div>
 
@@ -110,7 +109,7 @@ export const CobroView: React.FC = () => {
           onClick={cargarPedidos}
           disabled={cargando}
           aria-label="Actualizar cobros"
-          className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95"
+          className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
         >
           <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
         </button>
@@ -127,13 +126,30 @@ export const CobroView: React.FC = () => {
             onClick={() => setMensajeExito(null)}
             className="text-xs underline font-bold"
           >
-            OK
+            Aceptar
           </button>
         </div>
       )}
 
-      {/* Lista de Cuentas Pendientes (1 col en mobile, 2 col en tablet) */}
+      {errorCarga && (
+        <div className="p-4">
+          <ErrorState
+            mensaje={errorCarga}
+            onRetry={cargarPedidos}
+          />
+        </div>
+      )}
+
+      {/* Lista de Cuentas Pendientes */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {!errorCarga && !cargando && pedidos.length === 0 && (
+          <EmptyState
+            icon={Receipt}
+            titulo="Sin pedidos pendientes"
+            subtitulo="No hay pedidos pendientes de cobro."
+          />
+        )}
+
         {pedidos.map((p) => (
           <div
             key={p.pedidoId}
@@ -142,7 +158,9 @@ export const CobroView: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
-                <span className="text-[11px] text-ink-muted">({p.cantidadLineas} platos)</span>
+                <span className="text-[11px] text-ink-muted">
+                  ({p.cantidadLineas} {p.cantidadLineas === 1 ? 'plato' : 'platos'})
+                </span>
               </div>
               <p className="text-xs text-ink-muted mt-0.5">Atendido por: {p.mozoNombre}</p>
               <p className="text-lg font-black text-primary mt-1">S/ {p.total.toFixed(2)}</p>
@@ -154,6 +172,7 @@ export const CobroView: React.FC = () => {
                 triggerLight();
                 setPedidoSeleccionado(p);
                 setMontoRecibido(p.total.toString());
+                setErrorCobro(null);
               }}
               className="px-5 shrink-0"
             >
@@ -165,12 +184,19 @@ export const CobroView: React.FC = () => {
 
       {/* Bottom Sheet de Cobro Táctil */}
       <BottomSheet
-        isOpen={!!pedidoSeleccionado}
+        isOpen={Boolean(pedidoSeleccionado)}
         onClose={() => setPedidoSeleccionado(null)}
         title={pedidoSeleccionado ? `Cobrar ${pedidoSeleccionado.mesaNombre}` : ''}
       >
         {pedidoSeleccionado && (
           <div className="space-y-4">
+            {errorCobro && (
+              <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorCobro}</span>
+              </div>
+            )}
+
             {/* Monto a Cobrar */}
             <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
               <div>
@@ -197,10 +223,10 @@ export const CobroView: React.FC = () => {
             {/* Selector de Método de Pago */}
             <div className="grid grid-cols-4 gap-2">
               {[
-                { id: 'Efectivo', label: 'Efectivo', icon: Banknote },
-                { id: 'Yape', label: 'Yape', icon: Smartphone },
-                { id: 'Plin', label: 'Plin', icon: Smartphone },
-                { id: 'Tarjeta', label: 'Tarjeta', icon: CreditCard },
+                { id: 'Efectivo' as const, label: 'Efectivo', icon: Banknote },
+                { id: 'Yape' as const, label: 'Yape', icon: Smartphone },
+                { id: 'Plin' as const, label: 'Plin', icon: Smartphone },
+                { id: 'Tarjeta' as const, label: 'Tarjeta', icon: CreditCard },
               ].map((m) => {
                 const Icon = m.icon;
                 const activo = metodoPago === m.id;
@@ -208,7 +234,7 @@ export const CobroView: React.FC = () => {
                   <button
                     key={m.id}
                     type="button"
-                    onClick={() => { triggerLight(); setMetodoPago(m.id as any); }}
+                    onClick={() => { triggerLight(); setMetodoPago(m.id); }}
                     className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 active:scale-95 transition-all min-h-[58px] ${
                       activo
                         ? 'bg-primary text-white border-primary shadow-xs'

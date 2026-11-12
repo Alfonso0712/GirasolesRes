@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Minus, Trash2, Send, Search } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Trash2, Send, Search, AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
 import type { RolUsuario } from '../../types/auth';
@@ -7,6 +7,8 @@ import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import { ErrorState } from '../ui/ErrorState';
+import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 
 interface PedidoMesaViewProps {
@@ -23,35 +25,36 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   onPedidoExitoso,
 }) => {
   const [catalogo, setCatalogo] = useState<ProductoItem[]>([]);
+  const [cargando, setCargando] = useState<boolean>(false);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
+  const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
   const [categoriaActiva, setCategoriaActiva] = useState<string>('Todas');
   const [busqueda, setBusqueda] = useState<string>('');
   const [lineas, setLineas] = useState<LineaPedidoItem[]>([]);
   const [mostrarCarrito, setMostrarCarrito] = useState<boolean>(false);
   const [enviando, setEnviando] = useState<boolean>(false);
 
-  const { triggerLight, triggerSuccess } = useHaptics();
+  const { triggerLight, triggerSuccess, triggerError } = useHaptics();
 
   // Regla de Negocio RV-154: Prohibición de exposición de importes monetarios al Mozo
   const esMozo = rol === 'Mozo';
 
+  const cargarProductos = async () => {
+    setCargando(true);
+    setErrorCarga(null);
+    try {
+      const data = await pedidoService.obtenerCatalogo();
+      setCatalogo(data || []);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al cargar los productos disponibles';
+      setErrorCarga(msg);
+      setCatalogo([]);
+    } finally {
+      setCargando(false);
+    }
+  };
+
   useEffect(() => {
-    const cargarProductos = async () => {
-      try {
-        const data = await pedidoService.obtenerCatalogo();
-        setCatalogo(data);
-      } catch {
-        // Fallback en caso de desconexión
-        setCatalogo([
-          { id: 'p1', nombre: 'Lomo Saltado', precio: 32.00, categoria: 'Segundos', disponible: true },
-          { id: 'p2', nombre: 'Arroz con Mariscos', precio: 35.00, categoria: 'Segundos', disponible: true },
-          { id: 'p3', nombre: 'Ceviche Clásico', precio: 30.00, categoria: 'Entradas', disponible: true },
-          { id: 'p4', nombre: 'Causa Rellena', precio: 18.00, categoria: 'Entradas', disponible: true },
-          { id: 'p5', nombre: 'Chicha Morada (Jarra)', precio: 15.00, categoria: 'Bebidas', disponible: true },
-          { id: 'p6', nombre: 'Inca Kola 500ml', precio: 6.00, categoria: 'Bebidas', disponible: true },
-          { id: 'p7', nombre: 'Menú Ejecutivo del Día', precio: 16.00, categoria: 'Menú del Día', disponible: true, esMenuDelDia: true },
-        ]);
-      }
-    };
     cargarProductos();
   }, []);
 
@@ -105,9 +108,9 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     });
   };
 
-  const actualizarObservacion = (productoId: string, obs: string) => {
+  const actualizarObservacion = (productoId: string, observacion: string) => {
     setLineas((prev) =>
-      prev.map((l) => (l.productoId === productoId ? { ...l, observaciones: obs } : l))
+      prev.map((l) => (l.productoId === productoId ? { ...l, observaciones: observacion } : l))
     );
   };
 
@@ -117,8 +120,15 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   const handleEnviarComanda = async () => {
     if (lineas.length === 0) return;
     setEnviando(true);
+    setErrorEnvio(null);
+
+    const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-mesa-${Date.now()}`;
+
     try {
       await pedidoService.registrarPedidoMesa({
+        solicitudId,
         mesaId: mesa.id,
         lineas: lineas.map((l) => ({
           productoId: l.productoId,
@@ -126,18 +136,16 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           observaciones: l.observaciones,
         })),
       });
+
       triggerSuccess();
       const msg = esMozo
-        ? `Comanda de ${totalItems} platos enviada a Cocina para ${mesa.nombre}`
+        ? `Comanda de ${totalItems} ${totalItems === 1 ? 'plato enviada' : 'platos enviada'} a Cocina para ${mesa.nombre}`
         : `Comanda enviada para ${mesa.nombre} (Total: S/ ${total.toFixed(2)})`;
       onPedidoExitoso(msg);
-    } catch {
-      // Simular éxito para pruebas si no hay conectividad momentánea
-      triggerSuccess();
-      const msg = esMozo
-        ? `Comanda de ${totalItems} platos enviada a Cocina para ${mesa.nombre}`
-        : `Comanda registrada para ${mesa.nombre} (S/ ${total.toFixed(2)})`;
-      onPedidoExitoso(msg);
+    } catch (err: unknown) {
+      triggerError();
+      const msg = err instanceof Error ? err.message : 'Error al registrar el pedido para la mesa';
+      setErrorEnvio(msg);
     } finally {
       setEnviando(false);
     }
@@ -152,7 +160,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             type="button"
             onClick={onVolver}
             aria-label="Volver a Mesas"
-            className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95"
+            className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -162,9 +170,20 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           </div>
         </div>
 
-        <Badge variant={mesa.ocupacion === 'Libre' ? 'success' : 'danger'}>
-          {mesa.ocupacion}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant={mesa.ocupacion === 'Libre' ? 'success' : 'danger'}>
+            {mesa.ocupacion}
+          </Badge>
+          <button
+            type="button"
+            onClick={cargarProductos}
+            disabled={cargando}
+            aria-label="Actualizar catálogo"
+            className="w-9 h-9 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* 2. Buscador y Categorías Horizontales */}
@@ -204,6 +223,22 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
 
       {/* 3. Catálogo Táctil de Platos */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-24">
+        {errorCarga && (
+          <ErrorState
+            mensaje={errorCarga}
+            onRetry={cargarProductos}
+            className="my-4"
+          />
+        )}
+
+        {!errorCarga && !cargando && productosFiltrados.length === 0 && (
+          <EmptyState
+            icon={UtensilsCrossed}
+            titulo="No hay productos disponibles"
+            subtitulo="No se encontraron productos disponibles en el catálogo para esta categoría."
+          />
+        )}
+
         {productosFiltrados.map((prod) => {
           const lineaActual = lineas.find((l) => l.productoId === prod.id);
           return (
@@ -288,7 +323,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             </div>
             {/* RV-154: Mozo ve cantidad de ítems, no monto monetario */}
             <div className="text-sm font-black">
-              {esMozo ? `${totalItems} platos` : `S/ ${total.toFixed(2)}`}
+              {esMozo ? `${totalItems} ${totalItems === 1 ? 'plato' : 'platos'}` : `S/ ${total.toFixed(2)}`}
             </div>
           </button>
         </div>
@@ -301,6 +336,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         title={`Comanda para ${mesa.nombre}`}
       >
         <div className="space-y-4">
+          {errorEnvio && (
+            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorEnvio}</span>
+            </div>
+          )}
+
           <div className="divide-y divide-line">
             {lineas.map((linea) => (
               <div key={linea.productoId} className="py-3 space-y-2">
@@ -359,7 +401,9 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           ) : (
             <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">
               <span className="text-xs font-bold text-ink-muted">Cantidad total de ítems</span>
-              <span className="text-sm font-black text-ink">{totalItems} productos</span>
+              <span className="text-sm font-black text-ink">
+                {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
+              </span>
             </div>
           )}
 

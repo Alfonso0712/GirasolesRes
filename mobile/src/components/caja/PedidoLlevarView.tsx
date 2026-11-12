@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Plus, Minus, Search, Send, User } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Search, Send, User, AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
 import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
 import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
+import { ErrorState } from '../ui/ErrorState';
+import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 
 interface PedidoLlevarViewProps {
@@ -16,6 +18,9 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   onIrACobros,
 }) => {
   const [catalogo, setCatalogo] = useState<ProductoItem[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
+  const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
   const [lineas, setLineas] = useState<LineaPedidoItem[]>([]);
   const [referencia, setReferencia] = useState('');
   const [busqueda, setBusqueda] = useState('');
@@ -25,21 +30,23 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
 
+  const cargarCatalogo = async () => {
+    setCargando(true);
+    setErrorCarga(null);
+    try {
+      const data = await pedidoService.obtenerCatalogo();
+      setCatalogo(data || []);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al cargar los productos disponibles';
+      setErrorCarga(msg);
+      setCatalogo([]);
+    } finally {
+      setCargando(false);
+    }
+  };
+
   useEffect(() => {
-    const cargar = async () => {
-      try {
-        const data = await pedidoService.obtenerCatalogo();
-        setCatalogo(data);
-      } catch {
-        setCatalogo([
-          { id: '1', nombre: 'Lomo Saltado', precio: 32.00, categoria: 'Segundos', disponible: true },
-          { id: '2', nombre: 'Arroz con Mariscos', precio: 35.00, categoria: 'Segundos', disponible: true },
-          { id: '3', nombre: 'Ceviche Clásico', precio: 30.00, categoria: 'Entradas', disponible: true },
-          { id: '4', nombre: 'Chicha Morada (Jarra)', precio: 15.00, categoria: 'Bebidas', disponible: true },
-        ]);
-      }
-    };
-    cargar();
+    cargarCatalogo();
   }, []);
 
   const categorias = ['Todas', 'Entradas', 'Segundos', 'Bebidas'];
@@ -93,8 +100,15 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   const handleRegistrarPedidoLlevar = async () => {
     if (lineas.length === 0) return;
     setEnviando(true);
+    setErrorEnvio(null);
+
+    const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-llevar-${Date.now()}`;
+
     try {
       await pedidoService.registrarPedidoLlevar({
+        solicitudId,
         referencia: referencia.trim() || 'Cliente Mostrador',
         lineas: lineas.map((l) => ({
           productoId: l.productoId,
@@ -102,21 +116,17 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
           observaciones: l.observaciones,
         })),
       });
+
       triggerSuccess();
       setLineas([]);
       setReferencia('');
       setMostrarResumen(false);
       onPedidoCreado(`Pedido para llevar registrado (S/ ${total.toFixed(2)})`);
       if (onIrACobros) onIrACobros();
-    } catch {
+    } catch (err: unknown) {
       triggerError();
-      // Fallback
-      triggerSuccess();
-      setLineas([]);
-      setReferencia('');
-      setMostrarResumen(false);
-      onPedidoCreado(`Pedido para llevar registrado (S/ ${total.toFixed(2)})`);
-      if (onIrACobros) onIrACobros();
+      const msg = err instanceof Error ? err.message : 'Error al registrar el pedido para llevar';
+      setErrorEnvio(msg);
     } finally {
       setEnviando(false);
     }
@@ -135,6 +145,16 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
             <p className="text-xs text-ink-muted">Toma rápida de órdenes de mostrador</p>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={cargarCatalogo}
+          disabled={cargando}
+          aria-label="Actualizar catálogo"
+          className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
+        >
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+        </button>
       </div>
 
       {/* Referencia de Cliente & Buscador */}
@@ -185,6 +205,22 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
 
       {/* Catálogo de Productos */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-24">
+        {errorCarga && (
+          <ErrorState
+            mensaje={errorCarga}
+            onRetry={cargarCatalogo}
+            className="my-4"
+          />
+        )}
+
+        {!errorCarga && !cargando && productosFiltrados.length === 0 && (
+          <EmptyState
+            icon={UtensilsCrossed}
+            titulo="No hay productos disponibles"
+            subtitulo="No se encontraron productos disponibles en el catálogo para llevar."
+          />
+        )}
+
         {productosFiltrados.map((prod) => {
           const linea = lineas.find((l) => l.productoId === prod.id);
           return (
@@ -204,17 +240,17 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                   <button
                     type="button"
                     onClick={() => modificarCantidad(prod.id, -1)}
-                    className="w-8 h-8 rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs"
+                    className="w-9 h-9 rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="text-xs font-black min-w-[20px] text-center">
+                  <span className="text-sm font-black text-ink min-w-[20px] text-center">
                     {linea.cantidad}
                   </span>
                   <button
                     type="button"
                     onClick={() => modificarCantidad(prod.id, 1)}
-                    className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs"
+                    className="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -223,7 +259,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                 <button
                   type="button"
                   onClick={() => agregarProducto(prod)}
-                  className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs"
+                  className="w-11 h-11 rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0"
                 >
                   <Plus className="w-5 h-5" />
                 </button>
@@ -233,7 +269,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         })}
       </div>
 
-      {/* Barra Inferior Sticky */}
+      {/* Sticky Bottom Bar */}
       {lineas.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
           <button
@@ -248,39 +284,71 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-black text-xs">
                 {totalItems}
               </div>
-              <span className="text-sm font-bold">Ver Orden para Llevar</span>
+              <span className="text-sm font-bold tracking-wide">
+                Ver Orden para Llevar
+              </span>
             </div>
-            <span className="text-base font-black">S/ {total.toFixed(2)}</span>
+            <div className="text-sm font-black">S/ {total.toFixed(2)}</div>
           </button>
         </div>
       )}
 
-      {/* Bottom Sheet Resumen */}
+      {/* Bottom Sheet de Resumen */}
       <BottomSheet
         isOpen={mostrarResumen}
         onClose={() => setMostrarResumen(false)}
-        title="Confirmar Pedido para Llevar"
+        title="Orden para Llevar"
       >
         <div className="space-y-4">
+          {errorEnvio && (
+            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorEnvio}</span>
+            </div>
+          )}
+
+          <div className="p-3 bg-canvas border border-line rounded-xl text-xs">
+            <span className="text-ink-muted">Cliente:</span>{' '}
+            <span className="font-bold text-ink">{referencia || 'Cliente Mostrador'}</span>
+          </div>
+
           <div className="divide-y divide-line">
-            {lineas.map((linea) => (
-              <div key={linea.productoId} className="py-2.5 flex justify-between items-center">
+            {lineas.map((l) => (
+              <div key={l.productoId} className="py-2.5 flex justify-between items-center text-xs">
                 <div>
-                  <h4 className="text-xs font-bold text-ink">{linea.nombre}</h4>
-                  <p className="text-[11px] text-ink-muted">
-                    S/ {linea.precioUnitario.toFixed(2)} x {linea.cantidad}
+                  <h4 className="font-bold text-ink">{l.nombre}</h4>
+                  <p className="text-ink-muted">
+                    S/ {l.precioUnitario.toFixed(2)} x {l.cantidad}
                   </p>
                 </div>
-                <span className="text-xs font-black text-ink">
-                  S/ {(linea.precioUnitario * linea.cantidad).toFixed(2)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-black text-ink">
+                    S/ {(l.precioUnitario * l.cantidad).toFixed(2)}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => modificarCantidad(l.productoId, -1)}
+                      className="w-7 h-7 rounded-lg bg-canvas text-danger flex items-center justify-center border border-line"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => modificarCantidad(l.productoId, 1)}
+                      className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="p-3 rounded-2xl bg-canvas border border-line flex justify-between items-center">
-            <span className="text-xs font-bold text-ink-muted">Total Mostrador</span>
-            <span className="text-lg font-black text-primary">S/ {total.toFixed(2)}</span>
+          <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
+            <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
+            <span className="text-xl font-black text-primary">S/ {total.toFixed(2)}</span>
           </div>
 
           <Button
@@ -291,7 +359,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
             className="flex items-center justify-center gap-2"
           >
             <Send className="w-5 h-5" />
-            <span>Enviar a Cocina y Pasar a Cobro</span>
+            <span>Confirmar Pedido para Llevar</span>
           </Button>
         </div>
       </BottomSheet>

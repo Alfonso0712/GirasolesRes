@@ -3,50 +3,27 @@ import { ChefHat, Clock, CheckCircle2, Flame, RefreshCw } from 'lucide-react';
 import { comandaService } from '../../services/comandaService';
 import type { ComandaItem } from '../../types/comanda';
 import { useHaptics } from '../../hooks/useHaptics';
+import { ErrorState } from '../ui/ErrorState';
+import { EmptyState } from '../ui/EmptyState';
 
 export const KdsView: React.FC = () => {
   const [comandas, setComandas] = useState<ComandaItem[]>([]);
   const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<'todas' | 'pendientes' | 'enPreparacion'>('todas');
 
   const { triggerSuccess, triggerLight } = useHaptics();
 
   const cargarComandas = async () => {
     setCargando(true);
+    setError(null);
     try {
       const data = await comandaService.listarComandas();
-      // Concatenar pendientes y enPreparacion
       setComandas([...(data.pendientes || []), ...(data.enPreparacion || [])]);
-    } catch {
-      // Mock para pruebas si la API está desconectada
-      setComandas([
-        {
-          id: 'c1',
-          numero: 14,
-          mesaNombre: 'Mesa 2',
-          mozoNombre: 'Carlos',
-          fechaCreacion: new Date().toISOString(),
-          minutosEspera: 8,
-          estado: 'pendiente',
-          lineas: [
-            { productoId: '1', nombre: '1x Ceviche Mixto', cantidad: 1, observaciones: 'Sin ají', estado: 'pendiente' },
-            { productoId: '2', nombre: '2x Arroz con Mariscos', cantidad: 2, estado: 'pendiente' },
-          ],
-        },
-        {
-          id: 'c2',
-          numero: 15,
-          mesaNombre: 'Mesa 4',
-          mozoNombre: 'Ana',
-          fechaCreacion: new Date().toISOString(),
-          minutosEspera: 21,
-          estado: 'enPreparacion',
-          lineas: [
-            { productoId: '3', nombre: '1x Lomo Saltado', cantidad: 1, observaciones: 'Término medio', estado: 'enPreparacion' },
-            { productoId: '4', nombre: '1x Chicha Morada Jarra', cantidad: 1, estado: 'enPreparacion' },
-          ],
-        },
-      ]);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al consultar las comandas de cocina';
+      setError(msg);
+      setComandas([]);
     } finally {
       setCargando(false);
     }
@@ -88,7 +65,9 @@ export const KdsView: React.FC = () => {
           </div>
           <div>
             <h2 className="text-base font-extrabold text-ink leading-tight">Pantalla KDS Cocina</h2>
-            <p className="text-xs text-ink-muted">{comandas.length} comandas en proceso</p>
+            <p className="text-xs text-ink-muted">
+              {comandas.length} {comandas.length === 1 ? 'comanda en proceso' : 'comandas en proceso'}
+            </p>
           </div>
         </div>
 
@@ -129,22 +108,32 @@ export const KdsView: React.FC = () => {
             onClick={cargarComandas}
             disabled={cargando}
             aria-label="Actualizar comandas"
-            className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95"
+            className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
           >
             <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* Grid de Comandas KDS (1 col en mobile, 2-3 en tablet horizontal) */}
+      {/* Grid de Comandas KDS */}
       <div className="flex-1 overflow-y-auto p-4">
-        {comandasFiltradas.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6 text-ink-muted">
-            <CheckCircle2 className="w-12 h-12 text-success mb-2" />
-            <p className="text-base font-bold text-ink">¡Cocina al día!</p>
-            <p className="text-xs">No hay comandas pendientes en este momento.</p>
-          </div>
-        ) : (
+        {error && (
+          <ErrorState
+            mensaje={error}
+            onRetry={cargarComandas}
+            className="my-4"
+          />
+        )}
+
+        {!error && !cargando && comandasFiltradas.length === 0 && (
+          <EmptyState
+            icon={ChefHat}
+            titulo="Cocina al día"
+            subtitulo="No hay comandas pendientes en cocina."
+          />
+        )}
+
+        {comandasFiltradas.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {comandasFiltradas.map((comanda) => {
               const esCritico = comanda.minutosEspera >= 20;
