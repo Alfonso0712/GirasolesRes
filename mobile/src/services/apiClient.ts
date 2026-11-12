@@ -4,7 +4,13 @@ export const DEFAULT_API_BASE = 'https://girasoles.astrazynk.pp.ua/api';
 export function getApiBaseUrl(): string {
   const custom = localStorage.getItem('GIRASOLES_API_BASE');
   if (custom && custom.trim()) {
-    return custom.trim().replace(/\/$/, '');
+    const clean = custom.trim().replace(/\/$/, '');
+    // Si apunta al frontend estático, migrar automáticamente al backend real
+    if (clean.includes('girasolesres.pp.ua')) {
+      localStorage.setItem('GIRASOLES_API_BASE', DEFAULT_API_BASE);
+      return DEFAULT_API_BASE;
+    }
+    return clean;
   }
   return DEFAULT_API_BASE;
 }

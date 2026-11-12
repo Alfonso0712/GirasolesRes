@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Utensils, ChefHat, Receipt, Lock, User, Globe, AlertCircle } from 'lucide-react';
+import { Utensils, ChefHat, Receipt, Shield, Lock, User, Globe, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { authService } from '../../services/authService';
 import { getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
 import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
+import logoGirasoles from '../../assets/logo.png';
 
 interface LoginViewProps {
   onLoginSuccess: (session: UserSession) => void;
@@ -50,11 +51,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     <div className="flex-1 flex flex-col justify-between p-6 max-w-md mx-auto w-full overflow-y-auto safe-top safe-bottom">
       {/* 1. Header con Logo */}
       <div className="pt-6 pb-4 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-3xl mx-auto shadow-md mb-3">
-          G
+        <div className="w-20 h-20 mx-auto mb-2.5 p-1 rounded-2xl bg-surface border border-line shadow-xs flex items-center justify-center">
+          <img
+            src={logoGirasoles}
+            alt="Restaurante Girasoles"
+            className="w-full h-full object-contain"
+          />
         </div>
         <h1 className="text-xl font-extrabold text-ink tracking-tight">Restaurante Girasoles</h1>
-        <p className="text-xs text-ink-muted mt-1 font-medium">Terminal Móvil y Tablet Operativo</p>
+        <p className="text-xs text-ink-muted mt-0.5 font-medium">Terminal Móvil y Tablet Operativo</p>
       </div>
 
       {/* 2. Formulario de Acceso */}
@@ -113,32 +118,41 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Botones de Acceso Rápido para Pruebas del Docente */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-1.5">
           <button
             type="button"
-            onClick={() => handleQuickLogin('mozo1', 'Mozo123*')}
-            className="p-2.5 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+            onClick={() => handleQuickLogin('admin', 'Password123!')}
+            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+          >
+            <Shield className="w-4 h-4 text-primary mx-auto mb-1" />
+            <span className="text-[10px] font-bold block text-ink truncate">Admin</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickLogin('lperez', 'Password123!')}
+            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
           >
             <Utensils className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[11px] font-bold block text-ink">Mozo</span>
+            <span className="text-[10px] font-bold block text-ink truncate">Mozo</span>
           </button>
 
           <button
             type="button"
-            onClick={() => handleQuickLogin('cocinero1', 'Cocinero123*')}
-            className="p-2.5 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+            onClick={() => handleQuickLogin('msoto', 'Password123!')}
+            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
           >
             <ChefHat className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[11px] font-bold block text-ink">Cocinero</span>
+            <span className="text-[10px] font-bold block text-ink truncate">Cocinero</span>
           </button>
 
           <button
             type="button"
-            onClick={() => handleQuickLogin('cajero1', 'Cajero123*')}
-            className="p-2.5 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+            onClick={() => handleQuickLogin('atorres', 'Password123!')}
+            className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
           >
             <Receipt className="w-4 h-4 text-primary mx-auto mb-1" />
-            <span className="text-[11px] font-bold block text-ink">Cajero</span>
+            <span className="text-[10px] font-bold block text-ink truncate">Cajero</span>
           </button>
         </div>
       </div>

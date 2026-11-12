@@ -10,6 +10,7 @@ import { KdsView } from './components/cocina/KdsView';
 import { CobroView } from './components/caja/CobroView';
 import { PerfilView } from './components/perfil/PerfilView';
 import { useHaptics } from './hooks/useHaptics';
+import logoGirasoles from './assets/logo.png';
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(() => authService.getStoredSession());
@@ -66,9 +67,11 @@ export const App: React.FC = () => {
       {/* 1. Cabecera Móvil y Tablet Superior */}
       <header className="h-14 bg-brand-dark text-white px-4 flex items-center justify-between shrink-0 shadow-md">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-black text-base shadow-xs">
-            G
-          </div>
+          <img
+            src={logoGirasoles}
+            alt="Logo Girasoles"
+            className="w-8 h-8 rounded-lg object-contain shrink-0"
+          />
           <div>
             <h1 className="text-sm font-extrabold leading-tight tracking-wide">Girasoles Res</h1>
             <p className="text-[10px] text-amber-200/80 uppercase font-semibold">
