@@ -20,7 +20,7 @@ import { LoginView } from './components/auth/LoginView';
 import { ViewSkeleton } from './components/ui/ViewSkeleton';
 import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
-import logoGirasoles from './assets/logo.png';
+import logoGirasoles from './assets/logo-girasoles.png';
 
 // Carga diferida (lazy loading) para vistas de rol para acelerar el arranque
 const MesasView = lazy(() => import('./components/mesas/MesasView').then(m => ({ default: m.MesasView })));
@@ -147,7 +147,7 @@ export const App: React.FC = () => {
   // Si no hay sesión activa -> mostrar pantalla de Login
   if (!session) {
     return (
-      <div className="h-screen w-full bg-canvas text-ink flex flex-col overflow-hidden">
+      <div className="h-dvh w-full bg-canvas text-ink flex flex-col overflow-hidden">
         <LoginView
           onLoginSuccess={(s) => {
             setSession(s);
@@ -159,13 +159,16 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full bg-canvas text-ink overflow-hidden safe-top safe-bottom">
+    <div className="flex flex-col h-dvh w-full bg-canvas text-ink overflow-hidden">
       {/* 1. Cabecera Móvil y Tablet Superior */}
-      <header className="h-14 bg-brand-dark text-white px-4 flex items-center justify-between shrink-0 shadow-md">
+      <header className="h-14 bg-brand-dark text-white px-4 flex items-center justify-between shrink-0 shadow-md safe-top">
         <div className="flex items-center gap-2.5">
           <img
             src={logoGirasoles}
             alt="Logo Girasoles"
+            width={32}
+            height={32}
+            decoding="async"
             className="w-8 h-8 rounded-lg object-contain shrink-0"
           />
           <div>
@@ -259,7 +262,7 @@ export const App: React.FC = () => {
 
       {/* 3. Barra de Navegación Inferior Táctil Exclusiva por Rol */}
       {!mesaEnPedido && (
-        <nav className="h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none">
+        <nav className="h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none safe-bottom">
           {tabsDisponibles.map((tab) => {
             const Icon = tab.icon;
             const activo = currentTab === tab.id;

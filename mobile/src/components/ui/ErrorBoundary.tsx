@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<Props, State> {
   public override render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen w-full bg-canvas text-ink flex flex-col items-center justify-center p-6 text-center select-none">
+        <div className="min-h-dvh w-full bg-canvas text-ink flex flex-col items-center justify-center p-6 text-center select-none">
           <div className="w-16 h-16 rounded-2xl bg-danger-bg border border-danger-border flex items-center justify-center text-danger mb-4 shadow-sm">
             <AlertTriangle className="w-8 h-8" />
           </div>

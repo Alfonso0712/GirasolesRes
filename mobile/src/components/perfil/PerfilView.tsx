@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { BottomSheet } from '../ui/BottomSheet';
 import { getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
+import logoGirasoles from '../../assets/logo-girasoles.png';
 
 interface PerfilViewProps {
   session: UserSession;
@@ -144,6 +145,20 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Marca y Versión del Terminal */}
+      <div className="py-2 text-center flex flex-col items-center justify-center opacity-85 select-none">
+        <img
+          src={logoGirasoles}
+          alt="Logo Girasoles"
+          width={40}
+          height={40}
+          decoding="async"
+          className="w-10 h-10 object-contain mb-1 rounded-lg"
+        />
+        <p className="text-xs font-bold text-ink">Restaurante Girasoles</p>
+        <p className="text-[10px] text-ink-muted">Terminal Móvil v1.0.0</p>
+      </div>
 
       {/* 4. Botón de Cerrar Sesión */}
       <div className="pt-2">

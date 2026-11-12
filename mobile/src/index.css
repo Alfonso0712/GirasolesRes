@@ -78,12 +78,17 @@ html, body {
   -webkit-user-select: none;
 }
 
+button, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .safe-top {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
 .safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .safe-left {
@@ -92,4 +97,17 @@ html, body {
 
 .safe-right {
   padding-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-spin,
+  .animate-pulse {
+    animation: none !important;
+  }
 }

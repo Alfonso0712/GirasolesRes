@@ -5,7 +5,7 @@ import { authService } from '../../services/authService';
 import { getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
 import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
-import logoGirasoles from '../../assets/logo.png';
+import logoGirasoles from '../../assets/logo-girasoles.png';
 
 interface LoginViewProps {
   onLoginSuccess: (session: UserSession) => void;
@@ -56,6 +56,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <img
             src={logoGirasoles}
             alt="Restaurante Girasoles"
+            width={72}
+            height={72}
+            decoding="async"
             className="w-full h-full object-contain"
           />
         </div>
