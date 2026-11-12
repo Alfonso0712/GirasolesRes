@@ -39,7 +39,29 @@ export interface RegistrarPedidoLlevarRequest {
 
 export interface RegistrarPedidoResultDto {
   pedidoId: string;
-  numeroComanda: number;
+  numero: number;
   total?: number;
+  comandaId?: string;
+  mesaNombre?: string;
   mensaje?: string;
+}
+
+export interface PedidoItemDto {
+  id: string;
+  numero: number;
+  tipo: string;
+  mesa?: string;
+  referencia?: string;
+  hora: string;
+  total: number;
+  estado: string;
+  registradoPor: string;
+  usuarioId?: string;
+  esMio?: boolean;
+  cantidadLineas?: number;
+}
+
+export interface ListarPedidosResponseDto {
+  items: PedidoItemDto[];
+  total?: number;
 }

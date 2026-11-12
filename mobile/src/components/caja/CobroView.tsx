@@ -3,14 +3,16 @@ import {
   Receipt,
   CheckCircle,
   RefreshCw,
-  CreditCard,
   Banknote,
   Smartphone,
   Check,
-  AlertCircle
+  AlertCircle,
+  Lock
 } from 'lucide-react';
 import { cobroService } from '../../services/cobroService';
+import { cajaService } from '../../services/cajaService';
 import type { PedidoPendienteCobro, MetodoPago } from '../../types/cobro';
+import type { CajaActualResponseDto } from '../../types/caja';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
 import { Numpad } from '../ui/Numpad';
@@ -20,26 +22,31 @@ import { useHaptics } from '../../hooks/useHaptics';
 
 export const CobroView: React.FC = () => {
   const [pedidos, setPedidos] = useState<PedidoPendienteCobro[]>([]);
+  const [cajaActual, setCajaActual] = useState<CajaActualResponseDto | null>(null);
   const [cargando, setCargando] = useState(false);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<PedidoPendienteCobro | null>(null);
 
   // Estado del cobro
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('Efectivo');
-  const [tipoComprobante, setTipoComprobante] = useState<'Boleta' | 'Factura'>('Boleta');
   const [montoRecibido, setMontoRecibido] = useState<string>('');
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [procesando, setProcesando] = useState(false);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [errorCobro, setErrorCobro] = useState<string | null>(null);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
 
-  const cargarPedidos = async () => {
+  const cargarDatos = async () => {
     setCargando(true);
     setErrorCarga(null);
     try {
-      const data = await cobroService.obtenerPedidosPendientes();
-      setPedidos(data || []);
+      const [listaPedidos, estadoCaja] = await Promise.all([
+        cobroService.obtenerPedidosPendientes(),
+        cajaService.obtenerEstadoActual().catch(() => null),
+      ]);
+      setPedidos(listaPedidos || []);
+      setCajaActual(estadoCaja);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error al cargar las cuentas pendientes de cobro';
       setErrorCarga(msg);
@@ -50,7 +57,7 @@ export const CobroView: React.FC = () => {
   };
 
   useEffect(() => {
-    cargarPedidos();
+    cargarDatos();
   }, []);
 
   const total = pedidoSeleccionado?.total || 0;
@@ -58,31 +65,60 @@ export const CobroView: React.FC = () => {
   const vuelto = metodoPago === 'Efectivo' ? Math.max(0, numRecibido - total) : 0;
   const saldoFaltante = metodoPago === 'Efectivo' ? Math.max(0, total - numRecibido) : 0;
 
-  const handleProcesarCobro = async () => {
+  const cajaCerrada = cajaActual && cajaActual.estado !== 'abierta';
+
+  const handleAbrirCobro = (p: PedidoPendienteCobro) => {
+    triggerLight();
+    setPedidoSeleccionado(p);
+    setMontoRecibido(p.total.toString());
+    setMetodoPago('Efectivo');
+    setErrorCobro(null);
+    setMostrarConfirmacion(false);
+  };
+
+  const handleSolicitarConfirmacion = () => {
     if (!pedidoSeleccionado) return;
     if (metodoPago === 'Efectivo' && numRecibido < total) {
       triggerError();
       setErrorCobro('El monto recibido en efectivo no puede ser menor al total.');
       return;
     }
+    setErrorCobro(null);
+    triggerLight();
+    setMostrarConfirmacion(true);
+  };
+
+  const handleEjecutarCobro = async () => {
+    if (!pedidoSeleccionado) return;
 
     setProcesando(true);
     setErrorCobro(null);
+
+    const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-cobro-${Date.now()}`;
+
     try {
-      await cobroService.procesarCobro({
+      const res = await cobroService.procesarCobro({
+        solicitudId,
         pedidoId: pedidoSeleccionado.pedidoId,
-        metodoPago,
-        tipoComprobante,
+        totalMostrado: total,
+        metodo: metodoPago,
         montoRecibido: metodoPago === 'Efectivo' ? numRecibido : total,
+        tipoComprobante: 'Ticket',
       });
+
       triggerSuccess();
-      setMensajeExito(`Cobro de S/ ${total.toFixed(2)} registrado para ${pedidoSeleccionado.mesaNombre}`);
+      const msg = res.mensaje || `Cobro de S/ ${total.toFixed(2)} registrado exitosamente.`;
+      setMensajeExito(msg);
+      setMostrarConfirmacion(false);
       setPedidoSeleccionado(null);
-      cargarPedidos();
+      cargarDatos();
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'Error al procesar el cobro';
+      const msg = err instanceof Error ? err.message : 'No se pudo procesar el cobro.';
       setErrorCobro(msg);
+      setMostrarConfirmacion(false);
     } finally {
       setProcesando(false);
     }
@@ -106,7 +142,7 @@ export const CobroView: React.FC = () => {
 
         <button
           type="button"
-          onClick={cargarPedidos}
+          onClick={cargarDatos}
           disabled={cargando}
           aria-label="Actualizar cobros"
           className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
@@ -114,6 +150,15 @@ export const CobroView: React.FC = () => {
           <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
         </button>
       </div>
+
+      {cajaCerrada && (
+        <div className="m-4 p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger flex items-center gap-3">
+          <Lock className="w-5 h-5 shrink-0" />
+          <p className="text-xs font-bold leading-relaxed">
+            No se puede registrar cobros porque la caja está cerrada. Un cajero debe realizar la apertura de caja.
+          </p>
+        </div>
+      )}
 
       {mensajeExito && (
         <div className="m-4 p-4 rounded-2xl bg-success-bg border border-success-border text-success flex items-center justify-between animate-in fade-in">
@@ -135,7 +180,7 @@ export const CobroView: React.FC = () => {
         <div className="p-4">
           <ErrorState
             mensaje={errorCarga}
-            onRetry={cargarPedidos}
+            onRetry={cargarDatos}
           />
         </div>
       )}
@@ -168,12 +213,8 @@ export const CobroView: React.FC = () => {
 
             <Button
               size="md"
-              onClick={() => {
-                triggerLight();
-                setPedidoSeleccionado(p);
-                setMontoRecibido(p.total.toString());
-                setErrorCobro(null);
-              }}
+              disabled={Boolean(cajaCerrada)}
+              onClick={() => handleAbrirCobro(p)}
               className="px-5 shrink-0"
             >
               Cobrar
@@ -184,7 +225,7 @@ export const CobroView: React.FC = () => {
 
       {/* Bottom Sheet de Cobro Táctil */}
       <BottomSheet
-        isOpen={Boolean(pedidoSeleccionado)}
+        isOpen={Boolean(pedidoSeleccionado && !mostrarConfirmacion)}
         onClose={() => setPedidoSeleccionado(null)}
         title={pedidoSeleccionado ? `Cobrar ${pedidoSeleccionado.mesaNombre}` : ''}
       >
@@ -203,30 +244,23 @@ export const CobroView: React.FC = () => {
                 <p className="text-xs text-ink-muted">Total de la Cuenta</p>
                 <p className="text-2xl font-black text-primary">S/ {total.toFixed(2)}</p>
               </div>
-              {/* Selector de comprobante */}
-              <div className="flex gap-1 bg-surface border border-line p-1 rounded-xl">
-                {(['Boleta', 'Factura'] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => { triggerLight(); setTipoComprobante(t); }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                      tipoComprobante === t ? 'bg-primary text-white shadow-xs' : 'text-ink-muted'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
+
+              {/* Selector de comprobante: móvil solo emite Ticket */}
+              <div className="text-right">
+                <span className="text-xs font-bold text-ink bg-surface border border-line px-3 py-1.5 rounded-xl block">
+                  Ticket de Venta
+                </span>
+                <span className="text-[10px] text-ink-muted mt-1 block">
+                  Boleta / Factura: Disponible en la versión web
+                </span>
               </div>
             </div>
 
             {/* Selector de Método de Pago */}
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { id: 'Efectivo' as const, label: 'Efectivo', icon: Banknote },
                 { id: 'Yape' as const, label: 'Yape', icon: Smartphone },
-                { id: 'Plin' as const, label: 'Plin', icon: Smartphone },
-                { id: 'Tarjeta' as const, label: 'Tarjeta', icon: CreditCard },
               ].map((m) => {
                 const Icon = m.icon;
                 const activo = metodoPago === m.id;
@@ -234,15 +268,18 @@ export const CobroView: React.FC = () => {
                   <button
                     key={m.id}
                     type="button"
-                    onClick={() => { triggerLight(); setMetodoPago(m.id); }}
-                    className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 active:scale-95 transition-all min-h-[58px] ${
+                    onClick={() => {
+                      triggerLight();
+                      setMetodoPago(m.id);
+                    }}
+                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 active:scale-95 transition-all min-h-[50px] ${
                       activo
-                        ? 'bg-primary text-white border-primary shadow-xs'
-                        : 'bg-canvas text-ink-muted border-line hover:text-ink'
+                        ? 'bg-primary text-white border-primary shadow-xs font-bold'
+                        : 'bg-canvas text-ink-muted border-line hover:text-ink font-semibold'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
-                    <span className="text-[10px] font-bold">{m.label}</span>
+                    <span className="text-xs">{m.label}</span>
                   </button>
                 );
               })}
@@ -282,18 +319,64 @@ export const CobroView: React.FC = () => {
               </div>
             )}
 
-            {/* Botón de Confirmación */}
+            {/* Botón para solicitar confirmación */}
             <Button
               fullWidth
               size="lg"
-              isLoading={procesando}
               disabled={metodoPago === 'Efectivo' && saldoFaltante > 0}
-              onClick={handleProcesarCobro}
+              onClick={handleSolicitarConfirmacion}
               className="flex items-center justify-center gap-2 mt-2"
             >
               <Check className="w-5 h-5" />
-              <span>Emitir {tipoComprobante} (S/ {total.toFixed(2)})</span>
+              <span>Continuar al Cobro (S/ {total.toFixed(2)})</span>
             </Button>
+          </div>
+        )}
+      </BottomSheet>
+
+      {/* Bottom Sheet de Confirmación Definitiva */}
+      <BottomSheet
+        isOpen={Boolean(mostrarConfirmacion && pedidoSeleccionado)}
+        onClose={() => setMostrarConfirmacion(false)}
+        title="Confirmar Cobro"
+      >
+        {pedidoSeleccionado && (
+          <div className="space-y-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+              <Receipt className="w-6 h-6" />
+            </div>
+
+            <div>
+              <h3 className="text-base font-extrabold text-ink mb-1">
+                ¿Desea registrar el cobro de S/ {total.toFixed(2)} con método {metodoPago}?
+              </h3>
+              <p className="text-xs text-ink-muted">
+                {pedidoSeleccionado.mesaNombre} · Esta acción no se puede deshacer.
+              </p>
+              {metodoPago === 'Efectivo' && (
+                <p className="text-xs font-bold text-success mt-2">
+                  Vuelto a entregar: S/ {vuelto.toFixed(2)}
+                </p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <Button
+                variant="outline"
+                size="md"
+                disabled={procesando}
+                onClick={() => setMostrarConfirmacion(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="md"
+                isLoading={procesando}
+                onClick={handleEjecutarCobro}
+              >
+                Confirmar Cobro
+              </Button>
+            </div>
           </div>
         )}
       </BottomSheet>

@@ -9,5 +9,9 @@ export const comandaService = {
 
   actualizarEstado: async (id: string, estado: 'enPreparacion' | 'lista'): Promise<void> => {
     await apiClient.patch(`/comandas/${id}/estado`, { estado });
+  },
+
+  deshacerEstado: async (id: string): Promise<void> => {
+    await apiClient.post(`/comandas/${id}/deshacer`);
   }
 };

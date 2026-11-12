@@ -1,27 +1,32 @@
 export interface PedidoPendienteCobro {
   pedidoId: string;
-  mesaId: string;
+  mesaId?: string;
   mesaNombre: string;
   mozoNombre: string;
   total: number;
-  fechaCreacion: string;
+  fechaCreacion?: string;
   cantidadLineas: number;
 }
 
-export type MetodoPago = 'Efectivo' | 'Yape' | 'Plin' | 'Tarjeta';
+export type MetodoPago = 'Efectivo' | 'Yape';
 
 export interface CobroRequest {
+  solicitudId: string;
   pedidoId: string;
-  metodoPago: MetodoPago;
+  totalMostrado: number;
+  metodo: MetodoPago;
   montoRecibido?: number;
-  tipoComprobante: 'Boleta' | 'Factura';
-  documentoCliente?: string;
-  nombreCliente?: string;
+  yapeConfirmado?: boolean;
+  yapeReferencia?: string;
+  tipoComprobante?: string;
+  tipoDocReceptor?: string;
+  numDocReceptor?: string;
+  razonSocialReceptor?: string;
+  direccionReceptor?: string;
 }
 
 export interface CobroResponse {
   ventaId: string;
   mensaje: string;
-  total: number;
-  vuelto: number;
+  vuelto?: number;
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, RefreshCw, Utensils } from 'lucide-react';
-import { cobroService } from '../../services/cobroService';
-import type { PedidoPendienteCobro } from '../../types/cobro';
+import { pedidoService } from '../../services/pedidoService';
+import type { PedidoItemDto } from '../../types/pedido';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 
 export const MisPedidosView: React.FC = () => {
-  const [pedidos, setPedidos] = useState<PedidoPendienteCobro[]>([]);
+  const [pedidos, setPedidos] = useState<PedidoItemDto[]>([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,10 +14,10 @@ export const MisPedidosView: React.FC = () => {
     setCargando(true);
     setError(null);
     try {
-      const data = await cobroService.obtenerPedidosPendientes();
+      const data = await pedidoService.listarPedidos({ soloMios: true });
       setPedidos(data || []);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al cargar los pedidos';
+      const msg = err instanceof Error ? err.message : 'Error al consultar sus pedidos registrados';
       setError(msg);
       setPedidos([]);
     } finally {
@@ -38,8 +38,8 @@ export const MisPedidosView: React.FC = () => {
             <Utensils className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">Pedidos Activos</h2>
-            <p className="text-xs text-ink-muted">Mesas con consumo en curso</p>
+            <h2 className="text-base font-extrabold text-ink leading-tight">Pedidos Registrados</h2>
+            <p className="text-xs text-ink-muted">Consumo en curso en salón</p>
           </div>
         </div>
 
@@ -66,39 +66,42 @@ export const MisPedidosView: React.FC = () => {
         {!error && !cargando && pedidos.length === 0 && (
           <EmptyState
             icon={Utensils}
-            titulo="Sin pedidos pendientes"
+            titulo="Sin pedidos registrados"
             subtitulo="No tiene pedidos registrados en este turno."
           />
         )}
 
-        {pedidos.map((p) => (
-          <div
-            key={p.pedidoId}
-            className="bg-surface border border-line rounded-2xl p-4 shadow-xs flex items-center justify-between select-none"
-          >
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
-                <span className="text-[11px] text-primary font-bold bg-chip-accent-bg px-2 py-0.5 rounded-full border border-chip-accent-border">
-                  {p.cantidadLineas} platos
+        {pedidos.map((p) => {
+          const mesaOReferencia = p.mesa || p.referencia || `Pedido #${p.numero}`;
+          return (
+            <div
+              key={p.id}
+              className="bg-surface border border-line rounded-2xl p-4 shadow-xs flex items-center justify-between select-none"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-extrabold text-ink">{mesaOReferencia}</h3>
+                  <span className="text-[11px] text-primary font-bold bg-chip-accent-bg px-2 py-0.5 rounded-full border border-chip-accent-border">
+                    #{p.numero}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-ink-muted mt-1">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Hora: {p.hora || 'En curso'} · Atendido por: {p.registradoPor}</span>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <span className="text-base font-black text-primary block">
+                  S/ {p.total.toFixed(2)}
+                </span>
+                <span className="text-[10px] uppercase font-bold text-warning">
+                  {p.estado}
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-xs text-ink-muted mt-1">
-                <Clock className="w-3.5 h-3.5" />
-                <span>En atención · Mozo: {p.mozoNombre}</span>
-              </div>
             </div>
-
-            <div className="text-right">
-              <span className="text-base font-black text-primary block">
-                S/ {p.total.toFixed(2)}
-              </span>
-              <span className="text-[10px] uppercase font-bold text-warning">
-                Pendiente Cobro
-              </span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
