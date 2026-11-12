@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import {
   Utensils,
   ChefHat,
@@ -17,18 +17,22 @@ import type { UserSession, RolUsuario } from './types/auth';
 import type { MesaItem } from './types/mesa';
 import { authService } from './services/authService';
 import { LoginView } from './components/auth/LoginView';
-import { MesasView } from './components/mesas/MesasView';
-import { PedidoMesaView } from './components/pedidos/PedidoMesaView';
-import { MisPedidosView } from './components/pedidos/MisPedidosView';
-import { KdsView } from './components/cocina/KdsView';
-import { MenuDiaView } from './components/cocina/MenuDiaView';
-import { CobroView } from './components/caja/CobroView';
-import { CajaTurnoView } from './components/caja/CajaTurnoView';
-import { PedidoLlevarView } from './components/caja/PedidoLlevarView';
-import { AdminReportesView } from './components/admin/AdminReportesView';
-import { PerfilView } from './components/perfil/PerfilView';
+import { ViewSkeleton } from './components/ui/ViewSkeleton';
+import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
 import logoGirasoles from './assets/logo.png';
+
+// Carga diferida (lazy loading) para vistas de rol para acelerar el arranque
+const MesasView = lazy(() => import('./components/mesas/MesasView').then(m => ({ default: m.MesasView })));
+const PedidoMesaView = lazy(() => import('./components/pedidos/PedidoMesaView').then(m => ({ default: m.PedidoMesaView })));
+const MisPedidosView = lazy(() => import('./components/pedidos/MisPedidosView').then(m => ({ default: m.MisPedidosView })));
+const KdsView = lazy(() => import('./components/cocina/KdsView').then(m => ({ default: m.KdsView })));
+const MenuDiaView = lazy(() => import('./components/cocina/MenuDiaView').then(m => ({ default: m.MenuDiaView })));
+const CobroView = lazy(() => import('./components/caja/CobroView').then(m => ({ default: m.CobroView })));
+const CajaTurnoView = lazy(() => import('./components/caja/CajaTurnoView').then(m => ({ default: m.CajaTurnoView })));
+const PedidoLlevarView = lazy(() => import('./components/caja/PedidoLlevarView').then(m => ({ default: m.PedidoLlevarView })));
+const AdminReportesView = lazy(() => import('./components/admin/AdminReportesView').then(m => ({ default: m.AdminReportesView })));
+const PerfilView = lazy(() => import('./components/perfil/PerfilView').then(m => ({ default: m.PerfilView })));
 
 interface NavTabItem {
   id: string;
@@ -36,9 +40,26 @@ interface NavTabItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
+const getDefaultTabForRole = (rol: RolUsuario): string => {
+  switch (rol) {
+    case 'Cocinero':
+      return 'kds';
+    case 'Cajero':
+      return 'caja';
+    case 'Administrador':
+      return 'reportes';
+    case 'Mozo':
+    default:
+      return 'salon';
+  }
+};
+
 export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(() => authService.getStoredSession());
-  const [activeTab, setActiveTab] = useState<string>('salon');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const s = authService.getStoredSession();
+    return s ? getDefaultTabForRole(s.rol) : 'salon';
+  });
   const [mesaEnPedido, setMesaEnPedido] = useState<MesaItem | null>(null);
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
@@ -50,6 +71,11 @@ export const App: React.FC = () => {
   const [toastMensaje, setToastMensaje] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
+
+  // Ocultar pantalla de arranque cuando la app y la vista inicial estén montadas
+  useEffect(() => {
+    markAppReady();
+  }, []);
 
   // Definición de pestañas permitidas estrictamente según el rol del usuario (RBAC)
   const getTabsForRole = (rol: RolUsuario): NavTabItem[] => {
@@ -87,15 +113,10 @@ export const App: React.FC = () => {
 
   const tabsDisponibles = session ? getTabsForRole(session.rol) : [];
 
-  // Pestaña inicial por defecto al iniciar sesión
-  useEffect(() => {
-    if (session) {
-      if (session.rol === 'Cocinero') setActiveTab('kds');
-      else if (session.rol === 'Cajero') setActiveTab('caja');
-      else if (session.rol === 'Administrador') setActiveTab('reportes');
-      else setActiveTab('salon');
-    }
-  }, [session?.rol]);
+  // Derivación síncrona: si activeTab no pertenece al rol, renderizar la inicial del rol
+  const currentTab = tabsDisponibles.some((t) => t.id === activeTab)
+    ? activeTab
+    : (session ? getDefaultTabForRole(session.rol) : 'salon');
 
   const toggleDarkMode = () => {
     setIsDark((prev) => {
@@ -127,7 +148,12 @@ export const App: React.FC = () => {
   if (!session) {
     return (
       <div className="h-screen w-full bg-canvas text-ink flex flex-col overflow-hidden">
-        <LoginView onLoginSuccess={(s) => setSession(s)} />
+        <LoginView
+          onLoginSuccess={(s) => {
+            setSession(s);
+            setActiveTab(getDefaultTabForRole(s.rol));
+          }}
+        />
       </div>
     );
   }
@@ -168,65 +194,67 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* 2. Enrutador de Contenido Principal por Rol */}
+      {/* 2. Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
-        {/* Vista de Salón y Pedidos de Mesa */}
-        {activeTab === 'salon' && (
-          mesaEnPedido ? (
-            <PedidoMesaView
-              mesa={mesaEnPedido}
-              rol={session.rol}
-              onVolver={() => setMesaEnPedido(null)}
-              onPedidoExitoso={(msg) => {
-                setMesaEnPedido(null);
-                showToast(msg);
-              }}
+        <Suspense fallback={<ViewSkeleton />}>
+          {/* Vista de Salón y Pedidos de Mesa */}
+          {currentTab === 'salon' && (
+            mesaEnPedido ? (
+              <PedidoMesaView
+                mesa={mesaEnPedido}
+                rol={session.rol}
+                onVolver={() => setMesaEnPedido(null)}
+                onPedidoExitoso={(msg) => {
+                  setMesaEnPedido(null);
+                  showToast(msg);
+                }}
+              />
+            ) : (
+              <MesasView
+                onAbrirPedidoMesa={(mesa) => setMesaEnPedido(mesa)}
+                onNavigateToCobro={session.rol === 'Cajero' ? () => setActiveTab('cobros') : undefined}
+              />
+            )
+          )}
+
+          {/* Vista Mozo: Mis Pedidos */}
+          {currentTab === 'mis-pedidos' && <MisPedidosView />}
+
+          {/* Vista Cocinero: KDS */}
+          {currentTab === 'kds' && <KdsView />}
+
+          {/* Vista Cocinero: Control de Menú y Platos Agotados */}
+          {currentTab === 'menu-dia' && <MenuDiaView />}
+
+          {/* Vista Cajero y Admin: Gestión de Caja */}
+          {currentTab === 'caja' && (
+            <CajaTurnoView onNavigateToCobros={() => setActiveTab('cobros')} />
+          )}
+
+          {/* Vista Cajero: Cobros de Mesas */}
+          {currentTab === 'cobros' && <CobroView />}
+
+          {/* Vista Cajero: Pedido para Llevar */}
+          {currentTab === 'llevar' && (
+            <PedidoLlevarView
+              onPedidoCreado={(msg) => showToast(msg)}
+              onIrACobros={() => setActiveTab('cobros')}
             />
-          ) : (
-            <MesasView
-              onAbrirPedidoMesa={(mesa) => setMesaEnPedido(mesa)}
-              onNavigateToCobro={session.rol === 'Cajero' ? () => setActiveTab('cobros') : undefined}
+          )}
+
+          {/* Vista Administrador: Reportes y KPIs */}
+          {currentTab === 'reportes' && <AdminReportesView />}
+
+          {/* Vista Perfil y Ajustes */}
+          {currentTab === 'perfil' && (
+            <PerfilView
+              session={session}
+              isDark={isDark}
+              onToggleDarkMode={toggleDarkMode}
+              onLogout={handleLogout}
             />
-          )
-        )}
-
-        {/* Vista Mozo: Mis Pedidos */}
-        {activeTab === 'mis-pedidos' && <MisPedidosView />}
-
-        {/* Vista Cocinero: KDS */}
-        {activeTab === 'kds' && <KdsView />}
-
-        {/* Vista Cocinero: Control de Menú y Platos Agotados */}
-        {activeTab === 'menu-dia' && <MenuDiaView />}
-
-        {/* Vista Cajero y Admin: Gestión de Caja */}
-        {activeTab === 'caja' && (
-          <CajaTurnoView onNavigateToCobros={() => setActiveTab('cobros')} />
-        )}
-
-        {/* Vista Cajero: Cobros de Mesas */}
-        {activeTab === 'cobros' && <CobroView />}
-
-        {/* Vista Cajero: Pedido para Llevar */}
-        {activeTab === 'llevar' && (
-          <PedidoLlevarView
-            onPedidoCreado={(msg) => showToast(msg)}
-            onIrACobros={() => setActiveTab('cobros')}
-          />
-        )}
-
-        {/* Vista Administrador: Reportes y KPIs */}
-        {activeTab === 'reportes' && <AdminReportesView />}
-
-        {/* Vista Perfil y Ajustes */}
-        {activeTab === 'perfil' && (
-          <PerfilView
-            session={session}
-            isDark={isDark}
-            onToggleDarkMode={toggleDarkMode}
-            onLogout={handleLogout}
-          />
-        )}
+          )}
+        </Suspense>
       </main>
 
       {/* 3. Barra de Navegación Inferior Táctil Exclusiva por Rol */}
@@ -234,7 +262,7 @@ export const App: React.FC = () => {
         <nav className="h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none">
           {tabsDisponibles.map((tab) => {
             const Icon = tab.icon;
-            const activo = activeTab === tab.id;
+            const activo = currentTab === tab.id;
             return (
               <button
                 key={tab.id}
