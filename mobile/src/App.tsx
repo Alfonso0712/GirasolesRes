@@ -184,7 +184,7 @@ export const App: React.FC = () => {
       />
 
       {/* 2. Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
-      <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative">
+      <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative min-h-0">
         <Suspense fallback={<ViewSkeleton />}>
           {/* Vista de Salón y Pedidos de Mesa */}
           {currentTab === 'salon' && (
