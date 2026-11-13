@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Utensils, Clock, PlusCircle, Receipt } from 'lucide-react';
-import { mesaService } from '../../services/mesaService';
 import type { MesaItem } from '../../types/mesa';
+import type { RolUsuario } from '../../types/auth';
+import { puede } from '../../config/permisos';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -14,41 +15,29 @@ import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
-interface MesasViewProps {
+export interface MesasViewProps {
+  mesas: MesaItem[];
+  cargando: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
   onAbrirPedidoMesa: (mesa: MesaItem) => void;
   onNavigateToCobro?: (mesaId: string) => void;
+  rol?: RolUsuario;
 }
 
 export const MesasView: React.FC<MesasViewProps> = ({
+  mesas,
+  cargando,
+  error,
+  onRefresh,
   onAbrirPedidoMesa,
   onNavigateToCobro,
+  rol,
 }) => {
-  const [mesas, setMesas] = useState<MesaItem[]>([]);
   const [filtro, setFiltro] = useState<'todas' | 'libres' | 'ocupadas'>('todas');
-  const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [mesaSeleccionada, setMesaSeleccionada] = useState<MesaItem | null>(null);
 
   const { triggerLight } = useHaptics();
-
-  const cargarMesas = async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const data = await mesaService.getMesas();
-      setMesas(data || []);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar las mesas del salón';
-      setError(msg);
-      setMesas([]);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarMesas();
-  }, []);
 
   const mesasFiltradas = mesas.filter((m) => {
     if (!m.activa) return false;
@@ -60,10 +49,15 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const libresCount = mesas.filter((m) => m.activa && m.ocupacion === 'Libre').length;
   const ocupadasCount = mesas.filter((m) => m.activa && m.ocupacion === 'Ocupada').length;
 
+  const puedeTomarPedido = puede(rol, 'pedidoMesa.crear');
+  const puedeCobrar = puede(rol, 'cobros.procesar');
+
   const handleMesaClick = (mesa: MesaItem) => {
     triggerLight();
     if (mesa.ocupacion === 'Libre') {
-      onAbrirPedidoMesa(mesa);
+      if (puedeTomarPedido) {
+        onAbrirPedidoMesa(mesa);
+      }
     } else {
       setMesaSeleccionada(mesa);
     }
@@ -76,7 +70,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
         title="Salón y Mesas"
         subtitle={`${pluralizar(libresCount, 'libre', 'libres')} · ${pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}`}
         icon={<Utensils className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarMesas}
+        onRefresh={onRefresh}
         isRefreshing={cargando}
       />
 
@@ -95,12 +89,12 @@ export const MesasView: React.FC<MesasViewProps> = ({
         />
       </div>
 
-      {/* 2. Grilla Táctil de Mesas (2 col en celular, 3-4 col en tablet) */}
+      {/* 2. Grilla Táctil de Mesas */}
       <div className="flex-1 overflow-y-auto p-4 pb-24">
         {error && (
           <ErrorState
             mensaje={error}
-            onRetry={cargarMesas}
+            onRetry={onRefresh}
             className="my-4"
           />
         )}
@@ -120,12 +114,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {mesasFiltradas.map((mesa) => {
               const esLibre = mesa.ocupacion === 'Libre';
+              const interactiva = esLibre ? puedeTomarPedido : true;
+
               return (
                 <Card
                   key={mesa.id}
-                  interactive
+                  interactive={interactiva}
                   accent={esLibre ? 'success' : 'warning'}
-                  onClick={() => handleMesaClick(mesa)}
+                  onClick={interactiva ? () => handleMesaClick(mesa) : undefined}
                   padding="sm"
                   className="flex flex-col justify-between min-h-[116px] pl-3.5"
                 >
@@ -187,21 +183,23 @@ export const MesasView: React.FC<MesasViewProps> = ({
             </div>
 
             <div className="space-y-2.5">
-              <Button
-                fullWidth
-                size="lg"
-                onClick={() => {
-                  const m = mesaSeleccionada;
-                  setMesaSeleccionada(null);
-                  onAbrirPedidoMesa(m);
-                }}
-                className="flex items-center justify-center gap-2"
-              >
-                <PlusCircle className="w-5 h-5" />
-                <span>Agregar Más Platos a la Mesa</span>
-              </Button>
+              {puedeTomarPedido && (
+                <Button
+                  fullWidth
+                  size="lg"
+                  onClick={() => {
+                    const m = mesaSeleccionada;
+                    setMesaSeleccionada(null);
+                    onAbrirPedidoMesa(m);
+                  }}
+                  className="flex items-center justify-center gap-2"
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  <span>Agregar Más Platos a la Mesa</span>
+                </Button>
+              )}
 
-              {onNavigateToCobro && (
+              {onNavigateToCobro && puedeCobrar && (
                 <Button
                   fullWidth
                   size="lg"

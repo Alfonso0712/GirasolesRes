@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChefHat, Clock, CheckCircle2, Flame } from 'lucide-react';
-import { comandaService } from '../../services/comandaService';
 import type { ComandaItem } from '../../types/comanda';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
@@ -12,47 +11,37 @@ import { SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
 import { pluralizar } from '../../utils/format';
 
-export const KdsView: React.FC = () => {
-  const [comandas, setComandas] = useState<ComandaItem[]>([]);
-  const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export interface KdsViewProps {
+  comandas: ComandaItem[];
+  cargando: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
+  onCambiarEstado: (id: string, nuevoEstado: 'enPreparacion' | 'lista') => Promise<void>;
+}
+
+export const KdsView: React.FC<KdsViewProps> = ({
+  comandas,
+  cargando,
+  error,
+  onRefresh,
+  onCambiarEstado,
+}) => {
   const [filtro, setFiltro] = useState<'todas' | 'pendientes' | 'enPreparacion'>('todas');
+  const [procesandoId, setProcesandoId] = useState<string | null>(null);
 
-  const { triggerSuccess, triggerLight } = useHaptics();
+  const { triggerSuccess, triggerLight, triggerError } = useHaptics();
 
-  const cargarComandas = async () => {
-    setCargando(true);
-    setError(null);
+  const handleAccionEstado = async (id: string, nuevoEstado: 'enPreparacion' | 'lista') => {
+    triggerLight();
+    setProcesandoId(id);
     try {
-      const data = await comandaService.listarComandas();
-      setComandas([...(data.pendientes || []), ...(data.enPreparacion || [])]);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar las comandas de cocina';
-      setError(msg);
-      setComandas([]);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarComandas();
-    const interval = setInterval(cargarComandas, 15000); // Auto-refresco cada 15s en cocina
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleCambiarEstado = async (id: string, nuevoEstado: 'enPreparacion' | 'lista') => {
-    triggerSuccess();
-    try {
-      await comandaService.actualizarEstado(id, nuevoEstado);
+      await onCambiarEstado(id, nuevoEstado);
+      triggerSuccess();
     } catch {
-      // Optimistic update
+      triggerError();
+    } finally {
+      setProcesandoId(null);
     }
-    setComandas((prev) =>
-      prev
-        .map((c) => (c.id === id ? { ...c, estado: nuevoEstado } : c))
-        .filter((c) => c.estado !== 'lista')
-    );
   };
 
   const comandasFiltradas = comandas.filter((c) => {
@@ -68,7 +57,7 @@ export const KdsView: React.FC = () => {
         title="Pantalla KDS Cocina"
         subtitle={pluralizar(comandas.length, 'comanda en proceso', 'comandas en proceso')}
         icon={<ChefHat className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarComandas}
+        onRefresh={onRefresh}
         isRefreshing={cargando}
       />
 
@@ -93,7 +82,7 @@ export const KdsView: React.FC = () => {
         {error && (
           <ErrorState
             mensaje={error}
-            onRetry={cargarComandas}
+            onRetry={onRefresh}
             className="my-4"
           />
         )}
@@ -116,6 +105,7 @@ export const KdsView: React.FC = () => {
               const esCritico = comanda.minutosEspera >= 20;
               const esAlerta = comanda.minutosEspera >= 10 && !esCritico;
               const estadoCanonico = comanda.estado === 'pendiente' ? 'Pendiente' : 'En preparación';
+              const estaProcesando = procesandoId === comanda.id;
 
               return (
                 <Card
@@ -168,20 +158,22 @@ export const KdsView: React.FC = () => {
                     {comanda.estado === 'pendiente' ? (
                       <button
                         type="button"
-                        onClick={() => handleCambiarEstado(comanda.id, 'enPreparacion')}
-                        className="w-full bg-primary hover:bg-primary-hover text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md cursor-pointer"
+                        disabled={estaProcesando}
+                        onClick={() => handleAccionEstado(comanda.id, 'enPreparacion')}
+                        className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md cursor-pointer"
                       >
                         <Flame className="w-5 h-5" aria-hidden="true" />
-                        <span>Empezar Preparación</span>
+                        <span>{estaProcesando ? 'Actualizando...' : 'Empezar Preparación'}</span>
                       </button>
                     ) : (
                       <button
                         type="button"
-                        onClick={() => handleCambiarEstado(comanda.id, 'lista')}
-                        className="w-full bg-success hover:opacity-90 text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md cursor-pointer"
+                        disabled={estaProcesando}
+                        onClick={() => handleAccionEstado(comanda.id, 'lista')}
+                        className="w-full bg-success hover:opacity-90 disabled:opacity-50 text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md cursor-pointer"
                       >
                         <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
-                        <span>Marcar Listo para Servir</span>
+                        <span>{estaProcesando ? 'Actualizando...' : 'Marcar Listo para Servir'}</span>
                       </button>
                     )}
                   </div>

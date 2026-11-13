@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Clock, Utensils } from 'lucide-react';
-import { pedidoService } from '../../services/pedidoService';
 import type { PedidoItemDto } from '../../types/pedido';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
@@ -12,38 +11,37 @@ import { PageHeader } from '../layout/PageHeader';
 import { useHaptics } from '../../hooks/useHaptics';
 import { formatCurrency } from '../../utils/format';
 
-export const MisPedidosView: React.FC = () => {
-  const [pedidos, setPedidos] = useState<PedidoItemDto[]>([]);
+export interface MisPedidosViewProps {
+  pedidos: PedidoItemDto[];
+  cargando: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
+  esMozo?: boolean;
+}
+
+export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
+  pedidos,
+  cargando,
+  error,
+  onRefresh,
+  esMozo = false,
+}) => {
   const [filtro, setFiltro] = useState<'todos' | 'pendiente' | 'en-preparacion' | 'listo'>('todos');
-  const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
-
-  const cargarPedidos = async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const data = await pedidoService.listarPedidos({ soloMios: true });
-      setPedidos(data || []);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar sus pedidos registrados';
-      setError(msg);
-      setPedidos([]);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarPedidos();
-  }, []);
 
   const pedidosFiltrados = pedidos.filter((p) => {
     if (filtro === 'pendiente') return p.estado === 'Pendiente';
     if (filtro === 'en-preparacion') return p.estado === 'En preparación';
     if (filtro === 'listo') return p.estado === 'Listo';
     return true;
+  });
+
+  // Los pedidos 'Listos' se muestran primero (N-C 3)
+  const pedidosOrdenados = [...pedidosFiltrados].sort((a, b) => {
+    if (a.estado === 'Listo' && b.estado !== 'Listo') return -1;
+    if (a.estado !== 'Listo' && b.estado === 'Listo') return 1;
+    return 0;
   });
 
   const getAccentForEstado = (estado: string) => {
@@ -68,7 +66,7 @@ export const MisPedidosView: React.FC = () => {
         title="Pedidos Registrados"
         subtitle="Consumo en curso en salón"
         icon={<Clock className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarPedidos}
+        onRefresh={onRefresh}
         isRefreshing={cargando}
       />
 
@@ -93,7 +91,7 @@ export const MisPedidosView: React.FC = () => {
         {error && (
           <ErrorState
             mensaje={error}
-            onRetry={cargarPedidos}
+            onRetry={onRefresh}
             className="my-4"
           />
         )}
@@ -102,7 +100,7 @@ export const MisPedidosView: React.FC = () => {
           <SkeletonList count={5} />
         )}
 
-        {!error && !cargando && pedidosFiltrados.length === 0 && (
+        {!error && !cargando && pedidosOrdenados.length === 0 && (
           <EmptyState
             icon={Utensils}
             titulo="Sin pedidos registrados"
@@ -110,7 +108,7 @@ export const MisPedidosView: React.FC = () => {
           />
         )}
 
-        {pedidosFiltrados.map((p) => {
+        {pedidosOrdenados.map((p) => {
           const mesaOReferencia = p.mesa || p.referencia || `Pedido #${p.numero}`;
           return (
             <Card
@@ -132,9 +130,12 @@ export const MisPedidosView: React.FC = () => {
               </div>
 
               <div className="text-right flex flex-col items-end gap-1.5">
-                <span className="text-base font-black text-accent tabular-nums">
-                  {formatCurrency(p.total)}
-                </span>
+                {/* Regla RV-154: Mozo no ve montos económicos de pedidos */}
+                {!esMozo && (
+                  <span className="text-base font-black text-accent tabular-nums">
+                    {formatCurrency(p.total)}
+                  </span>
+                )}
                 <StatusBadge estado={p.estado} />
               </div>
             </Card>

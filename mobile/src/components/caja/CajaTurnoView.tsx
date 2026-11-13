@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, DollarSign, Smartphone, Check, ArrowRight } from 'lucide-react';
+import {
+  Lock,
+  Unlock,
+  DollarSign,
+  Smartphone,
+  Check,
+  ArrowRight,
+  Receipt,
+  History,
+  Info,
+} from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
-import type { CajaActualResponseDto, CierreResumenDto } from '../../types/caja';
+import { ventaService } from '../../services/ventaService';
+import type { CajaActualResponseDto, CierreResumenDto, HistorialCierresItemDto } from '../../types/caja';
+import type { VentaItem } from '../../types/venta';
+import type { RolUsuario } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { StatCard } from '../ui/StatCard';
@@ -11,20 +24,49 @@ import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { PageHeader } from '../layout/PageHeader';
 import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
+import { SkeletonList } from '../ui/Skeleton';
+import { EmptyState } from '../ui/EmptyState';
+import { FilterChipBar } from '../ui/FilterChipBar';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { puede } from '../../config/permisos';
 
-interface CajaTurnoViewProps {
+export interface CajaTurnoViewProps {
+  cajaActual: CajaActualResponseDto | null;
+  cargando: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
   onNavigateToCobros?: () => void;
+  rol?: RolUsuario;
 }
 
-export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros }) => {
-  const [cajaActual, setCajaActual] = useState<CajaActualResponseDto | null>(null);
-  const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
+  cajaActual,
+  cargando,
+  error,
+  onRefresh,
+  onNavigateToCobros,
+  rol = 'Cajero',
+}) => {
+  const esAdmin = rol === 'Administrador';
+  const puedeOperarCaja = puede(rol, 'caja.abrir') && puede(rol, 'caja.cerrar');
 
-  // Modales
+  // Control de pestaña principal: 'turno' | 'ventas' | 'cierres'
+  const [seccion, setSeccion] = useState<'turno' | 'ventas' | 'cierres'>('turno');
+
+  // Filtros de ventas (Hoy, Ayer, 7 días)
+  const [filtroVentas, setFiltroVentas] = useState<'hoy' | 'ayer' | '7dias'>('hoy');
+  const [ventas, setVentas] = useState<VentaItem[]>([]);
+  const [cargandoVentas, setCargandoVentas] = useState(false);
+  const [errorVentas, setErrorVentas] = useState<string | null>(null);
+
+  // Historial de cierres (solo Administrador)
+  const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
+  const [cargandoCierres, setCargandoCierres] = useState(false);
+  const [errorCierres, setErrorCierres] = useState<string | null>(null);
+
+  // Modales de operación de caja (Cajero)
   const [modalAbrir, setModalAbrir] = useState(false);
   const [montoApertura, setMontoApertura] = useState('100');
   const [modalCerrar, setModalCerrar] = useState(false);
@@ -34,37 +76,97 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
   const [efectivoContado, setEfectivoContado] = useState('');
   const [observacion, setObservacion] = useState('');
   const [procesando, setProcesando] = useState(false);
+  const [errorModal, setErrorModal] = useState<string | null>(null);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
 
-  const cargarCaja = async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const data = await cajaService.obtenerActual();
-      setCajaActual(data);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar el estado de la caja';
-      setError(msg);
-      setCajaActual(null);
-    } finally {
-      setCargando(false);
-    }
-  };
-
+  // Carga de ventas cuando se activa la sección de ventas
   useEffect(() => {
-    cargarCaja();
-  }, []);
+    if (seccion !== 'ventas') return;
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const toYMD = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const hoy = new Date();
+
+    let desde = toYMD(hoy);
+    let hasta = toYMD(hoy);
+
+    if (filtroVentas === 'ayer') {
+      const ayer = new Date(hoy);
+      ayer.setDate(ayer.getDate() - 1);
+      desde = toYMD(ayer);
+      hasta = toYMD(ayer);
+    } else if (filtroVentas === '7dias') {
+      const sieteDias = new Date(hoy);
+      sieteDias.setDate(sieteDias.getDate() - 7);
+      desde = toYMD(sieteDias);
+    }
+
+    let cancelado = false;
+    setCargandoVentas(true);
+    setErrorVentas(null);
+
+    ventaService.listarVentas({ desde, hasta })
+      .then((res) => {
+        if (!cancelado) {
+          setVentas(res.items || []);
+        }
+      })
+      .catch((err: unknown) => {
+        if (!cancelado) {
+          const msg = err instanceof Error ? err.message : 'Error al consultar ventas';
+          setErrorVentas(msg);
+          setVentas([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelado) setCargandoVentas(false);
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [seccion, filtroVentas]);
+
+  // Carga de historial de cierres cuando se activa la sección de cierres (Admin)
+  useEffect(() => {
+    if (seccion !== 'cierres' || !esAdmin) return;
+
+    let cancelado = false;
+    setCargandoCierres(true);
+    setErrorCierres(null);
+
+    cajaService.obtenerHistorialCierres()
+      .then((res) => {
+        if (!cancelado) {
+          setCierres(res.items || []);
+        }
+      })
+      .catch((err: unknown) => {
+        if (!cancelado) {
+          const msg = err instanceof Error ? err.message : 'Error al consultar historial de cierres';
+          setErrorCierres(msg);
+          setCierres([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelado) setCargandoCierres(false);
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [seccion, esAdmin]);
 
   const handleAbrirCaja = () => {
     const num = parseFloat(montoApertura) || 0;
     if (num <= 0) {
       triggerError();
-      setError('El monto inicial debe ser mayor a 0');
+      setErrorModal('El monto inicial debe ser mayor a 0');
       return;
     }
-    setError(null);
+    setErrorModal(null);
     setConfirmarApertura(true);
   };
 
@@ -80,11 +182,11 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
         tipo: 'exito',
         mensaje: `Caja abierta con éxito con fondo de ${formatCurrency(num)}`,
       });
-      cargarCaja();
+      await onRefresh();
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'Error al abrir caja';
-      setError(msg);
+      setErrorModal(msg);
       setConfirmarApertura(false);
     } finally {
       setProcesando(false);
@@ -94,7 +196,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
   const iniciarCierre = async () => {
     triggerLight();
     setProcesando(true);
-    setError(null);
+    setErrorModal(null);
     try {
       const resumen = await cajaService.obtenerResumenCierre();
       setResumenCierre(resumen);
@@ -103,15 +205,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'No se pudo obtener el resumen de cierre de caja';
-      setError(msg);
+      mostrar({ tipo: 'error', mensaje: msg });
     } finally {
       setProcesando(false);
     }
-  };
-
-  const handleSolicitarCierre = () => {
-    if (!resumenCierre) return;
-    setConfirmarCierre(true);
   };
 
   const ejecutarCierre = async () => {
@@ -122,7 +219,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
       await cajaService.cerrarCaja({
         efectivoContado: contado,
         efectivoEsperadoMostrado: resumenCierre.efectivoEsperado,
-        observacion: observacion.trim() || undefined
+        observacion: observacion.trim() || undefined,
       });
       triggerSuccess();
       setConfirmarCierre(false);
@@ -131,11 +228,11 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
         tipo: 'exito',
         mensaje: 'Cierre de caja completado con éxito',
       });
-      cargarCaja();
+      await onRefresh();
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'Error al cerrar caja';
-      setError(msg);
+      setErrorModal(msg);
       setConfirmarCierre(false);
     } finally {
       setProcesando(false);
@@ -150,6 +247,13 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
   const contadoNum = parseFloat(efectivoContado) || 0;
   const dif = contadoNum - esperado;
 
+  // Chips para control segmentado
+  const chipsSeccion = [
+    { id: 'turno', label: 'Turno' },
+    { id: 'ventas', label: 'Ventas' },
+    ...(esAdmin ? [{ id: 'cierres', label: 'Cierres' }] : []),
+  ];
+
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
@@ -157,141 +261,291 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
         title="Gestión de Caja"
         subtitle={estaAbierta ? 'Caja abierta y operativa' : 'Caja cerrada'}
         icon={<Lock className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarCaja}
+        onRefresh={onRefresh}
         isRefreshing={cargando}
       />
 
+      {/* 2. Control Segmentado de Sección */}
+      <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
+        <FilterChipBar
+          chips={chipsSeccion}
+          activeId={seccion}
+          onSelect={(id) => {
+            triggerLight();
+            setSeccion(id as typeof seccion);
+          }}
+        />
+      </div>
+
+      {/* 3. Contenido según la sección seleccionada */}
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
-        {error && (
-          <ErrorState
-            mensaje={error}
-            onRetry={cargarCaja}
-            className="my-4"
-          />
-        )}
-
-        {/* 1. Tarjeta de Estado de Caja */}
-        {cajaActual && (
+        {/* SECCIÓN 1: TURNO ACTUAL */}
+        {seccion === 'turno' && (
           <>
-            <Card
-              accent={estaAbierta ? 'success' : 'danger'}
-              className="space-y-4"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                      estaAbierta ? 'bg-success-bg text-success' : 'bg-danger-bg text-danger'
-                    }`}
-                  >
-                    {estaAbierta ? <Unlock className="w-6 h-6" aria-hidden="true" /> : <Lock className="w-6 h-6" aria-hidden="true" />}
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
-                      Estado del Turno
-                    </span>
-                    <h3 className="text-lg font-black text-ink">
-                      {estaAbierta ? 'Caja Abierta y Operativa' : 'Caja Cerrada'}
-                    </h3>
-                  </div>
-                </div>
-
-                <StatusBadge estado={estaAbierta ? 'Abierta' : 'Cerrada'} />
-              </div>
-
-              {estaAbierta && apertura && (
-                <div className="border-t border-line pt-3 text-xs space-y-1 text-ink-muted">
-                  <p>
-                    <span className="font-bold text-ink">Cajero:</span> {apertura.nombreUsuarioApertura}
-                  </p>
-                  <p>
-                    <span className="font-bold text-ink">Fondo Inicial:</span> {formatCurrency(apertura.montoInicial)}
-                  </p>
-                </div>
-              )}
-            </Card>
-
-            {/* 2. Métricas del Turno Actual (Solo si está abierta) */}
-            {estaAbierta && parcial && (
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-                  Ventas del Turno
-                </h3>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <StatCard
-                    titulo="Total Facturado"
-                    valor={formatCurrency(parcial.totalVentas)}
-                    subtitulo={pluralizar(parcial.cantidadVentas, 'comprobante', 'comprobantes')}
-                  />
-
-                  <StatCard
-                    titulo="Efectivo en Caja"
-                    valor={formatCurrency(apertura!.montoInicial + parcial.totalEfectivo)}
-                    subtitulo="Incluye fondo inicial"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <StatCard
-                    titulo="Ventas Efectivo"
-                    valor={formatCurrency(parcial.totalEfectivo)}
-                    icon={<DollarSign className="w-4 h-4 text-accent" aria-hidden="true" />}
-                  />
-
-                  <StatCard
-                    titulo="Ventas Yape / Plin"
-                    valor={formatCurrency(parcial.totalYape)}
-                    icon={<Smartphone className="w-4 h-4 text-info" aria-hidden="true" />}
-                  />
-                </div>
-              </div>
+            {error && (
+              <ErrorState
+                mensaje={error}
+                onRetry={onRefresh}
+                className="my-4"
+              />
             )}
 
-            {/* 3. Acciones de Operación */}
-            <div className="space-y-3 pt-2">
-              {!estaAbierta ? (
-                <Button
-                  fullWidth
-                  size="lg"
-                  onClick={() => {
-                    triggerLight();
-                    setModalAbrir(true);
-                  }}
-                  className="flex items-center justify-center gap-2"
+            {cargando && !cajaActual && (
+              <SkeletonList count={3} />
+            )}
+
+            {cajaActual && (
+              <>
+                {/* Tarjeta de Estado del Turno */}
+                <Card
+                  accent={estaAbierta ? 'success' : 'danger'}
+                  className="space-y-4"
                 >
-                  <Unlock className="w-5 h-5" />
-                  <span>Abrir Caja de Turno</span>
-                </Button>
-              ) : (
-                <div className="space-y-2.5">
-                  {onNavigateToCobros && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                          estaAbierta ? 'bg-success-bg text-success' : 'bg-danger-bg text-danger'
+                        }`}
+                      >
+                        {estaAbierta ? <Unlock className="w-6 h-6" aria-hidden="true" /> : <Lock className="w-6 h-6" aria-hidden="true" />}
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
+                          Estado del Turno
+                        </span>
+                        <h3 className="text-lg font-black text-ink">
+                          {estaAbierta ? 'Caja Abierta y Operativa' : 'Caja Cerrada'}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <StatusBadge estado={estaAbierta ? 'Abierta' : 'Cerrada'} />
+                  </div>
+
+                  {estaAbierta && apertura && (
+                    <div className="border-t border-line pt-3 text-xs space-y-1 text-ink-muted">
+                      <p>
+                        <span className="font-bold text-ink">Cajero:</span> {apertura.nombreUsuarioApertura}
+                      </p>
+                      <p>
+                        <span className="font-bold text-ink">Fondo Inicial:</span> {formatCurrency(apertura.montoInicial)}
+                      </p>
+                    </div>
+                  )}
+                </Card>
+
+                {/* Métricas del Turno Actual */}
+                {estaAbierta && parcial && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+                      Ventas del Turno
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <StatCard
+                        titulo="Total Facturado"
+                        valor={formatCurrency(parcial.totalVentas)}
+                        subtitulo={pluralizar(parcial.cantidadVentas, 'comprobante', 'comprobantes')}
+                      />
+
+                      <StatCard
+                        titulo="Efectivo en Caja"
+                        valor={formatCurrency(apertura!.montoInicial + parcial.totalEfectivo)}
+                        subtitulo="Incluye fondo inicial"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <StatCard
+                        titulo="Ventas Efectivo"
+                        valor={formatCurrency(parcial.totalEfectivo)}
+                        icon={<DollarSign className="w-4 h-4 text-accent" aria-hidden="true" />}
+                      />
+
+                      <StatCard
+                        titulo="Ventas Yape / Plin"
+                        valor={formatCurrency(parcial.totalYape)}
+                        icon={<Smartphone className="w-4 h-4 text-info" aria-hidden="true" />}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Acciones de Operación por Rol */}
+                <div className="space-y-3 pt-2">
+                  {!puedeOperarCaja ? (
+                    /* Administrador: Solo lectura informativa */
+                    <div className="bg-surface border border-line rounded-2xl p-4 flex items-center gap-3 text-ink-muted">
+                      <Info className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                      <p className="text-xs leading-relaxed">
+                        La apertura y el cierre de caja los realiza el Cajero.
+                      </p>
+                    </div>
+                  ) : !estaAbierta ? (
+                    /* Cajero: Abrir caja */
                     <Button
                       fullWidth
                       size="lg"
-                      onClick={onNavigateToCobros}
+                      onClick={() => {
+                        triggerLight();
+                        setErrorModal(null);
+                        setModalAbrir(true);
+                      }}
                       className="flex items-center justify-center gap-2"
                     >
-                      <span>Ir a Cobros Pendientes</span>
-                      <ArrowRight className="w-5 h-5" />
+                      <Unlock className="w-5 h-5" />
+                      <span>Abrir Caja de Turno</span>
                     </Button>
-                  )}
+                  ) : (
+                    /* Cajero: Ir a cobros o Cerrar caja */
+                    <div className="space-y-2.5">
+                      {onNavigateToCobros && (
+                        <Button
+                          fullWidth
+                          size="lg"
+                          onClick={onNavigateToCobros}
+                          className="flex items-center justify-center gap-2"
+                        >
+                          <span>Ir a Cobros Pendientes</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </Button>
+                      )}
 
-                  <Button
-                    fullWidth
-                    size="lg"
-                    variant="danger"
-                    isLoading={procesando}
-                    onClick={iniciarCierre}
-                    className="flex items-center justify-center gap-2"
-                  >
-                    <Lock className="w-5 h-5" />
-                    <span>Realizar Cierre de Caja / Arqueo</span>
-                  </Button>
+                      <Button
+                        fullWidth
+                        size="lg"
+                        variant="danger"
+                        isLoading={procesando}
+                        onClick={iniciarCierre}
+                        className="flex items-center justify-center gap-2"
+                      >
+                        <Lock className="w-5 h-5" />
+                        <span>Realizar Cierre de Caja / Arqueo</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </>
+        )}
+
+        {/* SECCIÓN 2: VENTAS (LISTA SOLO LECTURA) */}
+        {seccion === 'ventas' && (
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setFiltroVentas('hoy')}
+                className={`flex-1 py-2 text-xs font-bold rounded-xl border min-h-[44px] ${
+                  filtroVentas === 'hoy'
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-surface text-ink-muted border-line'
+                }`}
+              >
+                Hoy
+              </button>
+              <button
+                type="button"
+                onClick={() => setFiltroVentas('ayer')}
+                className={`flex-1 py-2 text-xs font-bold rounded-xl border min-h-[44px] ${
+                  filtroVentas === 'ayer'
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-surface text-ink-muted border-line'
+                }`}
+              >
+                Ayer
+              </button>
+              <button
+                type="button"
+                onClick={() => setFiltroVentas('7dias')}
+                className={`flex-1 py-2 text-xs font-bold rounded-xl border min-h-[44px] ${
+                  filtroVentas === '7dias'
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-surface text-ink-muted border-line'
+                }`}
+              >
+                Últimos 7 días
+              </button>
+            </div>
+
+            {errorVentas && (
+              <ErrorState mensaje={errorVentas} className="my-2" />
+            )}
+
+            {cargandoVentas && <SkeletonList count={4} />}
+
+            {!cargandoVentas && !errorVentas && ventas.length === 0 && (
+              <EmptyState
+                icon={Receipt}
+                titulo="Sin ventas registradas"
+                subtitulo="No se encontraron comprobantes de venta en el período seleccionado."
+              />
+            )}
+
+            {ventas.map((v) => (
+              <Card key={v.ventaId} accent="none" padding="sm" className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-extrabold text-ink">{v.comprobante}</span>
+                    <span className="text-xs text-ink-muted">Pedido #{v.pedidoNumero}</span>
+                  </div>
+                  <StatusBadge estado={v.estado} />
+                </div>
+                <div className="flex justify-between items-center text-xs text-ink-muted pt-1 border-t border-line">
+                  <span>{v.fechaHoraFormateada || v.fechaHora} · {v.metodo}</span>
+                  <span className="text-sm font-black text-accent tabular-nums">
+                    {formatCurrency(v.total)}
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* SECCIÓN 3: CIERRES (HISTORIAL SOLO LECTURA PARA ADMINISTRADOR) */}
+        {seccion === 'cierres' && esAdmin && (
+          <div className="space-y-3">
+            {errorCierres && (
+              <ErrorState mensaje={errorCierres} className="my-2" />
+            )}
+
+            {cargandoCierres && <SkeletonList count={4} />}
+
+            {!cargandoCierres && !errorCierres && cierres.length === 0 && (
+              <EmptyState
+                icon={History}
+                titulo="Sin cierres registrados"
+                subtitulo="No se registran actas de cierre de caja en el sistema."
+              />
+            )}
+
+            {cierres.map((c) => (
+              <Card key={c.cajaId} accent="none" padding="sm" className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-extrabold text-ink">{c.fechaCierre || c.fechaApertura}</span>
+                  <StatusBadge estado={c.estadoCuadre || 'Cuadra'} />
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-ink-muted pt-1 border-t border-line">
+                  <div>
+                    <span className="block text-ink-muted">Cajero:</span>
+                    <span className="font-bold text-ink">{c.cajero}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="block text-ink-muted">Total Ventas:</span>
+                    <span className="font-bold text-accent tabular-nums">
+                      {formatCurrency(c.totalVentas)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-ink-muted">
+                  <span>Fondo Inicial: {formatCurrency(c.montoInicial)}</span>
+                  <span>Diferencia: {formatCurrency(c.diferencia)}</span>
+                </div>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
 
@@ -302,6 +556,12 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
         title="Apertura de Caja"
       >
         <div className="space-y-4">
+          {errorModal && (
+            <p className="text-xs font-bold text-danger bg-danger-bg p-2 rounded-xl">
+              {errorModal}
+            </p>
+          )}
+
           <p className="text-xs text-ink-muted">
             Ingrese el fondo inicial en soles con el que empieza el turno:
           </p>
@@ -330,6 +590,12 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
       >
         {resumenCierre && (
           <div className="space-y-4">
+            {errorModal && (
+              <p className="text-xs font-bold text-danger bg-danger-bg p-2 rounded-xl">
+                {errorModal}
+              </p>
+            )}
+
             <div className="bg-canvas border border-line rounded-2xl p-3.5 space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-ink-muted">Fondo Inicial:</span>
@@ -339,93 +605,82 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                 <span className="text-ink-muted">Ventas Efectivo:</span>
                 <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.ventasEfectivo)}</span>
               </div>
-              <div className="border-t border-line pt-2 flex justify-between items-center">
-                <span className="text-xs font-black text-ink">Efectivo Esperado:</span>
-                <span className="text-xl font-black text-accent tabular-nums">
-                  {formatCurrency(esperado)}
-                </span>
+              <div className="flex justify-between text-xs border-t border-line pt-2 font-bold">
+                <span>Efectivo Esperado:</span>
+                <span className="text-accent tabular-nums">{formatCurrency(esperado)}</span>
               </div>
             </div>
 
-            {/* Comparación Contado vs Esperado */}
-            <div className="grid grid-cols-2 gap-2 text-center">
-              <div className="bg-canvas border border-line p-2 rounded-xl">
-                <span className="text-xs text-ink-muted block">Efectivo Contado</span>
-                <span className="text-lg font-black text-ink tabular-nums">
-                  {formatCurrency(parseFloat(efectivoContado) || 0)}
-                </span>
+            <div className="bg-canvas border border-line rounded-2xl p-3 text-center">
+              <span className="text-xs text-ink-muted block">Efectivo Contado</span>
+              <span className="text-3xl font-black text-accent tabular-nums">
+                {formatCurrency(contadoNum)}
+              </span>
+              <div className="mt-1">
+                {dif === 0 ? (
+                  <span className="text-xs font-bold text-success flex items-center justify-center gap-1">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Cuadra exactamente</span>
+                  </span>
+                ) : dif > 0 ? (
+                  <span className="text-xs font-bold text-info">
+                    Sobrante de {formatCurrency(dif)}
+                  </span>
+                ) : (
+                  <span className="text-xs font-bold text-danger">
+                    Faltante de {formatCurrency(Math.abs(dif))}
+                  </span>
+                )}
               </div>
+            </div>
 
-              <div
-                className={`border p-2 rounded-xl ${
-                  dif === 0
-                    ? 'bg-success-bg border-success-border text-success'
-                    : dif < 0
-                    ? 'bg-danger-bg border-danger-border text-danger'
-                    : 'bg-warning-bg border-warning-border text-warning'
-                }`}
-              >
-                <span className="text-xs font-bold block">
-                  {dif === 0 ? 'Cuadra Exacto' : dif < 0 ? 'Faltante' : 'Sobrante'}
-                </span>
-                <span className="text-lg font-black tabular-nums">
-                  {formatCurrency(Math.abs(dif))}
-                </span>
-              </div>
+            <div>
+              <label htmlFor="obs-cierre" className="block text-xs font-bold text-ink-muted mb-1">
+                Observación (opcional):
+              </label>
+              <input
+                id="obs-cierre"
+                type="text"
+                value={observacion}
+                onChange={(e) => setObservacion(e.target.value)}
+                placeholder="Ej. Billetes deteriorados..."
+                className="w-full bg-canvas border border-line rounded-xl px-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary"
+              />
             </div>
 
             <Numpad
               value={efectivoContado}
               onChange={(val) => setEfectivoContado(val)}
+              enterLabel="Confirmar Cierre"
+              onEnter={() => setConfirmarCierre(true)}
             />
-
-            <div>
-              <label className="text-xs font-bold text-ink block mb-1">Observación (Opcional)</label>
-              <input
-                type="text"
-                value={observacion}
-                onChange={(e) => setObservacion(e.target.value)}
-                placeholder="Ej. Billetes deteriorados o descuadre justificado"
-                className="w-full text-xs px-3 py-2 rounded-xl border border-line bg-canvas focus:outline-primary"
-              />
-            </div>
-
-            <Button
-              fullWidth
-              size="lg"
-              variant="danger"
-              isLoading={procesando}
-              onClick={handleSolicitarCierre}
-              className="flex items-center justify-center gap-2"
-            >
-              <Check className="w-5 h-5" />
-              <span>Confirmar Cierre de Caja</span>
-            </Button>
           </div>
         )}
       </BottomSheet>
 
-      {/* Confirmación de Apertura */}
+      {/* Confirmación Apertura */}
       <ConfirmSheet
         isOpen={confirmarApertura}
-        titulo="Confirmar Apertura"
-        mensaje={`¿Confirmar apertura de caja con un fondo inicial de ${formatCurrency(parseFloat(montoApertura) || 0)}?`}
-        etiquetaConfirmar="Confirmar Apertura"
-        cargando={procesando}
-        onConfirmar={ejecutarApertura}
         onCancelar={() => setConfirmarApertura(false)}
+        titulo="Confirmar Fondo Inicial"
+        mensaje={`¿Confirma la apertura de caja con un fondo inicial de ${formatCurrency(parseFloat(montoApertura) || 0)}?`}
+        etiquetaConfirmar="Sí, Abrir Caja"
+        etiquetaCancelar="Volver"
+        onConfirmar={ejecutarApertura}
+        cargando={procesando}
       />
 
-      {/* Confirmación de Cierre */}
+      {/* Confirmación Cierre */}
       <ConfirmSheet
         isOpen={confirmarCierre}
-        titulo="Asentar Cierre Definitivo"
-        mensaje="¿Está seguro de asentar el cierre definitivo de caja? Esta operación es inmutable y no podrá registrar más cobros."
-        etiquetaConfirmar="Asentar Cierre"
-        tono="peligro"
-        cargando={procesando}
-        onConfirmar={ejecutarCierre}
         onCancelar={() => setConfirmarCierre(false)}
+        titulo="Confirmar Cierre Definitivo"
+        mensaje={`Se cerrará el turno actual con un total contado de ${formatCurrency(contadoNum)}. Esta acción registrará el acta formal de cierre y no se puede deshacer.`}
+        etiquetaConfirmar="Sí, Cerrar Caja"
+        etiquetaCancelar="Volver"
+        tono="peligro"
+        onConfirmar={ejecutarCierre}
+        cargando={procesando}
       />
     </div>
   );

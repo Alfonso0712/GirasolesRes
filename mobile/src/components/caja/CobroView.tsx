@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Receipt,
   Banknote,
   Smartphone,
   Check,
   AlertCircle,
-  Lock
+  Lock,
 } from 'lucide-react';
 import { cobroService } from '../../services/cobroService';
-import { cajaService } from '../../services/cajaService';
 import type { PedidoPendienteCobro, MetodoPago } from '../../types/cobro';
 import type { CajaActualResponseDto } from '../../types/caja';
 import { BottomSheet } from '../ui/BottomSheet';
@@ -25,11 +24,23 @@ import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
-export const CobroView: React.FC = () => {
-  const [pedidos, setPedidos] = useState<PedidoPendienteCobro[]>([]);
-  const [cajaActual, setCajaActual] = useState<CajaActualResponseDto | null>(null);
-  const [cargando, setCargando] = useState(false);
-  const [errorCarga, setErrorCarga] = useState<string | null>(null);
+export interface CobroViewProps {
+  pedidos: PedidoPendienteCobro[];
+  cajaActual: CajaActualResponseDto | null;
+  cargando: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
+  onCobroExitoso?: () => void;
+}
+
+export const CobroView: React.FC<CobroViewProps> = ({
+  pedidos,
+  cajaActual,
+  cargando,
+  error,
+  onRefresh,
+  onCobroExitoso,
+}) => {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<PedidoPendienteCobro | null>(null);
 
   // Estado del cobro
@@ -41,29 +52,6 @@ export const CobroView: React.FC = () => {
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
   const { mostrar } = useToast();
-
-  const cargarDatos = async () => {
-    setCargando(true);
-    setErrorCarga(null);
-    try {
-      const [listaPedidos, estadoCaja] = await Promise.all([
-        cobroService.obtenerPedidosPendientes(),
-        cajaService.obtenerEstadoActual().catch(() => null),
-      ]);
-      setPedidos(listaPedidos || []);
-      setCajaActual(estadoCaja);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al cargar las cuentas pendientes de cobro';
-      setErrorCarga(msg);
-      setPedidos([]);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
 
   const total = pedidoSeleccionado?.total || 0;
   const numRecibido = parseFloat(montoRecibido) || 0;
@@ -121,7 +109,11 @@ export const CobroView: React.FC = () => {
       });
       setMostrarConfirmacion(false);
       setPedidoSeleccionado(null);
-      cargarDatos();
+      if (onCobroExitoso) {
+        onCobroExitoso();
+      } else {
+        await onRefresh();
+      }
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'No se pudo procesar el cobro.';
@@ -139,7 +131,7 @@ export const CobroView: React.FC = () => {
         title="Caja y Cobro Rápido"
         subtitle={pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
         icon={<Receipt className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarDatos}
+        onRefresh={onRefresh}
         isRefreshing={cargando}
       />
 
@@ -152,11 +144,11 @@ export const CobroView: React.FC = () => {
         </div>
       )}
 
-      {errorCarga && (
+      {error && (
         <div className="p-4">
           <ErrorState
-            mensaje={errorCarga}
-            onRetry={cargarDatos}
+            mensaje={error}
+            onRetry={onRefresh}
           />
         </div>
       )}
@@ -167,165 +159,193 @@ export const CobroView: React.FC = () => {
           <SkeletonList count={4} />
         )}
 
-        {!errorCarga && !cargando && pedidos.length === 0 && (
+        {!error && !cargando && pedidos.length === 0 && (
           <EmptyState
             icon={Receipt}
-            titulo="Sin pedidos pendientes"
-            subtitulo="No hay pedidos pendientes de cobro."
+            titulo="No hay cobros pendientes"
+            subtitulo="Todas las mesas y pedidos para llevar se encuentran al día."
           />
         )}
 
-        {pedidos.map((p) => (
-          <Card
-            key={p.pedidoId}
-            accent="warning"
-            className="flex items-center justify-between shadow-xs select-none"
-          >
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
+        {pedidos.map((p) => {
+          return (
+            <Card
+              key={p.pedidoId}
+              interactive={!cajaCerrada}
+              accent="none"
+              onClick={!cajaCerrada ? () => handleAbrirCobro(p) : undefined}
+              className="flex items-center justify-between select-none"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
+                </div>
+                <div className="text-xs text-ink-muted mt-1 space-y-0.5">
+                  <p>Mozo: {p.mozoNombre}</p>
+                  <p>{pluralizar(p.cantidadLineas, 'ítem', 'ítems')} en la orden</p>
+                </div>
+              </div>
+
+              <div className="text-right flex flex-col items-end gap-1.5">
+                <span className="text-xl font-black text-accent tabular-nums">
+                  {formatCurrency(p.total)}
+                </span>
                 <StatusBadge estado="Pendiente" />
               </div>
-              <p className="text-xs text-ink-muted mt-1">
-                {pluralizar(p.cantidadLineas, 'plato', 'platos')} · Mozo: {p.mozoNombre}
-              </p>
-              <p className="text-lg font-black text-accent mt-1 tabular-nums">{formatCurrency(p.total)}</p>
-            </div>
-
-            <Button
-              size="md"
-              disabled={Boolean(cajaCerrada)}
-              onClick={() => handleAbrirCobro(p)}
-              className="px-5 shrink-0"
-            >
-              Cobrar
-            </Button>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Bottom Sheet de Cobro Táctil */}
+      {/* 3. Modal Táctil de Cobro Rápido */}
       <BottomSheet
-        isOpen={Boolean(pedidoSeleccionado && !mostrarConfirmacion)}
+        isOpen={Boolean(pedidoSeleccionado)}
         onClose={() => setPedidoSeleccionado(null)}
-        title={pedidoSeleccionado ? `Cobrar ${pedidoSeleccionado.mesaNombre}` : ''}
+        title={pedidoSeleccionado ? `Cobro · ${pedidoSeleccionado.mesaNombre}` : ''}
       >
         {pedidoSeleccionado && (
           <div className="space-y-4">
             {errorCobro && (
-              <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
+              <div className="p-3 bg-danger-bg border border-danger-border rounded-xl text-danger text-xs font-bold flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorCobro}</span>
               </div>
             )}
 
-            {/* Monto a Cobrar */}
-            <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
-              <div>
-                <p className="text-xs text-ink-muted">Total de la Cuenta</p>
-                <p className="text-2xl font-black text-accent tabular-nums">{formatCurrency(total)}</p>
-              </div>
-
-              {/* Selector de comprobante: móvil solo emite Ticket */}
-              <div className="text-right">
-                <span className="text-xs font-bold text-ink bg-surface border border-line px-3 py-1.5 rounded-xl block">
-                  Ticket de Venta
-                </span>
-                <span className="text-xs text-ink-muted mt-1 block">
-                  Boleta / Factura: Disponible en la versión web
-                </span>
-              </div>
+            {/* Total a pagar */}
+            <div className="bg-canvas border border-line rounded-2xl p-4 text-center">
+              <span className="text-xs text-ink-muted block uppercase tracking-wider font-bold">
+                Total de la Cuenta
+              </span>
+              <span className="text-3xl font-black text-accent tabular-nums">
+                {formatCurrency(total)}
+              </span>
             </div>
 
             {/* Selector de Método de Pago */}
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { id: 'Efectivo' as const, label: 'Efectivo', icon: Banknote },
-                { id: 'Yape' as const, label: 'Yape', icon: Smartphone },
-              ].map((m) => {
-                const Icon = m.icon;
-                const activo = metodoPago === m.id;
-                return (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => {
-                      triggerLight();
-                      setMetodoPago(m.id);
-                    }}
-                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 active:scale-95 transition-all min-h-[50px] ${
-                      activo
-                        ? 'bg-primary text-white border-primary shadow-xs font-bold'
-                        : 'bg-canvas text-ink-muted border-line hover:text-ink font-semibold'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="text-xs">{m.label}</span>
-                  </button>
-                );
-              })}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerLight();
+                  setMetodoPago('Efectivo');
+                }}
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border font-bold text-xs transition-colors min-h-[48px] ${
+                  metodoPago === 'Efectivo'
+                    ? 'bg-primary text-white border-primary shadow-xs'
+                    : 'bg-canvas text-ink border-line'
+                }`}
+              >
+                <Banknote className="w-4 h-4" />
+                <span>Efectivo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  triggerLight();
+                  setMetodoPago('Yape');
+                  setMontoRecibido(total.toString());
+                }}
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border font-bold text-xs transition-colors min-h-[48px] ${
+                  metodoPago === 'Yape'
+                    ? 'bg-info text-white border-info shadow-xs'
+                    : 'bg-canvas text-ink border-line'
+                }`}
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>Yape / Plin</span>
+              </button>
             </div>
 
-            {/* Sección de Efectivo con Numpad táctil y cálculo de vuelto */}
-            {metodoPago === 'Efectivo' && (
-              <div className="space-y-3 pt-1">
-                <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="bg-canvas border border-line p-2 rounded-xl">
-                    <span className="text-xs text-ink-muted block">Monto Recibido</span>
+            {/* Flujo Efectivo con Teclado Numérico */}
+            {metodoPago === 'Efectivo' ? (
+              <div className="space-y-3">
+                <div className="bg-canvas border border-line rounded-2xl p-3 flex justify-between items-center text-xs">
+                  <div>
+                    <span className="text-ink-muted block">Recibido</span>
                     <span className="text-lg font-black text-ink tabular-nums">
-                      {formatCurrency(parseFloat(montoRecibido) || 0)}
+                      {formatCurrency(numRecibido)}
                     </span>
                   </div>
+                  <div className="text-right">
+                    <span className="text-ink-muted block">
+                      {saldoFaltante > 0 ? 'Falta cobrar' : 'Vuelto exacto'}
+                    </span>
+                    <span
+                      className={`text-lg font-black tabular-nums ${
+                        saldoFaltante > 0 ? 'text-danger' : 'text-success'
+                      }`}
+                    >
+                      {saldoFaltante > 0 ? formatCurrency(saldoFaltante) : formatCurrency(vuelto)}
+                    </span>
+                  </div>
+                </div>
 
-                  <div
-                    className={`border p-2 rounded-xl ${
-                      saldoFaltante > 0
-                        ? 'bg-danger-bg border-danger-border text-danger'
-                        : 'bg-success-bg border-success-border text-success'
-                    }`}
-                  >
-                    <span className="text-xs block font-semibold">
-                      {saldoFaltante > 0 ? 'Falta Pagar' : 'Vuelto'}
-                    </span>
-                    <span className="text-lg font-black tabular-nums">
-                      {formatCurrency(saldoFaltante > 0 ? saldoFaltante : vuelto)}
-                    </span>
-                  </div>
+                {/* Accesos rápidos de efectivo */}
+                <div className="flex gap-2">
+                  {[total, 20, 50, 100].map((monto) => (
+                    <button
+                      key={monto}
+                      type="button"
+                      onClick={() => {
+                        triggerLight();
+                        setMontoRecibido(monto.toString());
+                      }}
+                      className="flex-1 py-1.5 bg-canvas border border-line rounded-lg text-xs font-bold text-ink active:scale-95 transition-all"
+                    >
+                      {monto === total ? 'Exacto' : `S/ ${monto}`}
+                    </button>
+                  ))}
                 </div>
 
                 <Numpad
                   value={montoRecibido}
                   onChange={(val) => setMontoRecibido(val)}
+                  enterLabel="Cobrar Cuenta"
+                  onEnter={handleSolicitarConfirmacion}
                 />
               </div>
-            )}
+            ) : (
+              /* Flujo Digital (Yape / Plin) */
+              <div className="space-y-4 pt-2">
+                <div className="p-4 bg-info-bg/30 border border-info-border/50 rounded-2xl text-center space-y-1">
+                  <Smartphone className="w-8 h-8 text-info mx-auto" />
+                  <p className="text-xs font-bold text-ink">
+                    Monto exacto a cobrar: {formatCurrency(total)}
+                  </p>
+                  <p className="text-xs text-ink-muted">
+                    Verifique en el aplicativo que la transferencia o pago QR figure como completado.
+                  </p>
+                </div>
 
-            {/* Botón para solicitar confirmación */}
-            <Button
-              fullWidth
-              size="lg"
-              disabled={metodoPago === 'Efectivo' && saldoFaltante > 0}
-              onClick={handleSolicitarConfirmacion}
-              className="flex items-center justify-center gap-2 mt-2"
-            >
-              <Check className="w-5 h-5" />
-              <span>Continuar al Cobro ({formatCurrency(total)})</span>
-            </Button>
+                <Button
+                  fullWidth
+                  size="lg"
+                  onClick={handleSolicitarConfirmacion}
+                  className="flex items-center justify-center gap-2"
+                >
+                  <Check className="w-5 h-5" />
+                  <span>Confirmar Pago Digital</span>
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </BottomSheet>
 
-      {/* Confirmación Definitiva de Cobro */}
+      {/* 4. Confirmación Definitiva */}
       <ConfirmSheet
-        isOpen={Boolean(mostrarConfirmacion && pedidoSeleccionado)}
-        titulo="Confirmar Cobro"
-        mensaje={`¿Desea registrar el cobro de ${formatCurrency(total)} mediante ${metodoPago} para ${pedidoSeleccionado?.mesaNombre}?${
-          metodoPago === 'Efectivo' ? ` Vuelto a entregar: ${formatCurrency(vuelto)}.` : ''
-        } Esta operación no se puede deshacer.`}
-        etiquetaConfirmar="Confirmar Cobro"
-        cargando={procesando}
-        onConfirmar={handleEjecutarCobro}
+        isOpen={mostrarConfirmacion}
         onCancelar={() => setMostrarConfirmacion(false)}
+        titulo="Confirmar Cobro y Emisión"
+        mensaje={`¿Confirma el cobro de ${formatCurrency(total)} mediante ${metodoPago}? ${
+          metodoPago === 'Efectivo' && vuelto > 0 ? `Vuelto a entregar: ${formatCurrency(vuelto)}.` : ''
+        }`}
+        etiquetaConfirmar="Sí, Procesar Cobro"
+        etiquetaCancelar="Volver"
+        onConfirmar={handleEjecutarCobro}
+        cargando={procesando}
       />
     </div>
   );

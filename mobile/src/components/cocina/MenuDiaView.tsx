@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { CalendarCheck, AlertTriangle, Search, UtensilsCrossed } from 'lucide-react';
-import { menuDiaService } from '../../services/menuDiaService';
 import type { PlatoMenuDiaDto } from '../../services/menuDiaService';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
@@ -13,10 +12,23 @@ import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { useToast } from '../../context/ToastContext';
 import { pluralizar } from '../../utils/format';
 
-export const MenuDiaView: React.FC = () => {
-  const [platos, setPlatos] = useState<PlatoMenuDiaDto[]>([]);
-  const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export interface MenuDiaViewProps {
+  platos: PlatoMenuDiaDto[];
+  cargando: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
+  onCambiarDisponibilidad: (productoId: string, nuevoAgotado: boolean) => Promise<void>;
+  puedeModificar?: boolean;
+}
+
+export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
+  platos,
+  cargando,
+  error,
+  onRefresh,
+  onCambiarDisponibilidad,
+  puedeModificar = true,
+}) => {
   const [procesandoId, setProcesandoId] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<'todos' | 'disponibles' | 'agotados'>('todos');
   const [busqueda, setBusqueda] = useState('');
@@ -25,124 +37,81 @@ export const MenuDiaView: React.FC = () => {
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
 
-  const cargarPlatos = async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const data = await menuDiaService.obtenerMenuHoy();
-      setPlatos(data.platos || []);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar el menú del día';
-      setError(msg);
-      setPlatos([]);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarPlatos();
-  }, []);
-
   const ejecutarCambioDisponibilidad = async (plato: PlatoMenuDiaDto, nuevoAgotado: boolean) => {
+    if (!puedeModificar) return;
     triggerLight();
     setProcesandoId(plato.productoId);
 
-    // Optimistic UI update
-    setPlatos((prev) =>
-      prev.map((p) => (p.productoId === plato.productoId ? { ...p, agotado: nuevoAgotado } : p))
-    );
-
     try {
-      await menuDiaService.cambiarDisponibilidad(plato.productoId, nuevoAgotado);
+      await onCambiarDisponibilidad(plato.productoId, nuevoAgotado);
       triggerSuccess();
       if (nuevoAgotado) {
         mostrar({
           tipo: 'aviso',
-          mensaje: `Plato marcado como agotado: ${plato.nombre}`,
+          mensaje: `${plato.nombre} marcado como AGOTADO para los mozos`,
         });
       } else {
         mostrar({
           tipo: 'exito',
-          mensaje: `Plato reactivado correctamente: ${plato.nombre}`,
+          mensaje: `${plato.nombre} restablecido como DISPONIBLE`,
         });
       }
-    } catch {
+    } catch (err: unknown) {
       triggerError();
-      // Revertir en caso de error
-      setPlatos((prev) =>
-        prev.map((p) => (p.productoId === plato.productoId ? { ...p, agotado: plato.agotado } : p))
-      );
-      mostrar({
-        tipo: 'error',
-        mensaje: `No se pudo actualizar la disponibilidad de ${plato.nombre}`,
-      });
+      const msg = err instanceof Error ? err.message : 'Error al actualizar disponibilidad';
+      mostrar({ tipo: 'error', mensaje: msg });
     } finally {
       setProcesandoId(null);
     }
   };
 
-  const handleToggleDisponibilidad = (plato: PlatoMenuDiaDto) => {
-    if (!plato.agotado) {
-      // Marcar como agotado requiere confirmación
-      setPlatoParaAgotar(plato);
-    } else {
-      // Reactivar plato no requiere confirmación
-      void ejecutarCambioDisponibilidad(plato, false);
-    }
-  };
-
-  const handleConfirmarAgotado = async () => {
-    if (!platoParaAgotar) return;
-    const plato = platoParaAgotar;
-    setPlatoParaAgotar(null);
-    await ejecutarCambioDisponibilidad(plato, true);
-  };
-
   const platosFiltrados = platos.filter((p) => {
-    if (filtro === 'disponibles' && p.agotado) return false;
-    if (filtro === 'agotados' && !p.agotado) return false;
-    if (busqueda.trim() && !p.nombre.toLowerCase().includes(busqueda.toLowerCase())) {
-      return false;
-    }
+    const coincideBusqueda =
+      busqueda.trim() === '' ||
+      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.categoria.toLowerCase().includes(busqueda.toLowerCase());
+
+    if (!coincideBusqueda) return false;
+    if (filtro === 'disponibles') return !p.agotado;
+    if (filtro === 'agotados') return p.agotado;
     return true;
   });
 
-  const totalAgotados = platos.filter((p) => p.agotado).length;
+  const disponiblesCount = platos.filter((p) => !p.agotado).length;
+  const agotadosCount = platos.filter((p) => p.agotado).length;
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
         title="Control de Platos (Cocina)"
-        subtitle={
-          totalAgotados > 0
-            ? pluralizar(totalAgotados, 'plato agotado', 'platos agotados')
-            : 'Todos los platos disponibles'
-        }
+        subtitle={`${pluralizar(disponiblesCount, 'plato disponible', 'platos disponibles')} · ${pluralizar(agotadosCount, 'agotado', 'agotados')}`}
         icon={<CalendarCheck className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarPlatos}
+        onRefresh={onRefresh}
         isRefreshing={cargando}
       />
 
-      {/* 2. Filtros y Búsqueda */}
-      <div className="p-4 space-y-3 bg-surface border-b border-line shrink-0">
-        <div className="relative">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+      {/* 2. Barra de Búsqueda Rápida Táctil */}
+      <div className="bg-surface border-b border-line px-4 py-2.5 shrink-0 flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
           <input
             type="text"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar plato en el menú de hoy..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-line bg-canvas text-xs focus:outline-primary"
+            placeholder="Buscar plato o categoría..."
+            className="w-full bg-canvas border border-line rounded-xl pl-9 pr-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary"
           />
         </div>
+      </div>
 
+      {/* 3. Filtros de Estado */}
+      <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
         <FilterChipBar
           chips={[
             { id: 'todos', label: 'Todos', count: platos.length },
-            { id: 'disponibles', label: 'Disponibles', count: platos.length - totalAgotados },
-            { id: 'agotados', label: 'Agotados', count: totalAgotados },
+            { id: 'disponibles', label: 'Disponibles', count: disponiblesCount },
+            { id: 'agotados', label: 'Agotados', count: agotadosCount },
           ]}
           activeId={filtro}
           onSelect={(id) => {
@@ -152,88 +121,110 @@ export const MenuDiaView: React.FC = () => {
         />
       </div>
 
-      {/* 3. Lista de Platos */}
+      {/* 4. Lista de Platos y Switch de Agotado */}
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
         {error && (
           <ErrorState
             mensaje={error}
-            onRetry={cargarPlatos}
+            onRetry={onRefresh}
             className="my-4"
           />
         )}
 
         {cargando && platos.length === 0 && (
-          <SkeletonList count={5} />
+          <SkeletonList count={6} />
         )}
 
-        {!error && !cargando && platos.length === 0 && (
+        {!error && !cargando && platosFiltrados.length === 0 && (
           <EmptyState
             icon={UtensilsCrossed}
-            titulo="Menú no registrado"
-            subtitulo="No se ha registrado el menú del día de hoy. Solicite al administrador o cajero que lo defina en el sistema web."
+            titulo="No se encontraron platos"
+            subtitulo="No hay platos registrados en el menú del día que coincidan con la búsqueda."
           />
         )}
 
         {platosFiltrados.map((plato) => {
-          const estaAgotado = plato.agotado;
-          const procesando = procesandoId === plato.productoId;
+          const esAgotado = plato.agotado;
+          const estaProcesando = procesandoId === plato.productoId;
 
           return (
             <Card
               key={plato.productoId}
-              accent={estaAgotado ? 'danger' : 'none'}
-              className="flex items-center justify-between select-none"
+              accent={esAgotado ? 'danger' : 'success'}
+              className={`flex items-center justify-between select-none ${
+                esAgotado ? 'bg-danger-bg/20' : ''
+              }`}
             >
-              <div className="space-y-1">
+              <div className="min-w-0 flex-1 pr-3">
                 <div className="flex items-center gap-2">
-                  <h3
-                    className={`text-base font-extrabold ${
-                      estaAgotado ? 'text-danger line-through opacity-80' : 'text-ink'
-                    }`}
-                  >
+                  <h3 className={`text-base font-extrabold truncate ${esAgotado ? 'text-ink-muted line-through' : 'text-ink'}`}>
                     {plato.nombre}
                   </h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-ink-muted font-semibold bg-canvas px-2 py-0.5 rounded-lg border border-line">
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-ink-muted font-medium">
                     {plato.categoria}
                   </span>
-                  {estaAgotado && (
-                    <span className="text-xs font-bold text-danger uppercase flex items-center gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>Agotado</span>
+                  {esAgotado && (
+                    <span className="text-xs font-black text-danger bg-danger-bg border border-danger-border px-1.5 py-0.5 rounded-sm">
+                      AGOTADO
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Botón táctil grande tipo switch de cocina */}
-              <button
-                type="button"
-                disabled={procesando}
-                onClick={() => handleToggleDisponibilidad(plato)}
-                className={`px-4 py-2.5 rounded-xl font-extrabold text-xs transition-transform active:scale-95 min-h-[44px] shrink-0 border cursor-pointer ${
-                  estaAgotado
-                    ? 'bg-danger text-white border-danger shadow-xs'
-                    : 'bg-canvas text-ink border-line hover:border-danger hover:text-danger'
-                }`}
-              >
-                {procesando ? 'Actualizando...' : estaAgotado ? 'Marcar Disponible' : 'Marcar Agotado'}
-              </button>
+              {/* Botón táctil para alternar agotado */}
+              {puedeModificar && (
+                <div className="shrink-0">
+                  {esAgotado ? (
+                    <button
+                      type="button"
+                      disabled={estaProcesando}
+                      onClick={() => ejecutarCambioDisponibilidad(plato, false)}
+                      className="bg-success text-white font-black text-xs px-3.5 py-2.5 rounded-xl min-h-[44px] flex items-center gap-1.5 active:scale-95 transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                    >
+                      <span>Habilitar</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={estaProcesando}
+                      onClick={() => {
+                        triggerLight();
+                        setPlatoParaAgotar(plato);
+                      }}
+                      className="bg-danger-bg text-danger border border-danger-border font-black text-xs px-3.5 py-2.5 rounded-xl min-h-[44px] flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Agotar</span>
+                    </button>
+                  )}
+                </div>
+              )}
             </Card>
           );
         })}
       </div>
 
+      {/* 5. Modal de Confirmación para Agotar Plato */}
       <ConfirmSheet
         isOpen={Boolean(platoParaAgotar)}
-        titulo="Marcar plato agotado"
-        mensaje={`¿Confirmar que el plato '${platoParaAgotar?.nombre}' se encuentra agotado? No podrá ser seleccionado en nuevos pedidos.`}
-        etiquetaConfirmar="Marcar Agotado"
-        tono="peligro"
-        cargando={Boolean(procesandoId && platoParaAgotar)}
-        onConfirmar={handleConfirmarAgotado}
         onCancelar={() => setPlatoParaAgotar(null)}
+        titulo="Confirmar Plato Agotado"
+        mensaje={
+          platoParaAgotar
+            ? `¿Desea marcar "${platoParaAgotar.nombre}" como agotado? Los mozos no podrán agregarlo a nuevas comandas.`
+            : ''
+        }
+        etiquetaConfirmar="Sí, marcar agotado"
+        etiquetaCancelar="Cancelar"
+        tono="peligro"
+        onConfirmar={async () => {
+          if (!platoParaAgotar) return;
+          const p = platoParaAgotar;
+          setPlatoParaAgotar(null);
+          await ejecutarCambioDisponibilidad(p, true);
+        }}
       />
     </div>
   );
