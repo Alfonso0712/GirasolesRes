@@ -7,7 +7,12 @@ import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { MODO_DEMO } from '../../config/appConfig';
-import { obtenerUrlBase, consumirMensajeRestablecimiento } from '../../config/serverConfig';
+import {
+  obtenerUrlBase,
+  consumirMensajeRestablecimiento,
+  formatearMarcaCompilacion,
+  extraerHost,
+} from '../../config/serverConfig';
 import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const DemoQuickAccess = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
@@ -227,7 +232,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         {MODO_DEMO && (
           <div className="pt-2 text-center space-y-1">
             <p className="text-xs font-medium text-ink-muted">
-              Versión de demostración
+              {formatearMarcaCompilacion()}
             </p>
             <button
               type="button"
@@ -238,7 +243,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-muted hover:text-accent transition-colors min-h-[44px] px-3 py-2 rounded-xl active:scale-95 focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Globe className="w-3.5 h-3.5 text-accent" />
-              <span>Servidor: {apiUrl}</span>
+              <span>Servidor: {extraerHost(apiUrl)}</span>
               <Pencil className="w-3.5 h-3.5 text-ink-muted" />
             </button>
 

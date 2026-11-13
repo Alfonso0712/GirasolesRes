@@ -283,3 +283,36 @@ export async function probarConexion(urlCandidata: string): Promise<ResultadoPru
     };
   }
 }
+
+/**
+ * Retorna la marca de compilación para modo demostración:
+ * "Versión de demostración · compilación dd/mm hh:mm"
+ */
+export function formatearMarcaCompilacion(): string {
+  try {
+    if (typeof __BUILD_INFO__ === 'undefined' || !__BUILD_INFO__?.timestamp) {
+      return 'Versión de demostración';
+    }
+    const d = new Date(__BUILD_INFO__.timestamp);
+    if (isNaN(d.getTime())) return 'Versión de demostración';
+    const dia = String(d.getDate()).padStart(2, '0');
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const hora = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `Versión de demostración · compilación ${dia}/${mes} ${hora}:${min}`;
+  } catch {
+    return 'Versión de demostración';
+  }
+}
+
+/**
+ * Extrae únicamente el host de una URL para visualización resumida.
+ */
+export function extraerHost(url: string): string {
+  try {
+    const parsed = new URL(url);
+    return parsed.host;
+  } catch {
+    return url.replace(/^https?:\/\//i, '').split('/')[0] || url;
+  }
+}

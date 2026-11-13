@@ -2,8 +2,16 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
+const buildIso = new Date().toISOString()
+
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  define: {
+    __BUILD_INFO__: JSON.stringify({
+      mode,
+      timestamp: buildIso,
+    }),
+  },
   plugins: [
     react(),
     tailwindcss()
@@ -19,4 +27,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))

@@ -7,6 +7,7 @@ import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
+import { formatearMarcaCompilacion } from '../../config/serverConfig';
 import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const ServidorConfigSheet = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
@@ -173,6 +174,11 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         />
         <p className="text-xs font-bold text-ink">Restaurante Girasoles</p>
         <p className="text-xs text-ink-muted">Terminal Móvil v1.0.0</p>
+        {MODO_DEMO && (
+          <p className="text-xs text-ink-muted mt-0.5 font-medium">
+            {formatearMarcaCompilacion()}
+          </p>
+        )}
       </div>
 
       {/* 4. Botón de Cerrar Sesión */}
