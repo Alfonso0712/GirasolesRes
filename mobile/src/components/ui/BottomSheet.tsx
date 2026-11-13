@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useId } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useBackHandler } from '../../hooks/useBackHandler';
@@ -21,7 +22,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const titleId = useId();
 
   useEffect(() => {
-    const mainContent = document.getElementById('root-content') || document.querySelector('main');
+    const mainContent = document.getElementById('main-content') || document.querySelector('main');
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       mainContent?.setAttribute('inert', '');
@@ -45,7 +46,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -84,6 +85,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         {/* Scrollable Content */}
         <div className="p-5 overflow-y-auto flex-1">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

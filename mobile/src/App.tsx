@@ -145,9 +145,19 @@ export const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await authService.logout();
-    setSession(null);
-    setMesaEnPedido(null);
+    try {
+      await Promise.race([
+        authService.logout(),
+        new Promise((resolve) => setTimeout(resolve, 2500)),
+      ]);
+    } catch {
+      // Garantizar cierre local incluso sin conexión
+    } finally {
+      localStorage.removeItem('GIRASOLES_TOKEN');
+      localStorage.removeItem('GIRASOLES_SESSION');
+      setSession(null);
+      setMesaEnPedido(null);
+    }
   };
 
   // Si no hay sesión activa -> mostrar pantalla de Login
@@ -174,7 +184,7 @@ export const App: React.FC = () => {
       />
 
       {/* 2. Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
-      <main className="flex-1 flex flex-col overflow-hidden relative">
+      <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative">
         <Suspense fallback={<ViewSkeleton />}>
           {/* Vista de Salón y Pedidos de Mesa */}
           {currentTab === 'salon' && (
