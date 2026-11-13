@@ -1,60 +1,39 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
-import {
-  Utensils,
-  ChefHat,
-  Receipt,
-  User,
-  BarChart3,
-  Lock,
-  Clock,
-  CalendarCheck,
-  ShoppingBag
-} from 'lucide-react';
-import type { UserSession, RolUsuario } from './types/auth';
-import type { MesaItem } from './types/mesa';
+import type { UserSession } from './types/auth';
 import { authService } from './services/authService';
 import { LoginView } from './components/auth/LoginView';
 import { ViewSkeleton } from './components/ui/ViewSkeleton';
 import { AppHeader } from './components/layout/AppHeader';
-import { BottomNav, type NavTabItem } from './components/layout/BottomNav';
+import { BottomNav } from './components/layout/BottomNav';
+import { AccesoRestringido } from './components/layout/AccesoRestringido';
 import { useToast } from './context/ToastContext';
 import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
+import {
+  pestanaInicial,
+  obtenerPestanasParaRol,
+} from './config/navigation';
 
-// Carga diferida (lazy loading) para vistas de rol para acelerar el arranque
-const MesasView = lazy(() => import('./components/mesas/MesasView').then(m => ({ default: m.MesasView })));
-const PedidoMesaView = lazy(() => import('./components/pedidos/PedidoMesaView').then(m => ({ default: m.PedidoMesaView })));
-const MisPedidosView = lazy(() => import('./components/pedidos/MisPedidosView').then(m => ({ default: m.MisPedidosView })));
-const KdsView = lazy(() => import('./components/cocina/KdsView').then(m => ({ default: m.KdsView })));
-const MenuDiaView = lazy(() => import('./components/cocina/MenuDiaView').then(m => ({ default: m.MenuDiaView })));
-const CobroView = lazy(() => import('./components/caja/CobroView').then(m => ({ default: m.CobroView })));
-const CajaTurnoView = lazy(() => import('./components/caja/CajaTurnoView').then(m => ({ default: m.CajaTurnoView })));
-const PedidoLlevarView = lazy(() => import('./components/caja/PedidoLlevarView').then(m => ({ default: m.PedidoLlevarView })));
-const AdminReportesView = lazy(() => import('./components/admin/AdminReportesView').then(m => ({ default: m.AdminReportesView })));
-const PerfilView = lazy(() => import('./components/perfil/PerfilView').then(m => ({ default: m.PerfilView })));
-
-const getDefaultTabForRole = (rol: RolUsuario): string => {
-  switch (rol) {
-    case 'Cocinero':
-      return 'kds';
-    case 'Cajero':
-      return 'caja';
-    case 'Administrador':
-      return 'reportes';
-    case 'Mozo':
-    default:
-      return 'salon';
-  }
-};
+// Carga diferida (lazy loading) para páginas orquestadoras por rol
+const SalonPage = lazy(() => import('./pages/SalonPage'));
+const PedidosPage = lazy(() => import('./pages/PedidosPage'));
+const CocinaPage = lazy(() => import('./pages/CocinaPage'));
+const PlatosPage = lazy(() => import('./pages/PlatosPage'));
+const CajaPage = lazy(() => import('./pages/CajaPage'));
+const CobrosPage = lazy(() => import('./pages/CobrosPage'));
+const LlevarPage = lazy(() => import('./pages/LlevarPage'));
+const ReportesPage = lazy(() => import('./pages/ReportesPage'));
+const InicioPage = lazy(() => import('./pages/InicioPage'));
+const PerfilPage = lazy(() => import('./pages/PerfilPage'));
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(() => authService.getStoredSession());
   const [activeTab, setActiveTab] = useState<string>(() => {
     const s = authService.getStoredSession();
-    return s ? getDefaultTabForRole(s.rol) : 'salon';
+    return s ? pestanaInicial(s.rol) : 'salon';
   });
-  const [mesaEnPedido, setMesaEnPedido] = useState<MesaItem | null>(null);
+  const [enPedidoModo, setEnPedidoModo] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
       return localStorage.getItem('girasoles_theme') === 'dark' || document.documentElement.classList.contains('dark');
@@ -75,56 +54,26 @@ export const App: React.FC = () => {
     markAppReady();
   }, []);
 
-  // Definición de pestañas permitidas estrictamente según el rol del usuario (RBAC)
-  const getTabsForRole = (rol: RolUsuario): NavTabItem[] => {
-    switch (rol) {
-      case 'Mozo':
-        return [
-          { id: 'salon', label: 'Salón', icon: Utensils },
-          { id: 'mis-pedidos', label: 'Pedidos', icon: Clock },
-          { id: 'perfil', label: 'Perfil', icon: User },
-        ];
-      case 'Cocinero':
-        return [
-          { id: 'kds', label: 'Cocina KDS', icon: ChefHat },
-          { id: 'menu-dia', label: 'Platos', icon: CalendarCheck },
-          { id: 'perfil', label: 'Perfil', icon: User },
-        ];
-      case 'Cajero':
-        return [
-          { id: 'caja', label: 'Caja', icon: Lock },
-          { id: 'cobros', label: 'Cobros', icon: Receipt },
-          { id: 'llevar', label: 'Llevar', icon: ShoppingBag },
-          { id: 'salon', label: 'Salón', icon: Utensils },
-          { id: 'perfil', label: 'Perfil', icon: User },
-        ];
-      case 'Administrador':
-      default:
-        return [
-          { id: 'reportes', label: 'Reportes', icon: BarChart3 },
-          { id: 'salon', label: 'Salón', icon: Utensils },
-          { id: 'caja', label: 'Caja Turno', icon: Lock },
-          { id: 'perfil', label: 'Perfil', icon: User },
-        ];
-    }
-  };
+  // Pestañas canónicas autorizadas para el rol del usuario autenticado
+  const tabsDisponibles = session ? obtenerPestanasParaRol(session.rol) : [];
+  const esTabAutorizada = tabsDisponibles.some((t) => t.id === activeTab);
+  const initialTabForRole = session ? pestanaInicial(session.rol) : 'salon';
 
-  const tabsDisponibles = session ? getTabsForRole(session.rol) : [];
-
-  // Derivación síncrona: si activeTab no pertenece al rol, renderizar la inicial del rol
-  const currentTab = tabsDisponibles.some((t) => t.id === activeTab)
-    ? activeTab
-    : (session ? getDefaultTabForRole(session.rol) : 'salon');
-
-  const initialTabForRole = session ? getDefaultTabForRole(session.rol) : 'salon';
+  // Al cambiar de pestaña, desplazar hacia arriba
+  const handleSelectTab = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    const mainEl = document.getElementById('main-content');
+    if (mainEl) mainEl.scrollTop = 0;
+  }, []);
 
   // Manejo del botón Atrás nativo de Android con prioridades
   useAndroidBackButton({
-    currentTab,
+    currentTab: activeTab,
     initialTab: initialTabForRole,
     onGoToInitialTab: () => {
       triggerLight();
-      setActiveTab(initialTabForRole);
+      handleSelectTab(initialTabForRole);
     },
     showToast,
   });
@@ -156,7 +105,7 @@ export const App: React.FC = () => {
       localStorage.removeItem('GIRASOLES_TOKEN');
       localStorage.removeItem('GIRASOLES_SESSION');
       setSession(null);
-      setMesaEnPedido(null);
+      setEnPedidoModo(false);
     }
   };
 
@@ -167,7 +116,7 @@ export const App: React.FC = () => {
         <LoginView
           onLoginSuccess={(s) => {
             setSession(s);
-            setActiveTab(getDefaultTabForRole(s.rol));
+            handleSelectTab(pestanaInicial(s.rol));
           }}
         />
       </div>
@@ -186,72 +135,101 @@ export const App: React.FC = () => {
       {/* 2. Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
       <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative min-h-0">
         <Suspense fallback={<ViewSkeleton />}>
-          {/* Vista de Salón y Pedidos de Mesa */}
-          {currentTab === 'salon' && (
-            mesaEnPedido ? (
-              <PedidoMesaView
-                mesa={mesaEnPedido}
-                rol={session.rol}
-                onVolver={() => setMesaEnPedido(null)}
-                onPedidoExitoso={(msg) => {
-                  setMesaEnPedido(null);
-                  showToast(msg);
-                }}
-              />
-            ) : (
-              <MesasView
-                onAbrirPedidoMesa={(mesa) => setMesaEnPedido(mesa)}
-                onNavigateToCobro={session.rol === 'Cajero' ? () => setActiveTab('cobros') : undefined}
-              />
-            )
-          )}
-
-          {/* Vista Mozo: Mis Pedidos */}
-          {currentTab === 'mis-pedidos' && <MisPedidosView />}
-
-          {/* Vista Cocinero: KDS */}
-          {currentTab === 'kds' && <KdsView />}
-
-          {/* Vista Cocinero: Control de Menú y Platos Agotados */}
-          {currentTab === 'menu-dia' && <MenuDiaView />}
-
-          {/* Vista Cajero y Admin: Gestión de Caja */}
-          {currentTab === 'caja' && (
-            <CajaTurnoView onNavigateToCobros={() => setActiveTab('cobros')} />
-          )}
-
-          {/* Vista Cajero: Cobros de Mesas */}
-          {currentTab === 'cobros' && <CobroView />}
-
-          {/* Vista Cajero: Pedido para Llevar */}
-          {currentTab === 'llevar' && (
-            <PedidoLlevarView
-              onPedidoCreado={(msg) => showToast(msg)}
-              onIrACobros={() => setActiveTab('cobros')}
+          {!esTabAutorizada ? (
+            <AccesoRestringido
+              onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
             />
-          )}
+          ) : (
+            <>
+              {activeTab === 'inicio' && (
+                <InicioPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  onNavigateTab={(tab) => handleSelectTab(tab)}
+                />
+              )}
 
-          {/* Vista Administrador: Reportes y KPIs */}
-          {currentTab === 'reportes' && <AdminReportesView />}
+              {activeTab === 'salon' && (
+                <SalonPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  onNavigateToCobro={session.rol === 'Cajero' ? () => handleSelectTab('cobros') : undefined}
+                  onShowToast={showToast}
+                  onPedidoModoChange={setEnPedidoModo}
+                />
+              )}
 
-          {/* Vista Perfil y Ajustes */}
-          {currentTab === 'perfil' && (
-            <PerfilView
-              session={session}
-              isDark={isDark}
-              onToggleDarkMode={toggleDarkMode}
-              onLogout={handleLogout}
-            />
+              {activeTab === 'pedidos' && (
+                <PedidosPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                />
+              )}
+
+              {activeTab === 'cocina' && (
+                <CocinaPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                />
+              )}
+
+              {activeTab === 'platos' && (
+                <PlatosPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                />
+              )}
+
+              {activeTab === 'caja' && (
+                <CajaPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  onNavigateToCobros={() => handleSelectTab('cobros')}
+                />
+              )}
+
+              {activeTab === 'cobros' && (
+                <CobrosPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                />
+              )}
+
+              {activeTab === 'llevar' && (
+                <LlevarPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  onShowToast={showToast}
+                  onIrACobros={() => handleSelectTab('cobros')}
+                />
+              )}
+
+              {activeTab === 'reportes' && (
+                <ReportesPage
+                  rol={session.rol}
+                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                />
+              )}
+
+              {activeTab === 'perfil' && (
+                <PerfilPage
+                  session={session}
+                  isDark={isDark}
+                  onToggleDarkMode={toggleDarkMode}
+                  onLogout={handleLogout}
+                />
+              )}
+            </>
           )}
         </Suspense>
       </main>
 
       {/* 3. Barra de Navegación Inferior Táctil Exclusiva por Rol */}
-      {!mesaEnPedido && (
+      {!enPedidoModo && (
         <BottomNav
           tabs={tabsDisponibles}
-          currentTab={currentTab}
-          onSelectTab={(tabId) => setActiveTab(tabId)}
+          currentTab={activeTab}
+          onSelectTab={handleSelectTab}
         />
       )}
     </div>
