@@ -15,22 +15,12 @@ export interface MenuDiaResponseDto {
 
 export const menuDiaService = {
   obtenerMenuHoy: async (): Promise<MenuDiaResponseDto> => {
-    try {
-      return await apiClient.get<MenuDiaResponseDto>('/menu-dia');
-    } catch {
-      return await apiClient.get<MenuDiaResponseDto>('/menudia/hoy');
-    }
+    return apiClient.get<MenuDiaResponseDto>('/menu-dia');
   },
 
   cambiarDisponibilidad: async (productoId: string, agotado: boolean): Promise<void> => {
-    try {
-      await apiClient.patch(`/menu-dia/hoy/platos/${productoId}/disponibilidad`, {
-        agotado,
-      });
-    } catch {
-      await apiClient.patch(`/menudia/platos/${productoId}/disponibilidad`, {
-        agotado,
-      });
-    }
+    await apiClient.patch(`/menu-dia/hoy/platos/${productoId}/disponibilidad`, {
+      agotado,
+    });
   },
 };

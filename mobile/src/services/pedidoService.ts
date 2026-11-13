@@ -8,60 +8,41 @@ import type {
   PedidoItemDto
 } from '../types/pedido';
 
-interface BackendProductoMenu {
+interface ProductoMenuPedidoDto {
   id: string;
   nombre: string;
-  categoria?: string;
-  precio?: number;
-  agotado?: boolean;
-  disponible?: boolean;
-  esMenuDelDia?: boolean;
-}
-
-interface BackendProductoDisponible {
-  id: string;
-  nombre: string;
-  tipo?: string;
-  categoria?: string;
-  precio?: number;
-  activo?: boolean;
+  categoria: string;
+  precio: number;
+  agotado: boolean;
+  disponible: boolean;
+  rol?: string | null;
 }
 
 export const pedidoService = {
   obtenerCatalogo: async (buscar?: string, categoria?: string): Promise<ProductoItem[]> => {
-    try {
-      const res = await apiClient.get<BackendProductoMenu[]>('/pedidos/catalogo-pedido');
-      if (Array.isArray(res)) {
-        return res.map((p) => ({
-          id: p.id,
-          nombre: p.nombre,
-          precio: typeof p.precio === 'number' ? p.precio : 0,
-          categoria: p.categoria || 'Carta',
-          disponible: !p.agotado && p.disponible !== false,
-          esMenuDelDia: Boolean(p.esMenuDelDia),
-        }));
-      }
-    } catch {
-      // Fallback a productos disponibles si catalogo-pedido no responde
+    const res = await apiClient.get<ProductoMenuPedidoDto[]>('/pedidos/catalogo-pedido');
+    if (!Array.isArray(res)) {
+      return [];
     }
 
-    const q = new URLSearchParams();
-    if (buscar) q.append('buscar', buscar);
-    if (categoria) q.append('categoria', categoria);
-    const qs = q.toString() ? `?${q.toString()}` : '';
+    let lista = res.map((p) => ({
+      id: p.id,
+      nombre: p.nombre,
+      precio: typeof p.precio === 'number' ? p.precio : 0,
+      categoria: p.categoria || 'Carta',
+      disponible: !p.agotado && p.disponible !== false,
+      esMenuDelDia: p.categoria === 'Menú del Día',
+    }));
 
-    const fallback = await apiClient.get<BackendProductoDisponible[]>(`/productos/disponibles${qs}`);
-    if (Array.isArray(fallback)) {
-      return fallback.map((p) => ({
-        id: p.id,
-        nombre: p.nombre,
-        precio: typeof p.precio === 'number' ? p.precio : 0,
-        categoria: p.categoria || p.tipo || 'Carta',
-        disponible: p.activo !== false,
-        esMenuDelDia: p.tipo === 'MenuDia' || p.categoria === 'Menú del Día',
-      }));
+    if (buscar && buscar.trim()) {
+      const b = buscar.trim().toLowerCase();
+      lista = lista.filter((p) => p.nombre.toLowerCase().includes(b));
     }
-    return [];
+    if (categoria && categoria.trim() && categoria !== 'Todos') {
+      lista = lista.filter((p) => p.categoria.toLowerCase() === categoria.trim().toLowerCase());
+    }
+
+    return lista;
   },
 
   listarPedidos: async (params?: { soloMios?: boolean; estado?: string }): Promise<PedidoItemDto[]> => {
@@ -70,11 +51,8 @@ export const pedidoService = {
     if (params?.estado) q.append('estado', params.estado);
     const qs = q.toString() ? `?${q.toString()}` : '';
 
-    const res = await apiClient.get<ListarPedidosResponseDto | PedidoItemDto[]>(`/pedidos${qs}`);
-    if (Array.isArray(res)) {
-      return res;
-    }
-    if (res && Array.isArray(res.items)) {
+    const res = await apiClient.get<ListarPedidosResponseDto>(`/pedidos${qs}`);
+    if (Array.isArray(res?.items)) {
       return res.items;
     }
     return [];
