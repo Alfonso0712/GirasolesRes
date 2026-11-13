@@ -2,7 +2,7 @@ import React from 'react';
 import { Inbox } from 'lucide-react';
 import { Button } from './Button';
 
-interface EmptyStateProps {
+export interface EmptyStateProps {
   icon?: React.ComponentType<{ className?: string }>;
   titulo: string;
   subtitulo?: string;
@@ -24,8 +24,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     <div
       className={`flex flex-col items-center justify-center p-8 text-center rounded-2xl bg-surface border border-line ${className}`}
     >
-      <div className="w-12 h-12 rounded-full bg-chip-accent-bg text-accent flex items-center justify-center mb-3 shrink-0">
-        <Icon className="w-6 h-6" />
+      <div className="w-12 h-12 rounded-full bg-chip-accent-bg text-accent border border-chip-accent-border flex items-center justify-center mb-3 shrink-0">
+        <Icon className="w-6 h-6" aria-hidden="true" />
       </div>
       <h3 className="text-sm font-bold text-ink mb-1">{titulo}</h3>
       {subtitulo && (
