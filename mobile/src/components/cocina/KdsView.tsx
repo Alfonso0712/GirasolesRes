@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { ChefHat, Clock, CheckCircle2, Flame, RefreshCw } from 'lucide-react';
+import { ChefHat, Clock, CheckCircle2, Flame } from 'lucide-react';
 import { comandaService } from '../../services/comandaService';
 import type { ComandaItem } from '../../types/comanda';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { Card } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
+import { FilterChipBar } from '../ui/FilterChipBar';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { pluralizar } from '../../utils/format';
 
 export const KdsView: React.FC = () => {
@@ -58,65 +63,32 @@ export const KdsView: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* Header KDS */}
-      <div className="bg-surface border-b border-line px-5 py-3 shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
-            <ChefHat className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">Pantalla KDS Cocina</h2>
-            <p className="text-xs text-ink-muted">
-              {pluralizar(comandas.length, 'comanda en proceso', 'comandas en proceso')}
-            </p>
-          </div>
-        </div>
+      {/* 1. Encabezado KDS */}
+      <PageHeader
+        title="Pantalla KDS Cocina"
+        subtitle={pluralizar(comandas.length, 'comanda en proceso', 'comandas en proceso')}
+        icon={<ChefHat className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarComandas}
+        isRefreshing={cargando}
+      />
 
-        <div className="flex items-center gap-2">
-          {/* Filtros */}
-          <div className="hidden sm:flex gap-1.5 bg-canvas border border-line p-1 rounded-xl">
-            <button
-              type="button"
-              onClick={() => { triggerLight(); setFiltro('todas'); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                filtro === 'todas' ? 'bg-primary text-white' : 'text-ink-muted'
-              }`}
-            >
-              Todas
-            </button>
-            <button
-              type="button"
-              onClick={() => { triggerLight(); setFiltro('pendientes'); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                filtro === 'pendientes' ? 'bg-primary text-white' : 'text-ink-muted'
-              }`}
-            >
-              Pendientes
-            </button>
-            <button
-              type="button"
-              onClick={() => { triggerLight(); setFiltro('enPreparacion'); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                filtro === 'enPreparacion' ? 'bg-primary text-white' : 'text-ink-muted'
-              }`}
-            >
-              En Preparación
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={cargarComandas}
-            disabled={cargando}
-            aria-label="Actualizar comandas"
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-          </button>
-        </div>
+      {/* 2. Filtros de Estado */}
+      <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
+        <FilterChipBar
+          chips={[
+            { id: 'todas', label: 'Todas', count: comandas.length },
+            { id: 'pendientes', label: 'Pendientes', count: comandas.filter((c) => c.estado === 'pendiente').length },
+            { id: 'enPreparacion', label: 'En preparación', count: comandas.filter((c) => c.estado === 'enPreparacion').length },
+          ]}
+          activeId={filtro}
+          onSelect={(id) => {
+            triggerLight();
+            setFiltro(id as typeof filtro);
+          }}
+        />
       </div>
 
-      {/* Grid de Comandas KDS */}
+      {/* 3. Grid de Comandas KDS */}
       <div className="flex-1 overflow-y-auto p-4">
         {error && (
           <ErrorState
@@ -124,6 +96,10 @@ export const KdsView: React.FC = () => {
             onRetry={cargarComandas}
             className="my-4"
           />
+        )}
+
+        {cargando && comandas.length === 0 && (
+          <SkeletonList count={4} />
         )}
 
         {!error && !cargando && comandasFiltradas.length === 0 && (
@@ -139,17 +115,13 @@ export const KdsView: React.FC = () => {
             {comandasFiltradas.map((comanda) => {
               const esCritico = comanda.minutosEspera >= 20;
               const esAlerta = comanda.minutosEspera >= 10 && !esCritico;
+              const estadoCanonico = comanda.estado === 'pendiente' ? 'Pendiente' : 'En preparación';
 
               return (
-                <div
+                <Card
                   key={comanda.id}
-                  className={`bg-surface rounded-2xl border-2 flex flex-col justify-between shadow-sm select-none overflow-hidden ${
-                    esCritico
-                      ? 'border-danger'
-                      : esAlerta
-                      ? 'border-warning'
-                      : 'border-line'
-                  }`}
+                  accent={esCritico ? 'danger' : esAlerta ? 'warning' : comanda.estado === 'pendiente' ? 'warning' : 'info'}
+                  className="flex flex-col justify-between shadow-sm select-none p-0 overflow-hidden"
                 >
                   {/* Cabecera de comanda */}
                   <div
@@ -162,19 +134,22 @@ export const KdsView: React.FC = () => {
                     }`}
                   >
                     <div>
-                      <span className="text-xs font-bold uppercase tracking-wider block">
-                        Comanda #{comanda.numero}
-                      </span>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-xs font-bold uppercase tracking-wider block">
+                          Comanda #{comanda.numero}
+                        </span>
+                        <StatusBadge estado={estadoCanonico} />
+                      </div>
                       <h3 className="text-base font-extrabold">{comanda.mesaNombre}</h3>
                     </div>
 
                     <div className="text-right flex items-center gap-1 font-black text-sm">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-4 h-4" aria-hidden="true" />
                       <span>{pluralizar(comanda.minutosEspera, 'minuto', 'minutos')}</span>
                     </div>
                   </div>
 
-                  {/* Lista de platos en tamaño grande para cocinero */}
+                  {/* Lista de platos en tamaño legible para cocina */}
                   <div className="p-4 space-y-3 flex-1">
                     {comanda.lineas.map((l, idx) => (
                       <div key={idx} className="border-b border-line/60 pb-2 last:border-0">
@@ -194,23 +169,23 @@ export const KdsView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleCambiarEstado(comanda.id, 'enPreparacion')}
-                        className="w-full bg-primary hover:bg-primary-hover text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md"
+                        className="w-full bg-primary hover:bg-primary-hover text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md cursor-pointer"
                       >
-                        <Flame className="w-5 h-5" />
+                        <Flame className="w-5 h-5" aria-hidden="true" />
                         <span>Empezar Preparación</span>
                       </button>
                     ) : (
                       <button
                         type="button"
                         onClick={() => handleCambiarEstado(comanda.id, 'lista')}
-                        className="w-full bg-success hover:opacity-90 text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md"
+                        className="w-full bg-success hover:opacity-90 text-white font-black py-4 rounded-xl min-h-[56px] text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-98 shadow-md cursor-pointer"
                       >
-                        <CheckCircle2 className="w-5 h-5" />
+                        <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
                         <span>Marcar Listo para Servir</span>
                       </button>
                     )}
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>

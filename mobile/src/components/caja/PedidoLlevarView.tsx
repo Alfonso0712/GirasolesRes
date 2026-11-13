@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Plus, Minus, Search, Send, User, AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Search, Send, User, AlertCircle, UtensilsCrossed } from 'lucide-react';
 import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
 import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
+import { FilterChipBar } from '../ui/FilterChipBar';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -155,33 +159,19 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* Header */}
-      <div className="bg-surface border-b border-line px-5 py-3 shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
-            <ShoppingBag className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">Pedido para Llevar</h2>
-            <p className="text-xs text-ink-muted">Toma rápida de órdenes de mostrador</p>
-          </div>
-        </div>
+      {/* 1. Encabezado */}
+      <PageHeader
+        title="Pedido para Llevar"
+        subtitle="Toma rápida de órdenes de mostrador"
+        icon={<ShoppingBag className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarCatalogo}
+        isRefreshing={cargando}
+      />
 
-        <button
-          type="button"
-          onClick={cargarCatalogo}
-          disabled={cargando}
-          aria-label="Actualizar catálogo"
-          className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-        </button>
-      </div>
-
-      {/* Referencia de Cliente & Buscador */}
+      {/* 2. Referencia de Cliente & Buscador */}
       <div className="bg-surface border-b border-line px-4 py-2.5 shrink-0 space-y-2">
         <div className="relative">
-          <User className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
+          <User className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
           <input
             type="text"
             value={referencia}
@@ -192,7 +182,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         </div>
 
         <div className="relative">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
           <input
             type="text"
             value={busqueda}
@@ -203,28 +193,17 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         </div>
 
         {/* Chips de Categorías */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-          {categorias.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => {
-                triggerLight();
-                setCategoriaActiva(cat);
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all min-h-[36px] ${
-                categoriaActiva === cat
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'bg-canvas text-ink-muted border border-line'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <FilterChipBar
+          chips={categorias.map((cat) => ({ id: cat, label: cat }))}
+          activeId={categoriaActiva}
+          onSelect={(cat) => {
+            triggerLight();
+            setCategoriaActiva(cat);
+          }}
+        />
       </div>
 
-      {/* Catálogo de Productos */}
+      {/* 3. Catálogo de Productos */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-24">
         {errorCarga && (
           <ErrorState
@@ -232,6 +211,10 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
             onRetry={cargarCatalogo}
             className="my-4"
           />
+        )}
+
+        {cargando && catalogo.length === 0 && (
+          <SkeletonList count={5} />
         )}
 
         {!errorCarga && !cargando && productosFiltrados.length === 0 && (
@@ -245,9 +228,9 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         {productosFiltrados.map((prod) => {
           const linea = lineas.find((l) => l.productoId === prod.id);
           return (
-            <div
+            <Card
               key={prod.id}
-              className="bg-surface border border-line rounded-2xl p-3.5 flex items-center justify-between shadow-xs select-none"
+              className="p-3.5 flex items-center justify-between shadow-xs select-none"
             >
               <div className="flex-1 pr-3">
                 <h3 className="text-sm font-bold text-ink">{prod.nombre}</h3>
@@ -257,35 +240,38 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
               </div>
 
               {linea ? (
-                <div className="flex items-center gap-2 bg-canvas border border-line rounded-xl p-1">
+                <div className="flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
                   <button
                     type="button"
                     onClick={() => modificarCantidad(prod.id, -1)}
-                    className="w-9 h-9 rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs"
+                    aria-label={`Quitar uno de ${prod.nombre}`}
+                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="w-4 h-4" aria-hidden="true" />
                   </button>
-                  <span className="text-sm font-black text-ink min-w-[20px] text-center">
+                  <span className="text-sm font-black text-ink min-w-[24px] text-center tabular-nums">
                     {linea.cantidad}
                   </span>
                   <button
                     type="button"
                     onClick={() => modificarCantidad(prod.id, 1)}
-                    className="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs"
+                    aria-label={`Agregar uno más de ${prod.nombre}`}
+                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => agregarProducto(prod)}
-                  className="w-11 h-11 rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0"
+                  aria-label={`Agregar ${prod.nombre} al pedido`}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-5 h-5" aria-hidden="true" />
                 </button>
               )}
-            </div>
+            </Card>
           );
         })}
       </div>

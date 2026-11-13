@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, Plus, Minus, Trash2, Send, Search, AlertCircle, RefreshCw, UtensilsCrossed } from 'lucide-react';
+import { Plus, Minus, Trash2, Send, Search, AlertCircle, UtensilsCrossed } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
 import type { RolUsuario } from '../../types/auth';
@@ -7,7 +7,11 @@ import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
+import { Card } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
+import { FilterChipBar } from '../ui/FilterChipBar';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -179,43 +183,20 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* 1. Header Fijo Superior */}
-      <div className="bg-surface border-b border-line px-4 py-3 shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={solicitarVolver}
-            aria-label="Volver a Mesas"
-            className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">{mesa.nombre}</h2>
-            <p className="text-xs text-ink-muted">Toma de Pedido de Salón</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant={mesa.ocupacion === 'Libre' ? 'success' : 'danger'}>
-            {mesa.ocupacion}
-          </Badge>
-          <button
-            type="button"
-            onClick={cargarProductos}
-            disabled={cargando}
-            aria-label="Actualizar catálogo"
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-          </button>
-        </div>
-      </div>
+      {/* 1. Header con Botón Volver */}
+      <PageHeader
+        title={mesa.nombre}
+        subtitle="Toma de Pedido de Salón"
+        onVolver={solicitarVolver}
+        actions={<StatusBadge estado={mesa.ocupacion} />}
+        onRefresh={cargarProductos}
+        isRefreshing={cargando}
+      />
 
       {/* 2. Buscador y Categorías Horizontales */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0 space-y-2">
         <div className="relative">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
           <input
             type="text"
             value={busqueda}
@@ -225,26 +206,14 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           />
         </div>
 
-        {/* Chips de Categorías Horizontales Táctiles con Scroll */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-          {categorias.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => {
-                triggerLight();
-                setCategoriaActiva(cat);
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all min-h-[36px] ${
-                categoriaActiva === cat
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'bg-canvas text-ink-muted border border-line hover:text-ink'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <FilterChipBar
+          chips={categorias.map((cat) => ({ id: cat, label: cat }))}
+          activeId={categoriaActiva}
+          onSelect={(cat) => {
+            triggerLight();
+            setCategoriaActiva(cat);
+          }}
+        />
       </div>
 
       {/* 3. Catálogo Táctil de Platos */}
@@ -255,6 +224,10 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             onRetry={cargarProductos}
             className="my-4"
           />
+        )}
+
+        {cargando && catalogo.length === 0 && (
+          <SkeletonList count={5} />
         )}
 
         {!errorCarga && !cargando && productosFiltrados.length === 0 && (
@@ -268,9 +241,9 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         {productosFiltrados.map((prod) => {
           const lineaActual = lineas.find((l) => l.productoId === prod.id);
           return (
-            <div
+            <Card
               key={prod.id}
-              className="bg-surface border border-line rounded-2xl p-3.5 flex items-center justify-between shadow-xs select-none"
+              className="p-3.5 flex items-center justify-between shadow-xs select-none"
             >
               <div className="flex-1 pr-3">
                 <div className="flex items-center gap-1.5">
@@ -293,37 +266,40 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                 )}
               </div>
 
-              {/* Botones de acción rápida en la tarjeta */}
+              {/* Botones de acción rápida en la tarjeta (mínimo 44px de área táctil) */}
               {lineaActual ? (
-                <div className="flex items-center gap-2 bg-canvas border border-line rounded-xl p-1">
+                <div className="flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
                   <button
                     type="button"
                     onClick={() => modificarCantidad(prod.id, -1)}
-                    className="w-9 h-9 rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs"
+                    aria-label={`Quitar uno de ${prod.nombre}`}
+                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="w-4 h-4" aria-hidden="true" />
                   </button>
-                  <span className="text-sm font-black text-ink min-w-[20px] text-center">
+                  <span className="text-sm font-black text-ink min-w-[24px] text-center tabular-nums">
                     {lineaActual.cantidad}
                   </span>
                   <button
                     type="button"
                     onClick={() => modificarCantidad(prod.id, 1)}
-                    className="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs"
+                    aria-label={`Agregar uno más de ${prod.nombre}`}
+                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => agregarProducto(prod)}
-                  className="w-11 h-11 rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0"
+                  aria-label={`Agregar ${prod.nombre} a la comanda`}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-5 h-5" aria-hidden="true" />
                 </button>
               )}
-            </div>
+            </Card>
           );
         })}
       </div>

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Clock, PlusCircle, Receipt } from 'lucide-react';
+import { Utensils, Clock, PlusCircle, Receipt } from 'lucide-react';
 import { mesaService } from '../../services/mesaService';
 import type { MesaItem } from '../../types/mesa';
-import { Badge } from '../ui/Badge';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
+import { FilterChipBar } from '../ui/FilterChipBar';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -67,50 +71,28 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* 1. Barra de Estado del Salón y Filtros */}
-      <div className="bg-surface border-b border-line px-4 py-3 shrink-0 space-y-2.5">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-extrabold text-ink">Salón de Mesas</h2>
-            <p className="text-xs text-ink-muted">
-              {pluralizar(libresCount, 'libre', 'libres')} · {pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={cargarMesas}
-            disabled={cargando}
-            aria-label="Actualizar mesas"
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink-muted hover:text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-          </button>
-        </div>
+      {/* 1. Encabezado y Filtros */}
+      <PageHeader
+        title="Salón y Mesas"
+        subtitle={`${pluralizar(libresCount, 'libre', 'libres')} · ${pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}`}
+        icon={<Utensils className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarMesas}
+        isRefreshing={cargando}
+      />
 
-        {/* Chips de Filtro Horizontal Táctil */}
-        <div className="flex gap-2">
-          {[
-            { id: 'todas' as const, label: `Todas (${mesas.length})` },
-            { id: 'libres' as const, label: `Libres (${libresCount})` },
-            { id: 'ocupadas' as const, label: `Ocupadas (${ocupadasCount})` },
-          ].map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => {
-                triggerLight();
-                setFiltro(f.id);
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all min-h-[36px] ${
-                filtro === f.id
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'bg-canvas text-ink-muted hover:text-ink border border-line'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+      <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
+        <FilterChipBar
+          chips={[
+            { id: 'todas', label: 'Todas', count: mesas.length },
+            { id: 'libres', label: 'Libres', count: libresCount },
+            { id: 'ocupadas', label: 'Ocupadas', count: ocupadasCount },
+          ]}
+          activeId={filtro}
+          onSelect={(id) => {
+            triggerLight();
+            setFiltro(id as 'todas' | 'libres' | 'ocupadas');
+          }}
+        />
       </div>
 
       {/* 2. Grilla Táctil de Mesas (2 col en celular, 3-4 col en tablet) */}
@@ -121,6 +103,10 @@ export const MesasView: React.FC<MesasViewProps> = ({
             onRetry={cargarMesas}
             className="my-4"
           />
+        )}
+
+        {cargando && mesas.length === 0 && (
+          <SkeletonList count={6} />
         )}
 
         {!error && !cargando && mesasFiltradas.length === 0 && (
@@ -135,21 +121,16 @@ export const MesasView: React.FC<MesasViewProps> = ({
             {mesasFiltradas.map((mesa) => {
               const esLibre = mesa.ocupacion === 'Libre';
               return (
-                <button
+                <Card
                   key={mesa.id}
-                  type="button"
+                  interactive
+                  accent={esLibre ? 'success' : 'warning'}
                   onClick={() => handleMesaClick(mesa)}
-                  className={`p-3.5 rounded-2xl border text-left transition-all active:scale-95 flex flex-col justify-between min-h-[110px] shadow-xs select-none ${
-                    esLibre
-                      ? 'bg-surface border-success-border/70 hover:border-success'
-                      : 'bg-surface border-danger-border/70 hover:border-danger'
-                  }`}
+                  className="flex flex-col justify-between min-h-[116px]"
                 >
                   <div className="flex items-center justify-between w-full">
                     <span className="text-base font-extrabold text-ink">{mesa.nombre}</span>
-                    <Badge variant={esLibre ? 'success' : 'danger'}>
-                      {mesa.ocupacion}
-                    </Badge>
+                    <StatusBadge estado={mesa.ocupacion} />
                   </div>
 
                   <div className="mt-3 flex items-center justify-between text-xs text-ink-muted">
@@ -159,7 +140,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
                     {!esLibre && mesa.minutosOcupada && (
                       <span className="inline-flex items-center gap-1 font-bold text-danger shrink-0">
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                         <span>{pluralizar(mesa.minutosOcupada, 'min', 'mins')}</span>
                       </span>
                     )}
@@ -170,7 +151,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
                       {formatCurrency(mesa.totalPendiente)}
                     </div>
                   )}
-                </button>
+                </Card>
               );
             })}
           </div>

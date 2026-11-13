@@ -4,6 +4,7 @@ import { useHaptics } from '../../hooks/useHaptics';
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   variant?: 'default' | 'interactive';
+  interactive?: boolean;
   accent?: 'none' | 'success' | 'warning' | 'danger' | 'info';
   padding?: 'none' | 'sm' | 'md' | 'lg';
   className?: string;
@@ -13,6 +14,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Card: React.FC<CardProps> = ({
   children,
   variant = 'default',
+  interactive,
   accent = 'none',
   padding = 'md',
   className = '',
@@ -21,7 +23,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   const { triggerLight } = useHaptics();
 
-  const isInteractive = variant === 'interactive' || Boolean(onClick);
+  const isInteractive = variant === 'interactive' || Boolean(interactive) || Boolean(onClick);
 
   const paddingStyles = {
     none: 'p-0',

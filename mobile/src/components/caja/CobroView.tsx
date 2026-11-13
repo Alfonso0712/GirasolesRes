@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Receipt,
-  RefreshCw,
   Banknote,
   Smartphone,
   Check,
@@ -15,6 +14,10 @@ import type { CajaActualResponseDto } from '../../types/caja';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
@@ -131,34 +134,18 @@ export const CobroView: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* Header */}
-      <div className="bg-surface border-b border-line px-5 py-3 shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
-            <Receipt className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">Caja y Cobro Rápido</h2>
-            <p className="text-xs text-ink-muted">
-              {pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={cargarDatos}
-          disabled={cargando}
-          aria-label="Actualizar cobros"
-          className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
-        >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-        </button>
-      </div>
+      {/* 1. Encabezado */}
+      <PageHeader
+        title="Caja y Cobro Rápido"
+        subtitle={pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
+        icon={<Receipt className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarDatos}
+        isRefreshing={cargando}
+      />
 
       {cajaCerrada && (
         <div className="m-4 p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger flex items-center gap-3">
-          <Lock className="w-5 h-5 shrink-0" />
+          <Lock className="w-5 h-5 shrink-0" aria-hidden="true" />
           <p className="text-xs font-bold leading-relaxed">
             No se puede registrar cobros porque la caja está cerrada. Un cajero debe realizar la apertura de caja.
           </p>
@@ -174,8 +161,12 @@ export const CobroView: React.FC = () => {
         </div>
       )}
 
-      {/* Lista de Cuentas Pendientes */}
+      {/* 2. Lista de Cuentas Pendientes */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {cargando && pedidos.length === 0 && (
+          <SkeletonList count={4} />
+        )}
+
         {!errorCarga && !cargando && pedidos.length === 0 && (
           <EmptyState
             icon={Receipt}
@@ -185,18 +176,19 @@ export const CobroView: React.FC = () => {
         )}
 
         {pedidos.map((p) => (
-          <div
+          <Card
             key={p.pedidoId}
-            className="bg-surface border border-line rounded-2xl p-4 flex items-center justify-between shadow-xs select-none"
+            accent="warning"
+            className="flex items-center justify-between shadow-xs select-none"
           >
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
-                <span className="text-xs text-ink-muted">
-                  ({pluralizar(p.cantidadLineas, 'plato', 'platos')})
-                </span>
+                <StatusBadge estado="Pendiente" />
               </div>
-              <p className="text-xs text-ink-muted mt-0.5">Atendido por: {p.mozoNombre}</p>
+              <p className="text-xs text-ink-muted mt-1">
+                {pluralizar(p.cantidadLineas, 'plato', 'platos')} · Mozo: {p.mozoNombre}
+              </p>
               <p className="text-lg font-black text-accent mt-1 tabular-nums">{formatCurrency(p.total)}</p>
             </div>
 
@@ -208,7 +200,7 @@ export const CobroView: React.FC = () => {
             >
               Cobrar
             </Button>
-          </div>
+          </Card>
         ))}
       </div>
 

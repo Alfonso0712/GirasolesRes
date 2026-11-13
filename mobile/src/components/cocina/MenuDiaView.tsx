@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { CalendarCheck, RefreshCw, AlertTriangle, Search, UtensilsCrossed } from 'lucide-react';
+import { CalendarCheck, AlertTriangle, Search, UtensilsCrossed } from 'lucide-react';
 import { menuDiaService } from '../../services/menuDiaService';
 import type { PlatoMenuDiaDto } from '../../services/menuDiaService';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { Card } from '../ui/Card';
+import { FilterChipBar } from '../ui/FilterChipBar';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { useToast } from '../../context/ToastContext';
 import { pluralizar } from '../../utils/format';
@@ -108,37 +112,23 @@ export const MenuDiaView: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* 1. Header Fijo */}
-      <div className="bg-surface border-b border-line px-5 py-3 shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
-            <CalendarCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">Control de Platos (Cocina)</h2>
-            <p className="text-xs text-ink-muted">
-              {totalAgotados > 0
-                ? pluralizar(totalAgotados, 'plato agotado', 'platos agotados')
-                : 'Todos los platos disponibles'}
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={cargarPlatos}
-          disabled={cargando}
-          aria-label="Actualizar platos"
-          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
-        >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-        </button>
-      </div>
+      {/* 1. Encabezado */}
+      <PageHeader
+        title="Control de Platos (Cocina)"
+        subtitle={
+          totalAgotados > 0
+            ? pluralizar(totalAgotados, 'plato agotado', 'platos agotados')
+            : 'Todos los platos disponibles'
+        }
+        icon={<CalendarCheck className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarPlatos}
+        isRefreshing={cargando}
+      />
 
       {/* 2. Filtros y Búsqueda */}
       <div className="p-4 space-y-3 bg-surface border-b border-line shrink-0">
         <div className="relative">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
             type="text"
             value={busqueda}
@@ -148,27 +138,18 @@ export const MenuDiaView: React.FC = () => {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { id: 'todos' as const, label: `Todos (${platos.length})` },
-            { id: 'disponibles' as const, label: `Disponibles (${platos.length - totalAgotados})` },
-            { id: 'agotados' as const, label: `Agotados (${totalAgotados})` },
-          ].map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => {
-                triggerLight();
-                setFiltro(f.id);
-              }}
-              className={`py-2 rounded-xl text-xs font-bold transition-all min-h-[38px] ${
-                filtro === f.id ? 'bg-primary text-white shadow-xs' : 'bg-canvas text-ink-muted border border-line'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+        <FilterChipBar
+          chips={[
+            { id: 'todos', label: 'Todos', count: platos.length },
+            { id: 'disponibles', label: 'Disponibles', count: platos.length - totalAgotados },
+            { id: 'agotados', label: 'Agotados', count: totalAgotados },
+          ]}
+          activeId={filtro}
+          onSelect={(id) => {
+            triggerLight();
+            setFiltro(id as typeof filtro);
+          }}
+        />
       </div>
 
       {/* 3. Lista de Platos */}
@@ -179,6 +160,10 @@ export const MenuDiaView: React.FC = () => {
             onRetry={cargarPlatos}
             className="my-4"
           />
+        )}
+
+        {cargando && platos.length === 0 && (
+          <SkeletonList count={5} />
         )}
 
         {!error && !cargando && platos.length === 0 && (
@@ -194,13 +179,10 @@ export const MenuDiaView: React.FC = () => {
           const procesando = procesandoId === plato.productoId;
 
           return (
-            <div
+            <Card
               key={plato.productoId}
-              className={`p-4 rounded-2xl border transition-all flex items-center justify-between shadow-xs select-none ${
-                estaAgotado
-                  ? 'bg-danger-bg/40 border-danger-border/70'
-                  : 'bg-surface border-line'
-              }`}
+              accent={estaAgotado ? 'danger' : 'none'}
+              className="flex items-center justify-between select-none"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -218,7 +200,7 @@ export const MenuDiaView: React.FC = () => {
                   </span>
                   {estaAgotado && (
                     <span className="text-xs font-bold text-danger uppercase flex items-center gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5" />
+                      <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Agotado</span>
                     </span>
                   )}
@@ -230,7 +212,7 @@ export const MenuDiaView: React.FC = () => {
                 type="button"
                 disabled={procesando}
                 onClick={() => handleToggleDisponibilidad(plato)}
-                className={`px-4 py-2.5 rounded-xl font-extrabold text-xs transition-transform active:scale-95 min-h-[44px] shrink-0 border ${
+                className={`px-4 py-2.5 rounded-xl font-extrabold text-xs transition-transform active:scale-95 min-h-[44px] shrink-0 border cursor-pointer ${
                   estaAgotado
                     ? 'bg-danger text-white border-danger shadow-xs'
                     : 'bg-canvas text-ink border-line hover:border-danger hover:text-danger'
@@ -238,7 +220,7 @@ export const MenuDiaView: React.FC = () => {
               >
                 {procesando ? 'Actualizando...' : estaAgotado ? 'Marcar Disponible' : 'Marcar Agotado'}
               </button>
-            </div>
+            </Card>
           );
         })}
       </div>

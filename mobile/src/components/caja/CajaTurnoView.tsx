@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, RefreshCw, AlertCircle, DollarSign, Smartphone, Check, ArrowRight } from 'lucide-react';
+import { Lock, Unlock, DollarSign, Smartphone, Check, ArrowRight } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import type { CajaActualResponseDto, CierreResumenDto } from '../../types/caja';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
+import { StatCard } from '../ui/StatCard';
+import { StatusBadge } from '../ui/StatusBadge';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
+import { PageHeader } from '../layout/PageHeader';
 import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -148,33 +152,17 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* Header */}
-      <div className="bg-surface border-b border-line px-5 py-3 shrink-0 flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-extrabold text-ink leading-tight">Gestión de Caja</h2>
-          <p className="text-xs text-ink-muted">Apertura, arqueo y cierre del turno</p>
-        </div>
-        <button
-          type="button"
-          onClick={cargarCaja}
-          disabled={cargando}
-          aria-label="Actualizar caja"
-          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
-        >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-        </button>
-      </div>
+      {/* 1. Encabezado */}
+      <PageHeader
+        title="Gestión de Caja"
+        subtitle={estaAbierta ? 'Caja abierta y operativa' : 'Caja cerrada'}
+        icon={<Lock className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarCaja}
+        isRefreshing={cargando}
+      />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {error && (
-          <div className="p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Si no hay datos y hubo error de carga inicial */}
-        {!cajaActual && !cargando && error && (
           <ErrorState
             mensaje={error}
             onRetry={cargarCaja}
@@ -185,7 +173,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
         {/* 1. Tarjeta de Estado de Caja */}
         {cajaActual && (
           <>
-            <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-4">
+            <Card
+              accent={estaAbierta ? 'success' : 'danger'}
+              className="space-y-4"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
@@ -193,7 +184,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                       estaAbierta ? 'bg-success-bg text-success' : 'bg-danger-bg text-danger'
                     }`}
                   >
-                    {estaAbierta ? <Unlock className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
+                    {estaAbierta ? <Unlock className="w-6 h-6" aria-hidden="true" /> : <Lock className="w-6 h-6" aria-hidden="true" />}
                   </div>
                   <div>
                     <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
@@ -205,15 +196,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                   </div>
                 </div>
 
-                <span
-                  className={`text-xs font-extrabold px-3 py-1 rounded-full uppercase ${
-                    estaAbierta
-                      ? 'bg-success-bg text-success border border-success-border'
-                      : 'bg-danger-bg text-danger border border-danger-border'
-                  }`}
-                >
-                  {estaAbierta ? 'Abierta' : 'Cerrada'}
-                </span>
+                <StatusBadge estado={estaAbierta ? 'Abierta' : 'Cerrada'} />
               </div>
 
               {estaAbierta && apertura && (
@@ -226,7 +209,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                   </p>
                 </div>
               )}
-            </div>
+            </Card>
 
             {/* 2. Métricas del Turno Actual (Solo si está abierta) */}
             {estaAbierta && parcial && (
@@ -236,45 +219,31 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                 </h3>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                    <span className="text-xs text-ink-muted font-bold block">Total Facturado</span>
-                    <span className="text-xl font-black text-accent block mt-1 tabular-nums">
-                      {formatCurrency(parcial.totalVentas)}
-                    </span>
-                    <span className="text-xs text-ink-muted mt-0.5 block">
-                      {pluralizar(parcial.cantidadVentas, 'comprobante', 'comprobantes')}
-                    </span>
-                  </div>
+                  <StatCard
+                    titulo="Total Facturado"
+                    valor={formatCurrency(parcial.totalVentas)}
+                    subtitulo={pluralizar(parcial.cantidadVentas, 'comprobante', 'comprobantes')}
+                  />
 
-                  <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                    <span className="text-xs text-ink-muted font-bold block">Efectivo en Caja</span>
-                    <span className="text-xl font-black text-success block mt-1 tabular-nums">
-                      {formatCurrency(apertura!.montoInicial + parcial.totalEfectivo)}
-                    </span>
-                    <span className="text-xs text-ink-muted mt-0.5 block">Incluye fondo inicial</span>
-                  </div>
+                  <StatCard
+                    titulo="Efectivo en Caja"
+                    valor={formatCurrency(apertura!.montoInicial + parcial.totalEfectivo)}
+                    subtitulo="Incluye fondo inicial"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-chip-accent-bg text-accent flex items-center justify-center shrink-0">
-                      <DollarSign className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="text-xs text-ink-muted block font-semibold">Ventas Efectivo</span>
-                      <span className="text-sm font-extrabold text-ink tabular-nums">{formatCurrency(parcial.totalEfectivo)}</span>
-                    </div>
-                  </div>
+                  <StatCard
+                    titulo="Ventas Efectivo"
+                    valor={formatCurrency(parcial.totalEfectivo)}
+                    icon={<DollarSign className="w-4 h-4 text-accent" aria-hidden="true" />}
+                  />
 
-                  <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-info-bg text-info flex items-center justify-center shrink-0">
-                      <Smartphone className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="text-xs text-ink-muted block font-semibold">Ventas Yape / Plin</span>
-                      <span className="text-sm font-extrabold text-ink tabular-nums">{formatCurrency(parcial.totalYape)}</span>
-                    </div>
-                  </div>
+                  <StatCard
+                    titulo="Ventas Yape / Plin"
+                    valor={formatCurrency(parcial.totalYape)}
+                    icon={<Smartphone className="w-4 h-4 text-info" aria-hidden="true" />}
+                  />
                 </div>
               </div>
             )}

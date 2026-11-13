@@ -8,8 +8,10 @@ export interface FilterChipItem<T extends string = string> {
 }
 
 export interface FilterChipBarProps<T extends string = string> {
-  items: Array<FilterChipItem<T>>;
-  selectedId: T;
+  items?: Array<FilterChipItem<T>>;
+  chips?: Array<FilterChipItem<T>>;
+  selectedId?: T;
+  activeId?: T;
   onSelect: (id: T) => void;
   className?: string;
   'aria-label'?: string;
@@ -17,11 +19,15 @@ export interface FilterChipBarProps<T extends string = string> {
 
 export function FilterChipBar<T extends string = string>({
   items,
+  chips,
   selectedId,
+  activeId,
   onSelect,
   className = '',
   'aria-label': ariaLabel = 'Filtros',
 }: FilterChipBarProps<T>): React.ReactElement {
+  const chipList = items || chips || [];
+  const currentSelected = (selectedId ?? activeId) as T;
   const containerRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLButtonElement>(null);
 
@@ -33,7 +39,7 @@ export function FilterChipBar<T extends string = string>({
         inline: 'center',
       });
     }
-  }, [selectedId]);
+  }, [currentSelected]);
 
   return (
     <div className={`relative w-full ${className}`}>
@@ -50,8 +56,8 @@ export function FilterChipBar<T extends string = string>({
         aria-label={ariaLabel}
         className="flex gap-2 overflow-x-auto px-1 py-1 [scrollbar-width:none] [-webkit-overflow-scrolling:touch]"
       >
-        {items.map((item) => {
-          const isSelected = item.id === selectedId;
+        {chipList.map((item) => {
+          const isSelected = item.id === currentSelected;
           return (
             <div key={item.id} ref={isSelected ? (activeRef as unknown as React.RefObject<HTMLDivElement>) : undefined}>
               <FilterChip

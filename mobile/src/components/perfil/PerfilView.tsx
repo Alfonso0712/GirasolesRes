@@ -2,6 +2,7 @@ import React, { useState, Suspense, lazy } from 'react';
 import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -45,7 +46,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-canvas pb-28">
       {/* 1. Tarjeta de Usuario */}
-      <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs flex items-center gap-4">
+      <Card className="p-5 flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-2xl shadow-sm">
           {session.nombre.charAt(0)}
         </div>
@@ -54,15 +55,15 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             {session.nombre} {session.apellido}
           </h2>
           <span className="inline-flex items-center gap-1 text-xs font-bold text-accent bg-chip-accent-bg border border-chip-accent-border px-2.5 py-0.5 rounded-full mt-1">
-            <Shield className="w-3 h-3" />
+            <Shield className="w-3 h-3" aria-hidden="true" />
             <span>Rol: {session.rol}</span>
           </span>
           <p className="text-xs text-ink-muted mt-1">{session.correo}</p>
         </div>
-      </div>
+      </Card>
 
       {/* 2. Preferencias de Pantalla */}
-      <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-4">
+      <Card className="p-5 space-y-4">
         <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
           Ajustes del Terminal Móvil
         </h3>
@@ -71,7 +72,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         <div className="flex items-center justify-between min-h-[48px]">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
-              {isDark ? <Moon className="w-5 h-5 text-accent" /> : <Sun className="w-5 h-5 text-ink" />}
+              {isDark ? <Moon className="w-5 h-5 text-accent" aria-hidden="true" /> : <Sun className="w-5 h-5 text-ink" aria-hidden="true" />}
             </div>
             <div>
               <p className="text-sm font-bold text-ink">Modo Oscuro</p>
@@ -84,7 +85,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             aria-checked={isDark}
             onClick={onToggleDarkMode}
             aria-label="Alternar modo oscuro"
-            className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full"
+            className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full cursor-pointer"
           >
             <div
               className={`w-12 h-7 rounded-full p-1 transition-colors ${
@@ -104,7 +105,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px]">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
-              <Vibrate className="w-5 h-5" />
+              <Vibrate className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
               <p className="text-sm font-bold text-ink">Respuesta Háptica</p>
@@ -115,14 +116,14 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             Probar
           </Button>
         </div>
-      </div>
+      </Card>
 
       {/* 3. Conexión de Red / Servidor Backend (Exclusivo para Modo Demostración) */}
       {MODO_DEMO && (
-        <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
+        <Card className="p-5 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-ink">
-              <Globe className="w-4 h-4 text-accent" />
+              <Globe className="w-4 h-4 text-accent" aria-hidden="true" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Servidor de Backend (.NET 8)
               </h3>
@@ -144,7 +145,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             }}
             className="flex items-center justify-center gap-2 min-h-[44px]"
           >
-            <Pencil className="w-3.5 h-3.5" />
+            <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Configurar Dirección del Servidor</span>
           </Button>
 
@@ -157,7 +158,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
               />
             </Suspense>
           )}
-        </div>
+        </Card>
       )}
 
       {/* Marca y Versión del Terminal */}

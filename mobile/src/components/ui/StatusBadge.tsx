@@ -14,7 +14,8 @@ import {
 export type StatusCategory = 'mesa' | 'pedido' | 'caja' | 'general';
 
 export interface StatusBadgeProps {
-  status: string | boolean;
+  status?: string | boolean;
+  estado?: string | boolean;
   category?: StatusCategory;
   className?: string;
   label?: string;
@@ -102,11 +103,13 @@ function resolveStatus(status: string | boolean, category?: StatusCategory): Sta
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
+  estado,
   category,
   className = '',
   label: customLabel,
 }) => {
-  const config = resolveStatus(status, category);
+  const finalStatus = (status ?? estado ?? '') as string | boolean;
+  const config = resolveStatus(finalStatus, category);
   const Icon = config.icon;
   const label = customLabel || config.label;
 

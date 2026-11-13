@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, DollarSign, Smartphone, RefreshCw, ShoppingBag, Lock } from 'lucide-react';
+import { BarChart3, TrendingUp, DollarSign, Smartphone, ShoppingBag, Lock } from 'lucide-react';
 import { reporteService } from '../../services/reporteService';
 import { cajaService } from '../../services/cajaService';
 import type { ReporteVentasResponse, ItemPlatoVendido } from '../../types/reporte';
 import type { HistorialCierresItemDto } from '../../types/caja';
+import { Card } from '../ui/Card';
+import { StatCard } from '../ui/StatCard';
+import { FilterChipBar } from '../ui/FilterChipBar';
+import { SkeletonList } from '../ui/Skeleton';
+import { PageHeader } from '../layout/PageHeader';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
@@ -48,51 +53,30 @@ export const AdminReportesView: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
-      {/* Header */}
-      <div className="bg-surface border-b border-line px-5 py-3 shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
-            <BarChart3 className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-extrabold text-ink leading-tight">Métricas y Reportes</h2>
-            <p className="text-xs text-ink-muted">Visión gerencial de ventas y rendimiento</p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={cargarDatos}
-          disabled={cargando}
-          aria-label="Actualizar datos"
-          className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
-        >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
-        </button>
-      </div>
+      {/* 1. Encabezado */}
+      <PageHeader
+        title="Métricas y Reportes"
+        subtitle="Visión gerencial de ventas y rendimiento"
+        icon={<BarChart3 className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={cargarDatos}
+        isRefreshing={cargando}
+      />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Filtros de Período */}
-        <div className="grid grid-cols-3 gap-2 bg-surface border border-line p-1.5 rounded-2xl shadow-xs">
-          {[
-            { id: 'hoy' as const, label: 'Hoy' },
-            { id: '7dias' as const, label: '7 Días' },
-            { id: 'mes' as const, label: 'Este Mes' },
-          ].map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => {
-                triggerLight();
-                setPeriodo(p.id);
-              }}
-              className={`py-2 rounded-xl text-xs font-bold transition-all min-h-[44px] focus-visible:ring-2 focus-visible:ring-accent ${
-                periodo === p.id ? 'bg-primary text-white shadow-xs' : 'text-ink-muted'
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
+        {/* 2. Filtros de Período */}
+        <div className="bg-surface border border-line p-1.5 rounded-2xl shadow-xs">
+          <FilterChipBar
+            chips={[
+              { id: 'hoy', label: 'Hoy' },
+              { id: '7dias', label: '7 Días' },
+              { id: 'mes', label: 'Este Mes' },
+            ]}
+            activeId={periodo}
+            onSelect={(p) => {
+              triggerLight();
+              setPeriodo(p as typeof periodo);
+            }}
+          />
         </div>
 
         {error && (
@@ -103,6 +87,10 @@ export const AdminReportesView: React.FC = () => {
           />
         )}
 
+        {cargando && !reporteVentas && (
+          <SkeletonList count={3} />
+        )}
+
         {!error && !cargando && sinDatos && (
           <EmptyState
             icon={BarChart3}
@@ -111,58 +99,38 @@ export const AdminReportesView: React.FC = () => {
           />
         )}
 
-        {/* 1. KPIs Destacados */}
+        {/* 3. KPIs Destacados */}
         {reporteVentas && !sinDatos && (
           <div className="space-y-3">
-            {/* KPI Principal */}
-            <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs relative overflow-hidden">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-                  Ventas Totales
-                </span>
-                <span className="text-xs font-bold text-success bg-success-bg border border-success-border px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                  <span>Activo</span>
-                </span>
-              </div>
-              <p className="text-3xl font-black text-accent tabular-nums">
-                {formatCurrency(reporteVentas.total)}
-              </p>
-              <p className="text-xs text-ink-muted mt-1">
-                {pluralizar(reporteVentas.nVentas, 'pedido registrado', 'pedidos registrados')} en este período
-              </p>
-            </div>
+            <StatCard
+              titulo="Ventas Totales"
+              valor={formatCurrency(reporteVentas.total)}
+              subtitulo={`${pluralizar(reporteVentas.nVentas, 'pedido registrado', 'pedidos registrados')} en este período`}
+              icon={<TrendingUp className="w-5 h-5 text-success" aria-hidden="true" />}
+            />
 
             {/* Desglose por método de pago */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                <div className="w-8 h-8 rounded-xl bg-chip-accent-bg text-accent flex items-center justify-center mb-2">
-                  <DollarSign className="w-4 h-4" />
-                </div>
-                <span className="text-xs text-ink-muted font-bold block">En Efectivo</span>
-                <span className="text-lg font-black text-ink mt-0.5 block tabular-nums">
-                  {formatCurrency(reporteVentas.efectivo)}
-                </span>
-              </div>
+              <StatCard
+                titulo="En Efectivo"
+                valor={formatCurrency(reporteVentas.efectivo)}
+                icon={<DollarSign className="w-4 h-4 text-accent" aria-hidden="true" />}
+              />
 
-              <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                <div className="w-8 h-8 rounded-xl bg-info-bg text-info flex items-center justify-center mb-2">
-                  <Smartphone className="w-4 h-4" />
-                </div>
-                <span className="text-xs text-ink-muted font-bold block">En Yape / Plin</span>
-                <span className="text-lg font-black text-ink mt-0.5 block tabular-nums">
-                  {formatCurrency(reporteVentas.yape)}
-                </span>
-              </div>
+              <StatCard
+                titulo="En Yape / Plin"
+                valor={formatCurrency(reporteVentas.yape)}
+                icon={<Smartphone className="w-4 h-4 text-info" aria-hidden="true" />}
+              />
             </div>
           </div>
         )}
 
-        {/* 2. Platos Más Vendidos */}
+        {/* 4. Platos Más Vendidos */}
         {topPlatos.length > 0 && (
-          <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
+          <Card className="p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-accent" />
+              <ShoppingBag className="w-4 h-4 text-accent" aria-hidden="true" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Platos Más Vendidos
               </h3>
@@ -192,14 +160,14 @@ export const AdminReportesView: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         )}
 
-        {/* 3. Historial de Cierres de Caja */}
+        {/* 5. Historial de Cierres de Caja */}
         {cierres.length > 0 && (
-          <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
+          <Card className="p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-accent" />
+              <Lock className="w-4 h-4 text-accent" aria-hidden="true" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Cierres de Caja Recientes
               </h3>
@@ -235,7 +203,7 @@ export const AdminReportesView: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </div>
