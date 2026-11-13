@@ -209,7 +209,7 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
         {/* Ayuda con formato y ejemplos en trato de usted */}
         <div className="p-3.5 bg-canvas border border-line rounded-2xl text-xs text-ink-muted space-y-1.5">
           <p className="font-bold text-ink">Instrucciones de configuración:</p>
-          <ul className="list-disc list-inside space-y-1 text-[11px] leading-relaxed">
+          <ul className="list-disc list-inside space-y-1 text-xs leading-relaxed">
             <li>
               <strong className="text-ink">Emulador de Android:</strong>{' '}
               <code className="font-mono bg-surface px-1.5 py-0.5 rounded border border-line">

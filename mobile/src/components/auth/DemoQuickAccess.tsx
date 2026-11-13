@@ -18,7 +18,7 @@ export const DemoQuickAccess: React.FC<DemoQuickAccessProps> = ({ onQuickLogin }
     <>
       <div className="relative flex py-2 items-center">
         <div className="flex-grow border-t border-line"></div>
-        <span className="shrink-0 px-3 text-[11px] font-bold text-ink-muted uppercase">
+        <span className="shrink-0 px-3 text-xs font-semibold text-ink-muted uppercase">
           Acceso Rápido por Rol
         </span>
         <div className="flex-grow border-t border-line"></div>
@@ -32,10 +32,10 @@ export const DemoQuickAccess: React.FC<DemoQuickAccessProps> = ({ onQuickLogin }
               key={acc.rol}
               type="button"
               onClick={() => onQuickLogin(acc.usuario, acc.contrasena)}
-              className="p-2 rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all"
+              className="p-2 min-h-[44px] rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-accent"
             >
-              <Icon className="w-4 h-4 text-primary mx-auto mb-1" />
-              <span className="text-[10px] font-bold block text-ink truncate">{acc.rol}</span>
+              <Icon className="w-4 h-4 text-accent mx-auto mb-1" />
+              <span className="text-xs font-bold block text-ink truncate">{acc.rol}</span>
             </button>
           );
         })}

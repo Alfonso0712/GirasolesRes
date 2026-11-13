@@ -136,7 +136,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
           aria-label="Actualizar caja"
           className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
 
@@ -222,31 +222,31 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
                     <span className="text-xs text-ink-muted font-bold block">Total Facturado</span>
-                    <span className="text-xl font-black text-primary block mt-1">
+                    <span className="text-xl font-black text-accent block mt-1 tabular-nums">
                       {formatCurrency(parcial.totalVentas)}
                     </span>
-                    <span className="text-[11px] text-ink-muted mt-0.5 block">
+                    <span className="text-xs text-ink-muted mt-0.5 block">
                       {pluralizar(parcial.cantidadVentas, 'comprobante', 'comprobantes')}
                     </span>
                   </div>
 
                   <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
                     <span className="text-xs text-ink-muted font-bold block">Efectivo en Caja</span>
-                    <span className="text-xl font-black text-success block mt-1">
+                    <span className="text-xl font-black text-success block mt-1 tabular-nums">
                       {formatCurrency(apertura!.montoInicial + parcial.totalEfectivo)}
                     </span>
-                    <span className="text-[11px] text-ink-muted mt-0.5 block">Incluye fondo inicial</span>
+                    <span className="text-xs text-ink-muted mt-0.5 block">Incluye fondo inicial</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-surface border border-line rounded-2xl p-3.5 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-chip-accent-bg text-primary flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-chip-accent-bg text-accent flex items-center justify-center shrink-0">
                       <DollarSign className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-[11px] text-ink-muted block font-semibold">Ventas Efectivo</span>
-                      <span className="text-sm font-extrabold text-ink">{formatCurrency(parcial.totalEfectivo)}</span>
+                      <span className="text-xs text-ink-muted block font-semibold">Ventas Efectivo</span>
+                      <span className="text-sm font-extrabold text-ink tabular-nums">{formatCurrency(parcial.totalEfectivo)}</span>
                     </div>
                   </div>
 
@@ -255,8 +255,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                       <Smartphone className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-[11px] text-ink-muted block font-semibold">Ventas Yape / Plin</span>
-                      <span className="text-sm font-extrabold text-ink">{formatCurrency(parcial.totalYape)}</span>
+                      <span className="text-xs text-ink-muted block font-semibold">Ventas Yape / Plin</span>
+                      <span className="text-sm font-extrabold text-ink tabular-nums">{formatCurrency(parcial.totalYape)}</span>
                     </div>
                   </div>
                 </div>
@@ -323,7 +323,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
 
           <div className="bg-canvas border border-line rounded-2xl p-3 text-center">
             <span className="text-xs text-ink-muted block">Monto Inicial</span>
-            <span className="text-3xl font-black text-primary">
+            <span className="text-3xl font-black text-accent tabular-nums">
               {formatCurrency(parseFloat(montoApertura) || 0)}
             </span>
           </div>
@@ -348,15 +348,15 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
             <div className="bg-canvas border border-line rounded-2xl p-3.5 space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-ink-muted">Fondo Inicial:</span>
-                <span className="font-bold">{formatCurrency(resumenCierre.montoInicial)}</span>
+                <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.montoInicial)}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-ink-muted">Ventas Efectivo:</span>
-                <span className="font-bold">{formatCurrency(resumenCierre.ventasEfectivo)}</span>
+                <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.ventasEfectivo)}</span>
               </div>
               <div className="border-t border-line pt-2 flex justify-between items-center">
                 <span className="text-xs font-black text-ink">Efectivo Esperado:</span>
-                <span className="text-xl font-black text-primary">
+                <span className="text-xl font-black text-accent tabular-nums">
                   {formatCurrency(esperado)}
                 </span>
               </div>
@@ -365,8 +365,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
             {/* Comparación Contado vs Esperado */}
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="bg-canvas border border-line p-2 rounded-xl">
-                <span className="text-[11px] text-ink-muted block">Efectivo Contado</span>
-                <span className="text-lg font-black text-ink">
+                <span className="text-xs text-ink-muted block">Efectivo Contado</span>
+                <span className="text-lg font-black text-ink tabular-nums">
                   {formatCurrency(parseFloat(efectivoContado) || 0)}
                 </span>
               </div>
@@ -380,10 +380,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
                     : 'bg-warning-bg border-warning-border text-warning'
                 }`}
               >
-                <span className="text-[11px] block">
+                <span className="text-xs font-bold block">
                   {dif === 0 ? 'Cuadra Exacto' : dif < 0 ? 'Faltante' : 'Sobrante'}
                 </span>
-                <span className="text-lg font-black">
+                <span className="text-lg font-black tabular-nums">
                   {formatCurrency(Math.abs(dif))}
                 </span>
               </div>

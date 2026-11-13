@@ -148,7 +148,7 @@ export const CobroView: React.FC = () => {
           aria-label="Actualizar cobros"
           className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
 
@@ -204,12 +204,12 @@ export const CobroView: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
-                <span className="text-[11px] text-ink-muted">
+                <span className="text-xs text-ink-muted">
                   ({pluralizar(p.cantidadLineas, 'plato', 'platos')})
                 </span>
               </div>
               <p className="text-xs text-ink-muted mt-0.5">Atendido por: {p.mozoNombre}</p>
-              <p className="text-lg font-black text-primary mt-1">{formatCurrency(p.total)}</p>
+              <p className="text-lg font-black text-accent mt-1 tabular-nums">{formatCurrency(p.total)}</p>
             </div>
 
             <Button
@@ -243,7 +243,7 @@ export const CobroView: React.FC = () => {
             <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
               <div>
                 <p className="text-xs text-ink-muted">Total de la Cuenta</p>
-                <p className="text-2xl font-black text-primary">{formatCurrency(total)}</p>
+                <p className="text-2xl font-black text-accent tabular-nums">{formatCurrency(total)}</p>
               </div>
 
               {/* Selector de comprobante: móvil solo emite Ticket */}
@@ -251,7 +251,7 @@ export const CobroView: React.FC = () => {
                 <span className="text-xs font-bold text-ink bg-surface border border-line px-3 py-1.5 rounded-xl block">
                   Ticket de Venta
                 </span>
-                <span className="text-[10px] text-ink-muted mt-1 block">
+                <span className="text-xs text-ink-muted mt-1 block">
                   Boleta / Factura: Disponible en la versión web
                 </span>
               </div>
@@ -291,8 +291,8 @@ export const CobroView: React.FC = () => {
               <div className="space-y-3 pt-1">
                 <div className="grid grid-cols-2 gap-2 text-center">
                   <div className="bg-canvas border border-line p-2 rounded-xl">
-                    <span className="text-[11px] text-ink-muted block">Monto Recibido</span>
-                    <span className="text-lg font-black text-ink">
+                    <span className="text-xs text-ink-muted block">Monto Recibido</span>
+                    <span className="text-lg font-black text-ink tabular-nums">
                       {formatCurrency(parseFloat(montoRecibido) || 0)}
                     </span>
                   </div>
@@ -304,10 +304,10 @@ export const CobroView: React.FC = () => {
                         : 'bg-success-bg border-success-border text-success'
                     }`}
                   >
-                    <span className="text-[11px] block">
+                    <span className="text-xs block font-semibold">
                       {saldoFaltante > 0 ? 'Falta Pagar' : 'Vuelto'}
                     </span>
-                    <span className="text-lg font-black">
+                    <span className="text-lg font-black tabular-nums">
                       {formatCurrency(saldoFaltante > 0 ? saldoFaltante : vuelto)}
                     </span>
                   </div>
@@ -343,7 +343,7 @@ export const CobroView: React.FC = () => {
       >
         {pedidoSeleccionado && (
           <div className="space-y-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-chip-accent-bg text-accent flex items-center justify-center mx-auto">
               <Receipt className="w-6 h-6" />
             </div>
 

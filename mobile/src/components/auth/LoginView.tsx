@@ -72,7 +72,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <p className="text-xs text-ink-muted mt-0.5 font-medium">Terminal Móvil y Tablet Operativo</p>
 
           {MODO_DEMO && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-warning-bg border border-warning-border text-warning text-[11px] font-bold mt-2 shadow-2xs">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-warning-bg border border-warning-border text-warning text-xs font-semibold mt-2 shadow-2xs">
               <span>Modo demostración</span>
             </div>
           )}
@@ -119,9 +119,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                   setMostrarContrasena(!mostrarContrasena);
                 }}
                 aria-label={mostrarContrasena ? 'Ocultar contraseña' : 'Ver contraseña'}
-                className="absolute right-2 top-1.5 w-10 h-10 flex items-center justify-center text-ink-muted hover:text-ink active:scale-95 transition-transform"
+                className="absolute right-1.5 top-1 w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-ink-muted hover:text-ink active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
               >
-                {mostrarContrasena ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {mostrarContrasena ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
@@ -146,7 +146,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         {/* 3. Configuración de Conexión al Backend y Pie de Demostración */}
         {MODO_DEMO && (
           <div className="pt-2 text-center space-y-1">
-            <p className="text-[11px] font-medium text-ink-muted">
+            <p className="text-xs font-medium text-ink-muted">
               Versión de demostración
             </p>
             <button
@@ -155,9 +155,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 triggerLight();
                 setMostrarSheetServidor(true);
               }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-muted hover:text-primary transition-colors min-h-[44px] px-3 py-2 rounded-xl active:scale-95"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-muted hover:text-accent transition-colors min-h-[44px] px-3 py-2 rounded-xl active:scale-95 focus-visible:ring-2 focus-visible:ring-accent"
             >
-              <Globe className="w-3.5 h-3.5 text-primary" />
+              <Globe className="w-3.5 h-3.5 text-accent" />
               <span>Servidor: {apiUrl}</span>
               <Pencil className="w-3.5 h-3.5 text-ink-muted" />
             </button>

@@ -53,7 +53,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           <h2 className="text-base font-extrabold text-ink">
             {session.nombre} {session.apellido}
           </h2>
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full mt-1">
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-accent bg-chip-accent-bg border border-chip-accent-border px-2.5 py-0.5 rounded-full mt-1">
             <Shield className="w-3 h-3" />
             <span>Rol: {session.rol}</span>
           </span>
@@ -68,41 +68,47 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         </h3>
 
         {/* Modo Oscuro */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between min-h-[48px]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
-              {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+              {isDark ? <Moon className="w-5 h-5 text-accent" /> : <Sun className="w-5 h-5 text-ink" />}
             </div>
             <div>
               <p className="text-sm font-bold text-ink">Modo Oscuro</p>
-              <p className="text-[11px] text-ink-muted">Recomendado para turnos nocturnos y pantallas KDS</p>
+              <p className="text-xs text-ink-muted">Recomendado para turnos nocturnos y pantallas KDS</p>
             </div>
           </div>
           <button
             type="button"
+            role="switch"
+            aria-checked={isDark}
             onClick={onToggleDarkMode}
             aria-label="Alternar modo oscuro"
-            className={`w-12 h-7 rounded-full p-1 transition-colors ${
-              isDark ? 'bg-primary' : 'bg-line'
-            }`}
+            className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full"
           >
             <div
-              className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                isDark ? 'translate-x-5' : 'translate-x-0'
+              className={`w-12 h-7 rounded-full p-1 transition-colors ${
+                isDark ? 'bg-primary' : 'bg-line'
               }`}
-            />
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-surface transition-transform ${
+                  isDark ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </div>
           </button>
         </div>
 
         {/* Test de Vibración Háptica */}
-        <div className="flex items-center justify-between pt-2 border-t border-line">
+        <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
-              <Vibrate className="w-4 h-4" />
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+              <Vibrate className="w-5 h-5" />
             </div>
             <div>
               <p className="text-sm font-bold text-ink">Respuesta Háptica</p>
-              <p className="text-[11px] text-ink-muted">Vibración táctil al interactuar y confirmar acciones</p>
+              <p className="text-xs text-ink-muted">Vibración táctil al interactuar y confirmar acciones</p>
             </div>
           </div>
           <Button size="sm" variant="outline" onClick={triggerLight}>
@@ -116,12 +122,12 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-ink">
-              <Globe className="w-4 h-4 text-primary" />
+              <Globe className="w-4 h-4 text-accent" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Servidor de Backend (.NET 8)
               </h3>
             </div>
-            <span className="text-[10px] uppercase font-bold text-warning bg-warning-bg border border-warning-border px-2 py-0.5 rounded-full">
+            <span className="text-xs uppercase font-semibold text-warning bg-warning-bg border border-warning-border px-2 py-0.5 rounded-full">
               Demo
             </span>
           </div>
@@ -165,7 +171,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           className="w-10 h-10 object-contain mb-1 rounded-lg"
         />
         <p className="text-xs font-bold text-ink">Restaurante Girasoles</p>
-        <p className="text-[10px] text-ink-muted">Terminal Móvil v1.0.0</p>
+        <p className="text-xs text-ink-muted">Terminal Móvil v1.0.0</p>
       </div>
 
       {/* 4. Botón de Cerrar Sesión */}

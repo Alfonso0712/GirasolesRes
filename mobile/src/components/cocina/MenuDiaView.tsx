@@ -102,7 +102,7 @@ export const MenuDiaView: React.FC = () => {
           aria-label="Actualizar platos"
           className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
 
@@ -192,12 +192,12 @@ export const MenuDiaView: React.FC = () => {
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-ink-muted font-semibold bg-canvas px-2 py-0.5 rounded-lg border border-line">
+                  <span className="text-xs text-ink-muted font-semibold bg-canvas px-2 py-0.5 rounded-lg border border-line">
                     {plato.categoria}
                   </span>
                   {estaAgotado && (
-                    <span className="text-[10px] font-black text-danger uppercase flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3" />
+                    <span className="text-xs font-bold text-danger uppercase flex items-center gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5" />
                       <span>Agotado</span>
                     </span>
                   )}

@@ -20,6 +20,7 @@
   --color-accent: #B84500;
   --color-line: #E5E0DB;
   --color-line-soft: #F0EBE6;
+  --color-line-strong: #E5E0DB;
   --color-sidebar: #482813;
 
   /* Estados Semánticos Operativos */
@@ -36,10 +37,28 @@
   --color-info-bg: #EFF6FF;
   --color-info-border: #BFDBFE;
 
-  /* Superficies para Mobile */
+  /* Superficies y Tokens Móvil / Web */
+  --color-surface-raised: #FFFFFF;
+  --color-surface-success: #F4F9F4;
+  --color-surface-warm: #F5EBE1;
+  --color-surface-soft: #FDFBF9;
+
   --color-chip-accent-bg: #FFF6EE;
   --color-chip-accent-border: #FAD8BE;
   --color-chip-accent-hover: #FFEAD8;
+
+  --color-notice-bg: #FEF9EE;
+  --color-notice-border: #FCE8B3;
+  --color-notice-text: #7A4B13;
+
+  --color-demo-border: #D5CCC3;
+  --color-demo-divider: #EFEAE5;
+  --color-brand-tint: #FFF3E0;
+  --color-fill-strong: #171717;
+  --color-fill-strong-soft: #262626;
+
+  --color-modal-close-hover-bg: #F3F4F6;
+  --color-modal-close-hover-text: #374151;
 }
 
 @media screen {
@@ -47,23 +66,53 @@
     color-scheme: dark;
     --color-canvas: #1B1A19;
     --color-surface: #252320;
+    --color-surface-raised: #2E2B28;
+    --color-surface-success: #102418;
+    --color-surface-warm: #34302D;
+    --color-surface-soft: #252320;
+
     --color-ink: #F5F5F5;
     --color-ink-muted: #B0B0B0;
     --color-ink-faint: #9A948F;
+
     --color-line: #3A3634;
     --color-line-soft: #2E2B28;
+    --color-line-strong: #7A7270;
+
     --color-accent: #E8B49A;
+
     --color-success: #34D399;
     --color-success-bg: #102418;
     --color-success-border: #1F5238;
+
     --color-warning: #FBBF24;
     --color-warning-bg: #2A2412;
     --color-warning-border: #5A4A1A;
+
     --color-danger: #F87171;
     --color-danger-bg: #2A1414;
     --color-danger-border: #5C2626;
+
     --color-info: #60A5FA;
-    --color-info-bg: #1E293B;
+    --color-info-bg: #141E2E;
+    --color-info-border: #264A7A;
+
+    --color-chip-accent-bg: #3A2A22;
+    --color-chip-accent-border: #5A3A2C;
+    --color-chip-accent-hover: #4A3326;
+
+    --color-notice-bg: #2A2412;
+    --color-notice-border: #5A4A1A;
+    --color-notice-text: #FCD34D;
+
+    --color-demo-border: #4A4542;
+    --color-demo-divider: #3A3634;
+    --color-brand-tint: #3A2A22;
+    --color-fill-strong: #3A3634;
+    --color-fill-strong-soft: #34302D;
+
+    --color-modal-close-hover-bg: #3A3634;
+    --color-modal-close-hover-text: #F5F5F5;
   }
 }
 

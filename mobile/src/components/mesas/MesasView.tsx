@@ -81,9 +81,9 @@ export const MesasView: React.FC<MesasViewProps> = ({
             onClick={cargarMesas}
             disabled={cargando}
             aria-label="Actualizar mesas"
-            className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink-muted hover:text-ink flex items-center justify-center active:scale-95 transition-transform"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink-muted hover:text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
           </button>
         </div>
 
@@ -166,7 +166,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
                   </div>
 
                   {!esLibre && typeof mesa.totalPendiente === 'number' && (
-                    <div className="mt-1 text-right text-xs font-black text-primary">
+                    <div className="mt-1 text-right text-xs font-black text-accent tabular-nums">
                       {formatCurrency(mesa.totalPendiente)}
                     </div>
                   )}
@@ -188,7 +188,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
             <div className="bg-canvas border border-line rounded-2xl p-4 flex justify-between items-center">
               <div>
                 <p className="text-xs text-ink-muted">Total acumulado</p>
-                <p className="text-xl font-black text-primary">
+                <p className="text-xl font-black text-accent tabular-nums">
                   {formatCurrency(mesaSeleccionada.totalPendiente || 0)}
                 </p>
               </div>

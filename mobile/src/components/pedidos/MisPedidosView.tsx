@@ -51,7 +51,7 @@ export const MisPedidosView: React.FC = () => {
           aria-label="Actualizar pedidos"
           className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
 
@@ -82,7 +82,7 @@ export const MisPedidosView: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-base font-extrabold text-ink">{mesaOReferencia}</h3>
-                  <span className="text-[11px] text-primary font-bold bg-chip-accent-bg px-2 py-0.5 rounded-full border border-chip-accent-border">
+                  <span className="text-xs text-accent font-bold bg-chip-accent-bg px-2 py-0.5 rounded-full border border-chip-accent-border">
                     #{p.numero}
                   </span>
                 </div>
@@ -93,10 +93,10 @@ export const MisPedidosView: React.FC = () => {
               </div>
 
               <div className="text-right">
-                <span className="text-base font-black text-primary block">
+                <span className="text-base font-black text-accent block tabular-nums">
                   {formatCurrency(p.total)}
                 </span>
-                <span className="text-[10px] uppercase font-bold text-warning">
+                <span className="text-xs uppercase font-semibold text-warning">
                   {p.estado}
                 </span>
               </div>

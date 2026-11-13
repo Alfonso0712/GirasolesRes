@@ -171,9 +171,9 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
           onClick={cargarCatalogo}
           disabled={cargando}
           aria-label="Actualizar catálogo"
-          className="w-10 h-10 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
+          className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
 
@@ -250,7 +250,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
             >
               <div className="flex-1 pr-3">
                 <h3 className="text-sm font-bold text-ink">{prod.nombre}</h3>
-                <p className="text-xs font-extrabold text-primary mt-0.5">
+                <p className="text-xs font-extrabold text-accent mt-0.5 tabular-nums">
                   {formatCurrency(prod.precio)}
                 </p>
               </div>
@@ -301,7 +301,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
             className="w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px]"
           >
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-black text-xs">
+              <div className="w-8 h-8 rounded-full bg-surface/20 flex items-center justify-center font-black text-xs">
                 {totalItems}
               </div>
               <span className="text-sm font-bold tracking-wide">
@@ -368,7 +368,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
 
           <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
             <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-            <span className="text-xl font-black text-primary">{formatCurrency(total)}</span>
+            <span className="text-xl font-black text-accent tabular-nums">{formatCurrency(total)}</span>
           </div>
 
           <Button

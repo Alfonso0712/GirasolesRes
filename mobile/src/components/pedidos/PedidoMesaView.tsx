@@ -191,7 +191,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           </button>
           <div>
             <h2 className="text-base font-extrabold text-ink leading-tight">{mesa.nombre}</h2>
-            <p className="text-[11px] text-ink-muted">Toma de Pedido de Salón</p>
+            <p className="text-xs text-ink-muted">Toma de Pedido de Salón</p>
           </div>
         </div>
 
@@ -204,9 +204,9 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             onClick={cargarProductos}
             disabled={cargando}
             aria-label="Actualizar catálogo"
-            className="w-9 h-9 rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink flex items-center justify-center active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${cargando ? 'animate-spin text-primary' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
           </button>
         </div>
       </div>
@@ -275,18 +275,18 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-sm font-bold text-ink leading-snug">{prod.nombre}</h3>
                   {prod.esMenuDelDia && (
-                    <span className="text-[10px] font-black bg-primary/10 text-primary px-1.5 py-0.2 rounded">
+                    <span className="text-xs font-bold bg-chip-accent-bg text-accent border border-chip-accent-border px-1.5 py-0.5 rounded">
                       HOY
                     </span>
                   )}
                 </div>
                 {/* RV-154: Mozo ve la categoría, Admin/Cajero ve el precio en soles */}
                 {esMozo ? (
-                  <p className="text-[11px] font-semibold text-ink-muted mt-1">
+                  <p className="text-xs font-semibold text-ink-muted mt-1">
                     {prod.categoria}
                   </p>
                 ) : (
-                  <p className="text-xs font-extrabold text-primary mt-1">
+                  <p className="text-xs font-extrabold text-accent mt-1 tabular-nums">
                     {formatCurrency(prod.precio)}
                   </p>
                 )}
@@ -339,7 +339,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             className="w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px]"
           >
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-black text-xs">
+              <div className="w-8 h-8 rounded-full bg-surface/20 flex items-center justify-center font-black text-xs">
                 {totalItems}
               </div>
               <span className="text-sm font-bold tracking-wide">
@@ -421,7 +421,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           {!esMozo ? (
             <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
               <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-              <span className="text-xl font-black text-primary">{formatCurrency(total)}</span>
+              <span className="text-xl font-black text-accent tabular-nums">{formatCurrency(total)}</span>
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">

@@ -51,7 +51,7 @@ export const Numpad: React.FC<NumpadProps> = ({
             key={amt}
             type="button"
             onClick={() => handlePreset(amt)}
-            className="py-2 rounded-lg bg-chip-accent-bg border border-chip-accent-border text-primary font-bold text-xs active:scale-95 transition-transform"
+            className="py-2 min-h-[44px] rounded-lg bg-chip-accent-bg border border-chip-accent-border text-accent font-bold text-xs active:scale-95 transition-transform focus-visible:ring-2 focus-visible:ring-accent"
           >
             S/ {amt}
           </button>

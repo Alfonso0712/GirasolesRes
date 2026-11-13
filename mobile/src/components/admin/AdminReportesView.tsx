@@ -67,7 +67,7 @@ export const AdminReportesView: React.FC = () => {
           aria-label="Actualizar datos"
           className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-ink active:scale-95 transition-transform"
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-primary' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
 
@@ -86,7 +86,7 @@ export const AdminReportesView: React.FC = () => {
                 triggerLight();
                 setPeriodo(p.id);
               }}
-              className={`py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] ${
+              className={`py-2 rounded-xl text-xs font-bold transition-all min-h-[44px] focus-visible:ring-2 focus-visible:ring-accent ${
                 periodo === p.id ? 'bg-primary text-white shadow-xs' : 'text-ink-muted'
               }`}
             >
@@ -125,7 +125,7 @@ export const AdminReportesView: React.FC = () => {
                   <span>Activo</span>
                 </span>
               </div>
-              <p className="text-3xl font-black text-primary">
+              <p className="text-3xl font-black text-accent tabular-nums">
                 {formatCurrency(reporteVentas.total)}
               </p>
               <p className="text-xs text-ink-muted mt-1">
@@ -136,11 +136,11 @@ export const AdminReportesView: React.FC = () => {
             {/* Desglose por método de pago */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-surface border border-line rounded-2xl p-4 shadow-xs">
-                <div className="w-8 h-8 rounded-xl bg-chip-accent-bg text-primary flex items-center justify-center mb-2">
+                <div className="w-8 h-8 rounded-xl bg-chip-accent-bg text-accent flex items-center justify-center mb-2">
                   <DollarSign className="w-4 h-4" />
                 </div>
                 <span className="text-xs text-ink-muted font-bold block">En Efectivo</span>
-                <span className="text-lg font-black text-ink mt-0.5 block">
+                <span className="text-lg font-black text-ink mt-0.5 block tabular-nums">
                   {formatCurrency(reporteVentas.efectivo)}
                 </span>
               </div>
@@ -150,7 +150,7 @@ export const AdminReportesView: React.FC = () => {
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <span className="text-xs text-ink-muted font-bold block">En Yape / Plin</span>
-                <span className="text-lg font-black text-ink mt-0.5 block">
+                <span className="text-lg font-black text-ink mt-0.5 block tabular-nums">
                   {formatCurrency(reporteVentas.yape)}
                 </span>
               </div>
@@ -162,7 +162,7 @@ export const AdminReportesView: React.FC = () => {
         {topPlatos.length > 0 && (
           <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-primary" />
+              <ShoppingBag className="w-4 h-4 text-accent" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Platos Más Vendidos
               </h3>
@@ -177,15 +177,15 @@ export const AdminReportesView: React.FC = () => {
                     </span>
                     <div>
                       <h4 className="text-xs font-bold text-ink">{plato.producto}</h4>
-                      <span className="text-[10px] text-ink-muted">{plato.categoria}</span>
+                      <span className="text-xs text-ink-muted">{plato.categoria}</span>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-xs font-black text-primary block">
+                    <span className="text-xs font-black text-accent block">
                       {pluralizar(plato.cantidad, 'und.', 'unds.')}
                     </span>
-                    <span className="text-[11px] text-ink-muted">
+                    <span className="text-xs text-ink-muted tabular-nums">
                       {formatCurrency(plato.monto)}
                     </span>
                   </div>
@@ -199,7 +199,7 @@ export const AdminReportesView: React.FC = () => {
         {cierres.length > 0 && (
           <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-primary" />
+              <Lock className="w-4 h-4 text-accent" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Cierres de Caja Recientes
               </h3>
@@ -213,17 +213,17 @@ export const AdminReportesView: React.FC = () => {
                 >
                   <div>
                     <span className="font-bold text-ink block">{cierre.cajero}</span>
-                    <span className="text-[10px] text-ink-muted">
+                    <span className="text-xs text-ink-muted">
                       {new Date(cierre.fechaApertura).toLocaleDateString('es-PE')}
                     </span>
                   </div>
 
                   <div className="text-right">
-                    <span className="font-black text-ink block">
+                    <span className="font-black text-ink block tabular-nums">
                       {formatCurrency(cierre.totalVentas)}
                     </span>
                     <span
-                      className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full uppercase ${
+                      className={`text-xs font-bold px-1.5 py-0.5 rounded-full uppercase ${
                         cierre.estadoCuadre === 'Cuadra'
                           ? 'bg-success-bg text-success'
                           : 'bg-warning-bg text-warning'

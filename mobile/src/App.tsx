@@ -187,7 +187,7 @@ export const App: React.FC = () => {
           />
           <div>
             <h1 className="text-sm font-extrabold leading-tight tracking-wide">Girasoles Res</h1>
-            <p className="text-[10px] text-amber-200/80 uppercase font-semibold">
+            <p className="text-xs text-accent uppercase font-semibold truncate max-w-[200px]">
               {session.rol} · {session.nombre}
             </p>
           </div>
@@ -196,10 +196,10 @@ export const App: React.FC = () => {
         <button
           type="button"
           onClick={toggleDarkMode}
-          aria-label={isDark ? 'Modo Claro' : 'Modo Oscuro'}
-          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-transform"
+          aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+          className="min-w-[44px] min-h-[44px] rounded-full bg-surface/10 hover:bg-surface/20 active:scale-95 flex items-center justify-center transition-transform focus-visible:ring-2 focus-visible:ring-accent"
         >
-          {isDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-amber-100" />}
+          {isDark ? <Sun className="w-5 h-5 text-accent" /> : <Moon className="w-5 h-5 text-surface" />}
         </button>
       </header>
 
@@ -289,11 +289,11 @@ export const App: React.FC = () => {
                   setActiveTab(tab.id);
                 }}
                 className={`flex flex-col items-center justify-center gap-1 min-w-[50px] min-h-[48px] px-1 transition-colors ${
-                  activo ? 'text-primary font-bold' : 'text-ink-muted hover:text-ink'
+                  activo ? 'text-accent font-bold' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-[10px] truncate max-w-[64px]">{tab.label}</span>
+                <span className="text-xs leading-none truncate max-w-[68px]">{tab.label}</span>
               </button>
             );
           })}
