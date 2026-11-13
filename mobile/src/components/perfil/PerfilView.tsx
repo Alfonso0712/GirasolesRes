@@ -7,7 +7,7 @@ import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
 import { ServidorConfigSheet } from '../auth/ServidorConfigSheet';
-import logoGirasoles from '../../assets/logo-girasoles.png';
+import logoEmblema from '../../assets/logo-emblema-256.png';
 
 interface PerfilViewProps {
   session: UserSession;
@@ -150,7 +150,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
       {/* Marca y Versión del Terminal */}
       <div className="py-2 text-center flex flex-col items-center justify-center opacity-85 select-none">
         <img
-          src={logoGirasoles}
+          src={logoEmblema}
           alt="Logo Girasoles"
           width={40}
           height={40}

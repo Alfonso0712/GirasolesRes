@@ -21,7 +21,7 @@ import { ViewSkeleton } from './components/ui/ViewSkeleton';
 import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
-import logoGirasoles from './assets/logo-girasoles.png';
+import logoEmblema from './assets/logo-emblema-256.png';
 
 // Carga diferida (lazy loading) para vistas de rol para acelerar el arranque
 const MesasView = lazy(() => import('./components/mesas/MesasView').then(m => ({ default: m.MesasView })));
@@ -178,7 +178,7 @@ export const App: React.FC = () => {
       <header className="h-14 bg-brand-dark text-white px-4 flex items-center justify-between shrink-0 shadow-md safe-top">
         <div className="flex items-center gap-2.5">
           <img
-            src={logoGirasoles}
+            src={logoEmblema}
             alt="Logo Girasoles"
             width={32}
             height={32}

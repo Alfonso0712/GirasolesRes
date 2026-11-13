@@ -7,7 +7,7 @@ import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
 import { ServidorConfigSheet } from './ServidorConfigSheet';
-import logoGirasoles from '../../assets/logo-girasoles.png';
+import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const DemoQuickAccess = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
   ? lazy(() => import('./DemoQuickAccess').then((m) => ({ default: m.DemoQuickAccess })))
@@ -57,7 +57,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         <div className="pt-2 pb-2 text-center flex flex-col items-center">
           <div className="w-20 h-20 mx-auto mb-2.5 p-1 rounded-2xl bg-surface border border-line shadow-xs flex items-center justify-center">
             <img
-              src={logoGirasoles}
+              src={logoEmblema}
               alt="Restaurante Girasoles"
               width={72}
               height={72}
