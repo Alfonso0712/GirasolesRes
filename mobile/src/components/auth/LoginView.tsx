@@ -7,6 +7,7 @@ import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { MODO_DEMO } from '../../config/appConfig';
+export type { DemoAccount } from '../../config/demoAccounts';
 import {
   obtenerUrlBase,
   consumirMensajeRestablecimiento,

@@ -1,3 +1,5 @@
+// MÓDULO PROTEGIDO: conexión y modo demostración. No modificar sin actualizar mobile/CONNECTION.md y scripts/verify-connection.mjs
+
 import React, { useState, useEffect } from 'react';
 import { Globe, RefreshCw, Check, AlertTriangle, AlertCircle, RotateCcw } from 'lucide-react';
 import { BottomSheet } from '../ui/BottomSheet';

@@ -1,3 +1,5 @@
+// MÓDULO PROTEGIDO: conexión y modo demostración. No modificar sin actualizar mobile/CONNECTION.md y scripts/verify-connection.mjs
+
 /**
  * Cliente HTTP base para la aplicación móvil de Restaurante Girasoles.
  * Configuración centralizada, timeout de 15s con AbortController,

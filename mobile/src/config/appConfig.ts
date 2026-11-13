@@ -1,3 +1,5 @@
+// MÓDULO PROTEGIDO: conexión y modo demostración. No modificar sin actualizar mobile/CONNECTION.md y scripts/verify-connection.mjs
+
 /**
  * Configuración global del modo demostración para Restaurante Girasoles Mobile.
  * MODO_DEMO es verdadero en entorno de desarrollo local (DEV) o cuando la variable

@@ -94,3 +94,27 @@ frontend/src/
 - **Formato de Commits:** Usar estrictamente **Conventional Commits** (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, `perf:`).
 - **Prohibición de Atribución AI:** Está terminantemente prohibido incluir `"Co-Authored-By"` o cualquier mención de asistentes o herramientas de IA en los mensajes de commit.
 - **Pipeline de CI:** Todo commit en la rama `main` debe pasar en verde el workflow de GitHub Actions (`.github/workflows/ci.yml`), el cual compila y prueba tanto el backend (.NET) como el frontend (Vite/TypeScript).
+
+---
+
+## 5. Módulo de Conexión Móvil Protegido
+
+### 5.1 Definición y Dirección Oficial
+- **API real de backend:** `https://girasoles.astrazynk.pp.ua/api` (ASP.NET Core 8).
+- **Sitio web institucional:** `https://girasolesres.pp.ua` (portal institucional, **no es la API** y está prohibido como dirección de servidor).
+
+### 5.2 Archivos Protegidos
+Los siguientes archivos componen el núcleo de conexión y modo demostración del cliente móvil:
+- `mobile/src/config/serverConfig.ts`
+- `mobile/src/config/appConfig.ts`
+- `mobile/src/config/demoAccounts.ts`
+- `mobile/src/components/auth/ServidorConfigSheet.tsx`
+- `mobile/src/services/apiClient.ts`
+- `mobile/scripts/verify-connection.mjs`
+- `mobile/CONNECTION.md`
+
+### 5.3 Reglas Estrictas del Módulo
+- **Inmutabilidad de conexión:** Ningún cambio en el código del móvil puede alterar la URL por defecto, el modo demostración ni el acceso rápido sin actualizar formalmente `mobile/CONNECTION.md` y `mobile/scripts/verify-connection.mjs`.
+- **Verificación obligatoria de compilación:** Toda tarea o cambio que afecte a `mobile/` debe ejecutar y pasar al 100% en verde antes de terminar:
+  1. `npm --prefix mobile run build` (compilación y verificación de distribución de producción limpia de secretos).
+  2. `npm --prefix mobile run build:demo` (compilación y verificación de distribución de demostración).

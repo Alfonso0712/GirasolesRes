@@ -1,4 +1,4 @@
-// MÓDULO PROTEGIDO: conexión al servidor. No modificar sin actualizar mobile/CONNECTION.md y scripts/verify-connection.mjs
+// MÓDULO PROTEGIDO: conexión y modo demostración. No modificar sin actualizar mobile/CONNECTION.md y scripts/verify-connection.mjs
 
 import { MODO_DEMO } from './appConfig';
 

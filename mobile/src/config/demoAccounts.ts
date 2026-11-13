@@ -1,3 +1,5 @@
+// MÓDULO PROTEGIDO: conexión y modo demostración. No modificar sin actualizar mobile/CONNECTION.md y scripts/verify-connection.mjs
+
 export interface DemoAccount {
   rol: 'Admin' | 'Mozo' | 'Cocinero' | 'Cajero';
   usuario: string;
