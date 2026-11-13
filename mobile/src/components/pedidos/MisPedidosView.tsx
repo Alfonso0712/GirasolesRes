@@ -62,7 +62,7 @@ export const MisPedidosView: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
         title="Pedidos Registrados"
@@ -89,7 +89,7 @@ export const MisPedidosView: React.FC = () => {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
         {error && (
           <ErrorState
             mensaje={error}

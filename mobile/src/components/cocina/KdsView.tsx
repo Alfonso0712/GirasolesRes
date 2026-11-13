@@ -62,7 +62,7 @@ export const KdsView: React.FC = () => {
   });
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado KDS */}
       <PageHeader
         title="Pantalla KDS Cocina"
@@ -89,7 +89,7 @@ export const KdsView: React.FC = () => {
       </div>
 
       {/* 3. Grid de Comandas KDS */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 pb-24">
         {error && (
           <ErrorState
             mensaje={error}

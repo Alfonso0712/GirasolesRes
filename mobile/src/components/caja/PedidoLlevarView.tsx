@@ -158,7 +158,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
         title="Pedido para Llevar"
@@ -204,7 +204,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
       </div>
 
       {/* 3. Catálogo de Productos */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-24">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32">
         {errorCarga && (
           <ErrorState
             mensaje={errorCarga}

@@ -52,7 +52,7 @@ export const AdminReportesView: React.FC = () => {
   const sinDatos = !reporteVentas || (reporteVentas.nVentas === 0 && topPlatos.length === 0);
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
         title="Métricas y Reportes"
@@ -62,7 +62,7 @@ export const AdminReportesView: React.FC = () => {
         isRefreshing={cargando}
       />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
         {/* 2. Filtros de Período */}
         <div className="bg-surface border border-line p-1.5 rounded-2xl shadow-xs">
           <FilterChipBar

@@ -70,7 +70,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado y Filtros */}
       <PageHeader
         title="Salón y Mesas"
@@ -96,7 +96,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
       </div>
 
       {/* 2. Grilla Táctil de Mesas (2 col en celular, 3-4 col en tablet) */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 pb-24">
         {error && (
           <ErrorState
             mensaje={error}

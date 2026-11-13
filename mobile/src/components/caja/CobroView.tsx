@@ -133,7 +133,7 @@ export const CobroView: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
         title="Caja y Cobro Rápido"
@@ -162,7 +162,7 @@ export const CobroView: React.FC = () => {
       )}
 
       {/* 2. Lista de Cuentas Pendientes */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
         {cargando && pedidos.length === 0 && (
           <SkeletonList count={4} />
         )}

@@ -111,7 +111,7 @@ export const MenuDiaView: React.FC = () => {
   const totalAgotados = platos.filter((p) => p.agotado).length;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
         title="Control de Platos (Cocina)"
@@ -153,7 +153,7 @@ export const MenuDiaView: React.FC = () => {
       </div>
 
       {/* 3. Lista de Platos */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
         {error && (
           <ErrorState
             mensaje={error}

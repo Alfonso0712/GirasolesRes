@@ -182,7 +182,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Header con Botón Volver */}
       <PageHeader
         title={mesa.nombre}
@@ -217,7 +217,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       </div>
 
       {/* 3. Catálogo Táctil de Platos */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-24">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32">
         {errorCarga && (
           <ErrorState
             mensaje={errorCarga}
