@@ -118,3 +118,16 @@ Los siguientes archivos componen el núcleo de conexión y modo demostración de
 - **Verificación obligatoria de compilación:** Toda tarea o cambio que afecte a `mobile/` debe ejecutar y pasar al 100% en verde antes de terminar:
   1. `npm --prefix mobile run build` (compilación y verificación de distribución de producción limpia de secretos).
   2. `npm --prefix mobile run build:demo` (compilación y verificación de distribución de demostración).
+
+---
+
+## 6. Reglas de Trabajo del Móvil
+
+1. **Sin dependencias nuevas:** Salvo que una fase lo autorice expresamente. Prohibido ejecutar `npx cap sync`, `gradle` o `adb` durante fases de lógica o presentación. Prohibido mover, renombrar o borrar archivos existentes.
+2. **Módulos protegidos de conexión:** Mantener inmutable el comportamiento de `config/appConfig.ts`, `config/serverConfig.ts`, `config/demoAccounts.ts`, `components/auth/ServidorConfigSheet.tsx`, `services/apiClient.ts` (solo ampliaciones compatibles; nunca la URL, su resolución ni la protección contra el sitio web), el acceso rápido y la línea de servidor del login, `scripts/verify-connection.mjs`, `CONNECTION.md` y los `.env.*`. Antes de finalizar cualquier tarea, ejecutar `npm --prefix mobile run build` y `npm --prefix mobile run build:demo`: ambos deben terminar con la verificación en verde.
+3. **Reutilización de componentes y tokens:** Emplear los componentes base (`AppHeader`, `BottomNav`, `PageHeader`, `Card`, `FilterChipBar`, `StatusBadge`, `StatCard`, `Skeleton`, `EmptyState`, `ErrorState`, `IconButton`, `Button`, `BottomSheet`, `ConfirmSheet`, `ToastProvider`). Sin clases de color arbitrarias (`text-[#...]`) ni tamaños mágicos (`text-[Npx]`). Fuente Inter, tamaño mínimo 12 px, objetivos táctiles mínimos de 44 px, trato formal en USTED y glosario canónico (*Libre, Ocupada, Inactiva, Pendiente, En preparación, Listo, Pagado, Anulado, Abierta, Cerrada, Efectivo, Yape*; roles *Administrador, Cajero, Mozo, Cocinero*).
+4. **Fidelidad al backend:** Rutas, verbos HTTP y contratos DTO alineados estrictamente a los controladores de ASP.NET Core 8. Replicar el servicio equivalente de `frontend/src/services`. Prohibidas las rutas de respaldo y los datos simulados en producción.
+5. **Arquitectura y orquestación:** Cumplir la estructura modular (`pages/` como orquestadores de hook + vista, `hooks/` para ciclo de vida y sondeo, `services/` para transporte HTTP y `components/` puramente presentacionales sin lógica de carga propia). Respetar los mensajes MSG y reglas de negocio del backend.
+6. **Disciplina de Git:** Trabajar en la rama autorizada desde `main` con árbol limpio. Realizar un commit atómico por subpaso usando `git add` de RUTAS EXACTAS (prohibido `git add .` o `-A`). No realizar `push` ni `merge` sin instrucción explícita.
+7. **Resolución de contradicciones y seguridad:** Si algún requisito contradice los controladores del backend o la arquitectura del repositorio, detenerse y consultar. Prohibido imprimir contraseñas, tokens JWT o credenciales en registros e informes.
+
