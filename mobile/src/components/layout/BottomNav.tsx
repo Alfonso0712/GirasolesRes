@@ -3,8 +3,10 @@ import { useHaptics } from '../../hooks/useHaptics';
 
 export interface NavTabItem {
   id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
+  label?: string;
+  etiqueta?: string;
+  icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
+  icono?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
 }
 
 export interface BottomNavProps {
@@ -28,9 +30,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       className="relative z-20 min-h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none safe-bottom"
     >
       {tabs.map((tab) => {
-        const Icon = tab.icon;
+        const Icon = tab.icono || tab.icon;
+        const texto = tab.etiqueta || tab.label;
         const activo = currentTab === tab.id;
         const badgeCount = badges[tab.id] || 0;
+
+        if (!Icon) return null;
 
         return (
           <button
@@ -65,7 +70,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
             {/* Etiqueta */}
             <span className="text-xs leading-tight truncate max-w-[72px] mt-0.5">
-              {tab.label}
+              {texto}
             </span>
           </button>
         );
