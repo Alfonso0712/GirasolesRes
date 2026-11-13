@@ -1,12 +1,9 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import {
   Utensils,
   ChefHat,
   Receipt,
   User,
-  Sun,
-  Moon,
-  CheckCircle,
   BarChart3,
   Lock,
   Clock,
@@ -18,10 +15,12 @@ import type { MesaItem } from './types/mesa';
 import { authService } from './services/authService';
 import { LoginView } from './components/auth/LoginView';
 import { ViewSkeleton } from './components/ui/ViewSkeleton';
+import { AppHeader } from './components/layout/AppHeader';
+import { BottomNav, type NavTabItem } from './components/layout/BottomNav';
+import { useToast } from './context/ToastContext';
 import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
-import logoEmblema from './assets/logo-emblema-256.png';
 
 // Carga diferida (lazy loading) para vistas de rol para acelerar el arranque
 const MesasView = lazy(() => import('./components/mesas/MesasView').then(m => ({ default: m.MesasView })));
@@ -34,12 +33,6 @@ const CajaTurnoView = lazy(() => import('./components/caja/CajaTurnoView').then(
 const PedidoLlevarView = lazy(() => import('./components/caja/PedidoLlevarView').then(m => ({ default: m.PedidoLlevarView })));
 const AdminReportesView = lazy(() => import('./components/admin/AdminReportesView').then(m => ({ default: m.AdminReportesView })));
 const PerfilView = lazy(() => import('./components/perfil/PerfilView').then(m => ({ default: m.PerfilView })));
-
-interface NavTabItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
 
 const getDefaultTabForRole = (rol: RolUsuario): string => {
   switch (rol) {
@@ -69,9 +62,13 @@ export const App: React.FC = () => {
       return false;
     }
   });
-  const [toastMensaje, setToastMensaje] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
+  const { mostrar } = useToast();
+
+  const showToast = useCallback((mensaje: string) => {
+    mostrar({ tipo: 'exito', mensaje });
+  }, [mostrar]);
 
   // Ocultar pantalla de arranque cuando la app y la vista inicial estén montadas
   useEffect(() => {
@@ -120,11 +117,6 @@ export const App: React.FC = () => {
     : (session ? getDefaultTabForRole(session.rol) : 'salon');
 
   const initialTabForRole = session ? getDefaultTabForRole(session.rol) : 'salon';
-
-  const showToast = (mensaje: string) => {
-    setToastMensaje(mensaje);
-    setTimeout(() => setToastMensaje(null), 3500);
-  };
 
   // Manejo del botón Atrás nativo de Android con prioridades
   useAndroidBackButton({
@@ -175,41 +167,11 @@ export const App: React.FC = () => {
   return (
     <div className="flex flex-col h-dvh w-full bg-canvas text-ink overflow-hidden">
       {/* 1. Cabecera Móvil y Tablet Superior */}
-      <header className="h-14 bg-brand-dark text-white px-4 flex items-center justify-between shrink-0 shadow-md safe-top">
-        <div className="flex items-center gap-2.5">
-          <img
-            src={logoEmblema}
-            alt="Logo Girasoles"
-            width={32}
-            height={32}
-            decoding="async"
-            className="w-8 h-8 rounded-lg object-contain shrink-0"
-          />
-          <div>
-            <h1 className="text-sm font-extrabold leading-tight tracking-wide">Girasoles Res</h1>
-            <p className="text-xs text-accent uppercase font-semibold truncate max-w-[200px]">
-              {session.rol} · {session.nombre}
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={toggleDarkMode}
-          aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
-          className="min-w-[44px] min-h-[44px] rounded-full bg-surface/10 hover:bg-surface/20 active:scale-95 flex items-center justify-center transition-transform focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          {isDark ? <Sun className="w-5 h-5 text-accent" /> : <Moon className="w-5 h-5 text-surface" />}
-        </button>
-      </header>
-
-      {/* Toast Flotante */}
-      {toastMensaje && (
-        <div className="fixed top-16 left-4 right-4 z-50 bg-success text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-bold animate-in fade-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4 shrink-0" />
-          <span>{toastMensaje}</span>
-        </div>
-      )}
+      <AppHeader
+        session={session}
+        isDark={isDark}
+        onToggleDarkMode={toggleDarkMode}
+      />
 
       {/* 2. Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
@@ -276,28 +238,11 @@ export const App: React.FC = () => {
 
       {/* 3. Barra de Navegación Inferior Táctil Exclusiva por Rol */}
       {!mesaEnPedido && (
-        <nav className="h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none safe-bottom">
-          {tabsDisponibles.map((tab) => {
-            const Icon = tab.icon;
-            const activo = currentTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  triggerLight();
-                  setActiveTab(tab.id);
-                }}
-                className={`flex flex-col items-center justify-center gap-1 min-w-[50px] min-h-[48px] px-1 transition-colors ${
-                  activo ? 'text-accent font-bold' : 'text-ink-muted hover:text-ink'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="text-xs leading-none truncate max-w-[68px]">{tab.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        <BottomNav
+          tabs={tabsDisponibles}
+          currentTab={currentTab}
+          onSelectTab={(tabId) => setActiveTab(tabId)}
+        />
       )}
     </div>
   );
