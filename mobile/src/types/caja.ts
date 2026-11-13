@@ -59,7 +59,9 @@ export interface HistorialCierresItemDto {
   montoInicial: number;
   totalVentas: number;
   diferencia: number;
-  estadoCuadre: string;
+  estadoCuadre?: string;
+  resultado?: string | null;
+  conAjustes?: boolean;
 }
 
 export interface ListarCierresResponseDto {

@@ -6,6 +6,7 @@ import type { ReporteVentasResponse, ItemPlatoVendido } from '../../types/report
 import type { HistorialCierresItemDto } from '../../types/caja';
 import { Card } from '../ui/Card';
 import { StatCard } from '../ui/StatCard';
+import { StatusBadge } from '../ui/StatusBadge';
 import { FilterChipBar } from '../ui/FilterChipBar';
 import { SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
@@ -186,19 +187,17 @@ export const AdminReportesView: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="text-right">
+                  <div className="text-right flex flex-col items-end gap-1">
                     <span className="font-black text-ink block tabular-nums">
                       {formatCurrency(cierre.totalVentas)}
                     </span>
-                    <span
-                      className={`text-xs font-bold px-1.5 py-0.5 rounded-full uppercase ${
-                        cierre.estadoCuadre === 'Cuadra'
-                          ? 'bg-success-bg text-success'
-                          : 'bg-warning-bg text-warning'
-                      }`}
-                    >
-                      {cierre.estadoCuadre}
-                    </span>
+                    {(() => {
+                      const rawEstado = cierre.conAjustes
+                        ? 'Con ajustes'
+                        : (cierre.resultado || cierre.estadoCuadre || null);
+                      if (!rawEstado) return null;
+                      return <StatusBadge category="caja" estado={rawEstado} />;
+                    })()}
                   </div>
                 </div>
               ))}

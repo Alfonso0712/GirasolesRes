@@ -8,6 +8,7 @@ import {
   Unlock,
   Lock,
   AlertTriangle,
+  XCircle,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -44,14 +45,18 @@ function resolveStatus(status: string | boolean, category?: StatusCategory): Sta
     }
   }
 
-  // 2. Estados de Caja (CUS13)
+  // 2. Estados de Caja y Cuadre (CUS13 / Reportes)
   if (
     category === 'caja' ||
     lower === 'abierta' ||
     lower === 'cerrada' ||
     lower === 'anterior sin cerrar' ||
     lower === 'anteriorsincerrar' ||
-    lower === 'sincaja'
+    lower === 'sincaja' ||
+    lower === 'cuadra' ||
+    lower === 'sobrante' ||
+    lower === 'faltante' ||
+    lower.includes('ajuste')
   ) {
     if (lower === 'abierta') {
       return { label: 'Abierta', icon: Unlock, variant: 'success' };
@@ -61,6 +66,18 @@ function resolveStatus(status: string | boolean, category?: StatusCategory): Sta
     }
     if (lower.includes('anterior') || lower.includes('sin cerrar')) {
       return { label: 'Anterior sin cerrar', icon: AlertTriangle, variant: 'warning' };
+    }
+    if (lower === 'cuadra') {
+      return { label: 'Cuadra', icon: CheckCircle2, variant: 'success' };
+    }
+    if (lower === 'sobrante') {
+      return { label: 'Sobrante', icon: AlertTriangle, variant: 'warning' };
+    }
+    if (lower.includes('ajuste')) {
+      return { label: 'Con ajustes', icon: AlertTriangle, variant: 'warning' };
+    }
+    if (lower === 'faltante') {
+      return { label: 'Faltante', icon: XCircle, variant: 'danger' };
     }
   }
 
@@ -108,7 +125,11 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   className = '',
   label: customLabel,
 }) => {
-  const finalStatus = (status ?? estado ?? '') as string | boolean;
+  const raw = status ?? estado;
+  if (raw === undefined || raw === null || raw === '') {
+    return null;
+  }
+  const finalStatus = raw as string | boolean;
   const config = resolveStatus(finalStatus, category);
   const Icon = config.icon;
   const label = customLabel || config.label;
