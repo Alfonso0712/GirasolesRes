@@ -4,9 +4,11 @@ import { cajaService } from '../../services/cajaService';
 import type { CajaActualResponseDto, CierreResumenDto } from '../../types/caja';
 import { Button } from '../ui/Button';
 import { BottomSheet } from '../ui/BottomSheet';
+import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface CajaTurnoViewProps {
@@ -22,13 +24,15 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
   const [modalAbrir, setModalAbrir] = useState(false);
   const [montoApertura, setMontoApertura] = useState('100');
   const [modalCerrar, setModalCerrar] = useState(false);
+  const [confirmarApertura, setConfirmarApertura] = useState(false);
+  const [confirmarCierre, setConfirmarCierre] = useState(false);
   const [resumenCierre, setResumenCierre] = useState<CierreResumenDto | null>(null);
   const [efectivoContado, setEfectivoContado] = useState('');
   const [observacion, setObservacion] = useState('');
   const [procesando, setProcesando] = useState(false);
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
+  const { mostrar } = useToast();
 
   const cargarCaja = async () => {
     setCargando(true);
@@ -49,24 +53,35 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
     cargarCaja();
   }, []);
 
-  const handleAbrirCaja = async () => {
+  const handleAbrirCaja = () => {
     const num = parseFloat(montoApertura) || 0;
     if (num <= 0) {
       triggerError();
       setError('El monto inicial debe ser mayor a 0');
       return;
     }
+    setError(null);
+    setConfirmarApertura(true);
+  };
+
+  const ejecutarApertura = async () => {
+    const num = parseFloat(montoApertura) || 0;
     setProcesando(true);
     try {
       await cajaService.abrirCaja(num);
       triggerSuccess();
+      setConfirmarApertura(false);
       setModalAbrir(false);
-      setMensajeExito(`Caja abierta con éxito con fondo de ${formatCurrency(num)}`);
+      mostrar({
+        tipo: 'exito',
+        mensaje: `Caja abierta con éxito con fondo de ${formatCurrency(num)}`,
+      });
       cargarCaja();
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'Error al abrir caja';
       setError(msg);
+      setConfirmarApertura(false);
     } finally {
       setProcesando(false);
     }
@@ -90,7 +105,12 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
     }
   };
 
-  const handleConfirmarCierre = async () => {
+  const handleSolicitarCierre = () => {
+    if (!resumenCierre) return;
+    setConfirmarCierre(true);
+  };
+
+  const ejecutarCierre = async () => {
     if (!resumenCierre) return;
     const contado = parseFloat(efectivoContado) || 0;
     setProcesando(true);
@@ -101,13 +121,18 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
         observacion: observacion.trim() || undefined
       });
       triggerSuccess();
+      setConfirmarCierre(false);
       setModalCerrar(false);
-      setMensajeExito('Cierre de caja completado con éxito');
+      mostrar({
+        tipo: 'exito',
+        mensaje: 'Cierre de caja completado con éxito',
+      });
       cargarCaja();
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'Error al cerrar caja';
       setError(msg);
+      setConfirmarCierre(false);
     } finally {
       setProcesando(false);
     }
@@ -141,15 +166,6 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {mensajeExito && (
-          <div className="p-4 rounded-2xl bg-success-bg border border-success-border text-success flex items-center justify-between">
-            <span className="text-xs font-bold">{mensajeExito}</span>
-            <button type="button" onClick={() => setMensajeExito(null)} className="text-xs font-bold underline">
-              Aceptar
-            </button>
-          </div>
-        )}
-
         {error && (
           <div className="p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
@@ -410,7 +426,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
               size="lg"
               variant="danger"
               isLoading={procesando}
-              onClick={handleConfirmarCierre}
+              onClick={handleSolicitarCierre}
               className="flex items-center justify-center gap-2"
             >
               <Check className="w-5 h-5" />
@@ -419,6 +435,29 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({ onNavigateToCobros
           </div>
         )}
       </BottomSheet>
+
+      {/* Confirmación de Apertura */}
+      <ConfirmSheet
+        isOpen={confirmarApertura}
+        titulo="Confirmar Apertura"
+        mensaje={`¿Confirmar apertura de caja con un fondo inicial de ${formatCurrency(parseFloat(montoApertura) || 0)}?`}
+        etiquetaConfirmar="Confirmar Apertura"
+        cargando={procesando}
+        onConfirmar={ejecutarApertura}
+        onCancelar={() => setConfirmarApertura(false)}
+      />
+
+      {/* Confirmación de Cierre */}
+      <ConfirmSheet
+        isOpen={confirmarCierre}
+        titulo="Asentar Cierre Definitivo"
+        mensaje="¿Está seguro de asentar el cierre definitivo de caja? Esta operación es inmutable y no podrá registrar más cobros."
+        etiquetaConfirmar="Asentar Cierre"
+        tono="peligro"
+        cargando={procesando}
+        onConfirmar={ejecutarCierre}
+        onCancelar={() => setConfirmarCierre(false)}
+      />
     </div>
   );
 };

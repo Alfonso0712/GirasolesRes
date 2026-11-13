@@ -3,6 +3,7 @@ import { ShoppingBag, Plus, Minus, Search, Send, User, AlertCircle, RefreshCw, U
 import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
 import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
+import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
@@ -384,44 +385,21 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         </div>
       </BottomSheet>
 
-      {/* Diálogo de Confirmación para Descartar Pedido para Llevar */}
-      {mostrarConfirmDescartar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs select-none animate-in fade-in">
-          <div className="bg-surface border border-line rounded-3xl p-5 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95">
-            <div className="w-12 h-12 rounded-2xl bg-warning-bg border border-warning-border text-warning flex items-center justify-center mx-auto">
-              <AlertCircle className="w-6 h-6" />
-            </div>
-            <div className="text-center space-y-1">
-              <h3 className="text-base font-extrabold text-ink">
-                Tiene un pedido sin registrar. ¿Desea descartarlo?
-              </h3>
-              <p className="text-xs text-ink-muted">
-                Los productos agregados a la orden para llevar no se registrarán.
-              </p>
-            </div>
-            <div className="flex gap-2.5 pt-2">
-              <Button
-                variant="outline"
-                fullWidth
-                onClick={() => setMostrarConfirmDescartar(false)}
-              >
-                Seguir editando
-              </Button>
-              <Button
-                variant="danger"
-                fullWidth
-                onClick={() => {
-                  setMostrarConfirmDescartar(false);
-                  setLineas([]);
-                  setReferencia('');
-                }}
-              >
-                Descartar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confirmación para Descartar Pedido para Llevar */}
+      <ConfirmSheet
+        isOpen={mostrarConfirmDescartar}
+        titulo="Descartar pedido en curso"
+        mensaje="Tiene un pedido para llevar sin registrar. ¿Desea descartarlo? Los productos seleccionados no se guardarán."
+        etiquetaConfirmar="Descartar"
+        etiquetaCancelar="Seguir editando"
+        tono="peligro"
+        onConfirmar={() => {
+          setMostrarConfirmDescartar(false);
+          setLineas([]);
+          setReferencia('');
+        }}
+        onCancelar={() => setMostrarConfirmDescartar(false)}
+      />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, Suspense, lazy } from 'react';
 import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
-import { BottomSheet } from '../ui/BottomSheet';
+import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
@@ -191,46 +191,17 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         </Button>
       </div>
 
-      {/* Bottom Sheet de Confirmación de Cierre de Sesión */}
-      <BottomSheet
+      {/* Confirmación de Cierre de Sesión */}
+      <ConfirmSheet
         isOpen={mostrarConfirmLogout}
-        onClose={() => setMostrarConfirmLogout(false)}
-        title="Cerrar Sesión"
-      >
-        <div className="space-y-4 text-center">
-          <div className="w-12 h-12 rounded-full bg-danger/10 text-danger flex items-center justify-center mx-auto">
-            <LogOut className="w-6 h-6" />
-          </div>
-
-          <div>
-            <h3 className="text-base font-extrabold text-ink mb-1">
-              ¿Está seguro de que desea cerrar sesión?
-            </h3>
-            <p className="text-xs text-ink-muted">
-              Tendrá que ingresar nuevamente sus credenciales para acceder a la aplicación.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-2">
-            <Button
-              variant="outline"
-              size="md"
-              disabled={cerrandoSesion}
-              onClick={() => setMostrarConfirmLogout(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              size="md"
-              isLoading={cerrandoSesion}
-              onClick={handleConfirmarCierre}
-            >
-              Cerrar Sesión
-            </Button>
-          </div>
-        </div>
-      </BottomSheet>
+        titulo="Cerrar Sesión"
+        mensaje="¿Está seguro de que desea cerrar sesión? Tendrá que ingresar nuevamente sus credenciales para acceder a la aplicación."
+        etiquetaConfirmar="Cerrar Sesión"
+        tono="peligro"
+        cargando={cerrandoSesion}
+        onConfirmar={handleConfirmarCierre}
+        onCancelar={() => setMostrarConfirmLogout(false)}
+      />
     </div>
   );
 };

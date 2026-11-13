@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Receipt,
-  CheckCircle,
   RefreshCw,
   Banknote,
   Smartphone,
@@ -14,11 +13,13 @@ import { cajaService } from '../../services/cajaService';
 import type { PedidoPendienteCobro, MetodoPago } from '../../types/cobro';
 import type { CajaActualResponseDto } from '../../types/caja';
 import { BottomSheet } from '../ui/BottomSheet';
+import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
 import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 export const CobroView: React.FC = () => {
@@ -33,10 +34,10 @@ export const CobroView: React.FC = () => {
   const [montoRecibido, setMontoRecibido] = useState<string>('');
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [procesando, setProcesando] = useState(false);
-  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [errorCobro, setErrorCobro] = useState<string | null>(null);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
+  const { mostrar } = useToast();
 
   const cargarDatos = async () => {
     setCargando(true);
@@ -111,7 +112,10 @@ export const CobroView: React.FC = () => {
 
       triggerSuccess();
       const msg = res.mensaje || `Cobro de ${formatCurrency(total)} registrado exitosamente.`;
-      setMensajeExito(msg);
+      mostrar({
+        tipo: 'exito',
+        mensaje: msg,
+      });
       setMostrarConfirmacion(false);
       setPedidoSeleccionado(null);
       cargarDatos();
@@ -158,22 +162,6 @@ export const CobroView: React.FC = () => {
           <p className="text-xs font-bold leading-relaxed">
             No se puede registrar cobros porque la caja está cerrada. Un cajero debe realizar la apertura de caja.
           </p>
-        </div>
-      )}
-
-      {mensajeExito && (
-        <div className="m-4 p-4 rounded-2xl bg-success-bg border border-success-border text-success flex items-center justify-between animate-in fade-in">
-          <div className="flex items-center gap-2.5">
-            <CheckCircle className="w-5 h-5 shrink-0" />
-            <span className="text-xs font-bold">{mensajeExito}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setMensajeExito(null)}
-            className="text-xs underline font-bold"
-          >
-            Aceptar
-          </button>
         </div>
       )}
 
@@ -335,52 +323,18 @@ export const CobroView: React.FC = () => {
         )}
       </BottomSheet>
 
-      {/* Bottom Sheet de Confirmación Definitiva */}
-      <BottomSheet
+      {/* Confirmación Definitiva de Cobro */}
+      <ConfirmSheet
         isOpen={Boolean(mostrarConfirmacion && pedidoSeleccionado)}
-        onClose={() => setMostrarConfirmacion(false)}
-        title="Confirmar Cobro"
-      >
-        {pedidoSeleccionado && (
-          <div className="space-y-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-chip-accent-bg text-accent flex items-center justify-center mx-auto">
-              <Receipt className="w-6 h-6" />
-            </div>
-
-            <div>
-              <h3 className="text-base font-extrabold text-ink mb-1">
-                ¿Desea registrar el cobro de {formatCurrency(total)} con método {metodoPago}?
-              </h3>
-              <p className="text-xs text-ink-muted">
-                {pedidoSeleccionado.mesaNombre} · Esta acción no se puede deshacer.
-              </p>
-              {metodoPago === 'Efectivo' && (
-                <p className="text-xs font-bold text-success mt-2">
-                  Vuelto a entregar: {formatCurrency(vuelto)}
-                </p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <Button
-                variant="outline"
-                size="md"
-                disabled={procesando}
-                onClick={() => setMostrarConfirmacion(false)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                size="md"
-                isLoading={procesando}
-                onClick={handleEjecutarCobro}
-              >
-                Confirmar Cobro
-              </Button>
-            </div>
-          </div>
-        )}
-      </BottomSheet>
+        titulo="Confirmar Cobro"
+        mensaje={`¿Desea registrar el cobro de ${formatCurrency(total)} mediante ${metodoPago} para ${pedidoSeleccionado?.mesaNombre}?${
+          metodoPago === 'Efectivo' ? ` Vuelto a entregar: ${formatCurrency(vuelto)}.` : ''
+        } Esta operación no se puede deshacer.`}
+        etiquetaConfirmar="Confirmar Cobro"
+        cargando={procesando}
+        onConfirmar={handleEjecutarCobro}
+        onCancelar={() => setMostrarConfirmacion(false)}
+      />
     </div>
   );
 };

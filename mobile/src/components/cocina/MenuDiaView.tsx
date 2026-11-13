@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { CalendarCheck, RefreshCw, AlertTriangle, CheckCircle, Search, UtensilsCrossed } from 'lucide-react';
+import { CalendarCheck, RefreshCw, AlertTriangle, Search, UtensilsCrossed } from 'lucide-react';
 import { menuDiaService } from '../../services/menuDiaService';
 import type { PlatoMenuDiaDto } from '../../services/menuDiaService';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import { ConfirmSheet } from '../ui/ConfirmSheet';
+import { useToast } from '../../context/ToastContext';
 import { pluralizar } from '../../utils/format';
 
 export const MenuDiaView: React.FC = () => {
@@ -14,9 +16,10 @@ export const MenuDiaView: React.FC = () => {
   const [procesandoId, setProcesandoId] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<'todos' | 'disponibles' | 'agotados'>('todos');
   const [busqueda, setBusqueda] = useState('');
-  const [mensajeToast, setMensajeToast] = useState<string | null>(null);
+  const [platoParaAgotar, setPlatoParaAgotar] = useState<PlatoMenuDiaDto | null>(null);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
+  const { mostrar } = useToast();
 
   const cargarPlatos = async () => {
     setCargando(true);
@@ -37,9 +40,8 @@ export const MenuDiaView: React.FC = () => {
     cargarPlatos();
   }, []);
 
-  const handleToggleDisponibilidad = async (plato: PlatoMenuDiaDto) => {
+  const ejecutarCambioDisponibilidad = async (plato: PlatoMenuDiaDto, nuevoAgotado: boolean) => {
     triggerLight();
-    const nuevoAgotado = !plato.agotado;
     setProcesandoId(plato.productoId);
 
     // Optimistic UI update
@@ -50,20 +52,47 @@ export const MenuDiaView: React.FC = () => {
     try {
       await menuDiaService.cambiarDisponibilidad(plato.productoId, nuevoAgotado);
       triggerSuccess();
-      const txt = nuevoAgotado
-        ? `Plato marcado como AGOTADO: ${plato.nombre}`
-        : `Plato nuevamente DISPONIBLE: ${plato.nombre}`;
-      setMensajeToast(txt);
-      setTimeout(() => setMensajeToast(null), 3000);
+      if (nuevoAgotado) {
+        mostrar({
+          tipo: 'aviso',
+          mensaje: `Plato marcado como agotado: ${plato.nombre}`,
+        });
+      } else {
+        mostrar({
+          tipo: 'exito',
+          mensaje: `Plato reactivado correctamente: ${plato.nombre}`,
+        });
+      }
     } catch {
       triggerError();
       // Revertir en caso de error
       setPlatos((prev) =>
         prev.map((p) => (p.productoId === plato.productoId ? { ...p, agotado: plato.agotado } : p))
       );
+      mostrar({
+        tipo: 'error',
+        mensaje: `No se pudo actualizar la disponibilidad de ${plato.nombre}`,
+      });
     } finally {
       setProcesandoId(null);
     }
+  };
+
+  const handleToggleDisponibilidad = (plato: PlatoMenuDiaDto) => {
+    if (!plato.agotado) {
+      // Marcar como agotado requiere confirmación
+      setPlatoParaAgotar(plato);
+    } else {
+      // Reactivar plato no requiere confirmación
+      void ejecutarCambioDisponibilidad(plato, false);
+    }
+  };
+
+  const handleConfirmarAgotado = async () => {
+    if (!platoParaAgotar) return;
+    const plato = platoParaAgotar;
+    setPlatoParaAgotar(null);
+    await ejecutarCambioDisponibilidad(plato, true);
   };
 
   const platosFiltrados = platos.filter((p) => {
@@ -105,14 +134,6 @@ export const MenuDiaView: React.FC = () => {
           <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-accent' : ''}`} />
         </button>
       </div>
-
-      {/* Toast Flotante */}
-      {mensajeToast && (
-        <div className="fixed top-16 left-4 right-4 z-50 bg-primary text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-bold animate-in fade-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4 shrink-0" />
-          <span>{mensajeToast}</span>
-        </div>
-      )}
 
       {/* 2. Filtros y Búsqueda */}
       <div className="p-4 space-y-3 bg-surface border-b border-line shrink-0">
@@ -221,6 +242,17 @@ export const MenuDiaView: React.FC = () => {
           );
         })}
       </div>
+
+      <ConfirmSheet
+        isOpen={Boolean(platoParaAgotar)}
+        titulo="Marcar plato agotado"
+        mensaje={`¿Confirmar que el plato '${platoParaAgotar?.nombre}' se encuentra agotado? No podrá ser seleccionado en nuevos pedidos.`}
+        etiquetaConfirmar="Marcar Agotado"
+        tono="peligro"
+        cargando={Boolean(procesandoId && platoParaAgotar)}
+        onConfirmar={handleConfirmarAgotado}
+        onCancelar={() => setPlatoParaAgotar(null)}
+      />
     </div>
   );
 };

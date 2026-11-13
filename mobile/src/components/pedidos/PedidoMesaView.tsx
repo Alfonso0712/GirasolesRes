@@ -5,6 +5,7 @@ import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
 import type { RolUsuario } from '../../types/auth';
 import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
+import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { ErrorState } from '../ui/ErrorState';
@@ -446,44 +447,21 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         </div>
       </BottomSheet>
 
-      {/* Diálogo de Confirmación para Descartar Pedido de Mesa */}
-      {mostrarConfirmDescartar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs select-none animate-in fade-in">
-          <div className="bg-surface border border-line rounded-3xl p-5 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95">
-            <div className="w-12 h-12 rounded-2xl bg-warning-bg border border-warning-border text-warning flex items-center justify-center mx-auto">
-              <AlertCircle className="w-6 h-6" />
-            </div>
-            <div className="text-center space-y-1">
-              <h3 className="text-base font-extrabold text-ink">
-                Tiene un pedido sin registrar. ¿Desea descartarlo?
-              </h3>
-              <p className="text-xs text-ink-muted">
-                Los platos agregados a la orden no se enviarán a cocina.
-              </p>
-            </div>
-            <div className="flex gap-2.5 pt-2">
-              <Button
-                variant="outline"
-                fullWidth
-                onClick={() => setMostrarConfirmDescartar(false)}
-              >
-                Seguir editando
-              </Button>
-              <Button
-                variant="danger"
-                fullWidth
-                onClick={() => {
-                  setMostrarConfirmDescartar(false);
-                  setLineas([]);
-                  onVolver();
-                }}
-              >
-                Descartar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confirmación para Descartar Pedido de Mesa */}
+      <ConfirmSheet
+        isOpen={mostrarConfirmDescartar}
+        titulo="Descartar pedido en curso"
+        mensaje="Tiene un pedido con platos seleccionados sin registrar. ¿Desea descartarlo? Los platos no se enviarán a cocina."
+        etiquetaConfirmar="Descartar"
+        etiquetaCancelar="Seguir editando"
+        tono="peligro"
+        onConfirmar={() => {
+          setMostrarConfirmDescartar(false);
+          setLineas([]);
+          onVolver();
+        }}
+        onCancelar={() => setMostrarConfirmDescartar(false)}
+      />
     </div>
   );
 };
