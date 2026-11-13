@@ -1,11 +1,12 @@
 import React, { useState, Suspense, lazy } from 'react';
-import { Lock, User, Globe, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, Globe, AlertCircle, Eye, EyeOff, Pencil } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { authService } from '../../services/authService';
-import { getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
+import { getApiBaseUrl } from '../../services/apiClient';
 import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
+import { ServidorConfigSheet } from './ServidorConfigSheet';
 import logoGirasoles from '../../assets/logo-girasoles.png';
 
 const DemoQuickAccess = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
@@ -22,7 +23,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mostrarConfigUrl, setMostrarConfigUrl] = useState(false);
+  const [mostrarSheetServidor, setMostrarSheetServidor] = useState(false);
   const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
@@ -47,11 +48,6 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     setUsuario(user);
     setContrasena(pass);
     handleLogin(user, pass);
-  };
-
-  const handleSaveApiUrl = () => {
-    setApiBaseUrl(apiUrl);
-    setMostrarConfigUrl(false);
   };
 
   return (
@@ -150,35 +146,24 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <p className="text-[11px] font-medium text-ink-muted">
               Versión de demostración
             </p>
-            {!mostrarConfigUrl ? (
-              <button
-                type="button"
-                onClick={() => setMostrarConfigUrl(true)}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-muted hover:text-primary transition-colors min-h-[44px] px-3 py-2 rounded-xl active:scale-95"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>Servidor: {apiUrl}</span>
-              </button>
-            ) : (
-              <div className="bg-surface border border-line rounded-2xl p-3 text-left space-y-2 animate-in fade-in">
-                <label className="text-[11px] font-bold text-ink">URL de la API (.NET 8):</label>
-                <input
-                  type="text"
-                  value={apiUrl}
-                  onChange={(e) => setApiUrl(e.target.value)}
-                  placeholder="https://girasolesres.pp.ua/api"
-                  className="w-full px-3 py-2 rounded-lg border border-line text-xs font-mono bg-canvas"
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" fullWidth onClick={handleSaveApiUrl}>
-                    Guardar URL
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => setMostrarConfigUrl(false)}>
-                    Cancelar
-                  </Button>
-                </div>
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                triggerLight();
+                setMostrarSheetServidor(true);
+              }}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-muted hover:text-primary transition-colors min-h-[44px] px-3 py-2 rounded-xl active:scale-95"
+            >
+              <Globe className="w-3.5 h-3.5 text-primary" />
+              <span>Servidor: {apiUrl}</span>
+              <Pencil className="w-3.5 h-3.5 text-ink-muted" />
+            </button>
+
+            <ServidorConfigSheet
+              isOpen={mostrarSheetServidor}
+              onClose={() => setMostrarSheetServidor(false)}
+              onGuardado={(nueva) => setApiUrl(nueva)}
+            />
           </div>
         )}
       </div>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Check } from 'lucide-react';
+import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { BottomSheet } from '../ui/BottomSheet';
-import { getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
+import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
+import { ServidorConfigSheet } from '../auth/ServidorConfigSheet';
 import logoGirasoles from '../../assets/logo-girasoles.png';
 
 interface PerfilViewProps {
@@ -22,18 +23,11 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   onLogout,
 }) => {
   const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
-  const [guardado, setGuardado] = useState(false);
+  const [mostrarSheetServidor, setMostrarSheetServidor] = useState(false);
   const [mostrarConfirmLogout, setMostrarConfirmLogout] = useState(false);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
 
-  const { triggerLight, triggerSuccess } = useHaptics();
-
-  const handleGuardarUrl = () => {
-    setApiBaseUrl(apiUrl);
-    triggerSuccess();
-    setGuardado(true);
-    setTimeout(() => setGuardado(false), 2000);
-  };
+  const { triggerLight } = useHaptics();
 
   const handleConfirmarCierre = async () => {
     setCerrandoSesion(true);
@@ -117,33 +111,39 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
       {/* 3. Conexión de Red / Servidor Backend (Exclusivo para Modo Demostración) */}
       {MODO_DEMO && (
         <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
-          <div className="flex items-center gap-2 text-ink">
-            <Globe className="w-4 h-4 text-primary" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-              Servidor Backend (.NET 8)
-            </h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-ink">
+              <Globe className="w-4 h-4 text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+                Servidor de Backend (.NET 8)
+              </h3>
+            </div>
+            <span className="text-[10px] uppercase font-bold text-warning bg-warning-bg border border-warning-border px-2 py-0.5 rounded-full">
+              Demo
+            </span>
           </div>
-          <p className="text-xs text-ink-muted">
-            En emulador Android use <code className="bg-canvas px-1 rounded font-mono">10.0.2.2:5050</code>. En dispositivo físico use la IP del servidor.
+          <p className="text-xs text-ink-muted truncate font-mono bg-canvas p-2.5 rounded-xl border border-line">
+            {apiUrl}
           </p>
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={apiUrl}
-              onChange={(e) => setApiUrl(e.target.value)}
-              className="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-line bg-canvas focus:outline-primary"
-            />
-            <Button size="sm" fullWidth variant="outline" onClick={handleGuardarUrl}>
-              {guardado ? (
-                <span className="inline-flex items-center gap-1.5 text-success">
-                  <Check className="w-4 h-4" />
-                  <span>URL Guardada</span>
-                </span>
-              ) : (
-                <span>Guardar Nueva Dirección</span>
-              )}
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            fullWidth
+            variant="outline"
+            onClick={() => {
+              triggerLight();
+              setMostrarSheetServidor(true);
+            }}
+            className="flex items-center justify-center gap-2 min-h-[44px]"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+            <span>Configurar Dirección del Servidor</span>
+          </Button>
+
+          <ServidorConfigSheet
+            isOpen={mostrarSheetServidor}
+            onClose={() => setMostrarSheetServidor(false)}
+            onGuardado={(nueva) => setApiUrl(nueva)}
+          />
         </div>
       )}
 
