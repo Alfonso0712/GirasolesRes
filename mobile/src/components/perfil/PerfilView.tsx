@@ -144,9 +144,9 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
               triggerLight();
               setMostrarSheetServidor(true);
             }}
-            className="flex items-center justify-center gap-2 min-h-[44px]"
+            icon={<Pencil className="w-5 h-5 shrink-0" aria-hidden="true" />}
+            className="min-h-[44px]"
           >
-            <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Configurar Dirección del Servidor</span>
           </Button>
 
@@ -186,14 +186,13 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         <Button
           fullWidth
           size="lg"
-          variant="danger"
+          variant="danger-outline"
           onClick={() => {
             triggerLight();
             setMostrarConfirmLogout(true);
           }}
-          className="flex items-center justify-center gap-2"
+          icon={<LogOut className="w-5 h-5 shrink-0" aria-hidden="true" />}
         >
-          <LogOut className="w-5 h-5" />
           <span>Cerrar Sesión</span>
         </Button>
       </div>
