@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { BottomSheet } from '../ui/BottomSheet';
 import { getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
+import { MODO_DEMO } from '../../config/appConfig';
 import logoGirasoles from '../../assets/logo-girasoles.png';
 
 interface PerfilViewProps {
@@ -113,8 +114,8 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         </div>
       </div>
 
-      {/* 3. Conexión de Red / Servidor Backend (Exclusivo para Desarrollo) */}
-      {import.meta.env.DEV && (
+      {/* 3. Conexión de Red / Servidor Backend (Exclusivo para Modo Demostración) */}
+      {MODO_DEMO && (
         <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-3">
           <div className="flex items-center gap-2 text-ink">
             <Globe className="w-4 h-4 text-primary" />
