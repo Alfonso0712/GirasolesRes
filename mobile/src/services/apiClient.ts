@@ -4,22 +4,24 @@
  * manejo normalizado de errores (ApiError) y renovación preventiva de token JWT.
  */
 
-export const DEFAULT_API_BASE: string =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) || 'https://girasolesres.pp.ua/api';
+import {
+  URL_API_POR_DEFECTO,
+  obtenerUrlBase,
+  guardarUrl,
+  restablecerUrl,
+} from '../config/serverConfig';
+
+export const DEFAULT_API_BASE: string = URL_API_POR_DEFECTO;
 
 export function getApiBaseUrl(): string {
-  const custom = localStorage.getItem('GIRASOLES_API_BASE');
-  if (custom && custom.trim()) {
-    return custom.trim().replace(/\/$/, '');
-  }
-  return DEFAULT_API_BASE.replace(/\/$/, '');
+  return obtenerUrlBase();
 }
 
 export function setApiBaseUrl(url: string): void {
   if (!url || !url.trim()) {
-    localStorage.removeItem('GIRASOLES_API_BASE');
+    restablecerUrl();
   } else {
-    localStorage.setItem('GIRASOLES_API_BASE', url.trim().replace(/\/$/, ''));
+    guardarUrl(url);
   }
 }
 

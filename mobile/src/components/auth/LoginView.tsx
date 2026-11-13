@@ -1,11 +1,13 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Lock, User, Globe, AlertCircle, Eye, EyeOff, Pencil } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { authService } from '../../services/authService';
 import { getApiBaseUrl } from '../../services/apiClient';
 import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useToast } from '../../context/ToastContext';
 import { MODO_DEMO } from '../../config/appConfig';
+import { obtenerUrlBase, consumirMensajeRestablecimiento } from '../../config/serverConfig';
 import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const DemoQuickAccess = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
@@ -30,6 +32,37 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
+  const { mostrar: mostrarToast } = useToast();
+
+  useEffect(() => {
+    obtenerUrlBase();
+    const avisoPendiente = consumirMensajeRestablecimiento();
+    if (avisoPendiente) {
+      mostrarToast({
+        tipo: 'aviso',
+        mensaje: avisoPendiente,
+        duracionMs: 6000,
+      });
+    }
+
+    const handleRestablecido = (e: Event) => {
+      const custom = e as CustomEvent<{ mensaje?: string }>;
+      const msg =
+        custom.detail?.mensaje ||
+        'Se restableció la dirección del servidor porque la guardada no era la API.';
+      mostrarToast({
+        tipo: 'aviso',
+        mensaje: msg,
+        duracionMs: 6000,
+      });
+      setApiUrl(obtenerUrlBase());
+    };
+
+    window.addEventListener('girasoles:servidor-restablecido', handleRestablecido);
+    return () => {
+      window.removeEventListener('girasoles:servidor-restablecido', handleRestablecido);
+    };
+  }, [mostrarToast]);
 
   const handleLogin = async (user: string, pass: string) => {
     setError(null);

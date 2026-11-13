@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Globe, RefreshCw, Check, AlertTriangle, AlertCircle, RotateCcw } from 'lucide-react';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
-import { DEFAULT_API_BASE, getApiBaseUrl, setApiBaseUrl } from '../../services/apiClient';
+import {
+  URL_API_POR_DEFECTO,
+  obtenerUrlBase,
+  guardarUrl,
+  restablecerUrl,
+  normalizarUrl,
+} from '../../config/serverConfig';
 import { useHaptics } from '../../hooks/useHaptics';
 
 interface ServidorConfigSheetProps {
@@ -11,39 +17,12 @@ interface ServidorConfigSheetProps {
   onGuardado?: (nuevaUrl: string) => void;
 }
 
-interface ResultadoValidacion {
-  url: string;
-  esInsegura: boolean;
-  error?: string;
-}
-
-function normalizarUrl(raw: string): ResultadoValidacion {
-  let url = raw.trim();
-  if (!url) {
-    return { url: '', esInsegura: false, error: 'Ingrese una dirección de servidor válida.' };
-  }
-  if (!/^https?:\/\//i.test(url)) {
-    return { url: '', esInsegura: false, error: 'La dirección debe comenzar con http:// o https://' };
-  }
-  url = url.replace(/\/+$/, '');
-  try {
-    const parsed = new URL(url);
-    if (parsed.pathname === '' || parsed.pathname === '/') {
-      url = `${url}/api`;
-    }
-  } catch {
-    return { url: '', esInsegura: false, error: 'Formato de dirección URL inválido.' };
-  }
-  const esInsegura = url.startsWith('http://');
-  return { url, esInsegura };
-}
-
 export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
   isOpen,
   onClose,
   onGuardado,
 }) => {
-  const [urlInput, setUrlInput] = useState<string>(getApiBaseUrl());
+  const [urlInput, setUrlInput] = useState<string>(obtenerUrlBase());
   const [probando, setProbando] = useState<boolean>(false);
   const [resultadoPrueba, setResultadoPrueba] = useState<{
     tipo: 'exito' | 'error' | 'advertencia';
@@ -55,7 +34,7 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setUrlInput(getApiBaseUrl());
+      setUrlInput(obtenerUrlBase());
       setResultadoPrueba(null);
       setGuardadoExitoso(false);
     }
@@ -122,13 +101,19 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
   const handleGuardar = () => {
     triggerLight();
     const val = normalizarUrl(urlInput);
-    if (val.error) {
+    if (val.error || val.esBloqueado) {
       triggerError();
-      setResultadoPrueba({ tipo: 'error', mensaje: val.error });
+      setResultadoPrueba({ tipo: 'error', mensaje: val.error || 'Dirección de servidor no permitida.' });
       return;
     }
 
-    setApiBaseUrl(val.url);
+    const res = guardarUrl(val.url);
+    if (!res.ok) {
+      triggerError();
+      setResultadoPrueba({ tipo: 'error', mensaje: res.error || 'No se pudo guardar la dirección.' });
+      return;
+    }
+
     triggerSuccess();
     setGuardadoExitoso(true);
     if (onGuardado) onGuardado(val.url);
@@ -141,8 +126,8 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
 
   const handleRestablecer = () => {
     triggerLight();
-    setApiBaseUrl('');
-    const defecto = DEFAULT_API_BASE;
+    restablecerUrl();
+    const defecto = URL_API_POR_DEFECTO;
     setUrlInput(defecto);
     triggerSuccess();
     setResultadoPrueba({
@@ -167,7 +152,7 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
                 setUrlInput(e.target.value);
                 setResultadoPrueba(null);
               }}
-              placeholder="https://girasolesres.pp.ua/api"
+              placeholder={URL_API_POR_DEFECTO}
               className="w-full pl-10 pr-3 py-3 rounded-xl border border-line bg-canvas text-xs font-mono font-medium focus:outline-primary"
             />
           </div>
