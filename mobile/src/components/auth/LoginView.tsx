@@ -6,11 +6,14 @@ import { getApiBaseUrl } from '../../services/apiClient';
 import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
-import { ServidorConfigSheet } from './ServidorConfigSheet';
 import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const DemoQuickAccess = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
   ? lazy(() => import('./DemoQuickAccess').then((m) => ({ default: m.DemoQuickAccess })))
+  : null;
+
+const ServidorConfigSheet = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
+  ? lazy(() => import('./ServidorConfigSheet').then((m) => ({ default: m.ServidorConfigSheet })))
   : null;
 
 interface LoginViewProps {
@@ -159,11 +162,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
               <Pencil className="w-3.5 h-3.5 text-ink-muted" />
             </button>
 
-            <ServidorConfigSheet
-              isOpen={mostrarSheetServidor}
-              onClose={() => setMostrarSheetServidor(false)}
-              onGuardado={(nueva) => setApiUrl(nueva)}
-            />
+            {ServidorConfigSheet && (
+              <Suspense fallback={null}>
+                <ServidorConfigSheet
+                  isOpen={mostrarSheetServidor}
+                  onClose={() => setMostrarSheetServidor(false)}
+                  onGuardado={(nueva) => setApiUrl(nueva)}
+                />
+              </Suspense>
+            )}
           </div>
         )}
       </div>

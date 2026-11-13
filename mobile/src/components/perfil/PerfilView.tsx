@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
@@ -6,8 +6,11 @@ import { BottomSheet } from '../ui/BottomSheet';
 import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
-import { ServidorConfigSheet } from '../auth/ServidorConfigSheet';
 import logoEmblema from '../../assets/logo-emblema-256.png';
+
+const ServidorConfigSheet = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
+  ? lazy(() => import('../auth/ServidorConfigSheet').then((m) => ({ default: m.ServidorConfigSheet })))
+  : null;
 
 interface PerfilViewProps {
   session: UserSession;
@@ -139,11 +142,15 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             <span>Configurar Dirección del Servidor</span>
           </Button>
 
-          <ServidorConfigSheet
-            isOpen={mostrarSheetServidor}
-            onClose={() => setMostrarSheetServidor(false)}
-            onGuardado={(nueva) => setApiUrl(nueva)}
-          />
+          {ServidorConfigSheet && (
+            <Suspense fallback={null}>
+              <ServidorConfigSheet
+                isOpen={mostrarSheetServidor}
+                onClose={() => setMostrarSheetServidor(false)}
+                onGuardado={(nueva) => setApiUrl(nueva)}
+              />
+            </Suspense>
+          )}
         </div>
       )}
 
