@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { FilterChip } from './FilterChip';
 
 export interface FilterChipItem<T extends string = string> {
@@ -29,7 +29,36 @@ export function FilterChipBar<T extends string = string>({
   const chipList = items || chips || [];
   const currentSelected = (selectedId ?? activeId) as T;
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeRef = useRef<HTMLButtonElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
+
+  const [mostrarIzquierda, setMostrarIzquierda] = useState(false);
+  const [mostrarDerecha, setMostrarDerecha] = useState(false);
+
+  const actualizarDegradados = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setMostrarIzquierda(scrollLeft > 2);
+    setMostrarDerecha(scrollLeft + clientWidth < scrollWidth - 2);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    requestAnimationFrame(actualizarDegradados);
+  }, [actualizarDegradados]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    actualizarDegradados();
+
+    const ro = new ResizeObserver(() => {
+      requestAnimationFrame(actualizarDegradados);
+    });
+    ro.observe(el);
+
+    return () => ro.disconnect();
+  }, [actualizarDegradados, chipList.length]);
 
   useEffect(() => {
     if (activeRef.current && containerRef.current) {
@@ -38,20 +67,24 @@ export function FilterChipBar<T extends string = string>({
         block: 'nearest',
         inline: 'center',
       });
+      requestAnimationFrame(actualizarDegradados);
     }
-  }, [currentSelected]);
+  }, [currentSelected, actualizarDegradados]);
 
   return (
     <div className={`relative w-full ${className}`}>
       {/* Indicador sutil de scroll degradado izquierdo */}
-      <div
-        className="pointer-events-none absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-surface to-transparent z-10 opacity-70"
-        aria-hidden="true"
-      />
+      {mostrarIzquierda && (
+        <div
+          className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-surface to-transparent z-10 transition-opacity duration-200"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Contenedor con scroll horizontal táctil */}
       <div
         ref={containerRef}
+        onScroll={handleScroll}
         role="group"
         aria-label={ariaLabel}
         className="flex gap-2 overflow-x-auto px-1 py-1 [scrollbar-width:none] [-webkit-overflow-scrolling:touch]"
@@ -59,7 +92,7 @@ export function FilterChipBar<T extends string = string>({
         {chipList.map((item) => {
           const isSelected = item.id === currentSelected;
           return (
-            <div key={item.id} ref={isSelected ? (activeRef as unknown as React.RefObject<HTMLDivElement>) : undefined}>
+            <div key={item.id} ref={isSelected ? activeRef : undefined} className="shrink-0">
               <FilterChip
                 label={item.label}
                 count={item.count}
@@ -72,10 +105,12 @@ export function FilterChipBar<T extends string = string>({
       </div>
 
       {/* Indicador sutil de scroll degradado derecho */}
-      <div
-        className="pointer-events-none absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-surface to-transparent z-10 opacity-70"
-        aria-hidden="true"
-      />
+      {mostrarDerecha && (
+        <div
+          className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-surface to-transparent z-10 transition-opacity duration-200"
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 }
