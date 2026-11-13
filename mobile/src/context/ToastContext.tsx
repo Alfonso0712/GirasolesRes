@@ -128,9 +128,9 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 type="button"
                 onClick={ocultar}
                 aria-label="Cerrar notificación"
-                className="w-7 h-7 rounded-full hover:bg-white/20 flex items-center justify-center cursor-pointer opacity-80 hover:opacity-100"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full hover:bg-white/20 flex items-center justify-center cursor-pointer opacity-80 hover:opacity-100 active:scale-95 transition-transform"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           </div>

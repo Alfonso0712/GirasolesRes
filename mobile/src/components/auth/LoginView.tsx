@@ -96,6 +96,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
                 placeholder="Ej. mozo1"
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
                 className="w-full pl-10 pr-3 py-3 rounded-xl border border-line bg-canvas text-sm font-medium focus:outline-primary"
               />
             </div>
@@ -110,6 +113,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 className="w-full pl-10 pr-11 py-3 rounded-xl border border-line bg-canvas text-sm font-medium focus:outline-primary"
               />
               <button

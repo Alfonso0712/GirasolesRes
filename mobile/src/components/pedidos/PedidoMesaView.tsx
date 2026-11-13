@@ -365,19 +365,21 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                     <button
                       type="button"
                       onClick={() => modificarCantidad(linea.productoId, -1)}
-                      className="w-8 h-8 rounded-lg bg-canvas text-danger flex items-center justify-center border border-line"
+                      aria-label={linea.cantidad === 1 ? `Eliminar ${linea.nombre} de la orden` : `Disminuir cantidad de ${linea.nombre}`}
+                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
                     >
-                      {linea.cantidad === 1 ? <Trash2 className="w-3.5 h-3.5" /> : <Minus className="w-3.5 h-3.5" />}
+                      {linea.cantidad === 1 ? <Trash2 className="w-4 h-4" aria-hidden="true" /> : <Minus className="w-4 h-4" aria-hidden="true" />}
                     </button>
-                    <span className="text-xs font-black min-w-[20px] text-center">
+                    <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
                       {linea.cantidad}
                     </span>
                     <button
                       type="button"
                       onClick={() => modificarCantidad(linea.productoId, 1)}
-                      className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center"
+                      aria-label={`Aumentar cantidad de ${linea.nombre}`}
+                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
                     >
-                      <Plus className="w-3.5 h-3.5" />
+                      <Plus className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -388,7 +390,8 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   value={linea.observaciones || ''}
                   onChange={(e) => actualizarObservacion(linea.productoId, e.target.value)}
                   placeholder="Nota de cocina (ej. sin picante, bien cocido...)"
-                  className="w-full text-xs px-3 py-1.5 rounded-lg border border-line bg-canvas focus:outline-primary"
+                  aria-label={`Nota de cocina para ${linea.nombre}`}
+                  className="w-full px-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-primary"
                 />
               </div>
             ))}

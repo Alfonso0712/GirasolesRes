@@ -37,6 +37,11 @@
   --color-info-bg: #EFF6FF;
   --color-info-border: #BFDBFE;
 
+  --color-badge-success-text: #065F46;
+  --color-badge-warning-text: #78350F;
+  --color-badge-danger-text: #9F1239;
+  --color-badge-info-text: #1E40AF;
+
   /* Superficies y Tokens Móvil / Web */
   --color-surface-raised: #FFFFFF;
   --color-surface-success: #F4F9F4;
@@ -96,6 +101,11 @@
     --color-info: #60A5FA;
     --color-info-bg: #141E2E;
     --color-info-border: #264A7A;
+
+    --color-badge-success-text: #34D399;
+    --color-badge-warning-text: #FBBF24;
+    --color-badge-danger-text: #F87171;
+    --color-badge-info-text: #60A5FA;
 
     --color-chip-accent-bg: #3A2A22;
     --color-chip-accent-border: #5A3A2C;

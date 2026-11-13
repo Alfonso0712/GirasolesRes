@@ -332,20 +332,25 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                   <span className="font-black text-ink">
                     {formatCurrency(l.precioUnitario * l.cantidad)}
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={() => modificarCantidad(l.productoId, -1)}
-                      className="w-7 h-7 rounded-lg bg-canvas text-danger flex items-center justify-center border border-line"
+                      aria-label={`Disminuir cantidad de ${l.nombre}`}
+                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
                     >
-                      <Minus className="w-3 h-3" />
+                      <Minus className="w-4 h-4" aria-hidden="true" />
                     </button>
+                    <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
+                      {l.cantidad}
+                    </span>
                     <button
                       type="button"
                       onClick={() => modificarCantidad(l.productoId, 1)}
-                      className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center"
+                      aria-label={`Aumentar cantidad de ${l.nombre}`}
+                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
                     >
-                      <Plus className="w-3 h-3" />
+                      <Plus className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
