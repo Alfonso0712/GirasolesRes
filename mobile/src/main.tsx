@@ -1,10 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ToastProvider } from './context/ToastContext';
 import './index.css';
+
+// Inicialización de barras del sistema en plataformas nativas
+if (Capacitor.isNativePlatform()) {
+  void StatusBar.setOverlaysWebView({ overlay: false }).catch(() => {});
+  void StatusBar.setBackgroundColor({ color: '#482813' }).catch(() => {});
+  void StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

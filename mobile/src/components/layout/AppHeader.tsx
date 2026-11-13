@@ -17,7 +17,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onToggleDarkMode,
 }) => {
   return (
-    <header className="h-14 bg-brand-dark text-white px-4 flex items-center justify-between shrink-0 shadow-md safe-top">
+    <header className="relative z-20 min-h-14 bg-brand-dark text-white px-4 py-2 flex items-center justify-between shrink-0 shadow-md safe-top">
       <div className="flex items-center gap-2.5 min-w-0">
         <img
           src={logoEmblema}
@@ -33,7 +33,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
               Girasoles Res
             </h1>
             {MODO_DEMO && (
-              <span className="text-xs font-black uppercase px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/40">
+              <span className="text-xs font-black uppercase px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/40 shrink-0">
                 Demo
               </span>
             )}
@@ -48,7 +48,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         variant="ghost"
         onClick={onToggleDarkMode}
         aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
-        className="w-11 h-11 text-white hover:bg-white/10"
+        className="w-11 h-11 min-w-[44px] min-h-[44px] text-white hover:bg-white/10 active:bg-white/20 shrink-0"
       >
         {isDark ? <Sun className="w-5 h-5 text-accent" /> : <Moon className="w-5 h-5 text-white" />}
       </IconButton>
