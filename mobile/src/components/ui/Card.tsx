@@ -34,10 +34,10 @@ export const Card: React.FC<CardProps> = ({
 
   const accentStyles = {
     none: '',
-    success: 'border-l-4 border-l-success',
-    warning: 'border-l-4 border-l-warning',
-    danger: 'border-l-4 border-l-danger',
-    info: 'border-l-4 border-l-info',
+    success: 'relative overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-success',
+    warning: 'relative overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-warning',
+    danger: 'relative overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-danger',
+    info: 'relative overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-info',
   };
 
   const interactiveStyles = isInteractive

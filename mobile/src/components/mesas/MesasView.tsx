@@ -126,11 +126,16 @@ export const MesasView: React.FC<MesasViewProps> = ({
                   interactive
                   accent={esLibre ? 'success' : 'warning'}
                   onClick={() => handleMesaClick(mesa)}
-                  className="flex flex-col justify-between min-h-[116px]"
+                  padding="sm"
+                  className="flex flex-col justify-between min-h-[116px] pl-3.5"
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-base font-extrabold text-ink">{mesa.nombre}</span>
-                    <StatusBadge estado={mesa.ocupacion} />
+                  <div className="flex items-center justify-between gap-1.5 w-full">
+                    <span className="text-base font-extrabold text-ink whitespace-nowrap truncate min-w-0 flex-1">
+                      {mesa.nombre}
+                    </span>
+                    <div className="shrink-0">
+                      <StatusBadge estado={mesa.ocupacion} />
+                    </div>
                   </div>
 
                   <div className="mt-3 flex items-center justify-between text-xs text-ink-muted">
