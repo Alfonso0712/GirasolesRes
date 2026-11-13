@@ -8,7 +8,9 @@ import {
   guardarUrl,
   restablecerUrl,
   normalizarUrl,
+  probarConexion,
 } from '../../config/serverConfig';
+import { MODO_DEMO } from '../../config/appConfig';
 import { useHaptics } from '../../hooks/useHaptics';
 
 interface ServidorConfigSheetProps {
@@ -25,8 +27,9 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
   const [urlInput, setUrlInput] = useState<string>(obtenerUrlBase());
   const [probando, setProbando] = useState<boolean>(false);
   const [resultadoPrueba, setResultadoPrueba] = useState<{
-    tipo: 'exito' | 'error' | 'advertencia';
+    tipo: 'exito' | 'error';
     mensaje: string;
+    detalle?: string;
   } | null>(null);
   const [guardadoExitoso, setGuardadoExitoso] = useState<boolean>(false);
 
@@ -45,6 +48,15 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
   const handleProbarConexion = async () => {
     triggerLight();
     const val = normalizarUrl(urlInput);
+    if (val.esBloqueado) {
+      triggerError();
+      setResultadoPrueba({
+        tipo: 'error',
+        mensaje: 'Esta dirección es el sitio web de Girasoles, no la API.',
+        detalle: 'girasolesres.pp.ua es el sitio web y no la API de backend.',
+      });
+      return;
+    }
     if (val.error) {
       triggerError();
       setResultadoPrueba({ tipo: 'error', mensaje: val.error });
@@ -54,44 +66,17 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
     setProbando(true);
     setResultadoPrueba(null);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
     try {
-      const endpoint = val.url.endsWith('/mesas') ? val.url : `${val.url}/mesas`;
-      const res = await fetch(endpoint, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      // Cualquier respuesta 401 o 200 = Conexión correcta
-      if (res.status === 200 || res.status === 401) {
+      const res = await probarConexion(urlInput);
+      if (res.exito) {
         triggerSuccess();
-        setResultadoPrueba({
-          tipo: 'exito',
-          mensaje: 'Conexión correcta con el servidor de Girasoles.',
-        });
-      } else if (res.status === 404) {
-        triggerError();
-        setResultadoPrueba({
-          tipo: 'error',
-          mensaje: 'El servidor respondió, pero la ruta de la API no existe. Revise la dirección.',
-        });
       } else {
-        triggerSuccess();
-        setResultadoPrueba({
-          tipo: 'exito',
-          mensaje: `El servidor respondió con código ${res.status}. Conexión alcanzada.`,
-        });
+        triggerError();
       }
-    } catch {
-      clearTimeout(timeoutId);
-      triggerError();
       setResultadoPrueba({
-        tipo: 'error',
-        mensaje: 'No se pudo conectar con el servidor. Verifique la dirección y su conexión.',
+        tipo: res.tipo,
+        mensaje: res.mensaje,
+        detalle: res.detalle,
       });
     } finally {
       setProbando(false);
@@ -101,9 +86,18 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
   const handleGuardar = () => {
     triggerLight();
     const val = normalizarUrl(urlInput);
-    if (val.error || val.esBloqueado) {
+    if (val.esBloqueado) {
       triggerError();
-      setResultadoPrueba({ tipo: 'error', mensaje: val.error || 'Dirección de servidor no permitida.' });
+      setResultadoPrueba({
+        tipo: 'error',
+        mensaje: 'Esta dirección es el sitio web de Girasoles, no la API.',
+        detalle: 'No se permite guardar el sitio web como dirección del servidor.',
+      });
+      return;
+    }
+    if (val.error) {
+      triggerError();
+      setResultadoPrueba({ tipo: 'error', mensaje: val.error });
       return;
     }
 
@@ -158,8 +152,16 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
           </div>
         </div>
 
+        {/* Advertencia si corresponde al sitio web */}
+        {validacionActual.esBloqueado && (
+          <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-medium flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>Esta dirección es el sitio web de Girasoles, no la API.</span>
+          </div>
+        )}
+
         {/* Advertencia de conexión sin cifrar */}
-        {validacionActual.esInsegura && (
+        {validacionActual.esInsegura && !validacionActual.esBloqueado && (
           <div className="p-3 rounded-xl bg-warning-bg border border-warning-border text-warning text-xs font-medium flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>Conexión sin cifrar: úsela solo para pruebas en red local.</span>
@@ -169,18 +171,25 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
         {/* Mensaje de resultado de prueba o guardado */}
         {resultadoPrueba && (
           <div
-            className={`p-3 rounded-xl text-xs font-semibold flex items-start gap-2 ${
+            className={`p-3 rounded-xl text-xs font-semibold space-y-1 ${
               resultadoPrueba.tipo === 'exito'
                 ? 'bg-success-bg border border-success-border text-success'
                 : 'bg-danger-bg border border-danger-border text-danger'
             }`}
           >
-            {resultadoPrueba.tipo === 'exito' ? (
-              <Check className="w-4 h-4 shrink-0 mt-0.5" />
-            ) : (
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2">
+              {resultadoPrueba.tipo === 'exito' ? (
+                <Check className="w-4 h-4 shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              )}
+              <span>{resultadoPrueba.mensaje}</span>
+            </div>
+            {MODO_DEMO && resultadoPrueba.detalle && (
+              <p className="text-xs text-ink-muted font-normal pl-6">
+                {resultadoPrueba.detalle}
+              </p>
             )}
-            <span>{resultadoPrueba.mensaje}</span>
           </div>
         )}
 
@@ -243,6 +252,7 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
             <Button
               fullWidth
               size="md"
+              disabled={validacionActual.esBloqueado || Boolean(validacionActual.error)}
               onClick={handleGuardar}
               className="flex items-center justify-center gap-2 min-h-[44px]"
             >

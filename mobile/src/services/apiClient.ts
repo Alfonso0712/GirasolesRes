@@ -25,19 +25,25 @@ export function setApiBaseUrl(url: string): void {
   }
 }
 
+export type ApiErrorTipo = 'timeout' | 'sin-respuesta' | 'http';
+
 export class ApiError extends Error {
   public status: number;
   public codigo?: string;
   public mensaje: string;
   public detail?: string;
   public errors?: Record<string, string | string[]>;
+  public tipo: ApiErrorTipo;
+  public host?: string;
 
   constructor(
     status: number,
     mensaje: string,
     codigo?: string,
     errors?: Record<string, string | string[]>,
-    detail?: string
+    detail?: string,
+    tipo: ApiErrorTipo = 'http',
+    host?: string
   ) {
     super(mensaje);
     this.name = 'ApiError';
@@ -46,6 +52,8 @@ export class ApiError extends Error {
     this.codigo = codigo;
     this.errors = errors;
     this.detail = detail;
+    this.tipo = tipo;
+    this.host = host;
     Object.setPrototypeOf(this, ApiError.prototype);
   }
 }
@@ -191,6 +199,12 @@ class ApiClient {
     }
 
     const url = this.formatUrl(endpoint);
+    let requestHost = '';
+    try {
+      requestHost = new URL(url).host;
+    } catch {
+      requestHost = '';
+    }
     const headers = new Headers(options.headers || {});
 
     if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
@@ -246,7 +260,9 @@ class ApiClient {
             'Sesión expirada. Inicie sesión nuevamente.',
             codigo || 'UNAUTHORIZED',
             fieldErrors,
-            errorDetail
+            errorDetail,
+            'http',
+            requestHost
           );
         }
 
@@ -256,7 +272,9 @@ class ApiClient {
             'No tiene permiso para realizar esta acción.',
             codigo || 'FORBIDDEN',
             fieldErrors,
-            errorDetail
+            errorDetail,
+            'http',
+            requestHost
           );
         }
 
@@ -266,7 +284,9 @@ class ApiClient {
             'Ocurrió un error en el servidor. Intente nuevamente más tarde.',
             codigo || 'SERVER_ERROR',
             fieldErrors,
-            errorDetail
+            errorDetail,
+            'http',
+            requestHost
           );
         }
 
@@ -278,7 +298,9 @@ class ApiClient {
           mensajeCliente,
           codigo || 'BAD_REQUEST',
           fieldErrors,
-          errorDetail
+          errorDetail,
+          'http',
+          requestHost
         );
       }
 
@@ -301,7 +323,11 @@ class ApiClient {
         throw new ApiError(
           0,
           'No se pudo conectar con el servidor. Verifique su conexión.',
-          'ERR_TIMEOUT'
+          'ERR_TIMEOUT',
+          undefined,
+          undefined,
+          'timeout',
+          requestHost
         );
       }
 
@@ -312,14 +338,22 @@ class ApiClient {
         throw new ApiError(
           0,
           'No se pudo conectar con el servidor. Verifique su conexión.',
-          'ERR_CONEXION'
+          'ERR_CONEXION',
+          undefined,
+          undefined,
+          'sin-respuesta',
+          requestHost
         );
       }
 
       throw new ApiError(
         0,
         'No se pudo conectar con el servidor. Verifique su conexión.',
-        'ERR_DESCONOCIDO'
+        'ERR_DESCONOCIDO',
+        undefined,
+        undefined,
+        'sin-respuesta',
+        requestHost
       );
     }
   }

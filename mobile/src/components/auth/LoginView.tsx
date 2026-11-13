@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Lock, User, Globe, AlertCircle, Eye, EyeOff, Pencil } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { authService } from '../../services/authService';
-import { getApiBaseUrl } from '../../services/apiClient';
+import { getApiBaseUrl, ApiError } from '../../services/apiClient';
 import type { UserSession } from '../../types/auth';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
@@ -27,7 +27,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const [contrasena, setContrasena] = useState('');
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loginError, setLoginError] = useState<{
+    mensaje: string;
+    detalle?: string;
+    tipo?: 'timeout' | 'sin-respuesta' | 'http';
+  } | null>(null);
   const [mostrarSheetServidor, setMostrarSheetServidor] = useState(false);
   const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
 
@@ -65,7 +69,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   }, [mostrarToast]);
 
   const handleLogin = async (user: string, pass: string) => {
-    setError(null);
+    setLoginError(null);
     setIsLoading(true);
     try {
       const session = await authService.login(user, pass);
@@ -74,7 +78,24 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'Credenciales incorrectas';
-      setError(msg);
+      let detalle: string | undefined = undefined;
+      let tipo: 'timeout' | 'sin-respuesta' | 'http' | undefined = undefined;
+
+      if (err instanceof ApiError) {
+        tipo = err.tipo;
+        if (MODO_DEMO) {
+          const host = err.host || 'el servidor';
+          if (err.tipo === 'timeout') {
+            detalle = `Detalle: no hubo respuesta de ${host} en 15 s.`;
+          } else if (err.tipo === 'sin-respuesta') {
+            detalle = `Detalle: no se obtuvo respuesta de ${host}. Verifique que sea la dirección de la API, que el servidor esté encendido y que la red lo permita.`;
+          } else if (err.tipo === 'http' && err.status > 0) {
+            detalle = `Detalle: respuesta HTTP ${err.status} de ${host}.`;
+          }
+        }
+      }
+
+      setLoginError({ mensaje: msg, detalle, tipo });
     } finally {
       setIsLoading(false);
     }
@@ -113,10 +134,32 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
         {/* 2. Formulario de Acceso */}
         <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-4">
-          {error && (
-            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
+          {loginError && (
+            <div className="p-3.5 rounded-2xl bg-danger-bg border border-danger-border text-danger text-xs space-y-2">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span className="font-semibold">{loginError.mensaje}</span>
+              </div>
+              {MODO_DEMO && loginError.detalle && (
+                <p className="text-xs text-ink-muted pl-6">{loginError.detalle}</p>
+              )}
+              {MODO_DEMO &&
+                (loginError.tipo === 'timeout' || loginError.tipo === 'sin-respuesta') && (
+                  <div className="pt-0.5 pl-6">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        triggerLight();
+                        setMostrarSheetServidor(true);
+                      }}
+                      className="text-xs min-h-[36px] px-3 font-semibold"
+                    >
+                      Revisar servidor
+                    </Button>
+                  </div>
+                )}
             </div>
           )}
 

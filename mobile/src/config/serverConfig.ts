@@ -166,3 +166,120 @@ export function obtenerUrlBase(): string {
 
   return norm.url;
 }
+
+export interface ResultadoPruebaConexion {
+  exito: boolean;
+  tipo: 'exito' | 'error';
+  mensaje: string;
+  detalle?: string;
+  host: string;
+}
+
+/**
+ * Prueba la conexión contra el endpoint {base}/auth/me sin token con timeout de 8 segundos.
+ * Distingue explícitamente entre la API de backend (401 JSON) y un sitio web (HTML/200).
+ */
+export async function probarConexion(urlCandidata: string): Promise<ResultadoPruebaConexion> {
+  const norm = normalizarUrl(urlCandidata);
+  const host = norm.host || 'el servidor';
+
+  if (norm.esBloqueado) {
+    return {
+      exito: false,
+      tipo: 'error',
+      mensaje: 'Esta dirección es el sitio web de Girasoles, no la API.',
+      detalle: `Detalle: el host ${host} está registrado como sitio web institucional.`,
+      host,
+    };
+  }
+
+  if (norm.error) {
+    return {
+      exito: false,
+      tipo: 'error',
+      mensaje: norm.error,
+      host,
+    };
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const endpoint = `${norm.url.replace(/\/+$/, '')}/auth/me`;
+    const res = await fetch(endpoint, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    const contentType = (res.headers.get('content-type') || '').toLowerCase();
+    const esHtml = contentType.includes('text/html');
+    const esJson = contentType.includes('application/json');
+
+    // 401 con Content-Type application/json: Éxito verificado de la API
+    if (res.status === 401 && esJson) {
+      return {
+        exito: true,
+        tipo: 'exito',
+        mensaje: 'Conexión correcta: se encontró la API de Girasoles.',
+        host,
+      };
+    }
+
+    // 200 o text/html: Es un sitio web
+    if (res.status === 200 || esHtml) {
+      return {
+        exito: false,
+        tipo: 'error',
+        mensaje: 'La dirección responde, pero parece un sitio web y no la API de Girasoles. Revise la dirección.',
+        detalle: `Detalle: respuesta HTTP ${res.status} (${contentType || 'sin tipo'}) de ${host}.`,
+        host,
+      };
+    }
+
+    // 404: Ruta de API no existe
+    if (res.status === 404) {
+      return {
+        exito: false,
+        tipo: 'error',
+        mensaje: 'El servidor respondió, pero la ruta de la API no existe. Revise la dirección.',
+        detalle: `Detalle: respuesta HTTP 404 de ${host}.`,
+        host,
+      };
+    }
+
+    // 5xx (incluidos 530 y 1033 de Cloudflare)
+    if (res.status >= 500) {
+      return {
+        exito: false,
+        tipo: 'error',
+        mensaje: `El servidor o el túnel no está disponible en este momento (HTTP ${res.status}).`,
+        detalle: `Detalle: respuesta HTTP ${res.status} de ${host}.`,
+        host,
+      };
+    }
+
+    return {
+      exito: false,
+      tipo: 'error',
+      mensaje: 'La dirección responde, pero no devolvió el comportamiento esperado de la API. Revise la dirección.',
+      detalle: `Detalle: respuesta HTTP ${res.status} de ${host}.`,
+      host,
+    };
+  } catch (err: unknown) {
+    clearTimeout(timeoutId);
+    const esAbort =
+      (err instanceof Error && err.name === 'AbortError') || controller.signal.aborted;
+    return {
+      exito: false,
+      tipo: 'error',
+      mensaje: 'No se pudo conectar con el servidor. Verifique la dirección y su conexión.',
+      detalle: esAbort
+        ? `Detalle: no hubo respuesta de ${host} en 8 s.`
+        : `Detalle: no se obtuvo respuesta de ${host}. Verifique que sea la dirección de la API, que el servidor esté encendido y que la red lo permita.`,
+      host,
+    };
+  }
+}
