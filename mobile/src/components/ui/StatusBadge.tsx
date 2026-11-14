@@ -107,9 +107,24 @@ function resolveStatus(status: string | boolean, category?: StatusCategory): Sta
     return { label: 'Pagado · Pendiente', icon: Clock, variant: 'warning' };
   }
 
-  // 4. Fallback General
-  if (lower === 'activo' || lower === 'activa' || lower === 'cuadra') {
+  // 4. Fallback General y Estado del Menú del Día
+  if (
+    lower === 'activo' ||
+    lower === 'activa' ||
+    lower === 'cuadra' ||
+    lower === 'definido' ||
+    lower === 'menú definido' ||
+    lower === 'menu definido'
+  ) {
     return { label: text, icon: CheckCircle2, variant: 'success' };
+  }
+  if (
+    lower === 'menú no definido hoy' ||
+    lower === 'menu no definido hoy' ||
+    lower === 'sin definir' ||
+    lower === 'no definido'
+  ) {
+    return { label: text, icon: AlertTriangle, variant: 'warning' };
   }
   if (lower === 'inactivo' || lower === 'inactiva' || lower === 'agotado' || lower === 'desactivada') {
     return { label: text, icon: Ban, variant: 'danger' };

@@ -113,3 +113,33 @@ export function restarDiasLimaYMD(diasAtras: number, refDate: Date = new Date())
   const copia = new Date(refDate.getTime() - diasAtras * 24 * 60 * 60 * 1000);
   return obtenerHoyLimaYMD(copia);
 }
+
+/**
+ * Formatea una fecha "AAAA-MM-DD" o ISO a texto largo en español de Perú en America/Lima
+ * (ej. "sábado, 14 de noviembre de 2026").
+ */
+export function formatLimaFechaLarga(fecha?: string | null, refDate: Date = new Date()): string {
+  let target = refDate;
+  if (fecha && fecha.trim()) {
+    const limpio = fecha.trim();
+    const matchYmd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(limpio);
+    if (matchYmd) {
+      target = new Date(
+        Date.UTC(Number(matchYmd[1]), Number(matchYmd[2]) - 1, Number(matchYmd[3]), 17, 0, 0)
+      );
+    } else {
+      const parsed = new Date(limpio);
+      if (!isNaN(parsed.getTime())) {
+        target = parsed;
+      }
+    }
+  }
+
+  return new Intl.DateTimeFormat('es-PE', {
+    timeZone: ZONA_LIMA,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(target);
+}
