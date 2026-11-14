@@ -10,8 +10,9 @@
     "test:coverage": "vitest run --coverage --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "verify:conexion": "node scripts/verify-connection.mjs --src",
-    "build": "node scripts/verify-connection.mjs --src && tsc -b && vite build && node scripts/verify-connection.mjs --dist=production",
-    "build:demo": "node scripts/verify-connection.mjs --src && tsc -b && vite build --mode demo && node scripts/verify-connection.mjs --dist=demo",
+    "check:budget": "node scripts/check-budget.mjs",
+    "build": "node scripts/verify-connection.mjs --src && tsc -b && vite build && node scripts/verify-connection.mjs --dist=production && node scripts/check-budget.mjs",
+    "build:demo": "node scripts/verify-connection.mjs --src && tsc -b && vite build --mode demo && node scripts/verify-connection.mjs --dist=demo && node scripts/check-budget.mjs",
     "preview": "vite preview",
     "cap:sync": "cap sync",
     "cap:open": "cap open android"
