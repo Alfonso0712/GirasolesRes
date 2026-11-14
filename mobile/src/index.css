@@ -2,6 +2,7 @@
 @import "@fontsource-variable/inter";
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant left-handed (&:where(.left-handed, .left-handed *));
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

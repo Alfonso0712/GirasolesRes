@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import type { UserSession } from './types/auth';
 import { authService } from './services/authService';
+import { perfilService } from './services/perfilService';
 import { LoginView } from './components/auth/LoginView';
 import { ViewSkeleton } from './components/ui/ViewSkeleton';
 import { AppHeader } from './components/layout/AppHeader';
@@ -121,6 +122,7 @@ export const App: React.FC = () => {
       } else {
         document.documentElement.classList.remove('dark');
       }
+      perfilService.actualizarTema(next ? 'dark' : 'light');
       return next;
     });
   };

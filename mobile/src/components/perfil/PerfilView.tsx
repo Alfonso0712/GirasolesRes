@@ -1,11 +1,24 @@
 import React, { useState, Suspense, lazy } from 'react';
-import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil, Volume2 } from 'lucide-react';
+import {
+  Shield,
+  Moon,
+  Sun,
+  Vibrate,
+  LogOut,
+  Globe,
+  Pencil,
+  Volume2,
+  Smartphone,
+  KeyRound,
+} from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
+import { CambiarContrasenaSheet } from './CambiarContrasenaSheet';
 import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useHandedness } from '../../hooks/useHandedness';
 import { MODO_DEMO } from '../../config/appConfig';
 import { formatearMarcaCompilacion } from '../../config/serverConfig';
 import { reproducirSonidoKds, sonSonidosKdsHabilitados } from '../../utils/audioKds';
@@ -31,9 +44,11 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
   const [mostrarSheetServidor, setMostrarSheetServidor] = useState(false);
   const [mostrarConfirmLogout, setMostrarConfirmLogout] = useState(false);
+  const [mostrarCambiarPass, setMostrarCambiarPass] = useState(false);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
   const [sonidoHabilitado, setSonidoHabilitado] = useState(() => sonSonidosKdsHabilitados());
 
+  const { isLeftHanded, setHandedness } = useHandedness();
   const { triggerLight } = useHaptics();
 
   const handleToggleSonido = () => {
@@ -162,7 +177,88 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             </div>
           </button>
         </div>
+
+        {/* Orientación de Interfaz (Diestro / Zurdo) */}
+        <div className="pt-2 border-t border-line space-y-2">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+              <Smartphone className="w-5 h-5 text-accent" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-ink">Orientación de Manejo</p>
+              <p className="text-xs text-ink-muted">Alinea acciones táctiles para uso diestro o zurdo</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                triggerLight();
+                setHandedness('right');
+              }}
+              className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all min-h-[44px] ${
+                !isLeftHanded
+                  ? 'bg-primary text-white border-primary shadow-xs'
+                  : 'bg-canvas text-ink border-line'
+              }`}
+            >
+              Modo Diestro
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                triggerLight();
+                setHandedness('left');
+              }}
+              className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all min-h-[44px] ${
+                isLeftHanded
+                  ? 'bg-primary text-white border-primary shadow-xs'
+                  : 'bg-canvas text-ink border-line'
+              }`}
+            >
+              Modo Zurdo
+            </button>
+          </div>
+        </div>
       </Card>
+
+      {/* Seguridad de Cuenta (Exclusivo Administrador, RN-16) */}
+      {session.rol === 'Administrador' && (
+        <Card className="p-5 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <KeyRound className="w-4 h-4 text-accent" aria-hidden="true" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+              Seguridad de Cuenta
+            </h3>
+          </div>
+
+          <p className="text-xs text-ink-muted leading-relaxed">
+            Como administrador, puede cambiar su clave de acceso directamente desde este terminal móvil.
+          </p>
+
+          <Button
+            size="md"
+            fullWidth
+            variant="outline"
+            onClick={() => {
+              triggerLight();
+              setMostrarCambiarPass(true);
+            }}
+            className="flex items-center justify-center gap-2 min-h-[44px]"
+          >
+            <KeyRound className="w-4 h-4" />
+            <span>Cambiar Mi Contraseña</span>
+          </Button>
+
+          <CambiarContrasenaSheet
+            isOpen={mostrarCambiarPass}
+            onClose={() => setMostrarCambiarPass(false)}
+            onForzarLogout={onLogout}
+          />
+        </Card>
+      )}
 
       {/* 3. Conexión de Red / Servidor Backend (Exclusivo para Modo Demostración) */}
       {MODO_DEMO && (
