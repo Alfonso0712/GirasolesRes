@@ -165,6 +165,7 @@ export interface DetallePedidoCompletoDto {
   numero: number;
   tipo: string;
   mesa: string | null;
+  mesaId?: string | null;
   referencia: string | null;
   hora: string;
   total: number;

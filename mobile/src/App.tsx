@@ -163,6 +163,7 @@ export const App: React.FC = () => {
                 <PedidosPage
                   rol={session.rol}
                   onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  onNavigateToSalon={() => handleSelectTab('salon')}
                 />
               )}
 

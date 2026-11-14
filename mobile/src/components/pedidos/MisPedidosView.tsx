@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Clock, Utensils } from 'lucide-react';
-import type { PedidoItemDto } from '../../types/pedido';
+import type { PedidoItemDto, DetallePedidoCompletoDto } from '../../types/pedido';
+import type { RolUsuario } from '../../types/auth';
+import { DetallePedidoSheet } from './DetallePedidoSheet';
+import { AnularPedidoSheet } from './AnularPedidoSheet';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { Card } from '../ui/Card';
@@ -16,6 +19,9 @@ export interface MisPedidosViewProps {
   cargando: boolean;
   error: string | null;
   onRefresh: () => void | Promise<void>;
+  rol?: RolUsuario;
+  usuarioIdActual?: string;
+  onAgregarPlatos?: (pedido: DetallePedidoCompletoDto) => void;
   esMozo?: boolean;
 }
 
@@ -24,9 +30,14 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
   cargando,
   error,
   onRefresh,
+  rol = 'Mozo',
+  usuarioIdActual,
+  onAgregarPlatos,
   esMozo = false,
 }) => {
   const [filtro, setFiltro] = useState<'todos' | 'pendiente' | 'en-preparacion' | 'listo'>('todos');
+  const [pedidoDetalleId, setPedidoDetalleId] = useState<string | null>(null);
+  const [pedidoParaAnular, setPedidoParaAnular] = useState<DetallePedidoCompletoDto | PedidoItemDto | null>(null);
 
   const { triggerLight } = useHaptics();
 
@@ -64,7 +75,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
       {/* 1. Encabezado */}
       <PageHeader
         title="Pedidos Registrados"
-        subtitle="Consumo en curso en salón"
+        subtitle="Consumo en curso en salón y mostrador"
         icon={<Clock className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
         isRefreshing={cargando}
@@ -114,7 +125,12 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
             <Card
               key={p.id}
               accent={getAccentForEstado(p.estado)}
-              className="flex items-center justify-between select-none"
+              interactive={true}
+              onClick={() => {
+                triggerLight();
+                setPedidoDetalleId(p.id);
+              }}
+              className="flex items-center justify-between select-none cursor-pointer active:scale-98 transition-transform min-h-[56px]"
             >
               <div>
                 <div className="flex items-center gap-2">
@@ -142,6 +158,34 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
           );
         })}
       </div>
+
+      {/* 3. Bottom Sheet de Detalle Completo del Pedido */}
+      <DetallePedidoSheet
+        isOpen={Boolean(pedidoDetalleId)}
+        onClose={() => setPedidoDetalleId(null)}
+        pedidoId={pedidoDetalleId}
+        rol={rol}
+        usuarioIdActual={usuarioIdActual}
+        onAgregarPlatos={(det) => {
+          setPedidoDetalleId(null);
+          onAgregarPlatos?.(det);
+        }}
+        onSolicitarAnular={(det) => {
+          setPedidoDetalleId(null);
+          setPedidoParaAnular(det);
+        }}
+      />
+
+      {/* 4. Bottom Sheet de Anulación Justificada */}
+      <AnularPedidoSheet
+        isOpen={Boolean(pedidoParaAnular)}
+        onClose={() => setPedidoParaAnular(null)}
+        pedido={pedidoParaAnular}
+        onAnulacionExitosa={() => {
+          setPedidoParaAnular(null);
+          void onRefresh();
+        }}
+      />
     </div>
   );
 };
