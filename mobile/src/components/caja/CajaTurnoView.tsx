@@ -9,6 +9,7 @@ import {
   Receipt,
   History,
   Info,
+  AlertTriangle,
 } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import { ventaService } from '../../services/ventaService';
@@ -160,10 +161,20 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   }, [seccion, esAdmin]);
 
   const handleAbrirCaja = () => {
-    const num = parseFloat(montoApertura) || 0;
-    if (num <= 0) {
+    if (!montoApertura || montoApertura.trim() === '') {
       triggerError();
-      setErrorModal('El monto inicial debe ser mayor a 0');
+      setErrorModal('El monto inicial de apertura es obligatorio.');
+      return;
+    }
+    const num = parseFloat(montoApertura);
+    if (isNaN(num) || num < 0.00 || Number(num.toFixed(2)) !== num) {
+      triggerError();
+      setErrorModal('El monto debe ser mayor o igual a 0.00 y tener máximo 2 decimales.');
+      return;
+    }
+    if (num > 99999.99) {
+      triggerError();
+      setErrorModal('El monto no puede superar S/ 99,999.99.');
       return;
     }
     setErrorModal(null);
@@ -180,12 +191,15 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setModalAbrir(false);
       mostrar({
         tipo: 'exito',
-        mensaje: `Caja abierta con éxito con fondo de ${formatCurrency(num)}`,
+        mensaje: `Caja abierta con éxito con fondo inicial de ${formatCurrency(num)}.`,
       });
       await onRefresh();
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'Error al abrir caja';
+      let msg = 'Error al abrir caja';
+      if (err instanceof Error) {
+        msg = err.message;
+      }
       setErrorModal(msg);
       setConfirmarApertura(false);
     } finally {
@@ -211,9 +225,48 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     }
   };
 
+  const handleVerificarCierre = () => {
+    if (!efectivoContado || efectivoContado.trim() === '') {
+      triggerError();
+      setErrorModal('Debe ingresar el efectivo contado.');
+      return;
+    }
+    const contado = parseFloat(efectivoContado);
+    if (isNaN(contado) || contado < 0.00 || Number(contado.toFixed(2)) !== contado) {
+      triggerError();
+      setErrorModal('El monto debe ser mayor o igual a 0.00 y tener máximo 2 decimales.');
+      return;
+    }
+    if (contado > 99999.99) {
+      triggerError();
+      setErrorModal('El monto no puede superar S/ 99,999.99.');
+      return;
+    }
+    if (observacion.trim().length > 200) {
+      triggerError();
+      setErrorModal('La observación no puede superar los 200 caracteres.');
+      return;
+    }
+    setErrorModal(null);
+    setConfirmarCierre(true);
+  };
+
   const ejecutarCierre = async () => {
     if (!resumenCierre) return;
-    const contado = parseFloat(efectivoContado) || 0;
+    const contado = parseFloat(efectivoContado);
+    if (isNaN(contado) || contado < 0.00 || Number(contado.toFixed(2)) !== contado) {
+      setErrorModal('El monto debe ser mayor o igual a 0.00 y tener máximo 2 decimales.');
+      return;
+    }
+    if (contado > 99999.99) {
+      setErrorModal('El monto no puede superar S/ 99,999.99.');
+      return;
+    }
+    if (observacion.trim().length > 200) {
+      setErrorModal('La observación no puede superar los 200 caracteres.');
+      return;
+    }
+
     setProcesando(true);
     try {
       await cajaService.cerrarCaja({
@@ -226,12 +279,20 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setModalCerrar(false);
       mostrar({
         tipo: 'exito',
-        mensaje: 'Cierre de caja completado con éxito',
+        mensaje: 'Caja cerrada con éxito. Arqueo registrado.',
       });
       await onRefresh();
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'Error al cerrar caja';
+      if (msg.toLowerCase().includes('concurrente') || msg.toLowerCase().includes('actualizado')) {
+        try {
+          const nuevoResumen = await cajaService.obtenerResumenCierre();
+          setResumenCierre(nuevoResumen);
+        } catch {
+          // ignorar
+        }
+      }
       setErrorModal(msg);
       setConfirmarCierre(false);
     } finally {
@@ -239,6 +300,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     }
   };
 
+  const esAnteriorSinCerrar = cajaActual?.estado === 'anteriorSinCerrar' || cajaActual?.estado === 'sin_cerrar';
   const estaAbierta = cajaActual?.estado === 'abierta';
   const apertura = cajaActual?.apertura;
   const parcial = cajaActual?.resumenParcial;
@@ -246,6 +308,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const esperado = resumenCierre?.efectivoEsperado || 0;
   const contadoNum = parseFloat(efectivoContado) || 0;
   const dif = contadoNum - esperado;
+  const pedidosPendientes = resumenCierre?.pedidosPendientes || [];
+  const tienePendientes = pedidosPendientes.length > 0 || ((resumenCierre?.pedidosPendientesCobro ?? 0) > 0);
 
   // Chips para control segmentado
   const chipsSeccion = [
@@ -298,30 +362,62 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               <>
                 {/* Tarjeta de Estado del Turno */}
                 <Card
-                  accent={estaAbierta ? 'success' : 'danger'}
+                  accent={esAnteriorSinCerrar ? 'danger' : estaAbierta ? 'success' : 'danger'}
                   className="space-y-4"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                          estaAbierta ? 'bg-success-bg text-success' : 'bg-danger-bg text-danger'
+                          esAnteriorSinCerrar
+                            ? 'bg-danger-bg text-danger'
+                            : estaAbierta
+                            ? 'bg-success-bg text-success'
+                            : 'bg-danger-bg text-danger'
                         }`}
                       >
-                        {estaAbierta ? <Unlock className="w-6 h-6" aria-hidden="true" /> : <Lock className="w-6 h-6" aria-hidden="true" />}
+                        {esAnteriorSinCerrar ? (
+                          <AlertTriangle className="w-6 h-6" aria-hidden="true" />
+                        ) : estaAbierta ? (
+                          <Unlock className="w-6 h-6" aria-hidden="true" />
+                        ) : (
+                          <Lock className="w-6 h-6" aria-hidden="true" />
+                        )}
                       </div>
                       <div>
                         <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
                           Estado del Turno
                         </span>
                         <h3 className="text-lg font-black text-ink">
-                          {estaAbierta ? 'Caja Abierta y Operativa' : 'Caja Cerrada'}
+                          {esAnteriorSinCerrar
+                            ? 'Turno Anterior Sin Cerrar'
+                            : estaAbierta
+                            ? 'Caja Abierta y Operativa'
+                            : 'Caja Cerrada'}
                         </h3>
                       </div>
                     </div>
 
-                    <StatusBadge estado={estaAbierta ? 'Abierta' : 'Cerrada'} />
+                    <StatusBadge
+                      estado={
+                        esAnteriorSinCerrar
+                          ? 'Inactiva'
+                          : estaAbierta
+                          ? 'Abierta'
+                          : 'Cerrada'
+                      }
+                    />
                   </div>
+
+                  {esAnteriorSinCerrar && (
+                    <div className="p-3 bg-danger-bg border border-danger/30 rounded-xl flex items-start gap-2.5 text-xs text-danger">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">Turno pendiente de cierre</p>
+                        <p>Existe un turno anterior sin cerrar. Debe realizar el cierre antes de abrir una nueva caja.</p>
+                      </div>
+                    </div>
+                  )}
 
                   {estaAbierta && apertura && (
                     <div className="border-t border-line pt-3 text-xs space-y-1 text-ink-muted">
@@ -382,6 +478,19 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                         La apertura y el cierre de caja los realiza el Cajero.
                       </p>
                     </div>
+                  ) : esAnteriorSinCerrar ? (
+                    /* Turno anterior sin cerrar: Botón cerrar caja pendiente */
+                    <Button
+                      fullWidth
+                      size="lg"
+                      variant="danger"
+                      isLoading={procesando}
+                      onClick={iniciarCierre}
+                      className="flex items-center justify-center gap-2 min-h-[44px]"
+                    >
+                      <Lock className="w-5 h-5" />
+                      <span>Cerrar caja pendiente</span>
+                    </Button>
                   ) : !estaAbierta ? (
                     /* Cajero: Abrir caja */
                     <Button
@@ -392,7 +501,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                         setErrorModal(null);
                         setModalAbrir(true);
                       }}
-                      className="flex items-center justify-center gap-2"
+                      className="flex items-center justify-center gap-2 min-h-[44px]"
                     >
                       <Unlock className="w-5 h-5" />
                       <span>Abrir Caja de Turno</span>
@@ -405,7 +514,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                           fullWidth
                           size="lg"
                           onClick={onNavigateToCobros}
-                          className="flex items-center justify-center gap-2"
+                          className="flex items-center justify-center gap-2 min-h-[44px]"
                         >
                           <span>Ir a Cobros Pendientes</span>
                           <ArrowRight className="w-5 h-5" />
@@ -418,7 +527,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                         variant="danger"
                         isLoading={procesando}
                         onClick={iniciarCierre}
-                        className="flex items-center justify-center gap-2"
+                        className="flex items-center justify-center gap-2 min-h-[44px]"
                       >
                         <Lock className="w-5 h-5" />
                         <span>Realizar Cierre de Caja / Arqueo</span>
@@ -596,64 +705,122 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               </p>
             )}
 
-            <div className="bg-canvas border border-line rounded-2xl p-3.5 space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="text-ink-muted">Fondo Inicial:</span>
-                <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.montoInicial)}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-ink-muted">Ventas Efectivo:</span>
-                <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.ventasEfectivo)}</span>
-              </div>
-              <div className="flex justify-between text-xs border-t border-line pt-2 font-bold">
-                <span>Efectivo Esperado:</span>
-                <span className="text-accent tabular-nums">{formatCurrency(esperado)}</span>
-              </div>
-            </div>
+            {/* Si existen pedidos pendientes, se bloquea el cierre (RV-122, MSG-174) */}
+            {tienePendientes ? (
+              <div className="space-y-3">
+                <div className="p-3 bg-danger-bg border border-danger/30 rounded-xl flex items-start gap-2.5 text-xs text-danger">
+                  <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-danger" />
+                  <div>
+                    <p className="font-bold">No se puede cerrar la caja: hay pedidos pendientes</p>
+                    <p>
+                      Hay {pedidosPendientes.length} pedido(s) pendiente(s) de cobro. Cobre o anule todos los pedidos antes de cerrar la caja.
+                    </p>
+                  </div>
+                </div>
 
-            <div className="bg-canvas border border-line rounded-2xl p-3 text-center">
-              <span className="text-xs text-ink-muted block">Efectivo Contado</span>
-              <span className="text-3xl font-black text-accent tabular-nums">
-                {formatCurrency(contadoNum)}
-              </span>
-              <div className="mt-1">
-                {dif === 0 ? (
-                  <span className="text-xs font-bold text-success flex items-center justify-center gap-1">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Cuadra exactamente</span>
-                  </span>
-                ) : dif > 0 ? (
-                  <span className="text-xs font-bold text-info">
-                    Sobrante de {formatCurrency(dif)}
-                  </span>
-                ) : (
-                  <span className="text-xs font-bold text-danger">
-                    Faltante de {formatCurrency(Math.abs(dif))}
-                  </span>
+                <div className="divide-y divide-line bg-canvas rounded-xl border border-line overflow-hidden max-h-48 overflow-y-auto">
+                  {pedidosPendientes.map((p) => (
+                    <div key={p.pedidoId} className="p-3 flex items-center justify-between text-xs gap-3">
+                      <div>
+                        <span className="font-bold text-ink">Pedido #{p.numero}</span>
+                        <span className="text-ink-muted ml-2">
+                          ({p.tipo} · {p.mesa || 'Sin mesa'})
+                        </span>
+                      </div>
+                      <span className="font-bold text-danger tabular-nums">
+                        {formatCurrency(p.total)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {onNavigateToCobros && (
+                  <Button
+                    fullWidth
+                    size="lg"
+                    onClick={() => {
+                      setModalCerrar(false);
+                      onNavigateToCobros();
+                    }}
+                    className="flex items-center justify-center gap-2 min-h-[44px]"
+                  >
+                    <span>Ir a Cobros Pendientes</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
                 )}
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="bg-canvas border border-line rounded-2xl p-3.5 space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-ink-muted">Fondo Inicial:</span>
+                    <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.montoInicial)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-ink-muted">Ventas Efectivo:</span>
+                    <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.ventasEfectivo)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-ink-muted">Ventas Yape / Plin:</span>
+                    <span className="font-bold tabular-nums">{formatCurrency(resumenCierre.ventasYape)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs border-t border-line pt-2 font-bold">
+                    <span>Efectivo Esperado:</span>
+                    <span className="text-accent tabular-nums">{formatCurrency(esperado)}</span>
+                  </div>
+                </div>
 
-            <div>
-              <label htmlFor="obs-cierre" className="block text-xs font-bold text-ink-muted mb-1">
-                Observación (opcional):
-              </label>
-              <input
-                id="obs-cierre"
-                type="text"
-                value={observacion}
-                onChange={(e) => setObservacion(e.target.value)}
-                placeholder="Ej. Billetes deteriorados..."
-                className="w-full bg-canvas border border-line rounded-xl px-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary"
-              />
-            </div>
+                <div className="bg-canvas border border-line rounded-2xl p-3 text-center">
+                  <span className="text-xs text-ink-muted block">Efectivo Contado</span>
+                  <span className="text-3xl font-black text-accent tabular-nums">
+                    {formatCurrency(contadoNum)}
+                  </span>
+                  <div className="mt-1">
+                    {dif === 0 ? (
+                      <span className="text-xs font-bold text-success flex items-center justify-center gap-1">
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Cuadra exactamente</span>
+                      </span>
+                    ) : dif > 0 ? (
+                      <span className="text-xs font-bold text-info">
+                        Sobrante de {formatCurrency(dif)}
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold text-danger">
+                        Faltante de {formatCurrency(Math.abs(dif))}
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-            <Numpad
-              value={efectivoContado}
-              onChange={(val) => setEfectivoContado(val)}
-              enterLabel="Confirmar Cierre"
-              onEnter={() => setConfirmarCierre(true)}
-            />
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label htmlFor="obs-cierre" className="block text-xs font-bold text-ink-muted">
+                      Observación (opcional):
+                    </label>
+                    <span className="text-3xs text-ink-muted">
+                      {observacion.length}/200
+                    </span>
+                  </div>
+                  <input
+                    id="obs-cierre"
+                    type="text"
+                    maxLength={200}
+                    value={observacion}
+                    onChange={(e) => setObservacion(e.target.value)}
+                    placeholder="Ej. Billetes deteriorados..."
+                    className="w-full bg-canvas border border-line rounded-xl px-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
+                </div>
+
+                <Numpad
+                  value={efectivoContado}
+                  onChange={(val) => setEfectivoContado(val)}
+                  enterLabel="Confirmar Cierre"
+                  onEnter={handleVerificarCierre}
+                />
+              </>
+            )}
           </div>
         )}
       </BottomSheet>
@@ -662,8 +829,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       <ConfirmSheet
         isOpen={confirmarApertura}
         onCancelar={() => setConfirmarApertura(false)}
-        titulo="Confirmar Fondo Inicial"
-        mensaje={`¿Confirma la apertura de caja con un fondo inicial de ${formatCurrency(parseFloat(montoApertura) || 0)}?`}
+        titulo="Confirmar Apertura de Caja"
+        mensaje={`¿Confirmar apertura de caja con un fondo inicial de ${formatCurrency(parseFloat(montoApertura) || 0)}?`}
         etiquetaConfirmar="Sí, Abrir Caja"
         etiquetaCancelar="Volver"
         onConfirmar={ejecutarApertura}
@@ -674,10 +841,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       <ConfirmSheet
         isOpen={confirmarCierre}
         onCancelar={() => setConfirmarCierre(false)}
-        titulo="Confirmar Cierre Definitivo"
-        mensaje={`Se cerrará el turno actual con un total contado de ${formatCurrency(contadoNum)}. Esta acción registrará el acta formal de cierre y no se puede deshacer.`}
+        titulo="¿Confirmar Cierre de Caja?"
+        mensaje={`¿Cerrar la caja? No podrá cobrar hasta abrir una nueva y el cierre no se puede deshacer. Efectivo esperado: ${formatCurrency(esperado)}, contado: ${formatCurrency(contadoNum)}${dif === 0 ? ' (Cuadra)' : dif > 0 ? ` (+${formatCurrency(dif)})` : ` (-${formatCurrency(Math.abs(dif))})`}.`}
         etiquetaConfirmar="Sí, Cerrar Caja"
-        etiquetaCancelar="Volver"
+        etiquetaCancelar="Cancelar"
         tono="peligro"
         onConfirmar={ejecutarCierre}
         cargando={procesando}

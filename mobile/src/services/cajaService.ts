@@ -4,7 +4,8 @@ import type {
   AbrirCajaRequestDto,
   CierreResumenDto,
   CerrarCajaRequestDto,
-  HistorialCierresItemDto
+  ListarCierresResponseDto,
+  CierreDetalleDto,
 } from '../types/caja';
 
 export const cajaService = {
@@ -57,7 +58,23 @@ export const cajaService = {
     await apiClient.post('/caja/cerrar', payload);
   },
 
-  obtenerHistorialCierres: async (): Promise<{ items: HistorialCierresItemDto[] }> => {
-    return apiClient.get<{ items: HistorialCierresItemDto[] }>('/caja/cierres');
-  }
+  obtenerHistorialCierres: async (params?: {
+    desde?: string;
+    hasta?: string;
+    pagina?: number;
+    tamano?: number;
+  }): Promise<ListarCierresResponseDto> => {
+    const query = new URLSearchParams();
+    if (params?.desde) query.append('desde', params.desde);
+    if (params?.hasta) query.append('hasta', params.hasta);
+    if (params?.pagina) query.append('pagina', params.pagina.toString());
+    if (params?.tamano) query.append('tamano', params.tamano.toString());
+    const qs = query.toString() ? `?${query.toString()}` : '';
+
+    return apiClient.get<ListarCierresResponseDto>(`/caja/cierres${qs}`);
+  },
+
+  obtenerDetalleCierre: async (cajaId: string): Promise<CierreDetalleDto> => {
+    return apiClient.get<CierreDetalleDto>(`/caja/cierres/${cajaId}`);
+  },
 };
