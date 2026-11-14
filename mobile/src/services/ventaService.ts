@@ -1,5 +1,11 @@
 import { apiClient } from './apiClient';
-import type { ListarVentasResponse, FiltroVentasParams } from '../types/venta';
+import type {
+  ListarVentasResponse,
+  FiltroVentasParams,
+  VentaDetalle,
+  AnularVentaRequest,
+  AnularVentaResponse,
+} from '../types/venta';
 
 export const ventaService = {
   listarVentas: async (params?: FiltroVentasParams): Promise<ListarVentasResponse> => {
@@ -13,5 +19,13 @@ export const ventaService = {
     const qs = query.toString() ? `?${query.toString()}` : '';
 
     return apiClient.get<ListarVentasResponse>(`/ventas${qs}`);
+  },
+
+  obtenerDetalleVenta: async (ventaId: string): Promise<VentaDetalle> => {
+    return apiClient.get<VentaDetalle>(`/ventas/${ventaId}`);
+  },
+
+  anularVenta: async (ventaId: string, request: AnularVentaRequest): Promise<AnularVentaResponse> => {
+    return apiClient.post<AnularVentaResponse>(`/ventas/${ventaId}/anular`, request);
   },
 };

@@ -40,3 +40,59 @@ export interface FiltroVentasParams {
   pagina?: number;
   tamano?: number;
 }
+
+export interface LineaVentaDetalle {
+  cantidad: number;
+  productoNombre: string;
+  precioUnitario: number;
+  subtotal: number;
+  observacion?: string | null;
+  elecciones?: string | null;
+  incluye?: string | null;
+}
+
+export interface VentaDetalle {
+  ventaId: string;
+  comprobanteId?: string;
+  comprobante: string;
+  fechaHoraUtc?: string;
+  fechaHoraFormateada: string;
+  pedidoId?: string;
+  pedidoNumero: number;
+  tipo: string;
+  mesa?: string | null;
+  referencia?: string | null;
+  total: number;
+  metodo: string;
+  montoRecibido?: number | null;
+  vuelto?: number | null;
+  yapeReferencia?: string | null;
+  cajero: string;
+  estado: string;
+  cajaCerrada: boolean;
+  lineas: LineaVentaDetalle[];
+  motivoAnulacion?: string | null;
+  usuarioAnulacion?: string | null;
+  fechaHoraAnulacionFormateada?: string | null;
+  destinoPedido?: string | null;
+  tipoComprobante?: string | null;
+  tipoDocReceptor?: string | null;
+  numDocReceptor?: string | null;
+  razonSocialReceptor?: string | null;
+  direccionReceptor?: string | null;
+  opGravada?: number;
+  igv?: number;
+}
+
+export interface AnularVentaRequest {
+  solicitudId: string;
+  motivo: string;
+  destinoPedido: 'porCobrar' | 'anular' | string;
+}
+
+export interface AnularVentaResponse {
+  estado: string;
+  pedidoEstado: string;
+  comprobante: string;
+  mensaje: string;
+}

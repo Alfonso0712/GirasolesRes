@@ -10,11 +10,12 @@ import {
   History,
   Info,
   AlertTriangle,
+  Search,
 } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import { ventaService } from '../../services/ventaService';
 import type { CajaActualResponseDto, CierreResumenDto, HistorialCierresItemDto } from '../../types/caja';
-import type { VentaItem } from '../../types/venta';
+import type { VentaItem, VentaDetalle } from '../../types/venta';
 import type { RolUsuario } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -28,6 +29,7 @@ import { ErrorState } from '../ui/ErrorState';
 import { SkeletonList } from '../ui/Skeleton';
 import { EmptyState } from '../ui/EmptyState';
 import { FilterChipBar } from '../ui/FilterChipBar';
+import { VentaDetalleSheet } from './VentaDetalleSheet';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
@@ -56,11 +58,20 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   // Control de pestaña principal: 'turno' | 'ventas' | 'cierres'
   const [seccion, setSeccion] = useState<'turno' | 'ventas' | 'cierres'>('turno');
 
-  // Filtros de ventas (Hoy, Ayer, 7 días)
+  // Filtros de ventas (Hoy, Ayer, 7 días) y búsqueda
   const [filtroVentas, setFiltroVentas] = useState<'hoy' | 'ayer' | '7dias'>('hoy');
+  const [busquedaVentas, setBusquedaVentas] = useState('');
+  const [paginaVentas, setPaginaVentas] = useState(1);
+  const [totalVentas, setTotalVentas] = useState(0);
   const [ventas, setVentas] = useState<VentaItem[]>([]);
   const [cargandoVentas, setCargandoVentas] = useState(false);
   const [errorVentas, setErrorVentas] = useState<string | null>(null);
+
+  // Detalle y Anulación de Venta
+  const [sheetVentaAbierta, setSheetVentaAbierta] = useState(false);
+  const [ventaDetalle, setVentaDetalle] = useState<VentaDetalle | null>(null);
+  const [cargandoDetalleVenta, setCargandoDetalleVenta] = useState(false);
+  const [anulandoVenta, setAnulandoVenta] = useState(false);
 
   // Historial de cierres (solo Administrador)
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
@@ -82,10 +93,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
 
-  // Carga de ventas cuando se activa la sección de ventas
-  useEffect(() => {
-    if (seccion !== 'ventas') return;
-
+  const obtenerRangoFechasVentas = () => {
     const pad = (n: number) => String(n).padStart(2, '0');
     const toYMD = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     const hoy = new Date();
@@ -103,32 +111,89 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       sieteDias.setDate(sieteDias.getDate() - 7);
       desde = toYMD(sieteDias);
     }
+    return { desde, hasta };
+  };
 
-    let cancelado = false;
+  const cargarVentas = async (pagina = 1, append = false) => {
+    const { desde, hasta } = obtenerRangoFechasVentas();
     setCargandoVentas(true);
     setErrorVentas(null);
-
-    ventaService.listarVentas({ desde, hasta })
-      .then((res) => {
-        if (!cancelado) {
-          setVentas(res.items || []);
-        }
-      })
-      .catch((err: unknown) => {
-        if (!cancelado) {
-          const msg = err instanceof Error ? err.message : 'Error al consultar ventas';
-          setErrorVentas(msg);
-          setVentas([]);
-        }
-      })
-      .finally(() => {
-        if (!cancelado) setCargandoVentas(false);
+    try {
+      const res = await ventaService.listarVentas({
+        desde,
+        hasta,
+        busqueda: busquedaVentas.trim() || undefined,
+        pagina,
+        tamano: 20,
       });
+      if (append) {
+        setVentas((prev) => [...prev, ...(res.items || [])]);
+      } else {
+        setVentas(res.items || []);
+      }
+      setTotalVentas(res.total || 0);
+      setPaginaVentas(pagina);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al consultar ventas';
+      setErrorVentas(msg);
+      if (!append) setVentas([]);
+    } finally {
+      setCargandoVentas(false);
+    }
+  };
 
-    return () => {
-      cancelado = true;
-    };
-  }, [seccion, filtroVentas]);
+  // Carga de ventas cuando se activa la sección de ventas
+  useEffect(() => {
+    if (seccion === 'ventas') {
+      cargarVentas(1, false);
+    }
+  }, [seccion, filtroVentas, busquedaVentas]);
+
+  const handleVerDetalleVenta = async (ventaId: string) => {
+    triggerLight();
+    setSheetVentaAbierta(true);
+    setCargandoDetalleVenta(true);
+    setVentaDetalle(null);
+    try {
+      const d = await ventaService.obtenerDetalleVenta(ventaId);
+      setVentaDetalle(d);
+    } catch (err: unknown) {
+      triggerError();
+      const msg = err instanceof Error ? err.message : 'No se pudo obtener el detalle de la venta.';
+      mostrar({ tipo: 'error', mensaje: msg });
+      setSheetVentaAbierta(false);
+    } finally {
+      setCargandoDetalleVenta(false);
+    }
+  };
+
+  const handleAnularVenta = async (ventaId: string, motivoStr: string, destinoPedidoStr: string) => {
+    const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-anular-${Date.now()}`;
+    setAnulandoVenta(true);
+    try {
+      const res = await ventaService.anularVenta(ventaId, {
+        solicitudId,
+        motivo: motivoStr,
+        destinoPedido: destinoPedidoStr,
+      });
+      triggerSuccess();
+      mostrar({
+        tipo: 'exito',
+        mensaje: res.mensaje || `Comprobante ${res.comprobante} anulado con éxito.`,
+      });
+      cargarVentas(1, false);
+      onRefresh();
+    } catch (err: unknown) {
+      triggerError();
+      const msg = err instanceof Error ? err.message : 'Error al anular la venta.';
+      mostrar({ tipo: 'error', mensaje: msg });
+      throw err;
+    } finally {
+      setAnulandoVenta(false);
+    }
+  };
 
   // Carga de historial de cierres cuando se activa la sección de cierres (Admin)
   useEffect(() => {
@@ -540,9 +605,22 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
           </>
         )}
 
-        {/* SECCIÓN 2: VENTAS (LISTA SOLO LECTURA) */}
+        {/* SECCIÓN 2: VENTAS (LISTA CON DETALLE Y ANULACIÓN) */}
         {seccion === 'ventas' && (
           <div className="space-y-3">
+            {/* Buscador de comprobante */}
+            <div className="relative">
+              <Search className="w-4 h-4 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
+              <input
+                type="text"
+                maxLength={15}
+                value={busquedaVentas}
+                onChange={(e) => setBusquedaVentas(e.target.value)}
+                placeholder="Buscar comprobante (ej. B001)..."
+                className="w-full bg-surface border border-line rounded-xl pl-9 pr-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+              />
+            </div>
+
             <div className="flex gap-2">
               <button
                 type="button"
@@ -583,7 +661,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               <ErrorState mensaje={errorVentas} className="my-2" />
             )}
 
-            {cargandoVentas && <SkeletonList count={4} />}
+            {cargandoVentas && paginaVentas === 1 && <SkeletonList count={4} />}
 
             {!cargandoVentas && !errorVentas && ventas.length === 0 && (
               <EmptyState
@@ -594,7 +672,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
             )}
 
             {ventas.map((v) => (
-              <Card key={v.ventaId} accent="none" padding="sm" className="space-y-1">
+              <Card
+                key={v.ventaId}
+                interactive
+                accent="none"
+                padding="sm"
+                onClick={() => handleVerDetalleVenta(v.ventaId)}
+                className="space-y-1 select-none"
+              >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-extrabold text-ink">{v.comprobante}</span>
@@ -610,6 +695,21 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 </div>
               </Card>
             ))}
+
+            {/* Paginación progresiva */}
+            {ventas.length < totalVentas && (
+              <Button
+                fullWidth
+                variant="outline"
+                size="md"
+                disabled={cargandoVentas}
+                isLoading={cargandoVentas}
+                onClick={() => cargarVentas(paginaVentas + 1, true)}
+                className="min-h-[44px] mt-2"
+              >
+                <span>Cargar más comprobantes ({ventas.length} de {totalVentas})</span>
+              </Button>
+            )}
           </div>
         )}
 
@@ -848,6 +948,17 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         tono="peligro"
         onConfirmar={ejecutarCierre}
         cargando={procesando}
+      />
+
+      {/* Detalle y Anulación de Venta (Administrador y Cajero) */}
+      <VentaDetalleSheet
+        isOpen={sheetVentaAbierta}
+        onClose={() => setSheetVentaAbierta(false)}
+        venta={ventaDetalle}
+        cargando={cargandoDetalleVenta}
+        esAdmin={esAdmin}
+        onAnularVenta={handleAnularVenta}
+        anulando={anulandoVenta}
       />
     </div>
   );
