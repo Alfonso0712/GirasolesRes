@@ -10,12 +10,14 @@ import {
   Volume2,
   Smartphone,
   KeyRound,
+  BookOpen,
 } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { CambiarContrasenaSheet } from './CambiarContrasenaSheet';
+import { GuiaUsoSheet } from './GuiaUsoSheet';
 import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useHandedness } from '../../hooks/useHandedness';
@@ -45,6 +47,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   const [mostrarSheetServidor, setMostrarSheetServidor] = useState(false);
   const [mostrarConfirmLogout, setMostrarConfirmLogout] = useState(false);
   const [mostrarCambiarPass, setMostrarCambiarPass] = useState(false);
+  const [mostrarGuiaUso, setMostrarGuiaUso] = useState(false);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
   const [sonidoHabilitado, setSonidoHabilitado] = useState(() => sonSonidosKdsHabilitados());
 
@@ -259,6 +262,40 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           />
         </Card>
       )}
+
+      {/* Manual del Terminal / Guía Rápida de Uso */}
+      <Card className="p-5 space-y-3">
+        <div className="flex items-center gap-2.5">
+          <BookOpen className="w-4 h-4 text-accent" aria-hidden="true" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+            Manual del Terminal
+          </h3>
+        </div>
+
+        <p className="text-xs text-ink-muted leading-relaxed">
+          Consulte los procedimientos paso a paso y flujos clave asignados a su rol de {session.rol}.
+        </p>
+
+        <Button
+          size="md"
+          fullWidth
+          variant="outline"
+          onClick={() => {
+            triggerLight();
+            setMostrarGuiaUso(true);
+          }}
+          className="flex items-center justify-center gap-2 min-h-[44px]"
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Ver Guía Rápida de Uso</span>
+        </Button>
+
+        <GuiaUsoSheet
+          isOpen={mostrarGuiaUso}
+          onClose={() => setMostrarGuiaUso(false)}
+          rol={session.rol}
+        />
+      </Card>
 
       {/* 3. Conexión de Red / Servidor Backend (Exclusivo para Modo Demostración) */}
       {MODO_DEMO && (
