@@ -221,19 +221,19 @@ export const KdsView: React.FC<KdsViewProps> = ({
                         <StatusBadge estado={esPendiente ? 'Pendiente' : 'En preparación'} />
 
                         {comanda.esAdicional && (
-                          <span className="px-2 py-0.5 rounded-full text-2xs font-extrabold bg-accent text-white uppercase tracking-wider">
+                          <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-accent text-white uppercase tracking-wider">
                             Adicional {comanda.numeroAdicional > 0 ? `#${comanda.numeroAdicional}` : ''}
                           </span>
                         )}
 
                         {comanda.modificada && (
-                          <span className="px-2 py-0.5 rounded-full text-2xs font-extrabold bg-warning text-white uppercase tracking-wider">
+                          <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-warning text-white uppercase tracking-wider">
                             Modificada
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-base font-extrabold truncate text-ink">{destino}</h3>
+                      <h3 className="text-base font-extrabold text-ink leading-tight break-words">{destino}</h3>
                     </div>
 
                     {/* Tiempo de espera con alerta de demora si supera los 15 minutos */}
@@ -255,7 +255,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
                       )}
 
                       {comanda.horaLlegada && (
-                        <p className="text-2xs text-ink-muted mt-0.5">{comanda.horaLlegada}</p>
+                        <p className="text-xs text-ink-muted mt-0.5">{comanda.horaLlegada}</p>
                       )}
                     </div>
                   </div>
@@ -285,7 +285,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
 
                         {linea.observacion && (
                           <div className="mt-1.5 text-xs font-bold text-danger bg-danger-bg/70 border border-danger-border/60 px-2.5 py-1 rounded-lg">
-                            <span className="uppercase text-2xs tracking-wider block text-danger/80">Nota especial:</span>
+                            <span className="uppercase text-xs tracking-wider block text-danger/80">Nota especial:</span>
                             {linea.observacion}
                           </div>
                         )}
@@ -336,11 +336,11 @@ export const KdsView: React.FC<KdsViewProps> = ({
         >
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold truncate">
+              <span className="text-xs font-bold leading-tight break-words min-w-0">
                 Pedido N.º {undoAccion.pedidoNumero} marcado como{' '}
                 {undoAccion.nuevoEstado === 'enPreparacion' ? 'en preparación' : 'listo'}
               </span>
-              <span className="text-2xs font-extrabold text-accent shrink-0 tabular-nums">
+              <span className="text-xs font-extrabold text-accent shrink-0 tabular-nums">
                 ({undoAccion.segundosRestantes}s)
               </span>
             </div>

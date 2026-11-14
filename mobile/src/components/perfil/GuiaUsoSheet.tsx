@@ -72,8 +72,8 @@ export const GuiaUsoSheet: React.FC<GuiaUsoSheetProps> = ({
                       {idx + 1}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-ink truncate">{tarea.titulo}</p>
-                      <p className="text-3xs text-ink-muted truncate">{tarea.descripcionBreve}</p>
+                      <p className="text-xs font-bold text-ink leading-snug break-words">{tarea.titulo}</p>
+                      <p className="text-xs text-ink-muted line-clamp-2">{tarea.descripcionBreve}</p>
                     </div>
                   </div>
 
@@ -84,7 +84,7 @@ export const GuiaUsoSheet: React.FC<GuiaUsoSheetProps> = ({
 
                 {abierta && (
                   <div className="px-3 pb-3 pt-1 border-t border-line space-y-2 text-xs bg-surface/50">
-                    <p className="text-3xs text-ink-muted font-bold uppercase">
+                    <p className="text-xs text-ink-muted font-bold uppercase">
                       Pasos de ejecución:
                     </p>
                     <ol className="space-y-2">

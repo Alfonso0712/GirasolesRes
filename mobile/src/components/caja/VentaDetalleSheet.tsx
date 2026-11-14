@@ -119,7 +119,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-line text-xs text-ink-muted">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 shrink-0 text-ink-muted" />
-                  <span>{formatLimaFechaHora(venta.fechaHoraFormateada || venta.fechaHora)}</span>
+                  <span>{formatLimaFechaHora(venta.fechaHoraFormateada || venta.fechaHoraUtc)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 shrink-0 text-ink-muted" />

@@ -35,7 +35,7 @@ export const DemoQuickAccess: React.FC<DemoQuickAccessProps> = ({ onQuickLogin }
               className="p-2 min-h-[44px] rounded-xl border border-line bg-canvas hover:border-primary text-center active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Icon className="w-4 h-4 text-accent mx-auto mb-1" />
-              <span className="text-xs font-bold block text-ink truncate">{acc.rol}</span>
+              <span className="text-xs font-bold block text-ink leading-tight break-words">{acc.rol}</span>
             </button>
           );
         })}

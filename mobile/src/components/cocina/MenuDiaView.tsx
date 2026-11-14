@@ -168,7 +168,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
             >
               <div className="min-w-0 flex-1 pr-3">
                 <div className="flex items-center gap-2">
-                  <h3 className={`text-base font-extrabold truncate ${esAgotado ? 'text-ink-muted line-through' : 'text-ink'}`}>
+                  <h3 className={`text-base font-extrabold leading-snug break-words min-w-0 ${esAgotado ? 'text-ink-muted line-through' : 'text-ink'}`}>
                     {plato.nombre}
                   </h3>
                 </div>

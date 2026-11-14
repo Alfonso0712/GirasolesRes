@@ -183,7 +183,7 @@ export const ArmarMenuSheet: React.FC<ArmarMenuSheetProps> = ({
                   >
                     {seleccionada && <Check className="w-3.5 h-3.5" aria-hidden="true" />}
                   </div>
-                  <span className={`text-sm font-bold truncate ${seleccionada ? 'text-primary' : 'text-ink'}`}>
+                  <span className={`text-sm font-bold leading-snug break-words min-w-0 ${seleccionada ? 'text-primary' : 'text-ink'}`}>
                     {opc.nombre}
                   </span>
                 </div>

@@ -340,7 +340,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
               Demo
             </span>
           </div>
-          <p className="text-xs text-ink-muted truncate font-mono bg-canvas p-2.5 rounded-xl border border-line">
+          <p className="text-xs text-ink-muted break-all font-mono bg-canvas p-2.5 rounded-xl border border-line">
             {apiUrl}
           </p>
           <Button

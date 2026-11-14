@@ -35,19 +35,19 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             className="w-8 h-8 rounded-lg object-contain shrink-0"
           />
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm font-extrabold leading-tight tracking-wide truncate">
-                Girasoles Res
-              </h1>
+            <h1 className="text-sm font-semibold leading-tight break-words">
+              {[session.nombre, session.apellido].filter(Boolean).join(' ').trim() || session.nombre}
+            </h1>
+            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+              <span className="text-xs text-accent font-semibold">
+                {session.rol}
+              </span>
               {MODO_DEMO && (
                 <span className="text-xs font-black uppercase px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/40 shrink-0">
-                  Demo
+                  DEMO
                 </span>
               )}
             </div>
-            <p className="text-xs text-accent uppercase font-semibold truncate max-w-[200px] sm:max-w-xs">
-              {session.rol} · {session.nombre}
-            </p>
           </div>
         </div>
 

@@ -71,7 +71,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             </div>
 
             {/* Etiqueta */}
-            <span className="text-xs leading-tight truncate max-w-[72px] md:max-w-none mt-0.5 text-center">
+            <span className="text-xs leading-tight mt-0.5 text-center break-words">
               {texto}
             </span>
           </button>

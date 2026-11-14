@@ -351,8 +351,8 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                   <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
                     {l.elecciones.map((el) => (
                       <div key={el.parte} className="flex justify-between gap-2">
-                        <span className="font-semibold text-ink">{el.parte}:</span>
-                        <span className="text-ink-muted truncate">{el.productoNombre}</span>
+                        <span className="font-semibold text-ink shrink-0">{el.parte}:</span>
+                        <span className="text-ink-muted text-right break-words min-w-0">{el.productoNombre}</span>
                       </div>
                     ))}
                   </div>
@@ -409,7 +409,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                 <span>{l.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
               </button>
               {l.observacion && (
-                <span className="text-xs text-ink-muted italic truncate flex-1">
+                <span className="text-xs text-ink-muted italic line-clamp-2 flex-1 min-w-0">
                   "{l.observacion}"
                 </span>
               )}
@@ -557,7 +557,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                       Menú Completo
                     </span>
                   </div>
-                  <p className="text-xs text-ink-muted mt-0.5 line-clamp-1">
+                  <p className="text-xs text-ink-muted mt-0.5 line-clamp-2">
                     {m.incluye || 'Entrada / Sopa + Segundo + Bebida'}
                   </p>
                   <p className="text-xs font-extrabold text-accent mt-1 tabular-nums">

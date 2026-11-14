@@ -189,7 +189,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="shrink-0">{resolverAlertaIcono(alerta.tipo)}</div>
-                      <p className="text-xs font-bold text-ink truncate leading-tight">
+                      <p className="text-xs font-bold text-ink leading-tight break-words min-w-0">
                         {alerta.texto}
                       </p>
                     </div>

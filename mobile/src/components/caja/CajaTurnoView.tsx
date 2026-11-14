@@ -959,7 +959,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                     <label htmlFor="obs-cierre" className="block text-xs font-bold text-ink-muted">
                       Observación (opcional):
                     </label>
-                    <span className="text-3xs text-ink-muted">
+                    <span className="text-xs text-ink-muted">
                       {observacion.length}/200
                     </span>
                   </div>

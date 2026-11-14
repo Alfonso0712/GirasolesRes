@@ -65,8 +65,8 @@ export const StatCard: React.FC<StatCardProps> = ({
         onClick ? 'cursor-pointer active:scale-98 transition-transform' : ''
       } ${className}`}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted truncate">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted leading-tight break-words min-w-0">
           {finalTitle}
         </span>
         {icon && (

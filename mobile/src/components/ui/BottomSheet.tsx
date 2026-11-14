@@ -68,8 +68,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         </div>
 
         {/* Header */}
-        <div className="px-5 py-3 flex items-center justify-between border-b border-line shrink-0">
-          <h2 id={titleId} className="text-base font-bold text-ink truncate">
+        <div className="px-5 py-3 flex items-center justify-between gap-2 border-b border-line shrink-0">
+          <h2 id={titleId} className="text-base font-bold text-ink leading-tight break-words min-w-0">
             {title}
           </h2>
           <IconButton

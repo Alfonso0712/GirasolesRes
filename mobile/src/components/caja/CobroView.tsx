@@ -329,7 +329,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                     DNI del Cliente {total >= 700 ? '(Obligatorio por ley S/ 700+)' : '(Opcional)'}
                   </label>
                   {total >= 700 && (
-                    <span className="text-3xs font-extrabold text-danger bg-danger-bg px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-extrabold text-danger bg-danger-bg px-1.5 py-0.5 rounded">
                       Exigido SUNAT
                     </span>
                   )}
@@ -364,11 +364,11 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 </div>
 
                 {errorConsultaDoc && (
-                  <p className="text-3xs text-danger font-semibold">{errorConsultaDoc}</p>
+                  <p className="text-xs text-danger font-semibold">{errorConsultaDoc}</p>
                 )}
 
                 <div>
-                  <label htmlFor="nombre-dni" className="text-3xs font-bold text-ink-muted block mb-1">
+                  <label htmlFor="nombre-dni" className="text-xs font-bold text-ink-muted block mb-1">
                     Nombre o Razón Social (Opcional):
                   </label>
                   <input
@@ -389,7 +389,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                   <label htmlFor="doc-ruc" className="text-xs font-bold text-ink">
                     RUC de la Empresa (Obligatorio)
                   </label>
-                  <span className="text-3xs font-extrabold text-accent bg-accent-bg px-1.5 py-0.5 rounded">
+                  <span className="text-xs font-extrabold text-accent bg-accent-bg px-1.5 py-0.5 rounded">
                     10 o 20
                   </span>
                 </div>
@@ -423,11 +423,11 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 </div>
 
                 {errorConsultaDoc && (
-                  <p className="text-3xs text-danger font-semibold">{errorConsultaDoc}</p>
+                  <p className="text-xs text-danger font-semibold">{errorConsultaDoc}</p>
                 )}
 
                 <div>
-                  <label htmlFor="razon-ruc" className="text-3xs font-bold text-ink-muted block mb-1">
+                  <label htmlFor="razon-ruc" className="text-xs font-bold text-ink-muted block mb-1">
                     Razón Social *
                   </label>
                   <input
@@ -441,7 +441,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 </div>
 
                 <div>
-                  <label htmlFor="dir-ruc" className="text-3xs font-bold text-ink-muted block mb-1">
+                  <label htmlFor="dir-ruc" className="text-xs font-bold text-ink-muted block mb-1">
                     Dirección Fiscal (Opcional)
                   </label>
                   <input
@@ -553,7 +553,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                   <p className="text-xs font-bold text-ink">
                     Monto exacto a cobrar: {formatCurrency(total)}
                   </p>
-                  <p className="text-3xs text-ink-muted">
+                  <p className="text-xs text-ink-muted">
                     Verifique en la app bancaria la acreditación antes de emitir el comprobante.
                   </p>
                 </div>
@@ -577,7 +577,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 </button>
 
                 <div>
-                  <label htmlFor="ref-yape" className="text-3xs font-bold text-ink-muted block mb-1">
+                  <label htmlFor="ref-yape" className="text-xs font-bold text-ink-muted block mb-1">
                     Código de Referencia / Operación (Opcional, máx 20 caracteres):
                   </label>
                   <input

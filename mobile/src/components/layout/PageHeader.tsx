@@ -69,7 +69,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         )}
 
         <div className="min-w-0">
-          <h2 className="text-xl font-bold text-ink leading-tight truncate">{title}</h2>
+          <h2 className="text-xl font-bold text-ink leading-tight break-words">{title}</h2>
           {(subtitle || textoActualizado) && (
             <p className="text-sm text-ink-muted line-clamp-2 break-words">
               {subtitle}

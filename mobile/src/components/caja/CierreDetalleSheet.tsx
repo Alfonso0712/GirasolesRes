@@ -80,7 +80,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
             </div>
 
             {cierre.cajeroCierre && cierre.cajeroCierre !== cierre.cajeroApertura && (
-              <div className="text-3xs text-ink-muted flex items-center gap-1.5 pt-0.5">
+              <div className="text-xs text-ink-muted flex items-center gap-1.5 pt-0.5">
                 <User className="w-3 h-3 shrink-0" />
                 <span>Cierre realizado por: {cierre.cajeroCierre}</span>
               </div>
@@ -139,7 +139,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
 
             {cierre.observacion && (
               <div className="p-2.5 bg-surface border border-line rounded-xl text-xs space-y-0.5">
-                <span className="text-3xs font-bold text-ink-muted block uppercase">Observación de Cierre</span>
+                <span className="text-xs font-bold text-ink-muted block uppercase">Observación de Cierre</span>
                 <p className="text-ink italic">«{cierre.observacion}»</p>
               </div>
             )}
@@ -161,9 +161,9 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
                       <span className="text-danger tabular-nums">-{formatCurrency(a.total)}</span>
                     </div>
                     {a.motivo && (
-                      <p className="text-3xs text-ink-muted italic">«{a.motivo}»</p>
+                      <p className="text-xs text-ink-muted italic">«{a.motivo}»</p>
                     )}
-                    <div className="flex justify-between text-3xs text-ink-muted pt-0.5">
+                    <div className="flex justify-between text-xs text-ink-muted pt-0.5">
                       <span>Anulado por: {a.usuarioAnulacion || 'Administrador'}</span>
                       <span>{formatLimaFechaHora(a.fechaAnulacion || a.fechaVentaLocal)}</span>
                     </div>
@@ -197,7 +197,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
           )}
 
           {/* Nota informativa de PDF */}
-          <p className="text-3xs text-ink-muted text-center pt-1">
+          <p className="text-xs text-ink-muted text-center pt-1">
             El reporte de balance y arqueo en PDF con firmas de responsabilidad está disponible en la versión web.
           </p>
         </div>
