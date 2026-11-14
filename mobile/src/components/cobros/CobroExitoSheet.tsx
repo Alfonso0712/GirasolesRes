@@ -36,6 +36,7 @@ export const CobroExitoSheet: React.FC<CobroExitoSheetProps> = ({
   useEffect(() => {
     if (isOpen && datos) {
       triggerSuccess();
+      listoBtnRef.current?.focus();
       const timer = setTimeout(() => {
         listoBtnRef.current?.focus();
       }, 60);

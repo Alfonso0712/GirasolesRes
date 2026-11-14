@@ -111,7 +111,19 @@ mobile/
 
 ---
 
-## 6. Documentación Relacionada
+## 6. Comprobantes
+
+El cliente móvil permite emitir y gestionar comprobantes electrónicos (*Ticket*, *Boleta* y *Factura*) tras el cobro (rol *Cajero*) y reimprimir copias desde el historial de *Ventas* (roles *Cajero* y *Administrador*):
+
+- **Acciones disponibles:** *Imprimir*, *Guardar PDF* (en `Documentos/Girasoles` con respaldo en la hoja nativa de compartir), *Compartir PDF* y envío de resumen por *WhatsApp*. El PDF se descarga una sola vez por apertura de hoja y se reutiliza en memoria sin persistirse en almacenamiento local.
+- **Limitaciones reales:**
+  1. **WhatsApp no adjunta archivos por enlace:** El protocolo `wa.me` solo envía el mensaje de texto con el número de comprobante, fecha y monto total (sin exponer DNI ni RUC, y sin guardar el celular del cliente). Para enviar el archivo PDF se utiliza la opción *«Compartir PDF»*.
+  2. **Impresión mediante el visor del sistema:** La opción *«Imprimir»* abre el PDF en el visor del sistema Android (`@capacitor-community/file-opener` o la hoja nativa de compartir como respaldo) para imprimir mediante el servicio de impresión de Android.
+  3. **Sin impresora térmica directa:** No existe conexión directa ESC-POS por Bluetooth o USB hacia tiqueteras térmicas; la impresión se realiza a través del visor del sistema operativo.
+
+---
+
+## 7. Documentación Relacionada
 
 - [Especificación de Conexión y Seguridad (CONNECTION.md)](CONNECTION.md)
 - [Sistema de Diseño y Tokens de Interfaz (DESIGN.md)](DESIGN.md)

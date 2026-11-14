@@ -53,10 +53,11 @@ Derivada formalmente de los atributos `[Authorize(Roles = "...")]` de los contro
 
 ### 3.2 Flujo del Cajero
 1. **Apertura de Caja:** En pestaña *Caja*, ingresa fondo inicial mediante Numpad → confirma apertura.
-2. **Cobro Rápido:** En pestaña *Cobros*, pulsa cuenta pendiente → selecciona *Efectivo* (con cálculo automático de vuelto) o *Yape/Plin* → emite comprobante.
+2. **Cobro Rápido y Comprobante:** En pestaña *Cobros*, pulsa cuenta pendiente → selecciona *Efectivo* (con cálculo automático de vuelto) o *Yape/Plin* → emite comprobante y visualiza la hoja de éxito (`CobroExitoSheet`) con el número, tipo, destino, total, vuelto y acciones directas sobre el PDF (*Imprimir*, *Guardar PDF*, *Compartir PDF* y *WhatsApp*).
 3. **Mesa Ocupada:** En *Salón*, al pulsar una mesa ocupada dispone de acceso directo *Ir a cobrar*.
 4. **Para Llevar:** En pestaña *Llevar*, registra pedidos directos de mostrador.
-5. **Cierre de Caja:** En *Caja*, ejecuta arqueo con efectivo contado, detección de diferencias (*Cuadra*, *Sobrante*, *Faltante*) y genera acta.
+5. **Reimpresión desde Ventas:** En *Caja > Ventas*, el Cajero y el Administrador pueden abrir el detalle de cualquier venta *Vigente* para reimprimir, guardar o compartir la copia en PDF (`copia=true`). Si la venta está *Anulada*, las acciones permanecen deshabilitadas (*"Comprobante anulado."*).
+6. **Cierre de Caja:** En *Caja*, ejecuta arqueo con efectivo contado, detección de diferencias (*Cuadra*, *Sobrante*, *Faltante*) y genera acta.
 
 ### 3.3 Flujo del Cocinero
 1. **KDS Táctil:** En pestaña *Cocina*, visualiza comandas entrantes con alertas visuales de tiempo de espera (>=10 min advertencia, >=20 min crítico).
@@ -76,3 +77,14 @@ Derivada formalmente de los atributos `[Authorize(Roles = "...")]` de los contro
 2. **Alertas Sensoriales:** Al detectarse un nuevo pedido listo, se dispara una respuesta táctil (`triggerSuccess`), alerta sonora sintetizada (`reproducirSonidoKds('lista')`) y una notificación toast interactiva (*"Pedido N.º {n} de {mesa} está listo para recoger."*).
 3. **Insignias y Banners:** Se actualiza en tiempo real el distintivo numérico de la barra inferior (*Pedidos* para Mozo y *Cobros* para Cajero) y el banner superior en `MisPedidosView` (*"¡Tiene N pedidos listos en cocina!"*).
 4. **Limitación de Notificaciones en Segundo Plano:** El sistema de avisos opera exclusivamente mientras la aplicación se encuentra **abierta o en primer plano**. Por arquitectura desacoplada y ligera, el cliente móvil no incorpora servicios push en segundo plano (FCM/APNs) ni daemons persistentes del sistema operativo cuando la aplicación está cerrada o suspendida en segundo plano.
+
+---
+
+## 5. Comprobantes
+
+1. **Emisión tras el Cobro (`Cajero`):** Al confirmar un cobro se abre `CobroExitoSheet` con el resumen fiscal y las 4 acciones de comprobante (`ComprobanteAcciones`), que descargan por única vez el PDF original (`GET /api/cobros/comprobantes/{ventaId}/pdf?copia=false`) y reutilizan el `Blob` en memoria mientras la hoja permanece abierta.
+2. **Reimpresión desde Ventas (`Cajero` y `Administrador`):** Desde el detalle de una venta *Vigente* en *Caja > Ventas* (`VentaDetalleSheet`), se descarga el PDF con marca de copia (`GET /api/ventas/{id}/ticket?copia=true`). Los roles *Mozo* y *Cocinero* no tienen acceso a estas acciones.
+3. **Limitaciones Reales del Entorno Móvil:**
+   - **WhatsApp no adjunta archivos por enlace:** Los enlaces `https://wa.me` solo permiten prellenar el texto resumen del comprobante; para enviar el archivo PDF al cliente se debe usar el botón *«Compartir PDF»*. El número de celular ingresado nunca se almacena en el dispositivo ni en el servidor.
+   - **Impresión mediante el visor del sistema:** El botón *«Imprimir»* abre el PDF en el visor nativo del sistema operativo (`@capacitor-community/file-opener`, o la hoja de compartir como respaldo), desde donde el usuario selecciona la impresora configurada en Android.
+   - **Sin impresora térmica directa:** La aplicación móvil no se conecta directamente por Bluetooth/USB/ESC-POS a impresoras térmicas de 80 mm; toda impresión se delega al servicio de impresión del sistema Android sobre el PDF vectorial generado por el backend.
