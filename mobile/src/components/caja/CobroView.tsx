@@ -26,6 +26,7 @@ import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 export interface CobroViewProps {
@@ -66,6 +67,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
   const { mostrar } = useToast();
+  const { sinConexion } = useNetworkStatus();
 
   const total = pedidoSeleccionado?.total || 0;
   const numRecibido = parseFloat(montoRecibido) || 0;
@@ -201,6 +203,12 @@ export const CobroView: React.FC<CobroViewProps> = ({
         setErrorCobro('El código de referencia de Yape no puede superar 20 caracteres.');
         return;
       }
+    }
+
+    if (sinConexion) {
+      triggerError();
+      setErrorCobro('Sin conexión a internet. No se puede procesar el cobro.');
+      return;
     }
 
     triggerLight();
@@ -586,12 +594,13 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 <Button
                   fullWidth
                   size="lg"
-                  disabled={!yapeConfirmado}
+                  disabled={!yapeConfirmado || sinConexion}
+                  title={sinConexion ? 'Sin conexión a internet' : undefined}
                   onClick={handleSolicitarConfirmacion}
                   className="flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   <Check className="w-5 h-5" />
-                  <span>Confirmar Cobro Digital</span>
+                  <span>{sinConexion ? 'Sin conexión para cobrar' : 'Confirmar Cobro Digital'}</span>
                 </Button>
               </div>
             )}

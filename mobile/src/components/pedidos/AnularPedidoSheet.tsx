@@ -7,6 +7,7 @@ import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 
 export interface AnularPedidoSheetProps {
   isOpen: boolean;
@@ -35,10 +36,16 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
+  const { sinConexion } = useNetworkStatus();
 
   if (!isOpen || !pedido) return null;
 
   const handleValidarYContinuar = () => {
+    if (sinConexion) {
+      triggerError();
+      setErrorValidacion('Sin conexión a internet. No se puede anular pedidos.');
+      return;
+    }
     const texto = motivo.trim();
     if (texto.length < 5 || texto.length > 100) {
       triggerError();
@@ -159,12 +166,13 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
             <Button
               size="md"
               variant="danger"
-              disabled={motivo.trim().length < 5}
+              disabled={motivo.trim().length < 5 || sinConexion}
+              title={sinConexion ? 'Sin conexión a internet' : undefined}
               onClick={handleValidarYContinuar}
               className="flex-1 flex items-center justify-center gap-2 min-h-[48px]"
             >
               <Ban className="w-4 h-4" />
-              <span>Continuar Anulación</span>
+              <span>{sinConexion ? 'Sin conexión' : 'Continuar Anulación'}</span>
             </Button>
           </div>
         </div>

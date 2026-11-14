@@ -16,6 +16,7 @@ import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { naturalCompare } from '../../utils/canonico';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { MesaFormSheet } from './MesaFormSheet';
 
 export interface MesasViewProps {
@@ -61,6 +62,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const [desactivando, setDesactivando] = useState(false);
 
   const { triggerLight, triggerSuccess } = useHaptics();
+  const { sinConexion } = useNetworkStatus();
 
   const puedeGestionar = puede(rol, 'mesas.gestionar');
   const puedeTomarPedido = puede(rol, 'pedidoMesa.crear');
@@ -209,11 +211,13 @@ export const MesasView: React.FC<MesasViewProps> = ({
             <Button
               variant="primary"
               size="sm"
+              disabled={sinConexion}
+              title={sinConexion ? 'Sin conexión a internet' : undefined}
               onClick={handleAbrirCrear}
               className="min-h-[44px] px-3 flex items-center gap-1.5 shrink-0"
             >
               <Plus className="w-4 h-4" aria-hidden="true" />
-              <span>Nueva Mesa</span>
+              <span>{sinConexion ? 'Sin conexión' : 'Nueva Mesa'}</span>
             </Button>
           </div>
 
@@ -338,6 +342,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
                       <Button
                         variant="secondary"
                         size="sm"
+                        disabled={sinConexion}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleAbrirEditar(mesa);
@@ -353,18 +358,20 @@ export const MesasView: React.FC<MesasViewProps> = ({
                         <Button
                           variant="secondary"
                           size="sm"
-                          disabled={tienePedidosAbiertos}
+                          disabled={tienePedidosAbiertos || sinConexion}
                           onClick={(e) => {
                             e.stopPropagation();
                             triggerLight();
                             setMesaParaDesactivar(mesa);
                           }}
                           className={`flex-1 min-h-[44px] flex items-center justify-center gap-1.5 text-xs font-bold ${
-                            tienePedidosAbiertos ? 'opacity-50 cursor-not-allowed' : 'text-danger hover:bg-danger-bg'
+                            tienePedidosAbiertos || sinConexion ? 'opacity-50 cursor-not-allowed' : 'text-danger hover:bg-danger-bg'
                           }`}
-                          title={tienePedidosAbiertos ? 'Tiene pedidos abiertos' : 'Desactivar mesa'}
+                          title={sinConexion ? 'Sin conexión a internet' : tienePedidosAbiertos ? 'Tiene pedidos abiertos' : 'Desactivar mesa'}
                           aria-label={
-                            tienePedidosAbiertos
+                            sinConexion
+                              ? `Sin conexión a internet para desactivar ${mesa.nombre}`
+                              : tienePedidosAbiertos
                               ? `No se puede desactivar ${mesa.nombre}: tiene pedidos abiertos`
                               : `Desactivar mesa ${mesa.nombre}`
                           }
@@ -376,11 +383,15 @@ export const MesasView: React.FC<MesasViewProps> = ({
                         <Button
                           variant="secondary"
                           size="sm"
+                          disabled={sinConexion}
                           onClick={(e) => {
                             e.stopPropagation();
                             void handleActivarDirecto(mesa);
                           }}
-                          className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 text-xs font-bold text-success hover:bg-success-bg"
+                          className={`flex-1 min-h-[44px] flex items-center justify-center gap-1.5 text-xs font-bold ${
+                            sinConexion ? 'opacity-50 cursor-not-allowed' : 'text-success hover:bg-success-bg'
+                          }`}
+                          title={sinConexion ? 'Sin conexión a internet' : 'Activar mesa'}
                           aria-label={`Activar mesa ${mesa.nombre}`}
                         >
                           <Power className="w-3.5 h-3.5" aria-hidden="true" />

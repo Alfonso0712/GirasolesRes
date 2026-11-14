@@ -21,6 +21,7 @@ import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useBackHandler } from '../../hooks/useBackHandler';
 import { useToast } from '../../context/ToastContext';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface PedidoMesaViewProps {
@@ -76,6 +77,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar: mostrarToast } = useToast();
+  const { sinConexion } = useNetworkStatus();
 
   const esAmpliacion = Boolean(pedidoActivo);
 
@@ -519,12 +521,18 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         fullWidth
         size="lg"
         isLoading={enviando}
+        disabled={enviando || sinConexion}
+        title={sinConexion ? 'Sin conexión a internet' : undefined}
         onClick={solicitarEnvioComanda}
         className="flex items-center justify-center gap-2"
       >
         <Send className="w-5 h-5" />
         <span>
-          {esAmpliacion ? 'Enviar Ampliación a Cocina' : 'Enviar Pedido a Cocina'}
+          {sinConexion
+            ? 'Sin conexión para enviar'
+            : esAmpliacion
+              ? 'Enviar Ampliación a Cocina'
+              : 'Enviar Pedido a Cocina'}
         </span>
       </Button>
     </div>

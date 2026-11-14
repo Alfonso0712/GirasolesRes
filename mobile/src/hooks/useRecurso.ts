@@ -132,6 +132,14 @@ export function useRecurso<T>(
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    const handleReload = () => {
+      if (document.visibilityState === 'visible') {
+        ejecutarCarga(true);
+      }
+    };
+    window.addEventListener('girasoles:reload-active-view', handleReload);
+    window.addEventListener('online', handleReload);
+
     let removeAppListener: (() => void) | null = null;
     if (Capacitor.isNativePlatform()) {
       CapacitorApp.addListener('appStateChange', ({ isActive }) => {
@@ -152,6 +160,8 @@ export function useRecurso<T>(
     return () => {
       detenerTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('girasoles:reload-active-view', handleReload);
+      window.removeEventListener('online', handleReload);
       if (removeAppListener) removeAppListener();
     };
   }, [enabled, intervaloMs, pausarEnSegundoPlano, ejecutarCarga]);

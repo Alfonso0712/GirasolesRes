@@ -12,6 +12,7 @@ import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
 import { useKitchenNotifications } from './hooks/useKitchenNotifications';
+import { useNetworkStatus } from './hooks/useNetworkStatus';
 import { useComandas } from './hooks/useRecurso';
 import {
   pestanaInicial,
@@ -51,6 +52,13 @@ export const App: React.FC = () => {
   const showToast = useCallback((mensaje: string) => {
     mostrar({ tipo: 'exito', mensaje });
   }, [mostrar]);
+
+  // Monitoreo de conectividad y aviso de reconexión
+  useNetworkStatus(
+    useCallback(() => {
+      showToast('Conexión restablecida.');
+    }, [showToast])
+  );
 
   // Ocultar pantalla de arranque cuando la app y la vista inicial estén montadas
   useEffect(() => {

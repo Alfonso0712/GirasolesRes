@@ -18,6 +18,7 @@ import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useBackHandler } from '../../hooks/useBackHandler';
 import { useToast } from '../../context/ToastContext';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface PedidoLlevarViewProps {
@@ -62,6 +63,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar: mostrarToast } = useToast();
+  const { sinConexion } = useNetworkStatus();
 
   // Debounce de 250 ms para el buscador
   useEffect(() => {
@@ -427,12 +429,15 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         fullWidth
         size="lg"
         isLoading={enviando}
-        disabled={referencia.trim().length < 2 || referencia.trim().length > 30}
+        disabled={referencia.trim().length < 2 || referencia.trim().length > 30 || sinConexion}
+        title={sinConexion ? 'Sin conexión a internet' : undefined}
         onClick={solicitarRegistroPedido}
         className="flex items-center justify-center gap-2"
       >
         <Send className="w-5 h-5" />
-        <span>Confirmar Pedido para Llevar</span>
+        <span>
+          {sinConexion ? 'Sin conexión para registrar' : 'Confirmar Pedido para Llevar'}
+        </span>
       </Button>
     </div>
   );

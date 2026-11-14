@@ -37,6 +37,7 @@ import { FilterChipBar } from '../ui/FilterChipBar';
 import { VentaDetalleSheet } from './VentaDetalleSheet';
 import { CierreDetalleSheet } from './CierreDetalleSheet';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { puede } from '../../config/permisos';
@@ -60,6 +61,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 }) => {
   const esAdmin = rol === 'Administrador';
   const puedeOperarCaja = puede(rol, 'caja.abrir') && puede(rol, 'caja.cerrar');
+  const { sinConexion } = useNetworkStatus();
 
   // Control de pestaña principal: 'turno' | 'ventas' | 'cierres'
   const [seccion, setSeccion] = useState<'turno' | 'ventas' | 'cierres'>('turno');
@@ -255,6 +257,11 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   };
 
   const handleAbrirCaja = () => {
+    if (sinConexion) {
+      triggerError();
+      setErrorModal('No se puede abrir caja sin conexión a internet.');
+      return;
+    }
     if (!montoApertura || montoApertura.trim() === '') {
       triggerError();
       setErrorModal('El monto inicial de apertura es obligatorio.');
@@ -276,6 +283,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   };
 
   const ejecutarApertura = async () => {
+    if (sinConexion) {
+      mostrar({ tipo: 'error', mensaje: 'Sin conexión a internet. Intente nuevamente cuando se restablezca.' });
+      return;
+    }
     const num = parseFloat(montoApertura) || 0;
     setProcesando(true);
     try {
@@ -302,6 +313,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   };
 
   const iniciarCierre = async () => {
+    if (sinConexion) {
+      mostrar({ tipo: 'error', mensaje: 'Sin conexión a internet. No se puede iniciar el cierre de caja.' });
+      return;
+    }
     triggerLight();
     setProcesando(true);
     setErrorModal(null);
@@ -320,6 +335,11 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   };
 
   const handleVerificarCierre = () => {
+    if (sinConexion) {
+      triggerError();
+      setErrorModal('No se puede cerrar la caja sin conexión a internet.');
+      return;
+    }
     if (!efectivoContado || efectivoContado.trim() === '') {
       triggerError();
       setErrorModal('Debe ingresar el efectivo contado.');
@@ -346,6 +366,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   };
 
   const ejecutarCierre = async () => {
+    if (sinConexion) {
+      mostrar({ tipo: 'error', mensaje: 'Sin conexión a internet. Intente nuevamente cuando se restablezca.' });
+      return;
+    }
     if (!resumenCierre) return;
     const contado = parseFloat(efectivoContado);
     if (isNaN(contado) || contado < 0.00 || Number(contado.toFixed(2)) !== contado) {

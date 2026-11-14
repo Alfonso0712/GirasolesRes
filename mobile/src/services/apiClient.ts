@@ -165,6 +165,36 @@ async function intentarRenovarToken(currentToken: string): Promise<string | null
   return renewalPromise;
 }
 
+/**
+ * Ejecuta una consulta GET con reintentos y espera creciente exponencial (1 s, 2 s, 4 s; máx 3 reintentos).
+ * Exclusivo para consultas idempotentes (GET); nunca se aplica a mutaciones ni operaciones de dinero o pedidos.
+ */
+async function ejecutarConReintentos<T>(
+  operacion: () => Promise<T>,
+  intentosMaximos: number = 3
+): Promise<T> {
+  let intento = 0;
+  const demoras = [1000, 2000, 4000];
+
+  while (true) {
+    try {
+      return await operacion();
+    } catch (err: unknown) {
+      intento++;
+      const esFalloRed =
+        err instanceof ApiError &&
+        (err.tipo === 'sin-respuesta' || err.tipo === 'timeout' || err.status === 0);
+
+      if (esFalloRed && intento <= intentosMaximos) {
+        const espera = demoras[intento - 1] ?? 4000;
+        await new Promise((resolve) => setTimeout(resolve, espera));
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
 class ApiClient {
   private formatUrl(endpoint: string): string {
     const base = getApiBaseUrl();
@@ -231,6 +261,10 @@ class ApiClient {
       });
 
       clearTimeout(timeoutId);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('girasoles:network-success'));
+      }
 
       if (!response.ok) {
         let backendMsg: string | undefined;
@@ -314,6 +348,10 @@ class ApiClient {
     } catch (err: unknown) {
       clearTimeout(timeoutId);
 
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('girasoles:network-error', { detail: err }));
+      }
+
       if (err instanceof ApiError) {
         throw err;
       }
@@ -361,7 +399,7 @@ class ApiClient {
   }
 
   get<T>(endpoint: string, token?: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET' }, token);
+    return ejecutarConReintentos(() => this.request<T>(endpoint, { method: 'GET' }, token), 3);
   }
 
   post<T>(endpoint: string, body?: unknown, token?: string): Promise<T> {

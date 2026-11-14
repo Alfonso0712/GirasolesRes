@@ -4,6 +4,7 @@ import type { MesaItem } from '../../types/mesa';
 import { normalizeText, canonicalizarMesa } from '../../utils/canonico';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 
 export interface MesaFormSheetProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
   onSave,
 }) => {
   const isEdit = Boolean(mesaAEditar);
+  const { sinConexion } = useNetworkStatus();
   const [nombre, setNombre] = useState('');
   const [errorNombre, setErrorNombre] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
@@ -178,9 +180,11 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
             size="lg"
             fullWidth
             isLoading={guardando}
+            disabled={guardando || sinConexion}
+            title={sinConexion ? 'Sin conexión a internet' : undefined}
             className="min-h-[44px]"
           >
-            {isEdit ? 'Guardar Cambios' : 'Crear Mesa'}
+            {sinConexion ? 'Sin conexión' : isEdit ? 'Guardar Cambios' : 'Crear Mesa'}
           </Button>
         </div>
       </form>
