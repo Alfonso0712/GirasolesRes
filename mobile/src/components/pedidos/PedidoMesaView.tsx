@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils } from 'lucide-react';
+import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils, FileText } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { ProductoMenuPedidoDto, LineaBorrador } from '../../types/pedido';
 import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
@@ -7,6 +7,7 @@ import type { RolUsuario } from '../../types/auth';
 import { pedidoService } from '../../services/pedidoService';
 import { menuDiaService } from '../../services/menuDiaService';
 import { ArmarMenuSheet } from './ArmarMenuSheet';
+import { NotaCocinaSheet } from './NotaCocinaSheet';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
@@ -19,6 +20,7 @@ import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useBackHandler } from '../../hooks/useBackHandler';
+import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 
 interface PedidoMesaViewProps {
@@ -62,10 +64,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   const [lineas, setLineas] = useState<LineaBorrador[]>([]);
   const [mostrarCarrito, setMostrarCarrito] = useState<boolean>(false);
   const [mostrarConfirmDescartar, setMostrarConfirmDescartar] = useState<boolean>(false);
+  const [mostrarConfirmEnviar, setMostrarConfirmEnviar] = useState<boolean>(false);
+  const [lineaParaNota, setLineaParaNota] = useState<LineaBorrador | null>(null);
   const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDiaDto | null>(null);
   const [enviando, setEnviando] = useState<boolean>(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
+  const { mostrar: mostrarToast } = useToast();
 
   // Debounce de 250 ms para la búsqueda local en catálogo
   useEffect(() => {
@@ -77,6 +82,18 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
 
   // Control de navegación y confirmación al descartar pedido en curso
   const solicitarVolver = useCallback(() => {
+    if (mostrarConfirmEnviar) {
+      setMostrarConfirmEnviar(false);
+      return;
+    }
+    if (lineaParaNota) {
+      setLineaParaNota(null);
+      return;
+    }
+    if (menuParaArmar) {
+      setMenuParaArmar(null);
+      return;
+    }
     if (mostrarCarrito) {
       setMostrarCarrito(false);
       return;
@@ -90,7 +107,15 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     } else {
       onVolver();
     }
-  }, [mostrarCarrito, mostrarConfirmDescartar, lineas.length, onVolver]);
+  }, [
+    mostrarConfirmEnviar,
+    lineaParaNota,
+    menuParaArmar,
+    mostrarCarrito,
+    mostrarConfirmDescartar,
+    lineas.length,
+    onVolver,
+  ]);
 
   useBackHandler(true, () => {
     solicitarVolver();
@@ -166,6 +191,16 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       triggerError();
       return;
     }
+    const lineaExistente = lineas.find((l) => l.productoId === producto.id);
+    if (lineaExistente && lineaExistente.cantidad >= 20) {
+      triggerError();
+      mostrarToast({
+        tipo: 'aviso',
+        mensaje: 'La cantidad máxima por línea es 20.',
+      });
+      return;
+    }
+
     triggerLight();
     setLineas((prev) => {
       const idx = prev.findIndex((l) => l.productoId === producto.id);
@@ -196,6 +231,18 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   };
 
   const modificarCantidad = (lineaId: string, delta: number) => {
+    const linea = lineas.find((l) => l.id === lineaId);
+    if (!linea) return;
+
+    if (delta > 0 && linea.cantidad >= 20) {
+      triggerError();
+      mostrarToast({
+        tipo: 'aviso',
+        mensaje: 'La cantidad máxima por línea es 20.',
+      });
+      return;
+    }
+
     triggerLight();
     setLineas((prev) =>
       prev
@@ -221,8 +268,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   const total = lineas.reduce((acc, l) => acc + l.subtotal, 0);
   const totalItems = lineas.reduce((acc, l) => acc + l.cantidad, 0);
 
-  const handleEnviarComanda = async () => {
+  const solicitarEnvioComanda = () => {
     if (lineas.length === 0) return;
+    setErrorEnvio(null);
+    setMostrarConfirmEnviar(true);
+  };
+
+  const ejecutarEnvioComanda = async () => {
     setEnviando(true);
     setErrorEnvio(null);
 
@@ -248,6 +300,8 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       });
 
       triggerSuccess();
+      setMostrarConfirmEnviar(false);
+      setMostrarCarrito(false);
       const numPedido = res.numero;
       const msg = esMozo
         ? `Pedido N.º ${numPedido} registrado para ${mesa.nombre}. La comanda se envió a cocina.`
@@ -257,6 +311,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       triggerError();
       const msg = err instanceof Error ? err.message : 'Error al registrar el pedido para la mesa';
       setErrorEnvio(msg);
+      setMostrarConfirmEnviar(false);
+      if (msg.toLowerCase().includes('agotado') || msg.includes('103')) {
+        mostrarToast({
+          tipo: 'error',
+          mensaje: 'Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.',
+        });
+      }
     } finally {
       setEnviando(false);
     }
@@ -548,16 +609,26 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   </div>
                 </div>
 
-                {/* Input de nota especial para Cocina */}
-                <input
-                  type="text"
-                  maxLength={100}
-                  value={linea.observacion || ''}
-                  onChange={(e) => actualizarObservacion(linea.id, e.target.value)}
-                  placeholder="Nota de cocina (ej. sin picante, bien cocido...)"
-                  aria-label={`Nota de cocina para ${linea.nombre}`}
-                  className="w-full px-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink"
-                />
+                {/* Botón táctil para nota de cocina con modal de 100 caracteres (P-C) */}
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerLight();
+                      setLineaParaNota(linea);
+                    }}
+                    aria-label={`Nota de cocina para ${linea.nombre}`}
+                    className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-surface border border-line cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>{linea.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
+                  </button>
+                  {linea.observacion && (
+                    <span className="text-xs text-ink-muted italic truncate flex-1">
+                      "{linea.observacion}"
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -579,12 +650,12 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             </div>
           )}
 
-          {/* Botón de Envío */}
+          {/* Botón de Envío con ConfirmSheet previa */}
           <Button
             fullWidth
             size="lg"
             isLoading={enviando}
-            onClick={handleEnviarComanda}
+            onClick={solicitarEnvioComanda}
             className="flex items-center justify-center gap-2"
           >
             <Send className="w-5 h-5" />
@@ -592,6 +663,32 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           </Button>
         </div>
       </BottomSheet>
+
+      {/* Confirmación para Enviar Comanda a Cocina (P-C) */}
+      <ConfirmSheet
+        isOpen={mostrarConfirmEnviar}
+        titulo="Enviar comanda a cocina"
+        mensaje={`¿Desea enviar la comanda de la ${mesa.nombre} a cocina?`}
+        etiquetaConfirmar="Enviar a cocina"
+        etiquetaCancelar="Seguir editando"
+        tono="normal"
+        onConfirmar={ejecutarEnvioComanda}
+        onCancelar={() => setMostrarConfirmEnviar(false)}
+      />
+
+      {/* Modal para Nota de Cocina (P-C) */}
+      <NotaCocinaSheet
+        isOpen={Boolean(lineaParaNota)}
+        onClose={() => setLineaParaNota(null)}
+        nombrePlato={lineaParaNota?.nombre || ''}
+        notaInicial={lineaParaNota?.observacion || ''}
+        onGuardarNota={(nota) => {
+          if (lineaParaNota) {
+            actualizarObservacion(lineaParaNota.id, nota);
+            setLineaParaNota(null);
+          }
+        }}
+      />
 
       {/* Confirmación para Descartar Pedido de Mesa */}
       <ConfirmSheet
