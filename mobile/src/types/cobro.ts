@@ -1,11 +1,18 @@
 export interface PedidoPendienteCobro {
   pedidoId: string;
-  mesaId?: string;
-  mesaNombre: string;
-  mozoNombre: string;
+  numero?: number;
+  tipo?: string;
+  mesa?: string | null;
+  mesaId?: string | null;
+  mesaNombre?: string;
+  referencia?: string | null;
+  hora?: string;
+  estado?: string;
+  estaListo?: boolean;
+  mozoNombre?: string;
   total: number;
   fechaCreacion?: string;
-  cantidadLineas: number;
+  cantidadLineas?: number;
 }
 
 export type MetodoPago = 'Efectivo' | 'Yape';

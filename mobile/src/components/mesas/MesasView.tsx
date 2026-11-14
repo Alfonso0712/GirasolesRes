@@ -1,16 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import { Utensils, Clock, PlusCircle, Receipt, SlidersHorizontal, Plus, Pencil, Power, X } from 'lucide-react';
+import { Utensils, Clock, PlusCircle, Receipt, SlidersHorizontal, Plus, Pencil, Power } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { RolUsuario } from '../../types/auth';
 import { puede } from '../../config/permisos';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
+import { IconButton } from '../ui/IconButton';
 import { Card } from '../ui/Card';
 import { Switch } from '../ui/Switch';
 import { StatusBadge } from '../ui/StatusBadge';
 import { FilterChipBar } from '../ui/FilterChipBar';
-import { SkeletonList } from '../ui/Skeleton';
+import { Skeleton, SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
@@ -23,6 +24,7 @@ import { MesaFormSheet } from './MesaFormSheet';
 export interface MesasViewProps {
   mesas: MesaItem[];
   cargando: boolean;
+  cargandoPedidos?: boolean;
   error: string | null;
   onRefresh: () => void | Promise<void>;
   onAbrirPedidoMesa: (mesa: MesaItem) => void;
@@ -40,6 +42,7 @@ export interface MesasViewProps {
 export const MesasView: React.FC<MesasViewProps> = ({
   mesas,
   cargando,
+  cargandoPedidos = false,
   error,
   onRefresh,
   onAbrirPedidoMesa,
@@ -54,7 +57,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
   onCambiarEstadoMesa,
 }) => {
   const [filtro, setFiltro] = useState<'todas' | 'libres' | 'ocupadas' | 'inactivas'>('todas');
-  const [mesaSeleccionada, setMesaSeleccionada] = useState<MesaItem | null>(null);
+  const [mesaSeleccionadaId, setMesaSeleccionadaId] = useState<string | null>(null);
 
   // Estados para modal de formulario y confirmación
   const [formSheetOpen, setFormSheetOpen] = useState(false);
@@ -68,6 +71,12 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const puedeGestionar = puede(rol, 'mesas.gestionar');
   const puedeTomarPedido = puede(rol, 'pedidoMesa.crear');
   const puedeCobrar = puede(rol, 'cobros.procesar');
+  const esMozo = rol === 'Mozo';
+
+  const mesaSeleccionada = useMemo(() => {
+    if (!mesaSeleccionadaId) return null;
+    return mesas.find((m) => m.id === mesaSeleccionadaId) || null;
+  }, [mesas, mesaSeleccionadaId]);
 
   // Mesas ordenadas naturalmente
   const mesasOrdenadas = useMemo(() => {
@@ -92,14 +101,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const inactivasCount = mesas.filter((m) => !m.activa).length;
 
   const handleMesaClick = (mesa: MesaItem) => {
-    if (modoGestion) return; // En modo gestión el clic de tarjeta no abre pedido
+    if (modoGestion) return;
     triggerLight();
     if (mesa.ocupacion === 'Libre') {
       if (puedeTomarPedido) {
         onAbrirPedidoMesa(mesa);
       }
     } else {
-      setMesaSeleccionada(mesa);
+      setMesaSeleccionadaId(mesa.id);
     }
   };
 
@@ -150,7 +159,11 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
   const chips = useMemo(() => {
     const base = [
-      { id: 'todas', label: 'Todas', count: modoGestion && mostrarInactivas ? mesas.length : libresCount + ocupadasCount },
+      {
+        id: 'todas',
+        label: 'Todas',
+        count: modoGestion && mostrarInactivas ? mesas.length : libresCount + ocupadasCount,
+      },
       { id: 'libres', label: 'Libres', count: libresCount },
       { id: 'ocupadas', label: 'Ocupadas', count: ocupadasCount },
     ];
@@ -160,69 +173,69 @@ export const MesasView: React.FC<MesasViewProps> = ({
     return base;
   }, [modoGestion, mostrarInactivas, mesas.length, libresCount, ocupadasCount, inactivasCount]);
 
+  const tieneDatosMesaSeleccionada = Boolean(
+    mesaSeleccionada &&
+      ((typeof mesaSeleccionada.totalPendiente === 'number') ||
+        (typeof mesaSeleccionada.minutosOcupada === 'number') ||
+        (mesaSeleccionada.pedidosMesa && mesaSeleccionada.pedidosMesa.length > 0))
+  );
+
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
-      {/* 1. Encabezado y Filtros */}
+      {/* 1. Encabezado */}
       <PageHeader
-        title={modoGestion ? 'Gestión de Mesas' : 'Salón y Mesas'}
+        title={modoGestion ? 'Gestionar mesas' : 'Salón y Mesas'}
         subtitle={
           modoGestion
-            ? pluralizar(mesas.length, 'mesa registrada', 'mesas registradas')
+            ? pluralizar(mesas.length, 'mesa', 'mesas')
             : `${pluralizar(libresCount, 'libre', 'libres')} · ${pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}`
         }
-        icon={<Utensils className="w-5 h-5 text-white" aria-hidden="true" />}
+        icon={!modoGestion ? <Utensils className="w-5 h-5 text-white" aria-hidden="true" /> : undefined}
+        onVolver={
+          modoGestion
+            ? () => {
+                triggerLight();
+                onToggleModoGestion?.(false);
+              }
+            : undefined
+        }
         onRefresh={onRefresh}
         isRefreshing={cargando}
         actions={
-          puedeGestionar ? (
+          !modoGestion && puedeGestionar ? (
             <Button
-              variant={modoGestion ? 'primary' : 'secondary'}
+              variant="secondary"
               size="sm"
               onClick={() => {
                 triggerLight();
-                onToggleModoGestion?.(!modoGestion);
+                onToggleModoGestion?.(true);
               }}
               className="min-h-[44px] px-3 flex items-center gap-1.5 font-bold"
-              aria-label={modoGestion ? 'Salir de modo gestión de mesas' : 'Gestionar mesas'}
+              aria-label="Gestionar mesas"
             >
-              {modoGestion ? (
-                <>
-                  <X className="w-4 h-4" aria-hidden="true" />
-                  <span>Salir</span>
-                </>
-              ) : (
-                <>
-                  <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
-                  <span>Gestionar</span>
-                </>
-              )}
+              <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
+              <span>Gestionar</span>
             </Button>
           ) : undefined
         }
       />
 
-      {/* 2. Banner de Modo Gestión del Administrador */}
+      {/* 2. Barra de Modo Gestión del Administrador */}
       {modoGestion && puedeGestionar && (
-        <div className="bg-surface border-b border-line px-4 py-3 shrink-0 space-y-3">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <p className="text-xs font-black text-ink">Modo gestión de mesas</p>
-              <p className="text-xs text-ink-muted">Cree, edite o cambie la disponibilidad de mesas.</p>
-            </div>
-            <Button
-              variant="primary"
-              size="sm"
-              disabled={sinConexion}
-              title={sinConexion ? 'Sin conexión a internet' : undefined}
-              onClick={handleAbrirCrear}
-              className="min-h-[44px] px-3 flex items-center gap-1.5 shrink-0"
-            >
-              <Plus className="w-4 h-4" aria-hidden="true" />
-              <span>{sinConexion ? 'Sin conexión' : 'Nueva Mesa'}</span>
-            </Button>
-          </div>
+        <div className="bg-surface border-b border-line px-4 py-3 shrink-0 space-y-3 barra-accion-mano">
+          <Button
+            variant="primary"
+            fullWidth
+            disabled={sinConexion}
+            title={sinConexion ? 'Sin conexión a internet' : undefined}
+            onClick={handleAbrirCrear}
+            className="min-h-[44px] flex items-center justify-center gap-2 font-bold"
+          >
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            <span>{sinConexion ? 'Sin conexión' : 'Nueva mesa'}</span>
+          </Button>
 
-          <div className="flex items-center justify-between pt-1 border-t border-line/60">
+          <div className="flex items-center justify-between pt-2 border-t border-line/60">
             <span className="text-xs font-semibold text-ink">Mostrar inactivas</span>
             <Switch
               checked={mostrarInactivas}
@@ -248,7 +261,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
         />
       </div>
 
-      {/* 4. Grilla Táctil de Mesas */}
+      {/* 4. Contenido Principal: Lista en Modo Gestión o Cuadrícula en Salón */}
       <div className="flex-1 overflow-y-auto p-4 pb-24">
         {error && (
           <ErrorState
@@ -273,151 +286,201 @@ export const MesasView: React.FC<MesasViewProps> = ({
           />
         )}
 
-        {mesasFiltradas.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {mesasFiltradas.length > 0 && modoGestion ? (
+          /* Lista de filas de al menos 64 px en Modo Gestión */
+          <div className="space-y-2.5">
             {mesasFiltradas.map((mesa) => {
               const esLibre = mesa.ocupacion === 'Libre';
               const estaActiva = mesa.activa;
-              const interactiva = modoGestion ? false : (esLibre ? puedeTomarPedido : true);
-
-              // Estado de la mesa para el badge
               const estadoBadge = !estaActiva ? 'Inactiva' : mesa.ocupacion;
               const tienePedidosAbiertos = mesa.ocupacion === 'Ocupada';
 
               return (
                 <Card
                   key={mesa.id}
-                  interactive={interactiva}
-                  accent={!estaActiva ? 'none' : (esLibre ? 'success' : 'warning')}
-                  onClick={interactiva ? () => handleMesaClick(mesa) : undefined}
+                  accent={!estaActiva ? 'none' : esLibre ? 'success' : 'warning'}
                   padding="sm"
-                  className={`flex flex-col justify-between min-h-[128px] pl-3.5 ${
+                  className={`min-h-16 px-4 py-3 flex items-center justify-between gap-3 ${
                     !estaActiva ? 'opacity-80 bg-fill-subtle' : ''
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-1.5 w-full">
-                    <span className="text-lg font-semibold text-ink leading-tight break-words min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 flex flex-wrap items-center gap-2.5">
+                    <span className="text-base font-semibold text-ink leading-tight break-words">
                       {mesa.nombre}
                     </span>
-                    <div className="shrink-0">
-                      <StatusBadge estado={estadoBadge} />
-                    </div>
+                    <StatusBadge estado={estadoBadge} />
                   </div>
 
-                  {!modoGestion ? (
-                    <>
-                      <div className="mt-3 flex items-center justify-between gap-2 text-xs text-ink-muted">
-                        <span className="leading-tight break-words min-w-0">
-                          {esLibre ? 'Disponible' : (mesa.mozo ? `Mozo: ${mesa.mozo}` : 'Sin mozo asignado')}
-                        </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <IconButton
+                      variant="outline"
+                      disabled={sinConexion}
+                      onClick={() => handleAbrirEditar(mesa)}
+                      aria-label={`Editar ${mesa.nombre}`}
+                      className="w-11 h-11 min-w-[44px] min-h-[44px]"
+                    >
+                      <Pencil className="w-4 h-4 text-ink" aria-hidden="true" />
+                    </IconButton>
 
-                        {!esLibre && mesa.minutosOcupada && (
-                          <span className="inline-flex items-center gap-1 font-bold text-danger shrink-0">
-                            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                            <span>{pluralizar(mesa.minutosOcupada, 'min', 'mins')}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {!esLibre && typeof mesa.totalPendiente === 'number' && (
-                        <div className="mt-1 text-right text-xs font-black text-accent tabular-nums">
-                          {formatCurrency(mesa.totalPendiente)}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    /* Controles de Administración en la Tarjeta */
-                    <div className="mt-4 pt-2.5 border-t border-line/60 flex items-center gap-2">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        disabled={sinConexion}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAbrirEditar(mesa);
+                    {estaActiva ? (
+                      <IconButton
+                        variant="outline"
+                        disabled={tienePedidosAbiertos || sinConexion}
+                        onClick={() => {
+                          triggerLight();
+                          setMesaParaDesactivar(mesa);
                         }}
-                        className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 text-xs font-bold"
-                        aria-label={`Editar mesa ${mesa.nombre}`}
+                        aria-label={`Desactivar ${mesa.nombre}`}
+                        title={
+                          sinConexion
+                            ? 'Sin conexión a internet'
+                            : tienePedidosAbiertos
+                            ? 'No se puede desactivar una mesa ocupada'
+                            : `Desactivar ${mesa.nombre}`
+                        }
+                        className="w-11 h-11 min-w-[44px] min-h-[44px]"
                       >
-                        <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
-                        <span>Editar</span>
-                      </Button>
-
-                      {estaActiva ? (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          disabled={tienePedidosAbiertos || sinConexion}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            triggerLight();
-                            setMesaParaDesactivar(mesa);
-                          }}
-                          className={`flex-1 min-h-[44px] flex items-center justify-center gap-1.5 text-xs font-bold ${
-                            tienePedidosAbiertos || sinConexion ? 'opacity-50 cursor-not-allowed' : 'text-danger hover:bg-danger-bg'
-                          }`}
-                          title={sinConexion ? 'Sin conexión a internet' : tienePedidosAbiertos ? 'Tiene pedidos abiertos' : 'Desactivar mesa'}
-                          aria-label={
-                            sinConexion
-                              ? `Sin conexión a internet para desactivar ${mesa.nombre}`
-                              : tienePedidosAbiertos
-                              ? `No se puede desactivar ${mesa.nombre}: tiene pedidos abiertos`
-                              : `Desactivar mesa ${mesa.nombre}`
-                          }
-                        >
-                          <Power className="w-3.5 h-3.5" aria-hidden="true" />
-                          <span>{tienePedidosAbiertos ? 'Ocupada' : 'Desactivar'}</span>
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          disabled={sinConexion}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void handleActivarDirecto(mesa);
-                          }}
-                          className={`flex-1 min-h-[44px] flex items-center justify-center gap-1.5 text-xs font-bold ${
-                            sinConexion ? 'opacity-50 cursor-not-allowed' : 'text-success hover:bg-success-bg'
-                          }`}
-                          title={sinConexion ? 'Sin conexión a internet' : 'Activar mesa'}
-                          aria-label={`Activar mesa ${mesa.nombre}`}
-                        >
-                          <Power className="w-3.5 h-3.5" aria-hidden="true" />
-                          <span>Activar</span>
-                        </Button>
-                      )}
-                    </div>
-                  )}
+                        <Power className="w-4 h-4 text-danger" aria-hidden="true" />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        variant="outline"
+                        disabled={sinConexion}
+                        onClick={() => void handleActivarDirecto(mesa)}
+                        aria-label={`Activar ${mesa.nombre}`}
+                        title={sinConexion ? 'Sin conexión a internet' : `Activar ${mesa.nombre}`}
+                        className="w-11 h-11 min-w-[44px] min-h-[44px]"
+                      >
+                        <Power className="w-4 h-4 text-success" aria-hidden="true" />
+                      </IconButton>
+                    )}
+                  </div>
                 </Card>
               );
             })}
           </div>
+        ) : (
+          mesasFiltradas.length > 0 && (
+            /* Cuadrícula de Salón (todos los roles) */
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              {mesasFiltradas.map((mesa) => {
+                const esLibre = mesa.ocupacion === 'Libre';
+                const estaActiva = mesa.activa;
+                const interactiva = esLibre ? puedeTomarPedido : true;
+                const estadoBadge = !estaActiva ? 'Inactiva' : mesa.ocupacion;
+
+                return (
+                  <Card
+                    key={mesa.id}
+                    interactive={interactiva}
+                    accent={!estaActiva ? 'none' : esLibre ? 'success' : 'warning'}
+                    onClick={interactiva ? () => handleMesaClick(mesa) : undefined}
+                    padding="sm"
+                    className={`flex flex-col justify-between min-h-[116px] p-3.5 ${
+                      !estaActiva ? 'opacity-80 bg-fill-subtle' : ''
+                    }`}
+                  >
+                    {/* Línea 1: Nombre completo */}
+                    <span className="text-lg font-semibold text-ink leading-tight break-words block">
+                      {mesa.nombre}
+                    </span>
+
+                    {/* Línea 2: StatusBadge */}
+                    <div className="mt-2">
+                      <StatusBadge estado={estadoBadge} />
+                    </div>
+
+                    {/* Línea 3 (Ocupada): En mesa: {minutos} si el dato existe */}
+                    {!esLibre &&
+                      typeof mesa.minutosOcupada === 'number' &&
+                      mesa.minutosOcupada > 0 && (
+                        <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-ink-muted">
+                          <Clock className="w-3.5 h-3.5 shrink-0 text-danger" aria-hidden="true" />
+                          <span>
+                            En mesa: {pluralizar(mesa.minutosOcupada, 'minuto', 'minutos')}
+                          </span>
+                        </div>
+                      )}
+                  </Card>
+                );
+              })}
+            </div>
+          )
         )}
       </div>
 
-      {/* 5. Bottom Sheet de Acciones para Mesa Ocupada (Modo Salón Normal) */}
+      {/* 5. Bottom Sheet de Acciones para Mesa Ocupada */}
       <BottomSheet
         isOpen={Boolean(mesaSeleccionada)}
-        onClose={() => setMesaSeleccionada(null)}
+        onClose={() => setMesaSeleccionadaId(null)}
         title={mesaSeleccionada ? `${mesaSeleccionada.nombre} (Ocupada)` : ''}
       >
         {mesaSeleccionada && (
           <div className="space-y-4">
-            <div className="bg-canvas border border-line rounded-2xl p-4 flex justify-between items-center">
-              <div>
-                <p className="text-xs text-ink-muted">Total acumulado</p>
-                <p className="text-xl font-black text-accent tabular-nums">
-                  {formatCurrency(mesaSeleccionada.totalPendiente || 0)}
-                </p>
+            {cargandoPedidos && !tieneDatosMesaSeleccionada ? (
+              <div className="space-y-3" aria-busy="true">
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-16 w-full rounded-2xl" />
               </div>
-              <div className="text-right">
-                <p className="text-xs text-ink-muted">Tiempo en mesa</p>
-                <p className="text-sm font-bold text-ink">
-                  {pluralizar(mesaSeleccionada.minutosOcupada || 0, 'minuto', 'minutos')}
-                </p>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className="bg-canvas border border-line rounded-2xl p-4 flex justify-between items-center gap-4">
+                  {/* RV-154: El Mozo no ve importes, solo estado y tiempo */}
+                  {!esMozo && (
+                    <div>
+                      <p className="text-xs text-ink-muted">Total acumulado</p>
+                      <p className="text-xl font-black text-accent tabular-nums">
+                        {typeof mesaSeleccionada.totalPendiente === 'number'
+                          ? formatCurrency(mesaSeleccionada.totalPendiente)
+                          : '—'}
+                      </p>
+                    </div>
+                  )}
+                  <div className={esMozo ? 'text-left' : 'text-right'}>
+                    <p className="text-xs text-ink-muted">Tiempo en mesa</p>
+                    <p className="text-sm font-bold text-ink">
+                      {typeof mesaSeleccionada.minutosOcupada === 'number' &&
+                      mesaSeleccionada.minutosOcupada > 0
+                        ? pluralizar(mesaSeleccionada.minutosOcupada, 'minuto', 'minutos')
+                        : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Lista de pedidos abiertos de la mesa */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
+                    Pedidos de la mesa
+                  </span>
+                  {mesaSeleccionada.pedidosMesa && mesaSeleccionada.pedidosMesa.length > 0 ? (
+                    <div className="divide-y divide-line bg-canvas rounded-2xl border border-line overflow-hidden">
+                      {mesaSeleccionada.pedidosMesa.map((ped) => (
+                        <div
+                          key={ped.id}
+                          className="p-3 flex items-center justify-between gap-2 text-xs"
+                        >
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-extrabold text-ink">
+                              Pedido N.º {ped.numero}
+                            </span>
+                            <StatusBadge estado={ped.estado === 'EnPreparacion' ? 'En preparación' : ped.estado} />
+                          </div>
+                          {!esMozo && (
+                            <span className="font-bold text-accent tabular-nums shrink-0">
+                              {formatCurrency(ped.total)}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-canvas rounded-2xl border border-line text-xs text-ink-muted">
+                      —
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
 
             <div className="space-y-2.5">
               {puedeTomarPedido && (
@@ -426,13 +489,13 @@ export const MesasView: React.FC<MesasViewProps> = ({
                   size="lg"
                   onClick={() => {
                     const m = mesaSeleccionada;
-                    setMesaSeleccionada(null);
+                    setMesaSeleccionadaId(null);
                     onAbrirPedidoMesa(m);
                   }}
                   className="flex items-center justify-center gap-2 min-h-[44px]"
                 >
                   <PlusCircle className="w-5 h-5" />
-                  <span>Agregar Más Platos a la Mesa</span>
+                  <span>Agregar platos</span>
                 </Button>
               )}
 
@@ -440,16 +503,16 @@ export const MesasView: React.FC<MesasViewProps> = ({
                 <Button
                   fullWidth
                   size="lg"
-                  variant="secondary"
+                  variant="primary"
                   onClick={() => {
                     const id = mesaSeleccionada.id;
-                    setMesaSeleccionada(null);
+                    setMesaSeleccionadaId(null);
                     onNavigateToCobro(id);
                   }}
                   className="flex items-center justify-center gap-2 min-h-[44px]"
                 >
                   <Receipt className="w-5 h-5" />
-                  <span>Cobrar / Emitir Comprobante</span>
+                  <span>Ir a cobrar</span>
                 </Button>
               )}
             </div>

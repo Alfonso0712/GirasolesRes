@@ -115,10 +115,17 @@ export const pedidoService = {
   /**
    * Lista los pedidos del día con filtros.
    */
-  listarPedidos: async (params?: { soloMios?: boolean; estado?: string }): Promise<PedidoItemDto[]> => {
+  listarPedidos: async (params?: {
+    soloMios?: boolean;
+    estado?: string;
+    mesaId?: string;
+    tamano?: number;
+  }): Promise<PedidoItemDto[]> => {
     const q = new URLSearchParams();
     if (params?.soloMios) q.append('soloMios', 'true');
     if (params?.estado) q.append('estado', params.estado);
+    if (params?.mesaId) q.append('mesaId', params.mesaId);
+    if (params?.tamano) q.append('tamano', String(params.tamano));
     const qs = q.toString() ? `?${q.toString()}` : '';
 
     const res = await apiClient.get<ListarPedidosResponseDto>(`/pedidos${qs}`);

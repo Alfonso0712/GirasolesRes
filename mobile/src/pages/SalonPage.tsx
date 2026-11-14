@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMesas } from '../hooks/useRecurso';
+import { useMesasConPedidos } from '../hooks/useMesasConPedidos';
 import { puede } from '../config/permisos';
 import { AccesoRestringido } from '../components/layout/AccesoRestringido';
 import { MesasView } from '../components/mesas/MesasView';
@@ -29,7 +29,8 @@ export const SalonPage: React.FC<SalonPageProps> = ({
 
   const autorizado = puede(rol, 'mesas.ver');
 
-  const { datos: mesas, cargando, error, recargar } = useMesas({
+  const { mesas, cargando, cargandoPedidos, error, recargar } = useMesasConPedidos({
+    rol,
     incluirInactivas: modoGestion && mostrarInactivas,
     enabled: autorizado,
   });
@@ -83,8 +84,9 @@ export const SalonPage: React.FC<SalonPageProps> = ({
 
   return (
     <MesasView
-      mesas={mesas || []}
+      mesas={mesas}
       cargando={cargando}
+      cargandoPedidos={cargandoPedidos}
       error={error}
       onRefresh={recargar}
       onAbrirPedidoMesa={handleAbrirPedido}

@@ -657,6 +657,10 @@ export const CobroView: React.FC<CobroViewProps> = ({
 
         {pedidos.map((p) => {
           const seleccionado = pedidoSeleccionado?.pedidoId === p.pedidoId;
+          const etiquetaMesa =
+            p.mesa ||
+            p.mesaNombre ||
+            (p.referencia ? `Para llevar (${p.referencia})` : `Pedido N.º ${p.numero ?? ''}`);
           return (
             <Card
               key={p.pedidoId}
@@ -669,11 +673,17 @@ export const CobroView: React.FC<CobroViewProps> = ({
             >
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
+                  <h3 className="text-base font-extrabold text-ink">{etiquetaMesa}</h3>
                 </div>
                 <div className="text-xs text-ink-muted mt-1 space-y-0.5">
-                  <p>Mozo: {p.mozoNombre}</p>
-                  <p>{pluralizar(p.cantidadLineas, 'ítem', 'ítems')} en la orden</p>
+                  {p.mozoNombre ? (
+                    <p>Mozo: {p.mozoNombre}</p>
+                  ) : p.numero ? (
+                    <p>Pedido N.º {p.numero}{p.hora ? ` · ${p.hora}` : ''}</p>
+                  ) : null}
+                  {typeof p.cantidadLineas === 'number' && (
+                    <p>{pluralizar(p.cantidadLineas, 'ítem', 'ítems')} en la orden</p>
+                  )}
                 </div>
               </div>
 
@@ -681,7 +691,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 <span className="text-xl font-black text-accent tabular-nums">
                   {formatCurrency(p.total)}
                 </span>
-                <StatusBadge estado="Pendiente" />
+                <StatusBadge estado={p.estaListo || p.estado === 'Listo' ? 'Listo' : 'Pendiente'} />
               </div>
             </Card>
           );
@@ -699,7 +709,9 @@ export const CobroView: React.FC<CobroViewProps> = ({
             <div className="flex items-center gap-2">
               <Receipt className="w-5 h-5 text-accent" aria-hidden="true" />
               <h3 className="text-sm font-extrabold text-ink">
-                {pedidoSeleccionado ? `Cobro · ${pedidoSeleccionado.mesaNombre}` : 'Detalle de Cobro'}
+                {pedidoSeleccionado
+                  ? `Cobro · ${pedidoSeleccionado.mesa || pedidoSeleccionado.mesaNombre || (pedidoSeleccionado.referencia ? `Para llevar (${pedidoSeleccionado.referencia})` : `Pedido N.º ${pedidoSeleccionado.numero ?? ''}`)}`
+                  : 'Detalle de Cobro'}
               </h3>
             </div>
             {pedidoSeleccionado && (
@@ -730,7 +742,11 @@ export const CobroView: React.FC<CobroViewProps> = ({
         <BottomSheet
           isOpen={Boolean(pedidoSeleccionado)}
           onClose={() => setPedidoSeleccionado(null)}
-          title={pedidoSeleccionado ? `Cobro · ${pedidoSeleccionado.mesaNombre}` : ''}
+          title={
+            pedidoSeleccionado
+              ? `Cobro · ${pedidoSeleccionado.mesa || pedidoSeleccionado.mesaNombre || (pedidoSeleccionado.referencia ? `Para llevar (${pedidoSeleccionado.referencia})` : `Pedido N.º ${pedidoSeleccionado.numero ?? ''}`)}`
+              : ''
+          }
         >
           {pedidoSeleccionado && renderFormularioCobro()}
         </BottomSheet>
