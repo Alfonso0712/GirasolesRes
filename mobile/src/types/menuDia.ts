@@ -50,3 +50,24 @@ export interface MenuDiaResponseDto {
   opciones: OpcionMenuDto[];
   menusCompletos: MenuCompletoDiaDto[];
 }
+
+export interface CandidatoMenuDto {
+  id: string;
+  nombre: string;
+  tipo: 'Carta' | 'Componente';
+  rol?: string | null;
+  categoria?: string | null;
+  precio?: number | null;
+}
+
+export interface GuardarMenuDiaRequest {
+  productosCarta?: string[];
+  opciones?: string[];
+  menusCompletos?: number[];
+}
+
+export interface GuardarMenuDiaResponseDto {
+  success: boolean;
+  message: string;
+  data: MenuDiaResponseDto;
+}

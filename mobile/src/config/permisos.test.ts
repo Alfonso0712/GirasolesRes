@@ -64,19 +64,20 @@ describe('permisos - Matriz RBAC', () => {
       expect(puede(rol, 'platos.disponibilidad')).toBe(true);
     });
 
-    it('no debe tener acceso a salón, caja ni pedidos', () => {
+    it('no debe tener acceso a salón, caja, pedidos ni definir el menú del día', () => {
       expect(puede(rol, 'mesas.ver')).toBe(false);
       expect(puede(rol, 'pedidoMesa.crear')).toBe(false);
       expect(puede(rol, 'caja.ver')).toBe(false);
       expect(puede(rol, 'cobros.procesar')).toBe(false);
       expect(puede(rol, 'reportes.ver')).toBe(false);
+      expect(puede(rol, 'menuDia.definir')).toBe(false);
     });
   });
 
   describe('Permisos del Administrador', () => {
     const rol: RolUsuario = 'Administrador';
 
-    it('debe tener permisos de supervisión, reportes, gestión de mesas y anulación de ventas', () => {
+    it('debe tener permisos de supervisión, reportes, gestión de mesas, menú del día y anulación de ventas', () => {
       expect(puede(rol, 'inicio.ver')).toBe(true);
       expect(puede(rol, 'reportes.ver')).toBe(true);
       expect(puede(rol, 'mesas.gestionar')).toBe(true);
@@ -85,6 +86,8 @@ describe('permisos - Matriz RBAC', () => {
       expect(puede(rol, 'caja.ver')).toBe(true);
       expect(puede(rol, 'ventas.ver')).toBe(true);
       expect(puede(rol, 'platos.gestionar')).toBe(true);
+      expect(puede(rol, 'menuDia.definir')).toBe(true);
+      expect(puede(rol, 'platos.disponibilidad')).toBe(true);
     });
 
     it('no debe abrir/cerrar caja directamente (tarea exclusiva del Cajero en turno)', () => {
@@ -106,6 +109,7 @@ describe('permisos - Matriz RBAC', () => {
       'comandas.gestionar',
       'platos.disponibilidad',
       'platos.gestionar',
+      'menuDia.definir',
       'caja.ver',
       'caja.abrir',
       'caja.cerrar',

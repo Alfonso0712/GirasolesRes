@@ -11,6 +11,7 @@ export type Accion =
   | 'comandas.gestionar'
   | 'platos.disponibilidad'
   | 'platos.gestionar'
+  | 'menuDia.definir'
   | 'caja.ver'
   | 'caja.abrir'
   | 'caja.cerrar'
@@ -48,8 +49,9 @@ const MATRIZ_PERMISOS: Record<Accion, readonly RolUsuario[]> = {
 
   // MenuDiaController PATCH .../disponibilidad: [Authorize(Roles = "Administrador,Cocinero")]
   'platos.disponibilidad': ['Administrador', 'Cocinero'],
-  // MenuDiaController PUT /hoy: [Authorize(Roles = "Administrador")]
+  // MenuDiaController GET /candidatos y PUT /hoy: [Authorize(Roles = "Administrador")]
   'platos.gestionar': ['Administrador'],
+  'menuDia.definir': ['Administrador'],
 
   // CajaController GET /actual y /estado: [Authorize(Roles = "Cajero,Administrador")]
   'caja.ver': ['Administrador', 'Cajero'],
