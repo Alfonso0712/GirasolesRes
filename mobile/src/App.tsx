@@ -10,6 +10,8 @@ import { useToast } from './context/ToastContext';
 import { markAppReady } from './utils/boot';
 import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
+import { useKitchenNotifications } from './hooks/useKitchenNotifications';
+import { useComandas } from './hooks/useRecurso';
 import {
   pestanaInicial,
   obtenerPestanasParaRol,
@@ -77,6 +79,36 @@ export const App: React.FC = () => {
     },
     showToast,
   });
+
+  // Notificaciones sonoras y visuales en tiempo real para avisos de cocina
+  const { conteoAvisos } = useKitchenNotifications({
+    rol: session?.rol,
+    enabled: Boolean(session),
+    onNuevoAviso: (aviso) => {
+      const destino = aviso.mesa || (aviso.referencia ? `Para llevar (${aviso.referencia})` : 'Para llevar');
+      showToast(`Pedido N.º ${aviso.numero} de ${destino} está listo para recoger.`);
+    },
+  });
+
+  // Comandas pendientes para insignia en Cocinero si está en otra pestaña
+  const { datos: comandasData } = useComandas({
+    enabled: session?.rol === 'Cocinero',
+  });
+  const comandasPendientesCount =
+    comandasData?.items?.filter((c) => c.estado === 'Pendiente').length || 0;
+
+  // Insignias dinámicas de la barra de navegación
+  const badges: Record<string, number> = {};
+  if (conteoAvisos > 0) {
+    if (session?.rol === 'Mozo') {
+      badges.pedidos = conteoAvisos;
+    } else if (session?.rol === 'Cajero') {
+      badges.cobros = conteoAvisos;
+    }
+  }
+  if (session?.rol === 'Cocinero' && activeTab === 'platos' && comandasPendientesCount > 0) {
+    badges.cocina = comandasPendientesCount;
+  }
 
   const toggleDarkMode = () => {
     setIsDark((prev) => {
@@ -164,6 +196,7 @@ export const App: React.FC = () => {
                   rol={session.rol}
                   onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
                   onNavigateToSalon={() => handleSelectTab('salon')}
+                  conteoAvisosListos={conteoAvisos}
                 />
               )}
 
@@ -232,6 +265,7 @@ export const App: React.FC = () => {
           tabs={tabsDisponibles}
           currentTab={activeTab}
           onSelectTab={handleSelectTab}
+          badges={badges}
         />
       )}
     </div>

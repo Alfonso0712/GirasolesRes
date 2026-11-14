@@ -67,3 +67,12 @@ Derivada formalmente de los atributos `[Authorize(Roles = "...")]` de los contro
 1. **Inicio:** Dashboard ejecutivo con métricas del día (ventas totales, efectivo, Yape, ticket promedio, mesas ocupadas y estado de caja), alertas críticas y accesos rápidos.
 2. **Supervisión de Salón y Caja:** Monitorea mesas y consulta el turno actual en solo lectura (*"La apertura y el cierre de caja los realiza el Cajero"*), junto con el registro de ventas e historial de cierres.
 3. **Reportes:** Consulta métricas de rendimiento por período (*Hoy*, *7 Días*, *Este Mes*) y platos más vendidos.
+
+---
+
+## 4. Avisos de Cocina en Tiempo Real y Limitación de Notificaciones
+
+1. **Sondeo en Primer Plano:** El cliente móvil consulta activamente el endpoint `/api/avisos` cada 5 segundos mediante el hook `useKitchenNotifications` (activo para roles *Mozo*, *Cajero* y *Administrador*).
+2. **Alertas Sensoriales:** Al detectarse un nuevo pedido listo, se dispara una respuesta táctil (`triggerSuccess`), alerta sonora sintetizada (`reproducirSonidoKds('lista')`) y una notificación toast interactiva (*"Pedido N.º {n} de {mesa} está listo para recoger."*).
+3. **Insignias y Banners:** Se actualiza en tiempo real el distintivo numérico de la barra inferior (*Pedidos* para Mozo y *Cobros* para Cajero) y el banner superior en `MisPedidosView` (*"¡Tiene N pedidos listos en cocina!"*).
+4. **Limitación de Notificaciones en Segundo Plano:** El sistema de avisos opera exclusivamente mientras la aplicación se encuentra **abierta o en primer plano**. Por arquitectura desacoplada y ligera, el cliente móvil no incorpora servicios push en segundo plano (FCM/APNs) ni daemons persistentes del sistema operativo cuando la aplicación está cerrada o suspendida en segundo plano.

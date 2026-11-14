@@ -187,6 +187,16 @@ export interface ListarPedidosResponseDto {
   total: number;
 }
 
+export interface AvisoComandaDto {
+  id: string;
+  pedidoId: string;
+  numero: number;
+  tipo: string;
+  mesa: string | null;
+  referencia: string | null;
+  hora: string;
+}
+
 // Aliases de compatibilidad transitoria para componentes en refactorización
 export type ProductoItem = ProductoMenuPedidoDto;
 export type LineaPedidoItem = LineaBorrador;

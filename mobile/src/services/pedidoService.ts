@@ -12,6 +12,7 @@ import type {
   AnularPedidoRequest,
   ListarPedidosResponseDto,
   PedidoItemDto,
+  AvisoComandaDto,
 } from '../types/pedido';
 
 export const pedidoService = {
@@ -125,5 +126,19 @@ export const pedidoService = {
       return res.items;
     }
     return [];
+  },
+
+  /**
+   * Consulta los avisos de comanda lista pendientes (CUS09.3).
+   */
+  obtenerAvisosPendientes: async (): Promise<AvisoComandaDto[]> => {
+    return apiClient.get<AvisoComandaDto[]>('/avisos');
+  },
+
+  /**
+   * Marca un aviso como visto tras cerrarlo en pantalla (CUS09.3).
+   */
+  marcarAvisoVisto: async (id: string): Promise<void> => {
+    await apiClient.post(`/avisos/${id}/visto`);
   },
 };

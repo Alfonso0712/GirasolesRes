@@ -10,12 +10,14 @@ export interface PedidosPageProps {
   rol: RolUsuario;
   onVolverAlInicio: () => void;
   onNavigateToSalon?: () => void;
+  conteoAvisosListos?: number;
 }
 
 export const PedidosPage: React.FC<PedidosPageProps> = ({
   rol,
   onVolverAlInicio,
   onNavigateToSalon,
+  conteoAvisosListos = 0,
 }) => {
   if (!puede(rol, 'pedidos.ver')) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
@@ -36,6 +38,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
       onRefresh={recargar}
       rol={rol}
       usuarioIdActual={usuarioIdActual}
+      conteoAvisosListos={conteoAvisosListos}
       onAgregarPlatos={() => {
         if (onNavigateToSalon) {
           onNavigateToSalon();
