@@ -6,9 +6,13 @@ import {
   Check,
   AlertCircle,
   Lock,
+  Search,
+  FileText,
+  CheckSquare,
+  Square,
 } from 'lucide-react';
 import { cobroService } from '../../services/cobroService';
-import type { PedidoPendienteCobro, MetodoPago } from '../../types/cobro';
+import type { PedidoPendienteCobro, MetodoPago, TipoComprobante } from '../../types/cobro';
 import type { CajaActualResponseDto } from '../../types/caja';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
@@ -43,9 +47,19 @@ export const CobroView: React.FC<CobroViewProps> = ({
 }) => {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<PedidoPendienteCobro | null>(null);
 
+  // Tipo de comprobante
+  const [tipoComprobante, setTipoComprobante] = useState<TipoComprobante>('Ticket');
+  const [numDocReceptor, setNumDocReceptor] = useState('');
+  const [razonSocialReceptor, setRazonSocialReceptor] = useState('');
+  const [direccionReceptor, setDireccionReceptor] = useState('');
+  const [consultandoDoc, setConsultandoDoc] = useState(false);
+  const [errorConsultaDoc, setErrorConsultaDoc] = useState<string | null>(null);
+
   // Estado del cobro
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('Efectivo');
   const [montoRecibido, setMontoRecibido] = useState<string>('');
+  const [yapeConfirmado, setYapeConfirmado] = useState(false);
+  const [yapeReferencia, setYapeReferencia] = useState('');
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [procesando, setProcesando] = useState(false);
   const [errorCobro, setErrorCobro] = useState<string | null>(null);
@@ -60,23 +74,135 @@ export const CobroView: React.FC<CobroViewProps> = ({
 
   const cajaCerrada = cajaActual && cajaActual.estado !== 'abierta';
 
-  const handleAbrirCobro = (p: PedidoPendienteCobro) => {
-    triggerLight();
-    setPedidoSeleccionado(p);
-    setMontoRecibido(p.total.toString());
+  const resetFormulario = () => {
+    setTipoComprobante('Ticket');
+    setNumDocReceptor('');
+    setRazonSocialReceptor('');
+    setDireccionReceptor('');
+    setConsultandoDoc(false);
+    setErrorConsultaDoc(null);
     setMetodoPago('Efectivo');
+    setYapeConfirmado(false);
+    setYapeReferencia('');
     setErrorCobro(null);
     setMostrarConfirmacion(false);
   };
 
+  const handleAbrirCobro = (p: PedidoPendienteCobro) => {
+    triggerLight();
+    setPedidoSeleccionado(p);
+    resetFormulario();
+    setMontoRecibido(p.total.toString());
+  };
+
+  const handleConsultarDocumento = async () => {
+    const doc = numDocReceptor.trim();
+    setErrorConsultaDoc(null);
+
+    if (tipoComprobante === 'Boleta') {
+      if (doc.length !== 8 || !/^\d{8}$/.test(doc)) {
+        triggerError();
+        setErrorConsultaDoc('El DNI debe tener 8 dígitos numéricos.');
+        return;
+      }
+      setConsultandoDoc(true);
+      try {
+        triggerLight();
+        const res = await cobroService.consultarDni(doc);
+        if (res && res.nombreCompleto) {
+          setRazonSocialReceptor(res.nombreCompleto);
+          triggerSuccess();
+          mostrar({ tipo: 'exito', mensaje: `DNI validado: ${res.nombreCompleto}` });
+        }
+      } catch (err: unknown) {
+        triggerError();
+        const msg = err instanceof Error ? err.message : 'No se encontró información para el DNI ingresado.';
+        setErrorConsultaDoc(msg);
+      } finally {
+        setConsultandoDoc(false);
+      }
+    } else if (tipoComprobante === 'Factura') {
+      if (doc.length !== 11 || !/^(10|20)\d{9}$/.test(doc)) {
+        triggerError();
+        setErrorConsultaDoc('El RUC debe tener 11 dígitos y comenzar con 10 o 20.');
+        return;
+      }
+      setConsultandoDoc(true);
+      try {
+        triggerLight();
+        const res = await cobroService.consultarRuc(doc);
+        if (res) {
+          if (res.razonSocial) setRazonSocialReceptor(res.razonSocial);
+          if (res.direccion) setDireccionReceptor(res.direccion);
+          triggerSuccess();
+          mostrar({ tipo: 'exito', mensaje: `RUC validado: ${res.razonSocial}` });
+        }
+      } catch (err: unknown) {
+        triggerError();
+        const msg = err instanceof Error ? err.message : 'No se encontró información para el RUC ingresado.';
+        setErrorConsultaDoc(msg);
+      } finally {
+        setConsultandoDoc(false);
+      }
+    }
+  };
+
   const handleSolicitarConfirmacion = () => {
     if (!pedidoSeleccionado) return;
-    if (metodoPago === 'Efectivo' && numRecibido < total) {
-      triggerError();
-      setErrorCobro('El monto recibido en efectivo no puede ser menor al total.');
-      return;
-    }
     setErrorCobro(null);
+
+    // 1. Validaciones SUNAT según tipo de comprobante
+    if (tipoComprobante === 'Boleta') {
+      const doc = numDocReceptor.trim();
+      if (total >= 700 && (!doc || doc.length !== 8 || !/^\d{8}$/.test(doc))) {
+        triggerError();
+        setErrorCobro('Las boletas de S/ 700 o más exigen el DNI del cliente (8 dígitos).');
+        return;
+      }
+      if (doc && (doc.length !== 8 || !/^\d{8}$/.test(doc))) {
+        triggerError();
+        setErrorCobro('El DNI debe tener 8 dígitos numéricos.');
+        return;
+      }
+    } else if (tipoComprobante === 'Factura') {
+      const doc = numDocReceptor.trim();
+      if (!doc || doc.length !== 11 || !/^(10|20)\d{9}$/.test(doc)) {
+        triggerError();
+        setErrorCobro('El RUC debe tener 11 dígitos y comenzar con 10 o 20.');
+        return;
+      }
+      if (!razonSocialReceptor.trim()) {
+        triggerError();
+        setErrorCobro('La razón social es obligatoria para emitir una Factura.');
+        return;
+      }
+    }
+
+    // 2. Validaciones de método de pago
+    if (metodoPago === 'Efectivo') {
+      if (numRecibido < total) {
+        triggerError();
+        setErrorCobro('El monto recibido es menor al total a cobrar.');
+        return;
+      }
+      if (numRecibido > 9999.99) {
+        triggerError();
+        setErrorCobro('El monto recibido no puede exceder S/ 9,999.99.');
+        return;
+      }
+    } else if (metodoPago === 'Yape') {
+      if (!yapeConfirmado) {
+        triggerError();
+        setErrorCobro('Debe confirmar que verificó el pago en la aplicación de Yape/Plin.');
+        return;
+      }
+      if (yapeReferencia.trim().length > 20) {
+        triggerError();
+        setErrorCobro('El código de referencia de Yape no puede superar 20 caracteres.');
+        return;
+      }
+    }
+
     triggerLight();
     setMostrarConfirmacion(true);
   };
@@ -91,6 +217,13 @@ export const CobroView: React.FC<CobroViewProps> = ({
       ? crypto.randomUUID()
       : `sol-cobro-${Date.now()}`;
 
+    const payloadDocReceptor =
+      tipoComprobante === 'Factura'
+        ? 'RUC'
+        : tipoComprobante === 'Boleta' && numDocReceptor.trim()
+        ? 'DNI'
+        : null;
+
     try {
       const res = await cobroService.procesarCobro({
         solicitudId,
@@ -98,17 +231,25 @@ export const CobroView: React.FC<CobroViewProps> = ({
         totalMostrado: total,
         metodo: metodoPago,
         montoRecibido: metodoPago === 'Efectivo' ? numRecibido : total,
-        tipoComprobante: 'Ticket',
+        yapeConfirmado: metodoPago === 'Yape' ? yapeConfirmado : undefined,
+        yapeReferencia: metodoPago === 'Yape' && yapeReferencia.trim() ? yapeReferencia.trim() : undefined,
+        tipoComprobante,
+        tipoDocReceptor: payloadDocReceptor,
+        numDocReceptor: numDocReceptor.trim() || null,
+        razonSocialReceptor: razonSocialReceptor.trim() || null,
+        direccionReceptor: tipoComprobante === 'Factura' && direccionReceptor.trim() ? direccionReceptor.trim() : null,
       });
 
       triggerSuccess();
-      const msg = res.mensaje || `Cobro de ${formatCurrency(total)} registrado exitosamente.`;
+      const numComprobante = res.comprobante?.numeroFormateado || (res.comprobante?.serie ? `${res.comprobante.serie}-${res.comprobante.numero}` : '');
+      const msg = res.mensaje || `Cobro de ${formatCurrency(total)} registrado exitosamente.${numComprobante ? ` Comprobante ${numComprobante} emitido.` : ''}`;
       mostrar({
         tipo: 'exito',
         mensaje: msg,
       });
       setMostrarConfirmacion(false);
       setPedidoSeleccionado(null);
+      resetFormulario();
       if (onCobroExitoso) {
         onCobroExitoso();
       } else {
@@ -197,7 +338,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         })}
       </div>
 
-      {/* 3. Modal Táctil de Cobro Rápido */}
+      {/* 3. Modal Táctil de Cobro y Comprobante */}
       <BottomSheet
         isOpen={Boolean(pedidoSeleccionado)}
         onClose={() => setPedidoSeleccionado(null)}
@@ -213,7 +354,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
             )}
 
             {/* Total a pagar */}
-            <div className="bg-canvas border border-line rounded-2xl p-4 text-center">
+            <div className="bg-canvas border border-line rounded-2xl p-3.5 text-center">
               <span className="text-xs text-ink-muted block uppercase tracking-wider font-bold">
                 Total de la Cuenta
               </span>
@@ -222,40 +363,209 @@ export const CobroView: React.FC<CobroViewProps> = ({
               </span>
             </div>
 
-            {/* Selector de Método de Pago */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  triggerLight();
-                  setMetodoPago('Efectivo');
-                }}
-                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border font-bold text-xs transition-colors min-h-[48px] ${
-                  metodoPago === 'Efectivo'
-                    ? 'bg-primary text-white border-primary shadow-xs'
-                    : 'bg-canvas text-ink border-line'
-                }`}
-              >
-                <Banknote className="w-4 h-4" />
-                <span>Efectivo</span>
-              </button>
+            {/* Selector de Tipo de Comprobante */}
+            <div>
+              <span className="text-xs font-bold text-ink-muted uppercase tracking-wider block mb-1.5">
+                Tipo de Comprobante
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                {(['Ticket', 'Boleta', 'Factura'] as TipoComprobante[]).map((tipo) => (
+                  <button
+                    key={tipo}
+                    type="button"
+                    onClick={() => {
+                      triggerLight();
+                      setTipoComprobante(tipo);
+                      setErrorConsultaDoc(null);
+                      setErrorCobro(null);
+                    }}
+                    className={`py-2 px-2.5 rounded-xl border font-bold text-xs transition-colors min-h-[44px] flex flex-col items-center justify-center ${
+                      tipoComprobante === tipo
+                        ? 'bg-primary text-white border-primary shadow-2xs'
+                        : 'bg-canvas text-ink border-line'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 mb-0.5" />
+                    <span>{tipo}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  triggerLight();
-                  setMetodoPago('Yape');
-                  setMontoRecibido(total.toString());
-                }}
-                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border font-bold text-xs transition-colors min-h-[48px] ${
-                  metodoPago === 'Yape'
-                    ? 'bg-info text-white border-info shadow-xs'
-                    : 'bg-canvas text-ink border-line'
-                }`}
-              >
-                <Smartphone className="w-4 h-4" />
-                <span>Yape / Plin</span>
-              </button>
+            {/* Campos de Receptor según Tipo de Comprobante */}
+            {tipoComprobante === 'Boleta' && (
+              <div className="bg-canvas border border-line rounded-2xl p-3 space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="doc-dni" className="text-xs font-bold text-ink">
+                    DNI del Cliente {total >= 700 ? '(Obligatorio por ley S/ 700+)' : '(Opcional)'}
+                  </label>
+                  {total >= 700 && (
+                    <span className="text-3xs font-extrabold text-danger bg-danger-bg px-1.5 py-0.5 rounded">
+                      Exigido SUNAT
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    id="doc-dni"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={8}
+                    value={numDocReceptor}
+                    onChange={(e) => {
+                      setNumDocReceptor(e.target.value.replace(/\D/g, ''));
+                      setErrorConsultaDoc(null);
+                    }}
+                    placeholder="8 dígitos"
+                    className="flex-1 bg-surface border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={numDocReceptor.trim().length !== 8 || consultandoDoc}
+                    isLoading={consultandoDoc}
+                    onClick={handleConsultarDocumento}
+                    className="min-h-[44px] px-3 shrink-0 flex items-center gap-1.5"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    <span>Consultar</span>
+                  </Button>
+                </div>
+
+                {errorConsultaDoc && (
+                  <p className="text-3xs text-danger font-semibold">{errorConsultaDoc}</p>
+                )}
+
+                <div>
+                  <label htmlFor="nombre-dni" className="text-3xs font-bold text-ink-muted block mb-1">
+                    Nombre o Razón Social (Opcional):
+                  </label>
+                  <input
+                    id="nombre-dni"
+                    type="text"
+                    value={razonSocialReceptor}
+                    onChange={(e) => setRazonSocialReceptor(e.target.value)}
+                    placeholder="Nombre completo del cliente"
+                    className="w-full bg-surface border border-line rounded-xl px-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {tipoComprobante === 'Factura' && (
+              <div className="bg-canvas border border-line rounded-2xl p-3 space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="doc-ruc" className="text-xs font-bold text-ink">
+                    RUC de la Empresa (Obligatorio)
+                  </label>
+                  <span className="text-3xs font-extrabold text-accent bg-accent-bg px-1.5 py-0.5 rounded">
+                    10 o 20
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    id="doc-ruc"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={11}
+                    value={numDocReceptor}
+                    onChange={(e) => {
+                      setNumDocReceptor(e.target.value.replace(/\D/g, ''));
+                      setErrorConsultaDoc(null);
+                    }}
+                    placeholder="11 dígitos"
+                    className="flex-1 bg-surface border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={numDocReceptor.trim().length !== 11 || consultandoDoc}
+                    isLoading={consultandoDoc}
+                    onClick={handleConsultarDocumento}
+                    className="min-h-[44px] px-3 shrink-0 flex items-center gap-1.5"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    <span>Consultar</span>
+                  </Button>
+                </div>
+
+                {errorConsultaDoc && (
+                  <p className="text-3xs text-danger font-semibold">{errorConsultaDoc}</p>
+                )}
+
+                <div>
+                  <label htmlFor="razon-ruc" className="text-3xs font-bold text-ink-muted block mb-1">
+                    Razón Social *
+                  </label>
+                  <input
+                    id="razon-ruc"
+                    type="text"
+                    value={razonSocialReceptor}
+                    onChange={(e) => setRazonSocialReceptor(e.target.value)}
+                    placeholder="Razón Social registrada en SUNAT"
+                    className="w-full bg-surface border border-line rounded-xl px-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="dir-ruc" className="text-3xs font-bold text-ink-muted block mb-1">
+                    Dirección Fiscal (Opcional)
+                  </label>
+                  <input
+                    id="dir-ruc"
+                    type="text"
+                    value={direccionReceptor}
+                    onChange={(e) => setDireccionReceptor(e.target.value)}
+                    placeholder="Dirección fiscal para comprobante"
+                    className="w-full bg-surface border border-line rounded-xl px-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Selector de Método de Pago */}
+            <div>
+              <span className="text-xs font-bold text-ink-muted uppercase tracking-wider block mb-1.5">
+                Método de Pago
+              </span>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerLight();
+                    setMetodoPago('Efectivo');
+                  }}
+                  className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border font-bold text-xs transition-colors min-h-[48px] ${
+                    metodoPago === 'Efectivo'
+                      ? 'bg-primary text-white border-primary shadow-xs'
+                      : 'bg-canvas text-ink border-line'
+                  }`}
+                >
+                  <Banknote className="w-4 h-4" />
+                  <span>Efectivo</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerLight();
+                    setMetodoPago('Yape');
+                    setMontoRecibido(total.toString());
+                  }}
+                  className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border font-bold text-xs transition-colors min-h-[48px] ${
+                    metodoPago === 'Yape'
+                      ? 'bg-info text-white border-info shadow-xs'
+                      : 'bg-canvas text-ink border-line'
+                  }`}
+                >
+                  <Smartphone className="w-4 h-4" />
+                  <span>Yape / Plin</span>
+                </button>
+              </div>
             </div>
 
             {/* Flujo Efectivo con Teclado Numérico */}
@@ -292,7 +602,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                         triggerLight();
                         setMontoRecibido(monto.toString());
                       }}
-                      className="flex-1 py-1.5 bg-canvas border border-line rounded-lg text-xs font-bold text-ink active:scale-95 transition-all"
+                      className="flex-1 py-2 bg-canvas border border-line rounded-xl text-xs font-bold text-ink active:scale-95 transition-all min-h-[44px]"
                     >
                       {monto === total ? 'Exacto' : `S/ ${monto}`}
                     </button>
@@ -308,25 +618,59 @@ export const CobroView: React.FC<CobroViewProps> = ({
               </div>
             ) : (
               /* Flujo Digital (Yape / Plin) */
-              <div className="space-y-4 pt-2">
-                <div className="p-4 bg-info-bg/30 border border-info-border/50 rounded-2xl text-center space-y-1">
-                  <Smartphone className="w-8 h-8 text-info mx-auto" />
+              <div className="space-y-3 pt-1">
+                <div className="p-3 bg-info-bg/30 border border-info-border/50 rounded-2xl text-center space-y-1">
+                  <Smartphone className="w-7 h-7 text-info mx-auto" />
                   <p className="text-xs font-bold text-ink">
                     Monto exacto a cobrar: {formatCurrency(total)}
                   </p>
-                  <p className="text-xs text-ink-muted">
-                    Verifique en el aplicativo que la transferencia o pago QR figure como completado.
+                  <p className="text-3xs text-ink-muted">
+                    Verifique en la app bancaria la acreditación antes de emitir el comprobante.
                   </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerLight();
+                    setYapeConfirmado(!yapeConfirmado);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 bg-canvas border border-line rounded-xl text-left cursor-pointer min-h-[48px]"
+                >
+                  {yapeConfirmado ? (
+                    <CheckSquare className="w-5 h-5 text-primary shrink-0" />
+                  ) : (
+                    <Square className="w-5 h-5 text-ink-muted shrink-0" />
+                  )}
+                  <span className="text-xs font-bold text-ink">
+                    Pago verificado en la app de Yape/Plin
+                  </span>
+                </button>
+
+                <div>
+                  <label htmlFor="ref-yape" className="text-3xs font-bold text-ink-muted block mb-1">
+                    Código de Referencia / Operación (Opcional, máx 20 caracteres):
+                  </label>
+                  <input
+                    id="ref-yape"
+                    type="text"
+                    maxLength={20}
+                    value={yapeReferencia}
+                    onChange={(e) => setYapeReferencia(e.target.value)}
+                    placeholder="Ej. 12345678"
+                    className="w-full bg-canvas border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary min-h-[44px]"
+                  />
                 </div>
 
                 <Button
                   fullWidth
                   size="lg"
+                  disabled={!yapeConfirmado}
                   onClick={handleSolicitarConfirmacion}
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   <Check className="w-5 h-5" />
-                  <span>Confirmar Pago Digital</span>
+                  <span>Confirmar Cobro Digital</span>
                 </Button>
               </div>
             )}
@@ -338,9 +682,9 @@ export const CobroView: React.FC<CobroViewProps> = ({
       <ConfirmSheet
         isOpen={mostrarConfirmacion}
         onCancelar={() => setMostrarConfirmacion(false)}
-        titulo="Confirmar Cobro y Emisión"
-        mensaje={`¿Confirma el cobro de ${formatCurrency(total)} mediante ${metodoPago}? ${
-          metodoPago === 'Efectivo' && vuelto > 0 ? `Vuelto a entregar: ${formatCurrency(vuelto)}.` : ''
+        titulo="¿Confirmar Cobro?"
+        mensaje={`¿Confirmar cobro de ${formatCurrency(total)} mediante ${metodoPago}? Se emitirá el comprobante ${tipoComprobante}.${
+          metodoPago === 'Efectivo' && vuelto > 0 ? ` Vuelto a entregar: ${formatCurrency(vuelto)}.` : ''
         }`}
         etiquetaConfirmar="Sí, Procesar Cobro"
         etiquetaCancelar="Volver"
