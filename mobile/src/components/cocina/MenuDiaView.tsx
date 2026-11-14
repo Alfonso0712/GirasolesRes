@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarCheck, AlertTriangle, Search, UtensilsCrossed } from 'lucide-react';
+import { CalendarCheck, AlertTriangle, Search, UtensilsCrossed, X } from 'lucide-react';
 import type { PlatoMenuDiaDto } from '../../services/menuDiaService';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
@@ -66,10 +66,11 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
   };
 
   const platosFiltrados = platos.filter((p) => {
+    const query = busqueda.trim().toLowerCase();
     const coincideBusqueda =
-      busqueda.trim() === '' ||
-      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.categoria.toLowerCase().includes(busqueda.toLowerCase());
+      query === '' ||
+      p.nombre.toLowerCase().includes(query) ||
+      p.categoria.toLowerCase().includes(query);
 
     if (!coincideBusqueda) return false;
     if (filtro === 'disponibles') return !p.agotado;
@@ -100,8 +101,18 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar plato o categoría..."
-            className="w-full bg-canvas border border-line rounded-xl pl-9 pr-3 py-2 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary"
+            className="w-full bg-canvas border border-line rounded-xl pl-9 pr-9 py-2.5 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:ring-2 focus:ring-accent"
           />
+          {busqueda && (
+            <button
+              type="button"
+              onClick={() => setBusqueda('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 min-h-[36px] min-w-[36px] flex items-center justify-center text-ink-muted hover:text-ink cursor-pointer"
+              aria-label="Limpiar búsqueda"
+            >
+              <X className="w-4 h-4" aria-hidden="true" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -121,7 +132,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
         />
       </div>
 
-      {/* 4. Lista de Platos y Switch de Agotado */}
+      {/* 4. Lista de Platos y Acciones de Disponibilidad */}
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
         {error && (
           <ErrorState
@@ -180,7 +191,8 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
                     <button
                       type="button"
                       disabled={estaProcesando}
-                      onClick={() => ejecutarCambioDisponibilidad(plato, false)}
+                      onClick={() => void ejecutarCambioDisponibilidad(plato, false)}
+                      aria-label={`Marcar ${plato.nombre} como disponible`}
                       className="bg-success text-white font-black text-xs px-3.5 py-2.5 rounded-xl min-h-[44px] flex items-center gap-1.5 active:scale-95 transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                     >
                       <span>Habilitar</span>
@@ -193,6 +205,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
                         triggerLight();
                         setPlatoParaAgotar(plato);
                       }}
+                      aria-label={`Marcar ${plato.nombre} como agotado`}
                       className="bg-danger-bg text-danger border border-danger-border font-black text-xs px-3.5 py-2.5 rounded-xl min-h-[44px] flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                     >
                       <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
@@ -210,20 +223,16 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
       <ConfirmSheet
         isOpen={Boolean(platoParaAgotar)}
         onCancelar={() => setPlatoParaAgotar(null)}
-        titulo="Confirmar Plato Agotado"
-        mensaje={
-          platoParaAgotar
-            ? `¿Desea marcar "${platoParaAgotar.nombre}" como agotado? Los mozos no podrán agregarlo a nuevas comandas.`
-            : ''
-        }
-        etiquetaConfirmar="Sí, marcar agotado"
+        titulo={`¿Marcar ${platoParaAgotar?.nombre || ''} como agotado?`}
+        mensaje="No se podrán tomar nuevos pedidos de este plato."
+        etiquetaConfirmar="Marcar Agotado"
         etiquetaCancelar="Cancelar"
         tono="peligro"
-        onConfirmar={async () => {
+        onConfirmar={() => {
           if (!platoParaAgotar) return;
           const p = platoParaAgotar;
           setPlatoParaAgotar(null);
-          await ejecutarCambioDisponibilidad(p, true);
+          void ejecutarCambioDisponibilidad(p, true);
         }}
       />
     </div>
