@@ -1,17 +1,7 @@
 import { apiClient } from './apiClient';
+import type { MenuDiaResponseDto } from '../types/menuDia';
 
-export interface PlatoMenuDiaDto {
-  productoId: string;
-  nombre: string;
-  categoria: string;
-  agotado: boolean;
-}
-
-export interface MenuDiaResponseDto {
-  menuId?: string;
-  fecha?: string;
-  platos: PlatoMenuDiaDto[];
-}
+export type { PlatoMenuDto as PlatoMenuDiaDto, MenuDiaResponseDto } from '../types/menuDia';
 
 export const menuDiaService = {
   obtenerMenuHoy: async (): Promise<MenuDiaResponseDto> => {

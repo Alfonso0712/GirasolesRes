@@ -1,50 +1,119 @@
 import { apiClient } from './apiClient';
 import type {
-  ProductoItem,
+  ProductoMenuPedidoDto,
   RegistrarPedidoMesaRequest,
   RegistrarPedidoLlevarRequest,
   RegistrarPedidoResultDto,
+  RegistrarPedidoLlevarResultDto,
+  AgregarLineasPedidoRequest,
+  AgregarLineasResultDto,
+  PedidoAbiertoMesaDto,
+  DetallePedidoCompletoDto,
+  AnularPedidoRequest,
   ListarPedidosResponseDto,
-  PedidoItemDto
+  PedidoItemDto,
 } from '../types/pedido';
 
-interface ProductoMenuPedidoDto {
-  id: string;
-  nombre: string;
-  categoria: string;
-  precio: number;
-  agotado: boolean;
-  disponible: boolean;
-  rol?: string | null;
-}
-
 export const pedidoService = {
-  obtenerCatalogo: async (buscar?: string, categoria?: string): Promise<ProductoItem[]> => {
+  /**
+   * Obtiene los productos disponibles para la toma de pedidos (carta y opciones).
+   */
+  obtenerCatalogoPedido: async (): Promise<ProductoMenuPedidoDto[]> => {
     const res = await apiClient.get<ProductoMenuPedidoDto[]>('/pedidos/catalogo-pedido');
-    if (!Array.isArray(res)) {
-      return [];
-    }
-
-    let lista = res.map((p) => ({
-      id: p.id,
-      nombre: p.nombre,
-      precio: typeof p.precio === 'number' ? p.precio : 0,
-      categoria: p.categoria || 'Carta',
-      disponible: !p.agotado && p.disponible !== false,
-      esMenuDelDia: p.categoria === 'Menú del Día',
-    }));
-
-    if (buscar && buscar.trim()) {
-      const b = buscar.trim().toLowerCase();
-      lista = lista.filter((p) => p.nombre.toLowerCase().includes(b));
-    }
-    if (categoria && categoria.trim() && categoria !== 'Todos') {
-      lista = lista.filter((p) => p.categoria.toLowerCase() === categoria.trim().toLowerCase());
-    }
-
-    return lista;
+    return Array.isArray(res) ? res : [];
   },
 
+  /**
+   * Alias de compatibilidad transitoria.
+   */
+  obtenerCatalogo: async (): Promise<ProductoMenuPedidoDto[]> => {
+    return pedidoService.obtenerCatalogoPedido();
+  },
+
+  /**
+   * Consulta los pedidos activos en una mesa para detectar si está abierta y obtener su ID (MSG-95).
+   */
+  obtenerPedidosActivosPorMesa: async (mesaId: string): Promise<PedidoAbiertoMesaDto[]> => {
+    const res = await apiClient.get<PedidoAbiertoMesaDto[]>(`/pedidos/mesa/${mesaId}/activo`);
+    return Array.isArray(res) ? res : [];
+  },
+
+  /**
+   * Registra un nuevo pedido de mesa (CUS07.1).
+   */
+  registrarPedidoMesa: async (
+    request: RegistrarPedidoMesaRequest
+  ): Promise<RegistrarPedidoResultDto> => {
+    const solicitudId = request.solicitudId || (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-mesa-${Date.now()}`);
+
+    return apiClient.post<RegistrarPedidoResultDto>('/pedidos/mesa', {
+      ...request,
+      solicitudId,
+    });
+  },
+
+  /**
+   * Registra un pedido para llevar en caja (CUS08).
+   */
+  registrarPedidoLlevar: async (
+    request: RegistrarPedidoLlevarRequest
+  ): Promise<RegistrarPedidoLlevarResultDto> => {
+    const solicitudId = request.solicitudId || (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-llevar-${Date.now()}`);
+
+    return apiClient.post<RegistrarPedidoLlevarResultDto>('/pedidos/llevar', {
+      ...request,
+      solicitudId,
+    });
+  },
+
+  /**
+   * Agrega líneas/productos adicionales a un pedido existente en mesa ocupada (CUS07.2).
+   */
+  agregarLineas: async (
+    pedidoId: string,
+    request: AgregarLineasPedidoRequest
+  ): Promise<AgregarLineasResultDto> => {
+    const solicitudId = request.solicitudId || (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-ampliar-${Date.now()}`);
+
+    return apiClient.post<AgregarLineasResultDto>(`/pedidos/${pedidoId}/lineas`, {
+      ...request,
+      solicitudId,
+    });
+  },
+
+  /**
+   * Consulta el detalle completo de un pedido con líneas y comandas asociadas (CUS09.1).
+   */
+  obtenerDetalleCompleto: async (pedidoId: string): Promise<DetallePedidoCompletoDto> => {
+    return apiClient.get<DetallePedidoCompletoDto>(`/pedidos/${pedidoId}`);
+  },
+
+  /**
+   * Anula un pedido con justificación obligatoria de 5 a 100 caracteres (CUS09.2).
+   */
+  anularPedido: async (
+    pedidoId: string,
+    request: AnularPedidoRequest
+  ): Promise<{ success: boolean; message: string }> => {
+    const solicitudId = request.solicitudId || (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `sol-anular-${Date.now()}`);
+
+    return apiClient.post<{ success: boolean; message: string }>(`/pedidos/${pedidoId}/anular`, {
+      ...request,
+      solicitudId,
+    });
+  },
+
+  /**
+   * Lista los pedidos del día con filtros.
+   */
   listarPedidos: async (params?: { soloMios?: boolean; estado?: string }): Promise<PedidoItemDto[]> => {
     const q = new URLSearchParams();
     if (params?.soloMios) q.append('soloMios', 'true');
@@ -57,37 +126,4 @@ export const pedidoService = {
     }
     return [];
   },
-
-  registrarPedidoMesa: async (
-    request: RegistrarPedidoMesaRequest
-  ): Promise<RegistrarPedidoResultDto> => {
-    const solicitudId = request.solicitudId || (typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `sol-mesa-${Date.now()}`);
-
-    const payload = {
-      solicitudId,
-      mesaId: request.mesaId,
-      lineas: request.lineas,
-      notas: request.notas,
-    };
-
-    return apiClient.post<RegistrarPedidoResultDto>('/pedidos/mesa', payload);
-  },
-
-  registrarPedidoLlevar: async (
-    request: RegistrarPedidoLlevarRequest
-  ): Promise<RegistrarPedidoResultDto> => {
-    const solicitudId = request.solicitudId || (typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `sol-llevar-${Date.now()}`);
-
-    const payload = {
-      solicitudId,
-      referencia: request.referencia || 'Cliente Mostrador',
-      lineas: request.lineas,
-    };
-
-    return apiClient.post<RegistrarPedidoResultDto>('/pedidos/llevar', payload);
-  }
 };

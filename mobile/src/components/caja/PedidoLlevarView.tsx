@@ -90,28 +90,32 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
       if (idx >= 0) {
         const next = [...prev];
         next[idx].cantidad += 1;
+        next[idx].subtotal = next[idx].cantidad * next[idx].precioUnitario;
         return next;
       }
       return [
         ...prev,
         {
+          id: `prod-${producto.id}-${Date.now()}`,
           productoId: producto.id,
           nombre: producto.nombre,
           precioUnitario: producto.precio,
           cantidad: 1,
+          observacion: '',
+          subtotal: producto.precio,
         },
       ];
     });
   };
 
-  const modificarCantidad = (productoId: string, delta: number) => {
+  const modificarCantidad = (lineaId: string, delta: number) => {
     triggerLight();
     setLineas((prev) =>
       prev
         .map((l) => {
-          if (l.productoId === productoId) {
+          if (l.id === lineaId || l.productoId === lineaId) {
             const nueva = l.cantidad + delta;
-            return nueva > 0 ? { ...l, cantidad: nueva } : null;
+            return nueva > 0 ? { ...l, cantidad: nueva, subtotal: nueva * l.precioUnitario } : null;
           }
           return l;
         })
@@ -138,7 +142,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         lineas: lineas.map((l) => ({
           productoId: l.productoId,
           cantidad: l.cantidad,
-          observaciones: l.observaciones,
+          observacion: l.observacion,
         })),
       });
 
@@ -335,7 +339,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
-                      onClick={() => modificarCantidad(l.productoId, -1)}
+                      onClick={() => modificarCantidad(l.id, -1)}
                       aria-label={`Disminuir cantidad de ${l.nombre}`}
                       className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
                     >
@@ -346,7 +350,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                     </span>
                     <button
                       type="button"
-                      onClick={() => modificarCantidad(l.productoId, 1)}
+                      onClick={() => modificarCantidad(l.id, 1)}
                       aria-label={`Aumentar cantidad de ${l.nombre}`}
                       className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
                     >

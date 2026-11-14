@@ -1,67 +1,192 @@
-export interface ProductoItem {
-  id: string;
-  nombre: string;
-  precio: number;
-  categoria: string;
-  imagenUrl?: string;
-  disponible: boolean;
-  esMenuDelDia?: boolean;
+export interface EleccionOpcionRequest {
+  parte: string;
+  productoId: string;
 }
 
-export interface LineaPedidoItem {
+export interface EleccionOpcionResponseDto {
+  parte: string;
   productoId: string;
-  nombre: string;
-  precioUnitario: number;
+  productoNombre: string;
+}
+
+export interface LineaPedidoRequest {
+  productoId?: string | null;
+  menuCompletoId?: number | null;
+  elecciones?: EleccionOpcionRequest[];
   cantidad: number;
-  observaciones?: string;
+  observacion?: string;
 }
 
 export interface RegistrarPedidoMesaRequest {
-  solicitudId?: string;
+  solicitudId: string;
   mesaId: string;
-  lineas: {
-    productoId: string;
-    cantidad: number;
-    observaciones?: string;
-  }[];
+  lineas: LineaPedidoRequest[];
   notas?: string;
 }
 
 export interface RegistrarPedidoLlevarRequest {
-  solicitudId?: string;
+  solicitudId: string;
   referencia?: string;
-  lineas: {
-    productoId: string;
-    cantidad: number;
-    observaciones?: string;
-  }[];
+  lineas: LineaPedidoRequest[];
+}
+
+export interface AgregarLineasPedidoRequest {
+  solicitudId: string;
+  lineas: LineaPedidoRequest[];
 }
 
 export interface RegistrarPedidoResultDto {
   pedidoId: string;
   numero: number;
-  total?: number;
-  comandaId?: string;
+  total: number;
+  comandaId: string;
   mesaNombre?: string;
   mensaje?: string;
+}
+
+export interface RegistrarPedidoLlevarResultDto {
+  pedidoId: string;
+  numero: number;
+  total: number;
+  comandaId: string;
+}
+
+export interface AgregarLineasResultDto {
+  total: number;
+  comandaId: string;
+  numeroPedido: number;
+}
+
+export interface PedidoAbiertoMesaDto {
+  id: string;
+  numero: number;
+  estado: string;
+  total: number;
+}
+
+export interface LineaPedidoResponseDto {
+  id: string;
+  productoId?: string | null;
+  menuCompletoId?: number | null;
+  productoNombre: string;
+  incluye?: string | null;
+  precioUnitario: number;
+  cantidad: number;
+  subtotal: number;
+  observacion?: string;
+  elecciones?: EleccionOpcionResponseDto[];
+}
+
+export interface PedidoResponseDto {
+  id: string;
+  numero: number;
+  fechaOperativa: string;
+  fechaHora: string;
+  estado: string;
+  tipo: string;
+  total: number;
+  notas?: string;
+  mesaId?: string;
+  mesaNombre?: string;
+  mozoId: string;
+  mozoNombre: string;
+  lineas: LineaPedidoResponseDto[];
+}
+
+export interface ProductoMenuPedidoDto {
+  id: string;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  agotado: boolean;
+  disponible: boolean;
+  rol?: string | null;
+}
+
+export interface LineaBorrador {
+  id: string;
+  productoId?: string | null;
+  menuCompletoId?: number | null;
+  nombre: string;
+  incluye?: string | null;
+  precioUnitario: number;
+  cantidad: number;
+  observacion: string;
+  subtotal: number;
+  agotado?: boolean;
+  elecciones?: {
+    parte: string;
+    productoId: string;
+    productoNombre: string;
+  }[];
 }
 
 export interface PedidoItemDto {
   id: string;
   numero: number;
   tipo: string;
-  mesa?: string;
-  referencia?: string;
+  mesa?: string | null;
+  referencia?: string | null;
   hora: string;
   total: number;
   estado: string;
   registradoPor: string;
-  usuarioId?: string;
+  usuarioId: string;
   esMio?: boolean;
-  cantidadLineas?: number;
+  puedeModificar?: boolean;
+  puedeAnular?: boolean;
+  motivoDeshabilitado?: string | null;
+}
+
+export interface LineaDetalleDto {
+  detalleId: string;
+  productoId?: string | null;
+  menuCompletoId?: number | null;
+  nombre: string;
+  incluye?: string | null;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+  observacion?: string;
+  elecciones?: EleccionOpcionResponseDto[];
+}
+
+export interface ComandaDetalleDto {
+  comandaId: string;
+  numero: number;
+  estado: string;
+  esAdicional: boolean;
+  modificada: boolean;
+  fechaHora: string;
+}
+
+export interface DetallePedidoCompletoDto {
+  id: string;
+  numero: number;
+  tipo: string;
+  mesa: string | null;
+  referencia: string | null;
+  hora: string;
+  total: number;
+  estado: string;
+  registradoPor: string;
+  usuarioId: string;
+  motivoAnulacion: string | null;
+  lineas: LineaDetalleDto[];
+  comandas: ComandaDetalleDto[];
+}
+
+export interface AnularPedidoRequest {
+  solicitudId: string;
+  motivo: string;
 }
 
 export interface ListarPedidosResponseDto {
   items: PedidoItemDto[];
-  total?: number;
+  total: number;
 }
+
+// Aliases de compatibilidad transitoria para componentes en refactorización
+export type ProductoItem = ProductoMenuPedidoDto;
+export type LineaPedidoItem = LineaBorrador;
+

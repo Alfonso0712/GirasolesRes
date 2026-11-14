@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Minus, Trash2, Send, Search, AlertCircle, UtensilsCrossed } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
-import type { ProductoItem, LineaPedidoItem } from '../../types/pedido';
+import type { ProductoMenuPedidoDto, LineaBorrador } from '../../types/pedido';
+import type { MenuDiaResponseDto } from '../../types/menuDia';
 import type { RolUsuario } from '../../types/auth';
 import { pedidoService } from '../../services/pedidoService';
+import { menuDiaService } from '../../services/menuDiaService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
@@ -25,26 +27,53 @@ interface PedidoMesaViewProps {
   onPedidoExitoso: (mensaje: string) => void;
 }
 
+const ROLES_COMPONENTE_SET = new Set<string>([
+  'bebidadesayuno',
+  'platodesayuno',
+  'sopa',
+  'entrada',
+  'segundo',
+]);
+
+/**
+ * RN-140: Los componentes de menú no se pueden ordenar como productos individuales de carta.
+ */
+function esProductoDeCarta(prod: ProductoMenuPedidoDto): boolean {
+  if (prod.rol && prod.rol.trim() !== '') return false;
+  if (!prod.categoria) return false;
+  return !ROLES_COMPONENTE_SET.has(prod.categoria.trim().toLowerCase());
+}
+
 export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   mesa,
   rol = 'Mozo',
   onVolver,
   onPedidoExitoso,
 }) => {
-  const [catalogo, setCatalogo] = useState<ProductoItem[]>([]);
+  const [catalogo, setCatalogo] = useState<ProductoMenuPedidoDto[]>([]);
+  const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(null);
   const [cargando, setCargando] = useState<boolean>(false);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
   const [categoriaActiva, setCategoriaActiva] = useState<string>('Todas');
   const [busqueda, setBusqueda] = useState<string>('');
-  const [lineas, setLineas] = useState<LineaPedidoItem[]>([]);
+  const [busquedaDebounced, setBusquedaDebounced] = useState<string>('');
+  const [lineas, setLineas] = useState<LineaBorrador[]>([]);
   const [mostrarCarrito, setMostrarCarrito] = useState<boolean>(false);
   const [mostrarConfirmDescartar, setMostrarConfirmDescartar] = useState<boolean>(false);
   const [enviando, setEnviando] = useState<boolean>(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
 
-  // Control de retorno y botón Atrás con confirmación de descarte
+  // Debounce de 250 ms para la búsqueda local en catálogo
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setBusquedaDebounced(busqueda);
+    }, 250);
+    return () => clearTimeout(handler);
+  }, [busqueda]);
+
+  // Control de navegación y confirmación al descartar pedido en curso
   const solicitarVolver = useCallback(() => {
     if (mostrarCarrito) {
       setMostrarCarrito(false);
@@ -66,15 +95,19 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     return true;
   });
 
-  // Regla de Negocio RV-154: Prohibición de exposición de importes monetarios al Mozo
+  // Regla RV-154: Prohibición de exposición de importes monetarios al Mozo
   const esMozo = rol === 'Mozo';
 
-  const cargarProductos = async () => {
+  const cargarDatos = useCallback(async () => {
     setCargando(true);
     setErrorCarga(null);
     try {
-      const data = await pedidoService.obtenerCatalogo();
-      setCatalogo(data || []);
+      const [prods, menu] = await Promise.all([
+        pedidoService.obtenerCatalogoPedido(),
+        menuDiaService.obtenerMenuHoy().catch(() => null),
+      ]);
+      setCatalogo(prods || []);
+      setMenuDia(menu);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error al cargar los productos disponibles';
       setErrorCarga(msg);
@@ -82,69 +115,99 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     } finally {
       setCargando(false);
     }
-  };
-
-  useEffect(() => {
-    cargarProductos();
   }, []);
 
-  const categorias = ['Todas', 'Menú del Día', 'Entradas', 'Segundos', 'Bebidas'];
+  useEffect(() => {
+    void cargarDatos();
+  }, [cargarDatos]);
 
-  const productosFiltrados = catalogo.filter((p) => {
-    if (!p.disponible) return false;
-    if (categoriaActiva !== 'Todas') {
-      if (categoriaActiva === 'Menú del Día' && !p.esMenuDelDia) return false;
-      if (categoriaActiva !== 'Menú del Día' && p.categoria !== categoriaActiva) return false;
-    }
-    if (busqueda.trim()) {
-      return p.nombre.toLowerCase().includes(busqueda.toLowerCase());
-    }
-    return true;
-  });
+  // Categorías reales dinámicas excluyendo componentes de menú (RN-140)
+  const categoriasDinamicas = useMemo(() => {
+    const catsSet = new Set<string>();
+    catalogo.filter(esProductoDeCarta).forEach((p) => {
+      if (p.categoria && p.categoria.trim()) {
+        catsSet.add(p.categoria.trim());
+      }
+    });
+    const lista = Array.from(catsSet).sort();
+    const tieneMenus = Boolean(menuDia?.definido && (menuDia.menusCompletos?.length ?? 0) > 0);
+    return ['Todas', ...(tieneMenus ? ['Menús'] : []), ...lista];
+  }, [catalogo, menuDia]);
 
-  const agregarProducto = (producto: ProductoItem) => {
+  // Filtrado de productos de carta
+  const productosFiltrados = useMemo(() => {
+    if (categoriaActiva === 'Menús') {
+      return [];
+    }
+    return catalogo.filter((p) => {
+      if (!esProductoDeCarta(p)) return false;
+      if (categoriaActiva !== 'Todas' && p.categoria !== categoriaActiva) return false;
+      if (busquedaDebounced.trim()) {
+        const query = busquedaDebounced.trim().toLowerCase();
+        return p.nombre.toLowerCase().includes(query);
+      }
+      return true;
+    });
+  }, [catalogo, categoriaActiva, busquedaDebounced]);
+
+  const agregarProducto = (producto: ProductoMenuPedidoDto) => {
+    if (producto.agotado) {
+      triggerError();
+      return;
+    }
     triggerLight();
     setLineas((prev) => {
       const idx = prev.findIndex((l) => l.productoId === producto.id);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx].cantidad += 1;
+        const nuevaCant = next[idx].cantidad + 1;
+        next[idx] = {
+          ...next[idx],
+          cantidad: nuevaCant,
+          subtotal: nuevaCant * next[idx].precioUnitario,
+        };
         return next;
       }
       return [
         ...prev,
         {
+          id: `prod-${producto.id}-${Date.now()}`,
           productoId: producto.id,
           nombre: producto.nombre,
           precioUnitario: producto.precio,
           cantidad: 1,
+          observacion: '',
+          subtotal: producto.precio,
+          agotado: producto.agotado,
         },
       ];
     });
   };
 
-  const modificarCantidad = (productoId: string, delta: number) => {
+  const modificarCantidad = (lineaId: string, delta: number) => {
     triggerLight();
-    setLineas((prev) => {
-      return prev
+    setLineas((prev) =>
+      prev
         .map((l) => {
-          if (l.productoId === productoId) {
+          if (l.id === lineaId) {
             const nueva = l.cantidad + delta;
-            return nueva > 0 ? { ...l, cantidad: nueva } : null;
+            return nueva > 0
+              ? { ...l, cantidad: nueva, subtotal: nueva * l.precioUnitario }
+              : null;
           }
           return l;
         })
-        .filter(Boolean) as LineaPedidoItem[];
-    });
-  };
-
-  const actualizarObservacion = (productoId: string, observacion: string) => {
-    setLineas((prev) =>
-      prev.map((l) => (l.productoId === productoId ? { ...l, observaciones: observacion } : l))
+        .filter(Boolean) as LineaBorrador[]
     );
   };
 
-  const total = lineas.reduce((acc, l) => acc + l.precioUnitario * l.cantidad, 0);
+  const actualizarObservacion = (lineaId: string, observacion: string) => {
+    setLineas((prev) =>
+      prev.map((l) => (l.id === lineaId ? { ...l, observacion } : l))
+    );
+  };
+
+  const total = lineas.reduce((acc, l) => acc + l.subtotal, 0);
   const totalItems = lineas.reduce((acc, l) => acc + l.cantidad, 0);
 
   const handleEnviarComanda = async () => {
@@ -152,25 +215,32 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     setEnviando(true);
     setErrorEnvio(null);
 
-    const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `sol-mesa-${Date.now()}`;
+    const solicitudId =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `sol-mesa-${Date.now()}`;
 
     try {
-      await pedidoService.registrarPedidoMesa({
+      const res = await pedidoService.registrarPedidoMesa({
         solicitudId,
         mesaId: mesa.id,
         lineas: lineas.map((l) => ({
           productoId: l.productoId,
+          menuCompletoId: l.menuCompletoId,
+          elecciones: l.elecciones?.map((e) => ({
+            parte: e.parte,
+            productoId: e.productoId,
+          })),
           cantidad: l.cantidad,
-          observaciones: l.observaciones,
+          observacion: l.observacion || undefined,
         })),
       });
 
       triggerSuccess();
+      const numPedido = res.numero;
       const msg = esMozo
-        ? `Comanda de ${pluralizar(totalItems, 'plato', 'platos')} enviada a Cocina para ${mesa.nombre}`
-        : `Comanda enviada para ${mesa.nombre} (Total: ${formatCurrency(total)})`;
+        ? `Pedido N.º ${numPedido} registrado para ${mesa.nombre}. La comanda se envió a cocina.`
+        : `Pedido N.º ${numPedido} registrado para ${mesa.nombre} (${formatCurrency(total)}). La comanda se envió a cocina.`;
       onPedidoExitoso(msg);
     } catch (err: unknown) {
       triggerError();
@@ -183,17 +253,17 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
-      {/* 1. Header con Botón Volver */}
+      {/* 1. Encabezado con estado de mesa */}
       <PageHeader
         title={mesa.nombre}
         subtitle="Toma de Pedido de Salón"
         onVolver={solicitarVolver}
         actions={<StatusBadge estado={mesa.ocupacion} />}
-        onRefresh={cargarProductos}
+        onRefresh={cargarDatos}
         isRefreshing={cargando}
       />
 
-      {/* 2. Buscador y Categorías Horizontales */}
+      {/* 2. Buscador y Categorías Horizontales Dinámicas (P-A) */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0 space-y-2">
         <div className="relative">
           <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
@@ -202,12 +272,12 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar plato o bebida..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-primary"
+            className="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink"
           />
         </div>
 
         <FilterChipBar
-          chips={categorias.map((cat) => ({ id: cat, label: cat }))}
+          chips={categoriasDinamicas.map((cat) => ({ id: cat, label: cat }))}
           activeId={categoriaActiva}
           onSelect={(cat) => {
             triggerLight();
@@ -216,12 +286,12 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         />
       </div>
 
-      {/* 3. Catálogo Táctil de Platos */}
+      {/* 3. Catálogo de Platos con Categorías Reales */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32">
         {errorCarga && (
           <ErrorState
             mensaje={errorCarga}
-            onRetry={cargarProductos}
+            onRetry={cargarDatos}
             className="my-4"
           />
         )}
@@ -234,23 +304,27 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           <EmptyState
             icon={UtensilsCrossed}
             titulo="No hay productos disponibles"
-            subtitulo="No se encontraron productos disponibles en el catálogo para esta categoría."
+            subtitulo="No se encontraron productos disponibles en el catálogo para esta selección."
           />
         )}
 
         {productosFiltrados.map((prod) => {
           const lineaActual = lineas.find((l) => l.productoId === prod.id);
+          const estaAgotado = Boolean(prod.agotado);
+
           return (
             <Card
               key={prod.id}
-              className="p-3.5 flex items-center justify-between shadow-xs select-none"
+              className={`p-3.5 flex items-center justify-between shadow-xs select-none ${
+                estaAgotado ? 'opacity-60 bg-surface/50' : ''
+              }`}
             >
               <div className="flex-1 pr-3">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <h3 className="text-sm font-bold text-ink leading-snug">{prod.nombre}</h3>
-                  {prod.esMenuDelDia && (
-                    <span className="text-xs font-bold bg-chip-accent-bg text-accent border border-chip-accent-border px-1.5 py-0.5 rounded">
-                      HOY
+                  {estaAgotado && (
+                    <span className="text-xs font-bold bg-danger-bg text-danger border border-danger-border px-1.5 py-0.5 rounded">
+                      Agotado
                     </span>
                   )}
                 </div>
@@ -266,12 +340,21 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                 )}
               </div>
 
-              {/* Botones de acción rápida en la tarjeta (mínimo 44px de área táctil) */}
-              {lineaActual ? (
+              {/* Botones de acción táctil con mínimo 44px de área de toque */}
+              {estaAgotado ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink-muted flex items-center justify-center cursor-not-allowed opacity-50 shrink-0"
+                  aria-label={`${prod.nombre} está agotado`}
+                >
+                  <Plus className="w-5 h-5" aria-hidden="true" />
+                </button>
+              ) : lineaActual ? (
                 <div className="flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
                   <button
                     type="button"
-                    onClick={() => modificarCantidad(prod.id, -1)}
+                    onClick={() => modificarCantidad(lineaActual.id, -1)}
                     aria-label={`Quitar uno de ${prod.nombre}`}
                     className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
                   >
@@ -282,7 +365,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   </span>
                   <button
                     type="button"
-                    onClick={() => modificarCantidad(prod.id, 1)}
+                    onClick={() => modificarCantidad(lineaActual.id, 1)}
                     aria-label={`Agregar uno más de ${prod.nombre}`}
                     className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
                   >
@@ -313,7 +396,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
               triggerLight();
               setMostrarCarrito(true);
             }}
-            className="w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px]"
+            className="w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px] cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-surface/20 flex items-center justify-center font-black text-xs">
@@ -339,15 +422,14 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       >
         <div className="space-y-4">
           {errorEnvio && (
-            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{errorEnvio}</span>
+            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
+              {errorEnvio}
             </div>
           )}
 
           <div className="divide-y divide-line">
             {lineas.map((linea) => (
-              <div key={linea.productoId} className="py-3 space-y-2">
+              <div key={linea.id} className="py-3 space-y-2">
                 <div className="flex justify-between items-start">
                   <div>
                     <h4 className="text-sm font-bold text-ink">{linea.nombre}</h4>
@@ -356,7 +438,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                       <p className="text-xs text-ink-muted">
                         {formatCurrency(linea.precioUnitario)} x {linea.cantidad} ={' '}
                         <span className="font-bold text-ink">
-                          {formatCurrency(linea.precioUnitario * linea.cantidad)}
+                          {formatCurrency(linea.subtotal)}
                         </span>
                       </p>
                     )}
@@ -364,18 +446,26 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
-                      onClick={() => modificarCantidad(linea.productoId, -1)}
-                      aria-label={linea.cantidad === 1 ? `Eliminar ${linea.nombre} de la orden` : `Disminuir cantidad de ${linea.nombre}`}
+                      onClick={() => modificarCantidad(linea.id, -1)}
+                      aria-label={
+                        linea.cantidad === 1
+                          ? `Eliminar ${linea.nombre} de la orden`
+                          : `Disminuir cantidad de ${linea.nombre}`
+                      }
                       className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
                     >
-                      {linea.cantidad === 1 ? <Trash2 className="w-4 h-4" aria-hidden="true" /> : <Minus className="w-4 h-4" aria-hidden="true" />}
+                      {linea.cantidad === 1 ? (
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      ) : (
+                        <Minus className="w-4 h-4" aria-hidden="true" />
+                      )}
                     </button>
                     <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
                       {linea.cantidad}
                     </span>
                     <button
                       type="button"
-                      onClick={() => modificarCantidad(linea.productoId, 1)}
+                      onClick={() => modificarCantidad(linea.id, 1)}
                       aria-label={`Aumentar cantidad de ${linea.nombre}`}
                       className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
                     >
@@ -387,11 +477,12 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                 {/* Input de nota especial para Cocina */}
                 <input
                   type="text"
-                  value={linea.observaciones || ''}
-                  onChange={(e) => actualizarObservacion(linea.productoId, e.target.value)}
+                  maxLength={100}
+                  value={linea.observacion || ''}
+                  onChange={(e) => actualizarObservacion(linea.id, e.target.value)}
                   placeholder="Nota de cocina (ej. sin picante, bien cocido...)"
                   aria-label={`Nota de cocina para ${linea.nombre}`}
-                  className="w-full px-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-primary"
+                  className="w-full px-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink"
                 />
               </div>
             ))}
@@ -401,7 +492,9 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           {!esMozo ? (
             <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
               <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-              <span className="text-xl font-black text-accent tabular-nums">{formatCurrency(total)}</span>
+              <span className="text-xl font-black text-accent tabular-nums">
+                {formatCurrency(total)}
+              </span>
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">
