@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { perfilService } from '../../services/perfilService';
 import { BottomSheet } from '../ui/BottomSheet';
-import { Button } from '../ui/Button';
+import { SheetActions } from '../ui/SheetActions';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 
@@ -167,7 +167,7 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
             <label htmlFor="pass-nueva" className="text-xs font-bold text-ink">
               Nueva Contraseña (8-64 caracteres) *
             </label>
-            <span className="text-3xs text-ink-muted">{nuevaContrasena.length}/64</span>
+            <span className="text-xs text-ink-muted">{nuevaContrasena.length}/64</span>
           </div>
           <div className="relative">
             <input
@@ -216,19 +216,16 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
           </div>
         </div>
 
-        <div className="pt-2">
-          <Button
-            type="submit"
-            fullWidth
-            size="lg"
-            isLoading={procesando}
-            disabled={!contrasenaActual || !nuevaContrasena || !confirmarContrasena}
-            className="flex items-center justify-center gap-2 min-h-[48px]"
-          >
-            <KeyRound className="w-5 h-5" />
-            <span>Actualizar Contraseña</span>
-          </Button>
-        </div>
+        <SheetActions
+          secondaryLabel="Cancelar"
+          primaryLabel="Guardar"
+          primaryType="submit"
+          primaryVariant="primary"
+          isLoading={procesando}
+          primaryDisabled={!contrasenaActual || !nuevaContrasena || !confirmarContrasena}
+          primaryIcon={<KeyRound className="w-4 h-4" />}
+          onSecondary={handleCerrar}
+        />
       </form>
     </BottomSheet>
   );

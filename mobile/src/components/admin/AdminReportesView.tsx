@@ -12,6 +12,7 @@ import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { formatLimaFechaHora } from '../../utils/fechas';
 
 export interface AdminReportesViewProps {
   reporteVentas: ReporteVentasResponse | null;
@@ -156,7 +157,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
               {cierres.slice(0, 5).map((cierre) => (
                 <div key={cierre.cajaId} className="py-2.5 flex justify-between items-center text-xs">
                   <div>
-                    <span className="font-bold text-ink block">{cierre.fechaCierre || cierre.fechaApertura}</span>
+                    <span className="font-bold text-ink block">{formatLimaFechaHora(cierre.fechaCierre || cierre.fechaApertura)}</span>
                     <span className="text-ink-muted">Cajero: {cierre.cajero}</span>
                   </div>
                   <div className="text-right flex flex-col items-end gap-1">

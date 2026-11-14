@@ -15,6 +15,7 @@ import {
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Switch } from '../ui/Switch';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { CambiarContrasenaSheet } from './CambiarContrasenaSheet';
 import { GuiaUsoSheet } from './GuiaUsoSheet';
@@ -126,36 +127,21 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         </h3>
 
         {/* Modo Oscuro */}
-        <div className="flex items-center justify-between min-h-[48px]">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+        <div className="flex items-center justify-between min-h-[48px] gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
               {isDark ? <Moon className="w-5 h-5 text-accent" aria-hidden="true" /> : <Sun className="w-5 h-5 text-ink" aria-hidden="true" />}
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-ink">Modo Oscuro</p>
               <p className="text-xs text-ink-muted">Recomendado para turnos nocturnos y pantallas KDS</p>
             </div>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={isDark}
-            onClick={onToggleDarkMode}
+          <Switch
+            checked={isDark}
+            onChange={() => onToggleDarkMode()}
             aria-label="Alternar modo oscuro"
-            className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full cursor-pointer"
-          >
-            <div
-              className={`w-12 h-7 rounded-full p-1 transition-colors ${
-                isDark ? 'bg-primary' : 'bg-line'
-              }`}
-            >
-              <div
-                className={`w-5 h-5 rounded-full bg-surface transition-transform ${
-                  isDark ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </div>
-          </button>
+          />
         </div>
 
         {/* Respuesta Háptica con interruptor y botón Probar */}
@@ -172,26 +158,11 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={hapticsHabilitado}
-              onClick={handleToggleHaptics}
+            <Switch
+              checked={hapticsHabilitado}
+              onChange={() => handleToggleHaptics()}
               aria-label="Alternar respuesta háptica"
-              className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full cursor-pointer shrink-0"
-            >
-              <div
-                className={`w-12 h-7 rounded-full p-1 transition-colors border ${
-                  hapticsHabilitado ? 'bg-primary border-primary' : 'bg-line border-line-strong'
-                }`}
-              >
-                <div
-                  className={`w-4.5 h-4.5 rounded-full bg-surface shadow-xs transition-transform ${
-                    hapticsHabilitado ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </div>
-            </button>
+            />
           </div>
 
           <div className="flex items-center justify-between gap-3 pl-14">
@@ -222,36 +193,21 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         </div>
 
         {/* Sonido de avisos KDS / Pedidos */}
-        <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px]">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+        <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px] gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
               <Volume2 className="w-5 h-5" aria-hidden="true" />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-ink">Sonido de Avisos</p>
               <p className="text-xs text-ink-muted">Alertas sonoras para nuevas comandas y pedidos listos</p>
             </div>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={sonidoHabilitado}
-            onClick={handleToggleSonido}
+          <Switch
+            checked={sonidoHabilitado}
+            onChange={() => handleToggleSonido()}
             aria-label="Alternar sonido de avisos"
-            className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full cursor-pointer"
-          >
-            <div
-              className={`w-12 h-7 rounded-full p-1 transition-colors ${
-                sonidoHabilitado ? 'bg-primary' : 'bg-line'
-              }`}
-            >
-              <div
-                className={`w-5 h-5 rounded-full bg-surface transition-transform ${
-                  sonidoHabilitado ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </div>
-          </button>
+          />
         </div>
 
         {/* Orientación de Interfaz (Diestro / Zurdo) */}

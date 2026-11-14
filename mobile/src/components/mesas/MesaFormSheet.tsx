@@ -3,7 +3,7 @@ import { AlertCircle } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import { normalizeText, canonicalizarMesa } from '../../utils/canonico';
 import { BottomSheet } from '../ui/BottomSheet';
-import { Button } from '../ui/Button';
+import { SheetActions } from '../ui/SheetActions';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 
 export interface MesaFormSheetProps {
@@ -141,7 +141,7 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
                   : 'border-line focus:border-accent focus:ring-accent/20'
               }`}
             />
-            <span className="absolute right-3 top-3.5 text-2xs font-semibold text-ink-muted tabular-nums">
+            <span className="absolute right-3 top-3.5 text-xs font-semibold text-ink-muted tabular-nums">
               {nombre.length}/20
             </span>
           </div>
@@ -157,36 +157,22 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
             </div>
           )}
 
-          <p className="mt-1.5 text-2xs text-ink-muted">
+          <p className="mt-1.5 text-xs text-ink-muted">
             Permite letras, números, guiones y puntos (máximo 20 caracteres).
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 pt-2">
-          <Button
-            type="button"
-            variant="secondary"
-            size="lg"
-            fullWidth
-            onClick={onClose}
-            disabled={guardando}
-            className="min-h-[44px]"
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            size="lg"
-            fullWidth
-            isLoading={guardando}
-            disabled={guardando || sinConexion}
-            title={sinConexion ? 'Sin conexión a internet' : undefined}
-            className="min-h-[44px]"
-          >
-            {sinConexion ? 'Sin conexión' : isEdit ? 'Guardar Cambios' : 'Crear Mesa'}
-          </Button>
-        </div>
+        <SheetActions
+          secondaryLabel="Cancelar"
+          primaryLabel={sinConexion ? 'Sin conexión' : 'Guardar'}
+          primaryType="submit"
+          primaryVariant="primary"
+          isLoading={guardando}
+          primaryDisabled={guardando || sinConexion}
+          secondaryDisabled={guardando}
+          primaryTitle={sinConexion ? 'Sin conexión a internet' : undefined}
+          onSecondary={onClose}
+        />
       </form>
     </BottomSheet>
   );

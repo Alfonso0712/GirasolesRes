@@ -7,6 +7,7 @@ import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Switch } from '../ui/Switch';
 import { StatusBadge } from '../ui/StatusBadge';
 import { FilterChipBar } from '../ui/FilterChipBar';
 import { SkeletonList } from '../ui/Skeleton';
@@ -166,7 +167,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
         title={modoGestion ? 'Gestión de Mesas' : 'Salón y Mesas'}
         subtitle={
           modoGestion
-            ? `${mesas.length} ${pluralizar(mesas.length, 'mesa registrada', 'mesas registradas')}`
+            ? pluralizar(mesas.length, 'mesa registrada', 'mesas registradas')
             : `${pluralizar(libresCount, 'libre', 'libres')} · ${pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}`
         }
         icon={<Utensils className="w-5 h-5 text-white" aria-hidden="true" />}
@@ -223,26 +224,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
           <div className="flex items-center justify-between pt-1 border-t border-line/60">
             <span className="text-xs font-semibold text-ink">Mostrar inactivas</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={mostrarInactivas}
-              onClick={() => {
+            <Switch
+              checked={mostrarInactivas}
+              onChange={(nuevo) => {
                 triggerLight();
-                onToggleMostrarInactivas?.(!mostrarInactivas);
+                onToggleMostrarInactivas?.(nuevo);
               }}
-              className={`relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-accent ${
-                mostrarInactivas ? 'bg-accent' : 'bg-fill-muted'
-              }`}
-            >
-              <span className="sr-only">Mostrar mesas inactivas</span>
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-surface shadow-md ring-0 transition duration-200 ease-in-out ${
-                  mostrarInactivas ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
-            </button>
+              aria-label="Mostrar mesas inactivas"
+            />
           </div>
         </div>
       )}

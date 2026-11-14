@@ -438,6 +438,194 @@ class ApiClient {
   delete<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' }, token);
   }
+
+  /**
+   * Descarga un archivo binario (ej. PDF) con el token de autorización actual,
+   * errores normalizados (ApiError) y tiempo de espera de 30 segundos.
+   */
+  async descargarArchivo(
+    ruta: string,
+    params?: Record<string, string | number | undefined | null>,
+    token?: string
+  ): Promise<Blob> {
+    let authToken = token || localStorage.getItem('GIRASOLES_TOKEN') || undefined;
+
+    if (authToken) {
+      const exp = parseJwtExp(authToken);
+      if (exp !== null) {
+        const nowSeconds = Math.floor(Date.now() / 1000);
+        const segundosRestantes = exp - nowSeconds;
+        if (segundosRestantes > 0 && segundosRestantes < 300) {
+          const tokenRenovado = await intentarRenovarToken(authToken);
+          if (tokenRenovado) {
+            authToken = tokenRenovado;
+          }
+        }
+      }
+    }
+
+    let endpointFinal = ruta;
+    if (params) {
+      const searchParams = new URLSearchParams();
+      for (const [clave, valor] of Object.entries(params)) {
+        if (valor !== undefined && valor !== null && String(valor).trim() !== '') {
+          searchParams.append(clave, String(valor));
+        }
+      }
+      const queryStr = searchParams.toString();
+      if (queryStr) {
+        endpointFinal += (endpointFinal.includes('?') ? '&' : '?') + queryStr;
+      }
+    }
+
+    const url = this.formatUrl(endpointFinal);
+    let requestHost = '';
+    try {
+      requestHost = new URL(url).host;
+    } catch {
+      requestHost = '';
+    }
+
+    const headers = new Headers({
+      Accept: 'application/pdf, application/octet-stream, */*',
+    });
+    if (authToken) {
+      headers.set('Authorization', `Bearer ${authToken}`);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('girasoles:network-success'));
+      }
+
+      if (!response.ok) {
+        let backendMsg: string | undefined;
+        let codigo: string | undefined;
+        let fieldErrors: Record<string, string | string[]> | undefined;
+        let errorDetail: string | undefined;
+
+        try {
+          const errorJson = (await response.json()) as {
+            mensaje?: string;
+            message?: string;
+            detail?: string;
+            title?: string;
+            codigo?: string;
+            errors?: Record<string, string | string[]>;
+          };
+          backendMsg = errorJson.mensaje || errorJson.message || errorJson.detail || errorJson.title;
+          codigo = errorJson.codigo;
+          fieldErrors = errorJson.errors;
+          errorDetail = errorJson.detail || errorJson.title;
+        } catch {
+          // La respuesta de error no es JSON
+        }
+
+        if (response.status === 401) {
+          handleUnauthorized();
+          throw new ApiError(
+            401,
+            'Sesión expirada. Inicie sesión nuevamente.',
+            codigo || 'UNAUTHORIZED',
+            fieldErrors,
+            errorDetail,
+            'http',
+            requestHost
+          );
+        }
+
+        if (response.status === 403) {
+          throw new ApiError(
+            403,
+            'No tiene permiso para realizar esta acción.',
+            codigo || 'FORBIDDEN',
+            fieldErrors,
+            errorDetail,
+            'http',
+            requestHost
+          );
+        }
+
+        if (response.status >= 500) {
+          throw new ApiError(
+            response.status,
+            backendMsg || 'Ocurrió un error al generar el archivo en el servidor.',
+            codigo || 'SERVER_ERROR',
+            fieldErrors,
+            errorDetail,
+            'http',
+            requestHost
+          );
+        }
+
+        throw new ApiError(
+          response.status,
+          backendMsg || 'No se pudo descargar el documento solicitado.',
+          codigo || 'BAD_REQUEST',
+          fieldErrors,
+          errorDetail,
+          'http',
+          requestHost
+        );
+      }
+
+      return await response.blob();
+    } catch (err: unknown) {
+      clearTimeout(timeoutId);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('girasoles:network-error', { detail: err }));
+      }
+
+      if (err instanceof ApiError) {
+        throw err;
+      }
+
+      if (
+        (err instanceof Error && err.name === 'AbortError') ||
+        controller.signal.aborted
+      ) {
+        throw new ApiError(
+          0,
+          'La descarga tardó demasiado. Verifique su conexión.',
+          'ERR_TIMEOUT',
+          undefined,
+          undefined,
+          'timeout',
+          requestHost
+        );
+      }
+
+      throw new ApiError(
+        0,
+        'No se pudo conectar con el servidor para descargar el archivo.',
+        'ERR_CONEXION',
+        undefined,
+        undefined,
+        'sin-respuesta',
+        requestHost
+      );
+    }
+  }
 }
 
 export const apiClient = new ApiClient();
+
+export function descargarArchivo(
+  ruta: string,
+  params?: Record<string, string | number | undefined | null>,
+  token?: string
+): Promise<Blob> {
+  return apiClient.descargarArchivo(ruta, params, token);
+}

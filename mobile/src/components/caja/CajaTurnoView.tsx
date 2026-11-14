@@ -40,6 +40,7 @@ import { useHaptics } from '../../hooks/useHaptics';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { formatLimaFechaHora } from '../../utils/fechas';
 import { puede } from '../../config/permisos';
 
 export interface CajaTurnoViewProps {
@@ -741,7 +742,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                   <StatusBadge estado={v.estado} />
                 </div>
                 <div className="flex justify-between items-center text-xs text-ink-muted pt-1 border-t border-line">
-                  <span>{v.fechaHoraFormateada || v.fechaHora} · {v.metodo}</span>
+                  <span>{formatLimaFechaHora(v.fechaHoraFormateada || v.fechaHora)} · {v.metodo}</span>
                   <span className="text-sm font-black text-accent tabular-nums">
                     {formatCurrency(v.total)}
                   </span>
@@ -793,7 +794,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 className="space-y-2 select-none"
               >
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-extrabold text-ink">{c.fechaCierre || c.fechaApertura}</span>
+                  <span className="text-sm font-extrabold text-ink">{formatLimaFechaHora(c.fechaCierre || c.fechaApertura)}</span>
                   <StatusBadge estado={c.estadoCuadre || 'Cuadra'} />
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs text-ink-muted pt-1 border-t border-line">

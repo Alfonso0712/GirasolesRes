@@ -10,6 +10,7 @@ import type { CierreDetalleDto } from '../../types/caja';
 import { BottomSheet } from '../ui/BottomSheet';
 import { StatusBadge } from '../ui/StatusBadge';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { formatLimaFechaHora } from '../../utils/fechas';
 
 export interface CierreDetalleSheetProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title={cierre ? `Cierre · ${cierre.fechaCierreLocal || cierre.fechaCierre || cierre.fechaApertura}` : 'Detalle de Cierre'}
+      title={cierre ? `Cierre · ${formatLimaFechaHora(cierre.fechaCierreLocal || cierre.fechaCierre || cierre.fechaApertura)}` : 'Detalle de Cierre'}
     >
       {cargando || !cierre ? (
         <div className="py-12 flex flex-col items-center justify-center gap-3 text-ink-muted">
@@ -56,11 +57,11 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
                   {esAbierta ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
                 </div>
                 <div>
-                  <span className="text-3xs font-bold uppercase tracking-wider text-ink-muted block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
                     Acta de Turno
                   </span>
                   <h3 className="text-base font-extrabold text-ink">
-                    {cierre.fechaCierreLocal || cierre.fechaCierre || cierre.fechaAperturaLocal || cierre.fechaApertura}
+                    {formatLimaFechaHora(cierre.fechaCierreLocal || cierre.fechaCierre || cierre.fechaAperturaLocal || cierre.fechaApertura)}
                   </h3>
                 </div>
               </div>
@@ -70,7 +71,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-line text-xs text-ink-muted">
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 shrink-0 text-ink-muted" />
-                <span>Apertura: {cierre.fechaAperturaLocal || cierre.fechaApertura}</span>
+                <span>Apertura: {formatLimaFechaHora(cierre.fechaAperturaLocal || cierre.fechaApertura)}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5 shrink-0 text-ink-muted" />
@@ -164,7 +165,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
                     )}
                     <div className="flex justify-between text-3xs text-ink-muted pt-0.5">
                       <span>Anulado por: {a.usuarioAnulacion || 'Administrador'}</span>
-                      <span>{a.fechaAnulacion || a.fechaVentaLocal}</span>
+                      <span>{formatLimaFechaHora(a.fechaAnulacion || a.fechaVentaLocal)}</span>
                     </div>
                   </div>
                 ))}

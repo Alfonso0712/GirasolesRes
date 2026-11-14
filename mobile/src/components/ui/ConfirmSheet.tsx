@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle, AlertCircle } from 'lucide-react';
 import { BottomSheet } from './BottomSheet';
-import { Button } from './Button';
+import { SheetActions } from './SheetActions';
 
 export interface ConfirmSheetProps {
   isOpen: boolean;
@@ -33,7 +33,9 @@ export const ConfirmSheet: React.FC<ConfirmSheetProps> = ({
       <div className="space-y-4 text-center">
         <div
           className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto ${
-            esPeligro ? 'bg-danger-bg text-danger border border-danger-border' : 'bg-warning-bg text-warning border border-warning-border'
+            esPeligro
+              ? 'bg-danger-bg text-danger border border-danger-border'
+              : 'bg-warning-bg text-warning border border-warning-border'
           }`}
         >
           {esPeligro ? (
@@ -48,27 +50,14 @@ export const ConfirmSheet: React.FC<ConfirmSheetProps> = ({
           <p className="text-xs text-ink-muted leading-relaxed max-w-sm mx-auto">{mensaje}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 pt-2">
-          <Button
-            variant="outline"
-            size="md"
-            disabled={cargando}
-            onClick={onCancelar}
-            className="w-full"
-          >
-            {etiquetaCancelar}
-          </Button>
-
-          <Button
-            variant={esPeligro ? 'danger' : 'primary'}
-            size="md"
-            isLoading={cargando}
-            onClick={onConfirmar}
-            className="w-full"
-          >
-            {etiquetaConfirmar}
-          </Button>
-        </div>
+        <SheetActions
+          secondaryLabel={etiquetaCancelar}
+          primaryLabel={etiquetaConfirmar}
+          primaryVariant={esPeligro ? 'danger' : 'primary'}
+          isLoading={cargando}
+          onSecondary={onCancelar}
+          onPrimary={onConfirmar}
+        />
       </div>
     </BottomSheet>
   );

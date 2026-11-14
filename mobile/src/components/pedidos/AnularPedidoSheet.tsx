@@ -4,7 +4,7 @@ import type { DetallePedidoCompletoDto, PedidoItemDto } from '../../types/pedido
 import { pedidoService } from '../../services/pedidoService';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
-import { Button } from '../ui/Button';
+import { SheetActions } from '../ui/SheetActions';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
@@ -153,28 +153,16 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
             )}
           </div>
 
-          <div className="flex gap-2.5 pt-2">
-            <Button
-              size="md"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1 min-h-[48px]"
-            >
-              <span>Volver</span>
-            </Button>
-
-            <Button
-              size="md"
-              variant="danger"
-              disabled={motivo.trim().length < 5 || sinConexion}
-              title={sinConexion ? 'Sin conexión a internet' : undefined}
-              onClick={handleValidarYContinuar}
-              className="flex-1 flex items-center justify-center gap-2 min-h-[48px]"
-            >
-              <Ban className="w-4 h-4" />
-              <span>{sinConexion ? 'Sin conexión' : 'Continuar Anulación'}</span>
-            </Button>
-          </div>
+          <SheetActions
+            secondaryLabel="Cancelar"
+            primaryLabel={sinConexion ? 'Sin conexión' : 'Confirmar'}
+            primaryVariant="danger"
+            primaryDisabled={motivo.trim().length < 5 || sinConexion}
+            primaryTitle={sinConexion ? 'Sin conexión a internet' : undefined}
+            primaryIcon={<Ban className="w-4 h-4" />}
+            onSecondary={onClose}
+            onPrimary={handleValidarYContinuar}
+          />
         </div>
       </BottomSheet>
 

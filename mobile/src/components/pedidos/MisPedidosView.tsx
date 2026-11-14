@@ -97,7 +97,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
                 <span className="text-xs font-black">
-                  ¡Tiene {conteoAvisosListos} {pluralizar(conteoAvisosListos, 'pedido listo', 'pedidos listos')} en cocina!
+                  ¡Tiene {pluralizar(conteoAvisosListos, 'pedido listo', 'pedidos listos')} en cocina!
                 </span>
               </div>
               <button

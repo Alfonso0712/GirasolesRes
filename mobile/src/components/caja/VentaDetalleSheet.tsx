@@ -12,7 +12,9 @@ import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
 import { StatusBadge } from '../ui/StatusBadge';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
+import { SheetActions } from '../ui/SheetActions';
 import { formatCurrency } from '../../utils/format';
+import { formatLimaFechaHora } from '../../utils/fechas';
 import { useHaptics } from '../../hooks/useHaptics';
 
 export interface VentaDetalleSheetProps {
@@ -105,7 +107,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
             <div className="bg-canvas border border-line rounded-2xl p-3.5 space-y-2">
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-3xs font-bold uppercase tracking-wider text-ink-muted block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
                     {venta.tipoComprobante || 'Comprobante Electrónico'}
                   </span>
                   <h3 className="text-lg font-black text-ink">{venta.comprobante}</h3>
@@ -117,7 +119,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-line text-xs text-ink-muted">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 shrink-0 text-ink-muted" />
-                  <span>{venta.fechaHoraFormateada}</span>
+                  <span>{formatLimaFechaHora(venta.fechaHoraFormateada || venta.fechaHora)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 shrink-0 text-ink-muted" />
@@ -138,7 +140,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                     <p className="text-ink pl-5">{venta.razonSocialReceptor}</p>
                   )}
                   {venta.direccionReceptor && (
-                    <p className="text-3xs text-ink-muted pl-5 flex items-center gap-1">
+                    <p className="text-xs text-ink-muted pl-5 flex items-center gap-1">
                       <MapPin className="w-3 h-3 shrink-0" />
                       <span>{venta.direccionReceptor}</span>
                     </p>
@@ -155,11 +157,11 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                   <span>Comprobante Anulado Fiscalmente</span>
                 </div>
                 {venta.motivoAnulacion && (
-                  <p className="text-3xs">
+                  <p className="text-xs">
                     <span className="font-bold">Motivo:</span> {venta.motivoAnulacion}
                   </p>
                 )}
-                <div className="text-3xs text-danger/80 flex justify-between pt-0.5">
+                <div className="text-xs text-danger/80 flex justify-between pt-0.5">
                   <span>Por: {venta.usuarioAnulacion || 'Administrador'}</span>
                   {venta.fechaHoraAnulacionFormateada && (
                     <span>{venta.fechaHoraAnulacionFormateada}</span>
@@ -182,14 +184,14 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                         {linea.cantidad}x {linea.productoNombre}
                       </p>
                       {linea.observacion && (
-                        <p className="text-3xs text-ink-muted italic">«{linea.observacion}»</p>
+                        <p className="text-xs text-ink-muted italic">«{linea.observacion}»</p>
                       )}
                     </div>
                     <div className="text-right shrink-0">
                       <span className="font-extrabold text-ink tabular-nums">
                         {formatCurrency(linea.subtotal)}
                       </span>
-                      <span className="text-3xs text-ink-muted block">
+                      <span className="text-xs text-ink-muted block">
                         c/u {formatCurrency(linea.precioUnitario)}
                       </span>
                     </div>
@@ -217,7 +219,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                 <span className="text-accent tabular-nums">{formatCurrency(venta.total)}</span>
               </div>
 
-              <div className="flex justify-between text-3xs text-ink-muted pt-1 border-t border-line">
+              <div className="flex justify-between text-xs text-ink-muted pt-1 border-t border-line">
                 <span>Método: {venta.metodo}</span>
                 {venta.vuelto !== null && venta.vuelto !== undefined && venta.vuelto > 0 && (
                   <span>Vuelto: {formatCurrency(venta.vuelto)}</span>
@@ -229,7 +231,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
             </div>
 
             {/* Aviso informativo de PDF */}
-            <p className="text-3xs text-ink-muted text-center">
+            <p className="text-xs text-ink-muted text-center">
               La descarga del comprobante en formato PDF con firma y QR se encuentra disponible en la versión web.
             </p>
 
@@ -248,7 +250,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
             )}
 
             {venta.cajaCerrada && !esAnulada && (
-              <p className="text-3xs text-ink-muted text-center italic">
+              <p className="text-xs text-ink-muted text-center italic">
                 La caja de este turno ya fue cerrada. El comprobante no se puede anular.
               </p>
             )}
@@ -299,7 +301,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                   }`}
                 >
                   <p className="font-extrabold">Listo para cobrar</p>
-                  <p className="text-3xs opacity-80 mt-0.5">El pedido regresa a cobranza</p>
+                  <p className="text-xs opacity-80 mt-0.5">El pedido regresa a cobranza</p>
                 </button>
 
                 <button
@@ -315,7 +317,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                   }`}
                 >
                   <p className="font-extrabold">Anular pedido</p>
-                  <p className="text-3xs opacity-80 mt-0.5">Se cancela definitivamente</p>
+                  <p className="text-xs opacity-80 mt-0.5">Se cancela definitivamente</p>
                 </button>
               </div>
             </div>
@@ -326,7 +328,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                 <label htmlFor="motivo-anulacion" className="text-xs font-bold text-ink">
                   Motivo de Anulación (5-100 caracteres) *
                 </label>
-                <span className="text-3xs text-ink-muted">
+                <span className="text-xs text-ink-muted">
                   {motivo.length}/100
                 </span>
               </div>
@@ -354,7 +356,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
                       setMotivo(m);
                       setErrorMotivo(null);
                     }}
-                    className="text-3xs font-semibold px-2.5 py-1 rounded-lg bg-surface border border-line text-ink-muted hover:text-ink active:scale-95 transition-all min-h-[32px]"
+                    className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-surface border border-line text-ink-muted hover:text-ink active:scale-95 transition-all min-h-[32px]"
                   >
                     {m}
                   </button>
@@ -362,16 +364,14 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
               </div>
             </div>
 
-            <Button
-              fullWidth
-              size="lg"
-              variant="danger"
-              disabled={motivo.trim().length < 5 || motivo.trim().length > 100}
-              onClick={handleValidarAnulacion}
-              className="min-h-[48px]"
-            >
-              Continuar a Confirmación
-            </Button>
+            <SheetActions
+              secondaryLabel="Cancelar"
+              primaryLabel="Confirmar"
+              primaryVariant="danger"
+              primaryDisabled={motivo.trim().length < 5 || motivo.trim().length > 100}
+              onSecondary={() => setModalAnular(false)}
+              onPrimary={handleValidarAnulacion}
+            />
           </div>
         )}
       </BottomSheet>

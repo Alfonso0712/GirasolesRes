@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { formatCurrency, pluralizar } from './format';
+import { formatLimaFechaHora, formatLimaFecha, formatHora } from './fechas';
 import { canonicalizarMesa, normalizeText, naturalCompare } from './canonico';
 import {
   validarDni,
@@ -38,6 +39,28 @@ describe('utils - Formato y Canonicalización', () => {
 
     it('debe permitir pasar un plural irregular personalizado', () => {
       expect(pluralizar(3, 'análisis', 'análisis')).toBe('3 análisis');
+    });
+
+    it('nunca debe duplicar el número en frases reales de interfaz (R-C)', () => {
+      expect(pluralizar(12, 'mesa registrada', 'mesas registradas')).toBe('12 mesas registradas');
+      expect(`¡Tiene ${pluralizar(1, 'pedido listo', 'pedidos listos')} en cocina!`).toBe(
+        '¡Tiene 1 pedido listo en cocina!'
+      );
+      expect(`¡Tiene ${pluralizar(2, 'pedido listo', 'pedidos listos')} en cocina!`).toBe(
+        '¡Tiene 2 pedidos listos en cocina!'
+      );
+    });
+  });
+
+  describe('fechas en America/Lima (R-C)', () => {
+    it('convierte fechas ISO UTC a formato local de Lima DD/MM/AAAA HH:mm', () => {
+      expect(formatLimaFechaHora('2026-11-14T04:52:13.405267Z')).toBe('13/11/2026 23:52');
+      expect(formatLimaFecha('2026-11-14T04:52:13.405267Z')).toBe('13/11/2026');
+      expect(formatHora('2026-11-14T04:52:13.405267Z')).toBe('23:52');
+    });
+
+    it('formatea fechas AAAA-MM-DD sin desfase de medianoche UTC', () => {
+      expect(formatLimaFecha('2026-10-05')).toBe('05/10/2026');
     });
   });
 
