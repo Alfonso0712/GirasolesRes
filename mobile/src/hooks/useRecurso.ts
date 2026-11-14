@@ -166,8 +166,12 @@ export function useRecurso<T>(
 /**
  * Consulta de mesas del salón con intervalo de 15 s (alineado con la versión web).
  */
-export function useMesas(options?: { enabled?: boolean }) {
-  return useRecurso<MesaItem[]>(() => mesaService.getMesas(), {
+export function useMesas(options?: { incluirInactivas?: boolean; estado?: string; enabled?: boolean }) {
+  const fetcher = useCallback(
+    () => mesaService.getMesas({ incluirInactivas: options?.incluirInactivas, estado: options?.estado }),
+    [options?.incluirInactivas, options?.estado]
+  );
+  return useRecurso<MesaItem[]>(fetcher, {
     intervaloMs: 15000,
     pausarEnSegundoPlano: true,
     enabled: options?.enabled ?? true,

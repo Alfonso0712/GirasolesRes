@@ -10,3 +10,24 @@ export interface MesaItem {
   minutosOcupada?: number;
   mozo?: string | null;
 }
+
+export interface CrearMesaData {
+  nombre: string;
+}
+
+export interface ActualizarMesaData {
+  nombre: string;
+}
+
+export interface CambiarEstadoMesaData {
+  activa: boolean;
+}
+
+export interface MesaMutationResponse {
+  id: string;
+  nombre: string;
+  ocupacion: 'Libre' | 'Ocupada';
+  activa: boolean;
+  success?: boolean;
+  message?: string;
+}
