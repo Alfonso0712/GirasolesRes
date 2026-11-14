@@ -90,3 +90,11 @@ Derivada formalmente de los atributos `[Authorize(Roles = "...")]` de los contro
    - **WhatsApp no adjunta archivos por enlace:** Los enlaces `https://wa.me` solo permiten prellenar el texto resumen del comprobante; para enviar el archivo PDF al cliente se debe usar el botón *«Compartir PDF»*. El número de celular ingresado nunca se almacena en el dispositivo ni en el servidor.
    - **Impresión mediante el visor del sistema:** El botón *«Imprimir»* abre el PDF en el visor nativo del sistema operativo (`@capacitor-community/file-opener`, o la hoja de compartir como respaldo), desde donde el usuario selecciona la impresora configurada en Android.
    - **Sin impresora térmica directa:** La aplicación móvil no se conecta directamente por Bluetooth/USB/ESC-POS a impresoras térmicas de 80 mm; toda impresión se delega al servicio de impresión del sistema Android sobre el PDF vectorial generado por el backend.
+
+---
+
+## 6. Definición y Avisos del Menú del Día
+
+1. **Edición del Menú Diario (`Administrador`):** Desde *Más > Menú del día* (o mediante el atajo *«Definir menú»* en *Inicio* y *Salón*), el Administrador habilita o deshabilita menús completos (*Desayuno completo*, *Almuerzo completo*, *Solo segundo*), opciones de componentes por rol y platos de carta por categoría. El cliente valida en línea las reglas `MSG-224` y `MSG-219` y solicita confirmación (`MSG-102`) antes de descartar cambios o cambiar de pestaña.
+2. **Control de Disponibilidad (`Cocinero` y `Administrador`):** El Cocinero accede desde su pestaña *Menú* directamente a la vista *Disponibilidad* (`PATCH /api/menu-dia/hoy/platos/{id}/disponibilidad`), alineado con la autorización de `MenuDiaController`.
+3. **Avisos No Bloqueantes (`BannerMenuNoDefinido`):** Cuando `hoy.definido === false`, se muestra un aviso no bloqueante en *Salón*, *Pedido de mesa* y *Pedido para llevar* (con botón *«Definir menú»* para Administrador y mensaje informativo para Mozo y Cajero), reutilizando la caché en memoria de `menuDiaService` para evitar peticiones duplicadas.

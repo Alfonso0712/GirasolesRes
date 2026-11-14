@@ -50,6 +50,9 @@ Ubicados en `src/components/ui/` y `src/components/layout/`:
 10. **`Skeleton` / `SkeletonList`:** Indicador de carga accesible que respeta `prefers-reduced-motion`.
 11. **`BottomSheet` / `ConfirmSheet`:** Diálogos modales accesibles con `role="dialog"`, trampa de foco y compatibilidad con botón Atrás de Android.
 12. **`ToastProvider` / `useToast()`:** Avisos flotantes accesibles con `role="status"` ubicados sobre la barra de navegación inferior.
+13. **`Switch`:** Interruptor accesible con `role="switch"`, `aria-checked`, área táctil mínima garantizada de 44x44px y respuesta háptica ligera.
+14. **`SheetActions`:** Barra estandarizada de acciones primarias y secundarias para pies de hojas y barras fijas de cambios sin guardar.
+15. **`DefinirMenuView` / `GrupoAcordeonMenu` / `TarjetaMenuCompletoEdicion`:** Módulos de definición del menú diario con grupos desplegables (`aria-expanded`), filas táctiles de >= 56px (`role="checkbox"`, `aria-checked`), contadores `x de y` (`tabular-nums`) y validación en línea (`MSG-219`, `MSG-224`, `MSG-102`).
 
 ---
 
@@ -70,6 +73,7 @@ Los textos mostrados al usuario deben apegarse estrictamente a la nomenclatura o
 - **Pedidos / Comandas:** `Pendiente`, `En preparación`, `Listo`, `Pagado`, `Anulado`.
 - **Caja y Turno:** `Abierta`, `Cerrada`.
 - **Métodos de Pago:** `Efectivo`, `Yape`.
+- **Menú del Día:** `Menú definido`, `Menú no definido hoy`, `Agotado`, `Disponible`.
 - **Comprobantes:** `Ticket` (terminal móvil), `Boleta` / `Factura` (sistema web).
 
 ---
