@@ -69,11 +69,44 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDiaDto | null>(null);
   const [pedidoActivo, setPedidoActivo] = useState<PedidoAbiertoMesaDto | null>(null);
   const [enviando, setEnviando] = useState<boolean>(false);
+  const [hayBorradorGuardado, setHayBorradorGuardado] = useState<boolean>(false);
+  const [borradorRecuperado, setBorradorRecuperado] = useState<LineaBorrador[] | null>(null);
+
+  const DRAFT_KEY = `girasoles_borrador_mesa_${mesa.id}`;
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar: mostrarToast } = useToast();
 
   const esAmpliacion = Boolean(pedidoActivo);
+
+  // Detección inicial de borrador no registrado en sessionStorage (P-G)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setBorradorRecuperado(parsed as LineaBorrador[]);
+          setHayBorradorGuardado(true);
+        }
+      }
+    } catch {
+      // Manejo silencioso si sessionStorage no está disponible
+    }
+  }, [DRAFT_KEY]);
+
+  // Persistencia reactiva del borrador por mesa (P-G)
+  useEffect(() => {
+    try {
+      if (lineas.length > 0) {
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify(lineas));
+      } else {
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
+    } catch {
+      // Manejo silencioso de cuotas de almacenamiento
+    }
+  }, [lineas, DRAFT_KEY]);
 
   // Debounce de 250 ms para la búsqueda local en catálogo
   useEffect(() => {
@@ -319,6 +352,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         });
 
         triggerSuccess();
+        sessionStorage.removeItem(DRAFT_KEY);
         setMostrarConfirmEnviar(false);
         setMostrarCarrito(false);
         const msg = esMozo
@@ -350,6 +384,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       });
 
       triggerSuccess();
+      sessionStorage.removeItem(DRAFT_KEY);
       setMostrarConfirmEnviar(false);
       setMostrarCarrito(false);
       const numPedido = res.numero;
@@ -388,6 +423,48 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         onRefresh={cargarDatos}
         isRefreshing={cargando}
       />
+
+      {/* Banner de Borrador Encontrado (P-G) */}
+      {hayBorradorGuardado && borradorRecuperado && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2.5 flex items-center justify-between gap-3 shrink-0">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-ink">
+              Tiene un pedido sin registrar ({pluralizar(borradorRecuperado.length, 'plato', 'platos')}).
+            </p>
+            <p className="text-xs text-ink-muted">¿Desea continuarlo?</p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                triggerLight();
+                sessionStorage.removeItem(DRAFT_KEY);
+                setHayBorradorGuardado(false);
+                setBorradorRecuperado(null);
+              }}
+              className="px-2.5 py-1.5 rounded-lg border border-line bg-surface text-ink text-xs font-bold active:scale-95 cursor-pointer min-h-[44px]"
+            >
+              Descartar
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                triggerSuccess();
+                setLineas(borradorRecuperado);
+                setHayBorradorGuardado(false);
+                setBorradorRecuperado(null);
+                mostrarToast({
+                  tipo: 'info',
+                  mensaje: 'Se restauró el pedido guardado para esta mesa.',
+                });
+              }}
+              className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold active:scale-95 cursor-pointer min-h-[44px]"
+            >
+              Continuar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 2. Buscador y Categorías Horizontales Dinámicas (P-A) */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0 space-y-2">
@@ -759,6 +836,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         etiquetaCancelar="Seguir editando"
         tono="peligro"
         onConfirmar={() => {
+          sessionStorage.removeItem(DRAFT_KEY);
           setMostrarConfirmDescartar(false);
           setLineas([]);
           onVolver();
