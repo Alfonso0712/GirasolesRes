@@ -8,11 +8,14 @@ import {
   MapPin,
 } from 'lucide-react';
 import type { VentaDetalle } from '../../types/venta';
+import type { RolUsuario } from '../../types/auth';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Button } from '../ui/Button';
 import { StatusBadge } from '../ui/StatusBadge';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { SheetActions } from '../ui/SheetActions';
+import { ComprobanteAcciones } from '../cobros/ComprobanteAcciones';
+import { puede } from '../../config/permisos';
 import { formatCurrency } from '../../utils/format';
 import { formatLimaFechaHora } from '../../utils/fechas';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -23,6 +26,7 @@ export interface VentaDetalleSheetProps {
   venta: VentaDetalle | null;
   cargando: boolean;
   esAdmin?: boolean;
+  rol?: RolUsuario;
   onAnularVenta?: (ventaId: string, motivo: string, destinoPedido: string) => Promise<void>;
   anulando?: boolean;
 }
@@ -40,6 +44,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
   venta,
   cargando,
   esAdmin = false,
+  rol,
   onAnularVenta,
   anulando = false,
 }) => {
@@ -53,6 +58,8 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
 
   if (!isOpen) return null;
 
+  const rolEfectivo: RolUsuario = rol ?? (esAdmin ? 'Administrador' : 'Cajero');
+  const puedeReimprimir = puede(rolEfectivo, 'ventas.ver');
   const esAnulada = venta?.estado === 'Anulada' || venta?.estado === 'anulada';
   const puedeAnular = esAdmin && !esAnulada && !venta?.cajaCerrada && Boolean(onAnularVenta);
 
@@ -230,10 +237,19 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
               </div>
             </div>
 
-            {/* Aviso informativo de PDF */}
-            <p className="text-xs text-ink-muted text-center">
-              La descarga del comprobante en formato PDF con firma y QR se encuentra disponible en la versión web.
-            </p>
+            {/* Acciones de reimpresión y envío del comprobante (Cajero y Administrador) */}
+            {puedeReimprimir && (
+              <ComprobanteAcciones
+                venta={{
+                  ventaId: venta.ventaId,
+                  numero: venta.comprobante,
+                  total: venta.total,
+                  fecha: formatLimaFechaHora(venta.fechaHoraFormateada || venta.fechaHoraUtc),
+                  esCopia: true,
+                  anulada: esAnulada,
+                }}
+              />
+            )}
 
             {/* Acción de anulación exclusiva para Administrador */}
             {puedeAnular && (

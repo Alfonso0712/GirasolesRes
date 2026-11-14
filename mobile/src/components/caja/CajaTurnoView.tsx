@@ -1079,6 +1079,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         venta={ventaDetalle}
         cargando={cargandoDetalleVenta}
         esAdmin={esAdmin}
+        rol={rol}
         onAnularVenta={handleAnularVenta}
         anulando={anulandoVenta}
       />
