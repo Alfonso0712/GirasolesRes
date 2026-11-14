@@ -14,7 +14,12 @@ import {
 } from 'lucide-react';
 import { cajaService } from '../../services/cajaService';
 import { ventaService } from '../../services/ventaService';
-import type { CajaActualResponseDto, CierreResumenDto, HistorialCierresItemDto } from '../../types/caja';
+import type {
+  CajaActualResponseDto,
+  CierreResumenDto,
+  HistorialCierresItemDto,
+  CierreDetalleDto,
+} from '../../types/caja';
 import type { VentaItem, VentaDetalle } from '../../types/venta';
 import type { RolUsuario } from '../../types/auth';
 import { Button } from '../ui/Button';
@@ -30,6 +35,7 @@ import { SkeletonList } from '../ui/Skeleton';
 import { EmptyState } from '../ui/EmptyState';
 import { FilterChipBar } from '../ui/FilterChipBar';
 import { VentaDetalleSheet } from './VentaDetalleSheet';
+import { CierreDetalleSheet } from './CierreDetalleSheet';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
@@ -77,6 +83,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
   const [cargandoCierres, setCargandoCierres] = useState(false);
   const [errorCierres, setErrorCierres] = useState<string | null>(null);
+  const [sheetCierreAbierta, setSheetCierreAbierta] = useState(false);
+  const [cierreDetalle, setCierreDetalle] = useState<CierreDetalleDto | null>(null);
+  const [cargandoDetalleCierre, setCargandoDetalleCierre] = useState(false);
 
   // Modales de operación de caja (Cajero)
   const [modalAbrir, setModalAbrir] = useState(false);
@@ -224,6 +233,25 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       cancelado = true;
     };
   }, [seccion, esAdmin]);
+
+  const handleVerDetalleCierre = async (cajaId: string) => {
+    if (!cajaId) return;
+    triggerLight();
+    setSheetCierreAbierta(true);
+    setCargandoDetalleCierre(true);
+    setCierreDetalle(null);
+    try {
+      const d = await cajaService.obtenerDetalleCierre(cajaId);
+      setCierreDetalle(d);
+    } catch (err: unknown) {
+      triggerError();
+      const msg = err instanceof Error ? err.message : 'No se pudo obtener el detalle del cierre.';
+      mostrar({ tipo: 'error', mensaje: msg });
+      setSheetCierreAbierta(false);
+    } finally {
+      setCargandoDetalleCierre(false);
+    }
+  };
 
   const handleAbrirCaja = () => {
     if (!montoApertura || montoApertura.trim() === '') {
@@ -731,7 +759,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
             )}
 
             {cierres.map((c) => (
-              <Card key={c.cajaId} accent="none" padding="sm" className="space-y-2">
+              <Card
+                key={c.cajaId}
+                interactive
+                accent="none"
+                padding="sm"
+                onClick={() => handleVerDetalleCierre(c.cajaId)}
+                className="space-y-2 select-none"
+              >
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-extrabold text-ink">{c.fechaCierre || c.fechaApertura}</span>
                   <StatusBadge estado={c.estadoCuadre || 'Cuadra'} />
@@ -959,6 +994,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         esAdmin={esAdmin}
         onAnularVenta={handleAnularVenta}
         anulando={anulandoVenta}
+      />
+
+      {/* Detalle de Cierre de Caja (Administrador) */}
+      <CierreDetalleSheet
+        isOpen={sheetCierreAbierta}
+        onClose={() => setSheetCierreAbierta(false)}
+        cierre={cierreDetalle}
+        cargando={cargandoDetalleCierre}
       />
     </div>
   );
