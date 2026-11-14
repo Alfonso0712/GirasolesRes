@@ -12,8 +12,8 @@ Todas las etiquetas cumplen el límite estricto de 9 caracteres y el glosario of
 | :--- | :--- | :--- | :--- |
 | **Mozo** | Salón | Salón, Pedidos, Perfil | `SalonPage`, `PedidosPage`, `PerfilPage` |
 | **Cajero** | Caja | Caja, Cobros, Llevar, Salón, Perfil | `CajaPage`, `CobrosPage`, `LlevarPage`, `SalonPage`, `PerfilPage` |
-| **Cocinero** | Cocina | Cocina, Platos, Perfil | `CocinaPage`, `PlatosPage`, `PerfilPage` |
-| **Administrador** | Inicio | Inicio, Salón, Caja, Reportes, Perfil | `InicioPage`, `SalonPage`, `CajaPage`, `ReportesPage`, `PerfilPage` |
+| **Cocinero** | Cocina | Cocina, Menú, Perfil | `CocinaPage`, `PlatosPage`, `PerfilPage` |
+| **Administrador** | Inicio | Inicio, Salón, Caja, Reportes, Más | `InicioPage`, `SalonPage`, `CajaPage`, `ReportesPage`, `MasPage` |
 
 ---
 
@@ -32,6 +32,7 @@ Derivada formalmente de los atributos `[Authorize(Roles = "...")]` de los contro
 | `pedidos.anular` | `PedidosController` (POST `/{id}/anular`) | Admin, Cajero, Mozo | Anulación con justificación obligatoria. |
 | `comandas.gestionar` | `ComandasController` (GET, PUT) | Cocinero | Pestaña Cocina KDS exclusiva de Cocinero. |
 | `platos.disponibilidad`| `MenuDiaController` (PATCH `/disponibilidad`) | Administrador, Cocinero | Alternar estado agotado/disponible de platos. |
+| `menuDia.definir` | `MenuDiaController` (GET `/candidatos`, PUT `/hoy`) | Administrador | Definir menús completos, opciones y platos de carta de hoy. |
 | `caja.ver` | `CajaController` (GET `/actual`, `/estado`) | Administrador, Cajero | Consulta de estado y parciales de turno. |
 | `caja.abrir` / `.cerrar`| `CajaController` (POST `/abrir`, `/cerrar`)| Cajero | Administrador ve turno en solo lectura sin botones de apertura/cierre. |
 | `cobros.procesar` | `CobrosController` (POST) | Cajero | Pestaña Cobros exclusiva de Cajero. |
@@ -62,12 +63,13 @@ Derivada formalmente de los atributos `[Authorize(Roles = "...")]` de los contro
 ### 3.3 Flujo del Cocinero
 1. **KDS Táctil:** En pestaña *Cocina*, visualiza comandas entrantes con alertas visuales de tiempo de espera (>=10 min advertencia, >=20 min crítico).
 2. **Avance de Estados:** Botones táctiles de 56 px aptos para guantes: *Empezar Preparación* (pasa a *En preparación*) y *Marcar Listo para Servir* (pasa a *Listo*). Sondeo automático cada 5 s con pausa reactiva en segundo plano.
-3. **Control de Platos:** En pestaña *Platos*, marca platos como agotados para bloquear inmediatamente su venta en salón.
+3. **Control de Menú:** En pestaña *Menú*, marca platos como agotados o disponibles para sincronizar el salón en tiempo real.
 
 ### 3.4 Flujo del Administrador
-1. **Inicio:** Dashboard ejecutivo con métricas del día (ventas totales, efectivo, Yape, ticket promedio, mesas ocupadas y estado de caja), alertas críticas y accesos rápidos.
+1. **Inicio:** Dashboard ejecutivo con métricas del día (ventas totales, efectivo, Yape, ticket promedio, mesas ocupadas, estado de caja y estado del menú de hoy), alertas críticas y accesos rápidos.
 2. **Supervisión de Salón y Caja:** Monitorea mesas y consulta el turno actual en solo lectura (*"La apertura y el cierre de caja los realiza el Cajero"*), junto con el registro de ventas e historial de cierres.
 3. **Reportes:** Consulta métricas de rendimiento por período (*Hoy*, *7 Días*, *Este Mes*) y platos más vendidos.
+4. **Más (`MasPage`):** Concentra los módulos administrativos adicionales en filas de 64 px (*Menú del día* con el `StatusBadge` de hoy para definir menús completos, opciones y carta, y *Perfil y ajustes*), preparado para sumar *Productos* y *Usuarios*.
 
 ---
 

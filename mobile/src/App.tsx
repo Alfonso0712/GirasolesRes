@@ -69,6 +69,7 @@ const LlevarPage = lazy(() => import('./pages/LlevarPage'));
 const ReportesPage = lazy(() => import('./pages/ReportesPage'));
 const InicioPage = lazy(() => import('./pages/InicioPage'));
 const PerfilPage = lazy(() => import('./pages/PerfilPage'));
+const MasPage = lazy(() => import('./pages/MasPage'));
 
 export const App: React.FC = () => {
   const [estadoArranque] = useState(() => restaurarSesionValidaAlArrancar());
@@ -78,6 +79,9 @@ export const App: React.FC = () => {
     return estadoArranque.session ? pestanaInicial(estadoArranque.session.rol) : 'salon';
   });
   const [cajaSubTabInicial, setCajaSubTabInicial] = useState<'turno' | 'ventas' | 'cierres'>('turno');
+  const [masSeccionInicial, setMasSeccionInicial] = useState<'lista' | 'menu-dia' | 'perfil'>('lista');
+  const [tieneCambiosMenuDia, setTieneCambiosMenuDia] = useState<boolean>(false);
+  const [solicitudSalirMenuDia, setSolicitudSalirMenuDia] = useState<(() => void) | null>(null);
   const [enPedidoModo, setEnPedidoModo] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
@@ -111,13 +115,37 @@ export const App: React.FC = () => {
   const esTabAutorizada = tabsDisponibles.some((t) => t.id === activeTab);
   const initialTabForRole = session ? pestanaInicial(session.rol) : 'salon';
 
-  // Al cambiar de pestaña, desplazar hacia arriba
-  const handleSelectTab = useCallback((tabId: string) => {
-    setActiveTab(tabId);
+  // Al cambiar de pestaña, desplazar hacia arriba y verificar si hay cambios sin guardar en el menú
+  const ejecutarCambioTab = useCallback((tabId: string) => {
+    if (tabId === 'menu-dia') {
+      if (session?.rol === 'Administrador') {
+        setMasSeccionInicial('menu-dia');
+        setActiveTab('mas');
+      } else {
+        setActiveTab('platos');
+      }
+    } else if (tabId === 'mas') {
+      setMasSeccionInicial('lista');
+      setActiveTab('mas');
+    } else {
+      setActiveTab(tabId);
+    }
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     const mainEl = document.getElementById('main-content');
     if (mainEl) mainEl.scrollTop = 0;
-  }, []);
+  }, [session?.rol]);
+
+  const handleSelectTab = useCallback((tabId: string) => {
+    if (tieneCambiosMenuDia && tabId !== activeTab) {
+      setSolicitudSalirMenuDia(() => () => {
+        setTieneCambiosMenuDia(false);
+        setSolicitudSalirMenuDia(null);
+        ejecutarCambioTab(tabId);
+      });
+      return;
+    }
+    ejecutarCambioTab(tabId);
+  }, [tieneCambiosMenuDia, activeTab, ejecutarCambioTab]);
 
   // Manejo del botón Atrás nativo de Android con prioridades
   useAndroidBackButton({
@@ -291,6 +319,24 @@ export const App: React.FC = () => {
                   <PlatosPage
                     rol={session.rol}
                     onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onCambiosSinGuardarChange={setTieneCambiosMenuDia}
+                    solicitudSalirPendiente={solicitudSalirMenuDia}
+                    onCancelarSolicitudSalir={() => setSolicitudSalirMenuDia(null)}
+                  />
+                )}
+
+                {activeTab === 'mas' && (
+                  <MasPage
+                    session={session}
+                    seccionInicial={masSeccionInicial}
+                    onSeccionChange={setMasSeccionInicial}
+                    isDark={isDark}
+                    onToggleDarkMode={toggleDarkMode}
+                    onLogout={handleLogout}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onCambiosSinGuardarChange={setTieneCambiosMenuDia}
+                    solicitudSalirPendiente={solicitudSalirMenuDia}
+                    onCancelarSolicitudSalir={() => setSolicitudSalirMenuDia(null)}
                   />
                 )}
 

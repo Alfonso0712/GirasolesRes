@@ -14,6 +14,7 @@ import { pluralizar } from '../../utils/format';
 
 export interface MenuDiaViewProps {
   platos: PlatoMenuDiaDto[];
+  definido?: boolean;
   cargando: boolean;
   error: string | null;
   onRefresh: () => void | Promise<void>;
@@ -23,6 +24,7 @@ export interface MenuDiaViewProps {
 
 export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
   platos,
+  definido = true,
   cargando,
   error,
   onRefresh,
@@ -134,6 +136,16 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
 
       {/* 4. Lista de Platos y Acciones de Disponibilidad */}
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
+        {!cargando && !error && definido === false && (
+          <div
+            role="status"
+            className="p-3.5 rounded-2xl bg-warning-bg border border-warning-border text-badge-warning-text text-xs font-semibold flex items-start gap-2.5"
+          >
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+            <span>El administrador aún no ha publicado el menú del día.</span>
+          </div>
+        )}
+
         {error && (
           <ErrorState
             mensaje={error}

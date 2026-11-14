@@ -10,6 +10,7 @@ import {
   ShoppingBag,
   BarChart3,
   User,
+  Menu,
 } from 'lucide-react';
 import type { RolUsuario } from '../types/auth';
 
@@ -23,6 +24,7 @@ const LlevarPage = lazy(() => import('../pages/LlevarPage'));
 const ReportesPage = lazy(() => import('../pages/ReportesPage'));
 const InicioPage = lazy(() => import('../pages/InicioPage'));
 const PerfilPage = lazy(() => import('../pages/PerfilPage'));
+const MasPage = lazy(() => import('../pages/MasPage'));
 
 export interface NavTabConfig {
   id: string;
@@ -54,7 +56,7 @@ export const PESTANAS_POR_ROL: Record<RolUsuario, NavTabConfig[]> = {
   ],
   Cocinero: [
     { id: 'cocina', etiqueta: 'Cocina', label: 'Cocina', icono: ChefHat, icon: ChefHat, vista: CocinaPage },
-    { id: 'platos', etiqueta: 'Platos', label: 'Platos', icono: CalendarCheck, icon: CalendarCheck, vista: PlatosPage },
+    { id: 'platos', etiqueta: 'Menú', label: 'Menú', icono: CalendarCheck, icon: CalendarCheck, vista: PlatosPage },
     { id: 'perfil', etiqueta: 'Perfil', label: 'Perfil', icono: User, icon: User, vista: PerfilPage },
   ],
   Administrador: [
@@ -62,7 +64,7 @@ export const PESTANAS_POR_ROL: Record<RolUsuario, NavTabConfig[]> = {
     { id: 'salon', etiqueta: 'Salón', label: 'Salón', icono: Utensils, icon: Utensils, vista: SalonPage },
     { id: 'caja', etiqueta: 'Caja', label: 'Caja', icono: Lock, icon: Lock, vista: CajaPage },
     { id: 'reportes', etiqueta: 'Reportes', label: 'Reportes', icono: BarChart3, icon: BarChart3, vista: ReportesPage },
-    { id: 'perfil', etiqueta: 'Perfil', label: 'Perfil', icono: User, icon: User, vista: PerfilPage },
+    { id: 'mas', etiqueta: 'Más', label: 'Más', icono: Menu, icon: Menu, vista: MasPage },
   ],
 };
 

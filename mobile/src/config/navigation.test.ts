@@ -32,9 +32,11 @@ describe('navigation - Catálogo canónico de pestañas', () => {
 
       const cocineroTabs = obtenerPestanasParaRol('Cocinero');
       expect(cocineroTabs.map((t) => t.id)).toEqual(['cocina', 'platos', 'perfil']);
+      expect(cocineroTabs.find((t) => t.id === 'platos')?.etiqueta).toBe('Menú');
 
       const adminTabs = obtenerPestanasParaRol('Administrador');
-      expect(adminTabs.map((t) => t.id)).toEqual(['inicio', 'salon', 'caja', 'reportes', 'perfil']);
+      expect(adminTabs.map((t) => t.id)).toEqual(['inicio', 'salon', 'caja', 'reportes', 'mas']);
+      expect(adminTabs.find((t) => t.id === 'mas')?.etiqueta).toBe('Más');
     });
 
     it('todas las pestañas deben tener etiquetas de máximo 9 caracteres según glosario web', () => {
