@@ -1,5 +1,10 @@
 import { apiClient } from './apiClient';
 import type { UserSession, LoginResponse } from '../types/auth';
+import {
+  guardarUltimaActividad,
+  limpiarAlmacenamientoSesion,
+  CLAVE_AVISO_SESION,
+} from '../config/sesion';
 
 export const authService = {
   login: async (usuario: string, contrasena: string): Promise<UserSession> => {
@@ -7,6 +12,12 @@ export const authService = {
     if (res.data?.token) {
       localStorage.setItem('GIRASOLES_TOKEN', res.data.token);
       localStorage.setItem('GIRASOLES_SESSION', JSON.stringify(res.data));
+      guardarUltimaActividad(Date.now());
+      try {
+        localStorage.removeItem(CLAVE_AVISO_SESION);
+      } catch {
+        // Ignorar
+      }
     }
     return res.data;
   },
@@ -17,8 +28,7 @@ export const authService = {
     } catch {
       // Ignorar error de cierre en backend si no hay red
     } finally {
-      localStorage.removeItem('GIRASOLES_TOKEN');
-      localStorage.removeItem('GIRASOLES_SESSION');
+      limpiarAlmacenamientoSesion();
     }
   },
 
@@ -45,5 +55,5 @@ export const authService = {
     } catch {
       return null;
     }
-  }
+  },
 };

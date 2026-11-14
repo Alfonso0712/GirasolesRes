@@ -13,13 +13,50 @@ import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
 import { useKitchenNotifications } from './hooks/useKitchenNotifications';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
-import { useSessionLifecycle } from './hooks/useSessionLifecycle';
+import { useSesionInactividad } from './hooks/useSesionInactividad';
 import { InactivitySheet } from './components/layout/InactivitySheet';
 import { useComandas } from './hooks/useRecurso';
+import {
+  evaluarVigenciaSesion,
+  limpiarAlmacenamientoSesion,
+  guardarAvisoSesion,
+  guardarUltimaActividad,
+  leerUltimaActividad,
+} from './config/sesion';
 import {
   pestanaInicial,
   obtenerPestanasParaRol,
 } from './config/navigation';
+
+/**
+ * Restaura la sesión almacenada al iniciar la aplicación únicamente si sigue vigente
+ * (token no vencido por `exp` y tiempo de inactividad dentro del límite de 10 minutos).
+ * Si expiró, limpia el almacenamiento y envía el cierre al servidor sin bloquear ni mostrar la app.
+ */
+function restaurarSesionValidaAlArrancar(): {
+  session: UserSession | null;
+  aviso: string | null;
+} {
+  const guardada = authService.getStoredSession();
+  if (!guardada) {
+    return { session: null, aviso: null };
+  }
+
+  const evaluacion = evaluarVigenciaSesion(guardada);
+  if (!evaluacion.valida) {
+    const aviso = evaluacion.mensaje || 'Su sesión expiró. Ingrese nuevamente.';
+    limpiarAlmacenamientoSesion();
+    guardarAvisoSesion(aviso);
+    void authService.logout();
+    return { session: null, aviso };
+  }
+
+  if (leerUltimaActividad() === null) {
+    guardarUltimaActividad(Date.now());
+  }
+
+  return { session: guardada, aviso: null };
+}
 
 // Carga diferida (lazy loading) para páginas orquestadoras por rol
 const SalonPage = lazy(() => import('./pages/SalonPage'));
@@ -34,10 +71,11 @@ const InicioPage = lazy(() => import('./pages/InicioPage'));
 const PerfilPage = lazy(() => import('./pages/PerfilPage'));
 
 export const App: React.FC = () => {
-  const [session, setSession] = useState<UserSession | null>(() => authService.getStoredSession());
+  const [estadoArranque] = useState(() => restaurarSesionValidaAlArrancar());
+  const [session, setSession] = useState<UserSession | null>(estadoArranque.session);
+  const [avisoSesion, setAvisoSesion] = useState<string | null>(estadoArranque.aviso);
   const [activeTab, setActiveTab] = useState<string>(() => {
-    const s = authService.getStoredSession();
-    return s ? pestanaInicial(s.rol) : 'salon';
+    return estadoArranque.session ? pestanaInicial(estadoArranque.session.rol) : 'salon';
   });
   const [enPedidoModo, setEnPedidoModo] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -139,33 +177,28 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleLogout = useCallback(async (motivo?: string) => {
-    try {
-      await Promise.race([
-        authService.logout(),
-        new Promise((resolve) => setTimeout(resolve, 2500)),
-      ]);
-    } catch {
-      // Garantizar cierre local incluso sin conexión
-    } finally {
-      localStorage.removeItem('GIRASOLES_TOKEN');
-      localStorage.removeItem('GIRASOLES_SESSION');
-      setSession(null);
-      setEnPedidoModo(false);
-      if (motivo) {
-        mostrar({ tipo: 'aviso', mensaje: motivo });
-      }
+  const handleLogout = useCallback((motivo?: string) => {
+    limpiarAlmacenamientoSesion();
+    if (motivo) {
+      guardarAvisoSesion(motivo);
+      setAvisoSesion(motivo);
+      mostrar({ tipo: 'aviso', mensaje: motivo });
+    } else {
+      setAvisoSesion(null);
     }
+    setSession(null);
+    setEnPedidoModo(false);
+    void authService.logout();
   }, [mostrar]);
 
-  // Gestión de ciclo de vida de sesión e inactividad (RN-20 / RV-32)
+  // Gestión de ciclo de vida de sesión e inactividad (10 min por rol / aviso a los 9 min)
   const {
     avisoInactividadVisible,
     segundosRestantes,
     renovando: renovandoSesion,
     continuarSesion,
     cerrarSesionInactividad,
-  } = useSessionLifecycle({
+  } = useSesionInactividad({
     session,
     activeTab,
     onLogout: handleLogout,
@@ -176,7 +209,10 @@ export const App: React.FC = () => {
     return (
       <div className="h-dvh w-full bg-canvas text-ink flex flex-col overflow-hidden">
         <LoginView
+          avisoSesion={avisoSesion}
           onLoginSuccess={(s) => {
+            setAvisoSesion(null);
+            guardarUltimaActividad(Date.now());
             setSession(s);
             handleSelectTab(pestanaInicial(s.rol));
           }}

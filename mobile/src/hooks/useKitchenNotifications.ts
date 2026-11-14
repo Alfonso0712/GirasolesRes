@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { ApiError } from '../services/apiClient';
+import { esSesionAlmacenadaValida } from '../config/sesion';
 import { avisoService } from '../services/avisoService';
 import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
 import { useHaptics } from './useHaptics';
@@ -45,7 +47,7 @@ export function useKitchenNotifications({
   const puedeConsultar = enabled && (rol === 'Mozo' || rol === 'Cajero' || rol === 'Administrador');
 
   const consultarAvisos = useCallback(async () => {
-    if (!puedeConsultar || !estaVisibleRef.current) return;
+    if (!puedeConsultar || !estaVisibleRef.current || !esSesionAlmacenadaValida()) return;
     try {
       const lista = await avisoService.obtenerAvisosPendientes();
       if (Array.isArray(lista)) {
@@ -67,7 +69,17 @@ export function useKitchenNotifications({
           avisosPreviosRef.current = new Set(lista.map((a) => a.id));
         }
       }
-    } catch {
+    } catch (err: unknown) {
+      const status = err instanceof ApiError ? err.status : (err as { status?: number })?.status;
+      if (status === 401) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('girasoles:unauthorized'));
+        }
+      }
       // Ignorar fallas temporales de red en sondeo
     }
   }, [puedeConsultar]);
@@ -83,7 +95,7 @@ export function useKitchenNotifications({
   }, []);
 
   useEffect(() => {
-    if (!puedeConsultar) {
+    if (!puedeConsultar || !esSesionAlmacenadaValida()) {
       setAvisos([]);
       return;
     }
@@ -93,7 +105,7 @@ export function useKitchenNotifications({
     const iniciarTimer = () => {
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
-        if (estaVisibleRef.current) {
+        if (estaVisibleRef.current && esSesionAlmacenadaValida()) {
           consultarAvisos();
         }
       }, 5000);
@@ -108,10 +120,16 @@ export function useKitchenNotifications({
 
     iniciarTimer();
 
+    const handleUnauthorized = () => {
+      detenerTimer();
+      setAvisos([]);
+    };
+    window.addEventListener('girasoles:unauthorized', handleUnauthorized);
+
     const handleVisibilityChange = () => {
       const visible = document.visibilityState === 'visible';
       estaVisibleRef.current = visible;
-      if (visible) {
+      if (visible && esSesionAlmacenadaValida()) {
         consultarAvisos();
         iniciarTimer();
       } else {
@@ -125,7 +143,7 @@ export function useKitchenNotifications({
     if (Capacitor.isNativePlatform()) {
       CapacitorApp.addListener('appStateChange', ({ isActive }) => {
         estaVisibleRef.current = isActive;
-        if (isActive) {
+        if (isActive && esSesionAlmacenadaValida()) {
           consultarAvisos();
           iniciarTimer();
         } else {
@@ -138,6 +156,7 @@ export function useKitchenNotifications({
 
     return () => {
       detenerTimer();
+      window.removeEventListener('girasoles:unauthorized', handleUnauthorized);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (removeAppListener) removeAppListener();
     };

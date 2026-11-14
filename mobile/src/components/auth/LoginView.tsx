@@ -14,6 +14,7 @@ import {
   formatearMarcaCompilacion,
   extraerHost,
 } from '../../config/serverConfig';
+import { consumirAvisoSesion } from '../../config/sesion';
 import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const DemoQuickAccess = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
@@ -26,13 +27,15 @@ const ServidorConfigSheet = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MO
 
 interface LoginViewProps {
   onLoginSuccess: (session: UserSession) => void;
+  avisoSesion?: string | null;
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, avisoSesion: propAvisoSesion }) => {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [avisoSesion, setAvisoSesion] = useState<string | null>(() => propAvisoSesion || consumirAvisoSesion());
   const [loginError, setLoginError] = useState<{
     mensaje: string;
     detalle?: string;
@@ -74,8 +77,18 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     };
   }, [mostrarToast]);
 
+  useEffect(() => {
+    if (propAvisoSesion) {
+      setAvisoSesion(propAvisoSesion);
+    } else {
+      const pendiente = consumirAvisoSesion();
+      if (pendiente) setAvisoSesion(pendiente);
+    }
+  }, [propAvisoSesion]);
+
   const handleLogin = async (user: string, pass: string) => {
     setLoginError(null);
+    setAvisoSesion(null);
     setIsLoading(true);
     try {
       const session = await authService.login(user, pass);
@@ -140,6 +153,17 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
         {/* 2. Formulario de Acceso */}
         <div className="bg-surface border border-line rounded-3xl p-5 shadow-xs space-y-4">
+          {avisoSesion && !loginError && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="p-3.5 rounded-2xl bg-notice-bg border border-notice-border text-notice-text text-xs flex items-start gap-2 font-semibold"
+            >
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-warning" aria-hidden="true" />
+              <span>{avisoSesion}</span>
+            </div>
+          )}
+
           {loginError && (
             <div className="p-3.5 rounded-2xl bg-danger-bg border border-danger-border text-danger text-xs space-y-2">
               <div className="flex items-start gap-2">

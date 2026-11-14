@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { ApiError } from '../services/apiClient';
+import { esSesionAlmacenadaValida } from '../config/sesion';
 import { mesaService } from '../services/mesaService';
 import { cajaService } from '../services/cajaService';
 import { cobroService } from '../services/cobroService';
@@ -64,6 +66,13 @@ export function useRecurso<T>(
   const ejecutarCarga = useCallback(
     async (silencioso = false) => {
       if (!enabled) return;
+      if (!esSesionAlmacenadaValida()) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        return;
+      }
       if (enVueloRef.current) return;
       enVueloRef.current = true;
 
@@ -78,6 +87,17 @@ export function useRecurso<T>(
         setError(null);
         setActualizadoEn(new Date());
       } catch (err: unknown) {
+        const status = err instanceof ApiError ? err.status : (err as { status?: number })?.status;
+        if (status === 401) {
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('girasoles:unauthorized'));
+          }
+          return;
+        }
         const msg = err instanceof Error ? err.message : 'Error al obtener los datos.';
         setError(msg);
       } finally {
@@ -93,20 +113,9 @@ export function useRecurso<T>(
   }, [ejecutarCarga]);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !esSesionAlmacenadaValida()) return;
 
     ejecutarCarga(false);
-
-    if (!intervaloMs || intervaloMs <= 0) return;
-
-    const iniciarTimer = () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        if (estaVisibleRef.current) {
-          ejecutarCarga(true);
-        }
-      }, intervaloMs);
-    };
 
     const detenerTimer = () => {
       if (timerRef.current) {
@@ -115,13 +124,34 @@ export function useRecurso<T>(
       }
     };
 
+    const handleUnauthorized = () => {
+      detenerTimer();
+    };
+    window.addEventListener('girasoles:unauthorized', handleUnauthorized);
+
+    if (!intervaloMs || intervaloMs <= 0) {
+      return () => {
+        detenerTimer();
+        window.removeEventListener('girasoles:unauthorized', handleUnauthorized);
+      };
+    }
+
+    const iniciarTimer = () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        if (estaVisibleRef.current && esSesionAlmacenadaValida()) {
+          ejecutarCarga(true);
+        }
+      }, intervaloMs);
+    };
+
     iniciarTimer();
 
     const handleVisibilityChange = () => {
       const visible = document.visibilityState === 'visible';
       estaVisibleRef.current = visible;
       if (pausarEnSegundoPlano) {
-        if (visible) {
+        if (visible && esSesionAlmacenadaValida()) {
           ejecutarCarga(true);
           iniciarTimer();
         } else {
@@ -133,7 +163,7 @@ export function useRecurso<T>(
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     const handleReload = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === 'visible' && esSesionAlmacenadaValida()) {
         ejecutarCarga(true);
       }
     };
@@ -145,7 +175,7 @@ export function useRecurso<T>(
       CapacitorApp.addListener('appStateChange', ({ isActive }) => {
         estaVisibleRef.current = isActive;
         if (pausarEnSegundoPlano) {
-          if (isActive) {
+          if (isActive && esSesionAlmacenadaValida()) {
             ejecutarCarga(true);
             iniciarTimer();
           } else {
@@ -159,6 +189,7 @@ export function useRecurso<T>(
 
     return () => {
       detenerTimer();
+      window.removeEventListener('girasoles:unauthorized', handleUnauthorized);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('girasoles:reload-active-view', handleReload);
       window.removeEventListener('online', handleReload);

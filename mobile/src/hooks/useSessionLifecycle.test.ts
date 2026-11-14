@@ -23,10 +23,12 @@ describe('useSessionLifecycle', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    localStorage.clear();
   });
 
   it('inicia con aviso oculto y cuenta regresiva completa', () => {
@@ -90,7 +92,7 @@ describe('useSessionLifecycle', () => {
     expect(result.current.avisoInactividadVisible).toBe(false);
   });
 
-  it('exime de inactividad a la pantalla Cocina cuando el rol es Cocinero', () => {
+  it('aplica el límite de inactividad también al rol Cocinero según INACTIVIDAD_POR_ROL', () => {
     const cocineroSession: UserSession = {
       ...mockSession,
       rol: 'Cocinero',
@@ -107,11 +109,10 @@ describe('useSessionLifecycle', () => {
     );
 
     act(() => {
-      vi.advanceTimersByTime(15000); // Mucho más que el umbral
+      vi.advanceTimersByTime(5500);
     });
 
-    expect(result.current.avisoInactividadVisible).toBe(false);
-    expect(onLogout).not.toHaveBeenCalled();
+    expect(result.current.avisoInactividadVisible).toBe(true);
   });
 
   it('continuarSesion llama a renovarToken y oculta el aviso', async () => {
