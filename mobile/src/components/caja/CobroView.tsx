@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Receipt,
   Banknote,
@@ -24,10 +24,15 @@ import { PageHeader } from '../layout/PageHeader';
 import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
+import {
+  CobroExitoSheet,
+  type DatosCobroExitoso,
+} from '../cobros/CobroExitoSheet';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { formatLimaFechaHora } from '../../utils/fechas';
 
 export interface CobroViewProps {
   pedidos: PedidoPendienteCobro[];
@@ -64,6 +69,8 @@ export const CobroView: React.FC<CobroViewProps> = ({
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [procesando, setProcesando] = useState(false);
   const [errorCobro, setErrorCobro] = useState<string | null>(null);
+  const [cobroExitoso, setCobroExitoso] = useState<DatosCobroExitoso | null>(null);
+  const listaCobrosRef = useRef<HTMLDivElement | null>(null);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
   const { mostrar } = useToast();
@@ -248,21 +255,35 @@ export const CobroView: React.FC<CobroViewProps> = ({
         direccionReceptor: tipoComprobante === 'Factura' && direccionReceptor.trim() ? direccionReceptor.trim() : null,
       });
 
-      triggerSuccess();
-      const numComprobante = res.comprobante?.numeroFormateado || (res.comprobante?.serie ? `${res.comprobante.serie}-${res.comprobante.numero}` : '');
-      const msg = res.mensaje || `Cobro de ${formatCurrency(total)} registrado exitosamente.${numComprobante ? ` Comprobante ${numComprobante} emitido.` : ''}`;
-      mostrar({
-        tipo: 'exito',
-        mensaje: msg,
+      const numComprobante =
+        res.comprobante?.numeroFormateado ||
+        (res.comprobante?.serie
+          ? `${res.comprobante.serie}-${String(res.comprobante.numero ?? 1).padStart(6, '0')}`
+          : 'T001-000001');
+      const destino =
+        pedidoSeleccionado.mesa ||
+        pedidoSeleccionado.mesaNombre ||
+        'Para llevar';
+      const fechaEmitida = formatLimaFechaHora(
+        res.comprobante?.fechaHoraLocal ||
+          res.comprobante?.fechaHoraUtc ||
+          new Date().toISOString()
+      );
+
+      setCobroExitoso({
+        ventaId: res.ventaId,
+        numeroComprobante: numComprobante,
+        tipoComprobante,
+        destino,
+        metodoPago,
+        total,
+        montoRecibido: metodoPago === 'Efectivo' ? numRecibido : total,
+        vuelto: typeof res.vuelto === 'number' ? res.vuelto : vuelto,
+        fechaHora: fechaEmitida,
       });
       setMostrarConfirmacion(false);
       setPedidoSeleccionado(null);
       resetFormulario();
-      if (onCobroExitoso) {
-        onCobroExitoso();
-      } else {
-        await onRefresh();
-      }
     } catch (err: unknown) {
       triggerError();
       const msg = err instanceof Error ? err.message : 'No se pudo procesar el cobro.';
@@ -642,7 +663,12 @@ export const CobroView: React.FC<CobroViewProps> = ({
       )}
 
       {/* 2. Lista de Cuentas Pendientes */}
-          <div className="flex-1 overflow-y-auto p-4 pb-24 md:pb-6 space-y-3">
+          <div
+            ref={listaCobrosRef}
+            tabIndex={-1}
+            aria-label="Lista de cobros pendientes"
+            className="flex-1 overflow-y-auto p-4 pb-24 md:pb-6 space-y-3 outline-hidden"
+          >
         {cargando && pedidos.length === 0 && (
           <SkeletonList count={4} />
         )}
@@ -764,6 +790,23 @@ export const CobroView: React.FC<CobroViewProps> = ({
         etiquetaCancelar="Volver"
         onConfirmar={handleEjecutarCobro}
         cargando={procesando}
+      />
+
+      {/* 5. Hoja de Éxito del Cobro con Acciones de Comprobante */}
+      <CobroExitoSheet
+        isOpen={Boolean(cobroExitoso)}
+        datos={cobroExitoso}
+        onListo={() => {
+          setCobroExitoso(null);
+          if (onCobroExitoso) {
+            onCobroExitoso();
+          } else {
+            void onRefresh();
+          }
+          setTimeout(() => {
+            listaCobrosRef.current?.focus();
+          }, 50);
+        }}
       />
     </div>
   );

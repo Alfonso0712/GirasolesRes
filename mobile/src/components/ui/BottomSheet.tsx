@@ -9,6 +9,7 @@ export interface BottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  closeOnBackdrop?: boolean;
   children: React.ReactNode;
 }
 
@@ -16,6 +17,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   isOpen,
   onClose,
   title,
+  closeOnBackdrop = true,
   children,
 }) => {
   const { triggerLight } = useHaptics();
@@ -56,7 +58,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={handleClose}
+        onClick={closeOnBackdrop ? handleClose : undefined}
         aria-hidden="true"
       />
 
