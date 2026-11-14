@@ -23,10 +23,13 @@ import { useBackHandler } from '../../hooks/useBackHandler';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoMesaViewProps {
   mesa: MesaItem;
   rol?: RolUsuario;
+  menuDiaInicial?: MenuDiaResponseDto | null;
+  onIrADefinirMenu?: () => void;
   onVolver: () => void;
   onPedidoExitoso: (mensaje: string) => void;
 }
@@ -51,11 +54,15 @@ function esProductoDeCarta(prod: ProductoMenuPedidoDto): boolean {
 export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   mesa,
   rol = 'Mozo',
+  menuDiaInicial = null,
+  onIrADefinirMenu,
   onVolver,
   onPedidoExitoso,
 }) => {
   const [catalogo, setCatalogo] = useState<ProductoMenuPedidoDto[]>([]);
-  const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(null);
+  const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(
+    () => menuDiaInicial ?? menuDiaService.obtenerMenuHoyCacheado()
+  );
   const [cargando, setCargando] = useState<boolean>(false);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
@@ -163,7 +170,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   // Regla RV-154: Prohibición de exposición de importes monetarios al Mozo
   const esMozo = rol === 'Mozo';
 
-  const cargarDatos = useCallback(async () => {
+  const cargarDatos = useCallback(async (usarCache = true) => {
     setCargando(true);
     setErrorCarga(null);
     try {
@@ -173,7 +180,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         Promise<PedidoAbiertoMesaDto[]>
       ] = [
         pedidoService.obtenerCatalogoPedido(),
-        menuDiaService.obtenerMenuHoy().catch(() => null),
+        menuDiaService.obtenerMenuHoy({ usarCache }).catch(() => null),
         mesa.ocupacion === 'Ocupada'
           ? pedidoService.obtenerPedidosActivosPorMesa(mesa.id).catch(() => [])
           : Promise.resolve([]),
@@ -197,7 +204,14 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   }, [mesa.id, mesa.ocupacion]);
 
   useEffect(() => {
-    void cargarDatos();
+    void cargarDatos(true);
+    const handleMenuActualizado = () => {
+      void cargarDatos(false);
+    };
+    window.addEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
+    return () => {
+      window.removeEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
+    };
   }, [cargarDatos]);
 
   // Categorías reales dinámicas excluyendo componentes de menú (RN-140)
@@ -550,9 +564,25 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         }
         onVolver={solicitarVolver}
         actions={<StatusBadge estado={esAmpliacion ? 'Ocupada' : mesa.ocupacion} />}
-        onRefresh={cargarDatos}
+        onRefresh={() => void cargarDatos(false)}
         isRefreshing={cargando}
       />
+
+      {!cargando && menuDia !== null && !menuDia.definido && (
+        <div className="px-4 pt-3 shrink-0">
+          <BannerMenuNoDefinido
+            rol={rol}
+            onDefinirMenu={
+              onIrADefinirMenu
+                ? () => {
+                    onVolver();
+                    onIrADefinirMenu();
+                  }
+                : undefined
+            }
+          />
+        </div>
+      )}
 
       {/* Banner de Borrador Encontrado (P-G) */}
       {hayBorradorGuardado && borradorRecuperado && (

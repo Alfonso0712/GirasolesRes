@@ -20,6 +20,7 @@ import { useBackHandler } from '../../hooks/useBackHandler';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoLlevarViewProps {
   onPedidoCreado: (mensaje: string) => void;
@@ -45,7 +46,9 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   onIrACobros,
 }) => {
   const [catalogo, setCatalogo] = useState<ProductoMenuPedidoDto[]>([]);
-  const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(null);
+  const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(() =>
+    menuDiaService.obtenerMenuHoyCacheado()
+  );
   const [cargando, setCargando] = useState<boolean>(false);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
@@ -102,13 +105,13 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
     return false;
   });
 
-  const cargarDatos = useCallback(async () => {
+  const cargarDatos = useCallback(async (usarCache = true) => {
     setCargando(true);
     setErrorCarga(null);
     try {
       const [prods, menu] = await Promise.all([
         pedidoService.obtenerCatalogoPedido(),
-        menuDiaService.obtenerMenuHoy().catch(() => null),
+        menuDiaService.obtenerMenuHoy({ usarCache }).catch(() => null),
       ]);
       setCatalogo(prods || []);
       setMenuDia(menu);
@@ -122,7 +125,14 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   }, []);
 
   useEffect(() => {
-    void cargarDatos();
+    void cargarDatos(true);
+    const handleMenuActualizado = () => {
+      void cargarDatos(false);
+    };
+    window.addEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
+    return () => {
+      window.removeEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
+    };
   }, [cargarDatos]);
 
   // Categorías reales dinámicas excluyendo componentes de menú (RN-140)
@@ -449,9 +459,15 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         title="Pedido para Llevar"
         subtitle="Toma rápida de órdenes de mostrador"
         icon={<ShoppingBag className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={cargarDatos}
+        onRefresh={() => void cargarDatos(false)}
         isRefreshing={cargando}
       />
+
+      {!cargando && menuDia !== null && !menuDia.definido && (
+        <div className="px-4 pt-3 shrink-0">
+          <BannerMenuNoDefinido rol="Cajero" />
+        </div>
+      )}
 
       {/* Contenedor principal con división en dos paneles para tableta (md:) */}
       <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">

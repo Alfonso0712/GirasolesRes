@@ -12,10 +12,12 @@ import {
   Receipt,
   ChevronRight,
   ShieldAlert,
+  CalendarCheck,
 } from 'lucide-react';
 import type { InicioDashboardData, AlertaInicio } from '../../types/inicio';
 import { PageHeader } from '../layout/PageHeader';
 import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
 import { StatCard } from '../ui/StatCard';
 import { StatusBadge } from '../ui/StatusBadge';
 import { SkeletonList } from '../ui/Skeleton';
@@ -56,6 +58,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
   const ventasHoy = bloques.ventasHoy?.estado === 'ok' ? bloques.ventasHoy.datos : null;
   const mesas = bloques.mesas?.estado === 'ok' ? bloques.mesas.datos : null;
   const caja = bloques.caja?.estado === 'ok' ? bloques.caja.datos : null;
+  const menu = bloques.menu?.estado === 'ok' ? bloques.menu.datos : null;
   const alertas: AlertaInicio[] = bloques.alertas?.estado === 'ok' ? (bloques.alertas.datos || []) : [];
 
   const ticketPromedio = useMemo(() => {
@@ -80,6 +83,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
   };
 
   const resolverDestinoAlerta = (enlace: string) => {
+    if (enlace.includes('menu')) return 'menu-dia';
     if (enlace.includes('caja')) return 'caja';
     if (enlace.includes('salon') || enlace.includes('mesas')) return 'salon';
     if (enlace.includes('reportes')) return 'reportes';
@@ -291,6 +295,43 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
               </div>
             </Card>
           </div>
+
+          {/* Tarjeta Menú de hoy */}
+          <Card
+            accent={menu?.definido ? 'success' : 'warning'}
+            padding="md"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
+                <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+                  Menú de hoy
+                </span>
+                <StatusBadge
+                  estado={menu?.definido ? 'Menú definido' : 'Menú no definido hoy'}
+                />
+              </div>
+              <p className="text-xs text-ink-muted mt-1.5 break-words">
+                {menu?.definido
+                  ? `${menu.platos} platos disponibles · ${menu.agotados} agotados`
+                  : 'El menú no ha sido publicado aún para el servicio de hoy.'}
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              icon={<CalendarCheck className="w-4 h-4" aria-hidden="true" />}
+              onClick={() => {
+                triggerLight();
+                onNavigate('menu-dia');
+              }}
+              className="min-h-11 px-3.5 text-xs font-bold shrink-0 self-end sm:self-center"
+            >
+              Definir menú
+            </Button>
+          </Card>
         </div>
       </div>
     </div>

@@ -293,6 +293,7 @@ export const App: React.FC = () => {
                     rol={session.rol}
                     onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
                     onNavigateToCobro={session.rol === 'Cajero' ? () => handleSelectTab('cobros') : undefined}
+                    onIrADefinirMenu={session.rol === 'Administrador' ? () => handleSelectTab('menu-dia') : undefined}
                     onShowToast={showToast}
                     onPedidoModoChange={setEnPedidoModo}
                   />

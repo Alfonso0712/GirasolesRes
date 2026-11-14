@@ -20,6 +20,7 @@ import { formatCurrency, pluralizar } from '../../utils/format';
 import { naturalCompare } from '../../utils/canonico';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { MesaFormSheet } from './MesaFormSheet';
+import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 export interface MesasViewProps {
   mesas: MesaItem[];
@@ -29,6 +30,8 @@ export interface MesasViewProps {
   onRefresh: () => void | Promise<void>;
   onAbrirPedidoMesa: (mesa: MesaItem) => void;
   onNavigateToCobro?: (mesaId: string) => void;
+  onIrADefinirMenu?: () => void;
+  menuDefinido?: boolean;
   rol?: RolUsuario;
   modoGestion?: boolean;
   onToggleModoGestion?: (modo: boolean) => void;
@@ -47,6 +50,8 @@ export const MesasView: React.FC<MesasViewProps> = ({
   onRefresh,
   onAbrirPedidoMesa,
   onNavigateToCobro,
+  onIrADefinirMenu,
+  menuDefinido,
   rol,
   modoGestion = false,
   onToggleModoGestion,
@@ -263,6 +268,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
       {/* 4. Contenido Principal: Lista en Modo Gestión o Cuadrícula en Salón */}
       <div className="flex-1 overflow-y-auto p-4 pb-24">
+        {!modoGestion && menuDefinido === false && (
+          <BannerMenuNoDefinido
+            rol={rol}
+            onDefinirMenu={onIrADefinirMenu}
+            className="mb-3"
+          />
+        )}
+
         {error && (
           <ErrorState
             mensaje={error}
