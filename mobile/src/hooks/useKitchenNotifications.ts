@@ -25,6 +25,11 @@ export function useKitchenNotifications({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { triggerSuccess } = useHaptics();
+  const triggerSuccessRef = useRef(triggerSuccess);
+  triggerSuccessRef.current = triggerSuccess;
+
+  const onNuevoAvisoRef = useRef(onNuevoAviso);
+  onNuevoAvisoRef.current = onNuevoAviso;
 
   // Desbloqueo preventivo de AudioContext en cualquier interacción
   useEffect(() => {
@@ -53,10 +58,10 @@ export function useKitchenNotifications({
           // Detectar avisos que no estaban en el sondeo previo
           const nuevos = lista.filter((a) => !avisosPreviosRef.current.has(a.id));
           if (nuevos.length > 0) {
-            triggerSuccess();
+            triggerSuccessRef.current();
             reproducirSonidoKds('lista');
             nuevos.forEach((a) => {
-              onNuevoAviso?.(a);
+              onNuevoAvisoRef.current?.(a);
             });
           }
           avisosPreviosRef.current = new Set(lista.map((a) => a.id));
@@ -65,7 +70,7 @@ export function useKitchenNotifications({
     } catch {
       // Ignorar fallas temporales de red en sondeo
     }
-  }, [puedeConsultar, triggerSuccess, onNuevoAviso]);
+  }, [puedeConsultar]);
 
   const marcarVisto = useCallback(async (id: string) => {
     try {
