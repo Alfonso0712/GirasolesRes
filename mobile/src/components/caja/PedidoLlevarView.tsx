@@ -548,9 +548,9 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
               <Card
                 key={m.id}
                 accent="info"
-                className="p-3.5 flex items-center justify-between shadow-xs select-none"
+                className="handed-card p-3.5 flex items-center justify-between gap-3 shadow-xs select-none"
               >
-                <div className="flex-1 pr-3">
+                <div className="handed-card-info flex-1 min-w-0 pr-3">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <h3 className="text-sm font-extrabold text-ink leading-snug">{m.nombre}</h3>
                     <span className="text-xs font-bold bg-chip-accent-bg text-accent border border-chip-accent-border px-1.5 py-0.5 rounded">
@@ -590,11 +590,11 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
           return (
             <Card
               key={prod.id}
-              className={`p-3.5 flex items-center justify-between shadow-xs select-none ${
+              className={`handed-card p-3.5 flex items-center justify-between gap-3 shadow-xs select-none ${
                 estaAgotado ? 'opacity-60 bg-surface/50' : ''
               }`}
             >
-              <div className="flex-1 pr-3">
+              <div className="handed-card-info flex-1 min-w-0 pr-3">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <h3 className="text-sm font-bold text-ink">{prod.nombre}</h3>
                   {estaAgotado && (
@@ -618,7 +618,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                   <Plus className="w-5 h-5" aria-hidden="true" />
                 </button>
               ) : linea ? (
-                <div className="flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
+                <div className="handed-stepper flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
                   <button
                     type="button"
                     onClick={() => modificarCantidad(linea.id, -1)}
@@ -695,7 +695,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
               triggerLight();
               setMostrarResumen(true);
             }}
-            className="w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px] cursor-pointer"
+            className="handed-bar w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px] cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-surface/20 flex items-center justify-center font-black text-xs">

@@ -253,6 +253,9 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
               Modo Zurdo
             </button>
           </div>
+          <p className="text-xs text-ink-muted pt-1">
+            Los botones principales aparecerán a la {isLeftHanded ? 'izquierda' : 'derecha'}.
+          </p>
         </div>
       </Card>
 

@@ -49,7 +49,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const textoActualizado = actualizadoEn ? calcularTiempoRelativo(actualizadoEn) : null;
 
   return (
-    <header className="bg-surface border-b border-line px-4 py-3 shrink-0 flex items-center justify-between gap-3">
+    <header className="handed-header bg-surface border-b border-line px-4 py-3 shrink-0 flex items-center justify-between gap-3">
       <div className="flex items-center gap-3 min-w-0">
         {onVolver && (
           <IconButton
