@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils, FileText } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
-import type { ProductoMenuPedidoDto, LineaBorrador } from '../../types/pedido';
+import type { ProductoMenuPedidoDto, LineaBorrador, PedidoAbiertoMesaDto } from '../../types/pedido';
 import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
 import type { RolUsuario } from '../../types/auth';
 import { pedidoService } from '../../services/pedidoService';
@@ -67,10 +67,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   const [mostrarConfirmEnviar, setMostrarConfirmEnviar] = useState<boolean>(false);
   const [lineaParaNota, setLineaParaNota] = useState<LineaBorrador | null>(null);
   const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDiaDto | null>(null);
+  const [pedidoActivo, setPedidoActivo] = useState<PedidoAbiertoMesaDto | null>(null);
   const [enviando, setEnviando] = useState<boolean>(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar: mostrarToast } = useToast();
+
+  const esAmpliacion = Boolean(pedidoActivo);
 
   // Debounce de 250 ms para la búsqueda local en catálogo
   useEffect(() => {
@@ -129,12 +132,26 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     setCargando(true);
     setErrorCarga(null);
     try {
-      const [prods, menu] = await Promise.all([
+      const promesas: [
+        Promise<ProductoMenuPedidoDto[]>,
+        Promise<MenuDiaResponseDto | null>,
+        Promise<PedidoAbiertoMesaDto[]>
+      ] = [
         pedidoService.obtenerCatalogoPedido(),
         menuDiaService.obtenerMenuHoy().catch(() => null),
-      ]);
+        mesa.ocupacion === 'Ocupada'
+          ? pedidoService.obtenerPedidosActivosPorMesa(mesa.id).catch(() => [])
+          : Promise.resolve([]),
+      ];
+
+      const [prods, menu, pedidosMesa] = await Promise.all(promesas);
       setCatalogo(prods || []);
       setMenuDia(menu);
+      if (pedidosMesa && pedidosMesa.length > 0) {
+        setPedidoActivo(pedidosMesa[0]);
+      } else {
+        setPedidoActivo(null);
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error al cargar los productos disponibles';
       setErrorCarga(msg);
@@ -142,7 +159,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     } finally {
       setCargando(false);
     }
-  }, []);
+  }, [mesa.id, mesa.ocupacion]);
 
   useEffect(() => {
     void cargarDatos();
@@ -283,20 +300,53 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         ? crypto.randomUUID()
         : `sol-mesa-${Date.now()}`;
 
+    const lineasPayload = lineas.map((l) => ({
+      productoId: l.productoId,
+      menuCompletoId: l.menuCompletoId,
+      elecciones: l.elecciones?.map((e) => ({
+        parte: e.parte,
+        productoId: e.productoId,
+      })),
+      cantidad: l.cantidad,
+      observacion: l.observacion || undefined,
+    }));
+
+    if (esAmpliacion && pedidoActivo) {
+      try {
+        const res = await pedidoService.agregarLineas(pedidoActivo.id, {
+          solicitudId,
+          lineas: lineasPayload,
+        });
+
+        triggerSuccess();
+        setMostrarConfirmEnviar(false);
+        setMostrarCarrito(false);
+        const msg = esMozo
+          ? `Se agregaron ${pluralizar(totalItems, 'plato', 'platos')} al pedido N.º ${res.numeroPedido} de ${mesa.nombre}. La comanda adicional se envió a cocina.`
+          : `Se agregaron platos al pedido N.º ${res.numeroPedido} de ${mesa.nombre} (Total: ${formatCurrency(res.total)}). La comanda adicional se envió a cocina.`;
+        onPedidoExitoso(msg);
+      } catch (err: unknown) {
+        triggerError();
+        const msg = err instanceof Error ? err.message : 'Error al agregar platos al pedido';
+        setErrorEnvio(msg);
+        setMostrarConfirmEnviar(false);
+        if (msg.includes('115') || msg.toLowerCase().includes('en preparación')) {
+          mostrarToast({
+            tipo: 'error',
+            mensaje: 'El pedido ya está en preparación y no puede modificarse. Avise a cocina.',
+          });
+        }
+      } finally {
+        setEnviando(false);
+      }
+      return;
+    }
+
     try {
       const res = await pedidoService.registrarPedidoMesa({
         solicitudId,
         mesaId: mesa.id,
-        lineas: lineas.map((l) => ({
-          productoId: l.productoId,
-          menuCompletoId: l.menuCompletoId,
-          elecciones: l.elecciones?.map((e) => ({
-            parte: e.parte,
-            productoId: e.productoId,
-          })),
-          cantidad: l.cantidad,
-          observacion: l.observacion || undefined,
-        })),
+        lineas: lineasPayload,
       });
 
       triggerSuccess();
@@ -328,9 +378,13 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       {/* 1. Encabezado con estado de mesa */}
       <PageHeader
         title={mesa.nombre}
-        subtitle="Toma de Pedido de Salón"
+        subtitle={
+          esAmpliacion && pedidoActivo
+            ? `Ampliar pedido N.º ${pedidoActivo.numero}`
+            : 'Toma de Pedido de Salón'
+        }
         onVolver={solicitarVolver}
-        actions={<StatusBadge estado={mesa.ocupacion} />}
+        actions={<StatusBadge estado={esAmpliacion ? 'Ocupada' : mesa.ocupacion} />}
         onRefresh={cargarDatos}
         isRefreshing={cargando}
       />
@@ -659,17 +713,23 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             className="flex items-center justify-center gap-2"
           >
             <Send className="w-5 h-5" />
-            <span>Enviar Pedido a Cocina</span>
+            <span>
+              {esAmpliacion ? 'Enviar Ampliación a Cocina' : 'Enviar Pedido a Cocina'}
+            </span>
           </Button>
         </div>
       </BottomSheet>
 
-      {/* Confirmación para Enviar Comanda a Cocina (P-C) */}
+      {/* Confirmación para Enviar Comanda a Cocina (P-C / P-D) */}
       <ConfirmSheet
         isOpen={mostrarConfirmEnviar}
-        titulo="Enviar comanda a cocina"
-        mensaje={`¿Desea enviar la comanda de la ${mesa.nombre} a cocina?`}
-        etiquetaConfirmar="Enviar a cocina"
+        titulo={esAmpliacion ? 'Enviar ampliación a cocina' : 'Enviar comanda a cocina'}
+        mensaje={
+          esAmpliacion && pedidoActivo
+            ? `¿Desea enviar la ampliación del pedido N.º ${pedidoActivo.numero} de la ${mesa.nombre} a cocina?`
+            : `¿Desea enviar la comanda de la ${mesa.nombre} a cocina?`
+        }
+        etiquetaConfirmar={esAmpliacion ? 'Enviar ampliación' : 'Enviar a cocina'}
         etiquetaCancelar="Seguir editando"
         tono="normal"
         onConfirmar={ejecutarEnvioComanda}
