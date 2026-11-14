@@ -77,6 +77,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>(() => {
     return estadoArranque.session ? pestanaInicial(estadoArranque.session.rol) : 'salon';
   });
+  const [cajaSubTabInicial, setCajaSubTabInicial] = useState<'turno' | 'ventas' | 'cierres'>('turno');
   const [enPedidoModo, setEnPedidoModo] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
@@ -177,7 +178,7 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleLogout = useCallback((motivo?: string) => {
+  const handleLogout = useCallback(async (motivo?: string) => {
     limpiarAlmacenamientoSesion();
     if (motivo) {
       guardarAvisoSesion(motivo);
@@ -188,7 +189,7 @@ export const App: React.FC = () => {
     }
     setSession(null);
     setEnPedidoModo(false);
-    void authService.logout();
+    await authService.logout();
   }, [mostrar]);
 
   // Gestión de ciclo de vida de sesión e inactividad (10 min por rol / aviso a los 9 min)
@@ -296,6 +297,7 @@ export const App: React.FC = () => {
                 {activeTab === 'caja' && (
                   <CajaPage
                     rol={session.rol}
+                    subTabInicial={cajaSubTabInicial}
                     onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
                     onNavigateToCobros={() => handleSelectTab('cobros')}
                   />
@@ -321,6 +323,10 @@ export const App: React.FC = () => {
                   <ReportesPage
                     rol={session.rol}
                     onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onNavigateToCierres={() => {
+                      setCajaSubTabInicial('cierres');
+                      handleSelectTab('caja');
+                    }}
                   />
                 )}
 

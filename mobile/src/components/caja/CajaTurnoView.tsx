@@ -50,6 +50,7 @@ export interface CajaTurnoViewProps {
   onRefresh: () => void | Promise<void>;
   onNavigateToCobros?: () => void;
   rol?: RolUsuario;
+  subTabInicial?: 'turno' | 'ventas' | 'cierres';
 }
 
 export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
@@ -59,13 +60,20 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   onRefresh,
   onNavigateToCobros,
   rol = 'Cajero',
+  subTabInicial = 'turno',
 }) => {
   const esAdmin = rol === 'Administrador';
   const puedeOperarCaja = puede(rol, 'caja.abrir') && puede(rol, 'caja.cerrar');
   const { sinConexion } = useNetworkStatus();
 
   // Control de pestaña principal: 'turno' | 'ventas' | 'cierres'
-  const [seccion, setSeccion] = useState<'turno' | 'ventas' | 'cierres'>('turno');
+  const [seccion, setSeccion] = useState<'turno' | 'ventas' | 'cierres'>(subTabInicial);
+
+  useEffect(() => {
+    if (subTabInicial) {
+      setSeccion(subTabInicial);
+    }
+  }, [subTabInicial]);
 
   // Filtros de ventas (Hoy, Ayer, 7 días) y búsqueda
   const [filtroVentas, setFiltroVentas] = useState<'hoy' | 'ayer' | '7dias'>('hoy');

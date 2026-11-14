@@ -7,12 +7,14 @@ import type { RolUsuario } from '../types/auth';
 
 export interface CajaPageProps {
   rol: RolUsuario;
+  subTabInicial?: 'turno' | 'ventas' | 'cierres';
   onVolverAlInicio: () => void;
   onNavigateToCobros?: () => void;
 }
 
 export const CajaPage: React.FC<CajaPageProps> = ({
   rol,
+  subTabInicial,
   onVolverAlInicio,
   onNavigateToCobros,
 }) => {
@@ -31,6 +33,7 @@ export const CajaPage: React.FC<CajaPageProps> = ({
       onRefresh={recargar}
       onNavigateToCobros={onNavigateToCobros}
       rol={rol}
+      subTabInicial={subTabInicial}
     />
   );
 };
