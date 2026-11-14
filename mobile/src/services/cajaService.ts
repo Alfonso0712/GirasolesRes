@@ -77,4 +77,8 @@ export const cajaService = {
   obtenerDetalleCierre: async (cajaId: string): Promise<CierreDetalleDto> => {
     return apiClient.get<CierreDetalleDto>(`/caja/cierres/${cajaId}`);
   },
+
+  descargarCierrePdf: async (cajaId: string): Promise<Blob> => {
+    return apiClient.descargarArchivo(`/caja/cierres/${cajaId}/pdf`);
+  },
 };

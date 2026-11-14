@@ -62,7 +62,7 @@ export function generarUltimos12Meses(
 
   const lista: OpcionMes[] = [];
   for (let i = 0; i < 12; i++) {
-    let totalMeses = anioBase * 12 + (mesBase - 1) - i;
+    const totalMeses = anioBase * 12 + (mesBase - 1) - i;
     const anio = Math.floor(totalMeses / 12);
     const mes0a11 = ((totalMeses % 12) + 12) % 12;
     const mes1a12 = mes0a11 + 1;
@@ -71,12 +71,17 @@ export function generarUltimos12Meses(
   return lista;
 }
 
+export type SeleccionMes = OpcionMes;
+
 export interface MesSheetProps {
   isOpen: boolean;
   onClose: () => void;
   mesSeleccionadoId?: string | null;
+  selectedId?: string | null;
   incluirTodos?: boolean;
-  onSeleccionar: (opcion: OpcionMes) => void;
+  titulo?: string;
+  onSeleccionar?: (opcion: OpcionMes) => void;
+  onSelect?: (opcion: OpcionMes) => void;
   hoyReferenciaYMD?: string;
 }
 
@@ -84,10 +89,18 @@ export const MesSheet: React.FC<MesSheetProps> = ({
   isOpen,
   onClose,
   mesSeleccionadoId,
+  selectedId,
   incluirTodos = false,
+  titulo = 'Seleccionar mes',
   onSeleccionar,
+  onSelect,
   hoyReferenciaYMD,
 }) => {
+  const idActual = mesSeleccionadoId ?? selectedId;
+  const emitirSeleccion = (opcion: OpcionMes) => {
+    onSeleccionar?.(opcion);
+    onSelect?.(opcion);
+  };
   const meses = useMemo(
     () => generarUltimos12Meses(hoyReferenciaYMD),
     [hoyReferenciaYMD]
@@ -101,17 +114,17 @@ export const MesSheet: React.FC<MesSheetProps> = ({
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Seleccionar mes">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title={titulo}>
       <div className="space-y-1.5 max-h-96 overflow-y-auto pr-1">
         {incluirTodos && (
           <button
             type="button"
             onClick={() => {
-              onSeleccionar(opcionTodos);
+              emitirSeleccion(opcionTodos);
               onClose();
             }}
             className={`w-full min-h-11 px-3.5 py-2.5 rounded-xl border text-left flex items-center justify-between gap-3 transition-colors cursor-pointer ${
-              mesSeleccionadoId === 'todos'
+              idActual === 'todos'
                 ? 'bg-primary text-white border-primary font-bold'
                 : 'bg-canvas text-ink border-line hover:bg-surface-warm font-semibold'
             }`}
@@ -120,20 +133,20 @@ export const MesSheet: React.FC<MesSheetProps> = ({
               <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>Todos los meses</span>
             </span>
-            {mesSeleccionadoId === 'todos' && (
+            {idActual === 'todos' && (
               <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
             )}
           </button>
         )}
 
         {meses.map((mes) => {
-          const activo = mesSeleccionadoId === mes.id;
+          const activo = idActual === mes.id;
           return (
             <button
               key={mes.id}
               type="button"
               onClick={() => {
-                onSeleccionar(mes);
+                emitirSeleccion(mes);
                 onClose();
               }}
               className={`w-full min-h-11 px-3.5 py-2.5 rounded-xl border text-left flex items-center justify-between gap-3 transition-colors cursor-pointer ${

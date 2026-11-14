@@ -34,6 +34,7 @@ import { ErrorState } from '../ui/ErrorState';
 import { SkeletonList } from '../ui/Skeleton';
 import { EmptyState } from '../ui/EmptyState';
 import { FilterChipBar } from '../ui/FilterChipBar';
+import { MesSheet, type SeleccionMes } from '../ui/MesSheet';
 import { VentaDetalleSheet } from './VentaDetalleSheet';
 import { CierreDetalleSheet } from './CierreDetalleSheet';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -92,6 +93,15 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
   // Historial de cierres (solo Administrador)
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
+  const [paginaCierres, setPaginaCierres] = useState(1);
+  const [totalCierres, setTotalCierres] = useState(0);
+  const [mesCierres, setMesCierres] = useState<SeleccionMes>({
+    id: 'todos',
+    etiqueta: 'Todos los meses',
+    desde: '',
+    hasta: '',
+  });
+  const [mesSheetCierresAbierto, setMesSheetCierresAbierto] = useState(false);
   const [cargandoCierres, setCargandoCierres] = useState(false);
   const [errorCierres, setErrorCierres] = useState<string | null>(null);
   const [sheetCierreAbierta, setSheetCierreAbierta] = useState(false);
@@ -216,35 +226,40 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     }
   };
 
-  // Carga de historial de cierres cuando se activa la sección de cierres (Admin)
-  useEffect(() => {
-    if (seccion !== 'cierres' || !esAdmin) return;
-
-    let cancelado = false;
+  // Carga paginada del historial de cierres con filtro por mes (Admin)
+  const cargarCierres = async (pagina: number, acumular: boolean, filtroMes: SeleccionMes = mesCierres) => {
+    if (!esAdmin) return;
     setCargandoCierres(true);
     setErrorCierres(null);
-
-    cajaService.obtenerHistorialCierres()
-      .then((res) => {
-        if (!cancelado) {
-          setCierres(res.items || []);
-        }
-      })
-      .catch((err: unknown) => {
-        if (!cancelado) {
-          const msg = err instanceof Error ? err.message : 'Error al consultar historial de cierres';
-          setErrorCierres(msg);
-          setCierres([]);
-        }
-      })
-      .finally(() => {
-        if (!cancelado) setCargandoCierres(false);
+    try {
+      const res = await cajaService.obtenerHistorialCierres({
+        desde: filtroMes.desde || undefined,
+        hasta: filtroMes.hasta || undefined,
+        pagina,
+        tamano: 20,
       });
+      const items = res.items || [];
+      setTotalCierres(typeof res.total === 'number' ? res.total : items.length);
+      setPaginaCierres(pagina);
+      if (acumular) {
+        setCierres((prev) => [...prev, ...items]);
+      } else {
+        setCierres(items);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al consultar historial de cierres';
+      setErrorCierres(msg);
+      if (!acumular) setCierres([]);
+    } finally {
+      setCargandoCierres(false);
+    }
+  };
 
-    return () => {
-      cancelado = true;
-    };
-  }, [seccion, esAdmin]);
+  useEffect(() => {
+    if (seccion !== 'cierres' || !esAdmin) return;
+    void cargarCierres(1, false, mesCierres);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seccion, esAdmin, mesCierres]);
 
   const handleVerDetalleCierre = async (cajaId: string) => {
     if (!cajaId) return;
@@ -778,17 +793,38 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         {/* SECCIÓN 3: CIERRES (HISTORIAL SOLO LECTURA PARA ADMINISTRADOR) */}
         {seccion === 'cierres' && esAdmin && (
           <div className="space-y-3">
+            {/* Filtro por Mes */}
+            <div className="bg-surface border border-line p-2 rounded-2xl shadow-xs">
+              <FilterChipBar
+                chips={[
+                  {
+                    id: 'mes',
+                    label: `Mes: ${mesCierres.etiqueta}`,
+                  },
+                ]}
+                activeId="mes"
+                onSelect={() => {
+                  triggerLight();
+                  setMesSheetCierresAbierto(true);
+                }}
+              />
+            </div>
+
             {errorCierres && (
-              <ErrorState mensaje={errorCierres} className="my-2" />
+              <ErrorState
+                mensaje={errorCierres}
+                onRetry={() => void cargarCierres(1, false, mesCierres)}
+                className="my-2"
+              />
             )}
 
-            {cargandoCierres && <SkeletonList count={4} />}
+            {cargandoCierres && cierres.length === 0 && <SkeletonList count={4} />}
 
             {!cargandoCierres && !errorCierres && cierres.length === 0 && (
               <EmptyState
                 icon={History}
                 titulo="Sin cierres registrados"
-                subtitulo="No se registran actas de cierre de caja en el sistema."
+                subtitulo="No se registran actas de cierre de caja para el período seleccionado."
               />
             )}
 
@@ -801,8 +837,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 onClick={() => handleVerDetalleCierre(c.cajaId)}
                 className="space-y-2 select-none"
               >
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-extrabold text-ink">{formatLimaFechaHora(c.fechaCierre || c.fechaApertura)}</span>
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-sm font-extrabold text-ink">
+                    {formatLimaFechaHora(c.fechaCierre || c.fechaApertura)}
+                  </span>
                   <StatusBadge estado={c.estadoCuadre || 'Cuadra'} />
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs text-ink-muted pt-1 border-t border-line">
@@ -823,6 +861,21 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 </div>
               </Card>
             ))}
+
+            {cierres.length < totalCierres && (
+              <Button
+                fullWidth
+                variant="outline"
+                disabled={cargandoCierres}
+                onClick={() => {
+                  triggerLight();
+                  void cargarCierres(paginaCierres + 1, true, mesCierres);
+                }}
+                className="min-h-[44px]"
+              >
+                {cargandoCierres ? 'Cargando...' : 'Cargar más'}
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -1036,6 +1089,18 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         onClose={() => setSheetCierreAbierta(false)}
         cierre={cierreDetalle}
         cargando={cargandoDetalleCierre}
+      />
+
+      {/* Selector de Mes para Historial de Cierres (Administrador) */}
+      <MesSheet
+        isOpen={mesSheetCierresAbierto}
+        onClose={() => setMesSheetCierresAbierto(false)}
+        selectedId={mesCierres.id}
+        incluirTodos={true}
+        titulo="Filtrar cierres por mes"
+        onSelect={(sel) => {
+          setMesCierres(sel);
+        }}
       />
     </div>
   );
