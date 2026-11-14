@@ -14,6 +14,7 @@ export interface BottomNavProps {
   currentTab: string;
   onSelectTab: (tabId: string) => void;
   badges?: Record<string, number>;
+  className?: string;
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
@@ -21,13 +22,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   currentTab,
   onSelectTab,
   badges = {},
+  className = '',
 }) => {
   const { triggerLight } = useHaptics();
 
   return (
     <nav
       aria-label="Navegación principal"
-      className="relative z-20 min-h-16 bg-surface border-t border-line px-2 flex items-center justify-around shrink-0 shadow-lg select-none safe-bottom"
+      className={`relative z-20 min-h-16 md:min-h-full md:w-20 bg-surface border-t md:border-t-0 md:border-r border-line px-2 md:px-1 py-1 md:py-4 flex flex-row md:flex-col items-center justify-around md:justify-start md:gap-3 shrink-0 shadow-lg select-none safe-bottom md:safe-left ${className}`}
     >
       {tabs.map((tab) => {
         const Icon = tab.icono || tab.icon;
@@ -46,15 +48,15 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               triggerLight();
               onSelectTab(tab.id);
             }}
-            className={`relative flex flex-col items-center justify-center min-w-[52px] h-14 px-1.5 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-xl ${
+            className={`relative flex flex-col items-center justify-center min-w-[52px] md:w-full h-14 md:h-16 px-1.5 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-xl ${
               activo ? 'text-accent font-bold' : 'text-ink-muted hover:text-ink'
             }`}
           >
-            {/* Indicador visual activo superior */}
+            {/* Indicador visual activo (superior en móvil, lateral izquierdo en tablet) */}
             {activo && (
               <span
                 aria-hidden="true"
-                className="absolute top-0 w-8 h-1 bg-primary rounded-full animate-in fade-in zoom-in-75 duration-200"
+                className="absolute top-0 md:top-2 md:bottom-2 md:left-0 w-8 md:w-1 h-1 md:h-auto bg-primary rounded-full animate-in fade-in zoom-in-75 duration-200"
               />
             )}
 
@@ -69,7 +71,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             </div>
 
             {/* Etiqueta */}
-            <span className="text-xs leading-tight truncate max-w-[72px] mt-0.5">
+            <span className="text-xs leading-tight truncate max-w-[72px] md:max-w-none mt-0.5 text-center">
               {texto}
             </span>
           </button>

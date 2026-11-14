@@ -168,110 +168,113 @@ export const App: React.FC = () => {
         onToggleDarkMode={toggleDarkMode}
       />
 
-      {/* 2. Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
-      <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative min-h-0">
-        <Suspense fallback={<ViewSkeleton />}>
-          {!esTabAutorizada ? (
-            <AccesoRestringido
-              onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-            />
-          ) : (
-            <>
-              {activeTab === 'inicio' && (
-                <InicioPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                  onNavigateTab={(tab) => handleSelectTab(tab)}
-                />
-              )}
+      {/* 2. Contenedor principal responsive: riel lateral en tableta (md:) e inferior en móvil */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative min-h-0">
+        {!enPedidoModo && (
+          <BottomNav
+            tabs={tabsDisponibles}
+            currentTab={activeTab}
+            onSelectTab={handleSelectTab}
+            badges={badges}
+            className="order-last md:order-first"
+          />
+        )}
 
-              {activeTab === 'salon' && (
-                <SalonPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                  onNavigateToCobro={session.rol === 'Cajero' ? () => handleSelectTab('cobros') : undefined}
-                  onShowToast={showToast}
-                  onPedidoModoChange={setEnPedidoModo}
-                />
-              )}
+        {/* Enrutador de Contenido Principal por Rol con Carga Diferida (Suspense) */}
+        <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative min-h-0 order-first md:order-last">
+          <Suspense fallback={<ViewSkeleton />}>
+            {!esTabAutorizada ? (
+              <AccesoRestringido
+                onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+              />
+            ) : (
+              <>
+                {activeTab === 'inicio' && (
+                  <InicioPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onNavigateTab={(tab) => handleSelectTab(tab)}
+                  />
+                )}
 
-              {activeTab === 'pedidos' && (
-                <PedidosPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                  onNavigateToSalon={() => handleSelectTab('salon')}
-                  conteoAvisosListos={conteoAvisos}
-                />
-              )}
+                {activeTab === 'salon' && (
+                  <SalonPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onNavigateToCobro={session.rol === 'Cajero' ? () => handleSelectTab('cobros') : undefined}
+                    onShowToast={showToast}
+                    onPedidoModoChange={setEnPedidoModo}
+                  />
+                )}
 
-              {activeTab === 'cocina' && (
-                <CocinaPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                  onShowToast={showToast}
-                />
-              )}
+                {activeTab === 'pedidos' && (
+                  <PedidosPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onNavigateToSalon={() => handleSelectTab('salon')}
+                    conteoAvisosListos={conteoAvisos}
+                  />
+                )}
 
-              {activeTab === 'platos' && (
-                <PlatosPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                />
-              )}
+                {activeTab === 'cocina' && (
+                  <CocinaPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onShowToast={showToast}
+                  />
+                )}
 
-              {activeTab === 'caja' && (
-                <CajaPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                  onNavigateToCobros={() => handleSelectTab('cobros')}
-                />
-              )}
+                {activeTab === 'platos' && (
+                  <PlatosPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  />
+                )}
 
-              {activeTab === 'cobros' && (
-                <CobrosPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                />
-              )}
+                {activeTab === 'caja' && (
+                  <CajaPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onNavigateToCobros={() => handleSelectTab('cobros')}
+                  />
+                )}
 
-              {activeTab === 'llevar' && (
-                <LlevarPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                  onShowToast={showToast}
-                  onIrACobros={() => handleSelectTab('cobros')}
-                />
-              )}
+                {activeTab === 'cobros' && (
+                  <CobrosPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  />
+                )}
 
-              {activeTab === 'reportes' && (
-                <ReportesPage
-                  rol={session.rol}
-                  onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                />
-              )}
+                {activeTab === 'llevar' && (
+                  <LlevarPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                    onShowToast={showToast}
+                    onIrACobros={() => handleSelectTab('cobros')}
+                  />
+                )}
 
-              {activeTab === 'perfil' && (
-                <PerfilPage
-                  session={session}
-                  isDark={isDark}
-                  onToggleDarkMode={toggleDarkMode}
-                  onLogout={handleLogout}
-                />
-              )}
-            </>
-          )}
-        </Suspense>
-      </main>
+                {activeTab === 'reportes' && (
+                  <ReportesPage
+                    rol={session.rol}
+                    onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  />
+                )}
 
-      {/* 3. Barra de Navegación Inferior Táctil Exclusiva por Rol */}
-      {!enPedidoModo && (
-        <BottomNav
-          tabs={tabsDisponibles}
-          currentTab={activeTab}
-          onSelectTab={handleSelectTab}
-          badges={badges}
-        />
-      )}
+                {activeTab === 'perfil' && (
+                  <PerfilPage
+                    session={session}
+                    isDark={isDark}
+                    onToggleDarkMode={toggleDarkMode}
+                    onLogout={handleLogout}
+                  />
+                )}
+              </>
+            )}
+          </Suspense>
+        </main>
+      </div>
     </div>
   );
 };

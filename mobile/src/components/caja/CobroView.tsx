@@ -265,86 +265,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
     }
   };
 
-  return (
-    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
-      {/* 1. Encabezado */}
-      <PageHeader
-        title="Caja y Cobro Rápido"
-        subtitle={pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
-        icon={<Receipt className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={onRefresh}
-        isRefreshing={cargando}
-      />
-
-      {cajaCerrada && (
-        <div className="m-4 p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger flex items-center gap-3">
-          <Lock className="w-5 h-5 shrink-0" aria-hidden="true" />
-          <p className="text-xs font-bold leading-relaxed">
-            No se puede registrar cobros porque la caja está cerrada. Un cajero debe realizar la apertura de caja.
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="p-4">
-          <ErrorState
-            mensaje={error}
-            onRetry={onRefresh}
-          />
-        </div>
-      )}
-
-      {/* 2. Lista de Cuentas Pendientes */}
-      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
-        {cargando && pedidos.length === 0 && (
-          <SkeletonList count={4} />
-        )}
-
-        {!error && !cargando && pedidos.length === 0 && (
-          <EmptyState
-            icon={Receipt}
-            titulo="No hay cobros pendientes"
-            subtitulo="Todas las mesas y pedidos para llevar se encuentran al día."
-          />
-        )}
-
-        {pedidos.map((p) => {
-          return (
-            <Card
-              key={p.pedidoId}
-              interactive={!cajaCerrada}
-              accent="none"
-              onClick={!cajaCerrada ? () => handleAbrirCobro(p) : undefined}
-              className="flex items-center justify-between select-none"
-            >
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
-                </div>
-                <div className="text-xs text-ink-muted mt-1 space-y-0.5">
-                  <p>Mozo: {p.mozoNombre}</p>
-                  <p>{pluralizar(p.cantidadLineas, 'ítem', 'ítems')} en la orden</p>
-                </div>
-              </div>
-
-              <div className="text-right flex flex-col items-end gap-1.5">
-                <span className="text-xl font-black text-accent tabular-nums">
-                  {formatCurrency(p.total)}
-                </span>
-                <StatusBadge estado="Pendiente" />
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* 3. Modal Táctil de Cobro y Comprobante */}
-      <BottomSheet
-        isOpen={Boolean(pedidoSeleccionado)}
-        onClose={() => setPedidoSeleccionado(null)}
-        title={pedidoSeleccionado ? `Cobro · ${pedidoSeleccionado.mesaNombre}` : ''}
-      >
-        {pedidoSeleccionado && (
+  const renderFormularioCobro = () => (
           <div className="space-y-4">
             {errorCobro && (
               <div className="p-3 bg-danger-bg border border-danger-border rounded-xl text-danger text-xs font-bold flex items-center gap-2">
@@ -675,8 +596,136 @@ export const CobroView: React.FC<CobroViewProps> = ({
               </div>
             )}
           </div>
+  );
+
+  return (
+    <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
+      {/* 1. Encabezado */}
+      <PageHeader
+        title="Caja y Cobro Rápido"
+        subtitle={pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
+        icon={<Receipt className="w-5 h-5 text-white" aria-hidden="true" />}
+        onRefresh={onRefresh}
+        isRefreshing={cargando}
+      />
+
+      {/* Contenedor principal con lista y detalle en tableta (md:) */}
+      <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+        {/* Panel izquierdo: Lista de Cuentas Pendientes */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+
+      {cajaCerrada && (
+        <div className="m-4 p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger flex items-center gap-3">
+          <Lock className="w-5 h-5 shrink-0" aria-hidden="true" />
+          <p className="text-xs font-bold leading-relaxed">
+            No se puede registrar cobros porque la caja está cerrada. Un cajero debe realizar la apertura de caja.
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-4">
+          <ErrorState
+            mensaje={error}
+            onRetry={onRefresh}
+          />
+        </div>
+      )}
+
+      {/* 2. Lista de Cuentas Pendientes */}
+          <div className="flex-1 overflow-y-auto p-4 pb-24 md:pb-6 space-y-3">
+        {cargando && pedidos.length === 0 && (
+          <SkeletonList count={4} />
         )}
-      </BottomSheet>
+
+        {!error && !cargando && pedidos.length === 0 && (
+          <EmptyState
+            icon={Receipt}
+            titulo="No hay cobros pendientes"
+            subtitulo="Todas las mesas y pedidos para llevar se encuentran al día."
+          />
+        )}
+
+        {pedidos.map((p) => {
+          const seleccionado = pedidoSeleccionado?.pedidoId === p.pedidoId;
+          return (
+            <Card
+              key={p.pedidoId}
+              interactive={!cajaCerrada}
+              accent="none"
+              onClick={!cajaCerrada ? () => handleAbrirCobro(p) : undefined}
+              className={`flex items-center justify-between select-none ${
+                seleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
+              }`}
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-extrabold text-ink">{p.mesaNombre}</h3>
+                </div>
+                <div className="text-xs text-ink-muted mt-1 space-y-0.5">
+                  <p>Mozo: {p.mozoNombre}</p>
+                  <p>{pluralizar(p.cantidadLineas, 'ítem', 'ítems')} en la orden</p>
+                </div>
+              </div>
+
+              <div className="text-right flex flex-col items-end gap-1.5">
+                <span className="text-xl font-black text-accent tabular-nums">
+                  {formatCurrency(p.total)}
+                </span>
+                <StatusBadge estado="Pendiente" />
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+
+        </div>
+
+        {/* Panel derecho: Detalle de Cobro siempre visible en tableta / desktop */}
+        <aside
+          aria-label="Detalle y procesamiento de cobro"
+          className="hidden md:flex md:w-[420px] lg:w-[460px] flex-col border-l border-line bg-surface min-h-0 shrink-0"
+        >
+          <div className="p-4 border-b border-line flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <Receipt className="w-5 h-5 text-accent" aria-hidden="true" />
+              <h3 className="text-sm font-extrabold text-ink">
+                {pedidoSeleccionado ? `Cobro · ${pedidoSeleccionado.mesaNombre}` : 'Detalle de Cobro'}
+              </h3>
+            </div>
+            {pedidoSeleccionado && (
+              <span className="text-xs font-black text-accent tabular-nums">
+                {formatCurrency(pedidoSeleccionado.total)}
+              </span>
+            )}
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            {!pedidoSeleccionado ? (
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-ink-muted">
+                <Receipt className="w-12 h-12 stroke-1 text-ink-muted/40 mb-2" aria-hidden="true" />
+                <p className="text-sm font-bold">Sin cuenta seleccionada</p>
+                <p className="text-xs text-ink-muted mt-1">
+                  Seleccione una cuenta pendiente de la lista izquierda para procesar el comprobante y cobro.
+                </p>
+              </div>
+            ) : (
+              renderFormularioCobro()
+            )}
+          </div>
+        </aside>
+      </div>
+
+      {/* 3. Modal Táctil de Cobro y Comprobante (Solo móvil) */}
+      <div className="md:hidden">
+        <BottomSheet
+          isOpen={Boolean(pedidoSeleccionado)}
+          onClose={() => setPedidoSeleccionado(null)}
+          title={pedidoSeleccionado ? `Cobro · ${pedidoSeleccionado.mesaNombre}` : ''}
+        >
+          {pedidoSeleccionado && renderFormularioCobro()}
+        </BottomSheet>
+      </div>
 
       {/* 4. Confirmación Definitiva */}
       <ConfirmSheet

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { ShoppingBag, Plus, Minus, Search, Send, User, UtensilsCrossed, Utensils, FileText, Trash2 } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Search, Send, User, UtensilsCrossed, Utensils, FileText, Trash2, Receipt } from 'lucide-react';
 import type { ProductoMenuPedidoDto, LineaBorrador } from '../../types/pedido';
 import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
 import { pedidoService } from '../../services/pedidoService';
@@ -317,6 +317,126 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
     }
   };
 
+  const renderContenidoResumen = () => (
+    <div className="space-y-4">
+      {errorEnvio && (
+        <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
+          {errorEnvio}
+        </div>
+      )}
+
+      <div className="p-3 bg-canvas border border-line rounded-xl text-xs space-y-1">
+        <div className="flex justify-between items-center">
+          <span className="text-ink-muted">Cliente / Referencia:</span>
+          <span className="font-bold text-ink">
+            {referencia.trim() || 'No indicada'}
+          </span>
+        </div>
+        {referencia.trim().length < 2 && (
+          <p className="text-danger text-xs font-medium">
+            Debe indicar una referencia de cliente entre 2 y 30 caracteres.
+          </p>
+        )}
+      </div>
+
+      <div className="divide-y divide-line max-h-[300px] md:max-h-none overflow-y-auto pr-1">
+        {lineas.map((l) => (
+          <div key={l.id} className="py-2.5 space-y-1.5">
+            <div className="flex justify-between items-start text-xs">
+              <div>
+                <h4 className="font-bold text-ink">{l.nombre}</h4>
+                {l.elecciones && l.elecciones.length > 0 && (
+                  <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
+                    {l.elecciones.map((el) => (
+                      <div key={el.parte} className="flex justify-between gap-2">
+                        <span className="font-semibold text-ink">{el.parte}:</span>
+                        <span className="text-ink-muted truncate">{el.productoNombre}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-ink-muted mt-0.5">
+                  {formatCurrency(l.precioUnitario)} x {l.cantidad} ={' '}
+                  <span className="font-bold text-ink">{formatCurrency(l.subtotal)}</span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => modificarCantidad(l.id, -1)}
+                  aria-label={
+                    l.cantidad === 1
+                      ? `Eliminar ${l.nombre} de la orden`
+                      : `Disminuir cantidad de ${l.nombre}`
+                  }
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
+                >
+                  {l.cantidad === 1 ? (
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
+                  ) : (
+                    <Minus className="w-4 h-4" aria-hidden="true" />
+                  )}
+                </button>
+                <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
+                  {l.cantidad}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => modificarCantidad(l.id, 1)}
+                  aria-label={`Aumentar cantidad de ${l.nombre}`}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Nota para cocina */}
+            <div className="flex items-center gap-2 pt-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerLight();
+                  setLineaParaNota(l);
+                }}
+                aria-label={`Nota de cocina para ${l.nombre}`}
+                className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1 px-2 rounded-lg bg-surface border border-line cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>{l.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
+              </button>
+              {l.observacion && (
+                <span className="text-xs text-ink-muted italic truncate flex-1">
+                  "{l.observacion}"
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
+        <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
+        <span className="text-xl font-black text-accent tabular-nums">
+          {formatCurrency(total)}
+        </span>
+      </div>
+
+      <Button
+        fullWidth
+        size="lg"
+        isLoading={enviando}
+        disabled={referencia.trim().length < 2 || referencia.trim().length > 30}
+        onClick={solicitarRegistroPedido}
+        className="flex items-center justify-center gap-2"
+      >
+        <Send className="w-5 h-5" />
+        <span>Confirmar Pedido para Llevar</span>
+      </Button>
+    </div>
+  );
+
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
@@ -328,8 +448,12 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         isRefreshing={cargando}
       />
 
-      {/* 2. Referencia de Cliente Obligatoria (2-30 caracteres) y Buscador */}
-      <div className="bg-surface border-b border-line px-4 py-2.5 shrink-0 space-y-2">
+      {/* Contenedor principal con división en dos paneles para tableta (md:) */}
+      <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+        {/* Panel izquierdo: referencia, buscador, categorías y catálogo */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {/* 2. Referencia de Cliente Obligatoria (2-30 caracteres) y Buscador */}
+          <div className="bg-surface border-b border-line px-4 py-2.5 shrink-0 space-y-2">
         <div className="space-y-1">
           <div className="flex justify-between items-center text-xs">
             <label htmlFor="ref-cliente" className="font-bold text-ink">
@@ -385,7 +509,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
       </div>
 
       {/* 3. Catálogo de Productos y Menús */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32 md:pb-6">
         {errorCarga && (
           <ErrorState
             mensaje={errorCarga}
@@ -524,10 +648,42 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
           );
         })}
       </div>
+        </div>
 
-      {/* 4. Barra Inferior Táctil (Sticky Bottom Bar) */}
+        {/* Panel derecho: Resumen de la Orden siempre visible en tableta / desktop */}
+        <aside
+          aria-label="Resumen del pedido para llevar"
+          className="hidden md:flex md:w-80 lg:w-96 flex-col border-l border-line bg-surface min-h-0 shrink-0"
+        >
+          <div className="p-4 border-b border-line flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <Receipt className="w-5 h-5 text-accent" aria-hidden="true" />
+              <h3 className="text-sm font-extrabold text-ink">Orden para Llevar</h3>
+            </div>
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+              {pluralizar(totalItems, 'ítem', 'ítems')}
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            {lineas.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center p-4 text-ink-muted">
+                <Receipt className="w-12 h-12 stroke-1 text-ink-muted/40 mb-2" aria-hidden="true" />
+                <p className="text-sm font-bold">Sin productos seleccionados</p>
+                <p className="text-xs text-ink-muted mt-1">
+                  Ingrese la referencia del cliente y elija productos del catálogo.
+                </p>
+              </div>
+            ) : (
+              renderContenidoResumen()
+            )}
+          </div>
+        </aside>
+      </div>
+
+      {/* 4. Barra Inferior Táctil (Sticky Bottom Bar) (Solo móvil) */}
       {lineas.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
           <button
             type="button"
             onClick={() => {
@@ -549,130 +705,16 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         </div>
       )}
 
-      {/* 5. Bottom Sheet de Resumen de la Orden */}
-      <BottomSheet
-        isOpen={mostrarResumen}
-        onClose={() => setMostrarResumen(false)}
-        title="Orden para Llevar"
-      >
-        <div className="space-y-4">
-          {errorEnvio && (
-            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
-              {errorEnvio}
-            </div>
-          )}
-
-          <div className="p-3 bg-canvas border border-line rounded-xl text-xs space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-ink-muted">Cliente / Referencia:</span>
-              <span className="font-bold text-ink">
-                {referencia.trim() || 'No indicada'}
-              </span>
-            </div>
-            {referencia.trim().length < 2 && (
-              <p className="text-danger text-xs font-medium">
-                Debe indicar una referencia de cliente entre 2 y 30 caracteres.
-              </p>
-            )}
-          </div>
-
-          <div className="divide-y divide-line max-h-[300px] overflow-y-auto pr-1">
-            {lineas.map((l) => (
-              <div key={l.id} className="py-2.5 space-y-1.5">
-                <div className="flex justify-between items-start text-xs">
-                  <div>
-                    <h4 className="font-bold text-ink">{l.nombre}</h4>
-                    {l.elecciones && l.elecciones.length > 0 && (
-                      <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
-                        {l.elecciones.map((el) => (
-                          <div key={el.parte} className="flex justify-between gap-2">
-                            <span className="font-semibold text-ink">{el.parte}:</span>
-                            <span className="text-ink-muted truncate">{el.productoNombre}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <p className="text-ink-muted mt-0.5">
-                      {formatCurrency(l.precioUnitario)} x {l.cantidad} ={' '}
-                      <span className="font-bold text-ink">{formatCurrency(l.subtotal)}</span>
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => modificarCantidad(l.id, -1)}
-                      aria-label={
-                        l.cantidad === 1
-                          ? `Eliminar ${l.nombre} de la orden`
-                          : `Disminuir cantidad de ${l.nombre}`
-                      }
-                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
-                    >
-                      {l.cantidad === 1 ? (
-                        <Trash2 className="w-4 h-4" aria-hidden="true" />
-                      ) : (
-                        <Minus className="w-4 h-4" aria-hidden="true" />
-                      )}
-                    </button>
-                    <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
-                      {l.cantidad}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => modificarCantidad(l.id, 1)}
-                      aria-label={`Aumentar cantidad de ${l.nombre}`}
-                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4" aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Nota para cocina */}
-                <div className="flex items-center gap-2 pt-0.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      triggerLight();
-                      setLineaParaNota(l);
-                    }}
-                    aria-label={`Nota de cocina para ${l.nombre}`}
-                    className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1 px-2 rounded-lg bg-surface border border-line cursor-pointer"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>{l.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
-                  </button>
-                  {l.observacion && (
-                    <span className="text-xs text-ink-muted italic truncate flex-1">
-                      "{l.observacion}"
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
-            <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-            <span className="text-xl font-black text-accent tabular-nums">
-              {formatCurrency(total)}
-            </span>
-          </div>
-
-          <Button
-            fullWidth
-            size="lg"
-            isLoading={enviando}
-            disabled={referencia.trim().length < 2 || referencia.trim().length > 30}
-            onClick={solicitarRegistroPedido}
-            className="flex items-center justify-center gap-2"
-          >
-            <Send className="w-5 h-5" />
-            <span>Confirmar Pedido para Llevar</span>
-          </Button>
-        </div>
-      </BottomSheet>
+      {/* 5. Bottom Sheet de Resumen de la Orden (Solo móvil) */}
+      <div className="md:hidden">
+        <BottomSheet
+          isOpen={mostrarResumen}
+          onClose={() => setMostrarResumen(false)}
+          title="Orden para Llevar"
+        >
+          {renderContenidoResumen()}
+        </BottomSheet>
+      </div>
 
       {/* Confirmación para Registrar Pedido para Llevar (P-E) */}
       <ConfirmSheet

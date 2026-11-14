@@ -86,30 +86,28 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
           />
         )}
 
-        {/* 3. KPIs Destacados */}
+        {/* 3. KPIs Destacados en Cuadrícula Responsiva */}
         {reporteVentas && !sinDatos && (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <StatCard
               titulo="Ventas Totales"
               valor={formatCurrency(reporteVentas.total)}
               subtitulo={`${pluralizar(reporteVentas.nVentas, 'pedido registrado', 'pedidos registrados')} en este período`}
               icon={<TrendingUp className="w-5 h-5 text-success" aria-hidden="true" />}
+              className="sm:col-span-2 md:col-span-1"
             />
 
-            {/* Desglose por método de pago */}
-            <div className="grid grid-cols-2 gap-3">
-              <StatCard
-                titulo="En Efectivo"
-                valor={formatCurrency(reporteVentas.efectivo)}
-                icon={<DollarSign className="w-4 h-4 text-accent" aria-hidden="true" />}
-              />
+            <StatCard
+              titulo="En Efectivo"
+              valor={formatCurrency(reporteVentas.efectivo)}
+              icon={<DollarSign className="w-4 h-4 text-accent" aria-hidden="true" />}
+            />
 
-              <StatCard
-                titulo="En Yape / Plin"
-                valor={formatCurrency(reporteVentas.yape)}
-                icon={<Smartphone className="w-4 h-4 text-info" aria-hidden="true" />}
-              />
-            </div>
+            <StatCard
+              titulo="En Yape / Plin"
+              valor={formatCurrency(reporteVentas.yape)}
+              icon={<Smartphone className="w-4 h-4 text-info" aria-hidden="true" />}
+            />
           </div>
         )}
 

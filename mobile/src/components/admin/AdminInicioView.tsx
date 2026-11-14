@@ -209,7 +209,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
             Ventas de Hoy
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             <StatCard
               titulo="Total Ventas Hoy"
               valor={ventasHoy ? formatCurrency(ventasHoy.total) : 'S/ 0.00'}
@@ -223,9 +223,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
               subtitulo="Por venta realizada"
               icon={<TrendingUp className="w-4 h-4 text-success" aria-hidden="true" />}
             />
-          </div>
 
-          <div className="grid grid-cols-2 gap-3">
             <StatCard
               titulo="Efectivo"
               valor={ventasHoy ? formatCurrency(ventasHoy.efectivo) : 'S/ 0.00'}

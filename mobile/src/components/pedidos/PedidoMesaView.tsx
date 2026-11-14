@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils, FileText } from 'lucide-react';
+import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils, FileText, Receipt } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { ProductoMenuPedidoDto, LineaBorrador, PedidoAbiertoMesaDto } from '../../types/pedido';
 import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
@@ -408,6 +408,128 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     }
   };
 
+  const renderContenidoComanda = () => (
+    <div className="space-y-4">
+      {errorEnvio && (
+        <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
+          {errorEnvio}
+        </div>
+      )}
+
+      <div className="divide-y divide-line">
+        {lineas.map((linea) => (
+          <div key={linea.id} className="py-3 space-y-2">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="text-sm font-bold text-ink">{linea.nombre}</h4>
+                {linea.elecciones && linea.elecciones.length > 0 && (
+                  <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
+                    {linea.elecciones.map((el) => (
+                      <div key={el.parte} className="flex justify-between gap-2">
+                        <span className="font-semibold text-ink">{el.parte}:</span>
+                        <span className="text-ink-muted truncate">{el.productoNombre}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {/* RV-154: Ocultar importes si es Mozo */}
+                {!esMozo && (
+                  <p className="text-xs text-ink-muted">
+                    {formatCurrency(linea.precioUnitario)} x {linea.cantidad} ={' '}
+                    <span className="font-bold text-ink">
+                      {formatCurrency(linea.subtotal)}
+                    </span>
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => modificarCantidad(linea.id, -1)}
+                  aria-label={
+                    linea.cantidad === 1
+                      ? `Eliminar ${linea.nombre} de la orden`
+                      : `Disminuir cantidad de ${linea.nombre}`
+                  }
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
+                >
+                  {linea.cantidad === 1 ? (
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
+                  ) : (
+                    <Minus className="w-4 h-4" aria-hidden="true" />
+                  )}
+                </button>
+                <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
+                  {linea.cantidad}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => modificarCantidad(linea.id, 1)}
+                  aria-label={`Aumentar cantidad de ${linea.nombre}`}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Botón táctil para nota de cocina con modal de 100 caracteres (P-C) */}
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerLight();
+                  setLineaParaNota(linea);
+                }}
+                aria-label={`Nota de cocina para ${linea.nombre}`}
+                className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-surface border border-line cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>{linea.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
+              </button>
+              {linea.observacion && (
+                <span className="text-xs text-ink-muted italic truncate flex-1">
+                  "{linea.observacion}"
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Resumen Total: solo visible si no es Mozo */}
+      {!esMozo ? (
+        <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
+          <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
+          <span className="text-xl font-black text-accent tabular-nums">
+            {formatCurrency(total)}
+          </span>
+        </div>
+      ) : (
+        <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">
+          <span className="text-xs font-bold text-ink-muted">Cantidad total de ítems</span>
+          <span className="text-sm font-black text-ink">
+            {pluralizar(totalItems, 'producto', 'productos')}
+          </span>
+        </div>
+      )}
+
+      {/* Botón de Envío con ConfirmSheet previa */}
+      <Button
+        fullWidth
+        size="lg"
+        isLoading={enviando}
+        onClick={solicitarEnvioComanda}
+        className="flex items-center justify-center gap-2"
+      >
+        <Send className="w-5 h-5" />
+        <span>
+          {esAmpliacion ? 'Enviar Ampliación a Cocina' : 'Enviar Pedido a Cocina'}
+        </span>
+      </Button>
+    </div>
+  );
+
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado con estado de mesa */}
@@ -466,8 +588,12 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         </div>
       )}
 
-      {/* 2. Buscador y Categorías Horizontales Dinámicas (P-A) */}
-      <div className="bg-surface border-b border-line px-4 py-2 shrink-0 space-y-2">
+      {/* Contenedor principal con división en dos paneles para tableta (md:) */}
+      <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+        {/* Panel izquierdo: buscador, categorías y catálogo de productos */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {/* 2. Buscador y Categorías Horizontales Dinámicas (P-A) */}
+          <div className="bg-surface border-b border-line px-4 py-2 shrink-0 space-y-2">
         <div className="relative">
           <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
           <input
@@ -490,7 +616,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       </div>
 
       {/* 3. Catálogo de Platos con Categorías Reales */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32 md:pb-6">
         {errorCarga && (
           <ErrorState
             mensaje={errorCarga}
@@ -642,10 +768,42 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           );
         })}
       </div>
+        </div>
 
-      {/* 4. Barra Inferior Fija (Sticky Bottom Bar - Thumb Zone) */}
+        {/* Panel derecho: Comanda de Sala siempre visible en tableta / desktop */}
+        <aside
+          aria-label="Comanda de la mesa"
+          className="hidden md:flex md:w-80 lg:w-96 flex-col border-l border-line bg-surface min-h-0 shrink-0"
+        >
+          <div className="p-4 border-b border-line flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <Receipt className="w-5 h-5 text-accent" aria-hidden="true" />
+              <h3 className="text-sm font-extrabold text-ink">Comanda de Sala</h3>
+            </div>
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+              {pluralizar(totalItems, 'ítem', 'ítems')}
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            {lineas.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center p-4 text-ink-muted">
+                <Receipt className="w-12 h-12 stroke-1 text-ink-muted/40 mb-2" aria-hidden="true" />
+                <p className="text-sm font-bold">Comanda vacía</p>
+                <p className="text-xs text-ink-muted mt-1">
+                  Seleccione productos o menús del catálogo para agregarlos a la orden.
+                </p>
+              </div>
+            ) : (
+              renderContenidoComanda()
+            )}
+          </div>
+        </aside>
+      </div>
+
+      {/* 4. Barra Inferior Fija (Sticky Bottom Bar - Thumb Zone) (Solo móvil) */}
       {lineas.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
           <button
             type="button"
             onClick={() => {
@@ -670,132 +828,16 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
         </div>
       )}
 
-      {/* 5. Bottom Sheet: Detalle de Comanda y Envío a Cocina */}
-      <BottomSheet
-        isOpen={mostrarCarrito}
-        onClose={() => setMostrarCarrito(false)}
-        title={`Comanda para ${mesa.nombre}`}
-      >
-        <div className="space-y-4">
-          {errorEnvio && (
-            <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
-              {errorEnvio}
-            </div>
-          )}
-
-          <div className="divide-y divide-line">
-            {lineas.map((linea) => (
-              <div key={linea.id} className="py-3 space-y-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-sm font-bold text-ink">{linea.nombre}</h4>
-                    {linea.elecciones && linea.elecciones.length > 0 && (
-                      <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
-                        {linea.elecciones.map((el) => (
-                          <div key={el.parte} className="flex justify-between gap-2">
-                            <span className="font-semibold text-ink">{el.parte}:</span>
-                            <span className="text-ink-muted truncate">{el.productoNombre}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {/* RV-154: Ocultar importes si es Mozo */}
-                    {!esMozo && (
-                      <p className="text-xs text-ink-muted">
-                        {formatCurrency(linea.precioUnitario)} x {linea.cantidad} ={' '}
-                        <span className="font-bold text-ink">
-                          {formatCurrency(linea.subtotal)}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => modificarCantidad(linea.id, -1)}
-                      aria-label={
-                        linea.cantidad === 1
-                          ? `Eliminar ${linea.nombre} de la orden`
-                          : `Disminuir cantidad de ${linea.nombre}`
-                      }
-                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
-                    >
-                      {linea.cantidad === 1 ? (
-                        <Trash2 className="w-4 h-4" aria-hidden="true" />
-                      ) : (
-                        <Minus className="w-4 h-4" aria-hidden="true" />
-                      )}
-                    </button>
-                    <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
-                      {linea.cantidad}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => modificarCantidad(linea.id, 1)}
-                      aria-label={`Aumentar cantidad de ${linea.nombre}`}
-                      className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4" aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Botón táctil para nota de cocina con modal de 100 caracteres (P-C) */}
-                <div className="flex items-center gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      triggerLight();
-                      setLineaParaNota(linea);
-                    }}
-                    aria-label={`Nota de cocina para ${linea.nombre}`}
-                    className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-surface border border-line cursor-pointer"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>{linea.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
-                  </button>
-                  {linea.observacion && (
-                    <span className="text-xs text-ink-muted italic truncate flex-1">
-                      "{linea.observacion}"
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Resumen Total: solo visible si no es Mozo */}
-          {!esMozo ? (
-            <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
-              <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-              <span className="text-xl font-black text-accent tabular-nums">
-                {formatCurrency(total)}
-              </span>
-            </div>
-          ) : (
-            <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">
-              <span className="text-xs font-bold text-ink-muted">Cantidad total de ítems</span>
-              <span className="text-sm font-black text-ink">
-                {pluralizar(totalItems, 'producto', 'productos')}
-              </span>
-            </div>
-          )}
-
-          {/* Botón de Envío con ConfirmSheet previa */}
-          <Button
-            fullWidth
-            size="lg"
-            isLoading={enviando}
-            onClick={solicitarEnvioComanda}
-            className="flex items-center justify-center gap-2"
-          >
-            <Send className="w-5 h-5" />
-            <span>
-              {esAmpliacion ? 'Enviar Ampliación a Cocina' : 'Enviar Pedido a Cocina'}
-            </span>
-          </Button>
-        </div>
-      </BottomSheet>
+      {/* 5. Bottom Sheet: Detalle de Comanda y Envío a Cocina (Solo móvil) */}
+      <div className="md:hidden">
+        <BottomSheet
+          isOpen={mostrarCarrito}
+          onClose={() => setMostrarCarrito(false)}
+          title={`Comanda para ${mesa.nombre}`}
+        >
+          {renderContenidoComanda()}
+        </BottomSheet>
+      </div>
 
       {/* Confirmación para Enviar Comanda a Cocina (P-C / P-D) */}
       <ConfirmSheet
