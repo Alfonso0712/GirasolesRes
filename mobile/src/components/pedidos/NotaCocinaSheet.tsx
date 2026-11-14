@@ -60,7 +60,6 @@ export const NotaCocinaSheet: React.FC<NotaCocinaSheetProps> = ({
             onChange={(e) => setNota(e.target.value)}
             placeholder="Ej. Sin sal, término medio, bien caliente..."
             className="w-full bg-canvas border border-line rounded-xl px-3 py-2.5 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-primary"
-            autoFocus
           />
         </div>
 

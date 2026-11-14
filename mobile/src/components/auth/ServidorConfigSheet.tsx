@@ -138,10 +138,13 @@ export const ServidorConfigSheet: React.FC<ServidorConfigSheetProps> = ({
       <div className="space-y-4 select-none pb-2">
         {/* Campo de dirección */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-ink">Dirección del servidor</label>
+          <label htmlFor="input-servidor-url" className="text-xs font-bold text-ink">
+            Dirección del servidor
+          </label>
           <div className="relative">
             <Globe className="w-4 h-4 text-ink-muted absolute left-3.5 top-3.5 pointer-events-none" />
             <input
+              id="input-servidor-url"
               type="text"
               value={urlInput}
               onChange={(e) => {

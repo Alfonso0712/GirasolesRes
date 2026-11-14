@@ -154,8 +154,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   // Carga de ventas cuando se activa la sección de ventas
   useEffect(() => {
     if (seccion === 'ventas') {
-      cargarVentas(1, false);
+      void cargarVentas(1, false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seccion, filtroVentas, busquedaVentas]);
 
   const handleVerDetalleVenta = async (ventaId: string) => {

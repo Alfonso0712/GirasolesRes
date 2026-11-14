@@ -32,11 +32,8 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({
     };
   }, []);
 
-  if (!puede(rol, 'comandas.gestionar')) {
-    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
-  }
-
-  const { datos, cargando, error, recargar } = useComandas();
+  const autorizado = puede(rol, 'comandas.gestionar');
+  const { datos, cargando, error, recargar } = useComandas({ enabled: autorizado });
   const comandas = datos?.items || [];
 
   // Detección de nuevas comandas entrantes para sonido y vibración
@@ -61,6 +58,10 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({
 
     comandasPreviasRef.current = idsActuales;
   }, [datos, triggerMedium]);
+
+  if (!autorizado) {
+    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
+  }
 
   const handleCambiarEstado = async (id: string, nuevoEstado: 'enPreparacion' | 'lista') => {
     await comandaService.actualizarEstado(id, nuevoEstado);

@@ -16,9 +16,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
   rol,
   onVolverAlInicio,
 }) => {
-  if (!puede(rol, 'reportes.ver')) {
-    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
-  }
+  const autorizado = puede(rol, 'reportes.ver');
 
   const [periodo, setPeriodo] = useState<'hoy' | '7dias' | 'mes'>('hoy');
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
@@ -41,9 +39,10 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
     return { desde: toYMD(primerDiaMes), hasta: toYMD(hoy) };
   }, [periodo]);
 
-  const { datos, cargando, error, recargar } = useReportes(rango);
+  const { datos, cargando, error, recargar } = useReportes(rango, { enabled: autorizado });
 
   useEffect(() => {
+    if (!autorizado) return;
     let cancelado = false;
     cajaService.obtenerHistorialCierres()
       .then((res) => {
@@ -56,7 +55,11 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [autorizado]);
+
+  if (!autorizado) {
+    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
+  }
 
   const handleRefresh = async () => {
     await Promise.all([

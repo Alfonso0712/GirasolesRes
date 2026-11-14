@@ -16,11 +16,12 @@ export const InicioPage: React.FC<InicioPageProps> = ({
   onVolverAlInicio,
   onNavigateTab,
 }) => {
-  if (!puede(rol, 'inicio.ver')) {
+  const autorizado = puede(rol, 'inicio.ver');
+  const { datos, cargando, error, recargar, actualizadoEn } = useInicioDashboard({ enabled: autorizado });
+
+  if (!autorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
-
-  const { datos, cargando, error, recargar, actualizadoEn } = useInicioDashboard();
 
   return (
     <AdminInicioView

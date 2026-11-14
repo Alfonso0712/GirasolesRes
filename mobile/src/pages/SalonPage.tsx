@@ -27,13 +27,16 @@ export const SalonPage: React.FC<SalonPageProps> = ({
   const [modoGestion, setModoGestion] = useState(false);
   const [mostrarInactivas, setMostrarInactivas] = useState(false);
 
-  if (!puede(rol, 'mesas.ver')) {
-    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
-  }
+  const autorizado = puede(rol, 'mesas.ver');
 
   const { datos: mesas, cargando, error, recargar } = useMesas({
     incluirInactivas: modoGestion && mostrarInactivas,
+    enabled: autorizado,
   });
+
+  if (!autorizado) {
+    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
+  }
 
   const handleAbrirPedido = (mesa: MesaItem) => {
     setMesaEnPedido(mesa);

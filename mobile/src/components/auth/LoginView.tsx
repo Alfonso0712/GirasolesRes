@@ -170,10 +170,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           )}
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-ink">Usuario</label>
+            <label htmlFor="login-usuario" className="text-xs font-bold text-ink">
+              Usuario
+            </label>
             <div className="relative">
               <User className="w-4 h-4 text-ink-muted absolute left-3.5 top-3.5 pointer-events-none" />
               <input
+                id="login-usuario"
                 type="text"
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
@@ -187,10 +190,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-ink">Contraseña</label>
+            <label htmlFor="login-contrasena" className="text-xs font-bold text-ink">
+              Contraseña
+            </label>
             <div className="relative flex items-center">
               <Lock className="w-4 h-4 text-ink-muted absolute left-3.5 top-3.5 pointer-events-none" />
               <input
+                id="login-contrasena"
                 type={mostrarContrasena ? 'text' : 'password'}
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}

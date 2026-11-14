@@ -116,7 +116,9 @@ export const App: React.FC = () => {
       const next = !prev;
       try {
         localStorage.setItem('girasoles_theme', next ? 'dark' : 'light');
-      } catch {}
+      } catch {
+        // Ignorar error de acceso a almacenamiento local
+      }
       if (next) {
         document.documentElement.classList.add('dark');
       } else {

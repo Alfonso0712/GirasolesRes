@@ -14,12 +14,13 @@ export const CobrosPage: React.FC<CobrosPageProps> = ({
   rol,
   onVolverAlInicio,
 }) => {
-  if (!puede(rol, 'cobros.procesar')) {
+  const autorizado = puede(rol, 'cobros.procesar');
+  const { datos: pedidos, cargando: cargandoPedidos, error: errorPedidos, recargar: recargarPedidos } = useCobrosPendientes({ enabled: autorizado });
+  const { datos: cajaActual, cargando: cargandoCaja, error: errorCaja, recargar: recargarCaja } = useCaja({ enabled: autorizado });
+
+  if (!autorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
-
-  const { datos: pedidos, cargando: cargandoPedidos, error: errorPedidos, recargar: recargarPedidos } = useCobrosPendientes();
-  const { datos: cajaActual, cargando: cargandoCaja, error: errorCaja, recargar: recargarCaja } = useCaja();
 
   const handleRefresh = async () => {
     await Promise.all([recargarPedidos(), recargarCaja()]);

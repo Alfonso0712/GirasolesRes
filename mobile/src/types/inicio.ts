@@ -73,6 +73,6 @@ export interface InicioDashboardData {
     menu?: BloqueResultado<BloqueMenuAdmin>;
     ultimoCierre?: BloqueResultado<BloqueUltimoCierre>;
     alertas?: BloqueResultado<AlertaInicio[]>;
-    [key: string]: BloqueResultado<any> | undefined;
+    [key: string]: BloqueResultado<unknown> | undefined;
   };
 }

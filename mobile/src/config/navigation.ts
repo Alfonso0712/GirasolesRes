@@ -30,6 +30,7 @@ export interface NavTabConfig {
   label?: string; // Compatibilidad con BottomNav
   icono: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
   icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Componente polimórfico de vista diferida con props heterogéneas por rol
   vista: React.LazyExoticComponent<React.ComponentType<any>>;
 }
 

@@ -16,11 +16,12 @@ export const CajaPage: React.FC<CajaPageProps> = ({
   onVolverAlInicio,
   onNavigateToCobros,
 }) => {
-  if (!puede(rol, 'caja.ver')) {
+  const autorizado = puede(rol, 'caja.ver');
+  const { datos: cajaActual, cargando, error, recargar } = useCaja({ enabled: autorizado });
+
+  if (!autorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
-
-  const { datos: cajaActual, cargando, error, recargar } = useCaja();
 
   return (
     <CajaTurnoView

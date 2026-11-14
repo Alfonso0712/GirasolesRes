@@ -15,11 +15,12 @@ export const PlatosPage: React.FC<PlatosPageProps> = ({
   rol,
   onVolverAlInicio,
 }) => {
-  if (!puede(rol, 'platos.disponibilidad')) {
+  const autorizado = puede(rol, 'platos.disponibilidad');
+  const { datos, cargando, error, recargar } = useMenuDia({ enabled: autorizado });
+
+  if (!autorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
-
-  const { datos, cargando, error, recargar } = useMenuDia();
 
   const handleCambiarDisponibilidad = async (productoId: string, nuevoAgotado: boolean) => {
     await menuDiaService.cambiarDisponibilidad(productoId, nuevoAgotado);

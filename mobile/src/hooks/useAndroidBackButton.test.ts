@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useAndroidBackButton } from './useAndroidBackButton';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, type PluginListenerHandle } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import * as backHandlerModule from './useBackHandler';
 
@@ -20,11 +20,11 @@ describe('useAndroidBackButton - Gestión nativa de botón Atrás', () => {
     backListener = null;
 
     vi.spyOn(Capacitor, 'isNativePlatform').mockReturnValue(true);
-    vi.mocked(CapacitorApp.addListener).mockImplementation(async (event: string, cb: any) => {
+    vi.mocked(CapacitorApp.addListener).mockImplementation(async (event: string, cb: unknown) => {
       if (event === 'backButton') {
-        backListener = cb;
+        backListener = cb as () => void;
       }
-      return { remove: vi.fn() } as unknown as any;
+      return { remove: vi.fn() } as unknown as PluginListenerHandle;
     });
     vi.mocked(CapacitorApp.exitApp).mockResolvedValue(undefined);
   });

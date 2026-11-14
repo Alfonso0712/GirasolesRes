@@ -19,16 +19,19 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   onNavigateToSalon,
   conteoAvisosListos = 0,
 }) => {
-  if (!puede(rol, 'pedidos.ver')) {
-    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
-  }
+  const autorizado = puede(rol, 'pedidos.ver');
+
+  const { datos: pedidos, cargando, error, recargar } = usePedidos({
+    soloMios: rol === 'Mozo',
+    enabled: autorizado,
+  });
 
   const session = authService.getStoredSession();
   const usuarioIdActual = session?.id;
 
-  const { datos: pedidos, cargando, error, recargar } = usePedidos({
-    soloMios: rol === 'Mozo',
-  });
+  if (!autorizado) {
+    return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
+  }
 
   return (
     <MisPedidosView

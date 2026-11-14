@@ -49,6 +49,16 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       className={`bg-surface border border-line rounded-2xl p-4 shadow-xs flex flex-col justify-between ${
