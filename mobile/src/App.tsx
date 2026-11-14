@@ -171,6 +171,7 @@ export const App: React.FC = () => {
                 <CocinaPage
                   rol={session.rol}
                   onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
+                  onShowToast={showToast}
                 />
               )}
 

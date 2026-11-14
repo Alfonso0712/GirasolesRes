@@ -1,24 +1,49 @@
-export interface ComandaLinea {
-  productoId: string;
-  nombre: string;
+export interface LineaComanda {
+  producto: string;
+  elecciones?: string | null;
+  incluye?: string | null;
   cantidad: number;
-  observaciones?: string;
-  estado: string;
+  observacion?: string;
 }
 
-export interface ComandaItem {
+export interface ComandaKdsItem {
   id: string;
-  numero: number;
-  mesaNombre: string;
-  mozoNombre: string;
-  fechaCreacion: string;
+  pedidoNumero: number;
+  tipo: 'Mesa' | 'ParaLlevar';
+  mesa: string | null;
+  referencia: string | null;
+  horaLlegada: string;
+  fechaHoraLlegadaUtc: string;
+  estado: 'Pendiente' | 'EnPreparacion' | 'Lista';
+  etiqueta: string | null;
+  esAdicional: boolean;
+  numeroAdicional: number;
+  modificada: boolean;
+  registradoPor: string;
   minutosEspera: number;
-  estado: 'pendiente' | 'enPreparacion' | 'lista';
-  lineas: ComandaLinea[];
+  esDemora: boolean;
+  lineas: LineaComanda[];
+}
+
+export interface ResumenProducto {
+  producto: string;
+  cantidad: number;
 }
 
 export interface ListarComandasResponse {
-  pendientes: ComandaItem[];
-  enPreparacion: ComandaItem[];
-  listas: ComandaItem[];
+  items: ComandaKdsItem[];
+  resumen: ResumenProducto[];
+}
+
+export interface ActualizarEstadoComandaResponse {
+  id: string;
+  estado: string;
+  deshacerHasta: string;
+  mensaje: string;
+}
+
+export interface DeshacerEstadoComandaResponse {
+  id: string;
+  estado: string;
+  mensaje: string;
 }

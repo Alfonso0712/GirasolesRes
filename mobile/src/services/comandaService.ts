@@ -1,5 +1,9 @@
 import { apiClient } from './apiClient';
-import type { ListarComandasResponse } from '../types/comanda';
+import type {
+  ListarComandasResponse,
+  ActualizarEstadoComandaResponse,
+  DeshacerEstadoComandaResponse,
+} from '../types/comanda';
 
 export const comandaService = {
   listarComandas: async (estado?: string): Promise<ListarComandasResponse> => {
@@ -7,11 +11,14 @@ export const comandaService = {
     return apiClient.get<ListarComandasResponse>(url);
   },
 
-  actualizarEstado: async (id: string, estado: 'enPreparacion' | 'lista'): Promise<void> => {
-    await apiClient.patch(`/comandas/${id}/estado`, { estado });
+  actualizarEstado: async (
+    id: string,
+    estado: 'enPreparacion' | 'lista'
+  ): Promise<ActualizarEstadoComandaResponse> => {
+    return apiClient.patch<ActualizarEstadoComandaResponse>(`/comandas/${id}/estado`, { estado });
   },
 
-  deshacerEstado: async (id: string): Promise<void> => {
-    await apiClient.post(`/comandas/${id}/deshacer`);
-  }
+  deshacerEstado: async (id: string): Promise<DeshacerEstadoComandaResponse> => {
+    return apiClient.post<DeshacerEstadoComandaResponse>(`/comandas/${id}/deshacer`);
+  },
 };

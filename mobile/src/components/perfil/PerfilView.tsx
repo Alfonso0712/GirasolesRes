@@ -1,5 +1,5 @@
 import React, { useState, Suspense, lazy } from 'react';
-import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil } from 'lucide-react';
+import { Shield, Moon, Sun, Vibrate, LogOut, Globe, Pencil, Volume2 } from 'lucide-react';
 import type { UserSession } from '../../types/auth';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -8,6 +8,7 @@ import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { MODO_DEMO } from '../../config/appConfig';
 import { formatearMarcaCompilacion } from '../../config/serverConfig';
+import { reproducirSonidoKds, sonSonidosKdsHabilitados } from '../../utils/audioKds';
 import logoEmblema from '../../assets/logo-emblema-256.png';
 
 const ServidorConfigSheet = (import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true')
@@ -31,8 +32,19 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   const [mostrarSheetServidor, setMostrarSheetServidor] = useState(false);
   const [mostrarConfirmLogout, setMostrarConfirmLogout] = useState(false);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
+  const [sonidoHabilitado, setSonidoHabilitado] = useState(() => sonSonidosKdsHabilitados());
 
   const { triggerLight } = useHaptics();
+
+  const handleToggleSonido = () => {
+    triggerLight();
+    const nuevo = !sonidoHabilitado;
+    setSonidoHabilitado(nuevo);
+    localStorage.setItem('kds_sonido_activado', nuevo ? 'true' : 'false');
+    if (nuevo) {
+      reproducirSonidoKds('pendiente', true);
+    }
+  };
 
   const handleConfirmarCierre = async () => {
     setCerrandoSesion(true);
@@ -116,6 +128,39 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           <Button size="sm" variant="outline" onClick={triggerLight}>
             Probar
           </Button>
+        </div>
+
+        {/* Sonido de avisos KDS / Pedidos */}
+        <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px]">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+              <Volume2 className="w-5 h-5" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-ink">Sonido de Avisos</p>
+              <p className="text-xs text-ink-muted">Alertas sonoras para nuevas comandas y pedidos listos</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={sonidoHabilitado}
+            onClick={handleToggleSonido}
+            aria-label="Alternar sonido de avisos"
+            className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full cursor-pointer"
+          >
+            <div
+              className={`w-12 h-7 rounded-full p-1 transition-colors ${
+                sonidoHabilitado ? 'bg-primary' : 'bg-line'
+              }`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-surface transition-transform ${
+                  sonidoHabilitado ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </div>
+          </button>
         </div>
       </Card>
 

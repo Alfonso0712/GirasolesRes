@@ -1,30 +1,75 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useComandas } from '../hooks/useRecurso';
 import { puede } from '../config/permisos';
 import { AccesoRestringido } from '../components/layout/AccesoRestringido';
 import { KdsView } from '../components/cocina/KdsView';
 import { comandaService } from '../services/comandaService';
+import { desbloquearAudioKds, reproducirSonidoKds } from '../utils/audioKds';
+import { useHaptics } from '../hooks/useHaptics';
 import type { RolUsuario } from '../types/auth';
 
 export interface CocinaPageProps {
   rol: RolUsuario;
   onVolverAlInicio: () => void;
+  onShowToast?: (mensaje: string) => void;
 }
 
 export const CocinaPage: React.FC<CocinaPageProps> = ({
   rol,
   onVolverAlInicio,
+  onShowToast,
 }) => {
+  const { triggerMedium } = useHaptics();
+
+  // Desbloqueo preventivo del audio ante la primera interacción
+  useEffect(() => {
+    const desbloquear = () => desbloquearAudioKds();
+    window.addEventListener('click', desbloquear, { once: true });
+    window.addEventListener('touchstart', desbloquear, { once: true });
+    return () => {
+      window.removeEventListener('click', desbloquear);
+      window.removeEventListener('touchstart', desbloquear);
+    };
+  }, []);
+
   if (!puede(rol, 'comandas.gestionar')) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
   const { datos, cargando, error, recargar } = useComandas();
-  const comandas = [...(datos?.pendientes || []), ...(datos?.enPreparacion || [])];
+  const comandas = datos?.items || [];
+
+  // Detección de nuevas comandas entrantes para sonido y vibración
+  const comandasPreviasRef = useRef<Set<string> | null>(null);
+
+  useEffect(() => {
+    if (!datos?.items) return;
+
+    const idsActuales = new Set(datos.items.map((c) => c.id));
+
+    if (comandasPreviasRef.current !== null) {
+      // Buscar si hay alguna comanda nueva en estado Pendiente
+      const hayNuevasPendientes = datos.items.some(
+        (c) => c.estado === 'Pendiente' && !comandasPreviasRef.current?.has(c.id)
+      );
+
+      if (hayNuevasPendientes) {
+        reproducirSonidoKds('pendiente');
+        triggerMedium();
+      }
+    }
+
+    comandasPreviasRef.current = idsActuales;
+  }, [datos, triggerMedium]);
 
   const handleCambiarEstado = async (id: string, nuevoEstado: 'enPreparacion' | 'lista') => {
     await comandaService.actualizarEstado(id, nuevoEstado);
-    void recargar();
+    await recargar();
+  };
+
+  const handleDeshacer = async (id: string) => {
+    await comandaService.deshacerEstado(id);
+    await recargar();
   };
 
   return (
@@ -34,6 +79,8 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({
       error={error}
       onRefresh={recargar}
       onCambiarEstado={handleCambiarEstado}
+      onDeshacer={handleDeshacer}
+      onShowToast={onShowToast}
     />
   );
 };
