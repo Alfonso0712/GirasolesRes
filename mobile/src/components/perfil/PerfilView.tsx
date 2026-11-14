@@ -50,9 +50,35 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   const [mostrarGuiaUso, setMostrarGuiaUso] = useState(false);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
   const [sonidoHabilitado, setSonidoHabilitado] = useState(() => sonSonidosKdsHabilitados());
+  const [avisoHaptics, setAvisoHaptics] = useState<string | null>(null);
 
   const { isLeftHanded, setHandedness } = useHandedness();
-  const { triggerLight } = useHaptics();
+  const {
+    hapticsHabilitado,
+    setHapticsHabilitado,
+    triggerLight,
+    probarHaptics,
+  } = useHaptics();
+
+  const handleToggleHaptics = () => {
+    const nuevo = !hapticsHabilitado;
+    setHapticsHabilitado(nuevo);
+    setAvisoHaptics(null);
+    if (nuevo) {
+      void probarHaptics();
+    }
+  };
+
+  const handleProbarHaptics = async () => {
+    if (!hapticsHabilitado) return;
+    setAvisoHaptics(null);
+    const vibro = await probarHaptics();
+    if (!vibro) {
+      setAvisoHaptics(
+        'Este dispositivo no admite la vibración o está desactivada en los ajustes del sistema.'
+      );
+    }
+  };
 
   const handleToggleSonido = () => {
     triggerLight();
@@ -132,20 +158,67 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           </button>
         </div>
 
-        {/* Test de Vibración Háptica */}
-        <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px]">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
-              <Vibrate className="w-5 h-5" aria-hidden="true" />
+        {/* Respuesta Háptica con interruptor y botón Probar */}
+        <div className="pt-2 border-t border-line space-y-2">
+          <div className="flex items-center justify-between min-h-[48px] gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
+                <Vibrate className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-ink">Respuesta Háptica</p>
+                <p className="text-xs text-ink-muted">
+                  Vibración táctil al interactuar y confirmar acciones
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-bold text-ink">Respuesta Háptica</p>
-              <p className="text-xs text-ink-muted">Vibración táctil al interactuar y confirmar acciones</p>
-            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={hapticsHabilitado}
+              onClick={handleToggleHaptics}
+              aria-label="Alternar respuesta háptica"
+              className="min-h-[44px] min-w-[48px] inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent rounded-full cursor-pointer shrink-0"
+            >
+              <div
+                className={`w-12 h-7 rounded-full p-1 transition-colors border ${
+                  hapticsHabilitado ? 'bg-primary border-primary' : 'bg-line border-line-strong'
+                }`}
+              >
+                <div
+                  className={`w-4.5 h-4.5 rounded-full bg-surface shadow-xs transition-transform ${
+                    hapticsHabilitado ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </div>
+            </button>
           </div>
-          <Button size="sm" variant="outline" onClick={triggerLight}>
-            Probar
-          </Button>
+
+          <div className="flex items-center justify-between gap-3 pl-14">
+            <span className="text-xs text-ink-muted">
+              {hapticsHabilitado
+                ? 'Active el botón para verificar la vibración del equipo.'
+                : 'Active la respuesta háptica para probarla'}
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!hapticsHabilitado}
+              onClick={() => void handleProbarHaptics()}
+              className="min-h-[44px] shrink-0"
+            >
+              Probar
+            </Button>
+          </div>
+
+          {avisoHaptics && (
+            <p
+              role="status"
+              className="text-xs font-medium text-notice-text bg-notice-bg border border-notice-border rounded-xl px-3 py-2"
+            >
+              {avisoHaptics}
+            </p>
+          )}
         </div>
 
         {/* Sonido de avisos KDS / Pedidos */}

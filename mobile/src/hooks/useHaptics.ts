@@ -1,46 +1,100 @@
+import { useState, useEffect, useCallback } from 'react';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
+export const CLAVE_HAPTICS = 'girasoles_haptics';
+
+export function sonHapticsHabilitados(): boolean {
+  try {
+    const val = localStorage.getItem(CLAVE_HAPTICS);
+    if (val === null) return true; // Activada por defecto
+    return val !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+async function ejecutarConRespaldo(
+  accionNativa: () => Promise<void>,
+  duracionRespaldoMs: number = 20
+): Promise<boolean> {
+  if (!sonHapticsHabilitados()) {
+    return false;
+  }
+
+  try {
+    await accionNativa();
+    return true;
+  } catch {
+    try {
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        const ok = navigator.vibrate(duracionRespaldoMs);
+        return Boolean(ok);
+      }
+    } catch {
+      // Ignorar errores del navegador
+    }
+    return false;
+  }
+}
+
 export function useHaptics() {
-  const triggerLight = async () => {
-    try {
-      await Haptics.impact({ style: ImpactStyle.Light });
-    } catch {
-      // Ignorar en navegadores web que no soporten Haptics API
-      if ('vibrate' in navigator) {
-        navigator.vibrate(15);
-      }
-    }
-  };
+  const [hapticsHabilitado, setHapticsState] = useState<boolean>(() => sonHapticsHabilitados());
 
-  const triggerMedium = async () => {
-    try {
-      await Haptics.impact({ style: ImpactStyle.Medium });
-    } catch {
-      if ('vibrate' in navigator) {
-        navigator.vibrate(30);
-      }
-    }
-  };
+  useEffect(() => {
+    const handleSync = () => {
+      setHapticsState(sonHapticsHabilitados());
+    };
+    window.addEventListener('girasoles:haptics-change', handleSync);
+    return () => {
+      window.removeEventListener('girasoles:haptics-change', handleSync);
+    };
+  }, []);
 
-  const triggerSuccess = async () => {
+  const setHapticsHabilitado = useCallback((activo: boolean) => {
     try {
-      await Haptics.notification({ type: NotificationType.Success });
+      localStorage.setItem(CLAVE_HAPTICS, activo ? 'true' : 'false');
     } catch {
-      if ('vibrate' in navigator) {
-        navigator.vibrate([20, 50, 20]);
-      }
+      // Ignorar error de almacenamiento
     }
-  };
-
-  const triggerError = async () => {
-    try {
-      await Haptics.notification({ type: NotificationType.Error });
-    } catch {
-      if ('vibrate' in navigator) {
-        navigator.vibrate([50, 50, 50]);
-      }
+    setHapticsState(activo);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('girasoles:haptics-change'));
     }
-  };
+  }, []);
 
-  return { triggerLight, triggerMedium, triggerSuccess, triggerError };
+  const triggerLight = useCallback(async (): Promise<boolean> => {
+    return ejecutarConRespaldo(() => Haptics.impact({ style: ImpactStyle.Light }), 20);
+  }, []);
+
+  const triggerMedium = useCallback(async (): Promise<boolean> => {
+    return ejecutarConRespaldo(() => Haptics.impact({ style: ImpactStyle.Medium }), 20);
+  }, []);
+
+  const triggerSuccess = useCallback(async (): Promise<boolean> => {
+    return ejecutarConRespaldo(
+      () => Haptics.notification({ type: NotificationType.Success }),
+      20
+    );
+  }, []);
+
+  const triggerError = useCallback(async (): Promise<boolean> => {
+    return ejecutarConRespaldo(
+      () => Haptics.notification({ type: NotificationType.Error }),
+      20
+    );
+  }, []);
+
+  const probarHaptics = useCallback(async (): Promise<boolean> => {
+    return ejecutarConRespaldo(() => Haptics.impact({ style: ImpactStyle.Medium }), 20);
+  }, []);
+
+  return {
+    hapticsHabilitado,
+    setHapticsHabilitado,
+    triggerLight,
+    triggerMedium,
+    triggerSuccess,
+    triggerError,
+    probarHaptics,
+  };
 }
