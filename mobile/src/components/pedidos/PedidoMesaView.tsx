@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed } from 'lucide-react';
+import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { ProductoMenuPedidoDto, LineaBorrador } from '../../types/pedido';
-import type { MenuDiaResponseDto } from '../../types/menuDia';
+import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
 import type { RolUsuario } from '../../types/auth';
 import { pedidoService } from '../../services/pedidoService';
 import { menuDiaService } from '../../services/menuDiaService';
+import { ArmarMenuSheet } from './ArmarMenuSheet';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
@@ -61,6 +62,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   const [lineas, setLineas] = useState<LineaBorrador[]>([]);
   const [mostrarCarrito, setMostrarCarrito] = useState<boolean>(false);
   const [mostrarConfirmDescartar, setMostrarConfirmDescartar] = useState<boolean>(false);
+  const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDiaDto | null>(null);
   const [enviando, setEnviando] = useState<boolean>(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
@@ -133,6 +135,15 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     const tieneMenus = Boolean(menuDia?.definido && (menuDia.menusCompletos?.length ?? 0) > 0);
     return ['Todas', ...(tieneMenus ? ['Menús'] : []), ...lista];
   }, [catalogo, menuDia]);
+
+  // Filtrado de menús completos del día
+  const menusFiltrados = useMemo(() => {
+    if (!menuDia?.definido || !menuDia.menusCompletos?.length) return [];
+    if (categoriaActiva !== 'Todas' && categoriaActiva !== 'Menús') return [];
+    if (!busquedaDebounced.trim()) return menuDia.menusCompletos;
+    const query = busquedaDebounced.trim().toLowerCase();
+    return menuDia.menusCompletos.filter((m) => m.nombre.toLowerCase().includes(query));
+  }, [menuDia, categoriaActiva, busquedaDebounced]);
 
   // Filtrado de productos de carta
   const productosFiltrados = useMemo(() => {
@@ -300,12 +311,65 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           <SkeletonList count={5} />
         )}
 
-        {!errorCarga && !cargando && productosFiltrados.length === 0 && (
+        {!errorCarga && !cargando && productosFiltrados.length === 0 && menusFiltrados.length === 0 && (
           <EmptyState
             icon={UtensilsCrossed}
             titulo="No hay productos disponibles"
             subtitulo="No se encontraron productos disponibles en el catálogo para esta selección."
           />
+        )}
+
+        {/* Sección de Menús Completos del Día (P-B) */}
+        {menusFiltrados.length > 0 && (
+          <div className="space-y-2 mb-3">
+            <div className="flex items-center gap-1.5 px-1 pt-1">
+              <Utensils className="w-4 h-4 text-accent" />
+              <span className="text-xs font-black text-ink uppercase tracking-wider">
+                Menús Completos del Día
+              </span>
+            </div>
+            {menusFiltrados.map((m) => (
+              <Card
+                key={m.id}
+                accent="info"
+                className="p-3.5 flex items-center justify-between shadow-xs select-none"
+              >
+                <div className="flex-1 pr-3">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h3 className="text-sm font-extrabold text-ink leading-snug">{m.nombre}</h3>
+                    <span className="text-xs font-bold bg-chip-accent-bg text-accent border border-chip-accent-border px-1.5 py-0.5 rounded">
+                      Menú Completo
+                    </span>
+                  </div>
+                  <p className="text-xs text-ink-muted mt-0.5 line-clamp-1">
+                    {m.incluye || 'Entrada / Sopa + Segundo + Bebida'}
+                  </p>
+                  {!esMozo ? (
+                    <p className="text-xs font-extrabold text-accent mt-1 tabular-nums">
+                      {formatCurrency(m.precio)}
+                    </p>
+                  ) : (
+                    <p className="text-xs font-semibold text-ink-muted mt-1">
+                      Platos a elección
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => {
+                    triggerLight();
+                    setMenuParaArmar(m);
+                  }}
+                  className="min-h-[44px] px-3 font-bold shrink-0 flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Armar Menú</span>
+                </Button>
+              </Card>
+            ))}
+          </div>
         )}
 
         {productosFiltrados.map((prod) => {
@@ -433,6 +497,16 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                 <div className="flex justify-between items-start">
                   <div>
                     <h4 className="text-sm font-bold text-ink">{linea.nombre}</h4>
+                    {linea.elecciones && linea.elecciones.length > 0 && (
+                      <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
+                        {linea.elecciones.map((el) => (
+                          <div key={el.parte} className="flex justify-between gap-2">
+                            <span className="font-semibold text-ink">{el.parte}:</span>
+                            <span className="text-ink-muted truncate">{el.productoNombre}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {/* RV-154: Ocultar importes si es Mozo */}
                     {!esMozo && (
                       <p className="text-xs text-ink-muted">
@@ -533,6 +607,18 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           onVolver();
         }}
         onCancelar={() => setMostrarConfirmDescartar(false)}
+      />
+
+      {/* Asistente Paso a Paso para Armar Menú Completo (P-B) */}
+      <ArmarMenuSheet
+        isOpen={Boolean(menuParaArmar)}
+        onClose={() => setMenuParaArmar(null)}
+        menu={menuParaArmar}
+        esMozo={esMozo}
+        onAgregar={(nuevaLinea) => {
+          setLineas((prev) => [...prev, nuevaLinea]);
+          setMenuParaArmar(null);
+        }}
       />
     </div>
   );
