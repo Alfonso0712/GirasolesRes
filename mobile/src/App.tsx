@@ -13,6 +13,8 @@ import { useHaptics } from './hooks/useHaptics';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
 import { useKitchenNotifications } from './hooks/useKitchenNotifications';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
+import { useSessionLifecycle } from './hooks/useSessionLifecycle';
+import { InactivitySheet } from './components/layout/InactivitySheet';
 import { useComandas } from './hooks/useRecurso';
 import {
   pestanaInicial,
@@ -137,7 +139,7 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async (motivo?: string) => {
     try {
       await Promise.race([
         authService.logout(),
@@ -150,8 +152,24 @@ export const App: React.FC = () => {
       localStorage.removeItem('GIRASOLES_SESSION');
       setSession(null);
       setEnPedidoModo(false);
+      if (motivo) {
+        mostrar({ tipo: 'aviso', mensaje: motivo });
+      }
     }
-  };
+  }, [mostrar]);
+
+  // Gestión de ciclo de vida de sesión e inactividad (RN-20 / RV-32)
+  const {
+    avisoInactividadVisible,
+    segundosRestantes,
+    renovando: renovandoSesion,
+    continuarSesion,
+    cerrarSesionInactividad,
+  } = useSessionLifecycle({
+    session,
+    activeTab,
+    onLogout: handleLogout,
+  });
 
   // Si no hay sesión activa -> mostrar pantalla de Login
   if (!session) {
@@ -283,6 +301,15 @@ export const App: React.FC = () => {
           </Suspense>
         </main>
       </div>
+
+      {/* Aviso de inactividad con cuenta regresiva (RN-20 / RV-32) */}
+      <InactivitySheet
+        isOpen={avisoInactividadVisible}
+        segundosRestantes={segundosRestantes}
+        renovando={renovandoSesion}
+        onContinuar={continuarSesion}
+        onCerrar={cerrarSesionInactividad}
+      />
     </div>
   );
 };

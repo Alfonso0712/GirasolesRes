@@ -22,6 +22,21 @@ export const authService = {
     }
   },
 
+  renovarToken: async (): Promise<string> => {
+    const res = await apiClient.post<{ token: string; message?: string }>('/auth/renovar', {});
+    const nuevoToken = res.token;
+    if (nuevoToken) {
+      localStorage.setItem('GIRASOLES_TOKEN', nuevoToken);
+      const session = authService.getStoredSession();
+      if (session) {
+        session.token = nuevoToken;
+        localStorage.setItem('GIRASOLES_SESSION', JSON.stringify(session));
+      }
+      return nuevoToken;
+    }
+    throw new Error('Respuesta de renovación sin token');
+  },
+
   getStoredSession: (): UserSession | null => {
     const raw = localStorage.getItem('GIRASOLES_SESSION');
     if (!raw) return null;
