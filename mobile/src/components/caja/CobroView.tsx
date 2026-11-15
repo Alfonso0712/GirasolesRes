@@ -693,14 +693,14 @@ export const CobroView: React.FC<CobroViewProps> = ({
               interactive={!cajaCerrada}
               accent="none"
               onClick={!cajaCerrada ? () => handleAbrirCobro(p) : undefined}
-              className={`flex items-center justify-between select-none ${
+              className={`flex items-start justify-between gap-3 select-none ${
                 seleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
               }`}
             >
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-extrabold text-ink">{etiquetaMesa}</h3>
-                </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base font-extrabold text-ink leading-snug">
+                  {etiquetaMesa}
+                </h3>
                 <div className="text-xs text-ink-muted mt-1 space-y-0.5">
                   {p.mozoNombre ? (
                     <p>Mozo: {p.mozoNombre}</p>
@@ -713,7 +713,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 </div>
               </div>
 
-              <div className="text-right flex flex-col items-end gap-1.5">
+              <div className="text-right flex flex-col items-end gap-1.5 shrink-0">
                 <span className="text-xl font-black text-accent tabular-nums">
                   {formatCurrency(p.total)}
                 </span>

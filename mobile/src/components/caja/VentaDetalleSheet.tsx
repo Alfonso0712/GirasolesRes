@@ -112,15 +112,17 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
           <div className="space-y-4">
             {/* Cabecera del comprobante */}
             <div className="bg-canvas border border-line rounded-2xl p-3.5 space-y-2">
-              <div className="flex justify-between items-start">
-                <div>
+              <div className="flex justify-between items-start gap-2.5">
+                <div className="min-w-0 flex-1">
                   <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
                     {venta.tipoComprobante || 'Comprobante Electrónico'}
                   </span>
                   <h3 className="text-lg font-black text-ink">{venta.comprobante}</h3>
                   <span className="text-xs text-ink-muted">Pedido #{venta.pedidoNumero} ({venta.tipo})</span>
                 </div>
-                <StatusBadge estado={venta.estado} />
+                <div className="shrink-0">
+                  <StatusBadge estado={venta.estado} />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-line text-xs text-ink-muted">
@@ -185,8 +187,8 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
 
               <div className="divide-y divide-line bg-canvas rounded-xl border border-line overflow-hidden">
                 {venta.lineas.map((linea, idx) => (
-                  <div key={idx} className="p-2.5 text-xs flex justify-between items-start gap-2">
-                    <div className="space-y-0.5">
+                  <div key={idx} className="p-2.5 text-xs flex justify-between items-start gap-2.5">
+                    <div className="space-y-0.5 min-w-0 flex-1">
                       <p className="font-bold text-ink">
                         {linea.cantidad}x {linea.productoNombre}
                       </p>

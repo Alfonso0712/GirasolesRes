@@ -163,31 +163,36 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
                     triggerLight();
                     setPedidoDetalleId(p.id);
                   }}
-                  className={`flex items-center justify-between select-none cursor-pointer active:scale-98 transition-transform min-h-[56px] ${
+                  className={`select-none cursor-pointer active:scale-98 transition-transform min-h-[56px] space-y-2 ${
                     seleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
                   }`}
                 >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-base font-extrabold text-ink">{mesaOReferencia}</h3>
-                      <span className="text-xs text-accent font-bold bg-chip-accent-bg px-2 py-0.5 rounded-full border border-chip-accent-border">
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-center flex-wrap gap-x-2 gap-y-1 min-w-0 flex-1">
+                      <h3 className="text-base font-extrabold text-ink leading-snug">
+                        {mesaOReferencia}
+                      </h3>
+                      <span className="text-xs text-accent font-bold bg-chip-accent-bg px-2 py-0.5 rounded-full border border-chip-accent-border shrink-0">
                         #{p.numero}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-ink-muted mt-1">
-                      <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>Hora: {p.hora || 'En curso'} · Mozo: {p.registradoPor}</span>
-                    </div>
-                  </div>
 
-                  <div className="text-right flex flex-col items-end gap-1.5">
                     {/* Regla RV-154: Mozo no ve montos económicos de pedidos */}
                     {!esMozo && (
-                      <span className="text-base font-black text-accent tabular-nums">
+                      <span className="text-base font-black text-accent tabular-nums shrink-0">
                         {formatCurrency(p.total)}
                       </span>
                     )}
-                    <StatusBadge estado={p.estado} />
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 text-xs text-ink-muted min-w-0 flex-1">
+                      <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      <span>Hora: {p.hora || 'En curso'} · Mozo: {p.registradoPor}</span>
+                    </div>
+                    <div className="shrink-0">
+                      <StatusBadge estado={p.estado} />
+                    </div>
                   </div>
                 </Card>
               );

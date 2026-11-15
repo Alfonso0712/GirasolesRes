@@ -205,7 +205,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
                 >
                   {/* Cabecera de comanda con identificación clara */}
                   <div
-                    className={`p-3.5 flex items-center justify-between border-b ${
+                    className={`p-3.5 flex flex-wrap items-start justify-between gap-2 border-b ${
                       esDemora
                         ? 'bg-danger-bg text-danger border-danger-border'
                         : esPendiente

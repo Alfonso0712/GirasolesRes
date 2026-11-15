@@ -312,15 +312,17 @@ export const MesasView: React.FC<MesasViewProps> = ({
                   key={mesa.id}
                   accent={!estaActiva ? 'none' : esLibre ? 'success' : 'warning'}
                   padding="sm"
-                  className={`min-h-16 px-4 py-3 flex items-center justify-between gap-3 ${
+                  className={`min-h-16 px-3.5 py-3 flex items-center justify-between gap-2.5 ${
                     !estaActiva ? 'opacity-80 bg-fill-subtle' : ''
                   }`}
                 >
-                  <div className="min-w-0 flex-1 flex flex-wrap items-center gap-2.5">
-                    <span className="text-base font-semibold text-ink leading-tight break-words">
+                  <div className="min-w-0 flex-1 space-y-1.5">
+                    <span className="text-base font-semibold text-ink leading-tight block">
                       {mesa.nombre}
                     </span>
-                    <StatusBadge estado={estadoBadge} />
+                    <div className="inline-flex">
+                      <StatusBadge estado={estadoBadge} />
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">

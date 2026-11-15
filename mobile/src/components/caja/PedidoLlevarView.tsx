@@ -338,9 +338,9 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
       )}
 
       <div className="p-3 bg-canvas border border-line rounded-xl text-xs space-y-1">
-        <div className="flex justify-between items-center">
-          <span className="text-ink-muted">Cliente / Referencia:</span>
-          <span className="font-bold text-ink">
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-ink-muted shrink-0">Cliente / Referencia:</span>
+          <span className="font-bold text-ink text-right min-w-0">
             {referencia.trim() || 'No indicada'}
           </span>
         </div>
@@ -354,15 +354,15 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
       <div className="divide-y divide-line max-h-[300px] md:max-h-none overflow-y-auto pr-1">
         {lineas.map((l) => (
           <div key={l.id} className="py-2.5 space-y-1.5">
-            <div className="flex justify-between items-start text-xs">
-              <div>
+            <div className="flex justify-between items-start gap-3 text-xs">
+              <div className="min-w-0 flex-1">
                 <h4 className="font-bold text-ink">{l.nombre}</h4>
                 {l.elecciones && l.elecciones.length > 0 && (
                   <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
                     {l.elecciones.map((el) => (
                       <div key={el.parte} className="flex justify-between gap-2">
                         <span className="font-semibold text-ink shrink-0">{el.parte}:</span>
-                        <span className="text-ink-muted text-right break-words min-w-0">{el.productoNombre}</span>
+                        <span className="text-ink-muted text-right min-w-0">{el.productoNombre}</span>
                       </div>
                     ))}
                   </div>
@@ -581,18 +581,18 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
                   </p>
                 </div>
 
-                <Button
-                  size="sm"
-                  variant="primary"
+                <button
+                  type="button"
                   onClick={() => {
                     triggerLight();
                     setMenuParaArmar(m);
                   }}
-                  className="min-h-[44px] px-3 font-bold shrink-0 flex items-center gap-1"
+                  aria-label={`Armar ${m.nombre}`}
+                  title={`Armar ${m.nombre}`}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Armar Menú</span>
-                </Button>
+                  <Plus className="w-5 h-5" aria-hidden="true" />
+                </button>
               </Card>
             ))}
           </div>

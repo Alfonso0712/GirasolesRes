@@ -105,15 +105,15 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
     <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-canvas pb-28">
       {/* 1. Tarjeta de Usuario */}
       <Card className="p-5 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-2xl shadow-sm">
+        <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-2xl shadow-sm shrink-0">
           {session.nombre.charAt(0)}
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 className="text-base font-extrabold text-ink">
             {session.nombre} {session.apellido}
           </h2>
           <span className="inline-flex items-center gap-1 text-xs font-bold text-accent bg-chip-accent-bg border border-chip-accent-border px-2.5 py-0.5 rounded-full mt-1">
-            <Shield className="w-3 h-3" aria-hidden="true" />
+            <Shield className="w-3 h-3 shrink-0" aria-hidden="true" />
             <span>Rol: {session.rol}</span>
           </span>
           <p className="text-xs text-ink-muted mt-1">{session.correo}</p>
@@ -128,45 +128,49 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
 
         {/* Modo Oscuro */}
         <div className="flex items-center justify-between min-h-[48px] gap-3">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
               {isDark ? <Moon className="w-5 h-5 text-accent" aria-hidden="true" /> : <Sun className="w-5 h-5 text-ink" aria-hidden="true" />}
             </div>
-            <div className="min-w-0">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-ink">Modo Oscuro</p>
               <p className="text-xs text-ink-muted">Recomendado para turnos nocturnos y pantallas KDS</p>
             </div>
           </div>
-          <Switch
-            checked={isDark}
-            onChange={() => onToggleDarkMode()}
-            aria-label="Alternar modo oscuro"
-          />
+          <div className="shrink-0">
+            <Switch
+              checked={isDark}
+              onChange={() => onToggleDarkMode()}
+              aria-label="Alternar modo oscuro"
+            />
+          </div>
         </div>
 
         {/* Respuesta Háptica con interruptor y botón Probar */}
         <div className="pt-2 border-t border-line space-y-2">
           <div className="flex items-center justify-between min-h-[48px] gap-3">
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
                 <Vibrate className="w-5 h-5" aria-hidden="true" />
               </div>
-              <div className="min-w-0">
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-ink">Respuesta Háptica</p>
                 <p className="text-xs text-ink-muted">
                   Vibración táctil al interactuar y confirmar acciones
                 </p>
               </div>
             </div>
-            <Switch
-              checked={hapticsHabilitado}
-              onChange={() => handleToggleHaptics()}
-              aria-label="Alternar respuesta háptica"
-            />
+            <div className="shrink-0">
+              <Switch
+                checked={hapticsHabilitado}
+                onChange={() => handleToggleHaptics()}
+                aria-label="Alternar respuesta háptica"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center justify-between gap-3 pl-14">
-            <span className="text-xs text-ink-muted">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:pl-14">
+            <span className="text-xs text-ink-muted flex-1 min-w-0">
               {hapticsHabilitado
                 ? 'Active el botón para verificar la vibración del equipo.'
                 : 'Active la respuesta háptica para probarla'}
@@ -176,7 +180,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
               variant="outline"
               disabled={!hapticsHabilitado}
               onClick={() => void handleProbarHaptics()}
-              className="min-h-[44px] shrink-0"
+              className="min-h-[44px] shrink-0 w-full sm:w-auto"
             >
               Probar
             </Button>
@@ -194,29 +198,31 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
 
         {/* Sonido de avisos KDS / Pedidos */}
         <div className="flex items-center justify-between pt-2 border-t border-line min-h-[48px] gap-3">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
               <Volume2 className="w-5 h-5" aria-hidden="true" />
             </div>
-            <div className="min-w-0">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-ink">Sonido de Avisos</p>
               <p className="text-xs text-ink-muted">Alertas sonoras para nuevas comandas y pedidos listos</p>
             </div>
           </div>
-          <Switch
-            checked={sonidoHabilitado}
-            onChange={() => handleToggleSonido()}
-            aria-label="Alternar sonido de avisos"
-          />
+          <div className="shrink-0">
+            <Switch
+              checked={sonidoHabilitado}
+              onChange={() => handleToggleSonido()}
+              aria-label="Alternar sonido de avisos"
+            />
+          </div>
         </div>
 
         {/* Orientación de Interfaz (Diestro / Zurdo) */}
         <div className="pt-2 border-t border-line space-y-2">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink">
+            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line flex items-center justify-center text-ink shrink-0">
               <Smartphone className="w-5 h-5 text-accent" aria-hidden="true" />
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-ink">Orientación de Manejo</p>
               <p className="text-xs text-ink-muted">Alinea acciones táctiles para uso diestro o zurdo</p>
             </div>

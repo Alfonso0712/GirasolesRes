@@ -111,12 +111,12 @@ export const ArmarMenuSheet: React.FC<ArmarMenuSheetProps> = ({
     >
       <div className="space-y-4">
         {/* Encabezado del Menú Completo */}
-        <div className="bg-canvas border border-line rounded-2xl p-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+        <div className="bg-canvas border border-line rounded-2xl p-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <Utensils className="w-5 h-5" aria-hidden="true" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <span className="text-xs font-bold uppercase tracking-wider text-accent block">
                 {menu.nombre}
               </span>
@@ -126,11 +126,11 @@ export const ArmarMenuSheet: React.FC<ArmarMenuSheetProps> = ({
             </div>
           </div>
           {!esMozo ? (
-            <span className="text-base font-black text-accent tabular-nums">
+            <span className="text-base font-black text-accent tabular-nums shrink-0">
               {formatCurrency(menu.precio)}
             </span>
           ) : (
-            <span className="text-xs font-bold text-ink-muted bg-surface border border-line px-2 py-1 rounded-lg">
+            <span className="text-xs font-bold text-ink-muted bg-surface border border-line px-2 py-1 rounded-lg shrink-0">
               Menú Completo
             </span>
           )}

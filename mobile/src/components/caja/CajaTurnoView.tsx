@@ -756,16 +756,20 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 onClick={() => handleVerDetalleVenta(v.ventaId)}
                 className="space-y-1 select-none"
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
+                <div className="flex justify-between items-start gap-2.5">
+                  <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 min-w-0 flex-1">
                     <span className="text-sm font-extrabold text-ink">{v.comprobante}</span>
                     <span className="text-xs text-ink-muted">Pedido #{v.pedidoNumero}</span>
                   </div>
-                  <StatusBadge estado={v.estado} />
+                  <div className="shrink-0">
+                    <StatusBadge estado={v.estado} />
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-xs text-ink-muted pt-1 border-t border-line">
-                  <span>{formatLimaFechaHora(v.fechaHoraFormateada || v.fechaHora)} · {v.metodo}</span>
-                  <span className="text-sm font-black text-accent tabular-nums">
+                <div className="flex justify-between items-center gap-2 text-xs text-ink-muted pt-1 border-t border-line">
+                  <span className="min-w-0 flex-1">
+                    {formatLimaFechaHora(v.fechaHoraFormateada || v.fechaHora)} · {v.metodo}
+                  </span>
+                  <span className="text-sm font-black text-accent tabular-nums shrink-0">
                     {formatCurrency(v.total)}
                   </span>
                 </div>
@@ -944,13 +948,13 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 <div className="divide-y divide-line bg-canvas rounded-xl border border-line overflow-hidden max-h-48 overflow-y-auto">
                   {pedidosPendientes.map((p) => (
                     <div key={p.pedidoId} className="p-3 flex items-center justify-between text-xs gap-3">
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <span className="font-bold text-ink">Pedido #{p.numero}</span>
                         <span className="text-ink-muted ml-2">
                           ({p.tipo} · {p.mesa || 'Sin mesa'})
                         </span>
                       </div>
-                      <span className="font-bold text-danger tabular-nums">
+                      <span className="font-bold text-danger tabular-nums shrink-0">
                         {formatCurrency(p.total)}
                       </span>
                     </div>

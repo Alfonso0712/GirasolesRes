@@ -40,8 +40,8 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
 
   return (
     <section className="bg-surface rounded-2xl border border-line overflow-hidden shadow-2xs">
-      {/* Cabecera del acordeón con título, contador "x de y" y Switch "Seleccionar todos" */}
-      <div className="px-4 py-3 bg-canvas/60 border-b border-line flex items-center justify-between gap-2">
+      {/* Cabecera del acordeón en dos filas para dar ancho completo al título */}
+      <div className="bg-canvas/60 border-b border-line">
         <button
           type="button"
           aria-expanded={abierto}
@@ -50,10 +50,10 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
             triggerLight();
             setAbierto((prev) => !prev);
           }}
-          className="flex-1 min-h-11 flex items-center justify-between gap-2 text-left rounded-xl px-1 py-1 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent cursor-pointer"
+          className="w-full min-h-11 px-4 py-2.5 flex items-center justify-between gap-3 text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent cursor-pointer"
         >
-          <div className="min-w-0">
-            <h3 className="text-sm font-bold text-ink leading-snug break-words">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-bold text-ink leading-snug">
               {titulo}
             </h3>
             <span
@@ -73,7 +73,7 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
         </button>
 
         {items.length > 0 && (
-          <div className="flex items-center gap-2 shrink-0 pl-2 border-l border-line">
+          <div className="px-4 py-1.5 border-t border-line/60 flex items-center justify-between gap-3">
             <span className="text-xs font-semibold text-ink-muted">
               Seleccionar todos
             </span>

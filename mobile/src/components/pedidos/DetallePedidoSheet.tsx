@@ -88,21 +88,23 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
         <>
           {/* 1. Cabecera del Detalle */}
           <div className="bg-canvas border border-line rounded-2xl p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="min-w-0 flex-1">
                 <h3 className="text-base font-extrabold text-ink">
                   {pedido.tipo === 'Mesa'
                     ? `Mesa: ${pedido.mesa || 'Salón'}`
                     : `Para Llevar: ${pedido.referencia || 'Cliente'}`}
                 </h3>
                 <div className="flex items-center gap-1.5 text-xs text-ink-muted mt-0.5">
-                  <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                   <span>
                     {pedido.hora || 'En curso'} · Mozo: {pedido.registradoPor}
                   </span>
                 </div>
               </div>
-              <StatusBadge estado={pedido.estado} />
+              <div className="shrink-0">
+                <StatusBadge estado={pedido.estado} />
+              </div>
             </div>
 
             {/* Total solo visible si no es Mozo (RV-154) */}
@@ -134,11 +136,11 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
               {pedido.lineas.map((linea, idx) => (
                 <div key={linea.detalleId || idx} className="py-2.5 first:pt-1 last:pb-1">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-2 min-w-0">
+                    <div className="flex items-start gap-2 min-w-0 flex-1">
                       <span className="text-xs font-black text-accent bg-primary/10 w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
                         {linea.cantidad}x
                       </span>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <p className="text-xs font-bold text-ink leading-tight">{linea.nombre}</p>
                         {linea.elecciones && linea.elecciones.length > 0 && (
                           <p className="text-xs text-ink-muted mt-0.5 leading-snug">

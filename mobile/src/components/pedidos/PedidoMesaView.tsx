@@ -435,15 +435,15 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
       <div className="divide-y divide-line">
         {lineas.map((linea) => (
           <div key={linea.id} className="py-3 space-y-2">
-            <div className="flex justify-between items-start">
-              <div>
+            <div className="flex justify-between items-start gap-3">
+              <div className="min-w-0 flex-1">
                 <h4 className="text-sm font-bold text-ink">{linea.nombre}</h4>
                 {linea.elecciones && linea.elecciones.length > 0 && (
                   <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
                     {linea.elecciones.map((el) => (
                       <div key={el.parte} className="flex justify-between gap-2">
                         <span className="font-semibold text-ink shrink-0">{el.parte}:</span>
-                        <span className="text-ink-muted text-right break-words min-w-0">{el.productoNombre}</span>
+                        <span className="text-ink-muted text-right min-w-0">{el.productoNombre}</span>
                       </div>
                     ))}
                   </div>
@@ -458,7 +458,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => modificarCantidad(linea.id, -1)}
@@ -711,18 +711,18 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
                   )}
                 </div>
 
-                <Button
-                  size="sm"
-                  variant="primary"
+                <button
+                  type="button"
                   onClick={() => {
                     triggerLight();
                     setMenuParaArmar(m);
                   }}
-                  className="min-h-[44px] px-3 font-bold shrink-0 flex items-center gap-1"
+                  aria-label={`Armar ${m.nombre}`}
+                  title={`Armar ${m.nombre}`}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Armar Menú</span>
-                </Button>
+                  <Plus className="w-5 h-5" aria-hidden="true" />
+                </button>
               </Card>
             ))}
           </div>
