@@ -83,3 +83,11 @@ Los textos mostrados al usuario deben apegarse estrictamente a la nomenclatura o
 - Toda comunicación dirigida al personal del restaurante debe emplear el pronombre **USTED** (ej. *"¿Está seguro de asentar el cierre definitivo de caja?"*, *"Tendrá que ingresar nuevamente sus credenciales"*).
 - Prohibido el uso de modismos regionales, lenguaje informal o atribuciones automáticas.
 - Mensajes de confirmación claros, concisos y con advertencia de irreversibilidad en operaciones críticas.
+
+## 7. Reglas de Diseño Móvil (Textos y Encabezados)
+
+- **Encabezados en dos filas (`PageHeader`):** La fila 1 reserva el mayor ancho al título (`flex-1 min-w-0`), con acciones solo de ícono (máximo 2, 44×44 px, con `aria-label`). Las etiquetas de estado (`etiquetas`) y la marca temporal van en la fila 2.
+- **Filas y tarjetas navegables (`FilaNavegacion`):** Cualquier etiqueta superior a 14 caracteres o grupo de estado se ubica debajo del bloque de texto, nunca compitiendo horizontalmente con título y descripción.
+- **Acciones en filas:** Las acciones dentro de filas de lista deben ser botones solo de ícono de 44×44 px con `aria-label` para evitar comprimir el texto principal.
+- **Ancho mínimo de lectura:** El bloque textual principal (`flex-1 min-w-0`) debe conservar al menos el 60 % del ancho de la fila en pantallas de 360 px y 412 px.
+- **Integridad de palabras:** Está prohibido usar `break-all` o `overflow-wrap: anywhere`; los saltos de línea ocurren únicamente entre palabras completas (`check:layout`).
