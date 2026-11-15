@@ -40,18 +40,16 @@ function updateStoredToken(newToken: string): void {
   }
 }
 
+function leerTokenDirecto(obj: unknown): string | null {
+  if (typeof obj !== 'object' || obj === null || !('token' in obj)) return null;
+  return typeof obj.token === 'string' && obj.token ? obj.token : null;
+}
+
 function extraerTokenRespuesta(data: unknown): string | null {
-  if (typeof data !== 'object' || data === null) return null;
-  if ('token' in data && typeof data.token === 'string' && data.token) {
-    return data.token;
-  }
-  if ('data' in data && typeof data.data === 'object' && data.data !== null) {
-    const nested = data.data;
-    if ('token' in nested && typeof nested.token === 'string' && nested.token) {
-      return nested.token;
-    }
-  }
-  return null;
+  const directo = leerTokenDirecto(data);
+  if (directo) return directo;
+  if (typeof data !== 'object' || data === null || !('data' in data)) return null;
+  return leerTokenDirecto(data.data);
 }
 
 async function solicitarRenovacion(currentToken: string): Promise<string | null> {
