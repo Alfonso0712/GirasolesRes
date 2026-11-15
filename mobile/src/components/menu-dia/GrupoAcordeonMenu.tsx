@@ -15,7 +15,7 @@ export interface GrupoAcordeonMenuProps {
   agotadosPorId: Record<string, boolean>;
   mostrarPrecio?: boolean;
   abiertoInicial?: boolean;
-  onToggleItem: (item: CandidatoMenuDto) => void;
+  onToggleItem: (candidato: CandidatoMenuDto) => void;
   onToggleGrupo: (items: CandidatoMenuDto[]) => void;
 }
 
@@ -26,15 +26,15 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
   seleccionadosSet,
   agotadosPorId,
   mostrarPrecio = false,
-  abiertoInicial = true,
+  abiertoInicial: estaAbiertoInicial = true,
   onToggleItem,
   onToggleGrupo,
 }) => {
-  const [abierto, setAbierto] = useState<boolean>(abiertoInicial);
+  const [estaAbierto, setEstaAbierto] = useState<boolean>(estaAbiertoInicial);
   const { triggerLight } = useHaptics();
 
   const seleccionadosCount = items.filter((i) => seleccionadosSet.has(i.id)).length;
-  const todosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
+  const estanTodosSeleccionados = items.length > 0 && seleccionadosCount === items.length;
   const textoContador = formatearContadorGrupo(seleccionadosCount, items.length);
   const panelId = `panel-grupo-${clave}`;
 
@@ -44,11 +44,11 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
       <div className="bg-canvas/60 border-b border-line">
         <button
           type="button"
-          aria-expanded={abierto}
+          aria-expanded={estaAbierto}
           aria-controls={panelId}
           onClick={() => {
             triggerLight();
-            setAbierto((prev) => !prev);
+            setEstaAbierto((estaAbiertoPrevio) => !estaAbiertoPrevio);
           }}
           className="w-full min-h-11 px-4 py-2.5 flex items-center justify-between gap-3 text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent cursor-pointer"
         >
@@ -64,7 +64,7 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
             </span>
           </div>
           <span className="w-8 h-8 rounded-lg flex items-center justify-center text-ink-muted shrink-0">
-            {abierto ? (
+            {estaAbierto ? (
               <ChevronUp className="w-4 h-4" aria-hidden="true" />
             ) : (
               <ChevronDown className="w-4 h-4" aria-hidden="true" />
@@ -78,7 +78,7 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
               Seleccionar todos
             </span>
             <Switch
-              checked={todosSeleccionados}
+              checked={estanTodosSeleccionados}
               onChange={() => {
                 triggerLight();
                 onToggleGrupo(items);
@@ -90,26 +90,26 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
       </div>
 
       {/* Cuerpo desplegable del acordeón */}
-      {abierto && (
+      {estaAbierto && (
         <div id={panelId} className="divide-y divide-line">
           {items.length === 0 ? (
             <p className="px-4 py-4 text-xs text-ink-muted italic">
               No hay productos registrados en este grupo.
             </p>
           ) : (
-            items.map((item) => {
-              const estaSeleccionado = seleccionadosSet.has(item.id);
-              const estaAgotado = Boolean(agotadosPorId[item.id]);
+            items.map((candidato) => {
+              const estaSeleccionado = seleccionadosSet.has(candidato.id);
+              const estaAgotado = Boolean(agotadosPorId[candidato.id]);
 
               return (
                 <button
-                  key={item.id}
+                  key={candidato.id}
                   type="button"
                   role="checkbox"
                   aria-checked={estaSeleccionado}
                   onClick={() => {
                     triggerLight();
-                    onToggleItem(item);
+                    onToggleItem(candidato);
                   }}
                   className={`w-full min-h-14 px-4 py-2.5 flex items-center justify-between gap-3 text-left transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent cursor-pointer ${
                     estaSeleccionado
@@ -136,7 +136,7 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
 
                     <div className="min-w-0 flex-1">
                       <span className="text-sm font-bold text-ink leading-snug break-words block">
-                        {item.nombre}
+                        {candidato.nombre}
                       </span>
                       {estaAgotado && (
                         <div className="mt-1">
@@ -146,9 +146,9 @@ export const GrupoAcordeonMenu: React.FC<GrupoAcordeonMenuProps> = ({
                     </div>
                   </div>
 
-                  {mostrarPrecio && item.precio != null && item.precio > 0 && (
+                  {mostrarPrecio && candidato.precio != null && candidato.precio > 0 && (
                     <span className="text-sm font-extrabold text-accent tabular-nums whitespace-nowrap shrink-0">
-                      {formatCurrency(item.precio)}
+                      {formatCurrency(candidato.precio)}
                     </span>
                   )}
                 </button>

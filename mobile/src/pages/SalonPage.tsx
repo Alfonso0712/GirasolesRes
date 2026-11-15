@@ -27,17 +27,17 @@ export const SalonPage: React.FC<SalonPageProps> = ({
   onPedidoModoChange,
 }) => {
   const [mesaEnPedido, setMesaEnPedido] = useState<MesaItem | null>(null);
-  const [modoGestion, setModoGestion] = useState(false);
+  const [esModoGestion, setEsModoGestion] = useState(false);
   const [mostrarInactivas, setMostrarInactivas] = useState(false);
   const [menuHoy, setMenuHoy] = useState<MenuDiaResponseDto | null>(() =>
     menuDiaService.obtenerMenuHoyCacheado()
   );
 
-  const autorizado = puede(rol, 'mesas.ver');
+  const estaAutorizado = puede(rol, 'mesas.ver');
 
-  const cargarMenuHoy = useCallback(async (usarCache = true) => {
+  const cargarMenuHoy = useCallback(async (debeUsarCache = true) => {
     try {
-      const res = await menuDiaService.obtenerMenuHoy({ usarCache });
+      const res = await menuDiaService.obtenerMenuHoy({ usarCache: debeUsarCache });
       setMenuHoy(res);
     } catch {
       // No bloquear la operación del salón si falla la consulta de estado del menú
@@ -45,7 +45,7 @@ export const SalonPage: React.FC<SalonPageProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!autorizado) return;
+    if (!estaAutorizado) return;
     void cargarMenuHoy(true);
 
     const handleMenuActualizado = () => {
@@ -55,15 +55,21 @@ export const SalonPage: React.FC<SalonPageProps> = ({
     return () => {
       window.removeEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
     };
-  }, [autorizado, cargarMenuHoy]);
+  }, [estaAutorizado, cargarMenuHoy]);
 
-  const { mesas, cargando, cargandoPedidos, error, recargar } = useMesasConPedidos({
+  const {
+    mesas,
+    cargando: estaCargando,
+    cargandoPedidos: estaCargandoPedidos,
+    error,
+    recargar,
+  } = useMesasConPedidos({
     rol,
-    incluirInactivas: modoGestion && mostrarInactivas,
-    enabled: autorizado,
+    incluirInactivas: esModoGestion && mostrarInactivas,
+    enabled: estaAutorizado,
   });
 
-  if (!autorizado) {
+  if (!estaAutorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
@@ -89,9 +95,9 @@ export const SalonPage: React.FC<SalonPageProps> = ({
     await recargar();
   };
 
-  const handleCambiarEstadoMesa = async (id: string, activa: boolean) => {
-    await mesaService.cambiarEstadoMesa(id, activa);
-    onShowToast(activa ? 'Mesa activada.' : 'Mesa desactivada.');
+  const handleCambiarEstadoMesa = async (id: string, estaActiva: boolean) => {
+    await mesaService.cambiarEstadoMesa(id, estaActiva);
+    onShowToast(estaActiva ? 'Mesa activada.' : 'Mesa desactivada.');
     await recargar();
   };
 
@@ -115,8 +121,8 @@ export const SalonPage: React.FC<SalonPageProps> = ({
   return (
     <MesasView
       mesas={mesas}
-      cargando={cargando}
-      cargandoPedidos={cargandoPedidos}
+      cargando={estaCargando}
+      cargandoPedidos={estaCargandoPedidos}
       error={error}
       onRefresh={async () => {
         await Promise.all([recargar(), cargarMenuHoy(false)]);
@@ -126,8 +132,8 @@ export const SalonPage: React.FC<SalonPageProps> = ({
       onIrADefinirMenu={onIrADefinirMenu}
       menuDefinido={menuHoy ? menuHoy.definido : undefined}
       rol={rol}
-      modoGestion={modoGestion}
-      onToggleModoGestion={setModoGestion}
+      modoGestion={esModoGestion}
+      onToggleModoGestion={setEsModoGestion}
       mostrarInactivas={mostrarInactivas}
       onToggleMostrarInactivas={setMostrarInactivas}
       onCrearMesa={handleCrearMesa}

@@ -60,7 +60,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
   reportePlatos,
   topPlatos,
   cierres,
-  cargando,
+  cargando: estaCargando,
   error,
   onRefresh,
   periodo,
@@ -71,8 +71,8 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
   onNavigateToCierres,
 }) => {
   const [vista, setVista] = useState<VistaReporte>('ventas');
-  const [mesSheetAbierto, setMesSheetAbierto] = useState(false);
-  const [descargandoPdf, setDescargandoPdf] = useState(false);
+  const [estaMesSheetAbierto, setEstaMesSheetAbierto] = useState(false);
+  const [estaDescargandoPdf, setEstaDescargandoPdf] = useState(false);
   const [errorPdf, setErrorPdf] = useState<string | null>(null);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
@@ -93,16 +93,16 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
     return reporteVentas.total / reporteVentas.nVentas;
   }, [reporteVentas]);
 
-  const sinDatosVentas = !reporteVentas || reporteVentas.nVentas === 0;
-  const sinDatosPlatos = platosLista.length === 0;
-  const sinDatosActual = vista === 'ventas' ? sinDatosVentas : sinDatosPlatos;
+  const esSinDatosVentas = !reporteVentas || reporteVentas.nVentas === 0;
+  const esSinDatosPlatos = platosLista.length === 0;
+  const esSinDatosActual = vista === 'ventas' ? esSinDatosVentas : esSinDatosPlatos;
 
   const etiquetaOtroMes =
     periodo === 'otroMes' && mesElegido?.etiqueta ? mesElegido.etiqueta : 'Otro mes';
 
   const handleDescargarPdf = async () => {
     triggerLight();
-    setDescargandoPdf(true);
+    setEstaDescargandoPdf(true);
     setErrorPdf(null);
 
     const hoy = obtenerHoyLimaYMD();
@@ -130,7 +130,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
       setErrorPdf(msg);
       mostrar({ tipo: 'error', mensaje: msg });
     } finally {
-      setDescargandoPdf(false);
+      setEstaDescargandoPdf(false);
     }
   };
 
@@ -142,7 +142,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
         subtitle="Visión gerencial de ventas y rendimiento"
         icon={<BarChart3 className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
@@ -201,7 +201,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
             onSelect={(p) => {
               triggerLight();
               if (p === 'otroMes') {
-                setMesSheetAbierto(true);
+                setEstaMesSheetAbierto(true);
               } else {
                 onCambiarPeriodo(p);
               }
@@ -221,12 +221,12 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
             <Button
               variant="secondary"
               size="sm"
-              disabled={descargandoPdf || cargando || sinDatosActual}
+              disabled={estaDescargandoPdf || estaCargando || esSinDatosActual}
               onClick={() => void handleDescargarPdf()}
               className="min-h-[44px] px-3 flex items-center justify-center gap-1.5 shrink-0 font-bold w-full sm:w-auto"
             >
               <FileDown className="w-4 h-4 text-accent" aria-hidden="true" />
-              <span>{descargandoPdf ? 'Generando PDF…' : 'Descargar PDF'}</span>
+              <span>{estaDescargandoPdf ? 'Generando PDF…' : 'Descargar PDF'}</span>
             </Button>
           </div>
 
@@ -245,11 +245,11 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
           />
         )}
 
-        {cargando && !reporteVentas && (
+        {estaCargando && !reporteVentas && (
           <SkeletonList count={3} />
         )}
 
-        {!error && !cargando && sinDatosActual && (
+        {!error && !estaCargando && esSinDatosActual && (
           <EmptyState
             icon={BarChart3}
             titulo="Sin ventas registradas"
@@ -258,7 +258,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
         )}
 
         {/* 4A. Vista "Ventas": KPIs de la web y detalle por día */}
-        {!error && vista === 'ventas' && reporteVentas && !sinDatosVentas && (
+        {!error && vista === 'ventas' && reporteVentas && !esSinDatosVentas && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               <StatCard
@@ -335,7 +335,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
         )}
 
         {/* 4B. Vista "Platos vendidos": Ranking con nombre completo, cantidad, importe y barra de proporción */}
-        {!error && vista === 'platos' && !sinDatosPlatos && (
+        {!error && vista === 'platos' && !esSinDatosPlatos && (
           <Card className="p-5 shadow-xs space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -444,8 +444,8 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
 
       {/* Selector de Mes ("Otro mes") */}
       <MesSheet
-        isOpen={mesSheetAbierto}
-        onClose={() => setMesSheetAbierto(false)}
+        isOpen={estaMesSheetAbierto}
+        onClose={() => setEstaMesSheetAbierto(false)}
         selectedId={mesElegido?.id}
         incluirTodos={false}
         titulo="Seleccionar mes del reporte"

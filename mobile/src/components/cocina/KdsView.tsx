@@ -33,7 +33,7 @@ interface UndoAccion {
 
 export const KdsView: React.FC<KdsViewProps> = ({
   comandas,
-  cargando,
+  cargando: estaCargando,
   error,
   onRefresh,
   onCambiarEstado,
@@ -43,7 +43,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
   const [filtro, setFiltro] = useState<'todas' | 'pendientes' | 'enPreparacion'>('todas');
   const [procesandoId, setProcesandoId] = useState<string | null>(null);
   const [undoAccion, setUndoAccion] = useState<UndoAccion | null>(null);
-  const [deshaciendo, setDeshaciendo] = useState(false);
+  const [estaDeshaciendo, setEstaDeshaciendo] = useState(false);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
   const { ejecutar } = useAccionConAviso();
@@ -78,13 +78,13 @@ export const KdsView: React.FC<KdsViewProps> = ({
   const handleAccionEstado = async (comanda: ComandaKdsItem, nuevoEstado: 'enPreparacion' | 'lista') => {
     triggerLight();
     setProcesandoId(comanda.id);
-    const ok = await ejecutar(() => onCambiarEstado(comanda.id, nuevoEstado), {
+    const esExitoso = await ejecutar(() => onCambiarEstado(comanda.id, nuevoEstado), {
       mensajeError: 'No se pudo actualizar la comanda.',
       prefijoServidor: 'No se pudo actualizar la comanda.',
       reintentar: () => handleAccionEstado(comanda, nuevoEstado),
       onError: alFallarAccion,
     });
-    if (ok) {
+    if (esExitoso) {
       triggerSuccess();
       reproducirSonidoKds(nuevoEstado === 'enPreparacion' ? 'preparacion' : 'lista');
       setUndoAccion({ comandaId: comanda.id, pedidoNumero: comanda.pedidoNumero, nuevoEstado, segundosRestantes: SEGUNDOS_UNDO_KDS });
@@ -95,16 +95,16 @@ export const KdsView: React.FC<KdsViewProps> = ({
   const handleEjecutarDeshacer = async () => {
     if (!undoAccion || !onDeshacer) return;
     const { comandaId } = undoAccion;
-    setDeshaciendo(true);
+    setEstaDeshaciendo(true);
     triggerLight();
-    const ok = await ejecutar(() => onDeshacer(comandaId), {
+    const esExitoso = await ejecutar(() => onDeshacer(comandaId), {
       mensajeError: 'No se pudo revertir la comanda.',
       prefijoServidor: 'No se pudo revertir la comanda.',
       reintentar: () => handleEjecutarDeshacer(),
       onError: alFallarAccion,
     });
-    if (ok) { triggerSuccess(); onShowToast?.('Estado revertido con éxito.'); setUndoAccion(null); }
-    setDeshaciendo(false);
+    if (esExitoso) { triggerSuccess(); onShowToast?.('Estado revertido con éxito.'); setUndoAccion(null); }
+    setEstaDeshaciendo(false);
   };
 
   // Filtrado de comandas
@@ -140,7 +140,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
         subtitle={pluralizar(comandasOrdenadas.length, 'comanda activa', 'comandas activas')}
         icon={<ChefHat className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       {/* 2. Filtros de Estado */}
@@ -169,11 +169,11 @@ export const KdsView: React.FC<KdsViewProps> = ({
           />
         )}
 
-        {cargando && comandas.length === 0 && (
+        {estaCargando && comandas.length === 0 && (
           <SkeletonList count={4} />
         )}
 
-        {!error && !cargando && comandasOrdenadas.length === 0 && (
+        {!error && !estaCargando && comandasOrdenadas.length === 0 && (
           <EmptyState
             icon={ChefHat}
             titulo="No hay comandas pendientes en este momento"
@@ -356,12 +356,12 @@ export const KdsView: React.FC<KdsViewProps> = ({
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
-              disabled={deshaciendo}
+              disabled={estaDeshaciendo}
               onClick={() => void handleEjecutarDeshacer()}
               className="min-h-[44px] px-3 bg-accent text-white hover:opacity-90 text-xs font-black uppercase tracking-wider rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50 transition-all focus-visible:ring-2 focus-visible:ring-surface"
             >
               <RotateCcw className="w-4 h-4" aria-hidden="true" />
-              <span>{deshaciendo ? 'Revirtiendo...' : 'Deshacer'}</span>
+              <span>{estaDeshaciendo ? 'Revirtiendo...' : 'Deshacer'}</span>
             </button>
             <button
               type="button"

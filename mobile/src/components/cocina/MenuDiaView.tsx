@@ -25,8 +25,8 @@ export interface MenuDiaViewProps {
 
 export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
   platos,
-  definido = true,
-  cargando,
+  definido: estaDefinido = true,
+  cargando: estaCargando,
   error,
   onRefresh,
   onCambiarDisponibilidad,
@@ -40,15 +40,15 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
 
-  const ejecutarCambioDisponibilidad = async (plato: PlatoMenuDiaDto, nuevoAgotado: boolean) => {
+  const ejecutarCambioDisponibilidad = async (plato: PlatoMenuDiaDto, estaAgotadoNuevo: boolean) => {
     if (!puedeModificar) return;
     triggerLight();
     setProcesandoId(plato.productoId);
 
     try {
-      await onCambiarDisponibilidad(plato.productoId, nuevoAgotado);
+      await onCambiarDisponibilidad(plato.productoId, estaAgotadoNuevo);
       triggerSuccess();
-      if (nuevoAgotado) {
+      if (estaAgotadoNuevo) {
         mostrar({
           tipo: 'aviso',
           mensaje: `${plato.nombre} marcado como AGOTADO para los mozos`,
@@ -69,12 +69,12 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
 
   const platosFiltrados = platos.filter((p) => {
     const query = busqueda.trim().toLowerCase();
-    const coincideBusqueda =
+    const tieneCoincidenciaBusqueda =
       query === '' ||
       p.nombre.toLowerCase().includes(query) ||
       p.categoria.toLowerCase().includes(query);
 
-    if (!coincideBusqueda) return false;
+    if (!tieneCoincidenciaBusqueda) return false;
     if (filtro === 'disponibles') return !p.agotado;
     if (filtro === 'agotados') return p.agotado;
     return true;
@@ -91,7 +91,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
         subtitle={`${pluralizar(disponiblesCount, 'plato disponible', 'platos disponibles')} · ${pluralizar(agotadosCount, 'agotado', 'agotados')}`}
         icon={<CalendarCheck className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       {/* 2. Barra de Búsqueda Rápida Táctil */}
@@ -136,7 +136,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
 
       {/* 4. Lista de Platos y Acciones de Disponibilidad */}
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
-        {!cargando && !error && definido === false && (
+        {!estaCargando && !error && estaDefinido === false && (
           <div
             role="status"
             className="p-3.5 rounded-2xl bg-warning-bg border border-warning-border text-badge-warning-text text-xs font-semibold flex items-start gap-2.5"
@@ -154,11 +154,11 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
           />
         )}
 
-        {cargando && platos.length === 0 && (
+        {estaCargando && platos.length === 0 && (
           <SkeletonList count={6} />
         )}
 
-        {!error && !cargando && platosFiltrados.length === 0 && (
+        {!error && !estaCargando && platosFiltrados.length === 0 && (
           <EmptyState
             icon={UtensilsCrossed}
             titulo="No se encontraron platos"

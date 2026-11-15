@@ -27,23 +27,23 @@ export const PlatosPage: React.FC<PlatosPageProps> = ({
 }) => {
   const puedeDisponibilidad = puede(rol, 'platos.disponibilidad');
   const puedeDefinir = puede(rol, 'menuDia.definir');
-  const autorizado = puedeDisponibilidad || puedeDefinir;
+  const estaAutorizado = puedeDisponibilidad || puedeDefinir;
 
   const [modo, setModo] = useState<'disponibilidad' | 'definir'>(
     puedeDefinir ? modoInicial : 'disponibilidad'
   );
   const { triggerLight } = useHaptics();
 
-  const { datos, cargando, error, recargar } = useMenuDia({
-    enabled: autorizado && modo === 'disponibilidad',
+  const { datos, cargando: estaCargando, error, recargar } = useMenuDia({
+    enabled: estaAutorizado && modo === 'disponibilidad',
   });
 
-  if (!autorizado) {
+  if (!estaAutorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
-  const handleCambiarDisponibilidad = async (productoId: string, nuevoAgotado: boolean) => {
-    await menuDiaService.cambiarDisponibilidad(productoId, nuevoAgotado);
+  const handleCambiarDisponibilidad = async (productoId: string, estaAgotadoNuevo: boolean) => {
+    await menuDiaService.cambiarDisponibilidad(productoId, estaAgotadoNuevo);
     void recargar();
   };
 
@@ -105,7 +105,7 @@ export const PlatosPage: React.FC<PlatosPageProps> = ({
       <MenuDiaView
         platos={datos?.platos || []}
         definido={datos?.definido}
-        cargando={cargando}
+        cargando={estaCargando}
         error={error}
         onRefresh={recargar}
         onCambiarDisponibilidad={handleCambiarDisponibilidad}

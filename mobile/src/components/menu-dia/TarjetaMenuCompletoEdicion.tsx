@@ -20,7 +20,7 @@ export interface TarjetaMenuCompletoEdicionProps {
 
 export const TarjetaMenuCompletoEdicion: React.FC<TarjetaMenuCompletoEdicionProps> = ({
   menu,
-  habilitado,
+  habilitado: estaHabilitado,
   opcionesSeleccionadasSet,
   candidatos,
   onToggle,
@@ -45,15 +45,15 @@ export const TarjetaMenuCompletoEdicion: React.FC<TarjetaMenuCompletoEdicionProp
     (p) => p.opcionesNombres.length === 0
   );
   const avisoMsg219 =
-    habilitado && primeraParteSinOpciones
+    estaHabilitado && primeraParteSinOpciones
       ? MSG_219(menu.nombre, primeraParteSinOpciones.nombre)
       : null;
 
   return (
     <Card
-      accent={habilitado ? (avisoMsg219 ? 'warning' : 'success') : 'none'}
+      accent={estaHabilitado ? (avisoMsg219 ? 'warning' : 'success') : 'none'}
       padding="md"
-      className={habilitado ? '' : 'opacity-85'}
+      className={estaHabilitado ? '' : 'opacity-85'}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -71,7 +71,7 @@ export const TarjetaMenuCompletoEdicion: React.FC<TarjetaMenuCompletoEdicionProp
         </div>
 
         <Switch
-          checked={habilitado}
+          checked={estaHabilitado}
           onChange={() => {
             triggerLight();
             onToggle(menu.id);

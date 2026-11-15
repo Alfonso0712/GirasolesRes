@@ -36,7 +36,7 @@ export interface AdminInicioViewProps {
 
 export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
   datos,
-  cargando,
+  cargando: estaCargando,
   error,
   actualizadoEn,
   onRefresh,
@@ -89,7 +89,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
         actualizadoEn={actualizadoEn}
         icon={<LayoutDashboard className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
@@ -101,7 +101,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
           />
         )}
 
-        {cargando && !datos && (
+        {estaCargando && !datos && (
           <div className="space-y-4">
             <SkeletonList count={4} />
           </div>

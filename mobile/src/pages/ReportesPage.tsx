@@ -21,7 +21,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
   onVolverAlInicio,
   onNavigateToCierres,
 }) => {
-  const autorizado = puede(rol, 'reportes.ver');
+  const estaAutorizado = puede(rol, 'reportes.ver');
 
   const [periodo, setPeriodo] = useState<PeriodoReporte>('hoy');
   const [mesElegido, setMesElegido] = useState<SeleccionMes | null>(null);
@@ -45,15 +45,15 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
     return { desde: primerDiaMes, hasta: hoyLima };
   }, [periodo, mesElegido]);
 
-  const { datos, cargando, error, recargar } = useReportes(rango, { enabled: autorizado });
+  const { datos, cargando: estaCargando, error, recargar } = useReportes(rango, { enabled: estaAutorizado });
   const { ejecutar } = useAccionConAviso();
 
   const cargarCierres = useCallback(
-    async (canceladoRef?: { current: boolean }) => {
+    async (canceladoEstado?: { estaCancelado: boolean }) => {
       await ejecutar(
         async () => {
           const res = await cajaService.obtenerHistorialCierres();
-          if (!canceladoRef?.current) setCierres(res.items || []);
+          if (!canceladoEstado?.estaCancelado) setCierres(res.items || []);
         },
         {
           mensajeError: 'No se pudo cargar el historial de cierres.',
@@ -65,15 +65,15 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
   );
 
   useEffect(() => {
-    if (!autorizado) return;
-    const canceladoRef = { current: false };
-    void cargarCierres(canceladoRef);
+    if (!estaAutorizado) return;
+    const canceladoEstado = { estaCancelado: false };
+    void cargarCierres(canceladoEstado);
     return () => {
-      canceladoRef.current = true;
+      canceladoEstado.estaCancelado = true;
     };
-  }, [autorizado, cargarCierres]);
+  }, [estaAutorizado, cargarCierres]);
 
-  if (!autorizado) {
+  if (!estaAutorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
@@ -87,7 +87,7 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
       reportePlatos={datos?.platos || null}
       topPlatos={datos?.platos?.items || []}
       cierres={cierres}
-      cargando={cargando}
+      cargando={estaCargando}
       error={error}
       onRefresh={handleRefresh}
       periodo={periodo}
