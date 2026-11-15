@@ -47,10 +47,10 @@ export function useAndroidBackButton({
     let isSubscribed = true;
 
     const setupListener = async () => {
-      const handle = await CapacitorApp.addListener('backButton', () => {
+      const suscripcionListener = await CapacitorApp.addListener('backButton', () => {
         // Prioridad 1 y 2: Intentar ejecutar manejadores en la pila (modales, BottomSheets o subvistas)
-        const handledByStack = executeTopBackHandler();
-        if (handledByStack) {
+        const fueManejadoPorPila = executeTopBackHandler();
+        if (fueManejadoPorPila) {
           return;
         }
 
@@ -71,10 +71,10 @@ export function useAndroidBackButton({
       });
 
       if (!isSubscribed) {
-        void handle.remove();
+        void suscripcionListener.remove();
       }
 
-      return handle;
+      return suscripcionListener;
     };
 
     const handlePromise = setupListener();

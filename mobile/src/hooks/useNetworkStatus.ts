@@ -18,7 +18,7 @@ export function useNetworkStatus(onReconexion?: () => void): NetworkStatus {
     return true;
   });
 
-  const [falloRedReciente, setFalloRedReciente] = useState<boolean>(false);
+  const [hayFalloRedReciente, setHayFalloRedReciente] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -27,7 +27,7 @@ export function useNetworkStatus(onReconexion?: () => void): NetworkStatus {
 
     const handleOnline = () => {
       setIsOnline(true);
-      setFalloRedReciente(false);
+      setHayFalloRedReciente(false);
       if (estabaDesconectado) {
         estabaDesconectado = false;
         window.dispatchEvent(new CustomEvent('girasoles:reload-active-view'));
@@ -41,14 +41,14 @@ export function useNetworkStatus(onReconexion?: () => void): NetworkStatus {
     };
 
     const handleNetworkSuccess = () => {
-      setFalloRedReciente(false);
+      setHayFalloRedReciente(false);
       if (navigator.onLine && !isOnline) {
         handleOnline();
       }
     };
 
     const handleNetworkError = () => {
-      setFalloRedReciente(true);
+      setHayFalloRedReciente(true);
       estabaDesconectado = true;
     };
 
@@ -65,10 +65,10 @@ export function useNetworkStatus(onReconexion?: () => void): NetworkStatus {
     };
   }, [isOnline, onReconexion]);
 
-  const sinConexion = !isOnline || falloRedReciente;
+  const estaSinConexion = !isOnline || hayFalloRedReciente;
 
   return {
-    isOnline: !sinConexion,
-    sinConexion,
+    isOnline: !estaSinConexion,
+    sinConexion: estaSinConexion,
   };
 }

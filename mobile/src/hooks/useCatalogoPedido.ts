@@ -44,16 +44,16 @@ export function useCatalogoPedido(options: UseCatalogoPedidoOptions = {}) {
   const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(
     () => menuDiaInicial ?? menuDiaService.obtenerMenuHoyCacheado()
   );
-  const [cargando, setCargando] = useState(false);
+  const [estaCargando, setEstaCargando] = useState(false);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
-  const cargarDatos = useCallback(async (usarCache = true) => {
-    setCargando(true);
+  const cargarDatos = useCallback(async (debeUsarCache = true) => {
+    setEstaCargando(true);
     setErrorCarga(null);
     try {
       const [prods, menu] = await Promise.all([
         pedidoService.obtenerCatalogoPedido(),
-        menuDiaService.obtenerMenuHoy({ usarCache }).catch(() => null),
+        menuDiaService.obtenerMenuHoy({ usarCache: debeUsarCache }).catch(() => null),
         onCargarAdicional ? onCargarAdicional() : Promise.resolve(),
       ]);
       setCatalogo(prods || []);
@@ -62,7 +62,7 @@ export function useCatalogoPedido(options: UseCatalogoPedidoOptions = {}) {
       setErrorCarga(mensajeDeError(err, 'Error al cargar los productos disponibles'));
       setCatalogo([]);
     } finally {
-      setCargando(false);
+      setEstaCargando(false);
     }
   }, [onCargarAdicional]);
 
@@ -74,5 +74,5 @@ export function useCatalogoPedido(options: UseCatalogoPedidoOptions = {}) {
   }, [cargarDatos]);
 
   const filtros = useFiltrosCatalogo(catalogo, menuDia);
-  return { catalogo, menuDia, cargando, errorCarga, cargarDatos, ...filtros };
+  return { catalogo, menuDia, cargando: estaCargando, errorCarga, cargarDatos, ...filtros };
 }

@@ -44,10 +44,10 @@ export function useBorradorPedido(options: UseBorradorPedidoOptions = {}) {
   const storage = useBorradorStorage(draftKey, lineas, setLineas);
   const modales = useModalesPedido();
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
+  const [estaEnviando, setEstaEnviando] = useState(false);
   const haptics = useHaptics();
   const { mostrar: mostrarToast } = useToast();
-  const { sinConexion } = useNetworkStatus();
+  const { sinConexion: estaSinConexion } = useNetworkStatus();
   const msgLimite = `La cantidad máxima por línea es ${MAX_CANTIDAD_POR_LINEA}.`;
 
   const agregarProducto = (producto: ProductoMenuPedidoDto) => {
@@ -71,7 +71,7 @@ export function useBorradorPedido(options: UseBorradorPedidoOptions = {}) {
 
   return {
     ...cat, ...storage, ...modales, ...haptics,
-    lineas, setLineas, errorEnvio, setErrorEnvio, enviando, setEnviando, sinConexion, mostrarToast,
+    lineas, setLineas, errorEnvio, setErrorEnvio, enviando: estaEnviando, setEnviando: setEstaEnviando, sinConexion: estaSinConexion, mostrarToast,
     total: lineas.reduce((acc, l) => acc + l.subtotal, 0),
     totalItems: lineas.reduce((acc, l) => acc + l.cantidad, 0),
     agregarProducto, modificarCantidad, actualizarObservacion,

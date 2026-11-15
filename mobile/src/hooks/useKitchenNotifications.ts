@@ -19,7 +19,7 @@ export interface UseKitchenNotificationsProps {
 
 export function useKitchenNotifications({
   rol,
-  enabled = true,
+  enabled: estaHabilitado = true,
   onNuevoAviso,
 }: UseKitchenNotificationsProps) {
   const [avisos, setAvisos] = useState<AvisoComandaDto[]>([]);
@@ -47,7 +47,7 @@ export function useKitchenNotifications({
     };
   }, []);
 
-  const puedeConsultar = enabled && puede(rol, 'avisos.consultar');
+  const puedeConsultar = estaHabilitado && puede(rol, 'avisos.consultar');
 
   const consultarAvisos = useCallback(async () => {
     if (!puedeConsultar || !estaVisibleRef.current || !esSesionAlmacenadaValida()) return;
@@ -89,11 +89,11 @@ export function useKitchenNotifications({
 
   const marcarVisto = useCallback(
     async (id: string) => {
-      const ok = await ejecutar(() => avisoService.marcarAvisoVisto(id), {
+      const fueMarcadoVisto = await ejecutar(() => avisoService.marcarAvisoVisto(id), {
         mensajeError: 'No se pudo marcar el aviso como visto.',
         reintentar: () => marcarVisto(id),
       });
-      if (ok) {
+      if (fueMarcadoVisto) {
         setAvisos((prev) => prev.filter((a) => a.id !== id));
         avisosPreviosRef.current.delete(id);
       }
@@ -134,9 +134,9 @@ export function useKitchenNotifications({
     window.addEventListener('girasoles:unauthorized', handleUnauthorized);
 
     const handleVisibilityChange = () => {
-      const visible = document.visibilityState === 'visible';
-      estaVisibleRef.current = visible;
-      if (visible && esSesionAlmacenadaValida()) {
+      const estaVisible = document.visibilityState === 'visible';
+      estaVisibleRef.current = estaVisible;
+      if (estaVisible && esSesionAlmacenadaValida()) {
         consultarAvisos();
         iniciarTimer();
       } else {
@@ -156,8 +156,8 @@ export function useKitchenNotifications({
         } else {
           detenerTimer();
         }
-      }).then((handle) => {
-        removeAppListener = () => handle.remove();
+      }).then((suscripcionListener) => {
+        removeAppListener = () => suscripcionListener.remove();
       });
     }
 

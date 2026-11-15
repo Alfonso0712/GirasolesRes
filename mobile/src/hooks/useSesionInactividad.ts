@@ -55,15 +55,15 @@ export const useSesionInactividad = ({
     inactivityThresholdMs ??
     Math.max(1000, limiteTotalMs - warningCountdownSeconds * 1000);
 
-  const [avisoInactividadVisible, setAvisoInactividadVisible] = useState(false);
+  const [mostrarAvisoInactividad, setMostrarAvisoInactividad] = useState(false);
   const [segundosRestantes, setSegundosRestantes] = useState(warningCountdownSeconds);
-  const [renovando, setRenovando] = useState(false);
+  const [estaRenovando, setEstaRenovando] = useState(false);
 
   const ultimaActividadRef = useRef<number>(Date.now());
   const ultimaEscrituraRef = useRef<number>(0);
   const avisoAbiertoRef = useRef<boolean>(false);
   const cerrandoRef = useRef<boolean>(false);
-  avisoAbiertoRef.current = avisoInactividadVisible;
+  avisoAbiertoRef.current = mostrarAvisoInactividad;
 
   const onLogoutRef = useRef(onLogout);
   onLogoutRef.current = onLogout;
@@ -71,7 +71,7 @@ export const useSesionInactividad = ({
   const ejecutarCierreForzado = useCallback(async (mensaje: string) => {
     if (cerrandoRef.current) return;
     cerrandoRef.current = true;
-    setAvisoInactividadVisible(false);
+    setMostrarAvisoInactividad(false);
     limpiarAlmacenamientoSesion();
     guardarAvisoSesion(mensaje);
     await onLogoutRef.current(mensaje);
@@ -109,7 +109,7 @@ export const useSesionInactividad = ({
       const restanteMs = Math.max(1000, limiteTotalMs - (ahora - ultima));
       const segs = Math.min(warningCountdownSeconds, Math.ceil(restanteMs / 1000));
       setSegundosRestantes(segs);
-      setAvisoInactividadVisible(true);
+      setMostrarAvisoInactividad(true);
     }
 
     return true;
@@ -130,7 +130,7 @@ export const useSesionInactividad = ({
   useEffect(() => {
     if (!session) {
       cerrandoRef.current = false;
-      setAvisoInactividadVisible(false);
+      setMostrarAvisoInactividad(false);
       return;
     }
 
@@ -210,8 +210,8 @@ export const useSesionInactividad = ({
         if (isActive) {
           verificarVigenciaInmediata();
         }
-      }).then((handle) => {
-        removeAppListener = () => handle.remove();
+      }).then((suscripcionListener) => {
+        removeAppListener = () => suscripcionListener.remove();
       });
     }
 
@@ -246,7 +246,7 @@ export const useSesionInactividad = ({
 
       if (!avisoAbiertoRef.current && transcurrido >= umbralAvisoMs) {
         setSegundosRestantes(warningCountdownSeconds);
-        setAvisoInactividadVisible(true);
+        setMostrarAvisoInactividad(true);
       }
     }, 1000);
 
@@ -272,7 +272,7 @@ export const useSesionInactividad = ({
 
   // Cuenta regresiva de 60 s cuando el aviso está visible
   useEffect(() => {
-    if (!avisoInactividadVisible) return;
+    if (!mostrarAvisoInactividad) return;
 
     const timer = setInterval(() => {
       setSegundosRestantes((prev) => {
@@ -286,11 +286,11 @@ export const useSesionInactividad = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [avisoInactividadVisible, cerrarSesionInactividad]);
+  }, [mostrarAvisoInactividad, cerrarSesionInactividad]);
 
   // Continuar sesión: renueva actividad en memoria y localStorage, y solicita nuevo token
   const continuarSesion = useCallback(async () => {
-    setRenovando(true);
+    setEstaRenovando(true);
     const ahora = Date.now();
     ultimaActividadRef.current = ahora;
     ultimaEscrituraRef.current = ahora;
@@ -304,16 +304,16 @@ export const useSesionInactividad = ({
       ultimaActividadRef.current = marcaFinal;
       ultimaEscrituraRef.current = marcaFinal;
       guardarUltimaActividad(marcaFinal);
-      setAvisoInactividadVisible(false);
+      setMostrarAvisoInactividad(false);
       setSegundosRestantes(warningCountdownSeconds);
-      setRenovando(false);
+      setEstaRenovando(false);
     }
   }, [warningCountdownSeconds]);
 
   return {
-    avisoInactividadVisible,
+    avisoInactividadVisible: mostrarAvisoInactividad,
     segundosRestantes,
-    renovando,
+    renovando: estaRenovando,
     continuarSesion,
     cerrarSesionInactividad,
     registrarActividad,

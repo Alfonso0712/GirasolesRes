@@ -27,8 +27,8 @@ async function ejecutarConRespaldo(
   } catch {
     try {
       if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
-        const ok = navigator.vibrate(duracionRespaldoMs);
-        return Boolean(ok);
+        const pudoVibrar = navigator.vibrate(duracionRespaldoMs);
+        return Boolean(pudoVibrar);
       }
     } catch {
       // Ignorar errores del navegador
@@ -38,7 +38,7 @@ async function ejecutarConRespaldo(
 }
 
 export function useHaptics() {
-  const [hapticsHabilitado, setHapticsState] = useState<boolean>(() => sonHapticsHabilitados());
+  const [estaHapticsHabilitado, setHapticsState] = useState<boolean>(() => sonHapticsHabilitados());
 
   useEffect(() => {
     const handleSync = () => {
@@ -50,13 +50,13 @@ export function useHaptics() {
     };
   }, []);
 
-  const setHapticsHabilitado = useCallback((activo: boolean) => {
+  const setHapticsHabilitado = useCallback((estaActivo: boolean) => {
     try {
-      localStorage.setItem(CLAVE_HAPTICS, activo ? 'true' : 'false');
+      localStorage.setItem(CLAVE_HAPTICS, estaActivo ? 'true' : 'false');
     } catch {
       // Ignorar error de almacenamiento
     }
-    setHapticsState(activo);
+    setHapticsState(estaActivo);
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('girasoles:haptics-change'));
     }
@@ -89,7 +89,7 @@ export function useHaptics() {
   }, []);
 
   return {
-    hapticsHabilitado,
+    hapticsHabilitado: estaHapticsHabilitado,
     setHapticsHabilitado,
     triggerLight,
     triggerMedium,

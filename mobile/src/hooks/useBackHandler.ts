@@ -25,9 +25,9 @@ export function pushBackHandler(handler: BackHandler): () => void {
 export function executeTopBackHandler(): boolean {
   for (let i = handlersStack.length - 1; i >= 0; i--) {
     const handler = handlersStack[i];
-    const result = handler();
+    const fueManejado = handler();
     // Si retorna explícitamente false, permite que continúe; si no (void o true), se considera manejado
-    if (result !== false) {
+    if (fueManejado !== false) {
       return true;
     }
   }
@@ -35,12 +35,12 @@ export function executeTopBackHandler(): boolean {
 }
 
 /**
- * Hook para registrar un manejador del botón Atrás mientras la condición 'active' sea verdadera.
+ * Hook para registrar un manejador del botón Atrás mientras la condición 'estaActivo' sea verdadera.
  */
-export function useBackHandler(active: boolean, handler: BackHandler): void {
+export function useBackHandler(estaActivo: boolean, handler: BackHandler): void {
   useEffect(() => {
-    if (!active) return;
+    if (!estaActivo) return;
     const unregister = pushBackHandler(handler);
     return unregister;
-  }, [active, handler]);
+  }, [estaActivo, handler]);
 }

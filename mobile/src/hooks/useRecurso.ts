@@ -45,13 +45,13 @@ export function useRecurso<T>(
 ): UseRecursoReturn<T> {
   const {
     intervaloMs,
-    pausarEnSegundoPlano = true,
+    pausarEnSegundoPlano: debePausarEnSegundoPlano = true,
     inicial = null,
-    enabled = true,
+    enabled: estaHabilitado = true,
   } = options;
 
   const [datos, setDatos] = useState<T | null>(inicial);
-  const [cargando, setCargando] = useState<boolean>(enabled && inicial === null);
+  const [estaCargando, setEstaCargando] = useState<boolean>(estaHabilitado && inicial === null);
   const [error, setError] = useState<string | null>(null);
   const [actualizadoEn, setActualizadoEn] = useState<Date | null>(null);
 
@@ -64,8 +64,8 @@ export function useRecurso<T>(
   const estaVisibleRef = useRef<boolean>(true);
 
   const ejecutarCarga = useCallback(
-    async (silencioso = false) => {
-      if (!enabled) return;
+    async (esSilencioso = false) => {
+      if (!estaHabilitado) return;
       if (!esSesionAlmacenadaValida()) {
         if (timerRef.current) {
           clearInterval(timerRef.current);
@@ -76,8 +76,8 @@ export function useRecurso<T>(
       if (enVueloRef.current) return;
       enVueloRef.current = true;
 
-      if (!silencioso && !tieneDatosRef.current) {
-        setCargando(true);
+      if (!esSilencioso && !tieneDatosRef.current) {
+        setEstaCargando(true);
       }
 
       try {
@@ -102,10 +102,10 @@ export function useRecurso<T>(
         setError(msg);
       } finally {
         enVueloRef.current = false;
-        setCargando(false);
+        setEstaCargando(false);
       }
     },
-    [enabled]
+    [estaHabilitado]
   );
 
   const recargar = useCallback(async () => {
@@ -113,7 +113,7 @@ export function useRecurso<T>(
   }, [ejecutarCarga]);
 
   useEffect(() => {
-    if (!enabled || !esSesionAlmacenadaValida()) return;
+    if (!estaHabilitado || !esSesionAlmacenadaValida()) return;
 
     ejecutarCarga(false);
 
@@ -148,10 +148,10 @@ export function useRecurso<T>(
     iniciarTimer();
 
     const handleVisibilityChange = () => {
-      const visible = document.visibilityState === 'visible';
-      estaVisibleRef.current = visible;
-      if (pausarEnSegundoPlano) {
-        if (visible && esSesionAlmacenadaValida()) {
+      const estaVisible = document.visibilityState === 'visible';
+      estaVisibleRef.current = estaVisible;
+      if (debePausarEnSegundoPlano) {
+        if (estaVisible && esSesionAlmacenadaValida()) {
           ejecutarCarga(true);
           iniciarTimer();
         } else {
@@ -174,7 +174,7 @@ export function useRecurso<T>(
     if (Capacitor.isNativePlatform()) {
       CapacitorApp.addListener('appStateChange', ({ isActive }) => {
         estaVisibleRef.current = isActive;
-        if (pausarEnSegundoPlano) {
+        if (debePausarEnSegundoPlano) {
           if (isActive && esSesionAlmacenadaValida()) {
             ejecutarCarga(true);
             iniciarTimer();
@@ -182,8 +182,8 @@ export function useRecurso<T>(
             detenerTimer();
           }
         }
-      }).then((handle) => {
-        removeAppListener = () => handle.remove();
+      }).then((suscripcionListener) => {
+        removeAppListener = () => suscripcionListener.remove();
       });
     }
 
@@ -195,9 +195,9 @@ export function useRecurso<T>(
       window.removeEventListener('online', handleReload);
       if (removeAppListener) removeAppListener();
     };
-  }, [enabled, intervaloMs, pausarEnSegundoPlano, ejecutarCarga]);
+  }, [estaHabilitado, intervaloMs, debePausarEnSegundoPlano, ejecutarCarga]);
 
-  return { datos, cargando, error, recargar, actualizadoEn, setDatos };
+  return { datos, cargando: estaCargando, error, recargar, actualizadoEn, setDatos };
 }
 
 // ==========================================

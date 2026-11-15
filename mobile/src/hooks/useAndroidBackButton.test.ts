@@ -20,9 +20,9 @@ describe('useAndroidBackButton - Gestión nativa de botón Atrás', () => {
     backListener = null;
 
     vi.spyOn(Capacitor, 'isNativePlatform').mockReturnValue(true);
-    vi.mocked(CapacitorApp.addListener).mockImplementation(async (event: string, cb: unknown) => {
+    vi.mocked(CapacitorApp.addListener).mockImplementation(async (event: string, listener: unknown) => {
       if (event === 'backButton') {
-        backListener = cb as () => void;
+        backListener = listener as () => void;
       }
       return { remove: vi.fn() } as unknown as PluginListenerHandle;
     });
