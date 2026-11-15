@@ -43,16 +43,16 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
   isOpen,
   onClose,
   venta,
-  cargando,
+  cargando: estaCargando,
   esAdmin = false,
   rol,
   onAnularVenta,
-  anulando = false,
+  anulando: estaAnulando = false,
 }) => {
-  const [modalAnular, setModalAnular] = useState(false);
+  const [estaModalAnularAbierto, setEstaModalAnularAbierto] = useState(false);
   const [motivo, setMotivo] = useState('');
   const [destinoPedido, setDestinoPedido] = useState<'porCobrar' | 'anular'>('porCobrar');
-  const [confirmarPeligro, setConfirmarPeligro] = useState(false);
+  const [estaConfirmarPeligroAbierto, setEstaConfirmarPeligroAbierto] = useState(false);
   const [errorMotivo, setErrorMotivo] = useState<string | null>(null);
 
   const { triggerLight, triggerError } = useHaptics();
@@ -69,7 +69,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
     setMotivo('');
     setDestinoPedido('porCobrar');
     setErrorMotivo(null);
-    setModalAnular(true);
+    setEstaModalAnularAbierto(true);
   };
 
   const handleValidarAnulacion = () => {
@@ -81,19 +81,19 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
     }
     setErrorMotivo(null);
     triggerLight();
-    setConfirmarPeligro(true);
+    setEstaConfirmarPeligroAbierto(true);
   };
 
   const handleEjecutarAnulacion = async () => {
     if (!venta || !onAnularVenta) return;
     try {
       await onAnularVenta(venta.ventaId, motivo.trim(), destinoPedido);
-      setConfirmarPeligro(false);
-      setModalAnular(false);
+      setEstaConfirmarPeligroAbierto(false);
+      setEstaModalAnularAbierto(false);
       onClose();
     } catch {
       // Error handled by parent toast
-      setConfirmarPeligro(false);
+      setEstaConfirmarPeligroAbierto(false);
     }
   };
 
@@ -104,7 +104,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
         onClose={onClose}
         title={venta ? `Comprobante ${venta.comprobante}` : 'Detalle de Venta'}
       >
-        {cargando || !venta ? (
+        {estaCargando || !venta ? (
           <div className="py-12 flex flex-col items-center justify-center gap-3 text-ink-muted">
             <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin" />
             <p className="text-xs font-semibold">Cargando detalles del comprobante...</p>
@@ -279,8 +279,8 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
 
       {/* Modal de Anulación de Venta (Administrador) */}
       <BottomSheet
-        isOpen={modalAnular}
-        onClose={() => setModalAnular(false)}
+        isOpen={estaModalAnularAbierto}
+        onClose={() => setEstaModalAnularAbierto(false)}
         title="Anulación de Venta"
       >
         {venta && (
@@ -388,7 +388,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
               primaryLabel="Confirmar"
               primaryVariant="danger"
               primaryDisabled={motivo.trim().length < 5 || motivo.trim().length > 100}
-              onSecondary={() => setModalAnular(false)}
+              onSecondary={() => setEstaModalAnularAbierto(false)}
               onPrimary={handleValidarAnulacion}
             />
           </div>
@@ -397,8 +397,8 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
 
       {/* Confirmación Peligrosa Final */}
       <ConfirmSheet
-        isOpen={confirmarPeligro}
-        onCancelar={() => setConfirmarPeligro(false)}
+        isOpen={estaConfirmarPeligroAbierto}
+        onCancelar={() => setEstaConfirmarPeligroAbierto(false)}
         titulo="¿Confirmar Anulación de Comprobante?"
         mensaje={
           venta
@@ -409,7 +409,7 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
         etiquetaCancelar="Volver"
         tono="peligro"
         onConfirmar={handleEjecutarAnulacion}
-        cargando={anulando}
+        cargando={estaAnulando}
       />
     </>
   );

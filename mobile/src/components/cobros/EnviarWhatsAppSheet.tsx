@@ -28,11 +28,11 @@ export const EnviarWhatsAppSheet: React.FC<EnviarWhatsAppSheetProps> = ({
   total,
   fecha,
   onCompartirPdf,
-  compartiendoPdf = false,
+  compartiendoPdf: estaCompartiendoPdf = false,
 }) => {
   const [celular, setCelular] = useState('');
   const [errorCelular, setErrorCelular] = useState<string | null>(null);
-  const [abriendo, setAbriendo] = useState(false);
+  const [estaAbriendo, setEstaAbriendo] = useState(false);
 
   const inputId = useId();
   const helpId = useId();
@@ -44,7 +44,7 @@ export const EnviarWhatsAppSheet: React.FC<EnviarWhatsAppSheetProps> = ({
     if (!isOpen) {
       setCelular('');
       setErrorCelular(null);
-      setAbriendo(false);
+      setEstaAbriendo(false);
     }
     return () => {
       setCelular('');
@@ -87,7 +87,7 @@ export const EnviarWhatsAppSheet: React.FC<EnviarWhatsAppSheetProps> = ({
     }
 
     setErrorCelular(null);
-    setAbriendo(true);
+    setEstaAbriendo(true);
 
     try {
       const enlace = urlWhatsApp(celularValidado, mensajeVistaPrevia);
@@ -103,7 +103,7 @@ export const EnviarWhatsAppSheet: React.FC<EnviarWhatsAppSheetProps> = ({
       triggerError();
       setErrorCelular('No se pudo abrir WhatsApp en este dispositivo.');
     } finally {
-      setAbriendo(false);
+      setEstaAbriendo(false);
     }
   };
 
@@ -184,8 +184,8 @@ export const EnviarWhatsAppSheet: React.FC<EnviarWhatsAppSheetProps> = ({
             fullWidth
             size="lg"
             variant="primary"
-            disabled={abriendo || Boolean(errorCelular)}
-            isLoading={abriendo}
+            disabled={estaAbriendo || Boolean(errorCelular)}
+            isLoading={estaAbriendo}
             onClick={() => void handleAbrirWhatsApp()}
             aria-label="Abrir WhatsApp para enviar el mensaje del comprobante"
             className="min-h-[48px] flex items-center justify-center gap-2"
@@ -199,8 +199,8 @@ export const EnviarWhatsAppSheet: React.FC<EnviarWhatsAppSheetProps> = ({
             fullWidth
             size="lg"
             variant="secondary"
-            disabled={compartiendoPdf || abriendo}
-            isLoading={compartiendoPdf}
+            disabled={estaCompartiendoPdf || estaAbriendo}
+            isLoading={estaCompartiendoPdf}
             onClick={() => {
               triggerLight();
               void onCompartirPdf();

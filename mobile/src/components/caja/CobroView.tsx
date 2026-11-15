@@ -49,7 +49,7 @@ export interface CobroViewProps {
 export const CobroView: React.FC<CobroViewProps> = ({
   pedidos,
   cajaActual,
-  cargando,
+  cargando: estaCargando,
   error,
   onRefresh,
   onCobroExitoso,
@@ -61,40 +61,40 @@ export const CobroView: React.FC<CobroViewProps> = ({
   const [numDocReceptor, setNumDocReceptor] = useState('');
   const [razonSocialReceptor, setRazonSocialReceptor] = useState('');
   const [direccionReceptor, setDireccionReceptor] = useState('');
-  const [consultandoDoc, setConsultandoDoc] = useState(false);
+  const [estaConsultandoDoc, setEstaConsultandoDoc] = useState(false);
   const [errorConsultaDoc, setErrorConsultaDoc] = useState<string | null>(null);
 
   // Estado del cobro
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('Efectivo');
   const [montoRecibido, setMontoRecibido] = useState<string>('');
-  const [yapeConfirmado, setYapeConfirmado] = useState(false);
+  const [estaYapeConfirmado, setEstaYapeConfirmado] = useState(false);
   const [yapeReferencia, setYapeReferencia] = useState('');
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const [procesando, setProcesando] = useState(false);
+  const [estaProcesando, setEstaProcesando] = useState(false);
   const [errorCobro, setErrorCobro] = useState<string | null>(null);
   const [cobroExitoso, setCobroExitoso] = useState<DatosCobroExitoso | null>(null);
   const listaCobrosRef = useRef<HTMLDivElement | null>(null);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
   const { mostrar } = useToast();
-  const { sinConexion } = useNetworkStatus();
+  const { sinConexion: estaSinConexion } = useNetworkStatus();
 
   const total = pedidoSeleccionado?.total || 0;
   const numRecibido = parseFloat(montoRecibido) || 0;
   const vuelto = metodoPago === 'Efectivo' ? Math.max(0, numRecibido - total) : 0;
   const saldoFaltante = metodoPago === 'Efectivo' ? Math.max(0, total - numRecibido) : 0;
 
-  const cajaCerrada = cajaActual && cajaActual.estado !== 'abierta';
+  const estaCajaCerrada = cajaActual && cajaActual.estado !== 'abierta';
 
   const resetFormulario = () => {
     setTipoComprobante('Ticket');
     setNumDocReceptor('');
     setRazonSocialReceptor('');
     setDireccionReceptor('');
-    setConsultandoDoc(false);
+    setEstaConsultandoDoc(false);
     setErrorConsultaDoc(null);
     setMetodoPago('Efectivo');
-    setYapeConfirmado(false);
+    setEstaYapeConfirmado(false);
     setYapeReferencia('');
     setErrorCobro(null);
     setMostrarConfirmacion(false);
@@ -117,7 +117,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         setErrorConsultaDoc('El DNI debe tener 8 dígitos numéricos.');
         return;
       }
-      setConsultandoDoc(true);
+      setEstaConsultandoDoc(true);
       try {
         triggerLight();
         const res = await cobroService.consultarDni(doc);
@@ -131,7 +131,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         const msg = mensajeDeError(err, 'No se encontró información para el DNI ingresado.');
         setErrorConsultaDoc(msg);
       } finally {
-        setConsultandoDoc(false);
+        setEstaConsultandoDoc(false);
       }
     } else if (tipoComprobante === 'Factura') {
       if (doc.length !== 11 || !/^(10|20)\d{9}$/.test(doc)) {
@@ -139,7 +139,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         setErrorConsultaDoc('El RUC debe tener 11 dígitos y comenzar con 10 o 20.');
         return;
       }
-      setConsultandoDoc(true);
+      setEstaConsultandoDoc(true);
       try {
         triggerLight();
         const res = await cobroService.consultarRuc(doc);
@@ -154,7 +154,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         const msg = mensajeDeError(err, 'No se encontró información para el RUC ingresado.');
         setErrorConsultaDoc(msg);
       } finally {
-        setConsultandoDoc(false);
+        setEstaConsultandoDoc(false);
       }
     }
   };
@@ -203,7 +203,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         return;
       }
     } else if (metodoPago === 'Yape') {
-      if (!yapeConfirmado) {
+      if (!estaYapeConfirmado) {
         triggerError();
         setErrorCobro('Debe confirmar que verificó el pago en la aplicación de Yape/Plin.');
         return;
@@ -215,7 +215,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
       }
     }
 
-    if (sinConexion) {
+    if (estaSinConexion) {
       triggerError();
       setErrorCobro('Sin conexión a internet. No se puede procesar el cobro.');
       return;
@@ -228,7 +228,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
   const handleEjecutarCobro = async () => {
     if (!pedidoSeleccionado) return;
 
-    setProcesando(true);
+    setEstaProcesando(true);
     setErrorCobro(null);
 
     const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
@@ -249,7 +249,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         totalMostrado: total,
         metodo: metodoPago,
         montoRecibido: metodoPago === 'Efectivo' ? numRecibido : total,
-        yapeConfirmado: metodoPago === 'Yape' ? yapeConfirmado : undefined,
+        yapeConfirmado: metodoPago === 'Yape' ? estaYapeConfirmado : undefined,
         yapeReferencia: metodoPago === 'Yape' && yapeReferencia.trim() ? yapeReferencia.trim() : undefined,
         tipoComprobante,
         tipoDocReceptor: payloadDocReceptor,
@@ -292,7 +292,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
       setErrorCobro(mensajeDeError(err, 'No se pudo procesar el cobro.'));
       setMostrarConfirmacion(false);
     } finally {
-      setProcesando(false);
+      setEstaProcesando(false);
     }
   };
 
@@ -376,8 +376,8 @@ export const CobroView: React.FC<CobroViewProps> = ({
                     type="button"
                     size="sm"
                     variant="outline"
-                    disabled={numDocReceptor.trim().length !== 8 || consultandoDoc}
-                    isLoading={consultandoDoc}
+                    disabled={numDocReceptor.trim().length !== 8 || estaConsultandoDoc}
+                    isLoading={estaConsultandoDoc}
                     onClick={handleConsultarDocumento}
                     className="min-h-[44px] px-3 shrink-0 flex items-center gap-1.5"
                   >
@@ -435,8 +435,8 @@ export const CobroView: React.FC<CobroViewProps> = ({
                     type="button"
                     size="sm"
                     variant="outline"
-                    disabled={numDocReceptor.trim().length !== 11 || consultandoDoc}
-                    isLoading={consultandoDoc}
+                    disabled={numDocReceptor.trim().length !== 11 || estaConsultandoDoc}
+                    isLoading={estaConsultandoDoc}
                     onClick={handleConsultarDocumento}
                     className="min-h-[44px] px-3 shrink-0 flex items-center gap-1.5"
                   >
@@ -585,11 +585,11 @@ export const CobroView: React.FC<CobroViewProps> = ({
                   type="button"
                   onClick={() => {
                     triggerLight();
-                    setYapeConfirmado(!yapeConfirmado);
+                    setEstaYapeConfirmado(!estaYapeConfirmado);
                   }}
                   className="w-full flex items-center gap-3 p-3 bg-canvas border border-line rounded-xl text-left cursor-pointer min-h-[48px]"
                 >
-                  {yapeConfirmado ? (
+                  {estaYapeConfirmado ? (
                     <CheckSquare className="w-5 h-5 text-primary shrink-0" />
                   ) : (
                     <Square className="w-5 h-5 text-ink-muted shrink-0" />
@@ -617,13 +617,13 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 <Button
                   fullWidth
                   size="lg"
-                  disabled={!yapeConfirmado || sinConexion}
-                  title={sinConexion ? 'Sin conexión a internet' : undefined}
+                  disabled={!estaYapeConfirmado || estaSinConexion}
+                  title={estaSinConexion ? 'Sin conexión a internet' : undefined}
                   onClick={handleSolicitarConfirmacion}
                   className="flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   <Check className="w-5 h-5" />
-                  <span>{sinConexion ? 'Sin conexión para cobrar' : 'Confirmar Cobro Digital'}</span>
+                  <span>{estaSinConexion ? 'Sin conexión para cobrar' : 'Confirmar Cobro Digital'}</span>
                 </Button>
               </div>
             )}
@@ -638,7 +638,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         subtitle={pluralizar(pedidos.length, 'cuenta por cobrar', 'cuentas por cobrar')}
         icon={<Receipt className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       {/* Contenedor principal con lista y detalle en tableta (md:) */}
@@ -646,7 +646,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         {/* Panel izquierdo: Lista de Cuentas Pendientes */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
 
-      {cajaCerrada && (
+      {estaCajaCerrada && (
         <div className="m-4 p-4 rounded-2xl bg-danger-bg border border-danger-border text-danger flex items-center gap-3">
           <Lock className="w-5 h-5 shrink-0" aria-hidden="true" />
           <p className="text-xs font-bold leading-relaxed">
@@ -671,11 +671,11 @@ export const CobroView: React.FC<CobroViewProps> = ({
             aria-label="Lista de cobros pendientes"
             className="flex-1 overflow-y-auto p-4 pb-24 md:pb-6 space-y-3 outline-hidden"
           >
-        {cargando && pedidos.length === 0 && (
+        {estaCargando && pedidos.length === 0 && (
           <SkeletonList count={4} />
         )}
 
-        {!error && !cargando && pedidos.length === 0 && (
+        {!error && !estaCargando && pedidos.length === 0 && (
           <EmptyState
             icon={Receipt}
             titulo="No hay cobros pendientes"
@@ -684,7 +684,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         )}
 
         {pedidos.map((p) => {
-          const seleccionado = pedidoSeleccionado?.pedidoId === p.pedidoId;
+          const estaSeleccionado = pedidoSeleccionado?.pedidoId === p.pedidoId;
           const etiquetaMesa =
             p.mesa ||
             p.mesaNombre ||
@@ -692,11 +692,11 @@ export const CobroView: React.FC<CobroViewProps> = ({
           return (
             <Card
               key={p.pedidoId}
-              interactive={!cajaCerrada}
+              interactive={!estaCajaCerrada}
               accent="none"
-              onClick={!cajaCerrada ? () => handleAbrirCobro(p) : undefined}
+              onClick={!estaCajaCerrada ? () => handleAbrirCobro(p) : undefined}
               className={`flex items-start justify-between gap-3 select-none ${
-                seleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
+                estaSeleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
               }`}
             >
               <div className="min-w-0 flex-1">
@@ -791,7 +791,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         etiquetaConfirmar="Sí, Procesar Cobro"
         etiquetaCancelar="Volver"
         onConfirmar={handleEjecutarCobro}
-        cargando={procesando}
+        cargando={estaProcesando}
       />
 
       {/* 5. Hoja de Éxito del Cobro con Acciones de Comprobante */}

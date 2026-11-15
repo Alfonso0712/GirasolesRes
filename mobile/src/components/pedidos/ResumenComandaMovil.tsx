@@ -22,7 +22,7 @@ function etiquetaBotonMovil(esMesa: boolean, esMozo: boolean, totalItems: number
  */
 export const ResumenComandaMovil: React.FC<ResumenComandaMovilProps> = ({
   contenido,
-  abierto,
+  abierto: estaAbierto,
   tituloSheet,
   onAbrir,
   onCerrar,
@@ -47,7 +47,7 @@ export const ResumenComandaMovil: React.FC<ResumenComandaMovilProps> = ({
         </div>
       )}
       <div className="md:hidden">
-        <BottomSheet isOpen={abierto} onClose={onCerrar} title={tituloSheet}>
+        <BottomSheet isOpen={estaAbierto} onClose={onCerrar} title={tituloSheet}>
           <ContenidoComanda {...contenido} />
         </BottomSheet>
       </div>

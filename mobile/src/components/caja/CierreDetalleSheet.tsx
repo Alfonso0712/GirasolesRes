@@ -30,9 +30,9 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
   isOpen,
   onClose,
   cierre,
-  cargando,
+  cargando: estaCargando,
 }) => {
-  const [descargandoPdf, setDescargandoPdf] = useState(false);
+  const [estaDescargandoPdf, setEstaDescargandoPdf] = useState(false);
   const [errorPdf, setErrorPdf] = useState<string | null>(null);
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
@@ -54,7 +54,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
     if (!idCierre) return;
 
     triggerLight();
-    setDescargandoPdf(true);
+    setEstaDescargandoPdf(true);
     setErrorPdf(null);
 
     try {
@@ -74,7 +74,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
       setErrorPdf(msg);
       mostrar({ tipo: 'error', mensaje: msg });
     } finally {
-      setDescargandoPdf(false);
+      setEstaDescargandoPdf(false);
     }
   };
 
@@ -84,7 +84,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
       onClose={onClose}
       title="Detalle de Acta de Cierre"
     >
-      {cargando || !cierre ? (
+      {estaCargando || !cierre ? (
         <SkeletonList count={4} />
       ) : (
         <div className="space-y-4">
@@ -267,12 +267,12 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
           <Button
             fullWidth
             variant="primary"
-            disabled={descargandoPdf}
+            disabled={estaDescargandoPdf}
             onClick={() => void handleDescargarActaPdf()}
             className="min-h-[48px] flex items-center justify-center gap-2 font-bold"
           >
             <FileDown className="w-4 h-4" aria-hidden="true" />
-            <span>{descargandoPdf ? 'Generando PDF…' : 'Descargar acta en PDF'}</span>
+            <span>{estaDescargandoPdf ? 'Generando PDF…' : 'Descargar acta en PDF'}</span>
           </Button>
         </div>
       )}

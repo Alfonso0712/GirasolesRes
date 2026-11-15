@@ -31,7 +31,7 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
   onCerrar,
 }) => {
   const [pedido, setPedido] = useState<DetallePedidoCompletoDto | null>(null);
-  const [cargando, setCargando] = useState<boolean>(false);
+  const [estaCargando, setEstaCargando] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
@@ -40,16 +40,16 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
 
   useEffect(() => {
     if (pedidoId) {
-      setCargando(true);
+      setEstaCargando(true);
       setError(null);
       pedidoService
         .obtenerDetalleCompleto(pedidoId)
-        .then((data) => setPedido(data))
+        .then((detalle) => setPedido(detalle))
         .catch((err: unknown) => {
           setError(mensajeDeError(err, 'Error al consultar el detalle del pedido'));
           setPedido(null);
         })
-        .finally(() => setCargando(false));
+        .finally(() => setEstaCargando(false));
     } else {
       setPedido(null);
       setError(null);
@@ -58,27 +58,27 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
 
   if (!pedidoId) return null;
 
-  const noModificable = pedido?.estado === 'Pagado' || pedido?.estado === 'Anulado';
+  const esNoModificable = pedido?.estado === 'Pagado' || pedido?.estado === 'Anulado';
   // RN-65: Mozo/Cajero solo pueden anular sus propios pedidos; Administrador puede anular cualquiera
   const esCreador = usuarioIdActual && pedido?.usuarioId ? usuarioIdActual === pedido.usuarioId : true;
-  const puedeAnular = puede(rol, 'pedidos.anular') && !noModificable && (puedeAnularTodos || esCreador);
-  const puedeAmpliar = puede(rol, 'pedidoMesa.crear') && !noModificable;
+  const puedeAnular = puede(rol, 'pedidos.anular') && !esNoModificable && (puedeAnularTodos || esCreador);
+  const puedeAmpliar = puede(rol, 'pedidoMesa.crear') && !esNoModificable;
 
   return (
     <div className="space-y-4 max-h-[80vh] md:max-h-none overflow-y-auto pr-1">
-      {cargando && <SkeletonList count={4} />}
+      {estaCargando && <SkeletonList count={4} />}
 
       {error && (
         <ErrorState
           mensaje={error}
           onRetry={() => {
             if (pedidoId) {
-              setCargando(true);
+              setEstaCargando(true);
               pedidoService
                 .obtenerDetalleCompleto(pedidoId)
-                .then((data) => setPedido(data))
+                .then((detalle) => setPedido(detalle))
                 .catch((err: unknown) => setError(mensajeDeError(err, 'Error')))
-                .finally(() => setCargando(false));
+                .finally(() => setEstaCargando(false));
             }
           }}
         />

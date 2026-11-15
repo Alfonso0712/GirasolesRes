@@ -28,7 +28,7 @@ export interface MisPedidosViewProps {
 
 export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
   pedidos,
-  cargando,
+  cargando: estaCargando,
   error,
   onRefresh,
   rol = 'Mozo',
@@ -80,7 +80,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
         subtitle="Consumo en curso en salón y mostrador"
         icon={<Clock className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       {/* Contenedor principal con lista y detalle en tableta (md:) */}
@@ -139,11 +139,11 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
               />
             )}
 
-            {cargando && pedidos.length === 0 && (
+            {estaCargando && pedidos.length === 0 && (
               <SkeletonList count={5} />
             )}
 
-            {!error && !cargando && pedidosOrdenados.length === 0 && (
+            {!error && !estaCargando && pedidosOrdenados.length === 0 && (
               <EmptyState
                 icon={Utensils}
                 titulo="Sin pedidos registrados"
@@ -153,7 +153,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
 
             {pedidosOrdenados.map((p) => {
               const mesaOReferencia = p.mesa || p.referencia || `Pedido #${p.numero}`;
-              const seleccionado = pedidoDetalleId === p.id;
+              const estaSeleccionado = pedidoDetalleId === p.id;
               return (
                 <Card
                   key={p.id}
@@ -164,7 +164,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
                     setPedidoDetalleId(p.id);
                   }}
                   className={`select-none cursor-pointer active:scale-98 transition-transform min-h-[56px] space-y-2 ${
-                    seleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
+                    estaSeleccionado ? 'ring-2 ring-primary bg-primary/5' : ''
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2.5">

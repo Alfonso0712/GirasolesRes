@@ -59,7 +59,7 @@ export interface CajaTurnoViewProps {
 
 export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   cajaActual,
-  cargando,
+  cargando: estaCargando,
   error,
   onRefresh,
   onNavigateToCobros,
@@ -68,7 +68,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 }) => {
   const puedeVerCierres = puede(rol, 'cierres.ver');
   const puedeOperarCaja = puede(rol, 'caja.abrir') && puede(rol, 'caja.cerrar');
-  const { sinConexion } = useNetworkStatus();
+  const { sinConexion: estaSinConexion } = useNetworkStatus();
 
   // Control de pestaña principal: 'turno' | 'ventas' | 'cierres'
   const [seccion, setSeccion] = useState<'turno' | 'ventas' | 'cierres'>(subTabInicial);
@@ -85,14 +85,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const [paginaVentas, setPaginaVentas] = useState(1);
   const [totalVentas, setTotalVentas] = useState(0);
   const [ventas, setVentas] = useState<VentaItem[]>([]);
-  const [cargandoVentas, setCargandoVentas] = useState(false);
+  const [estaCargandoVentas, setEstaCargandoVentas] = useState(false);
   const [errorVentas, setErrorVentas] = useState<string | null>(null);
 
   // Detalle y Anulación de Venta
-  const [sheetVentaAbierta, setSheetVentaAbierta] = useState(false);
+  const [estaSheetVentaAbierta, setEstaSheetVentaAbierta] = useState(false);
   const [ventaDetalle, setVentaDetalle] = useState<VentaDetalle | null>(null);
-  const [cargandoDetalleVenta, setCargandoDetalleVenta] = useState(false);
-  const [anulandoVenta, setAnulandoVenta] = useState(false);
+  const [estaCargandoDetalleVenta, setEstaCargandoDetalleVenta] = useState(false);
+  const [estaAnulandoVenta, setEstaAnulandoVenta] = useState(false);
 
   // Historial de cierres (solo Administrador)
   const [cierres, setCierres] = useState<HistorialCierresItemDto[]>([]);
@@ -104,23 +104,23 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     desde: '',
     hasta: '',
   });
-  const [mesSheetCierresAbierto, setMesSheetCierresAbierto] = useState(false);
-  const [cargandoCierres, setCargandoCierres] = useState(false);
+  const [estaMesSheetCierresAbierto, setEstaMesSheetCierresAbierto] = useState(false);
+  const [estaCargandoCierres, setEstaCargandoCierres] = useState(false);
   const [errorCierres, setErrorCierres] = useState<string | null>(null);
-  const [sheetCierreAbierta, setSheetCierreAbierta] = useState(false);
+  const [estaSheetCierreAbierta, setEstaSheetCierreAbierta] = useState(false);
   const [cierreDetalle, setCierreDetalle] = useState<CierreDetalleDto | null>(null);
-  const [cargandoDetalleCierre, setCargandoDetalleCierre] = useState(false);
+  const [estaCargandoDetalleCierre, setEstaCargandoDetalleCierre] = useState(false);
 
   // Modales de operación de caja (Cajero)
-  const [modalAbrir, setModalAbrir] = useState(false);
+  const [estaModalAbrirAbierto, setEstaModalAbrirAbierto] = useState(false);
   const [montoApertura, setMontoApertura] = useState('100');
-  const [modalCerrar, setModalCerrar] = useState(false);
-  const [confirmarApertura, setConfirmarApertura] = useState(false);
-  const [confirmarCierre, setConfirmarCierre] = useState(false);
+  const [estaModalCerrarAbierto, setEstaModalCerrarAbierto] = useState(false);
+  const [estaConfirmarAperturaAbierto, setEstaConfirmarAperturaAbierto] = useState(false);
+  const [estaConfirmarCierreAbierto, setEstaConfirmarCierreAbierto] = useState(false);
   const [resumenCierre, setResumenCierre] = useState<CierreResumenDto | null>(null);
   const [efectivoContado, setEfectivoContado] = useState('');
   const [observacion, setObservacion] = useState('');
-  const [procesando, setProcesando] = useState(false);
+  const [estaProcesando, setEstaProcesando] = useState(false);
   const [errorModal, setErrorModal] = useState<string | null>(null);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
@@ -147,9 +147,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     return { desde, hasta };
   };
 
-  const cargarVentas = async (pagina = 1, append = false) => {
+  const cargarVentas = async (pagina = 1, debeAcumular = false) => {
     const { desde, hasta } = obtenerRangoFechasVentas();
-    setCargandoVentas(true);
+    setEstaCargandoVentas(true);
     setErrorVentas(null);
     try {
       const res = await ventaService.listarVentas({
@@ -159,7 +159,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         pagina,
         tamano: 20,
       });
-      if (append) {
+      if (debeAcumular) {
         setVentas((prev) => [...prev, ...(res.items || [])]);
       } else {
         setVentas(res.items || []);
@@ -169,9 +169,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     } catch (err: unknown) {
       const msg = mensajeDeError(err, 'Error al consultar ventas');
       setErrorVentas(msg);
-      if (!append) setVentas([]);
+      if (!debeAcumular) setVentas([]);
     } finally {
-      setCargandoVentas(false);
+      setEstaCargandoVentas(false);
     }
   };
 
@@ -185,8 +185,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
   const handleVerDetalleVenta = async (ventaId: string) => {
     triggerLight();
-    setSheetVentaAbierta(true);
-    setCargandoDetalleVenta(true);
+    setEstaSheetVentaAbierta(true);
+    setEstaCargandoDetalleVenta(true);
     setVentaDetalle(null);
     try {
       const d = await ventaService.obtenerDetalleVenta(ventaId);
@@ -195,9 +195,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       triggerError();
       const msg = mensajeDeError(err, 'No se pudo obtener el detalle de la venta.');
       mostrar({ tipo: 'error', mensaje: msg });
-      setSheetVentaAbierta(false);
+      setEstaSheetVentaAbierta(false);
     } finally {
-      setCargandoDetalleVenta(false);
+      setEstaCargandoDetalleVenta(false);
     }
   };
 
@@ -205,7 +205,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     const solicitudId = typeof crypto !== 'undefined' && crypto.randomUUID
       ? crypto.randomUUID()
       : `sol-anular-${Date.now()}`;
-    setAnulandoVenta(true);
+    setEstaAnulandoVenta(true);
     try {
       const res = await ventaService.anularVenta(ventaId, {
         solicitudId,
@@ -225,14 +225,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       mostrar({ tipo: 'error', mensaje: msg });
       throw err;
     } finally {
-      setAnulandoVenta(false);
+      setEstaAnulandoVenta(false);
     }
   };
 
   // Carga paginada del historial de cierres con filtro por mes (Admin)
-  const cargarCierres = async (pagina: number, acumular: boolean, filtroMes: SeleccionMes = mesCierres) => {
+  const cargarCierres = async (pagina: number, debeAcumular: boolean, filtroMes: SeleccionMes = mesCierres) => {
     if (!puedeVerCierres) return;
-    setCargandoCierres(true);
+    setEstaCargandoCierres(true);
     setErrorCierres(null);
     try {
       const res = await cajaService.obtenerHistorialCierres({
@@ -244,7 +244,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       const items = res.items || [];
       setTotalCierres(typeof res.total === 'number' ? res.total : items.length);
       setPaginaCierres(pagina);
-      if (acumular) {
+      if (debeAcumular) {
         setCierres((prev) => [...prev, ...items]);
       } else {
         setCierres(items);
@@ -252,9 +252,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
     } catch (err: unknown) {
       const msg = mensajeDeError(err, 'Error al consultar historial de cierres');
       setErrorCierres(msg);
-      if (!acumular) setCierres([]);
+      if (!debeAcumular) setCierres([]);
     } finally {
-      setCargandoCierres(false);
+      setEstaCargandoCierres(false);
     }
   };
 
@@ -267,8 +267,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const handleVerDetalleCierre = async (cajaId: string) => {
     if (!cajaId) return;
     triggerLight();
-    setSheetCierreAbierta(true);
-    setCargandoDetalleCierre(true);
+    setEstaSheetCierreAbierta(true);
+    setEstaCargandoDetalleCierre(true);
     setCierreDetalle(null);
     try {
       const d = await cajaService.obtenerDetalleCierre(cajaId);
@@ -277,14 +277,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       triggerError();
       const msg = mensajeDeError(err, 'No se pudo obtener el detalle del cierre.');
       mostrar({ tipo: 'error', mensaje: msg });
-      setSheetCierreAbierta(false);
+      setEstaSheetCierreAbierta(false);
     } finally {
-      setCargandoDetalleCierre(false);
+      setEstaCargandoDetalleCierre(false);
     }
   };
 
   const handleAbrirCaja = () => {
-    if (sinConexion) {
+    if (estaSinConexion) {
       triggerError();
       setErrorModal('No se puede abrir caja sin conexión a internet.');
       return;
@@ -306,21 +306,21 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       return;
     }
     setErrorModal(null);
-    setConfirmarApertura(true);
+    setEstaConfirmarAperturaAbierto(true);
   };
 
   const ejecutarApertura = async () => {
-    if (sinConexion) {
+    if (estaSinConexion) {
       mostrar({ tipo: 'error', mensaje: 'Sin conexión a internet. Intente nuevamente cuando se restablezca.' });
       return;
     }
     const num = parseFloat(montoApertura) || 0;
-    setProcesando(true);
+    setEstaProcesando(true);
     try {
       await cajaService.abrirCaja(num);
       triggerSuccess();
-      setConfirmarApertura(false);
-      setModalAbrir(false);
+      setEstaConfirmarAperturaAbierto(false);
+      setEstaModalAbrirAbierto(false);
       mostrar({
         tipo: 'exito',
         mensaje: `Caja abierta con éxito con fondo inicial de ${formatCurrency(num)}.`,
@@ -330,36 +330,36 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       triggerError();
       const msg = mensajeDeError(err, 'Error al abrir caja');
       setErrorModal(msg);
-      setConfirmarApertura(false);
+      setEstaConfirmarAperturaAbierto(false);
     } finally {
-      setProcesando(false);
+      setEstaProcesando(false);
     }
   };
 
   const iniciarCierre = async () => {
-    if (sinConexion) {
+    if (estaSinConexion) {
       mostrar({ tipo: 'error', mensaje: 'Sin conexión a internet. No se puede iniciar el cierre de caja.' });
       return;
     }
     triggerLight();
-    setProcesando(true);
+    setEstaProcesando(true);
     setErrorModal(null);
     try {
       const resumen = await cajaService.obtenerResumenCierre();
       setResumenCierre(resumen);
       setEfectivoContado(resumen.efectivoEsperado.toString());
-      setModalCerrar(true);
+      setEstaModalCerrarAbierto(true);
     } catch (err: unknown) {
       triggerError();
       const msg = mensajeDeError(err, 'No se pudo obtener el resumen de cierre de caja');
       mostrar({ tipo: 'error', mensaje: msg });
     } finally {
-      setProcesando(false);
+      setEstaProcesando(false);
     }
   };
 
   const handleVerificarCierre = () => {
-    if (sinConexion) {
+    if (estaSinConexion) {
       triggerError();
       setErrorModal('No se puede cerrar la caja sin conexión a internet.');
       return;
@@ -386,11 +386,11 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       return;
     }
     setErrorModal(null);
-    setConfirmarCierre(true);
+    setEstaConfirmarCierreAbierto(true);
   };
 
   const ejecutarCierre = async () => {
-    if (sinConexion) {
+    if (estaSinConexion) {
       mostrar({ tipo: 'error', mensaje: 'Sin conexión a internet. Intente nuevamente cuando se restablezca.' });
       return;
     }
@@ -409,7 +409,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       return;
     }
 
-    setProcesando(true);
+    setEstaProcesando(true);
     try {
       await cajaService.cerrarCaja({
         efectivoContado: contado,
@@ -417,8 +417,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         observacion: observacion.trim() || undefined,
       });
       triggerSuccess();
-      setConfirmarCierre(false);
-      setModalCerrar(false);
+      setEstaConfirmarCierreAbierto(false);
+      setEstaModalCerrarAbierto(false);
       mostrar({
         tipo: 'exito',
         mensaje: 'Caja cerrada con éxito. Arqueo registrado.',
@@ -437,9 +437,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         }
       }
       setErrorModal(msg);
-      setConfirmarCierre(false);
+      setEstaConfirmarCierreAbierto(false);
     } finally {
-      setProcesando(false);
+      setEstaProcesando(false);
     }
   };
 
@@ -469,7 +469,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         subtitle={estaAbierta ? 'Caja abierta y operativa' : 'Caja cerrada'}
         icon={<Lock className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
       />
 
       {/* 2. Control Segmentado de Sección */}
@@ -497,7 +497,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               />
             )}
 
-            {cargando && !cajaActual && (
+            {estaCargando && !cajaActual && (
               <SkeletonList count={3} />
             )}
 
@@ -626,7 +626,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                       fullWidth
                       size="lg"
                       variant="danger"
-                      isLoading={procesando}
+                      isLoading={estaProcesando}
                       onClick={iniciarCierre}
                       className="flex items-center justify-center gap-2 min-h-[44px]"
                     >
@@ -641,7 +641,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                       onClick={() => {
                         triggerLight();
                         setErrorModal(null);
-                        setModalAbrir(true);
+                        setEstaModalAbrirAbierto(true);
                       }}
                       className="flex items-center justify-center gap-2 min-h-[44px]"
                     >
@@ -667,7 +667,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                         fullWidth
                         size="lg"
                         variant="danger"
-                        isLoading={procesando}
+                        isLoading={estaProcesando}
                         onClick={iniciarCierre}
                         className="flex items-center justify-center gap-2 min-h-[44px]"
                       >
@@ -738,9 +738,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               <ErrorState mensaje={errorVentas} className="my-2" />
             )}
 
-            {cargandoVentas && paginaVentas === 1 && <SkeletonList count={4} />}
+            {estaCargandoVentas && paginaVentas === 1 && <SkeletonList count={4} />}
 
-            {!cargandoVentas && !errorVentas && ventas.length === 0 && (
+            {!estaCargandoVentas && !errorVentas && ventas.length === 0 && (
               <EmptyState
                 icon={Receipt}
                 titulo="Sin ventas registradas"
@@ -783,8 +783,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 fullWidth
                 variant="outline"
                 size="md"
-                disabled={cargandoVentas}
-                isLoading={cargandoVentas}
+                disabled={estaCargandoVentas}
+                isLoading={estaCargandoVentas}
                 onClick={() => cargarVentas(paginaVentas + 1, true)}
                 className="min-h-[44px] mt-2"
               >
@@ -809,7 +809,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 activeId="mes"
                 onSelect={() => {
                   triggerLight();
-                  setMesSheetCierresAbierto(true);
+                  setEstaMesSheetCierresAbierto(true);
                 }}
               />
             </div>
@@ -822,9 +822,9 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               />
             )}
 
-            {cargandoCierres && cierres.length === 0 && <SkeletonList count={4} />}
+            {estaCargandoCierres && cierres.length === 0 && <SkeletonList count={4} />}
 
-            {!cargandoCierres && !errorCierres && cierres.length === 0 && (
+            {!estaCargandoCierres && !errorCierres && cierres.length === 0 && (
               <EmptyState
                 icon={History}
                 titulo="Sin cierres registrados"
@@ -872,14 +872,14 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
               <Button
                 fullWidth
                 variant="outline"
-                disabled={cargandoCierres}
+                disabled={estaCargandoCierres}
                 onClick={() => {
                   triggerLight();
                   void cargarCierres(paginaCierres + 1, true, mesCierres);
                 }}
                 className="min-h-[44px]"
               >
-                {cargandoCierres ? 'Cargando...' : 'Cargar más'}
+                {estaCargandoCierres ? 'Cargando...' : 'Cargar más'}
               </Button>
             )}
           </div>
@@ -888,8 +888,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
       {/* Modal Apertura de Caja */}
       <BottomSheet
-        isOpen={modalAbrir}
-        onClose={() => setModalAbrir(false)}
+        isOpen={estaModalAbrirAbierto}
+        onClose={() => setEstaModalAbrirAbierto(false)}
         title="Apertura de Caja"
       >
         <div className="space-y-4">
@@ -921,8 +921,8 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
       {/* Modal Cierre de Caja y Arqueo */}
       <BottomSheet
-        isOpen={modalCerrar}
-        onClose={() => setModalCerrar(false)}
+        isOpen={estaModalCerrarAbierto}
+        onClose={() => setEstaModalCerrarAbierto(false)}
         title="Arqueo y Cierre Definitivo"
       >
         {resumenCierre && (
@@ -967,7 +967,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                     fullWidth
                     size="lg"
                     onClick={() => {
-                      setModalCerrar(false);
+                      setEstaModalCerrarAbierto(false);
                       onNavigateToCobros();
                     }}
                     className="flex items-center justify-center gap-2 min-h-[44px]"
@@ -1055,53 +1055,53 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
       {/* Confirmación Apertura */}
       <ConfirmSheet
-        isOpen={confirmarApertura}
-        onCancelar={() => setConfirmarApertura(false)}
+        isOpen={estaConfirmarAperturaAbierto}
+        onCancelar={() => setEstaConfirmarAperturaAbierto(false)}
         titulo="Confirmar Apertura de Caja"
         mensaje={`¿Confirmar apertura de caja con un fondo inicial de ${formatCurrency(parseFloat(montoApertura) || 0)}?`}
         etiquetaConfirmar="Sí, Abrir Caja"
         etiquetaCancelar="Volver"
         onConfirmar={ejecutarApertura}
-        cargando={procesando}
+        cargando={estaProcesando}
       />
 
       {/* Confirmación Cierre */}
       <ConfirmSheet
-        isOpen={confirmarCierre}
-        onCancelar={() => setConfirmarCierre(false)}
+        isOpen={estaConfirmarCierreAbierto}
+        onCancelar={() => setEstaConfirmarCierreAbierto(false)}
         titulo="¿Confirmar Cierre de Caja?"
         mensaje={`¿Cerrar la caja? No podrá cobrar hasta abrir una nueva y el cierre no se puede deshacer. Efectivo esperado: ${formatCurrency(esperado)}, contado: ${formatCurrency(contadoNum)}${dif === 0 ? ' (Cuadra)' : dif > 0 ? ` (+${formatCurrency(dif)})` : ` (-${formatCurrency(Math.abs(dif))})`}.`}
         etiquetaConfirmar="Sí, Cerrar Caja"
         etiquetaCancelar="Cancelar"
         tono="peligro"
         onConfirmar={ejecutarCierre}
-        cargando={procesando}
+        cargando={estaProcesando}
       />
 
       {/* Detalle y Anulación de Venta (Administrador y Cajero) */}
       <VentaDetalleSheet
-        isOpen={sheetVentaAbierta}
-        onClose={() => setSheetVentaAbierta(false)}
+        isOpen={estaSheetVentaAbierta}
+        onClose={() => setEstaSheetVentaAbierta(false)}
         venta={ventaDetalle}
-        cargando={cargandoDetalleVenta}
+        cargando={estaCargandoDetalleVenta}
         esAdmin={puede(rol, 'ventas.anular')}
         rol={rol}
         onAnularVenta={handleAnularVenta}
-        anulando={anulandoVenta}
+        anulando={estaAnulandoVenta}
       />
 
       {/* Detalle de Cierre de Caja (Administrador) */}
       <CierreDetalleSheet
-        isOpen={sheetCierreAbierta}
-        onClose={() => setSheetCierreAbierta(false)}
+        isOpen={estaSheetCierreAbierta}
+        onClose={() => setEstaSheetCierreAbierta(false)}
         cierre={cierreDetalle}
-        cargando={cargandoDetalleCierre}
+        cargando={estaCargandoDetalleCierre}
       />
 
       {/* Selector de Mes para Historial de Cierres (Administrador) */}
       <MesSheet
-        isOpen={mesSheetCierresAbierto}
-        onClose={() => setMesSheetCierresAbierto(false)}
+        isOpen={estaMesSheetCierresAbierto}
+        onClose={() => setEstaMesSheetCierresAbierto(false)}
         selectedId={mesCierres.id}
         incluirTodos={true}
         titulo="Filtrar cierres por mes"

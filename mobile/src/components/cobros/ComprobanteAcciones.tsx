@@ -20,12 +20,12 @@ export interface ComprobanteAccionesProps {
 }
 
 export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta }) => {
-  const [whatsAppAbierto, setWhatsAppAbierto] = useState(false);
+  const [estaWhatsAppAbierto, setEstaWhatsAppAbierto] = useState(false);
   const { triggerLight } = useHaptics();
 
   const {
     accionActiva,
-    ocupado,
+    ocupado: estaOcupado,
     errorMensaje,
     avisoExito,
     imprimir,
@@ -36,7 +36,7 @@ export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta 
   if (!venta) return null;
 
   const esAnulada = Boolean(venta.anulada);
-  const deshabilitado = esAnulada || ocupado;
+  const estaDeshabilitado = esAnulada || estaOcupado;
 
   return (
     <div className="space-y-3" aria-label="Acciones del comprobante">
@@ -54,7 +54,7 @@ export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta 
         {/* 1. Imprimir */}
         <button
           type="button"
-          disabled={deshabilitado}
+          disabled={estaDeshabilitado}
           onClick={() => void imprimir()}
           aria-label="Imprimir comprobante"
           className="min-h-[52px] px-3 py-2.5 rounded-xl border border-line bg-surface hover:bg-canvas text-ink font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
@@ -66,7 +66,7 @@ export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta 
         {/* 2. Guardar PDF */}
         <button
           type="button"
-          disabled={deshabilitado}
+          disabled={estaDeshabilitado}
           onClick={() => void guardar()}
           aria-label="Guardar comprobante en PDF"
           className="min-h-[52px] px-3 py-2.5 rounded-xl border border-line bg-surface hover:bg-canvas text-ink font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
@@ -78,7 +78,7 @@ export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta 
         {/* 3. Compartir PDF */}
         <button
           type="button"
-          disabled={deshabilitado}
+          disabled={estaDeshabilitado}
           onClick={() => void compartir()}
           aria-label="Compartir comprobante en PDF"
           className="min-h-[52px] px-3 py-2.5 rounded-xl border border-line bg-surface hover:bg-canvas text-ink font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
@@ -90,10 +90,10 @@ export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta 
         {/* 4. WhatsApp */}
         <button
           type="button"
-          disabled={deshabilitado}
+          disabled={estaDeshabilitado}
           onClick={() => {
             triggerLight();
-            setWhatsAppAbierto(true);
+            setEstaWhatsAppAbierto(true);
           }}
           aria-label="Enviar comprobante por WhatsApp"
           className="min-h-[52px] px-3 py-2.5 rounded-xl border border-line bg-surface hover:bg-canvas text-ink font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
@@ -125,8 +125,8 @@ export const ComprobanteAcciones: React.FC<ComprobanteAccionesProps> = ({ venta 
       )}
 
       <EnviarWhatsAppSheet
-        isOpen={whatsAppAbierto}
-        onClose={() => setWhatsAppAbierto(false)}
+        isOpen={estaWhatsAppAbierto}
+        onClose={() => setEstaWhatsAppAbierto(false)}
         numeroComprobante={venta.numero}
         total={venta.total}
         fecha={venta.fecha}
