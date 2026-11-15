@@ -86,6 +86,20 @@ export function pestanaInicial(rol: RolUsuario): string {
 }
 
 /**
+ * Pestaña de la barra inferior que recibe la insignia de avisos de pedidos listos en cocina.
+ */
+export function pestanaBadgeAvisos(rol: RolUsuario | undefined | null): 'pedidos' | 'cobros' | null {
+  switch (rol) {
+    case 'Mozo':
+      return 'pedidos';
+    case 'Cajero':
+      return 'cobros';
+    default:
+      return null;
+  }
+}
+
+/**
  * Obtiene la lista de pestañas autorizadas para un rol.
  */
 export function obtenerPestanasParaRol(rol: RolUsuario): NavTabConfig[] {

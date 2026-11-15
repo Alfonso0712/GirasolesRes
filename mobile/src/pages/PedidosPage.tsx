@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePedidos } from '../hooks/useRecurso';
-import { puede } from '../config/permisos';
+import { puede, puedeVerMontos } from '../config/permisos';
 import { authService } from '../services/authService';
 import { AccesoRestringido } from '../components/layout/AccesoRestringido';
 import { MisPedidosView } from '../components/pedidos/MisPedidosView';
@@ -22,7 +22,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
   const autorizado = puede(rol, 'pedidos.ver');
 
   const { datos: pedidos, cargando, error, recargar } = usePedidos({
-    soloMios: rol === 'Mozo',
+    soloMios: !puede(rol, 'pedidos.verTodos'),
     enabled: autorizado,
   });
 
@@ -47,7 +47,7 @@ export const PedidosPage: React.FC<PedidosPageProps> = ({
           onNavigateToSalon();
         }
       }}
-      esMozo={rol === 'Mozo'}
+      esMozo={!puedeVerMontos(rol)}
     />
   );
 };

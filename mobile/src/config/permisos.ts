@@ -8,7 +8,11 @@ export type Accion =
   | 'pedidos.ver'
   | 'pedidos.modificar'
   | 'pedidos.anular'
+  | 'pedidos.verTodos'
+  | 'pedidos.anularTodos'
   | 'comandas.gestionar'
+  | 'avisos.consultar'
+  | 'perfil.cambiarContrasena'
   | 'platos.disponibilidad'
   | 'platos.gestionar'
   | 'menuDia.definir'
@@ -43,9 +47,17 @@ const MATRIZ_PERMISOS: Record<Accion, readonly RolUsuario[]> = {
   'pedidos.modificar': ['Mozo', 'Cajero'],
   // PedidosController POST /{id}/anular: [Authorize(Roles = "Mozo,Cajero,Administrador")]
   'pedidos.anular': ['Administrador', 'Cajero', 'Mozo'],
+  // PedidosPage / PedidosController GET sin filtro de usuario: Administrador y Cajero
+  'pedidos.verTodos': ['Administrador', 'Cajero'],
+  // RN-65: Administrador puede anular pedidos de cualquier creador
+  'pedidos.anularTodos': ['Administrador'],
 
   // ComandasController: [Authorize(Roles = "Cocinero")]
   'comandas.gestionar': ['Cocinero'],
+  // Avisos de cocina para Mozo, Cajero y Administrador
+  'avisos.consultar': ['Administrador', 'Cajero', 'Mozo'],
+  // RN-16: Cambio de contraseña propia en app móvil reservado a Administrador
+  'perfil.cambiarContrasena': ['Administrador'],
 
   // MenuDiaController PATCH .../disponibilidad: [Authorize(Roles = "Administrador,Cocinero")]
   'platos.disponibilidad': ['Administrador', 'Cocinero'],
@@ -85,4 +97,12 @@ export function puede(rol: RolUsuario | undefined | null, accion: Accion): boole
   if (!rol) return false;
   const rolesAutorizados = MATRIZ_PERMISOS[accion];
   return rolesAutorizados ? rolesAutorizados.includes(rol) : false;
+}
+
+/**
+ * RV-154: Prohibición de exposición de importes monetarios al rol Mozo.
+ */
+export function puedeVerMontos(rol: RolUsuario | undefined | null): boolean {
+  if (!rol) return false;
+  return rol !== 'Mozo';
 }

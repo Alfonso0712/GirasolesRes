@@ -5,6 +5,7 @@ import { cobroService } from '../services/cobroService';
 const INTERVALO_POLLING_MESAS_MS = 15_000;
 import { authService } from '../services/authService';
 import { evaluarVigenciaSesion } from '../config/sesion';
+import { puede } from '../config/permisos';
 import type { MesaItem, PedidoMesaResumen } from '../types/mesa';
 import type { RolUsuario } from '../types/auth';
 import type { PedidoItemDto } from '../types/pedido';
@@ -245,7 +246,7 @@ export function useMesasConPedidos(
         let pedidosDia: PedidoItemDto[] = [];
         let cobrosPendientes: PedidoPendienteCobro[] = [];
 
-        if (rol === 'Cajero') {
+        if (puede(rol, 'cobros.procesar')) {
           const [resCobros, resPedidos] = await Promise.allSettled([
             cobroService.obtenerPedidosPendientes(),
             pedidoService.listarPedidos({ tamano: 200 }),

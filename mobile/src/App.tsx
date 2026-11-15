@@ -25,8 +25,10 @@ import {
 } from './config/sesion';
 import {
   pestanaInicial,
+  pestanaBadgeAvisos,
   obtenerPestanasParaRol,
 } from './config/navigation';
+import { puede } from './config/permisos';
 
 /**
  * Restaura la sesión almacenada al iniciar la aplicación únicamente si sigue vigente
@@ -118,7 +120,7 @@ export const App: React.FC = () => {
   // Al cambiar de pestaña, desplazar hacia arriba y verificar si hay cambios sin guardar en el menú
   const ejecutarCambioTab = useCallback((tabId: string) => {
     if (tabId === 'menu-dia') {
-      if (session?.rol === 'Administrador') {
+      if (puede(session?.rol, 'menuDia.definir')) {
         setMasSeccionInicial('menu-dia');
         setActiveTab('mas');
       } else {
@@ -170,21 +172,18 @@ export const App: React.FC = () => {
 
   // Comandas pendientes para insignia en Cocinero si está en otra pestaña
   const { datos: comandasData } = useComandas({
-    enabled: session?.rol === 'Cocinero',
+    enabled: puede(session?.rol, 'comandas.gestionar'),
   });
   const comandasPendientesCount =
     comandasData?.items?.filter((c) => c.estado === 'Pendiente').length || 0;
 
   // Insignias dinámicas de la barra de navegación
   const badges: Record<string, number> = {};
-  if (conteoAvisos > 0) {
-    if (session?.rol === 'Mozo') {
-      badges.pedidos = conteoAvisos;
-    } else if (session?.rol === 'Cajero') {
-      badges.cobros = conteoAvisos;
-    }
+  const tabAvisos = pestanaBadgeAvisos(session?.rol);
+  if (conteoAvisos > 0 && tabAvisos) {
+    badges[tabAvisos] = conteoAvisos;
   }
-  if (session?.rol === 'Cocinero' && activeTab === 'platos' && comandasPendientesCount > 0) {
+  if (puede(session?.rol, 'comandas.gestionar') && activeTab === 'platos' && comandasPendientesCount > 0) {
     badges.cocina = comandasPendientesCount;
   }
 
@@ -292,8 +291,8 @@ export const App: React.FC = () => {
                   <SalonPage
                     rol={session.rol}
                     onVolverAlInicio={() => handleSelectTab(initialTabForRole)}
-                    onNavigateToCobro={session.rol === 'Cajero' ? () => handleSelectTab('cobros') : undefined}
-                    onIrADefinirMenu={session.rol === 'Administrador' ? () => handleSelectTab('menu-dia') : undefined}
+                    onNavigateToCobro={puede(session.rol, 'cobros.procesar') ? () => handleSelectTab('cobros') : undefined}
+                    onIrADefinirMenu={puede(session.rol, 'menuDia.definir') ? () => handleSelectTab('menu-dia') : undefined}
                     onShowToast={showToast}
                     onPedidoModoChange={setEnPedidoModo}
                   />

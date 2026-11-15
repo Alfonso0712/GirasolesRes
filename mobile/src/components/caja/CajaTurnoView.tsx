@@ -64,7 +64,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   rol = 'Cajero',
   subTabInicial = 'turno',
 }) => {
-  const esAdmin = rol === 'Administrador';
+  const puedeVerCierres = puede(rol, 'cierres.ver');
   const puedeOperarCaja = puede(rol, 'caja.abrir') && puede(rol, 'caja.cerrar');
   const { sinConexion } = useNetworkStatus();
 
@@ -229,7 +229,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
   // Carga paginada del historial de cierres con filtro por mes (Admin)
   const cargarCierres = async (pagina: number, acumular: boolean, filtroMes: SeleccionMes = mesCierres) => {
-    if (!esAdmin) return;
+    if (!puedeVerCierres) return;
     setCargandoCierres(true);
     setErrorCierres(null);
     try {
@@ -257,10 +257,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   };
 
   useEffect(() => {
-    if (seccion !== 'cierres' || !esAdmin) return;
+    if (seccion !== 'cierres' || !puedeVerCierres) return;
     void cargarCierres(1, false, mesCierres);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seccion, esAdmin, mesCierres]);
+  }, [seccion, puedeVerCierres, mesCierres]);
 
   const handleVerDetalleCierre = async (cajaId: string) => {
     if (!cajaId) return;
@@ -458,7 +458,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const chipsSeccion: Array<FilterChipItem<'turno' | 'ventas' | 'cierres'>> = [
     { id: 'turno', label: 'Turno' },
     { id: 'ventas', label: 'Ventas' },
-    ...(esAdmin ? [{ id: 'cierres' as const, label: 'Cierres' }] : []),
+    ...(puedeVerCierres ? [{ id: 'cierres' as const, label: 'Cierres' }] : []),
   ];
 
   return (
@@ -795,7 +795,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         )}
 
         {/* SECCIÓN 3: CIERRES (HISTORIAL SOLO LECTURA PARA ADMINISTRADOR) */}
-        {seccion === 'cierres' && esAdmin && (
+        {seccion === 'cierres' && puedeVerCierres && (
           <div className="space-y-3">
             {/* Filtro por Mes */}
             <div className="bg-surface border border-line p-2 rounded-2xl shadow-xs">
@@ -1084,7 +1084,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         onClose={() => setSheetVentaAbierta(false)}
         venta={ventaDetalle}
         cargando={cargandoDetalleVenta}
-        esAdmin={esAdmin}
+        esAdmin={puede(rol, 'ventas.anular')}
         rol={rol}
         onAnularVenta={handleAnularVenta}
         anulando={anulandoVenta}

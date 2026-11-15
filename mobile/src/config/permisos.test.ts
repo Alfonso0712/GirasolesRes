@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { puede, type Accion } from './permisos';
+import { puede, puedeVerMontos, type Accion } from './permisos';
 import type { RolUsuario } from '../types/auth';
 
 describe('permisos - Matriz RBAC', () => {
@@ -106,7 +106,11 @@ describe('permisos - Matriz RBAC', () => {
       'pedidos.ver',
       'pedidos.modificar',
       'pedidos.anular',
+      'pedidos.verTodos',
+      'pedidos.anularTodos',
       'comandas.gestionar',
+      'avisos.consultar',
+      'perfil.cambiarContrasena',
       'platos.disponibilidad',
       'platos.gestionar',
       'menuDia.definir',
@@ -128,6 +132,42 @@ describe('permisos - Matriz RBAC', () => {
           expect(typeof resultado).toBe('boolean');
         });
       });
+    });
+
+    it('matriz exacta para avisos.consultar, pedidos.verTodos, pedidos.anularTodos y perfil.cambiarContrasena', () => {
+      expect(puede('Mozo', 'avisos.consultar')).toBe(true);
+      expect(puede('Cajero', 'avisos.consultar')).toBe(true);
+      expect(puede('Administrador', 'avisos.consultar')).toBe(true);
+      expect(puede('Cocinero', 'avisos.consultar')).toBe(false);
+
+      expect(puede('Administrador', 'pedidos.verTodos')).toBe(true);
+      expect(puede('Cajero', 'pedidos.verTodos')).toBe(true);
+      expect(puede('Mozo', 'pedidos.verTodos')).toBe(false);
+      expect(puede('Cocinero', 'pedidos.verTodos')).toBe(false);
+
+      expect(puede('Administrador', 'pedidos.anularTodos')).toBe(true);
+      expect(puede('Cajero', 'pedidos.anularTodos')).toBe(false);
+      expect(puede('Mozo', 'pedidos.anularTodos')).toBe(false);
+      expect(puede('Cocinero', 'pedidos.anularTodos')).toBe(false);
+
+      expect(puede('Administrador', 'perfil.cambiarContrasena')).toBe(true);
+      expect(puede('Cajero', 'perfil.cambiarContrasena')).toBe(false);
+      expect(puede('Mozo', 'perfil.cambiarContrasena')).toBe(false);
+      expect(puede('Cocinero', 'perfil.cambiarContrasena')).toBe(false);
+    });
+  });
+
+  describe('RV-154 - puedeVerMontos', () => {
+    it('prohíbe al Mozo y roles ausentes ver importes monetarios', () => {
+      expect(puedeVerMontos('Mozo')).toBe(false);
+      expect(puedeVerMontos(undefined)).toBe(false);
+      expect(puedeVerMontos(null)).toBe(false);
+    });
+
+    it('permite ver montos al Cajero, Administrador y Cocinero', () => {
+      expect(puedeVerMontos('Cajero')).toBe(true);
+      expect(puedeVerMontos('Administrador')).toBe(true);
+      expect(puedeVerMontos('Cocinero')).toBe(true);
     });
   });
 });

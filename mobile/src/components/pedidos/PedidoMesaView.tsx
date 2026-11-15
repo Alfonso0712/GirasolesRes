@@ -24,6 +24,7 @@ import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { esProductoDeCarta } from '../../utils/pedidos';
+import { puedeVerMontos } from '../../config/permisos';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoMesaViewProps {
@@ -165,7 +166,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   });
 
   // Regla RV-154: Prohibición de exposición de importes monetarios al Mozo
-  const esMozo = rol === 'Mozo';
+  const esMozo = !puedeVerMontos(rol);
 
   const cargarDatos = useCallback(async (usarCache = true) => {
     setCargando(true);

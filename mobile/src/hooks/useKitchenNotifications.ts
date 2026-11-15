@@ -3,6 +3,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ApiError } from '../services/apiClient';
 import { esSesionAlmacenadaValida } from '../config/sesion';
+import { puede } from '../config/permisos';
 import { avisoService } from '../services/avisoService';
 import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
 import { extraerEstadoError } from '../utils/errores';
@@ -45,7 +46,7 @@ export function useKitchenNotifications({
     };
   }, []);
 
-  const puedeConsultar = enabled && (rol === 'Mozo' || rol === 'Cajero' || rol === 'Administrador');
+  const puedeConsultar = enabled && puede(rol, 'avisos.consultar');
 
   const consultarAvisos = useCallback(async () => {
     if (!puedeConsultar || !estaVisibleRef.current || !esSesionAlmacenadaValida()) return;

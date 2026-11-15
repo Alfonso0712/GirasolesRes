@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Utensils, Clock, PlusCircle, Receipt, SlidersHorizontal, Plus, Pencil, Power } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
 import type { RolUsuario } from '../../types/auth';
-import { puede } from '../../config/permisos';
+import { puede, puedeVerMontos } from '../../config/permisos';
 import { BottomSheet } from '../ui/BottomSheet';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { Button } from '../ui/Button';
@@ -76,7 +76,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const puedeGestionar = puede(rol, 'mesas.gestionar');
   const puedeTomarPedido = puede(rol, 'pedidoMesa.crear');
   const puedeCobrar = puede(rol, 'cobros.procesar');
-  const esMozo = rol === 'Mozo';
+  const esMozo = !puedeVerMontos(rol);
 
   const mesaSeleccionada = useMemo(() => {
     if (!mesaSeleccionadaId) return null;

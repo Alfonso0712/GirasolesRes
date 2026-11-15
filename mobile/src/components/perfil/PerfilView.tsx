@@ -23,6 +23,7 @@ import { getApiBaseUrl } from '../../services/apiClient';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useHandedness } from '../../hooks/useHandedness';
 import { MODO_DEMO } from '../../config/appConfig';
+import { puede } from '../../config/permisos';
 import { formatearMarcaCompilacion } from '../../config/serverConfig';
 import { reproducirSonidoKds, sonSonidosKdsHabilitados } from '../../utils/audioKds';
 import logoEmblema from '../../assets/logo-emblema-256.png';
@@ -266,7 +267,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
       </Card>
 
       {/* Seguridad de Cuenta (Exclusivo Administrador, RN-16) */}
-      {session.rol === 'Administrador' && (
+      {puede(session.rol, 'perfil.cambiarContrasena') && (
         <Card className="p-5 space-y-3">
           <div className="flex items-center gap-2.5">
             <KeyRound className="w-4 h-4 text-accent" aria-hidden="true" />

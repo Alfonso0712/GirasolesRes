@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   PESTANAS_POR_ROL,
   pestanaInicial,
+  pestanaBadgeAvisos,
   obtenerPestanasParaRol,
 } from './navigation';
 import type { RolUsuario } from '../types/auth';
@@ -19,6 +20,16 @@ describe('navigation - Catálogo canónico de pestañas', () => {
 
     it('debe tener fallback a "salon" para roles desconocidos', () => {
       expect(pestanaInicial('Desconocido' as unknown as RolUsuario)).toBe('salon');
+    });
+  });
+
+  describe('pestanaBadgeAvisos', () => {
+    it('asigna el destino de insignia de avisos por rol', () => {
+      expect(pestanaBadgeAvisos('Mozo')).toBe('pedidos');
+      expect(pestanaBadgeAvisos('Cajero')).toBe('cobros');
+      expect(pestanaBadgeAvisos('Administrador')).toBeNull();
+      expect(pestanaBadgeAvisos('Cocinero')).toBeNull();
+      expect(pestanaBadgeAvisos(undefined)).toBeNull();
     });
   });
 

@@ -9,7 +9,7 @@ import { StatusBadge } from '../ui/StatusBadge';
 import { SkeletonList } from '../ui/Skeleton';
 import { ErrorState } from '../ui/ErrorState';
 import { formatCurrency, pluralizar } from '../../utils/format';
-import { puede } from '../../config/permisos';
+import { puede, puedeVerMontos } from '../../config/permisos';
 import { useHaptics } from '../../hooks/useHaptics';
 
 export interface DetallePedidoContenidoProps {
@@ -34,8 +34,8 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const { triggerLight } = useHaptics();
-  const esMozo = rol === 'Mozo';
-  const esAdmin = rol === 'Administrador';
+  const esMozo = !puedeVerMontos(rol);
+  const puedeAnularTodos = puede(rol, 'pedidos.anularTodos');
 
   useEffect(() => {
     if (pedidoId) {
@@ -61,8 +61,8 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
   const noModificable = pedido?.estado === 'Pagado' || pedido?.estado === 'Anulado';
   // RN-65: Mozo/Cajero solo pueden anular sus propios pedidos; Administrador puede anular cualquiera
   const esCreador = usuarioIdActual && pedido?.usuarioId ? usuarioIdActual === pedido.usuarioId : true;
-  const puedeAnular = puede(rol, 'pedidos.anular') && !noModificable && (esAdmin || esCreador);
-  const puedeAmpliar = (rol === 'Mozo' || rol === 'Administrador') && !noModificable;
+  const puedeAnular = puede(rol, 'pedidos.anular') && !noModificable && (puedeAnularTodos || esCreador);
+  const puedeAmpliar = puede(rol, 'pedidoMesa.crear') && !noModificable;
 
   return (
     <div className="space-y-4 max-h-[80vh] md:max-h-none overflow-y-auto pr-1">
