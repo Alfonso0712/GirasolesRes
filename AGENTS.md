@@ -167,4 +167,18 @@ Toda falla en operaciones asíncronas de `mobile/` debe regirse por la regla de 
 | **Sesión expirada (`401`)** | No mostrar toast ni errores técnicos; el flujo global redirige al inicio de sesión. | `extraerEstadoError(err) === 401` | Se limpia sesión según ciclo de vida global. |
 | **Extracción de mensaje** | Mostrar `ApiError.mensaje` tal cual cuando exista; ante errores técnicos inesperados, devolver siempre el mensaje seguro por defecto (`porDefecto`). | `esApiError`, `mensajeDeError` | Prohibido exponer `err.message` técnico de JS/red al usuario o dejar bloques `catch {}` vacíos y promesas `void fn()` sin manejo. |
 
+---
+
+## 9. Convención de Nombres (Móvil)
+
+Toda incorporación o refactorización en `mobile/src/` debe respetar la siguiente convención bilingüe y de claridad semántica, vigilada por ESLint (`lint` para nombres genéricos y `lint:nombres` con información de tipos para prefijos booleanos):
+
+- **Dominio del negocio en español:** entidades, estados, campos y reglas de dominio se nombran en español (`mesa`, `pedido`, `comanda`, `cobro`, `caja`, `menuDia`).
+- **Estructura técnica de React y plataforma en inglés:** hooks con prefijo `use`, callbacks `on*`, contratos `Props`, primitivas genéricas de UI (`Button`, `Card`, `BottomSheet`) y adaptadores de plugins nativos.
+- **Trazabilidad con `frontend/`:** ayudantes heredados o espejados del cliente web conservan su nombre original (`formatCurrency`, `formatLimaFecha`).
+- **Prefijo obligatorio en booleanos:** variables y parámetros booleanos deben iniciar con un verbo del conjunto permitido (`es`, `tiene`, `esta`, `hay`, `puede`, `debe`, `mostrar`, `is`, `has`, `can`, `should`, `show`), prefiriendo español en código nuevo de dominio. **Excepción:** propiedades que imitan atributos HTML o patrones estándar de React (`checked`, `disabled`, `open`, `loading`, `selected`, `required`, `readOnly`, `autoFocus`, `hidden`).
+- **Prohibición de nombres genéricos:** quedan prohibidos `data`, `item`, `info`, `temp`, `obj`, `cb` y `handle` (aislados) en identificadores locales; se permiten únicamente índices de bucle (`i`, `j`, `idx`) y parámetros de tipo genérico (`T`, `TData`).
+- **Alcance protegido y exportaciones públicas:** los módulos protegidos de conexión/autenticación, los campos de DTO provenientes del backend y las exportaciones públicas inventariadas en Fase 12C conservan sus firmas hasta aprobación explícita.
+
+
 

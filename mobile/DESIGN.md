@@ -101,3 +101,15 @@ Los textos mostrados al usuario deben apegarse estrictamente a la nomenclatura o
 - **Acción de recuperación:** Las acciones de usuario fallidas incluyen la acción **`Reintentar`** y preservan intacto el estado visible previo hasta que el servidor confirme el cambio.
 - **Datos no disponibles:** Cuando una carga secundaria o de sondeo falla sin datos históricos previos para un monto o contador, se muestra **`—`** y nunca ceros inventados.
 - **Silencio ante `401`:** Los errores de autenticación (`401`) no generan toasts de error para no superponerse con la redirección global de sesión expirada.
+
+---
+
+## 9. Convención de Nombres
+
+- **Español en el dominio:** Entidades, estados, reglas y flujos gastronómicos se escriben en español (`mesa`, `pedido`, `comanda`, `cobro`, `caja`, `menuDia`).
+- **Inglés en infraestructura React/UI:** Hooks (`use*`), eventos (`on*`), contratos `Props`, componentes base de UI (`Button`, `Card`, `BottomSheet`) y wrappers de plugins nativos.
+- **Ayudantes espejados de web:** Conservan su nombre original por trazabilidad con `frontend/` (`formatCurrency`, `formatLimaFecha`).
+- **Booleanos con prefijo verbal:** Toda variable o parámetro booleano inicia con `es`, `tiene`, `esta`, `hay`, `puede`, `debe`, `mostrar`, `is`, `has`, `can`, `should` o `show` (preferencia por español en dominio), salvo atributos HTML/React estándar (`checked`, `disabled`, `open`, `loading`, `selected`, `required`, `readOnly`, `autoFocus`, `hidden`).
+- **Sin identificadores genéricos:** Prohibidos `data`, `item`, `info`, `temp`, `obj`, `cb` y `handle` como identificadores locales; use nombres que revelen la intención (`mesa`, `plato`, `linea`, `respuesta`). Se admiten índices de bucle y parámetros genéricos de tipo (`T`).
+- **Reglas automáticas:** `npm --prefix mobile run lint` bloquea identificadores genéricos locales y `npm --prefix mobile run lint:nombres` verifica prefijos booleanos con información de tipos (`eslint.nombres.config.mjs`).
+
