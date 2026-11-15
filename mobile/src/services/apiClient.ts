@@ -27,6 +27,13 @@ export function setApiBaseUrl(url: string): void {
   }
 }
 
+import {
+  agregarQueryParams,
+  construirCabecerasBinario,
+  construirCabecerasJson,
+  extraerHost,
+  formatearUrl,
+} from './http/construirPeticion';
 import { ApiError } from './http/errorHttp';
 import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
 import { manejarNoAutorizado, setOnUnauthorizedCallback } from './http/noAutorizado';
@@ -43,39 +50,12 @@ export type { ApiErrorTipo, OpcionesApiError };
 // Reintentos exponenciales delegados a ./http/reintentos
 
 class ApiClient {
-  private formatUrl(endpoint: string): string {
-    const base = getApiBaseUrl();
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-
-    // Si endpoint ya incluye /api y la base termina con /api, no duplicar
-    if (base.endsWith('/api') && cleanEndpoint.startsWith('/api')) {
-      return `${base.replace(/\/api$/, '')}${cleanEndpoint}`;
-    }
-    return `${base}${cleanEndpoint}`;
-  }
-
   async request<T>(endpoint: string, options: RequestInit = {}, token?: string): Promise<T> {
     const authToken = await resolverTokenPeticion(token, esRutaAuthEspecial(endpoint));
 
-    const url = this.formatUrl(endpoint);
-    let requestHost = '';
-    try {
-      requestHost = new URL(url).host;
-    } catch {
-      requestHost = '';
-    }
-    const headers = new Headers(options.headers || {});
-
-    if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
-      headers.set('Content-Type', 'application/json');
-    }
-    if (!headers.has('Accept')) {
-      headers.set('Accept', 'application/json');
-    }
-
-    if (authToken) {
-      headers.set('Authorization', `Bearer ${authToken}`);
-    }
+    const url = formatearUrl(endpoint);
+    const requestHost = extraerHost(url);
+    const headers = construirCabecerasJson(options.headers, options.body, authToken);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -270,35 +250,10 @@ class ApiClient {
     token?: string
   ): Promise<Blob> {
     const authToken = await resolverTokenPeticion(token);
-
-    let endpointFinal = ruta;
-    if (params) {
-      const searchParams = new URLSearchParams();
-      for (const [clave, valor] of Object.entries(params)) {
-        if (valor !== undefined && valor !== null && String(valor).trim() !== '') {
-          searchParams.append(clave, String(valor));
-        }
-      }
-      const queryStr = searchParams.toString();
-      if (queryStr) {
-        endpointFinal += (endpointFinal.includes('?') ? '&' : '?') + queryStr;
-      }
-    }
-
-    const url = this.formatUrl(endpointFinal);
-    let requestHost = '';
-    try {
-      requestHost = new URL(url).host;
-    } catch {
-      requestHost = '';
-    }
-
-    const headers = new Headers({
-      Accept: 'application/pdf, application/octet-stream, */*',
-    });
-    if (authToken) {
-      headers.set('Authorization', `Bearer ${authToken}`);
-    }
+    const endpointFinal = agregarQueryParams(ruta, params);
+    const url = formatearUrl(endpointFinal);
+    const requestHost = extraerHost(url);
+    const headers = construirCabecerasBinario(authToken);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
