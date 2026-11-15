@@ -30,6 +30,7 @@ export function setApiBaseUrl(url: string): void {
 import { ApiError } from './http/errorHttp';
 import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
 import { manejarNoAutorizado, setOnUnauthorizedCallback } from './http/noAutorizado';
+import { ejecutarConReintentos } from './http/reintentos';
 import { esRutaAuthEspecial, resolverTokenPeticion } from './http/renovacionToken';
 
 export { ApiError, setOnUnauthorizedCallback };
@@ -39,35 +40,7 @@ export type { ApiErrorTipo, OpcionesApiError };
 
 // Renovación preventiva de token delegada a ./http/renovacionToken
 
-/**
- * Ejecuta una consulta GET con reintentos y espera creciente exponencial (1 s, 2 s, 4 s; máx 3 reintentos).
- * Exclusivo para consultas idempotentes (GET); nunca se aplica a mutaciones ni operaciones de dinero o pedidos.
- */
-async function ejecutarConReintentos<T>(
-  operacion: () => Promise<T>,
-  intentosMaximos: number = 3
-): Promise<T> {
-  let intento = 0;
-  const demoras = [1000, 2000, 4000];
-
-  while (true) {
-    try {
-      return await operacion();
-    } catch (err: unknown) {
-      intento++;
-      const esFalloRed =
-        err instanceof ApiError &&
-        (err.tipo === 'sin-respuesta' || err.tipo === 'timeout' || err.status === 0);
-
-      if (esFalloRed && intento <= intentosMaximos) {
-        const espera = demoras[intento - 1] ?? 4000;
-        await new Promise((resolve) => setTimeout(resolve, espera));
-        continue;
-      }
-      throw err;
-    }
-  }
-}
+// Reintentos exponenciales delegados a ./http/reintentos
 
 class ApiClient {
   private formatUrl(endpoint: string): string {
