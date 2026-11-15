@@ -251,20 +251,20 @@ export function alternarGrupo(
 
   let tipoDetectado: 'Componente' | 'Carta' | undefined = tipoExplicito;
 
-  for (const item of grupo) {
-    if (typeof item === 'string') {
-      ids.push(item);
-      if (!tipoDetectado && tiposPorId[item]) {
-        tipoDetectado = tiposPorId[item];
+  for (const elemento of grupo) {
+    if (typeof elemento === 'string') {
+      ids.push(elemento);
+      if (!tipoDetectado && tiposPorId[elemento]) {
+        tipoDetectado = tiposPorId[elemento];
       }
     } else {
-      ids.push(item.id);
-      tiposPorId[item.id] = item.tipo;
+      ids.push(elemento.id);
+      tiposPorId[elemento.id] = elemento.tipo;
       if (!tipoDetectado) {
-        tipoDetectado = item.tipo;
+        tipoDetectado = elemento.tipo;
       }
-      if (item.tipo === 'Componente' && item.rol) {
-        rolesPorOpcion[item.id] = item.rol;
+      if (elemento.tipo === 'Componente' && elemento.rol) {
+        rolesPorOpcion[elemento.id] = elemento.rol;
       }
     }
   }
@@ -281,9 +281,9 @@ export function alternarGrupo(
 
   if (tipoFinal === 'Carta') {
     const set = new Set(seleccion.productosCarta);
-    const todosMarcados = ids.every((id) => set.has(id));
+    const estanTodosMarcados = ids.every((id) => set.has(id));
     for (const id of ids) {
-      if (todosMarcados) {
+      if (estanTodosMarcados) {
         set.delete(id);
       } else {
         set.add(id);
@@ -298,9 +298,9 @@ export function alternarGrupo(
   }
 
   const set = new Set(seleccion.opciones);
-  const todosMarcados = ids.every((id) => set.has(id));
+  const estanTodosMarcados = ids.every((id) => set.has(id));
   for (const id of ids) {
-    if (todosMarcados) {
+    if (estanTodosMarcados) {
       set.delete(id);
     } else {
       set.add(id);
@@ -367,8 +367,8 @@ export function contarSeleccionados(
   }
 
   let contador = 0;
-  for (const item of listaItems) {
-    const id = typeof item === 'string' ? item : item.id;
+  for (const elemento of listaItems) {
+    const id = typeof elemento === 'string' ? elemento : elemento.id;
     if (conjuntoSeleccionados.has(id)) {
       contador += 1;
     }

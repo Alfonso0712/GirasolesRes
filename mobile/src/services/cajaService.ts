@@ -36,7 +36,7 @@ export const cajaService = {
     return apiClient.get<CierreResumenDto>('/caja/cierre/resumen');
   },
 
-  cerrarCaja: async (data: {
+  cerrarCaja: async (datosCierre: {
     efectivoContado: number;
     efectivoEsperadoMostrado: number;
     observacion?: string;
@@ -47,12 +47,12 @@ export const cajaService = {
 
     const payload: CerrarCajaRequestDto = {
       solicitudId,
-      efectivoContado: data.efectivoContado,
-      montoCierreEfectivo: data.efectivoContado,
-      efectivoEsperadoMostrado: data.efectivoEsperadoMostrado,
-      montoCierreSistema: data.efectivoEsperadoMostrado,
-      observacion: data.observacion,
-      observaciones: data.observacion,
+      efectivoContado: datosCierre.efectivoContado,
+      montoCierreEfectivo: datosCierre.efectivoContado,
+      efectivoEsperadoMostrado: datosCierre.efectivoEsperadoMostrado,
+      montoCierreSistema: datosCierre.efectivoEsperadoMostrado,
+      observacion: datosCierre.observacion,
+      observaciones: datosCierre.observacion,
     };
 
     await apiClient.post('/caja/cerrar', payload);

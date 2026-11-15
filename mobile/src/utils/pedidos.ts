@@ -35,10 +35,10 @@ export function esProductoDeCarta(prod: ProductoMenuPedidoDto): boolean {
  */
 export function esLineaBorrador(valor: unknown): valor is LineaBorrador {
   if (typeof valor !== 'object' || valor === null) return false;
-  const obj: object = valor;
-  const okStr = CAMPOS_TEXTO_BORRADOR.every((k) => typeof Reflect.get(obj, k) === 'string');
-  const okNum = CAMPOS_NUMERO_BORRADOR.every((k) => typeof Reflect.get(obj, k) === 'number');
-  return okStr && okNum;
+  const registro: object = valor;
+  const tieneCamposTexto = CAMPOS_TEXTO_BORRADOR.every((k) => typeof Reflect.get(registro, k) === 'string');
+  const tieneCamposNumero = CAMPOS_NUMERO_BORRADOR.every((k) => typeof Reflect.get(registro, k) === 'number');
+  return tieneCamposTexto && tieneCamposNumero;
 }
 
 /**

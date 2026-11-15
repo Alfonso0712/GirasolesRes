@@ -75,16 +75,16 @@ export const menuDiaService = {
   },
 
   guardarMenuHoy: async (
-    data: GuardarMenuDiaRequest
+    solicitudMenu: GuardarMenuDiaRequest
   ): Promise<GuardarMenuDiaResponseDto> => {
-    const res = await apiClient.put<GuardarMenuDiaResponseDto>('/menu-dia/hoy', data);
+    const res = await apiClient.put<GuardarMenuDiaResponseDto>('/menu-dia/hoy', solicitudMenu);
     notificarActualizacionMenu(res?.data ?? null);
     return res;
   },
 
-  cambiarDisponibilidad: async (productoId: string, agotado: boolean): Promise<void> => {
+  cambiarDisponibilidad: async (productoId: string, estaAgotado: boolean): Promise<void> => {
     await apiClient.patch(`/menu-dia/hoy/platos/${productoId}/disponibilidad`, {
-      agotado,
+      agotado: estaAgotado,
     });
     notificarActualizacionMenu(null);
   },

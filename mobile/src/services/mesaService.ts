@@ -20,15 +20,15 @@ export const mesaService = {
     return apiClient.get<MesaItem[]>(url);
   },
 
-  crearMesa: async (data: CrearMesaData): Promise<MesaMutationResponse> => {
-    return apiClient.post<MesaMutationResponse>('/mesas', data);
+  crearMesa: async (datosMesa: CrearMesaData): Promise<MesaMutationResponse> => {
+    return apiClient.post<MesaMutationResponse>('/mesas', datosMesa);
   },
 
-  actualizarMesa: async (id: string, data: ActualizarMesaData): Promise<MesaMutationResponse> => {
-    return apiClient.put<MesaMutationResponse>(`/mesas/${id}`, data);
+  actualizarMesa: async (id: string, datosMesa: ActualizarMesaData): Promise<MesaMutationResponse> => {
+    return apiClient.put<MesaMutationResponse>(`/mesas/${id}`, datosMesa);
   },
 
-  cambiarEstadoMesa: async (id: string, activa: boolean): Promise<MesaMutationResponse> => {
-    return apiClient.patch<MesaMutationResponse>(`/mesas/${id}/estado`, { activa });
+  cambiarEstadoMesa: async (id: string, estaActiva: boolean): Promise<MesaMutationResponse> => {
+    return apiClient.patch<MesaMutationResponse>(`/mesas/${id}/estado`, { activa: estaActiva });
   }
 };

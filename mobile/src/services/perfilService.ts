@@ -29,8 +29,8 @@ export const perfilService = {
     }
   },
 
-  cambiarContrasena: async (data: CambiarContrasenaPropiaRequest): Promise<CambiarContrasenaResponse> => {
-    const res = await apiClient.put<CambiarContrasenaResponse>('/perfil/contrasena', data);
+  cambiarContrasena: async (datosContrasena: CambiarContrasenaPropiaRequest): Promise<CambiarContrasenaResponse> => {
+    const res = await apiClient.put<CambiarContrasenaResponse>('/perfil/contrasena', datosContrasena);
     if (res.token) {
       try {
         localStorage.setItem('GIRASOLES_TOKEN', res.token);

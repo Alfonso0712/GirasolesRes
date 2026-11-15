@@ -12,8 +12,8 @@ export const cobroService = {
     return apiClient.get<PedidoPendienteCobro[]>('/cobros/pendientes');
   },
 
-  procesarCobro: async (data: CobroRequest): Promise<CobroResponse> => {
-    return apiClient.post<CobroResponse>('/cobros', data);
+  procesarCobro: async (datosCobro: CobroRequest): Promise<CobroResponse> => {
+    return apiClient.post<CobroResponse>('/cobros', datosCobro);
   },
 
   consultarDni: async (dni: string): Promise<ResultadoConsultaDni> => {

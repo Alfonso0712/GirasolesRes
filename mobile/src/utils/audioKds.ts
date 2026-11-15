@@ -44,8 +44,8 @@ export function sonSonidosKdsHabilitados(): boolean {
  * - 'preparacion': Tono dinámico ascendente al iniciar preparación
  * - 'lista': Acorde alegre de 3 notas de servicio al marcar como lista
  */
-export function reproducirSonidoKds(tipo: TipoSonidoKds, activado = sonSonidosKdsHabilitados(), volumenRatio = 1.0): void {
-  if (!activado || volumenRatio <= 0) return;
+export function reproducirSonidoKds(tipo: TipoSonidoKds, estaActivado = sonSonidosKdsHabilitados(), volumenRatio = 1.0): void {
+  if (!estaActivado || volumenRatio <= 0) return;
   const vol = Math.max(0, Math.min(1, volumenRatio));
 
   try {

@@ -73,9 +73,9 @@ function enriquecerMesaOcupada(
   let mozoDetectado = mesa.mozo ?? null;
 
   for (const c of cobrosPendientes) {
-    const coincideId = Boolean(c.mesaId && c.mesaId === mesa.id);
+    const esMismoId = Boolean(c.mesaId && c.mesaId === mesa.id);
     const nombreCobro = normalizarNombreMesa(c.mesa || c.mesaNombre);
-    if (coincideId || (nombreNorm && nombreCobro && nombreNorm === nombreCobro)) {
+    if (esMismoId || (nombreNorm && nombreCobro && nombreNorm === nombreCobro)) {
       const id = c.pedidoId;
       mapaPedidos.set(id, {
         id,
@@ -106,7 +106,7 @@ function enriquecerMesaOcupada(
   let totalPendiente: number | null =
     typeof mesa.totalPendiente === 'number' && mesa.totalPendiente > 0 ? mesa.totalPendiente : null;
   if (listaPedidos.length > 0) {
-    totalPendiente = listaPedidos.reduce((acc, item) => acc + item.total, 0);
+    totalPendiente = listaPedidos.reduce((acc, pedido) => acc + pedido.total, 0);
   }
 
   let minutosOcupada: number | null =
