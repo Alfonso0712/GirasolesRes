@@ -33,16 +33,16 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
   const [motivo, setMotivo] = useState<string>('');
   const [errorValidacion, setErrorValidacion] = useState<string | null>(null);
   const [mostrarConfirmar, setMostrarConfirmar] = useState<boolean>(false);
-  const [procesando, setProcesando] = useState<boolean>(false);
+  const [estaProcesando, setEstaProcesando] = useState<boolean>(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
-  const { sinConexion } = useNetworkStatus();
+  const { sinConexion: estaSinConexion } = useNetworkStatus();
 
   if (!isOpen || !pedido) return null;
 
   const handleValidarYContinuar = () => {
-    if (sinConexion) {
+    if (estaSinConexion) {
       triggerError();
       setErrorValidacion('Sin conexión a internet. No se puede anular pedidos.');
       return;
@@ -59,7 +59,7 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
   };
 
   const handleEjecutarAnulacion = async () => {
-    setProcesando(true);
+    setEstaProcesando(true);
     try {
       const res = await pedidoService.anularPedido(pedido.id, {
         solicitudId: `sol-anular-${Date.now()}`,
@@ -79,7 +79,7 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
       mostrar({ tipo: 'error', mensaje: mensajeDeError(err, 'No se pudo anular el pedido.') });
       setMostrarConfirmar(false);
     } finally {
-      setProcesando(false);
+      setEstaProcesando(false);
     }
   };
 
@@ -152,10 +152,10 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
 
           <SheetActions
             secondaryLabel="Cancelar"
-            primaryLabel={sinConexion ? 'Sin conexión' : 'Confirmar'}
+            primaryLabel={estaSinConexion ? 'Sin conexión' : 'Confirmar'}
             primaryVariant="danger"
-            primaryDisabled={motivo.trim().length < 5 || sinConexion}
-            primaryTitle={sinConexion ? 'Sin conexión a internet' : undefined}
+            primaryDisabled={motivo.trim().length < 5 || estaSinConexion}
+            primaryTitle={estaSinConexion ? 'Sin conexión a internet' : undefined}
             primaryIcon={<Ban className="w-4 h-4" />}
             onSecondary={onClose}
             onPrimary={handleValidarYContinuar}
@@ -173,7 +173,7 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
         etiquetaCancelar="Volver"
         tono="peligro"
         onConfirmar={handleEjecutarAnulacion}
-        cargando={procesando}
+        cargando={estaProcesando}
       />
     </>
   );

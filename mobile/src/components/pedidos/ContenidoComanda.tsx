@@ -72,12 +72,12 @@ function esBotonDeshabilitado(config: ContenidoComandaConfig, referencia?: strin
   return refTrim.length < 2 || refTrim.length > 30 || config.sinConexion;
 }
 
-function textoBotonEnviar(esMesa: boolean, sinConexion: boolean, esAmpliacion: boolean): string {
+function textoBotonEnviar(esMesa: boolean, estaSinConexion: boolean, esAmpliacion: boolean): string {
   if (esMesa) {
-    if (sinConexion) return 'Sin conexión para enviar';
+    if (estaSinConexion) return 'Sin conexión para enviar';
     return esAmpliacion ? 'Enviar Ampliación a Cocina' : 'Enviar Pedido a Cocina';
   }
-  return sinConexion ? 'Sin conexión para registrar' : 'Confirmar Pedido para Llevar';
+  return estaSinConexion ? 'Sin conexión para registrar' : 'Confirmar Pedido para Llevar';
 }
 
 /**
@@ -85,7 +85,7 @@ function textoBotonEnviar(esMesa: boolean, sinConexion: boolean, esAmpliacion: b
  */
 export const ContenidoComanda: React.FC<ContenidoComandaProps> = ({ config, extra, acciones }) => {
   const esMesa = config.variante === 'mesa';
-  const deshabilitado = esBotonDeshabilitado(config, extra.referencia);
+  const estaDeshabilitado = esBotonDeshabilitado(config, extra.referencia);
   const claseLista = esMesa ? 'divide-y divide-line' : 'divide-y divide-line max-h-[300px] md:max-h-none overflow-y-auto pr-1';
 
   return (
@@ -100,7 +100,7 @@ export const ContenidoComanda: React.FC<ContenidoComandaProps> = ({ config, extr
         ))}
       </div>
       <BloqueTotalComanda esMozo={Boolean(extra.esMozo)} total={config.total} totalItems={config.totalItems} />
-      <Button fullWidth size="lg" isLoading={config.enviando} disabled={deshabilitado} title={config.sinConexion ? 'Sin conexión a internet' : undefined} onClick={acciones.onEnviar} className="flex items-center justify-center gap-2">
+      <Button fullWidth size="lg" isLoading={config.enviando} disabled={estaDeshabilitado} title={config.sinConexion ? 'Sin conexión a internet' : undefined} onClick={acciones.onEnviar} className="flex items-center justify-center gap-2">
         <Send className="w-5 h-5" />
         <span>{textoBotonEnviar(esMesa, config.sinConexion, Boolean(extra.esAmpliacion))}</span>
       </Button>

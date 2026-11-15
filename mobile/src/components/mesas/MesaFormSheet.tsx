@@ -23,17 +23,17 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
   onSave,
 }) => {
   const isEdit = Boolean(mesaAEditar);
-  const { sinConexion } = useNetworkStatus();
+  const { sinConexion: estaSinConexion } = useNetworkStatus();
   const [nombre, setNombre] = useState('');
   const [errorNombre, setErrorNombre] = useState<string | null>(null);
-  const [guardando, setGuardando] = useState(false);
+  const [estaGuardando, setEstaGuardando] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
     setNombre(mesaAEditar?.nombre || '');
     setErrorNombre(null);
-    setGuardando(false);
+    setEstaGuardando(false);
     const timer = setTimeout(() => {
       inputRef.current?.focus();
       inputRef.current?.select();
@@ -72,12 +72,12 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
 
     // RV-52: Unicidad canonicalizada
     const canonNuevo = canonicalizarMesa(limpio);
-    const duplicada = todasLasMesas.some((m) => {
+    const estaDuplicada = todasLasMesas.some((m) => {
       if (isEdit && m.id === mesaAEditar?.id) return false;
       return canonicalizarMesa(m.nombre) === canonNuevo;
     });
 
-    if (duplicada) {
+    if (estaDuplicada) {
       setErrorNombre('Esa mesa ya está registrada. Use otro número o nombre.');
       return false;
     }
@@ -96,12 +96,12 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
       return;
     }
 
-    setGuardando(true);
+    setEstaGuardando(true);
     try {
       await onSave(limpio);
       onClose();
     } catch (err: unknown) {
-      setGuardando(false);
+      setEstaGuardando(false);
       setErrorNombre(mensajeDeError(err, 'No se pudo completar la operación. Intente nuevamente.'));
       inputRef.current?.focus();
     }
@@ -131,7 +131,7 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
               onBlur={handleBlur}
               placeholder="Ej. Mesa 1, Terraza A, Barra"
               maxLength={20}
-              disabled={guardando}
+              disabled={estaGuardando}
               aria-invalid={Boolean(errorNombre)}
               aria-describedby={errorNombre ? 'error-nombre-mesa' : undefined}
               className={`w-full px-3.5 py-3 rounded-xl border bg-canvas text-ink text-sm font-semibold placeholder:text-ink-muted/50 focus:outline-hidden focus:ring-2 transition-all ${
@@ -163,13 +163,13 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
 
         <SheetActions
           secondaryLabel="Cancelar"
-          primaryLabel={sinConexion ? 'Sin conexión' : 'Guardar'}
+          primaryLabel={estaSinConexion ? 'Sin conexión' : 'Guardar'}
           primaryType="submit"
           primaryVariant="primary"
-          isLoading={guardando}
-          primaryDisabled={guardando || sinConexion}
-          secondaryDisabled={guardando}
-          primaryTitle={sinConexion ? 'Sin conexión a internet' : undefined}
+          isLoading={estaGuardando}
+          primaryDisabled={estaGuardando || estaSinConexion}
+          secondaryDisabled={estaGuardando}
+          primaryTitle={estaSinConexion ? 'Sin conexión a internet' : undefined}
           onSecondary={onClose}
         />
       </form>

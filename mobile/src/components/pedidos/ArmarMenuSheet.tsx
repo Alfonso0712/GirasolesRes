@@ -48,8 +48,8 @@ export const ArmarMenuSheet: React.FC<ArmarMenuSheetProps> = ({
   const eleccionActual = elecciones[parteActual.nombre];
   const esUltimoPaso = pasoActual === totalPartes - 1;
 
-  const handleSeleccionarOpcion = (productoId: string, productoNombre: string, agotado: boolean) => {
-    if (agotado) {
+  const handleSeleccionarOpcion = (productoId: string, productoNombre: string, estaAgotado: boolean) => {
+    if (estaAgotado) {
       triggerError();
       return;
     }
@@ -155,20 +155,20 @@ export const ArmarMenuSheet: React.FC<ArmarMenuSheetProps> = ({
         {/* Lista de opciones disponibles para esta parte */}
         <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
           {parteActual.opciones.map((opc) => {
-            const seleccionada = eleccionActual?.productoId === opc.productoId;
-            const agotada = opc.agotado;
+            const estaSeleccionada = eleccionActual?.productoId === opc.productoId;
+            const estaAgotada = opc.agotado;
 
             return (
               <Card
                 key={opc.productoId}
                 accent="none"
                 padding="sm"
-                interactive={!agotada}
-                onClick={!agotada ? () => handleSeleccionarOpcion(opc.productoId, opc.nombre, agotada) : undefined}
+                interactive={!estaAgotada}
+                onClick={!estaAgotada ? () => handleSeleccionarOpcion(opc.productoId, opc.nombre, estaAgotada) : undefined}
                 className={`flex items-center justify-between select-none min-h-[52px] ${
-                  seleccionada
+                  estaSeleccionada
                     ? 'border-primary bg-primary/5 text-primary'
-                    : agotada
+                    : estaAgotada
                     ? 'opacity-50 bg-canvas'
                     : 'bg-surface'
                 }`}
@@ -176,19 +176,19 @@ export const ArmarMenuSheet: React.FC<ArmarMenuSheetProps> = ({
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
                   <div
                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                      seleccionada
+                      estaSeleccionada
                         ? 'border-primary bg-primary text-white'
                         : 'border-line bg-canvas'
                     }`}
                   >
-                    {seleccionada && <Check className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {estaSeleccionada && <Check className="w-3.5 h-3.5" aria-hidden="true" />}
                   </div>
-                  <span className={`text-sm font-bold leading-snug break-words min-w-0 ${seleccionada ? 'text-primary' : 'text-ink'}`}>
+                  <span className={`text-sm font-bold leading-snug break-words min-w-0 ${estaSeleccionada ? 'text-primary' : 'text-ink'}`}>
                     {opc.nombre}
                   </span>
                 </div>
 
-                {agotada && (
+                {estaAgotada && (
                   <span className="text-xs font-bold text-danger bg-danger-bg border border-danger-border px-2 py-0.5 rounded-md shrink-0">
                     Agotado
                   </span>

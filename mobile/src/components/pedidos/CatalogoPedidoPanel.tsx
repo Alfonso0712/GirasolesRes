@@ -106,7 +106,7 @@ export const CatalogoPedidoPanel: React.FC<CatalogoPedidoPanelProps> = ({
   const subtituloVacio = variante === 'mesa'
     ? 'No se encontraron productos disponibles en el catálogo para esta selección.'
     : 'No se encontraron productos disponibles en el catálogo para llevar.';
-  const sinResultados = !estado.errorCarga && !estado.cargando && productos.length === 0 && menus.length === 0;
+  const estaSinResultados = !estado.errorCarga && !estado.cargando && productos.length === 0 && menus.length === 0;
 
   return (
     <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -114,7 +114,7 @@ export const CatalogoPedidoPanel: React.FC<CatalogoPedidoPanelProps> = ({
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32 md:pb-6">
         {estado.errorCarga && <ErrorState mensaje={estado.errorCarga} onRetry={estado.onReintentar} className="my-4" />}
         {estado.cargando && estado.catalogoVacio && <SkeletonList count={5} />}
-        {sinResultados && <EmptyState icon={UtensilsCrossed} titulo="No hay productos disponibles" subtitulo={subtituloVacio} />}
+        {estaSinResultados && <EmptyState icon={UtensilsCrossed} titulo="No hay productos disponibles" subtitulo={subtituloVacio} />}
         <SeccionMenusCatalogo menus={menus} esMozo={estado.esMozo} onArmar={acciones.onArmarMenu} />
         {productos.map((prod) => (
           <TarjetaProductoCatalogo key={prod.id} producto={prod} lineaActual={estado.lineas.find((l) => l.productoId === prod.id)} variante={variante} esMozo={estado.esMozo} onAgregar={acciones.onAgregarProducto} onModificarCantidad={acciones.onModificarCantidad} />

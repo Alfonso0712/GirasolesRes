@@ -50,8 +50,8 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
     gruposCarta,
     actual,
     agotadosPorId,
-    cargando,
-    guardando,
+    cargando: estaCargando,
+    guardando: estaGuardando,
     error,
     errorValidacion,
     tieneCambios,
@@ -67,9 +67,9 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
 
   const [seccionActiva, setSeccionActiva] = useState<SeccionDefinirMenu>(seccionInicial);
   const [errorEnLinea, setErrorEnLinea] = useState<string | null>(null);
-  const [confirmarGuardarAbierto, setConfirmarGuardarAbierto] = useState<boolean>(false);
-  const [confirmarDescartarAbierto, setConfirmarDescartarAbierto] = useState<boolean>(false);
-  const [salirTrasDescartar, setSalirTrasDescartar] = useState<boolean>(false);
+  const [estaConfirmarGuardarAbierto, setEstaConfirmarGuardarAbierto] = useState<boolean>(false);
+  const [estaConfirmarDescartarAbierto, setEstaConfirmarDescartarAbierto] = useState<boolean>(false);
+  const [debeSalirTrasDescartar, setDebeSalirTrasDescartar] = useState<boolean>(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { mostrar } = useToast();
@@ -81,35 +81,35 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
     };
   }, [tieneCambios, onCambiosSinGuardarChange]);
 
-  const mostrarModalDescarte = confirmarDescartarAbierto || Boolean(solicitudSalirPendiente);
+  const mostrarModalDescarte = estaConfirmarDescartarAbierto || Boolean(solicitudSalirPendiente);
 
   const handleIntentarVolver = () => {
     if (!onVolver) return;
     if (tieneCambios) {
       triggerLight();
-      setSalirTrasDescartar(true);
-      setConfirmarDescartarAbierto(true);
+      setDebeSalirTrasDescartar(true);
+      setEstaConfirmarDescartarAbierto(true);
       return;
     }
     onVolver();
   };
 
   useBackHandler(
-    tieneCambios || confirmarGuardarAbierto || mostrarModalDescarte,
+    tieneCambios || estaConfirmarGuardarAbierto || mostrarModalDescarte,
     () => {
-      if (confirmarGuardarAbierto) {
-        setConfirmarGuardarAbierto(false);
+      if (estaConfirmarGuardarAbierto) {
+        setEstaConfirmarGuardarAbierto(false);
         return true;
       }
       if (mostrarModalDescarte) {
-        setConfirmarDescartarAbierto(false);
-        setSalirTrasDescartar(false);
+        setEstaConfirmarDescartarAbierto(false);
+        setDebeSalirTrasDescartar(false);
         onCancelarSolicitudSalir?.();
         return true;
       }
       if (tieneCambios) {
-        setSalirTrasDescartar(Boolean(onVolver));
-        setConfirmarDescartarAbierto(true);
+        setDebeSalirTrasDescartar(Boolean(onVolver));
+        setEstaConfirmarDescartarAbierto(true);
         return true;
       }
       return false;
@@ -135,11 +135,11 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
       return;
     }
 
-    setConfirmarGuardarAbierto(true);
+    setEstaConfirmarGuardarAbierto(true);
   };
 
   const handleConfirmarGuardar = async () => {
-    setConfirmarGuardarAbierto(false);
+    setEstaConfirmarGuardarAbierto(false);
     const res = await guardar();
     if (res.exito) {
       triggerSuccess();
@@ -160,12 +160,12 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
 
   const handleConfirmarDescartar = () => {
     const accionSalir = solicitudSalirPendiente;
-    const debeVolver = salirTrasDescartar;
+    const debeVolver = debeSalirTrasDescartar;
 
     descartarCambios();
     setErrorEnLinea(null);
-    setConfirmarDescartarAbierto(false);
-    setSalirTrasDescartar(false);
+    setEstaConfirmarDescartarAbierto(false);
+    setDebeSalirTrasDescartar(false);
     onCancelarSolicitudSalir?.();
 
     if (accionSalir) {
@@ -185,13 +185,13 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
         onVolver={onVolver ? handleIntentarVolver : undefined}
         onRefresh={() => {
           if (tieneCambios) {
-            setSalirTrasDescartar(false);
-            setConfirmarDescartarAbierto(true);
+            setDebeSalirTrasDescartar(false);
+            setEstaConfirmarDescartarAbierto(true);
             return;
           }
           void recargar();
         }}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
         etiquetas={<StatusBadge estado={etiquetaEstadoMenu} />}
       />
 
@@ -275,11 +275,11 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
           />
         )}
 
-        {cargando && candidatos.length === 0 && (
+        {estaCargando && candidatos.length === 0 && (
           <SkeletonList count={5} />
         )}
 
-        {!cargando && !error && candidatos.length === 0 && (
+        {!estaCargando && !error && candidatos.length === 0 && (
           <EmptyState
             icon={UtensilsCrossed}
             titulo="Sin opciones disponibles"
@@ -316,9 +316,9 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
                 seleccionadosSet={opcionesSet}
                 agotadosPorId={agotadosPorId}
                 mostrarPrecio={false}
-                onToggleItem={(item) => {
+                onToggleItem={(candidato) => {
                   setErrorEnLinea(null);
-                  toggleOpcion(item.id, 'Componente', item.rol);
+                  toggleOpcion(candidato.id, 'Componente', candidato.rol);
                 }}
                 onToggleGrupo={(items) => {
                   setErrorEnLinea(null);
@@ -340,9 +340,9 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
                 seleccionadosSet={cartaSet}
                 agotadosPorId={agotadosPorId}
                 mostrarPrecio
-                onToggleItem={(item) => {
+                onToggleItem={(candidato) => {
                   setErrorEnLinea(null);
-                  toggleOpcion(item.id, 'Carta');
+                  toggleOpcion(candidato.id, 'Carta');
                 }}
                 onToggleGrupo={(items) => {
                   setErrorEnLinea(null);
@@ -372,11 +372,11 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
             secondaryLabel="Descartar"
             primaryLabel="Guardar menú del día"
             primaryIcon={<Save className="w-4 h-4" aria-hidden="true" />}
-            isLoading={guardando}
+            isLoading={estaGuardando}
             onSecondary={() => {
               triggerLight();
-              setSalirTrasDescartar(false);
-              setConfirmarDescartarAbierto(true);
+              setDebeSalirTrasDescartar(false);
+              setEstaConfirmarDescartarAbierto(true);
             }}
             onPrimary={handleSolicitarGuardar}
           />
@@ -387,8 +387,8 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
       <ConfirmSheet
         isOpen={mostrarModalDescarte}
         onCancelar={() => {
-          setConfirmarDescartarAbierto(false);
-          setSalirTrasDescartar(false);
+          setEstaConfirmarDescartarAbierto(false);
+          setDebeSalirTrasDescartar(false);
           onCancelarSolicitudSalir?.();
         }}
         titulo="¿Descartar cambios?"
@@ -401,14 +401,14 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
 
       {/* 6. ConfirmSheet para guardar el menú del día */}
       <ConfirmSheet
-        isOpen={confirmarGuardarAbierto}
-        onCancelar={() => setConfirmarGuardarAbierto(false)}
+        isOpen={estaConfirmarGuardarAbierto}
+        onCancelar={() => setEstaConfirmarGuardarAbierto(false)}
         titulo="¿Guardar menú del día?"
         mensaje="¿Desea guardar el menú del día de hoy? El personal verá estas opciones al registrar pedidos."
         etiquetaConfirmar="Guardar menú del día"
         etiquetaCancelar="Cancelar"
         tono="normal"
-        cargando={guardando}
+        cargando={estaGuardando}
         onConfirmar={() => void handleConfirmarGuardar()}
       />
     </div>

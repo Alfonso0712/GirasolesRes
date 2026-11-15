@@ -45,16 +45,16 @@ export interface MesasViewProps {
 
 export const MesasView: React.FC<MesasViewProps> = ({
   mesas,
-  cargando,
-  cargandoPedidos = false,
+  cargando: estaCargando,
+  cargandoPedidos: estaCargandoPedidos = false,
   error,
   onRefresh,
   onAbrirPedidoMesa,
   onNavigateToCobro,
   onIrADefinirMenu,
-  menuDefinido,
+  menuDefinido: estaMenuDefinido,
   rol,
-  modoGestion = false,
+  modoGestion: esModoGestion = false,
   onToggleModoGestion,
   mostrarInactivas = false,
   onToggleMostrarInactivas,
@@ -66,14 +66,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const [mesaSeleccionadaId, setMesaSeleccionadaId] = useState<string | null>(null);
 
   // Estados para modal de formulario y confirmación
-  const [formSheetOpen, setFormSheetOpen] = useState(false);
+  const [estaFormSheetAbierto, setEstaFormSheetAbierto] = useState(false);
   const [mesaAEditar, setMesaAEditar] = useState<MesaItem | null>(null);
   const [mesaParaDesactivar, setMesaParaDesactivar] = useState<MesaItem | null>(null);
-  const [desactivando, setDesactivando] = useState(false);
+  const [estaDesactivando, setEstaDesactivando] = useState(false);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
   const { ejecutar } = useAccionConAviso();
-  const { sinConexion } = useNetworkStatus();
+  const { sinConexion: estaSinConexion } = useNetworkStatus();
 
   const puedeGestionar = puede(rol, 'mesas.gestionar');
   const puedeTomarPedido = puede(rol, 'pedidoMesa.crear');
@@ -93,22 +93,22 @@ export const MesasView: React.FC<MesasViewProps> = ({
   // Filtrado de mesas según modo de visualización o gestión
   const mesasFiltradas = useMemo(() => {
     return mesasOrdenadas.filter((m) => {
-      if (!modoGestion && !m.activa) return false;
-      if (modoGestion && !mostrarInactivas && !m.activa) return false;
+      if (!esModoGestion && !m.activa) return false;
+      if (esModoGestion && !mostrarInactivas && !m.activa) return false;
 
       if (filtro === 'libres') return m.activa && m.ocupacion === 'Libre';
       if (filtro === 'ocupadas') return m.activa && m.ocupacion === 'Ocupada';
       if (filtro === 'inactivas') return !m.activa;
       return true;
     });
-  }, [mesasOrdenadas, modoGestion, mostrarInactivas, filtro]);
+  }, [mesasOrdenadas, esModoGestion, mostrarInactivas, filtro]);
 
   const libresCount = mesas.filter((m) => m.activa && m.ocupacion === 'Libre').length;
   const ocupadasCount = mesas.filter((m) => m.activa && m.ocupacion === 'Ocupada').length;
   const inactivasCount = mesas.filter((m) => !m.activa).length;
 
   const handleMesaClick = (mesa: MesaItem) => {
-    if (modoGestion) return;
+    if (esModoGestion) return;
     triggerLight();
     if (mesa.ocupacion === 'Libre') {
       if (puedeTomarPedido) {
@@ -122,13 +122,13 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const handleAbrirCrear = () => {
     triggerLight();
     setMesaAEditar(null);
-    setFormSheetOpen(true);
+    setEstaFormSheetAbierto(true);
   };
 
   const handleAbrirEditar = (mesa: MesaItem) => {
     triggerLight();
     setMesaAEditar(mesa);
-    setFormSheetOpen(true);
+    setEstaFormSheetAbierto(true);
   };
 
   const handleGuardarForm = async (nombre: string) => {
@@ -137,13 +137,13 @@ export const MesasView: React.FC<MesasViewProps> = ({
     triggerSuccess();
   };
 
-  const cambiarEstadoConAviso = (mesa: MesaItem, activa: boolean, alCompletar: () => void) => {
+  const cambiarEstadoConAviso = (mesa: MesaItem, estaActiva: boolean, alCompletar: () => void) => {
     if (!onCambiarEstadoMesa) return Promise.resolve();
-    return ejecutar(() => onCambiarEstadoMesa(mesa.id, activa), {
-      mensajeError: `No se pudo ${activa ? 'activar' : 'desactivar'} la mesa.`,
-      reintentar: () => void cambiarEstadoConAviso(mesa, activa, alCompletar),
+    return ejecutar(() => onCambiarEstadoMesa(mesa.id, estaActiva), {
+      mensajeError: `No se pudo ${estaActiva ? 'activar' : 'desactivar'} la mesa.`,
+      reintentar: () => void cambiarEstadoConAviso(mesa, estaActiva, alCompletar),
       onError: triggerError,
-    }).then((ok) => { if (ok) { triggerSuccess(); alCompletar(); } });
+    }).then((esExitoso) => { if (esExitoso) { triggerSuccess(); alCompletar(); } });
   };
 
   const handleActivarDirecto = (mesa: MesaItem) => {
@@ -153,9 +153,9 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
   const handleConfirmarDesactivar = async () => {
     if (!mesaParaDesactivar) return;
-    setDesactivando(true);
+    setEstaDesactivando(true);
     await cambiarEstadoConAviso(mesaParaDesactivar, false, () => setMesaParaDesactivar(null));
-    setDesactivando(false);
+    setEstaDesactivando(false);
   };
 
   const chips = useMemo(() => {
@@ -163,16 +163,16 @@ export const MesasView: React.FC<MesasViewProps> = ({
       {
         id: 'todas',
         label: 'Todas',
-        count: modoGestion && mostrarInactivas ? mesas.length : libresCount + ocupadasCount,
+        count: esModoGestion && mostrarInactivas ? mesas.length : libresCount + ocupadasCount,
       },
       { id: 'libres', label: 'Libres', count: libresCount },
       { id: 'ocupadas', label: 'Ocupadas', count: ocupadasCount },
     ];
-    if (modoGestion && mostrarInactivas) {
+    if (esModoGestion && mostrarInactivas) {
       base.push({ id: 'inactivas', label: 'Inactivas', count: inactivasCount });
     }
     return base;
-  }, [modoGestion, mostrarInactivas, mesas.length, libresCount, ocupadasCount, inactivasCount]);
+  }, [esModoGestion, mostrarInactivas, mesas.length, libresCount, ocupadasCount, inactivasCount]);
 
   const tieneDatosMesaSeleccionada = Boolean(
     mesaSeleccionada &&
@@ -185,16 +185,16 @@ export const MesasView: React.FC<MesasViewProps> = ({
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
       {/* 1. Encabezado */}
       <PageHeader
-        title={modoGestion ? 'Gestionar mesas' : 'Salón y Mesas'}
+        title={esModoGestion ? 'Gestionar mesas' : 'Salón y Mesas'}
         subtitle={
-          modoGestion
+          esModoGestion
             ? pluralizar(mesas.length, 'mesa', 'mesas')
             : `${pluralizar(libresCount, 'libre', 'libres')} · ${pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}`
         }
-        icon={!modoGestion ? <Utensils className="w-5 h-5 text-white" aria-hidden="true" /> : undefined}
-        etiquetas={modoGestion ? <StatusBadge estado="Modo gestión" /> : undefined}
+        icon={!esModoGestion ? <Utensils className="w-5 h-5 text-white" aria-hidden="true" /> : undefined}
+        etiquetas={esModoGestion ? <StatusBadge estado="Modo gestión" /> : undefined}
         onVolver={
-          modoGestion
+          esModoGestion
             ? () => {
                 triggerLight();
                 onToggleModoGestion?.(false);
@@ -202,9 +202,9 @@ export const MesasView: React.FC<MesasViewProps> = ({
             : undefined
         }
         onRefresh={onRefresh}
-        isRefreshing={cargando}
+        isRefreshing={estaCargando}
         actions={
-          !modoGestion && puedeGestionar ? (
+          !esModoGestion && puedeGestionar ? (
             <IconButton
               variant="outline"
               onClick={() => {
@@ -221,27 +221,27 @@ export const MesasView: React.FC<MesasViewProps> = ({
       />
 
       {/* 2. Barra de Modo Gestión del Administrador */}
-      {modoGestion && puedeGestionar && (
+      {esModoGestion && puedeGestionar && (
         <div className="bg-surface border-b border-line px-4 py-3 shrink-0 space-y-3 barra-accion-mano">
           <Button
             variant="primary"
             fullWidth
-            disabled={sinConexion}
-            title={sinConexion ? 'Sin conexión a internet' : undefined}
+            disabled={estaSinConexion}
+            title={estaSinConexion ? 'Sin conexión a internet' : undefined}
             onClick={handleAbrirCrear}
             className="min-h-[44px] flex items-center justify-center gap-2 font-bold"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
-            <span>{sinConexion ? 'Sin conexión' : 'Nueva mesa'}</span>
+            <span>{estaSinConexion ? 'Sin conexión' : 'Nueva mesa'}</span>
           </Button>
 
           <div className="flex items-center justify-between pt-2 border-t border-line/60">
             <span className="text-xs font-semibold text-ink">Mostrar inactivas</span>
             <Switch
               checked={mostrarInactivas}
-              onChange={(nuevo) => {
+              onChange={(esNuevoVisible) => {
                 triggerLight();
-                onToggleMostrarInactivas?.(nuevo);
+                onToggleMostrarInactivas?.(esNuevoVisible);
               }}
               aria-label="Mostrar mesas inactivas"
             />
@@ -263,7 +263,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
       {/* 4. Contenido Principal: Lista en Modo Gestión o Cuadrícula en Salón */}
       <div className="flex-1 overflow-y-auto p-4 pb-24">
-        {!modoGestion && menuDefinido === false && (
+        {!esModoGestion && estaMenuDefinido === false && (
           <BannerMenuNoDefinido
             rol={rol}
             onDefinirMenu={onIrADefinirMenu}
@@ -279,22 +279,22 @@ export const MesasView: React.FC<MesasViewProps> = ({
           />
         )}
 
-        {cargando && mesas.length === 0 && (
+        {estaCargando && mesas.length === 0 && (
           <SkeletonList count={6} />
         )}
 
-        {!error && !cargando && mesasFiltradas.length === 0 && (
+        {!error && !estaCargando && mesasFiltradas.length === 0 && (
           <EmptyState
             titulo="No hay mesas disponibles"
             subtitulo={
-              modoGestion
+              esModoGestion
                 ? 'No se encontraron mesas para el criterio seleccionado. Puede registrar una nueva mesa.'
                 : 'No se encontraron mesas activas en el salón según el filtro seleccionado.'
             }
           />
         )}
 
-        {mesasFiltradas.length > 0 && modoGestion ? (
+        {mesasFiltradas.length > 0 && esModoGestion ? (
           /* Lista de filas de al menos 64 px en Modo Gestión */
           <div className="space-y-2.5">
             {mesasFiltradas.map((mesa) => {
@@ -324,7 +324,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
                   <div className="flex items-center gap-2 shrink-0">
                     <IconButton
                       variant="outline"
-                      disabled={sinConexion}
+                      disabled={estaSinConexion}
                       onClick={() => handleAbrirEditar(mesa)}
                       aria-label={`Editar ${mesa.nombre}`}
                       className="w-11 h-11 min-w-[44px] min-h-[44px]"
@@ -335,14 +335,14 @@ export const MesasView: React.FC<MesasViewProps> = ({
                     {estaActiva ? (
                       <IconButton
                         variant="outline"
-                        disabled={tienePedidosAbiertos || sinConexion}
+                        disabled={tienePedidosAbiertos || estaSinConexion}
                         onClick={() => {
                           triggerLight();
                           setMesaParaDesactivar(mesa);
                         }}
                         aria-label={`Desactivar ${mesa.nombre}`}
                         title={
-                          sinConexion
+                          estaSinConexion
                             ? 'Sin conexión a internet'
                             : tienePedidosAbiertos
                             ? 'No se puede desactivar una mesa ocupada'
@@ -355,10 +355,10 @@ export const MesasView: React.FC<MesasViewProps> = ({
                     ) : (
                       <IconButton
                         variant="outline"
-                        disabled={sinConexion}
+                        disabled={estaSinConexion}
                         onClick={() => void handleActivarDirecto(mesa)}
                         aria-label={`Activar ${mesa.nombre}`}
-                        title={sinConexion ? 'Sin conexión a internet' : `Activar ${mesa.nombre}`}
+                        title={estaSinConexion ? 'Sin conexión a internet' : `Activar ${mesa.nombre}`}
                         className="w-11 h-11 min-w-[44px] min-h-[44px]"
                       >
                         <Power className="w-4 h-4 text-success" aria-hidden="true" />
@@ -376,15 +376,15 @@ export const MesasView: React.FC<MesasViewProps> = ({
               {mesasFiltradas.map((mesa) => {
                 const esLibre = mesa.ocupacion === 'Libre';
                 const estaActiva = mesa.activa;
-                const interactiva = esLibre ? puedeTomarPedido : true;
+                const esInteractiva = esLibre ? puedeTomarPedido : true;
                 const estadoBadge = !estaActiva ? 'Inactiva' : mesa.ocupacion;
 
                 return (
                   <Card
                     key={mesa.id}
-                    interactive={interactiva}
+                    interactive={esInteractiva}
                     accent={!estaActiva ? 'none' : esLibre ? 'success' : 'warning'}
-                    onClick={interactiva ? () => handleMesaClick(mesa) : undefined}
+                    onClick={esInteractiva ? () => handleMesaClick(mesa) : undefined}
                     padding="sm"
                     className={`flex flex-col justify-between min-h-[116px] p-3.5 ${
                       !estaActiva ? 'opacity-80 bg-fill-subtle' : ''
@@ -427,7 +427,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
       >
         {mesaSeleccionada && (
           <div className="space-y-4">
-            {cargandoPedidos && !tieneDatosMesaSeleccionada ? (
+            {estaCargandoPedidos && !tieneDatosMesaSeleccionada ? (
               <div className="space-y-3" aria-busy="true">
                 <Skeleton className="h-20 w-full rounded-2xl" />
                 <Skeleton className="h-16 w-full rounded-2xl" />
@@ -532,8 +532,8 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
       {/* 6. Modal de Formulario Crear / Editar Mesa */}
       <MesaFormSheet
-        isOpen={formSheetOpen}
-        onClose={() => setFormSheetOpen(false)}
+        isOpen={estaFormSheetAbierto}
+        onClose={() => setEstaFormSheetAbierto(false)}
         mesaAEditar={mesaAEditar}
         todasLasMesas={mesas}
         onSave={handleGuardarForm}
@@ -547,7 +547,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
         etiquetaConfirmar="Desactivar"
         etiquetaCancelar="Cancelar"
         tono="peligro"
-        cargando={desactivando}
+        cargando={estaDesactivando}
         onConfirmar={() => void handleConfirmarDesactivar()}
         onCancelar={() => setMesaParaDesactivar(null)}
       />

@@ -13,7 +13,7 @@ export const CampoReferenciaLlevar: React.FC<CampoReferenciaLlevarProps> = ({
   referencia,
   onChange,
 }) => {
-  const valida = referencia.trim().length >= 2 && referencia.trim().length <= 30;
+  const esValida = referencia.trim().length >= 2 && referencia.trim().length <= 30;
 
   return (
     <div className="space-y-1">
@@ -21,7 +21,7 @@ export const CampoReferenciaLlevar: React.FC<CampoReferenciaLlevarProps> = ({
         <label htmlFor="ref-cliente" className="font-bold text-ink">
           Cliente / Referencia <span className="text-danger">*</span>
         </label>
-        <span className={`font-mono text-xs ${valida ? 'text-success' : 'text-ink-muted'}`}>
+        <span className={`font-mono text-xs ${esValida ? 'text-success' : 'text-ink-muted'}`}>
           {referencia.length}/30
         </span>
       </div>
