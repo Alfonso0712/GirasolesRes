@@ -29,37 +29,12 @@ export function setApiBaseUrl(url: string): void {
 
 import { ApiError } from './http/errorHttp';
 import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
+import { manejarNoAutorizado, setOnUnauthorizedCallback } from './http/noAutorizado';
 
-export { ApiError };
+export { ApiError, setOnUnauthorizedCallback };
 export type { ApiErrorTipo, OpcionesApiError };
 
-type UnauthorizedHandler = () => void;
-let onUnauthorizedCallback: UnauthorizedHandler | null = null;
-
-export function setOnUnauthorizedCallback(handler: UnauthorizedHandler | null): void {
-  onUnauthorizedCallback = handler;
-}
-
-function handleUnauthorized(): void {
-  try {
-    localStorage.removeItem('GIRASOLES_TOKEN');
-    localStorage.removeItem('GIRASOLES_SESSION');
-  } catch {
-    // Ignorar errores de acceso a almacenamiento
-  }
-
-  if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('girasoles:unauthorized'));
-  }
-
-  if (onUnauthorizedCallback) {
-    try {
-      onUnauthorizedCallback();
-    } catch {
-      // Ignorar errores del callback
-    }
-  }
-}
+// Manejo centralizado de 401 delegado a ./http/noAutorizado
 
 function parseJwtExp(token: string): number | null {
   try {
@@ -263,7 +238,7 @@ class ApiClient {
         }
 
         if (response.status === 401) {
-          handleUnauthorized();
+          manejarNoAutorizado();
           throw new ApiError({
             status: 401,
             mensaje: 'Sesión expirada. Inicie sesión nuevamente.',
@@ -500,7 +475,7 @@ class ApiClient {
         }
 
         if (response.status === 401) {
-          handleUnauthorized();
+          manejarNoAutorizado();
           throw new ApiError({
             status: 401,
             mensaje: 'Sesión expirada. Inicie sesión nuevamente.',
