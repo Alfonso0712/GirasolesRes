@@ -4,6 +4,7 @@
  */
 
 import { requiereDniBoleta } from './fiscal';
+import { MONTO_MAXIMO_CAJA } from '../config/constantes';
 
 export interface ValidacionResultado {
   valido: boolean;
@@ -73,7 +74,7 @@ export function validarBoleta(total: number, documentoCliente?: string): Validac
 export function validarMonto(
   monto: number | string,
   min: number = 0,
-  max: number = 99999.99
+  max: number = MONTO_MAXIMO_CAJA
 ): ValidacionResultado {
   const num = typeof monto === 'number' ? monto : parseFloat(monto);
   if (isNaN(num)) {

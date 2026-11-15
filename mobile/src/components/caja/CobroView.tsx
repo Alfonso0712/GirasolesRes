@@ -33,6 +33,7 @@ import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { requiereDniBoleta } from '../../utils/fiscal';
+import { BILLETES_RAPIDOS_EFECTIVO, MONTO_MAXIMO_EFECTIVO_COBRO } from '../../config/constantes';
 import { formatLimaFechaHora } from '../../utils/fechas';
 
 export interface CobroViewProps {
@@ -195,7 +196,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         setErrorCobro('El monto recibido es menor al total a cobrar.');
         return;
       }
-      if (numRecibido > 9999.99) {
+      if (numRecibido > MONTO_MAXIMO_EFECTIVO_COBRO) {
         triggerError();
         setErrorCobro('El monto recibido no puede exceder S/ 9,999.99.');
         return;
@@ -545,7 +546,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
 
                 {/* Accesos rápidos de efectivo */}
                 <div className="flex gap-2">
-                  {[total, 20, 50, 100].map((monto) => (
+                  {[total, ...BILLETES_RAPIDOS_EFECTIVO].map((monto) => (
                     <button
                       key={monto}
                       type="button"

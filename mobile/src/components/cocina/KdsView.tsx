@@ -11,6 +11,7 @@ import { SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
 import { pluralizar } from '../../utils/format';
 import { reproducirSonidoKds } from '../../utils/audioKds';
+import { MINUTOS_DEMORA_KDS, SEGUNDOS_UNDO_KDS } from '../../config/constantes';
 
 export interface KdsViewProps {
   comandas: ComandaKdsItem[];
@@ -83,7 +84,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
         comandaId: comanda.id,
         pedidoNumero: comanda.pedidoNumero,
         nuevoEstado,
-        segundosRestantes: 10,
+        segundosRestantes: SEGUNDOS_UNDO_KDS,
       });
     } catch {
       triggerError();
@@ -185,7 +186,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
         {comandasOrdenadas.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {comandasOrdenadas.map((comanda) => {
-              const esDemora = comanda.esDemora || comanda.minutosEspera > 15;
+              const esDemora = comanda.esDemora || comanda.minutosEspera > MINUTOS_DEMORA_KDS;
               const esPendiente = comanda.estado === 'Pendiente';
               const estaProcesando = procesandoId === comanda.id;
 
@@ -349,7 +350,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
             <div className="w-full bg-surface/20 h-1.5 rounded-full mt-2 overflow-hidden">
               <div
                 className="bg-accent h-full transition-all duration-1000 ease-linear rounded-full"
-                style={{ width: `${(undoAccion.segundosRestantes / 10) * 100}%` }}
+                style={{ width: `${(undoAccion.segundosRestantes / SEGUNDOS_UNDO_KDS) * 100}%` }}
               />
             </div>
           </div>

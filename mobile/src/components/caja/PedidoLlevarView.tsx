@@ -21,6 +21,7 @@ import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { esProductoDeCarta } from '../../utils/pedidos';
+import { MAX_CANTIDAD_POR_LINEA } from '../../config/constantes';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoLlevarViewProps {
@@ -167,11 +168,11 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
     }
 
     const lineaExistente = lineas.find((l) => l.productoId === producto.id);
-    if (lineaExistente && lineaExistente.cantidad >= 20) {
+    if (lineaExistente && lineaExistente.cantidad >= MAX_CANTIDAD_POR_LINEA) {
       triggerError();
       mostrarToast({
         tipo: 'aviso',
-        mensaje: 'La cantidad máxima por línea es 20.',
+        mensaje: `La cantidad máxima por línea es ${MAX_CANTIDAD_POR_LINEA}.`,
       });
       return;
     }
@@ -209,11 +210,11 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
     const linea = lineas.find((l) => l.id === lineaId);
     if (!linea) return;
 
-    if (delta > 0 && linea.cantidad >= 20) {
+    if (delta > 0 && linea.cantidad >= MAX_CANTIDAD_POR_LINEA) {
       triggerError();
       mostrarToast({
         tipo: 'aviso',
-        mensaje: 'La cantidad máxima por línea es 20.',
+        mensaje: `La cantidad máxima por línea es ${MAX_CANTIDAD_POR_LINEA}.`,
       });
       return;
     }

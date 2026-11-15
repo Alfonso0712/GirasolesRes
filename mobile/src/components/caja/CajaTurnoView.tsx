@@ -44,6 +44,7 @@ import { formatCurrency, pluralizar } from '../../utils/format';
 import { calcularEfectivoEsperado } from '../../utils/caja';
 import { formatLimaFechaHora } from '../../utils/fechas';
 import { puede } from '../../config/permisos';
+import { MONTO_MAXIMO_CAJA } from '../../config/constantes';
 
 export interface CajaTurnoViewProps {
   cajaActual: CajaActualResponseDto | null;
@@ -298,7 +299,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setErrorModal('El monto debe ser mayor o igual a 0.00 y tener máximo 2 decimales.');
       return;
     }
-    if (num > 99999.99) {
+    if (num > MONTO_MAXIMO_CAJA) {
       triggerError();
       setErrorModal('El monto no puede superar S/ 99,999.99.');
       return;
@@ -376,7 +377,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setErrorModal('El monto debe ser mayor o igual a 0.00 y tener máximo 2 decimales.');
       return;
     }
-    if (contado > 99999.99) {
+    if (contado > MONTO_MAXIMO_CAJA) {
       triggerError();
       setErrorModal('El monto no puede superar S/ 99,999.99.');
       return;
@@ -401,7 +402,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setErrorModal('El monto debe ser mayor o igual a 0.00 y tener máximo 2 decimales.');
       return;
     }
-    if (contado > 99999.99) {
+    if (contado > MONTO_MAXIMO_CAJA) {
       setErrorModal('El monto no puede superar S/ 99,999.99.');
       return;
     }
