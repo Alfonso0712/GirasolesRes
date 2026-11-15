@@ -88,11 +88,11 @@ describe('utils/pedidos helpers de borrador y filtrado', () => {
     const menuDia: MenuDiaResponseDto = {
       fecha: '2026-11-14',
       definido: true,
-      esFindeOFeriado: false,
+      platos: [],
+      opciones: [],
       menusCompletos: [
-        { id: 'm1', nombre: 'Menú Ejecutivo', precio: 18, incluye: 'Sopa + Segundo', pasos: [] },
+        { id: 1, nombre: 'Menú Ejecutivo', precio: 18, incluye: 'Sopa + Segundo', disponible: true, partes: [] },
       ],
-      grupos: [],
     };
     const catalogo = [
       crearProducto({ id: 'p1', nombre: 'Lomo', categoria: 'Platos a la Carta' }),
@@ -131,7 +131,7 @@ describe('utils/pedidos helpers de borrador y filtrado', () => {
 
     const payload = mapearLineasPedidoPayload([
       ...conNota,
-      { id: 'm1', menuCompletoId: 'mc1', elecciones: [{ parte: 'Segundo', productoId: 'p9', productoNombre: 'Seco' }], nombre: 'Menú', precioUnitario: 18, cantidad: 1, observacion: '', subtotal: 18 },
+      { id: 'm1', menuCompletoId: 1, elecciones: [{ parte: 'Segundo', productoId: 'p9', productoNombre: 'Seco' }], nombre: 'Menú', precioUnitario: 18, cantidad: 1, observacion: '', subtotal: 18 },
     ]);
     expect(payload[0].observacion).toBe('Sin cebolla');
     expect(payload[1].elecciones).toEqual([{ parte: 'Segundo', productoId: 'p9' }]);

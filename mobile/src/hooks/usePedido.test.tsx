@@ -46,7 +46,7 @@ vi.mock('../services/menuDiaService', () => ({
   },
 }));
 
-const MESA_BASE: MesaItem = { id: 'm-1', nombre: 'Mesa 1', numero: 1, estado: 'Activa', ocupacion: 'Libre' };
+const MESA_BASE: MesaItem = { id: 'm-1', nombre: 'Mesa 1', ocupacion: 'Libre', activa: true };
 
 describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)', () => {
   beforeEach(() => {
@@ -59,15 +59,15 @@ describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)',
     vi.mocked(menuDiaService.obtenerMenuHoy).mockResolvedValue({
       fecha: '2026-11-14',
       definido: true,
-      esFindeOFeriado: false,
+      platos: [],
+      opciones: [],
       menusCompletos: [],
-      grupos: [],
     });
   });
 
   it('useBorradorStorage ignora JSON inválido en sessionStorage', () => {
     sessionStorage.setItem('bad-draft', '{malformed');
-    const { result } = renderHook(() => useBorradorStorage('bad-draft'));
+    const { result } = renderHook(() => useBorradorStorage('bad-draft', [], vi.fn()));
     expect(result.current.hayBorradorGuardado).toBe(false);
     expect(result.current.borradorRecuperado).toBeNull();
   });
@@ -102,7 +102,7 @@ describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)',
 
   it('usePedidoMesa notifica si ampliación falla con código 115 (en preparación)', async () => {
     vi.mocked(pedidoService.obtenerPedidosActivosPorMesa).mockResolvedValueOnce([
-      { id: 'ped-1', numero: 99, total: 20, estado: 'EnPreparacion', fecha: '2026-11-14', detalles: [] },
+      { id: 'ped-1', numero: 99, total: 20, estado: 'EnPreparacion' },
     ]);
     const mesaOcupada: MesaItem = { ...MESA_BASE, ocupacion: 'Ocupada' };
     const { result } = renderHook(() =>
