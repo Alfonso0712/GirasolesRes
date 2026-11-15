@@ -33,7 +33,7 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
   const [mostrarNueva, setMostrarNueva] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
-  const [procesando, setProcesando] = useState(false);
+  const [estaProcesando, setEstaProcesando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { triggerLight, triggerSuccess, triggerError } = useHaptics();
@@ -82,7 +82,7 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
       return;
     }
 
-    setProcesando(true);
+    setEstaProcesando(true);
     triggerLight();
 
     try {
@@ -118,7 +118,7 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
 
       setError(mensajeExtraido || 'Error al actualizar la contraseña.');
     } finally {
-      setProcesando(false);
+      setEstaProcesando(false);
     }
   };
 
@@ -217,7 +217,7 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
           primaryLabel="Guardar"
           primaryType="submit"
           primaryVariant="primary"
-          isLoading={procesando}
+          isLoading={estaProcesando}
           primaryDisabled={!contrasenaActual || !nuevaContrasena || !confirmarContrasena}
           primaryIcon={<KeyRound className="w-4 h-4" />}
           onSecondary={handleCerrar}

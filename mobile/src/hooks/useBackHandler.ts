@@ -25,9 +25,9 @@ export function pushBackHandler(handler: BackHandler): () => void {
 export function executeTopBackHandler(): boolean {
   for (let i = handlersStack.length - 1; i >= 0; i--) {
     const handler = handlersStack[i];
-    const fueManejado = handler();
+    const esManejado = handler();
     // Si retorna explícitamente false, permite que continúe; si no (void o true), se considera manejado
-    if (fueManejado !== false) {
+    if (esManejado !== false) {
       return true;
     }
   }

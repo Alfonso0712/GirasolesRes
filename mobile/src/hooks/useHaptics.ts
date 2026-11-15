@@ -27,8 +27,8 @@ async function ejecutarConRespaldo(
   } catch {
     try {
       if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
-        const pudoVibrar = navigator.vibrate(duracionRespaldoMs);
-        return Boolean(pudoVibrar);
+        const tieneVibracion = navigator.vibrate(duracionRespaldoMs);
+        return Boolean(tieneVibracion);
       }
     } catch {
       // Ignorar errores del navegador

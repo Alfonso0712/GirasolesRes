@@ -49,8 +49,8 @@ export function useAndroidBackButton({
     const setupListener = async () => {
       const suscripcionListener = await CapacitorApp.addListener('backButton', () => {
         // Prioridad 1 y 2: Intentar ejecutar manejadores en la pila (modales, BottomSheets o subvistas)
-        const fueManejadoPorPila = executeTopBackHandler();
-        if (fueManejadoPorPila) {
+        const esManejadoPorPila = executeTopBackHandler();
+        if (esManejadoPorPila) {
           return;
         }
 

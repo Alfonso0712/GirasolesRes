@@ -39,7 +39,7 @@ export interface UseMesasConPedidosResultado {
 }
 
 interface ResultadoPedidosMesas {
-  tuvoExito: boolean;
+  esExitoso: boolean;
   error?: unknown;
   pedidosDia: PedidoItemDto[];
   cobrosPendientes: PedidoPendienteCobro[];
@@ -55,7 +55,7 @@ async function consultarPedidosPorRol(rol?: RolUsuario): Promise<ResultadoPedido
     const tienePedidosOk = resPedidos.status === 'fulfilled';
     if (tieneCobrosOk && tienePedidosOk) {
       return {
-        tuvoExito: true,
+        esExitoso: true,
         cobrosPendientes: Array.isArray(resCobros.value) ? resCobros.value : [],
         pedidosDia: Array.isArray(resPedidos.value) ? resPedidos.value : [],
       };
@@ -66,18 +66,18 @@ async function consultarPedidosPorRol(rol?: RolUsuario): Promise<ResultadoPedido
         : resPedidos.status === 'rejected'
           ? resPedidos.reason
           : undefined;
-    return { tuvoExito: false, error: err, pedidosDia: [], cobrosPendientes: [] };
+    return { esExitoso: false, error: err, pedidosDia: [], cobrosPendientes: [] };
   }
 
   try {
     const lista = await pedidoService.listarPedidos({ tamano: 200 });
     return {
-      tuvoExito: true,
+      esExitoso: true,
       pedidosDia: Array.isArray(lista) ? lista : [],
       cobrosPendientes: [],
     };
   } catch (err: unknown) {
-    return { tuvoExito: false, error: err, pedidosDia: [], cobrosPendientes: [] };
+    return { esExitoso: false, error: err, pedidosDia: [], cobrosPendientes: [] };
   }
 }
 
@@ -135,7 +135,7 @@ export function useMesasConPedidos(
         const resPedidos = await consultarPedidosPorRol(rol);
         if (!montadoRef.current) return;
 
-        if (resPedidos.tuvoExito) {
+        if (resPedidos.esExitoso) {
           actualizarMesas(
             combinarMesasConPedidos(mesasBase, resPedidos.pedidosDia, resPedidos.cobrosPendientes)
           );

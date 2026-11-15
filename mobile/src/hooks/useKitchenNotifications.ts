@@ -89,11 +89,11 @@ export function useKitchenNotifications({
 
   const marcarVisto = useCallback(
     async (id: string) => {
-      const fueMarcadoVisto = await ejecutar(() => avisoService.marcarAvisoVisto(id), {
+      const estaMarcadoVisto = await ejecutar(() => avisoService.marcarAvisoVisto(id), {
         mensajeError: 'No se pudo marcar el aviso como visto.',
         reintentar: () => marcarVisto(id),
       });
-      if (fueMarcadoVisto) {
+      if (estaMarcadoVisto) {
         setAvisos((prev) => prev.filter((a) => a.id !== id));
         avisosPreviosRef.current.delete(id);
       }

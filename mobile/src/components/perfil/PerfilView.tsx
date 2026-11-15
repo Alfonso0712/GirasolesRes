@@ -50,32 +50,32 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
   const [mostrarConfirmLogout, setMostrarConfirmLogout] = useState(false);
   const [mostrarCambiarPass, setMostrarCambiarPass] = useState(false);
   const [mostrarGuiaUso, setMostrarGuiaUso] = useState(false);
-  const [cerrandoSesion, setCerrandoSesion] = useState(false);
-  const [sonidoHabilitado, setSonidoHabilitado] = useState(() => sonSonidosKdsHabilitados());
+  const [estaCerrandoSesion, setEstaCerrandoSesion] = useState(false);
+  const [estaSonidoHabilitado, setEstaSonidoHabilitado] = useState(() => sonSonidosKdsHabilitados());
   const [avisoHaptics, setAvisoHaptics] = useState<string | null>(null);
 
   const { isLeftHanded, setHandedness } = useHandedness();
   const {
-    hapticsHabilitado,
+    hapticsHabilitado: estaHapticsHabilitado,
     setHapticsHabilitado,
     triggerLight,
     probarHaptics,
   } = useHaptics();
 
   const handleToggleHaptics = () => {
-    const nuevo = !hapticsHabilitado;
-    setHapticsHabilitado(nuevo);
+    const estaHabilitadoNuevo = !estaHapticsHabilitado;
+    setHapticsHabilitado(estaHabilitadoNuevo);
     setAvisoHaptics(null);
-    if (nuevo) {
+    if (estaHabilitadoNuevo) {
       void probarHaptics();
     }
   };
 
   const handleProbarHaptics = async () => {
-    if (!hapticsHabilitado) return;
+    if (!estaHapticsHabilitado) return;
     setAvisoHaptics(null);
-    const vibro = await probarHaptics();
-    if (!vibro) {
+    const tieneVibracion = await probarHaptics();
+    if (!tieneVibracion) {
       setAvisoHaptics(
         'Este dispositivo no admite la vibración o está desactivada en los ajustes del sistema.'
       );
@@ -84,20 +84,20 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
 
   const handleToggleSonido = () => {
     triggerLight();
-    const nuevo = !sonidoHabilitado;
-    setSonidoHabilitado(nuevo);
-    localStorage.setItem('kds_sonido_activado', nuevo ? 'true' : 'false');
-    if (nuevo) {
+    const estaHabilitadoNuevo = !estaSonidoHabilitado;
+    setEstaSonidoHabilitado(estaHabilitadoNuevo);
+    localStorage.setItem('kds_sonido_activado', estaHabilitadoNuevo ? 'true' : 'false');
+    if (estaHabilitadoNuevo) {
       reproducirSonidoKds('pendiente', true);
     }
   };
 
   const handleConfirmarCierre = async () => {
-    setCerrandoSesion(true);
+    setEstaCerrandoSesion(true);
     try {
       await onLogout();
     } finally {
-      setCerrandoSesion(false);
+      setEstaCerrandoSesion(false);
       setMostrarConfirmLogout(false);
     }
   };
@@ -163,7 +163,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
             </div>
             <div className="shrink-0">
               <Switch
-                checked={hapticsHabilitado}
+                checked={estaHapticsHabilitado}
                 onChange={() => handleToggleHaptics()}
                 aria-label="Alternar respuesta háptica"
               />
@@ -172,14 +172,14 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:pl-14">
             <span className="text-xs text-ink-muted flex-1 min-w-0">
-              {hapticsHabilitado
+              {estaHapticsHabilitado
                 ? 'Active el botón para verificar la vibración del equipo.'
                 : 'Active la respuesta háptica para probarla'}
             </span>
             <Button
               size="sm"
               variant="outline"
-              disabled={!hapticsHabilitado}
+              disabled={!estaHapticsHabilitado}
               onClick={() => void handleProbarHaptics()}
               className="min-h-[44px] shrink-0 w-full sm:w-auto"
             >
@@ -210,7 +210,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
           </div>
           <div className="shrink-0">
             <Switch
-              checked={sonidoHabilitado}
+              checked={estaSonidoHabilitado}
               onChange={() => handleToggleSonido()}
               aria-label="Alternar sonido de avisos"
             />
@@ -421,7 +421,7 @@ export const PerfilView: React.FC<PerfilViewProps> = ({
         mensaje="¿Está seguro de que desea cerrar sesión? Tendrá que ingresar nuevamente sus credenciales para acceder a la aplicación."
         etiquetaConfirmar="Cerrar Sesión"
         tono="peligro"
-        cargando={cerrandoSesion}
+        cargando={estaCerrandoSesion}
         onConfirmar={handleConfirmarCierre}
         onCancelar={() => setMostrarConfirmLogout(false)}
       />

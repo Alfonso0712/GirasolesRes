@@ -56,7 +56,7 @@ export const GuiaUsoSheet: React.FC<GuiaUsoSheetProps> = ({
           </span>
 
           {guia.tareas.map((tarea, idx) => {
-            const abierta = tareaExpandida === tarea.id;
+            const estaAbierta = tareaExpandida === tarea.id;
             return (
               <div
                 key={tarea.id}
@@ -78,11 +78,11 @@ export const GuiaUsoSheet: React.FC<GuiaUsoSheetProps> = ({
                   </div>
 
                   <div className="p-1 text-ink-muted shrink-0">
-                    {abierta ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    {estaAbierta ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </div>
                 </button>
 
-                {abierta && (
+                {estaAbierta && (
                   <div className="px-3 pb-3 pt-1 border-t border-line space-y-2 text-xs bg-surface/50">
                     <p className="text-xs text-ink-muted font-bold uppercase">
                       Pasos de ejecución:
