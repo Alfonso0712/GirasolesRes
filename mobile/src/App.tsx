@@ -73,7 +73,7 @@ const InicioPage = lazy(() => import('./pages/InicioPage'));
 const PerfilPage = lazy(() => import('./pages/PerfilPage'));
 const MasPage = lazy(() => import('./pages/MasPage'));
 
-export const App: React.FC = () => {
+const App: React.FC = () => {
   const [estadoArranque] = useState(() => restaurarSesionValidaAlArrancar());
   const [session, setSession] = useState<UserSession | null>(estadoArranque.session);
   const [avisoSesion, setAvisoSesion] = useState<string | null>(estadoArranque.aviso);

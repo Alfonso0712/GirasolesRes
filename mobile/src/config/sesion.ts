@@ -31,7 +31,7 @@ export const AVISO_SESION_EXPIRADA =
 /**
  * Extrae el campo `exp` (segundos Unix) de un token JWT sin librerías externas.
  */
-export function extraerExpJwt(token?: string | null): number | null {
+function extraerExpJwt(token?: string | null): number | null {
   if (!token || typeof token !== 'string') return null;
   try {
     const partes = token.trim().split('.');

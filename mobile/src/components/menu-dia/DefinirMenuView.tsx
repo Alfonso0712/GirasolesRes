@@ -414,5 +414,3 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
     </div>
   );
 };
-
-export default DefinirMenuView;

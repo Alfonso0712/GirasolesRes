@@ -23,7 +23,7 @@ export function getDeviceHandedness(): Handedness {
 let currentHandedness: Handedness = getDeviceHandedness();
 const listeners = new Set<() => void>();
 
-export function applyHandednessClass(handedness: Handedness) {
+function applyHandednessClass(handedness: Handedness) {
   if (typeof document !== 'undefined' && document.documentElement) {
     const esZurdo = handedness === 'left';
     document.documentElement.classList.toggle('zurdo', esZurdo);

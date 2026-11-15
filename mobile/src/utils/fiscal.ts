@@ -2,7 +2,7 @@
  * Reglas fiscales SUNAT para cálculo de IGV y umbral obligatorio de DNI en boletas.
  */
 
-export const FACTOR_IGV = 1.18;
+const FACTOR_IGV = 1.18;
 export const UMBRAL_DNI_BOLETA = 700;
 
 /**

@@ -33,7 +33,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   );
 };
 
-export const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' }) => {
+const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' }) => {
   return (
     <div
       aria-hidden="true"

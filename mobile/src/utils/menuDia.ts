@@ -70,7 +70,7 @@ export interface GrupoCandidatos {
   items: CandidatoMenuDto[];
 }
 
-export const GRUPOS_COMPONENTES_ORDEN: readonly { clave: string; titulo: string }[] = [
+const GRUPOS_COMPONENTES_ORDEN: readonly { clave: string; titulo: string }[] = [
   { clave: 'BebidaDesayuno', titulo: 'Bebidas de Desayuno' },
   { clave: 'PlatoDesayuno', titulo: 'Platos de Desayuno' },
   { clave: 'Sopa', titulo: 'Sopas del Día' },
@@ -78,7 +78,7 @@ export const GRUPOS_COMPONENTES_ORDEN: readonly { clave: string; titulo: string 
   { clave: 'Segundo', titulo: 'Segundos del Día' },
 ];
 
-export const GRUPOS_CARTA_ORDEN: readonly {
+const GRUPOS_CARTA_ORDEN: readonly {
   clave: string;
   titulo: string;
   categorias: readonly string[];

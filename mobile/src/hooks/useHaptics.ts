@@ -3,7 +3,7 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 export const CLAVE_HAPTICS = 'girasoles_haptics';
 
-export function sonHapticsHabilitados(): boolean {
+function sonHapticsHabilitados(): boolean {
   try {
     const val = localStorage.getItem(CLAVE_HAPTICS);
     if (val === null) return true; // Activada por defecto
