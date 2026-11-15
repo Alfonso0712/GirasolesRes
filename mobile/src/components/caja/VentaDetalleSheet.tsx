@@ -17,6 +17,7 @@ import { SheetActions } from '../ui/SheetActions';
 import { ComprobanteAcciones } from '../cobros/ComprobanteAcciones';
 import { puede } from '../../config/permisos';
 import { formatCurrency } from '../../utils/format';
+import { calcularOpGravada, calcularIgv } from '../../utils/fiscal';
 import { formatLimaFechaHora } from '../../utils/fechas';
 import { useHaptics } from '../../hooks/useHaptics';
 
@@ -214,13 +215,13 @@ export const VentaDetalleSheet: React.FC<VentaDetalleSheetProps> = ({
               <div className="flex justify-between text-ink-muted">
                 <span>Op. Gravada:</span>
                 <span className="tabular-nums font-semibold">
-                  {formatCurrency(venta.opGravada || (venta.total / 1.18))}
+                  {formatCurrency(calcularOpGravada(venta.total, venta.opGravada))}
                 </span>
               </div>
               <div className="flex justify-between text-ink-muted">
                 <span>IGV (18%):</span>
                 <span className="tabular-nums font-semibold">
-                  {formatCurrency(venta.igv || (venta.total - (venta.total / 1.18)))}
+                  {formatCurrency(calcularIgv(venta.total, venta.igv))}
                 </span>
               </div>
               <div className="flex justify-between text-base font-black text-ink border-t border-line pt-2">

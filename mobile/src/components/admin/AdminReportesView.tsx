@@ -31,6 +31,7 @@ import { useToast } from '../../context/ToastContext';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { calcularPorcentajeBarraRanking } from '../../utils/reportes';
 import { formatLimaFechaHora, formatLimaFecha, obtenerHoyLimaYMD } from '../../utils/fechas';
 import { compartirPdf } from '../../utils/archivos';
 
@@ -354,10 +355,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
 
             <div className="divide-y divide-line">
               {platosLista.map((plato, idx) => {
-                const porcentaje = Math.max(
-                  4,
-                  Math.min(100, Math.round((plato.cantidad / maxCantidadPlato) * 100))
-                );
+                const porcentaje = calcularPorcentajeBarraRanking(plato.cantidad, maxCantidadPlato);
                 return (
                   <div key={plato.productoId || idx} className="py-3 space-y-2 text-xs">
                     <div className="flex items-start justify-between gap-3">

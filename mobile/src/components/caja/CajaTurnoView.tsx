@@ -41,6 +41,7 @@ import { useHaptics } from '../../hooks/useHaptics';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { calcularEfectivoEsperado } from '../../utils/caja';
 import { formatLimaFechaHora } from '../../utils/fechas';
 import { puede } from '../../config/permisos';
 
@@ -588,7 +589,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
                       <StatCard
                         titulo="Efectivo en Caja"
-                        valor={formatCurrency((apertura?.montoInicial ?? 0) + parcial.totalEfectivo)}
+                        valor={formatCurrency(calcularEfectivoEsperado(apertura?.montoInicial, parcial.totalEfectivo))}
                         subtitulo="Incluye fondo inicial"
                       />
                     </div>

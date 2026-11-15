@@ -32,6 +32,7 @@ import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { requiereDniBoleta } from '../../utils/fiscal';
 import { formatLimaFechaHora } from '../../utils/fechas';
 
 export interface CobroViewProps {
@@ -163,7 +164,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
     // 1. Validaciones SUNAT según tipo de comprobante
     if (tipoComprobante === 'Boleta') {
       const doc = numDocReceptor.trim();
-      if (total >= 700 && (!doc || doc.length !== 8 || !/^\d{8}$/.test(doc))) {
+      if (requiereDniBoleta(total) && (!doc || doc.length !== 8 || !/^\d{8}$/.test(doc))) {
         triggerError();
         setErrorCobro('Las boletas de S/ 700 o más exigen el DNI del cliente (8 dígitos).');
         return;
@@ -347,9 +348,9 @@ export const CobroView: React.FC<CobroViewProps> = ({
               <div className="bg-canvas border border-line rounded-2xl p-3 space-y-2.5">
                 <div className="flex justify-between items-center">
                   <label htmlFor="doc-dni" className="text-xs font-bold text-ink">
-                    DNI del Cliente {total >= 700 ? '(Obligatorio por ley S/ 700+)' : '(Opcional)'}
+                    DNI del Cliente {requiereDniBoleta(total) ? '(Obligatorio por ley S/ 700+)' : '(Opcional)'}
                   </label>
-                  {total >= 700 && (
+                  {requiereDniBoleta(total) && (
                     <span className="text-xs font-extrabold text-danger bg-danger-bg px-1.5 py-0.5 rounded">
                       Exigido SUNAT
                     </span>

@@ -3,6 +3,8 @@
  * y operaciones de cobro y caja en la aplicación móvil de Restaurante Girasoles.
  */
 
+import { requiereDniBoleta } from './fiscal';
+
 export interface ValidacionResultado {
   valido: boolean;
   error?: string;
@@ -39,12 +41,7 @@ export function validarRuc(ruc: string): ValidacionResultado {
   return { valido: true };
 }
 
-/**
- * Determina si una boleta requiere DNI obligatorio por superar o igualar S/ 700.00 (norma SUNAT).
- */
-export function requiereDniBoleta(total: number): boolean {
-  return typeof total === 'number' && !isNaN(total) && total >= 700;
-}
+export { requiereDniBoleta };
 
 /**
  * Valida los datos requeridos para la emisión de una boleta de venta.
