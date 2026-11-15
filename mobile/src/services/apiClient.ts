@@ -28,6 +28,12 @@ export function setApiBaseUrl(url: string): void {
 }
 
 import {
+  lanzarErrorHttp,
+  normalizarErrorCatch,
+  PERFIL_ERROR_BINARIO,
+  PERFIL_ERROR_JSON,
+} from './http/clasificarFallo';
+import {
   agregarQueryParams,
   construirCabecerasBinario,
   construirCabecerasJson,
@@ -36,7 +42,7 @@ import {
 } from './http/construirPeticion';
 import { ApiError } from './http/errorHttp';
 import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
-import { manejarNoAutorizado, setOnUnauthorizedCallback } from './http/noAutorizado';
+import { setOnUnauthorizedCallback } from './http/noAutorizado';
 import { ejecutarConReintentos } from './http/reintentos';
 import { esRutaAuthEspecial, resolverTokenPeticion } from './http/renovacionToken';
 
@@ -74,77 +80,7 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        let backendMsg: string | undefined;
-        let codigo: string | undefined;
-        let fieldErrors: Record<string, string | string[]> | undefined;
-        let errorDetail: string | undefined;
-
-        try {
-          const errorJson = (await response.json()) as {
-            mensaje?: string;
-            message?: string;
-            detail?: string;
-            title?: string;
-            codigo?: string;
-            errors?: Record<string, string | string[]>;
-          };
-          backendMsg = errorJson.mensaje || errorJson.message || errorJson.detail || errorJson.title;
-          codigo = errorJson.codigo;
-          fieldErrors = errorJson.errors;
-          errorDetail = errorJson.detail || errorJson.title;
-        } catch {
-          // La respuesta no es JSON
-        }
-
-        if (response.status === 401) {
-          manejarNoAutorizado();
-          throw new ApiError({
-            status: 401,
-            mensaje: 'Sesión expirada. Inicie sesión nuevamente.',
-            codigo: codigo || 'UNAUTHORIZED',
-            errors: fieldErrors,
-            detail: errorDetail,
-            tipo: 'http',
-            host: requestHost,
-          });
-        }
-
-        if (response.status === 403) {
-          throw new ApiError({
-            status: 403,
-            mensaje: 'No tiene permiso para realizar esta acción.',
-            codigo: codigo || 'FORBIDDEN',
-            errors: fieldErrors,
-            detail: errorDetail,
-            tipo: 'http',
-            host: requestHost,
-          });
-        }
-
-        if (response.status >= 500) {
-          throw new ApiError({
-            status: response.status,
-            mensaje: 'Ocurrió un error en el servidor. Intente nuevamente más tarde.',
-            codigo: codigo || 'SERVER_ERROR',
-            errors: fieldErrors,
-            detail: errorDetail,
-            tipo: 'http',
-            host: requestHost,
-          });
-        }
-
-        const mensajeCliente =
-          backendMsg || 'Solicitud inválida. Verifique los datos ingresados.';
-
-        throw new ApiError({
-          status: response.status,
-          mensaje: mensajeCliente,
-          codigo: codigo || 'BAD_REQUEST',
-          errors: fieldErrors,
-          detail: errorDetail,
-          tipo: 'http',
-          host: requestHost,
-        });
+        return await lanzarErrorHttp(response, requestHost, PERFIL_ERROR_JSON);
       }
 
       if (response.status === 204) {
@@ -159,43 +95,7 @@ class ApiClient {
         window.dispatchEvent(new CustomEvent('girasoles:network-error', { detail: err }));
       }
 
-      if (err instanceof ApiError) {
-        throw err;
-      }
-
-      if (
-        (err instanceof Error && err.name === 'AbortError') ||
-        controller.signal.aborted
-      ) {
-        throw new ApiError({
-          status: 0,
-          mensaje: 'No se pudo conectar con el servidor. Verifique su conexión.',
-          codigo: 'ERR_TIMEOUT',
-          tipo: 'timeout',
-          host: requestHost,
-        });
-      }
-
-      if (
-        err instanceof Error &&
-        (err.name === 'TypeError' || err.message.toLowerCase().includes('fetch'))
-      ) {
-        throw new ApiError({
-          status: 0,
-          mensaje: 'No se pudo conectar con el servidor. Verifique su conexión.',
-          codigo: 'ERR_CONEXION',
-          tipo: 'sin-respuesta',
-          host: requestHost,
-        });
-      }
-
-      throw new ApiError({
-        status: 0,
-        mensaje: 'No se pudo conectar con el servidor. Verifique su conexión.',
-        codigo: 'ERR_DESCONOCIDO',
-        tipo: 'sin-respuesta',
-        host: requestHost,
-      });
+      return normalizarErrorCatch(err, controller.signal.aborted, requestHost, PERFIL_ERROR_JSON);
     }
   }
 
@@ -272,74 +172,7 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        let backendMsg: string | undefined;
-        let codigo: string | undefined;
-        let fieldErrors: Record<string, string | string[]> | undefined;
-        let errorDetail: string | undefined;
-
-        try {
-          const errorJson = (await response.json()) as {
-            mensaje?: string;
-            message?: string;
-            detail?: string;
-            title?: string;
-            codigo?: string;
-            errors?: Record<string, string | string[]>;
-          };
-          backendMsg = errorJson.mensaje || errorJson.message || errorJson.detail || errorJson.title;
-          codigo = errorJson.codigo;
-          fieldErrors = errorJson.errors;
-          errorDetail = errorJson.detail || errorJson.title;
-        } catch {
-          // La respuesta de error no es JSON
-        }
-
-        if (response.status === 401) {
-          manejarNoAutorizado();
-          throw new ApiError({
-            status: 401,
-            mensaje: 'Sesión expirada. Inicie sesión nuevamente.',
-            codigo: codigo || 'UNAUTHORIZED',
-            errors: fieldErrors,
-            detail: errorDetail,
-            tipo: 'http',
-            host: requestHost,
-          });
-        }
-
-        if (response.status === 403) {
-          throw new ApiError({
-            status: 403,
-            mensaje: 'No tiene permiso para realizar esta acción.',
-            codigo: codigo || 'FORBIDDEN',
-            errors: fieldErrors,
-            detail: errorDetail,
-            tipo: 'http',
-            host: requestHost,
-          });
-        }
-
-        if (response.status >= 500) {
-          throw new ApiError({
-            status: response.status,
-            mensaje: backendMsg || 'Ocurrió un error al generar el archivo en el servidor.',
-            codigo: codigo || 'SERVER_ERROR',
-            errors: fieldErrors,
-            detail: errorDetail,
-            tipo: 'http',
-            host: requestHost,
-          });
-        }
-
-        throw new ApiError({
-          status: response.status,
-          mensaje: backendMsg || 'No se pudo descargar el documento solicitado.',
-          codigo: codigo || 'BAD_REQUEST',
-          errors: fieldErrors,
-          detail: errorDetail,
-          tipo: 'http',
-          host: requestHost,
-        });
+        return await lanzarErrorHttp(response, requestHost, PERFIL_ERROR_BINARIO);
       }
 
       return await response.blob();
@@ -350,30 +183,7 @@ class ApiClient {
         window.dispatchEvent(new CustomEvent('girasoles:network-error', { detail: err }));
       }
 
-      if (err instanceof ApiError) {
-        throw err;
-      }
-
-      if (
-        (err instanceof Error && err.name === 'AbortError') ||
-        controller.signal.aborted
-      ) {
-        throw new ApiError({
-          status: 0,
-          mensaje: 'La descarga tardó demasiado. Verifique su conexión.',
-          codigo: 'ERR_TIMEOUT',
-          tipo: 'timeout',
-          host: requestHost,
-        });
-      }
-
-      throw new ApiError({
-        status: 0,
-        mensaje: 'No se pudo conectar con el servidor para descargar el archivo.',
-        codigo: 'ERR_CONEXION',
-        tipo: 'sin-respuesta',
-        host: requestHost,
-      });
+      return normalizarErrorCatch(err, controller.signal.aborted, requestHost, PERFIL_ERROR_BINARIO);
     }
   }
 }
