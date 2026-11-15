@@ -17,6 +17,7 @@ import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { formatLimaFechaHora, obtenerHoyLimaYMD } from '../../utils/fechas';
 import { compartirPdf } from '../../utils/archivos';
+import { mensajeDeError } from '../../utils/errores';
 
 export interface CierreDetalleSheetProps {
   isOpen: boolean;
@@ -69,10 +70,7 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
       mostrar({ tipo: 'exito', mensaje: 'Acta de cierre en PDF generada correctamente.' });
     } catch (err: unknown) {
       triggerError();
-      const msg =
-        err instanceof Error && err.message
-          ? err.message
-          : 'No se pudo descargar el acta de cierre en PDF.';
+      const msg = mensajeDeError(err, 'No se pudo descargar el acta de cierre en PDF.');
       setErrorPdf(msg);
       mostrar({ tipo: 'error', mensaje: msg });
     } finally {

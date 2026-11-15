@@ -9,6 +9,7 @@ import { StatusBadge } from '../ui/StatusBadge';
 import { SkeletonList } from '../ui/Skeleton';
 import { ErrorState } from '../ui/ErrorState';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { mensajeDeError } from '../../utils/errores';
 import { puede, puedeVerMontos } from '../../config/permisos';
 import { useHaptics } from '../../hooks/useHaptics';
 
@@ -45,8 +46,7 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
         .obtenerDetalleCompleto(pedidoId)
         .then((data) => setPedido(data))
         .catch((err: unknown) => {
-          const msg = err instanceof Error ? err.message : 'Error al consultar el detalle del pedido';
-          setError(msg);
+          setError(mensajeDeError(err, 'Error al consultar el detalle del pedido'));
           setPedido(null);
         })
         .finally(() => setCargando(false));
@@ -77,7 +77,7 @@ export const DetallePedidoContenido: React.FC<DetallePedidoContenidoProps> = ({
               pedidoService
                 .obtenerDetalleCompleto(pedidoId)
                 .then((data) => setPedido(data))
-                .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Error'))
+                .catch((err: unknown) => setError(mensajeDeError(err, 'Error')))
                 .finally(() => setCargando(false));
             }
           }}

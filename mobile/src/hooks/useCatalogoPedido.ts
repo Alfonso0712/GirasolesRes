@@ -8,6 +8,7 @@ import {
   filtrarMenusCatalogo,
   filtrarProductosCatalogo,
 } from '../utils/pedidos';
+import { mensajeDeError } from '../utils/errores';
 
 export interface UseCatalogoPedidoOptions {
   menuDiaInicial?: MenuDiaResponseDto | null;
@@ -58,7 +59,7 @@ export function useCatalogoPedido(options: UseCatalogoPedidoOptions = {}) {
       setCatalogo(prods || []);
       setMenuDia(menu);
     } catch (err: unknown) {
-      setErrorCarga(err instanceof Error ? err.message : 'Error al cargar los productos disponibles');
+      setErrorCarga(mensajeDeError(err, 'Error al cargar los productos disponibles'));
       setCatalogo([]);
     } finally {
       setCargando(false);

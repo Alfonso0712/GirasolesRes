@@ -34,6 +34,7 @@ import { formatCurrency, pluralizar } from '../../utils/format';
 import { calcularPorcentajeBarraRanking } from '../../utils/reportes';
 import { formatLimaFechaHora, formatLimaFecha, obtenerHoyLimaYMD } from '../../utils/fechas';
 import { compartirPdf } from '../../utils/archivos';
+import { mensajeDeError } from '../../utils/errores';
 
 export type PeriodoReporte = 'hoy' | '7dias' | 'mes' | 'otroMes';
 export type VistaReporte = 'ventas' | 'platos';
@@ -125,10 +126,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
       mostrar({ tipo: 'exito', mensaje: 'Reporte PDF generado correctamente.' });
     } catch (err: unknown) {
       triggerError();
-      const msg =
-        err instanceof Error && err.message
-          ? err.message
-          : 'No se pudo generar el reporte en PDF.';
+      const msg = mensajeDeError(err, 'No se pudo generar el reporte en PDF.');
       setErrorPdf(msg);
       mostrar({ tipo: 'error', mensaje: msg });
     } finally {

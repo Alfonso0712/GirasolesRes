@@ -5,6 +5,7 @@ import { normalizeText, canonicalizarMesa } from '../../utils/canonico';
 import { BottomSheet } from '../ui/BottomSheet';
 import { SheetActions } from '../ui/SheetActions';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
+import { mensajeDeError } from '../../utils/errores';
 
 export interface MesaFormSheetProps {
   isOpen: boolean;
@@ -101,8 +102,7 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
       onClose();
     } catch (err: unknown) {
       setGuardando(false);
-      const msg = err instanceof Error ? err.message : 'No se pudo completar la operación. Intente nuevamente.';
-      setErrorNombre(msg);
+      setErrorNombre(mensajeDeError(err, 'No se pudo completar la operación. Intente nuevamente.'));
       inputRef.current?.focus();
     }
   };

@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import { ApiError } from '../services/apiClient';
 import { esSesionAlmacenadaValida } from '../config/sesion';
-import { extraerEstadoError } from '../utils/errores';
+import { esApiError, extraerEstadoError, mensajeDeError } from '../utils/errores';
 import { mesaService } from '../services/mesaService';
 import { cajaService } from '../services/cajaService';
 import { cobroService } from '../services/cobroService';
@@ -88,7 +87,7 @@ export function useRecurso<T>(
         setError(null);
         setActualizadoEn(new Date());
       } catch (err: unknown) {
-        const status = err instanceof ApiError ? err.status : extraerEstadoError(err);
+        const status = esApiError(err) ? err.status : extraerEstadoError(err);
         if (status === 401) {
           if (timerRef.current) {
             clearInterval(timerRef.current);
@@ -99,7 +98,7 @@ export function useRecurso<T>(
           }
           return;
         }
-        const msg = err instanceof Error ? err.message : 'Error al obtener los datos.';
+        const msg = mensajeDeError(err, 'Error al obtener los datos.');
         setError(msg);
       } finally {
         enVueloRef.current = false;

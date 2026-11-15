@@ -5,6 +5,7 @@ import { PedidoLlevarView } from './PedidoLlevarView';
 import { ToastProvider } from '../../context/ToastContext';
 import { pedidoService } from '../../services/pedidoService';
 import { menuDiaService } from '../../services/menuDiaService';
+import { ApiError } from '../../services/apiClient';
 import { MAX_CANTIDAD_POR_LINEA } from '../../config/constantes';
 import type { ProductoMenuPedidoDto } from '../../types/pedido';
 import type { MenuDiaResponseDto } from '../../types/menuDia';
@@ -169,7 +170,7 @@ describe('PedidoLlevarView — red de seguridad (Paso 1)', () => {
 
   it('fotografía estado error al fallar catálogo', async () => {
     vi.mocked(pedidoService.obtenerCatalogoPedido).mockRejectedValue(
-      new Error('Error al cargar catálogo para llevar')
+      new ApiError(500, 'Error al cargar catálogo para llevar')
     );
 
     const { container } = render(

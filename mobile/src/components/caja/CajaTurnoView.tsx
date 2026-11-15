@@ -43,6 +43,7 @@ import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { calcularEfectivoEsperado } from '../../utils/caja';
 import { formatLimaFechaHora } from '../../utils/fechas';
+import { mensajeDeError } from '../../utils/errores';
 import { puede } from '../../config/permisos';
 import { MONTO_MAXIMO_CAJA } from '../../config/constantes';
 
@@ -166,7 +167,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setTotalVentas(res.total || 0);
       setPaginaVentas(pagina);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar ventas';
+      const msg = mensajeDeError(err, 'Error al consultar ventas');
       setErrorVentas(msg);
       if (!append) setVentas([]);
     } finally {
@@ -192,7 +193,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setVentaDetalle(d);
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'No se pudo obtener el detalle de la venta.';
+      const msg = mensajeDeError(err, 'No se pudo obtener el detalle de la venta.');
       mostrar({ tipo: 'error', mensaje: msg });
       setSheetVentaAbierta(false);
     } finally {
@@ -220,7 +221,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       onRefresh();
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'Error al anular la venta.';
+      const msg = mensajeDeError(err, 'Error al anular la venta.');
       mostrar({ tipo: 'error', mensaje: msg });
       throw err;
     } finally {
@@ -249,7 +250,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
         setCierres(items);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al consultar historial de cierres';
+      const msg = mensajeDeError(err, 'Error al consultar historial de cierres');
       setErrorCierres(msg);
       if (!acumular) setCierres([]);
     } finally {
@@ -274,7 +275,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setCierreDetalle(d);
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'No se pudo obtener el detalle del cierre.';
+      const msg = mensajeDeError(err, 'No se pudo obtener el detalle del cierre.');
       mostrar({ tipo: 'error', mensaje: msg });
       setSheetCierreAbierta(false);
     } finally {
@@ -327,10 +328,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       await onRefresh();
     } catch (err: unknown) {
       triggerError();
-      let msg = 'Error al abrir caja';
-      if (err instanceof Error) {
-        msg = err.message;
-      }
+      const msg = mensajeDeError(err, 'Error al abrir caja');
       setErrorModal(msg);
       setConfirmarApertura(false);
     } finally {
@@ -353,7 +351,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       setModalCerrar(true);
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'No se pudo obtener el resumen de cierre de caja';
+      const msg = mensajeDeError(err, 'No se pudo obtener el resumen de cierre de caja');
       mostrar({ tipo: 'error', mensaje: msg });
     } finally {
       setProcesando(false);
@@ -428,7 +426,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       await onRefresh();
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'Error al cerrar caja';
+      const msg = mensajeDeError(err, 'Error al cerrar caja');
       if (msg.toLowerCase().includes('concurrente') || msg.toLowerCase().includes('actualizado')) {
         try {
           const nuevoResumen = await cajaService.obtenerResumenCierre();

@@ -8,6 +8,7 @@ import { SheetActions } from '../ui/SheetActions';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
+import { mensajeDeError } from '../../utils/errores';
 
 export interface AnularPedidoSheetProps {
   isOpen: boolean;
@@ -75,11 +76,7 @@ export const AnularPedidoSheet: React.FC<AnularPedidoSheetProps> = ({
       onAnulacionExitosa();
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'No se pudo anular el pedido.';
-      mostrar({
-        tipo: 'error',
-        mensaje: msg,
-      });
+      mostrar({ tipo: 'error', mensaje: mensajeDeError(err, 'No se pudo anular el pedido.') });
       setMostrarConfirmar(false);
     } finally {
       setProcesando(false);

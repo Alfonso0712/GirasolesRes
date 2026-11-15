@@ -5,6 +5,7 @@ import { PedidoMesaView } from './PedidoMesaView';
 import { ToastProvider } from '../../context/ToastContext';
 import { pedidoService } from '../../services/pedidoService';
 import { menuDiaService } from '../../services/menuDiaService';
+import { ApiError } from '../../services/apiClient';
 import { MAX_CANTIDAD_POR_LINEA } from '../../config/constantes';
 import type { MesaItem } from '../../types/mesa';
 import type { LineaBorrador, ProductoMenuPedidoDto } from '../../types/pedido';
@@ -217,7 +218,7 @@ describe('PedidoMesaView — red de seguridad (Paso 1)', () => {
 
   it('fotografía estado error al fallar catálogo', async () => {
     vi.mocked(pedidoService.obtenerCatalogoPedido).mockRejectedValue(
-      new Error('Error de red al consultar productos')
+      new ApiError(500, 'Error de red al consultar productos')
     );
 
     const { container } = render(

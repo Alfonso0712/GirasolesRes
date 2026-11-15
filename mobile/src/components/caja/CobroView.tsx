@@ -35,6 +35,7 @@ import { formatCurrency, pluralizar } from '../../utils/format';
 import { requiereDniBoleta } from '../../utils/fiscal';
 import { BILLETES_RAPIDOS_EFECTIVO, MONTO_MAXIMO_EFECTIVO_COBRO } from '../../config/constantes';
 import { formatLimaFechaHora } from '../../utils/fechas';
+import { mensajeDeError } from '../../utils/errores';
 
 export interface CobroViewProps {
   pedidos: PedidoPendienteCobro[];
@@ -127,7 +128,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         }
       } catch (err: unknown) {
         triggerError();
-        const msg = err instanceof Error ? err.message : 'No se encontró información para el DNI ingresado.';
+        const msg = mensajeDeError(err, 'No se encontró información para el DNI ingresado.');
         setErrorConsultaDoc(msg);
       } finally {
         setConsultandoDoc(false);
@@ -150,7 +151,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
         }
       } catch (err: unknown) {
         triggerError();
-        const msg = err instanceof Error ? err.message : 'No se encontró información para el RUC ingresado.';
+        const msg = mensajeDeError(err, 'No se encontró información para el RUC ingresado.');
         setErrorConsultaDoc(msg);
       } finally {
         setConsultandoDoc(false);
@@ -288,8 +289,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
       resetFormulario();
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'No se pudo procesar el cobro.';
-      setErrorCobro(msg);
+      setErrorCobro(mensajeDeError(err, 'No se pudo procesar el cobro.'));
       setMostrarConfirmacion(false);
     } finally {
       setProcesando(false);

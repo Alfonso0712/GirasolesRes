@@ -11,6 +11,7 @@ import { PageHeader } from '../layout/PageHeader';
 import { ConfirmSheet } from '../ui/ConfirmSheet';
 import { useToast } from '../../context/ToastContext';
 import { pluralizar } from '../../utils/format';
+import { mensajeDeError } from '../../utils/errores';
 
 export interface MenuDiaViewProps {
   platos: PlatoMenuDiaDto[];
@@ -60,8 +61,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
       }
     } catch (err: unknown) {
       triggerError();
-      const msg = err instanceof Error ? err.message : 'Error al actualizar disponibilidad';
-      mostrar({ tipo: 'error', mensaje: msg });
+      mostrar({ tipo: 'error', mensaje: mensajeDeError(err, 'Error al actualizar disponibilidad') });
     } finally {
       setProcesandoId(null);
     }

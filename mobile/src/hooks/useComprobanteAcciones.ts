@@ -7,6 +7,7 @@ import {
   nombreArchivoComprobante,
 } from '../utils/archivos';
 import { useHaptics } from './useHaptics';
+import { mensajeDeError } from '../utils/errores';
 
 export type TipoAccionComprobante = 'imprimir' | 'guardar' | 'compartir';
 export type EstadoAccionComprobante = 'inactivo' | 'generando' | 'ok' | 'error';
@@ -107,10 +108,7 @@ export function useComprobanteAcciones(venta: DatosComprobanteAccion | null) {
         setEstados((prev) => ({ ...prev, [tipo]: 'ok' }));
         triggerSuccess();
       } catch (err: unknown) {
-        const msg =
-          err instanceof Error && err.message
-            ? err.message
-            : 'No se pudo obtener el comprobante en PDF.';
+        const msg = mensajeDeError(err, 'No se pudo obtener el comprobante en PDF.');
         setEstados((prev) => ({ ...prev, [tipo]: 'error' }));
         setErrorMensaje(msg);
         triggerError();

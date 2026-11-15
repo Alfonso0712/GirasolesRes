@@ -6,6 +6,7 @@ const INTERVALO_POLLING_MESAS_MS = 15_000;
 import { authService } from '../services/authService';
 import { evaluarVigenciaSesion } from '../config/sesion';
 import { puede } from '../config/permisos';
+import { mensajeDeError } from '../utils/errores';
 import type { MesaItem, PedidoMesaResumen } from '../types/mesa';
 import type { RolUsuario } from '../types/auth';
 import type { PedidoItemDto } from '../types/pedido';
@@ -271,8 +272,7 @@ export function useMesasConPedidos(
         setMesas(enriquecidas);
       } catch (err: unknown) {
         if (!montadoRef.current) return;
-        const msg = err instanceof Error ? err.message : 'Error al cargar las mesas del salón.';
-        setError(msg);
+        setError(mensajeDeError(err, 'Error al cargar las mesas del salón.'));
       } finally {
         if (montadoRef.current) {
           setCargando(false);

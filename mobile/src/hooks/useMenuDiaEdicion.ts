@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRecurso } from './useRecurso';
 import { menuDiaService } from '../services/menuDiaService';
+import { mensajeDeError } from '../utils/errores';
 import type {
   MenuDiaResponseDto,
   CandidatoMenuDto,
@@ -206,10 +207,7 @@ export function useMenuDiaEdicion(
         data: nuevoHoy,
       };
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error
-          ? err.message
-          : 'No se pudo guardar el menú del día.';
+      const msg = mensajeDeError(err, 'No se pudo guardar el menú del día.');
       setErrorValidacion(msg);
       return {
         exito: false,

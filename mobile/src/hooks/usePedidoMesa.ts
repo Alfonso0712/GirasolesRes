@@ -9,6 +9,7 @@ import { useBackHandler } from './useBackHandler';
 import { puedeVerMontos } from '../config/permisos';
 import { formatCurrency, pluralizar } from '../utils/format';
 import { generarSolicitudId, mapearLineasPedidoPayload } from '../utils/pedidos';
+import { mensajeDeError } from '../utils/errores';
 
 export interface UsePedidoMesaOptions {
   mesa: MesaItem;
@@ -33,7 +34,7 @@ function resolverVolverMesa(borrador: BorradorMesa, onVolver: () => void) {
 function manejarErrorEnvioMesa(err: unknown, esAmpliacion: boolean, borrador: BorradorMesa) {
   borrador.triggerError();
   const fallback = esAmpliacion ? 'Error al agregar platos al pedido' : 'Error al registrar el pedido para la mesa';
-  const msg = err instanceof Error ? err.message : fallback;
+  const msg = mensajeDeError(err, fallback);
   borrador.setErrorEnvio(msg);
   borrador.setMostrarConfirmEnviar(false);
   if (esAmpliacion && (msg.includes('115') || msg.toLowerCase().includes('en preparación'))) {

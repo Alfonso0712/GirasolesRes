@@ -5,6 +5,7 @@ import { usePedidoMesa } from './usePedidoMesa';
 import { usePedidoLlevar } from './usePedidoLlevar';
 import { pedidoService } from '../services/pedidoService';
 import { menuDiaService } from '../services/menuDiaService';
+import { ApiError } from '../services/apiClient';
 import type { MesaItem } from '../types/mesa';
 
 const { mostrarToastMock } = vi.hoisted(() => ({ mostrarToastMock: vi.fn() }));
@@ -87,7 +88,7 @@ describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)',
     act(() => result.current.solicitarEnvioComanda());
     expect(result.current.mostrarConfirmEnviar).toBe(true);
 
-    vi.mocked(pedidoService.registrarPedidoMesa).mockRejectedValueOnce(new Error('Error 103: producto agotado'));
+    vi.mocked(pedidoService.registrarPedidoMesa).mockRejectedValueOnce(new ApiError(400, 'Error 103: producto agotado'));
     await act(async () => {
       await result.current.ejecutarEnvioComanda();
     });
@@ -113,7 +114,7 @@ describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)',
     act(() => {
       result.current.agregarProducto({ id: 'p1', nombre: 'Ceviche', categoria: 'Carta', precio: 25, disponible: true, agotado: false, rol: null });
     });
-    vi.mocked(pedidoService.agregarLineas).mockRejectedValueOnce(new Error('Código 115: en preparación'));
+    vi.mocked(pedidoService.agregarLineas).mockRejectedValueOnce(new ApiError(409, 'Código 115: en preparación'));
     await act(async () => {
       await result.current.ejecutarEnvioComanda();
     });
@@ -136,7 +137,7 @@ describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)',
     expect(result.current.errorEnvio).toContain('entre 2 y 30');
 
     act(() => result.current.cambiarReferencia('Juan'));
-    vi.mocked(pedidoService.registrarPedidoLlevar).mockRejectedValueOnce(new Error('Plato agotado 103'));
+    vi.mocked(pedidoService.registrarPedidoLlevar).mockRejectedValueOnce(new ApiError(400, 'Plato agotado 103'));
     await act(async () => {
       await result.current.ejecutarRegistroPedidoLlevar();
     });

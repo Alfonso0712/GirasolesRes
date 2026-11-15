@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRecurso } from './useRecurso';
+import { ApiError } from '../services/apiClient';
 
 describe('useRecurso - Sondeo y Gestión de Estado', () => {
   beforeEach(() => {
@@ -57,7 +58,7 @@ describe('useRecurso - Sondeo y Gestión de Estado', () => {
   });
 
   it('debe capturar errores de carga sin romper el estado', async () => {
-    const mockFetcher = vi.fn().mockRejectedValue(new Error('Fallo de red'));
+    const mockFetcher = vi.fn().mockRejectedValue(new ApiError(500, 'Fallo de red'));
 
     const { result } = renderHook(() =>
       useRecurso(mockFetcher, { intervaloMs: 0 })

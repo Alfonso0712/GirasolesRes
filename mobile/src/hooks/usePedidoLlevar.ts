@@ -3,6 +3,7 @@ import { pedidoService } from '../services/pedidoService';
 import { useBorradorPedido } from './useBorradorPedido';
 import { useBackHandler } from './useBackHandler';
 import { generarSolicitudId, mapearLineasPedidoPayload } from '../utils/pedidos';
+import { mensajeDeError } from '../utils/errores';
 
 export interface UsePedidoLlevarOptions {
   onPedidoCreado: (mensaje: string) => void;
@@ -46,7 +47,7 @@ async function enviarRegistroLlevar(
 
 function manejarErrorLlevar(err: unknown, borrador: BorradorPedido) {
   borrador.triggerError();
-  const msg = err instanceof Error ? err.message : 'Error al registrar el pedido para llevar';
+  const msg = mensajeDeError(err, 'Error al registrar el pedido para llevar');
   borrador.setErrorEnvio(msg);
   borrador.setMostrarConfirmEnviar(false);
   if (msg.toLowerCase().includes('agotado') || msg.includes('103')) {
