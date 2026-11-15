@@ -58,7 +58,9 @@ describe('useRecurso - Sondeo y Gestión de Estado', () => {
   });
 
   it('debe capturar errores de carga sin romper el estado', async () => {
-    const mockFetcher = vi.fn().mockRejectedValue(new ApiError(500, 'Fallo de red'));
+    const mockFetcher = vi.fn().mockRejectedValue(
+      new ApiError({ status: 500, mensaje: 'Fallo de red' })
+    );
 
     const { result } = renderHook(() =>
       useRecurso(mockFetcher, { intervaloMs: 0 })

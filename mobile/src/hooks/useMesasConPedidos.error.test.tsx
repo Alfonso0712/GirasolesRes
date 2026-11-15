@@ -100,10 +100,10 @@ describe('useMesasConPedidos - Política de errores y transición de polling', (
 
     vi.mocked(pedidoService.listarPedidos)
       .mockResolvedValueOnce(PEDIDOS_VALIDOS)
-      .mockRejectedValueOnce(new ApiError(503, 'Fallo temporal'))
-      .mockRejectedValueOnce(new ApiError(503, 'Sigue caído'))
+      .mockRejectedValueOnce(new ApiError({ status: 503, mensaje: 'Fallo temporal' }))
+      .mockRejectedValueOnce(new ApiError({ status: 503, mensaje: 'Sigue caído' }))
       .mockResolvedValueOnce(PEDIDOS_VALIDOS)
-      .mockRejectedValueOnce(new ApiError(503, 'Caída posterior'));
+      .mockRejectedValueOnce(new ApiError({ status: 503, mensaje: 'Caída posterior' }));
 
     const capturado: { valor: ReturnType<typeof useMesasConPedidos> | null } = { valor: null };
     function Monitor() {
@@ -156,7 +156,9 @@ describe('useMesasConPedidos - Política de errores y transición de polling', (
 
   it('no emite toast cuando el fallo de pedidos es 401', async () => {
     vi.mocked(mesaService.getMesas).mockResolvedValueOnce([MESAS_BASE[0]]);
-    vi.mocked(pedidoService.listarPedidos).mockRejectedValueOnce(new ApiError(401, 'No autorizado'));
+    vi.mocked(pedidoService.listarPedidos).mockRejectedValueOnce(
+      new ApiError({ status: 401, mensaje: 'No autorizado' })
+    );
 
     const { result } = renderHook(
       () => useMesasConPedidos({ rol: 'Mozo', enabled: true }),
@@ -177,7 +179,9 @@ describe('useMesasConPedidos - Política de errores y transición de polling', (
     vi.useRealTimers();
     const onCambiarEstadoMesa = vi
       .fn()
-      .mockRejectedValueOnce(new ApiError(422, 'No se pudo activar en este momento.'));
+      .mockRejectedValueOnce(
+        new ApiError({ status: 422, mensaje: 'No se pudo activar en este momento.' })
+      );
 
     render(
       <ToastProvider>

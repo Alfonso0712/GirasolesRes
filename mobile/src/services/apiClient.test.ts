@@ -22,15 +22,15 @@ describe('apiClient', () => {
 
   describe('ApiError', () => {
     it('debe construir correctamente un error con sus propiedades', () => {
-      const err = new ApiError(
-        400,
-        'Monto inválido',
-        'MSG-170',
-        { monto: 'El monto excede el límite' },
-        'Detalle adicional',
-        'http',
-        'api.servidor.com'
-      );
+      const err = new ApiError({
+        status: 400,
+        mensaje: 'Monto inválido',
+        codigo: 'MSG-170',
+        errors: { monto: 'El monto excede el límite' },
+        detail: 'Detalle adicional',
+        tipo: 'http',
+        host: 'api.servidor.com',
+      });
 
       expect(err.name).toBe('ApiError');
       expect(err.status).toBe(400);

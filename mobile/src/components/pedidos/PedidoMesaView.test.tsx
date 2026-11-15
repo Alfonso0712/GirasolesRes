@@ -218,7 +218,7 @@ describe('PedidoMesaView — red de seguridad (Paso 1)', () => {
 
   it('fotografía estado error al fallar catálogo', async () => {
     vi.mocked(pedidoService.obtenerCatalogoPedido).mockRejectedValue(
-      new ApiError(500, 'Error de red al consultar productos')
+      new ApiError({ status: 500, mensaje: 'Error de red al consultar productos' })
     );
 
     const { container } = render(

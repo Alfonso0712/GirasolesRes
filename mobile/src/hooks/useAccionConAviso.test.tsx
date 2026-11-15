@@ -40,7 +40,7 @@ describe('useAccionConAviso', () => {
           onClick={() => {
             void ejecutar(
               async () => {
-                throw new ApiError(409, 'La comanda ya fue preparada.');
+                throw new ApiError({ status: 409, mensaje: 'La comanda ya fue preparada.' });
               },
               {
                 mensajeError: 'No se pudo actualizar la comanda.',
@@ -109,7 +109,7 @@ describe('useAccionConAviso', () => {
           onClick={() => {
             void ejecutar(
               async () => {
-                throw new ApiError(401, 'Sesion expirada');
+                throw new ApiError({ status: 401, mensaje: 'Sesion expirada' });
               },
               { mensajeError: 'Error al guardar.', onError }
             );

@@ -24,20 +24,20 @@ describe('utils/errores', () => {
   });
 
   it('esApiError distingue ApiError real de errores genericos y objetos simples', () => {
-    const apiErr = new ApiError(422, 'MSG-10: Producto agotado.');
+    const apiErr = new ApiError({ status: 422, mensaje: 'MSG-10: Producto agotado.' });
     expect(esApiError(apiErr)).toBe(true);
-    expect(esApiError(new ApiError(0, 'Sin conexion', undefined, undefined, undefined, 'sin-respuesta'))).toBe(true);
-    expect(esApiError(new ApiError(408, 'Tiempo agotado', undefined, undefined, undefined, 'timeout'))).toBe(true);
+    expect(esApiError(new ApiError({ status: 0, mensaje: 'Sin conexion', tipo: 'sin-respuesta' }))).toBe(true);
+    expect(esApiError(new ApiError({ status: 408, mensaje: 'Tiempo agotado', tipo: 'timeout' }))).toBe(true);
     expect(esApiError(new Error('TypeError: failed to fetch'))).toBe(false);
     expect(esApiError({ name: 'ApiError', status: 500, mensaje: 'No es Error' })).toBe(false);
     expect(esApiError(null)).toBe(false);
   });
 
   it('mensajeDeError devuelve mensaje de ApiError y cae al porDefecto ante errores tecnicos u otros tipos', () => {
-    const apiErr = new ApiError(400, 'El pedido ya esta en preparacion.');
+    const apiErr = new ApiError({ status: 400, mensaje: 'El pedido ya esta en preparacion.' });
     expect(mensajeDeError(apiErr, 'Error generico')).toBe('El pedido ya esta en preparacion.');
 
-    const apiSinMensaje = new ApiError(500, '');
+    const apiSinMensaje = new ApiError({ status: 500, mensaje: '' });
     expect(mensajeDeError(apiSinMensaje, 'Error al guardar.')).toBe('Error al guardar.');
 
     expect(mensajeDeError(new TypeError('Cannot read properties of undefined'), 'No se pudo procesar el cobro.')).toBe(
@@ -77,7 +77,7 @@ describe('utils/errores', () => {
     ];
     for (const fallback of fallbacks) {
       expect(mensajeDeError(new Error('raw internal error'), fallback)).toBe(fallback);
-      expect(mensajeDeError(new ApiError(400, 'MSG-01: Respuesta del servidor'), fallback)).toBe(
+      expect(mensajeDeError(new ApiError({ status: 400, mensaje: 'MSG-01: Respuesta del servidor' }), fallback)).toBe(
         'MSG-01: Respuesta del servidor'
       );
     }

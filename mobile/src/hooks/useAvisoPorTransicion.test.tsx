@@ -35,7 +35,9 @@ describe('useAvisoPorTransicion', () => {
           if (ok) {
             registrarExito();
           } else {
-            const emitio = registrarFallo(new ApiError(503, 'Servicio temporalmente no disponible'), {
+            const emitio = registrarFallo(
+              new ApiError({ status: 503, mensaje: 'Servicio temporalmente no disponible' }),
+              {
               mensajePorDefecto: 'No se pudieron cargar los pedidos de las mesas.',
             });
             if (emitio) avisosEmitidos.push(indice);
@@ -83,7 +85,7 @@ describe('useAvisoPorTransicion', () => {
 
       useEffect(() => {
         emitidos.push(
-          registrarFallo(new ApiError(401, 'No autorizado'), {
+          registrarFallo(new ApiError({ status: 401, mensaje: 'No autorizado' }), {
             mensajePorDefecto: 'Falla de polling.',
           })
         );

@@ -27,38 +27,11 @@ export function setApiBaseUrl(url: string): void {
   }
 }
 
-export type ApiErrorTipo = 'timeout' | 'sin-respuesta' | 'http';
+import { ApiError } from './http/errorHttp';
+import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
 
-export class ApiError extends Error {
-  public status: number;
-  public codigo?: string;
-  public mensaje: string;
-  public detail?: string;
-  public errors?: Record<string, string | string[]>;
-  public tipo: ApiErrorTipo;
-  public host?: string;
-
-  constructor(
-    status: number,
-    mensaje: string,
-    codigo?: string,
-    errors?: Record<string, string | string[]>,
-    detail?: string,
-    tipo: ApiErrorTipo = 'http',
-    host?: string
-  ) {
-    super(mensaje);
-    this.name = 'ApiError';
-    this.status = status;
-    this.mensaje = mensaje;
-    this.codigo = codigo;
-    this.errors = errors;
-    this.detail = detail;
-    this.tipo = tipo;
-    this.host = host;
-    Object.setPrototypeOf(this, ApiError.prototype);
-  }
-}
+export { ApiError };
+export type { ApiErrorTipo, OpcionesApiError };
 
 type UnauthorizedHandler = () => void;
 let onUnauthorizedCallback: UnauthorizedHandler | null = null;
@@ -291,53 +264,53 @@ class ApiClient {
 
         if (response.status === 401) {
           handleUnauthorized();
-          throw new ApiError(
-            401,
-            'Sesión expirada. Inicie sesión nuevamente.',
-            codigo || 'UNAUTHORIZED',
-            fieldErrors,
-            errorDetail,
-            'http',
-            requestHost
-          );
+          throw new ApiError({
+            status: 401,
+            mensaje: 'Sesión expirada. Inicie sesión nuevamente.',
+            codigo: codigo || 'UNAUTHORIZED',
+            errors: fieldErrors,
+            detail: errorDetail,
+            tipo: 'http',
+            host: requestHost,
+          });
         }
 
         if (response.status === 403) {
-          throw new ApiError(
-            403,
-            'No tiene permiso para realizar esta acción.',
-            codigo || 'FORBIDDEN',
-            fieldErrors,
-            errorDetail,
-            'http',
-            requestHost
-          );
+          throw new ApiError({
+            status: 403,
+            mensaje: 'No tiene permiso para realizar esta acción.',
+            codigo: codigo || 'FORBIDDEN',
+            errors: fieldErrors,
+            detail: errorDetail,
+            tipo: 'http',
+            host: requestHost,
+          });
         }
 
         if (response.status >= 500) {
-          throw new ApiError(
-            response.status,
-            'Ocurrió un error en el servidor. Intente nuevamente más tarde.',
-            codigo || 'SERVER_ERROR',
-            fieldErrors,
-            errorDetail,
-            'http',
-            requestHost
-          );
+          throw new ApiError({
+            status: response.status,
+            mensaje: 'Ocurrió un error en el servidor. Intente nuevamente más tarde.',
+            codigo: codigo || 'SERVER_ERROR',
+            errors: fieldErrors,
+            detail: errorDetail,
+            tipo: 'http',
+            host: requestHost,
+          });
         }
 
         const mensajeCliente =
           backendMsg || 'Solicitud inválida. Verifique los datos ingresados.';
 
-        throw new ApiError(
-          response.status,
-          mensajeCliente,
-          codigo || 'BAD_REQUEST',
-          fieldErrors,
-          errorDetail,
-          'http',
-          requestHost
-        );
+        throw new ApiError({
+          status: response.status,
+          mensaje: mensajeCliente,
+          codigo: codigo || 'BAD_REQUEST',
+          errors: fieldErrors,
+          detail: errorDetail,
+          tipo: 'http',
+          host: requestHost,
+        });
       }
 
       if (response.status === 204) {
@@ -360,41 +333,35 @@ class ApiClient {
         (err instanceof Error && err.name === 'AbortError') ||
         controller.signal.aborted
       ) {
-        throw new ApiError(
-          0,
-          'No se pudo conectar con el servidor. Verifique su conexión.',
-          'ERR_TIMEOUT',
-          undefined,
-          undefined,
-          'timeout',
-          requestHost
-        );
+        throw new ApiError({
+          status: 0,
+          mensaje: 'No se pudo conectar con el servidor. Verifique su conexión.',
+          codigo: 'ERR_TIMEOUT',
+          tipo: 'timeout',
+          host: requestHost,
+        });
       }
 
       if (
         err instanceof Error &&
         (err.name === 'TypeError' || err.message.toLowerCase().includes('fetch'))
       ) {
-        throw new ApiError(
-          0,
-          'No se pudo conectar con el servidor. Verifique su conexión.',
-          'ERR_CONEXION',
-          undefined,
-          undefined,
-          'sin-respuesta',
-          requestHost
-        );
+        throw new ApiError({
+          status: 0,
+          mensaje: 'No se pudo conectar con el servidor. Verifique su conexión.',
+          codigo: 'ERR_CONEXION',
+          tipo: 'sin-respuesta',
+          host: requestHost,
+        });
       }
 
-      throw new ApiError(
-        0,
-        'No se pudo conectar con el servidor. Verifique su conexión.',
-        'ERR_DESCONOCIDO',
-        undefined,
-        undefined,
-        'sin-respuesta',
-        requestHost
-      );
+      throw new ApiError({
+        status: 0,
+        mensaje: 'No se pudo conectar con el servidor. Verifique su conexión.',
+        codigo: 'ERR_DESCONOCIDO',
+        tipo: 'sin-respuesta',
+        host: requestHost,
+      });
     }
   }
 
@@ -534,50 +501,50 @@ class ApiClient {
 
         if (response.status === 401) {
           handleUnauthorized();
-          throw new ApiError(
-            401,
-            'Sesión expirada. Inicie sesión nuevamente.',
-            codigo || 'UNAUTHORIZED',
-            fieldErrors,
-            errorDetail,
-            'http',
-            requestHost
-          );
+          throw new ApiError({
+            status: 401,
+            mensaje: 'Sesión expirada. Inicie sesión nuevamente.',
+            codigo: codigo || 'UNAUTHORIZED',
+            errors: fieldErrors,
+            detail: errorDetail,
+            tipo: 'http',
+            host: requestHost,
+          });
         }
 
         if (response.status === 403) {
-          throw new ApiError(
-            403,
-            'No tiene permiso para realizar esta acción.',
-            codigo || 'FORBIDDEN',
-            fieldErrors,
-            errorDetail,
-            'http',
-            requestHost
-          );
+          throw new ApiError({
+            status: 403,
+            mensaje: 'No tiene permiso para realizar esta acción.',
+            codigo: codigo || 'FORBIDDEN',
+            errors: fieldErrors,
+            detail: errorDetail,
+            tipo: 'http',
+            host: requestHost,
+          });
         }
 
         if (response.status >= 500) {
-          throw new ApiError(
-            response.status,
-            backendMsg || 'Ocurrió un error al generar el archivo en el servidor.',
-            codigo || 'SERVER_ERROR',
-            fieldErrors,
-            errorDetail,
-            'http',
-            requestHost
-          );
+          throw new ApiError({
+            status: response.status,
+            mensaje: backendMsg || 'Ocurrió un error al generar el archivo en el servidor.',
+            codigo: codigo || 'SERVER_ERROR',
+            errors: fieldErrors,
+            detail: errorDetail,
+            tipo: 'http',
+            host: requestHost,
+          });
         }
 
-        throw new ApiError(
-          response.status,
-          backendMsg || 'No se pudo descargar el documento solicitado.',
-          codigo || 'BAD_REQUEST',
-          fieldErrors,
-          errorDetail,
-          'http',
-          requestHost
-        );
+        throw new ApiError({
+          status: response.status,
+          mensaje: backendMsg || 'No se pudo descargar el documento solicitado.',
+          codigo: codigo || 'BAD_REQUEST',
+          errors: fieldErrors,
+          detail: errorDetail,
+          tipo: 'http',
+          host: requestHost,
+        });
       }
 
       return await response.blob();
@@ -596,26 +563,22 @@ class ApiClient {
         (err instanceof Error && err.name === 'AbortError') ||
         controller.signal.aborted
       ) {
-        throw new ApiError(
-          0,
-          'La descarga tardó demasiado. Verifique su conexión.',
-          'ERR_TIMEOUT',
-          undefined,
-          undefined,
-          'timeout',
-          requestHost
-        );
+        throw new ApiError({
+          status: 0,
+          mensaje: 'La descarga tardó demasiado. Verifique su conexión.',
+          codigo: 'ERR_TIMEOUT',
+          tipo: 'timeout',
+          host: requestHost,
+        });
       }
 
-      throw new ApiError(
-        0,
-        'No se pudo conectar con el servidor para descargar el archivo.',
-        'ERR_CONEXION',
-        undefined,
-        undefined,
-        'sin-respuesta',
-        requestHost
-      );
+      throw new ApiError({
+        status: 0,
+        mensaje: 'No se pudo conectar con el servidor para descargar el archivo.',
+        codigo: 'ERR_CONEXION',
+        tipo: 'sin-respuesta',
+        host: requestHost,
+      });
     }
   }
 }

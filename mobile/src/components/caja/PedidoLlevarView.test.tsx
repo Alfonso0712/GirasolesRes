@@ -170,7 +170,7 @@ describe('PedidoLlevarView — red de seguridad (Paso 1)', () => {
 
   it('fotografía estado error al fallar catálogo', async () => {
     vi.mocked(pedidoService.obtenerCatalogoPedido).mockRejectedValue(
-      new ApiError(500, 'Error al cargar catálogo para llevar')
+      new ApiError({ status: 500, mensaje: 'Error al cargar catálogo para llevar' })
     );
 
     const { container } = render(

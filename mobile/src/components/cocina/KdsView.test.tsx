@@ -46,7 +46,7 @@ describe('KdsView - Política de errores y avisos de fallo', () => {
   it('muestra aviso de error con Reintentar, resincroniza lista y no altera el estado visible si falla cambiar estado', async () => {
     const onCambiarEstado = vi
       .fn()
-      .mockRejectedValueOnce(new ApiError(409, 'La comanda ya está en preparación.'))
+      .mockRejectedValueOnce(new ApiError({ status: 409, mensaje: 'La comanda ya está en preparación.' }))
       .mockResolvedValueOnce(undefined);
     const onRefresh = vi.fn().mockResolvedValue(undefined);
 
@@ -82,7 +82,7 @@ describe('KdsView - Política de errores y avisos de fallo', () => {
   });
 
   it('no muestra toast ante 401', async () => {
-    const onCambiarEstado = vi.fn().mockRejectedValueOnce(new ApiError(401, 'Sesión expirada'));
+    const onCambiarEstado = vi.fn().mockRejectedValueOnce(new ApiError({ status: 401, mensaje: 'Sesión expirada' }));
     const onRefresh = vi.fn();
 
     render(
@@ -109,7 +109,7 @@ describe('KdsView - Política de errores y avisos de fallo', () => {
 
   it('muestra barra de deshacer y sin aviso de error cuando tiene éxito; avisa si falla deshacer', async () => {
     const onCambiarEstado = vi.fn().mockResolvedValue(undefined);
-    const onDeshacer = vi.fn().mockRejectedValueOnce(new ApiError(400, 'Expiró el plazo para deshacer.'));
+    const onDeshacer = vi.fn().mockRejectedValueOnce(new ApiError({ status: 400, mensaje: 'Expiró el plazo para deshacer.' }));
     const onRefresh = vi.fn().mockResolvedValue(undefined);
 
     render(
