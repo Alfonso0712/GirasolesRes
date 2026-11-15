@@ -30,88 +30,14 @@ export function setApiBaseUrl(url: string): void {
 import { ApiError } from './http/errorHttp';
 import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
 import { manejarNoAutorizado, setOnUnauthorizedCallback } from './http/noAutorizado';
+import { esRutaAuthEspecial, resolverTokenPeticion } from './http/renovacionToken';
 
 export { ApiError, setOnUnauthorizedCallback };
 export type { ApiErrorTipo, OpcionesApiError };
 
 // Manejo centralizado de 401 delegado a ./http/noAutorizado
 
-function parseJwtExp(token: string): number | null {
-  try {
-    const parts = token.trim().split('.');
-    if (parts.length !== 3 || !parts[1]) return null;
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
-    const jsonPayload = decodeURIComponent(
-      atob(padded)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    const parsed = JSON.parse(jsonPayload) as { exp?: unknown };
-    return typeof parsed.exp === 'number' ? parsed.exp : null;
-  } catch {
-    return null;
-  }
-}
-
-function updateStoredToken(newToken: string): void {
-  try {
-    localStorage.setItem('GIRASOLES_TOKEN', newToken);
-    const rawSession = localStorage.getItem('GIRASOLES_SESSION');
-    if (rawSession) {
-      const sessionObj = JSON.parse(rawSession) as Record<string, unknown>;
-      sessionObj.token = newToken;
-      localStorage.setItem('GIRASOLES_SESSION', JSON.stringify(sessionObj));
-    }
-  } catch {
-    // Ignorar errores de acceso a almacenamiento
-  }
-}
-
-let renewalPromise: Promise<string | null> | null = null;
-
-async function intentarRenovarToken(currentToken: string): Promise<string | null> {
-  if (renewalPromise) {
-    return renewalPromise;
-  }
-
-  renewalPromise = (async () => {
-    try {
-      const base = getApiBaseUrl();
-      const cleanBase = base.endsWith('/api') ? base : `${base}/api`;
-      const url = `${cleanBase}/auth/renovar`;
-
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${currentToken}`,
-        },
-      });
-
-      if (!res.ok) {
-        return null;
-      }
-
-      const data = (await res.json()) as { token?: string; data?: { token?: string } };
-      const nuevoToken = data.token || data.data?.token;
-      if (nuevoToken && typeof nuevoToken === 'string') {
-        updateStoredToken(nuevoToken);
-        return nuevoToken;
-      }
-      return null;
-    } catch {
-      return null;
-    } finally {
-      renewalPromise = null;
-    }
-  })();
-
-  return renewalPromise;
-}
+// Renovación preventiva de token delegada a ./http/renovacionToken
 
 /**
  * Ejecuta una consulta GET con reintentos y espera creciente exponencial (1 s, 2 s, 4 s; máx 3 reintentos).
@@ -156,27 +82,7 @@ class ApiClient {
   }
 
   async request<T>(endpoint: string, options: RequestInit = {}, token?: string): Promise<T> {
-    const isAuthSpecialEndpoint =
-      endpoint.includes('/auth/login') ||
-      endpoint.includes('/auth/logout') ||
-      endpoint.includes('/auth/renovar');
-
-    let authToken = token || localStorage.getItem('GIRASOLES_TOKEN') || undefined;
-
-    // Renovación preventiva de token si vence en menos de 5 minutos (300 s)
-    if (authToken && !isAuthSpecialEndpoint) {
-      const exp = parseJwtExp(authToken);
-      if (exp !== null) {
-        const nowSeconds = Math.floor(Date.now() / 1000);
-        const segundosRestantes = exp - nowSeconds;
-        if (segundosRestantes > 0 && segundosRestantes < 300) {
-          const tokenRenovado = await intentarRenovarToken(authToken);
-          if (tokenRenovado) {
-            authToken = tokenRenovado;
-          }
-        }
-      }
-    }
+    const authToken = await resolverTokenPeticion(token, esRutaAuthEspecial(endpoint));
 
     const url = this.formatUrl(endpoint);
     let requestHost = '';
@@ -390,21 +296,7 @@ class ApiClient {
     params?: Record<string, string | number | undefined | null>,
     token?: string
   ): Promise<Blob> {
-    let authToken = token || localStorage.getItem('GIRASOLES_TOKEN') || undefined;
-
-    if (authToken) {
-      const exp = parseJwtExp(authToken);
-      if (exp !== null) {
-        const nowSeconds = Math.floor(Date.now() / 1000);
-        const segundosRestantes = exp - nowSeconds;
-        if (segundosRestantes > 0 && segundosRestantes < 300) {
-          const tokenRenovado = await intentarRenovarToken(authToken);
-          if (tokenRenovado) {
-            authToken = tokenRenovado;
-          }
-        }
-      }
-    }
+    const authToken = await resolverTokenPeticion(token);
 
     let endpointFinal = ruta;
     if (params) {
