@@ -182,14 +182,14 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
                     }
                     interactive={Boolean(destino)}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
                       <div className="shrink-0">{resolverAlertaIcono(alerta.tipo)}</div>
-                      <p className="text-xs font-bold text-ink leading-tight break-words min-w-0">
+                      <p className="text-xs font-bold text-ink leading-tight min-w-0">
                         {alerta.texto}
                       </p>
                     </div>
                     {destino && (
-                      <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" aria-hidden="true" />
+                      <ChevronRight className="w-5 h-5 text-ink-muted shrink-0" aria-hidden="true" />
                     )}
                   </Card>
                 );
@@ -243,21 +243,21 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
             <Card
               accent="none"
               padding="md"
-              className="flex items-center justify-between"
+              className="flex items-center justify-between gap-3"
               onClick={() => {
                 triggerLight();
                 onNavigate('salon');
               }}
               interactive
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-xs text-ink-muted block">Salón</span>
                 <span className="text-lg font-black text-ink">
                   {mesas ? `${mesas.ocupadas} de ${totalMesas}` : '0 de 0'}
                 </span>
                 <span className="text-xs text-ink-muted block mt-0.5">Mesas ocupadas</span>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-primary">
+              <div className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-primary shrink-0">
                 <Utensils className="w-5 h-5" aria-hidden="true" />
               </div>
             </Card>
@@ -265,14 +265,14 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
             <Card
               accent="none"
               padding="md"
-              className="flex items-center justify-between"
+              className="flex items-center justify-between gap-3"
               onClick={() => {
                 triggerLight();
                 onNavigate('caja');
               }}
               interactive
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-xs text-ink-muted block">Caja</span>
                 <span className="text-lg font-black text-ink block">
                   {caja?.estado || 'Sin abrir'}
@@ -281,7 +281,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
                   <StatusBadge estado={caja?.estado === 'Abierta' ? 'Abierta' : 'Cerrada'} />
                 </div>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-accent">
+              <div className="w-10 h-10 rounded-xl bg-canvas border border-line flex items-center justify-center text-accent shrink-0">
                 <Lock className="w-5 h-5" aria-hidden="true" />
               </div>
             </Card>
@@ -294,19 +294,19 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
             className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
           >
             <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
-                <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-                  Menú de hoy
-                </span>
-                <StatusBadge
-                  estado={menu?.definido ? 'Menú definido' : 'Menú no definido hoy'}
-                />
-              </div>
-              <p className="text-xs text-ink-muted mt-1.5 break-words">
+              <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
+                Menú de hoy
+              </span>
+              <p className="text-xs text-ink-muted mt-1">
                 {menu?.definido
                   ? `${menu.platos} platos disponibles · ${menu.agotados} agotados`
                   : 'El menú no ha sido publicado aún para el servicio de hoy.'}
               </p>
+              <div className="inline-flex flex-wrap items-center gap-2 mt-2">
+                <StatusBadge
+                  estado={menu?.definido ? 'Menú definido' : 'Menú no definido hoy'}
+                />
+              </div>
             </div>
 
             <Button
@@ -318,7 +318,7 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
                 triggerLight();
                 onNavigate('menu-dia');
               }}
-              className="min-h-11 px-3.5 text-xs font-bold shrink-0 self-end sm:self-center"
+              className="min-h-11 px-3.5 text-xs font-bold shrink-0 w-full sm:w-auto"
             >
               Definir menú
             </Button>

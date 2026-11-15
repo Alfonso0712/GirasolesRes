@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarCheck, AlertTriangle, Search, UtensilsCrossed, X } from 'lucide-react';
+import { CalendarCheck, AlertTriangle, CheckCircle2, Search, UtensilsCrossed, X } from 'lucide-react';
 import type { PlatoMenuDiaDto } from '../../services/menuDiaService';
 import { useHaptics } from '../../hooks/useHaptics';
 import { ErrorState } from '../ui/ErrorState';
@@ -196,7 +196,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
                 </div>
               </div>
 
-              {/* Botón táctil para alternar agotado */}
+              {/* Botón táctil solo ícono (44 px) para alternar agotado */}
               {puedeModificar && (
                 <div className="shrink-0">
                   {esAgotado ? (
@@ -205,9 +205,10 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
                       disabled={estaProcesando}
                       onClick={() => void ejecutarCambioDisponibilidad(plato, false)}
                       aria-label={`Marcar ${plato.nombre} como disponible`}
-                      className="bg-success text-white font-black text-xs px-3.5 py-2.5 rounded-xl min-h-[44px] flex items-center gap-1.5 active:scale-95 transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                      title="Marcar disponible"
+                      className="w-11 h-11 min-w-[44px] min-h-[44px] bg-success text-white rounded-xl flex items-center justify-center active:scale-95 transition-all shadow-xs disabled:opacity-50 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden"
                     >
-                      <span>Habilitar</span>
+                      <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
                     </button>
                   ) : (
                     <button
@@ -218,10 +219,10 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
                         setPlatoParaAgotar(plato);
                       }}
                       aria-label={`Marcar ${plato.nombre} como agotado`}
-                      className="bg-danger-bg text-danger border border-danger-border font-black text-xs px-3.5 py-2.5 rounded-xl min-h-[44px] flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+                      title="Marcar agotado"
+                      className="w-11 h-11 min-w-[44px] min-h-[44px] bg-danger-bg text-danger border border-danger-border rounded-xl flex items-center justify-center active:scale-95 transition-all disabled:opacity-50 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden"
                     >
-                      <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>Agotar</span>
+                      <AlertTriangle className="w-5 h-5" aria-hidden="true" />
                     </button>
                   )}
                 </div>

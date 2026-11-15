@@ -507,48 +507,47 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                   accent={esAnteriorSinCerrar ? 'danger' : estaAbierta ? 'success' : 'danger'}
                   className="space-y-4"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                          esAnteriorSinCerrar
-                            ? 'bg-danger-bg text-danger'
-                            : estaAbierta
-                            ? 'bg-success-bg text-success'
-                            : 'bg-danger-bg text-danger'
-                        }`}
-                      >
-                        {esAnteriorSinCerrar ? (
-                          <AlertTriangle className="w-6 h-6" aria-hidden="true" />
-                        ) : estaAbierta ? (
-                          <Unlock className="w-6 h-6" aria-hidden="true" />
-                        ) : (
-                          <Lock className="w-6 h-6" aria-hidden="true" />
-                        )}
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
-                          Estado del Turno
-                        </span>
-                        <h3 className="text-lg font-black text-ink">
-                          {esAnteriorSinCerrar
-                            ? 'Turno Anterior Sin Cerrar'
-                            : estaAbierta
-                            ? 'Caja Abierta y Operativa'
-                            : 'Caja Cerrada'}
-                        </h3>
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+                        esAnteriorSinCerrar
+                          ? 'bg-danger-bg text-danger'
+                          : estaAbierta
+                          ? 'bg-success-bg text-success'
+                          : 'bg-danger-bg text-danger'
+                      }`}
+                    >
+                      {esAnteriorSinCerrar ? (
+                        <AlertTriangle className="w-6 h-6" aria-hidden="true" />
+                      ) : estaAbierta ? (
+                        <Unlock className="w-6 h-6" aria-hidden="true" />
+                      ) : (
+                        <Lock className="w-6 h-6" aria-hidden="true" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block">
+                        Estado del Turno
+                      </span>
+                      <h3 className="text-lg font-black text-ink leading-snug">
+                        {esAnteriorSinCerrar
+                          ? 'Turno Anterior Sin Cerrar'
+                          : estaAbierta
+                          ? 'Caja Abierta y Operativa'
+                          : 'Caja Cerrada'}
+                      </h3>
+                      <div className="inline-flex flex-wrap items-center gap-2 mt-2">
+                        <StatusBadge
+                          estado={
+                            esAnteriorSinCerrar
+                              ? 'Inactiva'
+                              : estaAbierta
+                              ? 'Abierta'
+                              : 'Cerrada'
+                          }
+                        />
                       </div>
                     </div>
-
-                    <StatusBadge
-                      estado={
-                        esAnteriorSinCerrar
-                          ? 'Inactiva'
-                          : estaAbierta
-                          ? 'Abierta'
-                          : 'Cerrada'
-                      }
-                    />
                   </div>
 
                   {esAnteriorSinCerrar && (
@@ -837,11 +836,13 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                 onClick={() => handleVerDetalleCierre(c.cajaId)}
                 className="space-y-2 select-none"
               >
-                <div className="flex justify-between items-center gap-2">
-                  <span className="text-sm font-extrabold text-ink">
+                <div className="space-y-1.5">
+                  <span className="text-sm font-extrabold text-ink block">
                     {formatLimaFechaHora(c.fechaCierre || c.fechaApertura)}
                   </span>
-                  <StatusBadge estado={c.estadoCuadre || 'Cuadra'} />
+                  <div className="inline-flex flex-wrap items-center gap-2">
+                    <StatusBadge estado={c.estadoCuadre || 'Cuadra'} />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs text-ink-muted pt-1 border-t border-line">
                   <div>

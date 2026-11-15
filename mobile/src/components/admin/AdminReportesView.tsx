@@ -209,10 +209,10 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
             }}
           />
 
-          <div className="flex items-center justify-between gap-3 pt-2 border-t border-line/60">
-            <div className="flex items-center gap-1.5 text-xs text-ink-muted min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-line/60">
+            <div className="flex items-center gap-1.5 text-xs text-ink-muted min-w-0 flex-1">
               <Calendar className="w-3.5 h-3.5 text-accent shrink-0" aria-hidden="true" />
-              <span className="font-medium break-words">
+              <span className="font-medium">
                 {rangoActual
                   ? `${formatLimaFecha(rangoActual.desde)} — ${formatLimaFecha(rangoActual.hasta)}`
                   : 'Período actual'}
@@ -224,7 +224,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
               size="sm"
               disabled={descargandoPdf || cargando || sinDatosActual}
               onClick={() => void handleDescargarPdf()}
-              className="min-h-[44px] px-3 flex items-center gap-1.5 shrink-0 font-bold"
+              className="min-h-[44px] px-3 flex items-center justify-center gap-1.5 shrink-0 font-bold w-full sm:w-auto"
             >
               <FileDown className="w-4 h-4 text-accent" aria-hidden="true" />
               <span>{descargandoPdf ? 'Generando PDF…' : 'Descargar PDF'}</span>
@@ -425,20 +425,20 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
               {cierres.slice(0, 5).map((cierre) => (
                 <div
                   key={cierre.cajaId}
-                  className="py-2.5 flex justify-between items-center gap-3 text-xs"
+                  className="py-2.5 flex justify-between items-start gap-3 text-xs"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1 space-y-1">
                     <span className="font-bold text-ink block">
                       {formatLimaFechaHora(cierre.fechaCierre || cierre.fechaApertura)}
                     </span>
-                    <span className="text-ink-muted">Cajero: {cierre.cajero}</span>
+                    <span className="text-ink-muted block">Cajero: {cierre.cajero}</span>
+                    <div className="inline-flex pt-0.5">
+                      <StatusBadge estado={cierre.estadoCuadre || 'Cuadra'} />
+                    </div>
                   </div>
-                  <div className="text-right flex flex-col items-end gap-1 shrink-0">
-                    <span className="font-black text-accent tabular-nums">
-                      {formatCurrency(cierre.totalVentas)}
-                    </span>
-                    <StatusBadge estado={cierre.estadoCuadre || 'Cuadra'} />
-                  </div>
+                  <span className="font-black text-accent tabular-nums shrink-0 text-sm">
+                    {formatCurrency(cierre.totalVentas)}
+                  </span>
                 </div>
               ))}
             </div>

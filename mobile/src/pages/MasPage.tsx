@@ -3,16 +3,14 @@ import {
   Menu,
   CalendarCheck,
   User,
-  ChevronRight,
 } from 'lucide-react';
 import type { UserSession } from '../types/auth';
 import { puede } from '../config/permisos';
 import { useMenuDia } from '../hooks/useRecurso';
 import { useBackHandler } from '../hooks/useBackHandler';
-import { useHaptics } from '../hooks/useHaptics';
 import { PageHeader } from '../components/layout/PageHeader';
 import { AccesoRestringido } from '../components/layout/AccesoRestringido';
-import { Card } from '../components/ui/Card';
+import { FilaNavegacion } from '../components/ui/FilaNavegacion';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { DefinirMenuView } from '../components/menu-dia/DefinirMenuView';
 import { PerfilView } from '../components/perfil/PerfilView';
@@ -74,7 +72,6 @@ export const MasPage: React.FC<MasPageProps> = ({
 }) => {
   const autorizado = puede(session.rol, 'menuDia.definir');
   const [seccion, setSeccion] = useState<SeccionMasAdmin>(seccionInicial);
-  const { triggerLight } = useHaptics();
 
   useEffect(() => {
     setSeccion(seccionInicial);
@@ -144,41 +141,18 @@ export const MasPage: React.FC<MasPageProps> = ({
         {OPCIONES_MAS_ADMIN.map((item) => {
           const Icono = item.icono;
           return (
-            <Card
+            <FilaNavegacion
               key={item.id}
-              accent="none"
-              padding="none"
-              interactive
-              onClick={() => {
-                triggerLight();
-                cambiarSeccion(item.id);
-              }}
-              className="min-h-16 px-4 py-3 flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="w-11 h-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <Icono className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-extrabold text-ink leading-snug break-words">
-                    {item.titulo}
-                  </h3>
-                  <p className="text-xs text-ink-muted mt-0.5 break-words">
-                    {item.subtitulo}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                {item.mostrarEstadoMenu && (
+              icono={<Icono className="w-5 h-5" aria-hidden="true" />}
+              titulo={item.titulo}
+              descripcion={item.subtitulo}
+              etiqueta={
+                item.mostrarEstadoMenu ? (
                   <StatusBadge estado={etiquetaEstadoMenu} />
-                )}
-                <ChevronRight
-                  className="w-4 h-4 text-ink-muted shrink-0"
-                  aria-hidden="true"
-                />
-              </div>
-            </Card>
+                ) : undefined
+              }
+              onClick={() => cambiarSeccion(item.id)}
+            />
           );
         })}
       </div>
