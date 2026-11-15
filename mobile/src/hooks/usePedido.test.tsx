@@ -46,7 +46,7 @@ vi.mock('../services/menuDiaService', () => ({
   },
 }));
 
-const MESA_BASE: MesaItem = { id: 'm-1', nombre: 'Mesa 1', ocupacion: 'Libre', activa: true };
+const MESA_BASE: MesaItem = { id: 'mesa-1', nombre: 'Mesa 1', ocupacion: 'Libre', activa: true };
 
 describe('hooks de pedido (useBorradorStorage, usePedidoMesa, usePedidoLlevar)', () => {
   beforeEach(() => {
