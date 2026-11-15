@@ -1,23 +1,17 @@
 import React from 'react';
-import { Plus, Minus, Trash2, Send, Search, UtensilsCrossed, Utensils, FileText, Receipt } from 'lucide-react';
 import type { MesaItem } from '../../types/mesa';
-import type { MenuDiaResponseDto } from '../../types/menuDia';
+import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
 import type { RolUsuario } from '../../types/auth';
-import { ArmarMenuSheet } from './ArmarMenuSheet';
-import { NotaCocinaSheet } from './NotaCocinaSheet';
-import { BottomSheet } from '../ui/BottomSheet';
-import { ConfirmSheet } from '../ui/ConfirmSheet';
-import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
 import { StatusBadge } from '../ui/StatusBadge';
-import { FilterChipBar } from '../ui/FilterChipBar';
-import { SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
-import { ErrorState } from '../ui/ErrorState';
-import { EmptyState } from '../ui/EmptyState';
-import { usePedidoMesa } from '../../hooks/usePedidoMesa';
-import { formatCurrency, pluralizar } from '../../utils/format';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
+import { usePedidoMesa } from '../../hooks/usePedidoMesa';
+import { CatalogoPedidoPanel } from './CatalogoPedidoPanel';
+import { ComandaPanel } from './ComandaPanel';
+import { ResumenComandaMovil } from './ResumenComandaMovil';
+import { BannerBorradorMesa } from './BannerBorradorMesa';
+import { ModalesPedido, construirNotaYMenuModales } from './ModalesPedido';
+import type { ContenidoComandaProps } from './ContenidoComanda';
 
 interface PedidoMesaViewProps {
   mesa: MesaItem;
@@ -28,553 +22,72 @@ interface PedidoMesaViewProps {
   onPedidoExitoso: (mensaje: string) => void;
 }
 
-export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
-  mesa,
-  rol = 'Mozo',
-  menuDiaInicial = null,
-  onIrADefinirMenu,
-  onVolver,
-  onPedidoExitoso,
-}) => {
-  const {
-    catalogo,
-    menuDia,
-    cargando,
-    errorCarga,
-    errorEnvio,
-    categoriaActiva,
-    setCategoriaActiva,
-    busqueda,
-    setBusqueda,
-    lineas,
-    setLineas,
-    mostrarPanelOrden: mostrarCarrito,
-    setMostrarPanelOrden: setMostrarCarrito,
-    mostrarConfirmDescartar,
-    setMostrarConfirmDescartar,
-    mostrarConfirmEnviar,
-    setMostrarConfirmEnviar,
-    lineaParaNota,
-    setLineaParaNota,
-    menuParaArmar,
-    setMenuParaArmar,
-    pedidoActivo,
-    enviando,
-    hayBorradorGuardado,
-    borradorRecuperado,
-    sinConexion,
-    esMozo,
-    esAmpliacion,
-    total,
-    totalItems,
-    categoriasDinamicas,
-    menusFiltrados,
-    productosFiltrados,
-    cargarDatos,
-    agregarProducto,
-    modificarCantidad,
-    actualizarObservacion,
-    descartarBorradorGuardado,
-    restaurarBorradorGuardado,
-    solicitarVolver,
-    solicitarEnvioComanda,
-    ejecutarEnvioComanda,
-    descartarYVolver,
-    triggerLight,
-  } = usePedidoMesa({ mesa, rol, menuDiaInicial, onVolver, onPedidoExitoso });
+function construirContenidoMesa(p: ReturnType<typeof usePedidoMesa>): ContenidoComandaProps {
+  return {
+    config: { variante: 'mesa', lineas: p.lineas, total: p.total, totalItems: p.totalItems, errorEnvio: p.errorEnvio, enviando: p.enviando, sinConexion: p.sinConexion },
+    extra: { esMozo: p.esMozo, esAmpliacion: p.esAmpliacion },
+    acciones: { onModificarCantidad: p.modificarCantidad, onEditarNota: (l) => { p.triggerLight(); p.setLineaParaNota(l); }, onEnviar: p.solicitarEnvioComanda },
+  };
+}
 
-  const renderContenidoComanda = () => (
-    <div className="space-y-4">
-      {errorEnvio && (
-        <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
-          {errorEnvio}
-        </div>
+function construirCatalogoMesa(p: ReturnType<typeof usePedidoMesa>) {
+  return {
+    filtros: { busqueda: p.busqueda, onBusquedaChange: p.setBusqueda, categorias: p.categoriasDinamicas, categoriaActiva: p.categoriaActiva, onSelectCategoria: (cat: string) => { p.triggerLight(); p.setCategoriaActiva(cat); } },
+    estado: { cargando: p.cargando, catalogoVacio: p.catalogo.length === 0, errorCarga: p.errorCarga, onReintentar: p.cargarDatos, esMozo: p.esMozo, lineas: p.lineas },
+    acciones: { onArmarMenu: (m: MenuCompletoDiaDto) => { p.triggerLight(); p.setMenuParaArmar(m); }, onAgregarProducto: p.agregarProducto, onModificarCantidad: p.modificarCantidad },
+  };
+}
+
+function construirModalesMesa(p: ReturnType<typeof usePedidoMesa>, nombreMesa: string) {
+  const msgEnvio = p.esAmpliacion && p.pedidoActivo
+    ? `¿Desea enviar la ampliación del pedido N.º ${p.pedidoActivo.numero} de la ${nombreMesa} a cocina?`
+    : `¿Desea enviar la comanda de la ${nombreMesa} a cocina?`;
+  return {
+    envio: { abierto: p.mostrarConfirmEnviar, titulo: p.esAmpliacion ? 'Enviar ampliación a cocina' : 'Enviar comanda a cocina', mensaje: msgEnvio, etiquetaConfirmar: p.esAmpliacion ? 'Enviar ampliación' : 'Enviar a cocina', onConfirmar: p.ejecutarEnvioComanda, onCancelar: () => p.setMostrarConfirmEnviar(false) },
+    descarte: { abierto: p.mostrarConfirmDescartar, titulo: 'Descartar pedido en curso', mensaje: '', mensajeDescarte: 'Tiene un pedido con platos seleccionados sin registrar. ¿Desea descartarlo? Los platos no se enviarán a cocina.', etiquetaConfirmar: 'Descartar', onConfirmar: p.descartarYVolver, onCancelar: () => p.setMostrarConfirmDescartar(false) },
+    ...construirNotaYMenuModales(p, p.esMozo),
+  };
+}
+
+function renderBannersMesa(
+  p: ReturnType<typeof usePedidoMesa>,
+  rol: RolUsuario,
+  onVolver: () => void,
+  onIrADefinirMenu?: () => void
+) {
+  const irADefinir = onIrADefinirMenu ? () => { onVolver(); onIrADefinirMenu(); } : undefined;
+  return (
+    <>
+      {!p.cargando && p.menuDia !== null && !p.menuDia.definido && (
+        <div className="px-4 pt-3 shrink-0"><BannerMenuNoDefinido rol={rol} onDefinirMenu={irADefinir} /></div>
       )}
-
-      <div className="divide-y divide-line">
-        {lineas.map((linea) => (
-          <div key={linea.id} className="py-3 space-y-2">
-            <div className="flex justify-between items-start gap-3">
-              <div className="min-w-0 flex-1">
-                <h4 className="text-sm font-bold text-ink">{linea.nombre}</h4>
-                {linea.elecciones && linea.elecciones.length > 0 && (
-                  <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
-                    {linea.elecciones.map((el) => (
-                      <div key={el.parte} className="flex justify-between gap-2">
-                        <span className="font-semibold text-ink shrink-0">{el.parte}:</span>
-                        <span className="text-ink-muted text-right min-w-0">{el.productoNombre}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {/* RV-154: Ocultar importes si es Mozo */}
-                {!esMozo && (
-                  <p className="text-xs text-ink-muted">
-                    {formatCurrency(linea.precioUnitario)} x {linea.cantidad} ={' '}
-                    <span className="font-bold text-ink">
-                      {formatCurrency(linea.subtotal)}
-                    </span>
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => modificarCantidad(linea.id, -1)}
-                  aria-label={
-                    linea.cantidad === 1
-                      ? `Eliminar ${linea.nombre} de la orden`
-                      : `Disminuir cantidad de ${linea.nombre}`
-                  }
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
-                >
-                  {linea.cantidad === 1 ? (
-                    <Trash2 className="w-4 h-4" aria-hidden="true" />
-                  ) : (
-                    <Minus className="w-4 h-4" aria-hidden="true" />
-                  )}
-                </button>
-                <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
-                  {linea.cantidad}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => modificarCantidad(linea.id, 1)}
-                  aria-label={`Aumentar cantidad de ${linea.nombre}`}
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-
-            {/* Botón táctil para nota de cocina con modal de 100 caracteres (P-C) */}
-            <div className="flex items-center gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  triggerLight();
-                  setLineaParaNota(linea);
-                }}
-                aria-label={`Nota de cocina para ${linea.nombre}`}
-                className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-surface border border-line cursor-pointer"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>{linea.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
-              </button>
-              {linea.observacion && (
-                <span className="text-xs text-ink-muted italic line-clamp-2 flex-1 min-w-0">
-                  "{linea.observacion}"
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Resumen Total: solo visible si no es Mozo */}
-      {!esMozo ? (
-        <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
-          <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-          <span className="text-xl font-black text-accent tabular-nums">
-            {formatCurrency(total)}
-          </span>
-        </div>
-      ) : (
-        <div className="p-3 rounded-xl bg-canvas border border-line flex justify-between items-center">
-          <span className="text-xs font-bold text-ink-muted">Cantidad total de ítems</span>
-          <span className="text-sm font-black text-ink">
-            {pluralizar(totalItems, 'producto', 'productos')}
-          </span>
-        </div>
+      {p.hayBorradorGuardado && p.borradorRecuperado && (
+        <BannerBorradorMesa cantidadPlatos={p.borradorRecuperado.length} onDescartar={p.descartarBorradorGuardado} onContinuar={p.restaurarBorradorGuardado} />
       )}
-
-      {/* Botón de Envío con ConfirmSheet previa */}
-      <Button
-        fullWidth
-        size="lg"
-        isLoading={enviando}
-        disabled={enviando || sinConexion}
-        title={sinConexion ? 'Sin conexión a internet' : undefined}
-        onClick={solicitarEnvioComanda}
-        className="flex items-center justify-center gap-2"
-      >
-        <Send className="w-5 h-5" />
-        <span>
-          {sinConexion
-            ? 'Sin conexión para enviar'
-            : esAmpliacion
-              ? 'Enviar Ampliación a Cocina'
-              : 'Enviar Pedido a Cocina'}
-        </span>
-      </Button>
-    </div>
+    </>
   );
+}
+
+/**
+ * Vista orquestadora de toma y ampliación de pedidos para una mesa de salón.
+ */
+export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
+  mesa, rol = 'Mozo', menuDiaInicial = null, onIrADefinirMenu, onVolver, onPedidoExitoso,
+}) => {
+  const p = usePedidoMesa({ mesa, rol, menuDiaInicial, onVolver, onPedidoExitoso });
+  const contenido = construirContenidoMesa(p);
+  const subtitulo = p.esAmpliacion && p.pedidoActivo ? `Ampliar pedido N.º ${p.pedidoActivo.numero}` : 'Toma de Pedido de Salón';
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
-      {/* 1. Encabezado con estado de mesa */}
-      <PageHeader
-        title={mesa.nombre}
-        subtitle={
-          esAmpliacion && pedidoActivo
-            ? `Ampliar pedido N.º ${pedidoActivo.numero}`
-            : 'Toma de Pedido de Salón'
-        }
-        onVolver={solicitarVolver}
-        etiquetas={<StatusBadge estado={esAmpliacion ? 'Ocupada' : mesa.ocupacion} />}
-        onRefresh={() => void cargarDatos(false)}
-        isRefreshing={cargando}
-      />
-
-      {!cargando && menuDia !== null && !menuDia.definido && (
-        <div className="px-4 pt-3 shrink-0">
-          <BannerMenuNoDefinido
-            rol={rol}
-            onDefinirMenu={
-              onIrADefinirMenu
-                ? () => {
-                    onVolver();
-                    onIrADefinirMenu();
-                  }
-                : undefined
-            }
-          />
-        </div>
-      )}
-
-      {/* Banner de Borrador Encontrado (P-G) */}
-      {hayBorradorGuardado && borradorRecuperado && (
-        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2.5 flex items-center justify-between gap-3 shrink-0">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-ink">
-              Tiene un pedido sin registrar ({pluralizar(borradorRecuperado.length, 'plato', 'platos')}).
-            </p>
-            <p className="text-xs text-ink-muted">¿Desea continuarlo?</p>
-          </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              type="button"
-              onClick={descartarBorradorGuardado}
-              className="px-2.5 py-1.5 rounded-lg border border-line bg-surface text-ink text-xs font-bold active:scale-95 cursor-pointer min-h-[44px]"
-            >
-              Descartar
-            </button>
-            <button
-              type="button"
-              onClick={restaurarBorradorGuardado}
-              className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold active:scale-95 cursor-pointer min-h-[44px]"
-            >
-              Continuar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Contenedor principal con división en dos paneles para tableta (md:) */}
+      <PageHeader title={mesa.nombre} subtitle={subtitulo} onVolver={p.solicitarVolver} etiquetas={<StatusBadge estado={p.esAmpliacion ? 'Ocupada' : mesa.ocupacion} />} onRefresh={() => void p.cargarDatos(false)} isRefreshing={p.cargando} />
+      {renderBannersMesa(p, rol, onVolver, onIrADefinirMenu)}
       <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
-        {/* Panel izquierdo: buscador, categorías y catálogo de productos */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          {/* 2. Buscador y Categorías Horizontales Dinámicas (P-A) */}
-          <div className="bg-surface border-b border-line px-4 py-2 shrink-0 space-y-2">
-        <div className="relative">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar plato o bebida..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink"
-          />
-        </div>
-
-        <FilterChipBar
-          chips={categoriasDinamicas.map((cat) => ({ id: cat, label: cat }))}
-          activeId={categoriaActiva}
-          onSelect={(cat) => {
-            triggerLight();
-            setCategoriaActiva(cat);
-          }}
-        />
+        <CatalogoPedidoPanel variante="mesa" {...construirCatalogoMesa(p)} menus={p.menusFiltrados} productos={p.productosFiltrados} />
+        <ComandaPanel contenido={contenido} tituloAside="Comanda de Sala" ariaLabelAside="Comanda de la mesa" vacioTitulo="Comanda vacía" vacioSubtitulo="Seleccione productos o menús del catálogo para agregarlos a la orden." />
       </div>
-
-      {/* 3. Catálogo de Platos con Categorías Reales */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32 md:pb-6">
-        {errorCarga && (
-          <ErrorState
-            mensaje={errorCarga}
-            onRetry={cargarDatos}
-            className="my-4"
-          />
-        )}
-
-        {cargando && catalogo.length === 0 && (
-          <SkeletonList count={5} />
-        )}
-
-        {!errorCarga && !cargando && productosFiltrados.length === 0 && menusFiltrados.length === 0 && (
-          <EmptyState
-            icon={UtensilsCrossed}
-            titulo="No hay productos disponibles"
-            subtitulo="No se encontraron productos disponibles en el catálogo para esta selección."
-          />
-        )}
-
-        {/* Sección de Menús Completos del Día (P-B) */}
-        {menusFiltrados.length > 0 && (
-          <div className="space-y-2 mb-3">
-            <div className="flex items-center gap-1.5 px-1 pt-1">
-              <Utensils className="w-4 h-4 text-accent" />
-              <span className="text-xs font-black text-ink uppercase tracking-wider">
-                Menús Completos del Día
-              </span>
-            </div>
-            {menusFiltrados.map((m) => (
-              <Card
-                key={m.id}
-                accent="info"
-                className="handed-card p-3.5 flex items-center justify-between gap-3 shadow-xs select-none"
-              >
-                <div className="handed-card-info flex-1 min-w-0 pr-3">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="text-sm font-extrabold text-ink leading-snug">{m.nombre}</h3>
-                    <span className="text-xs font-bold bg-chip-accent-bg text-accent border border-chip-accent-border px-1.5 py-0.5 rounded">
-                      Menú Completo
-                    </span>
-                  </div>
-                  <p className="text-xs text-ink-muted mt-0.5 line-clamp-2">
-                    {m.incluye || 'Entrada / Sopa + Segundo + Bebida'}
-                  </p>
-                  {!esMozo ? (
-                    <p className="text-xs font-extrabold text-accent mt-1 tabular-nums">
-                      {formatCurrency(m.precio)}
-                    </p>
-                  ) : (
-                    <p className="text-xs font-semibold text-ink-muted mt-1">
-                      Platos a elección
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    triggerLight();
-                    setMenuParaArmar(m);
-                  }}
-                  aria-label={`Armar ${m.nombre}`}
-                  title={`Armar ${m.nombre}`}
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden"
-                >
-                  <Plus className="w-5 h-5" aria-hidden="true" />
-                </button>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {productosFiltrados.map((prod) => {
-          const lineaActual = lineas.find((l) => l.productoId === prod.id);
-          const estaAgotado = Boolean(prod.agotado);
-
-          return (
-            <Card
-              key={prod.id}
-              className={`handed-card p-3.5 flex items-center justify-between gap-3 shadow-xs select-none ${
-                estaAgotado ? 'opacity-60 bg-surface/50' : ''
-              }`}
-            >
-              <div className="handed-card-info flex-1 min-w-0 pr-3">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <h3 className="text-sm font-bold text-ink leading-snug">{prod.nombre}</h3>
-                  {estaAgotado && (
-                    <span className="text-xs font-bold bg-danger-bg text-danger border border-danger-border px-1.5 py-0.5 rounded">
-                      Agotado
-                    </span>
-                  )}
-                </div>
-                {/* RV-154: Mozo ve la categoría, Admin/Cajero ve el precio en soles */}
-                {esMozo ? (
-                  <p className="text-xs font-semibold text-ink-muted mt-1">
-                    {prod.categoria}
-                  </p>
-                ) : (
-                  <p className="text-xs font-extrabold text-accent mt-1 tabular-nums">
-                    {formatCurrency(prod.precio)}
-                  </p>
-                )}
-              </div>
-
-              {/* Botones de acción táctil con mínimo 44px de área de toque */}
-              {estaAgotado ? (
-                <button
-                  type="button"
-                  disabled
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink-muted flex items-center justify-center cursor-not-allowed opacity-50 shrink-0"
-                  aria-label={`${prod.nombre} está agotado`}
-                >
-                  <Plus className="w-5 h-5" aria-hidden="true" />
-                </button>
-              ) : lineaActual ? (
-                <div className="handed-stepper flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
-                  <button
-                    type="button"
-                    onClick={() => modificarCantidad(lineaActual.id, -1)}
-                    aria-label={`Quitar uno de ${prod.nombre}`}
-                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
-                  >
-                    <Minus className="w-4 h-4" aria-hidden="true" />
-                  </button>
-                  <span className="text-sm font-black text-ink min-w-[24px] text-center tabular-nums">
-                    {lineaActual.cantidad}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => modificarCantidad(lineaActual.id, 1)}
-                    aria-label={`Agregar uno más de ${prod.nombre}`}
-                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" aria-hidden="true" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => agregarProducto(prod)}
-                  aria-label={`Agregar ${prod.nombre} a la comanda`}
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer"
-                >
-                  <Plus className="w-5 h-5" aria-hidden="true" />
-                </button>
-              )}
-            </Card>
-          );
-        })}
-      </div>
-        </div>
-
-        {/* Panel derecho: Comanda de Sala siempre visible en tableta / desktop */}
-        <aside
-          aria-label="Comanda de la mesa"
-          className="hidden md:flex md:w-80 lg:w-96 flex-col border-l border-line bg-surface min-h-0 shrink-0"
-        >
-          <div className="p-4 border-b border-line flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2">
-              <Receipt className="w-5 h-5 text-accent" aria-hidden="true" />
-              <h3 className="text-sm font-extrabold text-ink">Comanda de Sala</h3>
-            </div>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-              {pluralizar(totalItems, 'ítem', 'ítems')}
-            </span>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4">
-            {lineas.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-4 text-ink-muted">
-                <Receipt className="w-12 h-12 stroke-1 text-ink-muted/40 mb-2" aria-hidden="true" />
-                <p className="text-sm font-bold">Comanda vacía</p>
-                <p className="text-xs text-ink-muted mt-1">
-                  Seleccione productos o menús del catálogo para agregarlos a la orden.
-                </p>
-              </div>
-            ) : (
-              renderContenidoComanda()
-            )}
-          </div>
-        </aside>
-      </div>
-
-      {/* 4. Barra Inferior Fija (Sticky Bottom Bar - Thumb Zone) (Solo móvil) */}
-      {lineas.length > 0 && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
-          <button
-            type="button"
-            onClick={() => {
-              triggerLight();
-              setMostrarCarrito(true);
-            }}
-            className="handed-bar w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px] cursor-pointer"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-surface/20 flex items-center justify-center font-black text-xs">
-                {totalItems}
-              </div>
-              <span className="text-sm font-bold tracking-wide">
-                {esMozo ? 'Ver Comanda de Sala' : 'Ver Detalle del Pedido'}
-              </span>
-            </div>
-            {/* RV-154: Mozo ve cantidad de ítems, no monto monetario */}
-            <div className="text-sm font-black">
-              {esMozo ? pluralizar(totalItems, 'plato', 'platos') : formatCurrency(total)}
-            </div>
-          </button>
-        </div>
-      )}
-
-      {/* 5. Bottom Sheet: Detalle de Comanda y Envío a Cocina (Solo móvil) */}
-      <div className="md:hidden">
-        <BottomSheet
-          isOpen={mostrarCarrito}
-          onClose={() => setMostrarCarrito(false)}
-          title={`Comanda para ${mesa.nombre}`}
-        >
-          {renderContenidoComanda()}
-        </BottomSheet>
-      </div>
-
-      {/* Confirmación para Enviar Comanda a Cocina (P-C / P-D) */}
-      <ConfirmSheet
-        isOpen={mostrarConfirmEnviar}
-        titulo={esAmpliacion ? 'Enviar ampliación a cocina' : 'Enviar comanda a cocina'}
-        mensaje={
-          esAmpliacion && pedidoActivo
-            ? `¿Desea enviar la ampliación del pedido N.º ${pedidoActivo.numero} de la ${mesa.nombre} a cocina?`
-            : `¿Desea enviar la comanda de la ${mesa.nombre} a cocina?`
-        }
-        etiquetaConfirmar={esAmpliacion ? 'Enviar ampliación' : 'Enviar a cocina'}
-        etiquetaCancelar="Seguir editando"
-        tono="normal"
-        onConfirmar={ejecutarEnvioComanda}
-        onCancelar={() => setMostrarConfirmEnviar(false)}
-      />
-
-      {/* Modal para Nota de Cocina (P-C) */}
-      <NotaCocinaSheet
-        isOpen={Boolean(lineaParaNota)}
-        onClose={() => setLineaParaNota(null)}
-        nombrePlato={lineaParaNota?.nombre || ''}
-        notaInicial={lineaParaNota?.observacion || ''}
-        onGuardarNota={(nota) => {
-          if (lineaParaNota) {
-            actualizarObservacion(lineaParaNota.id, nota);
-            setLineaParaNota(null);
-          }
-        }}
-      />
-
-      {/* Confirmación para Descartar Pedido de Mesa */}
-      <ConfirmSheet
-        isOpen={mostrarConfirmDescartar}
-        titulo="Descartar pedido en curso"
-        mensaje="Tiene un pedido con platos seleccionados sin registrar. ¿Desea descartarlo? Los platos no se enviarán a cocina."
-        etiquetaConfirmar="Descartar"
-        etiquetaCancelar="Seguir editando"
-        tono="peligro"
-        onConfirmar={descartarYVolver}
-        onCancelar={() => setMostrarConfirmDescartar(false)}
-      />
-
-      {/* Asistente Paso a Paso para Armar Menú Completo (P-B) */}
-      <ArmarMenuSheet
-        isOpen={Boolean(menuParaArmar)}
-        onClose={() => setMenuParaArmar(null)}
-        menu={menuParaArmar}
-        esMozo={esMozo}
-        onAgregar={(nuevaLinea) => {
-          setLineas((prev) => [...prev, nuevaLinea]);
-          setMenuParaArmar(null);
-        }}
-      />
+      <ResumenComandaMovil contenido={contenido} abierto={p.mostrarPanelOrden} tituloSheet={`Comanda para ${mesa.nombre}`} onAbrir={() => { p.triggerLight(); p.setMostrarPanelOrden(true); }} onCerrar={() => p.setMostrarPanelOrden(false)} />
+      <ModalesPedido orden="mesa" {...construirModalesMesa(p, mesa.nombre)} />
     </div>
   );
 };

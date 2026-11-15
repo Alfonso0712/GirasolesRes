@@ -1,524 +1,63 @@
 import React from 'react';
-import { ShoppingBag, Plus, Minus, Search, Send, User, UtensilsCrossed, Utensils, FileText, Trash2, Receipt } from 'lucide-react';
-import { ArmarMenuSheet } from '../pedidos/ArmarMenuSheet';
-import { NotaCocinaSheet } from '../pedidos/NotaCocinaSheet';
-import { BottomSheet } from '../ui/BottomSheet';
-import { ConfirmSheet } from '../ui/ConfirmSheet';
-import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
-import { FilterChipBar } from '../ui/FilterChipBar';
-import { SkeletonList } from '../ui/Skeleton';
+import { ShoppingBag } from 'lucide-react';
 import { PageHeader } from '../layout/PageHeader';
-import { ErrorState } from '../ui/ErrorState';
-import { EmptyState } from '../ui/EmptyState';
-import { usePedidoLlevar } from '../../hooks/usePedidoLlevar';
-import { formatCurrency, pluralizar } from '../../utils/format';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
+import { usePedidoLlevar } from '../../hooks/usePedidoLlevar';
+import { CatalogoPedidoPanel } from '../pedidos/CatalogoPedidoPanel';
+import { ComandaPanel } from '../pedidos/ComandaPanel';
+import { ResumenComandaMovil } from '../pedidos/ResumenComandaMovil';
+import { CampoReferenciaLlevar } from '../pedidos/CampoReferenciaLlevar';
+import { ModalesPedido, construirNotaYMenuModales } from '../pedidos/ModalesPedido';
+import type { ContenidoComandaProps } from '../pedidos/ContenidoComanda';
 
 interface PedidoLlevarViewProps {
   onPedidoCreado: (mensaje: string) => void;
   onIrACobros?: () => void;
 }
 
-export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
-  onPedidoCreado,
-  onIrACobros,
-}) => {
-  const {
-    catalogo,
-    menuDia,
-    cargando,
-    errorCarga,
-    errorEnvio,
-    lineas,
-    setLineas,
-    referencia,
-    cambiarReferencia,
-    busqueda,
-    setBusqueda,
-    categoriaActiva,
-    setCategoriaActiva,
-    mostrarPanelOrden: mostrarResumen,
-    setMostrarPanelOrden: setMostrarResumen,
-    mostrarConfirmDescartar,
-    setMostrarConfirmDescartar,
-    mostrarConfirmEnviar,
-    setMostrarConfirmEnviar,
-    lineaParaNota,
-    setLineaParaNota,
-    menuParaArmar,
-    setMenuParaArmar,
-    enviando,
-    sinConexion,
-    total,
-    totalItems,
-    categoriasDinamicas,
-    menusFiltrados,
-    productosFiltrados,
-    cargarDatos,
-    agregarProducto,
-    modificarCantidad,
-    actualizarObservacion,
-    solicitarRegistroPedido,
-    ejecutarRegistroPedidoLlevar,
-    descartarPedido,
-    triggerLight,
-  } = usePedidoLlevar({ onPedidoCreado, onIrACobros });
+function construirContenidoLlevar(p: ReturnType<typeof usePedidoLlevar>): ContenidoComandaProps {
+  return {
+    config: { variante: 'llevar', lineas: p.lineas, total: p.total, totalItems: p.totalItems, errorEnvio: p.errorEnvio, enviando: p.enviando, sinConexion: p.sinConexion },
+    extra: { esMozo: false, referencia: p.referencia },
+    acciones: { onModificarCantidad: p.modificarCantidad, onEditarNota: (l) => { p.triggerLight(); p.setLineaParaNota(l); }, onEnviar: p.solicitarRegistroPedido },
+  };
+}
 
-  const renderContenidoResumen = () => (
-    <div className="space-y-4">
-      {errorEnvio && (
-        <div className="p-3 rounded-xl bg-danger-bg border border-danger-border text-danger text-xs font-bold">
-          {errorEnvio}
-        </div>
-      )}
+function construirModalesLlevar(p: ReturnType<typeof usePedidoLlevar>) {
+  return {
+    envio: { abierto: p.mostrarConfirmEnviar, titulo: 'Registrar pedido para llevar', mensaje: `¿Desea registrar el pedido para llevar a nombre de "${p.referencia.trim()}"? La comanda se enviará a cocina.`, etiquetaConfirmar: 'Registrar y enviar', onConfirmar: p.ejecutarRegistroPedidoLlevar, onCancelar: () => p.setMostrarConfirmEnviar(false) },
+    descarte: { abierto: p.mostrarConfirmDescartar, titulo: 'Descartar pedido en curso', mensaje: '', mensajeDescarte: 'Tiene un pedido para llevar sin registrar. ¿Desea descartarlo? Los productos seleccionados no se guardarán.', etiquetaConfirmar: 'Descartar', onConfirmar: p.descartarPedido, onCancelar: () => p.setMostrarConfirmDescartar(false) },
+    ...construirNotaYMenuModales(p, false),
+  };
+}
 
-      <div className="p-3 bg-canvas border border-line rounded-xl text-xs space-y-1">
-        <div className="flex justify-between items-center gap-2">
-          <span className="text-ink-muted shrink-0">Cliente / Referencia:</span>
-          <span className="font-bold text-ink text-right min-w-0">
-            {referencia.trim() || 'No indicada'}
-          </span>
-        </div>
-        {referencia.trim().length < 2 && (
-          <p className="text-danger text-xs font-medium">
-            Debe indicar una referencia de cliente entre 2 y 30 caracteres.
-          </p>
-        )}
-      </div>
-
-      <div className="divide-y divide-line max-h-[300px] md:max-h-none overflow-y-auto pr-1">
-        {lineas.map((l) => (
-          <div key={l.id} className="py-2.5 space-y-1.5">
-            <div className="flex justify-between items-start gap-3 text-xs">
-              <div className="min-w-0 flex-1">
-                <h4 className="font-bold text-ink">{l.nombre}</h4>
-                {l.elecciones && l.elecciones.length > 0 && (
-                  <div className="text-xs text-ink-muted bg-canvas p-1.5 rounded-lg border border-line space-y-0.5 mt-1">
-                    {l.elecciones.map((el) => (
-                      <div key={el.parte} className="flex justify-between gap-2">
-                        <span className="font-semibold text-ink shrink-0">{el.parte}:</span>
-                        <span className="text-ink-muted text-right min-w-0">{el.productoNombre}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="text-ink-muted mt-0.5">
-                  {formatCurrency(l.precioUnitario)} x {l.cantidad} ={' '}
-                  <span className="font-bold text-ink">{formatCurrency(l.subtotal)}</span>
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => modificarCantidad(l.id, -1)}
-                  aria-label={
-                    l.cantidad === 1
-                      ? `Eliminar ${l.nombre} de la orden`
-                      : `Disminuir cantidad de ${l.nombre}`
-                  }
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas text-danger flex items-center justify-center border border-line active:scale-95 transition-transform cursor-pointer"
-                >
-                  {l.cantidad === 1 ? (
-                    <Trash2 className="w-4 h-4" aria-hidden="true" />
-                  ) : (
-                    <Minus className="w-4 h-4" aria-hidden="true" />
-                  )}
-                </button>
-                <span className="text-sm font-black min-w-[24px] text-center tabular-nums">
-                  {l.cantidad}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => modificarCantidad(l.id, 1)}
-                  aria-label={`Aumentar cantidad de ${l.nombre}`}
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-
-            {/* Nota para cocina */}
-            <div className="flex items-center gap-2 pt-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  triggerLight();
-                  setLineaParaNota(l);
-                }}
-                aria-label={`Nota de cocina para ${l.nombre}`}
-                className="text-xs font-bold text-accent hover:underline flex items-center gap-1.5 py-1 px-2 rounded-lg bg-surface border border-line cursor-pointer"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>{l.observacion ? 'Modificar nota' : 'Agregar nota'}</span>
-              </button>
-              {l.observacion && (
-                <span className="text-xs text-ink-muted italic line-clamp-2 flex-1 min-w-0">
-                  "{l.observacion}"
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-3.5 rounded-2xl bg-canvas border border-line flex justify-between items-center">
-        <span className="text-sm font-bold text-ink-muted">Total a Pagar</span>
-        <span className="text-xl font-black text-accent tabular-nums">
-          {formatCurrency(total)}
-        </span>
-      </div>
-
-      <Button
-        fullWidth
-        size="lg"
-        isLoading={enviando}
-        disabled={referencia.trim().length < 2 || referencia.trim().length > 30 || sinConexion}
-        title={sinConexion ? 'Sin conexión a internet' : undefined}
-        onClick={solicitarRegistroPedido}
-        className="flex items-center justify-center gap-2"
-      >
-        <Send className="w-5 h-5" />
-        <span>
-          {sinConexion ? 'Sin conexión para registrar' : 'Confirmar Pedido para Llevar'}
-        </span>
-      </Button>
-    </div>
-  );
+/**
+ * Vista orquestadora para registrar pedidos rápidos para llevar desde mostrador.
+ */
+export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({ onPedidoCreado, onIrACobros }) => {
+  const p = usePedidoLlevar({ onPedidoCreado, onIrACobros });
+  const contenido = construirContenidoLlevar(p);
 
   return (
     <div className="flex-1 flex flex-col h-full bg-canvas overflow-hidden min-h-0">
-      {/* 1. Encabezado */}
-      <PageHeader
-        title="Pedido para Llevar"
-        subtitle="Toma rápida de órdenes de mostrador"
-        icon={<ShoppingBag className="w-5 h-5 text-white" aria-hidden="true" />}
-        onRefresh={() => void cargarDatos(false)}
-        isRefreshing={cargando}
-      />
-
-      {!cargando && menuDia !== null && !menuDia.definido && (
-        <div className="px-4 pt-3 shrink-0">
-          <BannerMenuNoDefinido rol="Cajero" />
-        </div>
+      <PageHeader title="Pedido para Llevar" subtitle="Toma rápida de órdenes de mostrador" icon={<ShoppingBag className="w-5 h-5 text-white" aria-hidden="true" />} onRefresh={() => void p.cargarDatos(false)} isRefreshing={p.cargando} />
+      {!p.cargando && p.menuDia !== null && !p.menuDia.definido && (
+        <div className="px-4 pt-3 shrink-0"><BannerMenuNoDefinido rol="Cajero" /></div>
       )}
-
-      {/* Contenedor principal con división en dos paneles para tableta (md:) */}
       <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
-        {/* Panel izquierdo: referencia, buscador, categorías y catálogo */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          {/* 2. Referencia de Cliente Obligatoria (2-30 caracteres) y Buscador */}
-          <div className="bg-surface border-b border-line px-4 py-2.5 shrink-0 space-y-2">
-        <div className="space-y-1">
-          <div className="flex justify-between items-center text-xs">
-            <label htmlFor="ref-cliente" className="font-bold text-ink">
-              Cliente / Referencia <span className="text-danger">*</span>
-            </label>
-            <span
-              className={`font-mono text-xs ${
-                referencia.trim().length >= 2 && referencia.trim().length <= 30
-                  ? 'text-success'
-                  : 'text-ink-muted'
-              }`}
-            >
-              {referencia.length}/30
-            </span>
-          </div>
-          <div className="relative">
-            <User className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
-            <input
-              id="ref-cliente"
-              type="text"
-              maxLength={30}
-              value={referencia}
-              onChange={(e) => cambiarReferencia(e.target.value)}
-              placeholder="Nombre o referencia del cliente (ej. Juan P.)"
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink font-medium"
-            />
-          </div>
-        </div>
-
-        <div className="relative">
-          <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" aria-hidden="true" />
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar plato o bebida..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink"
-          />
-        </div>
-
-        {/* Chips de Categorías Dinámicas */}
-        <FilterChipBar
-          chips={categoriasDinamicas.map((cat) => ({ id: cat, label: cat }))}
-          activeId={categoriaActiva}
-          onSelect={(cat) => {
-            triggerLight();
-            setCategoriaActiva(cat);
-          }}
+        <CatalogoPedidoPanel
+          variante="llevar"
+          cabeceraExtra={<CampoReferenciaLlevar referencia={p.referencia} onChange={p.cambiarReferencia} />}
+          filtros={{ busqueda: p.busqueda, onBusquedaChange: p.setBusqueda, categorias: p.categoriasDinamicas, categoriaActiva: p.categoriaActiva, onSelectCategoria: (cat) => { p.triggerLight(); p.setCategoriaActiva(cat); } }}
+          estado={{ cargando: p.cargando, catalogoVacio: p.catalogo.length === 0, errorCarga: p.errorCarga, onReintentar: p.cargarDatos, lineas: p.lineas }}
+          menus={p.menusFiltrados}
+          productos={p.productosFiltrados}
+          acciones={{ onArmarMenu: (m) => { p.triggerLight(); p.setMenuParaArmar(m); }, onAgregarProducto: p.agregarProducto, onModificarCantidad: p.modificarCantidad }}
         />
+        <ComandaPanel contenido={contenido} tituloAside="Orden para Llevar" ariaLabelAside="Resumen del pedido para llevar" vacioTitulo="Sin productos seleccionados" vacioSubtitulo="Ingrese la referencia del cliente y elija productos del catálogo." />
       </div>
-
-      {/* 3. Catálogo de Productos y Menús */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 pb-32 md:pb-6">
-        {errorCarga && (
-          <ErrorState
-            mensaje={errorCarga}
-            onRetry={cargarDatos}
-            className="my-4"
-          />
-        )}
-
-        {cargando && catalogo.length === 0 && (
-          <SkeletonList count={5} />
-        )}
-
-        {!errorCarga && !cargando && productosFiltrados.length === 0 && menusFiltrados.length === 0 && (
-          <EmptyState
-            icon={UtensilsCrossed}
-            titulo="No hay productos disponibles"
-            subtitulo="No se encontraron productos disponibles en el catálogo para llevar."
-          />
-        )}
-
-        {/* Menús Completos del Día */}
-        {menusFiltrados.length > 0 && (
-          <div className="space-y-2 mb-3">
-            <div className="flex items-center gap-1.5 px-1 pt-1">
-              <Utensils className="w-4 h-4 text-accent" />
-              <span className="text-xs font-black text-ink uppercase tracking-wider">
-                Menús Completos del Día
-              </span>
-            </div>
-            {menusFiltrados.map((m) => (
-              <Card
-                key={m.id}
-                accent="info"
-                className="handed-card p-3.5 flex items-center justify-between gap-3 shadow-xs select-none"
-              >
-                <div className="handed-card-info flex-1 min-w-0 pr-3">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="text-sm font-extrabold text-ink leading-snug">{m.nombre}</h3>
-                    <span className="text-xs font-bold bg-chip-accent-bg text-accent border border-chip-accent-border px-1.5 py-0.5 rounded">
-                      Menú Completo
-                    </span>
-                  </div>
-                  <p className="text-xs text-ink-muted mt-0.5 line-clamp-2">
-                    {m.incluye || 'Entrada / Sopa + Segundo + Bebida'}
-                  </p>
-                  <p className="text-xs font-extrabold text-accent mt-1 tabular-nums">
-                    {formatCurrency(m.precio)}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    triggerLight();
-                    setMenuParaArmar(m);
-                  }}
-                  aria-label={`Armar ${m.nombre}`}
-                  title={`Armar ${m.nombre}`}
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden"
-                >
-                  <Plus className="w-5 h-5" aria-hidden="true" />
-                </button>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Productos de Carta */}
-        {productosFiltrados.map((prod) => {
-          const linea = lineas.find((l) => l.productoId === prod.id);
-          const estaAgotado = Boolean(prod.agotado);
-
-          return (
-            <Card
-              key={prod.id}
-              className={`handed-card p-3.5 flex items-center justify-between gap-3 shadow-xs select-none ${
-                estaAgotado ? 'opacity-60 bg-surface/50' : ''
-              }`}
-            >
-              <div className="handed-card-info flex-1 min-w-0 pr-3">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <h3 className="text-sm font-bold text-ink">{prod.nombre}</h3>
-                  {estaAgotado && (
-                    <span className="text-xs font-bold bg-danger-bg text-danger border border-danger-border px-1.5 py-0.5 rounded">
-                      Agotado
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs font-extrabold text-accent mt-0.5 tabular-nums">
-                  {formatCurrency(prod.precio)}
-                </p>
-              </div>
-
-              {estaAgotado ? (
-                <button
-                  type="button"
-                  disabled
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-canvas border border-line text-ink-muted flex items-center justify-center cursor-not-allowed opacity-50 shrink-0"
-                  aria-label={`${prod.nombre} está agotado`}
-                >
-                  <Plus className="w-5 h-5" aria-hidden="true" />
-                </button>
-              ) : linea ? (
-                <div className="handed-stepper flex items-center gap-1.5 bg-canvas border border-line rounded-xl p-1">
-                  <button
-                    type="button"
-                    onClick={() => modificarCantidad(linea.id, -1)}
-                    aria-label={`Quitar uno de ${prod.nombre}`}
-                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-surface text-danger flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
-                  >
-                    <Minus className="w-4 h-4" aria-hidden="true" />
-                  </button>
-                  <span className="text-sm font-black text-ink min-w-[24px] text-center tabular-nums">
-                    {linea.cantidad}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => modificarCantidad(linea.id, 1)}
-                    aria-label={`Agregar uno más de ${prod.nombre}`}
-                    className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" aria-hidden="true" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => agregarProducto(prod)}
-                  aria-label={`Agregar ${prod.nombre} al pedido`}
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-primary text-white flex items-center justify-center active:scale-95 shadow-xs shrink-0 cursor-pointer"
-                >
-                  <Plus className="w-5 h-5" aria-hidden="true" />
-                </button>
-              )}
-            </Card>
-          );
-        })}
-      </div>
-        </div>
-
-        {/* Panel derecho: Resumen de la Orden siempre visible en tableta / desktop */}
-        <aside
-          aria-label="Resumen del pedido para llevar"
-          className="hidden md:flex md:w-80 lg:w-96 flex-col border-l border-line bg-surface min-h-0 shrink-0"
-        >
-          <div className="p-4 border-b border-line flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2">
-              <Receipt className="w-5 h-5 text-accent" aria-hidden="true" />
-              <h3 className="text-sm font-extrabold text-ink">Orden para Llevar</h3>
-            </div>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-              {pluralizar(totalItems, 'ítem', 'ítems')}
-            </span>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4">
-            {lineas.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-4 text-ink-muted">
-                <Receipt className="w-12 h-12 stroke-1 text-ink-muted/40 mb-2" aria-hidden="true" />
-                <p className="text-sm font-bold">Sin productos seleccionados</p>
-                <p className="text-xs text-ink-muted mt-1">
-                  Ingrese la referencia del cliente y elija productos del catálogo.
-                </p>
-              </div>
-            ) : (
-              renderContenidoResumen()
-            )}
-          </div>
-        </aside>
-      </div>
-
-      {/* 4. Barra Inferior Táctil (Sticky Bottom Bar) (Solo móvil) */}
-      {lineas.length > 0 && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-line shadow-2xl safe-bottom z-30">
-          <button
-            type="button"
-            onClick={() => {
-              triggerLight();
-              setMostrarResumen(true);
-            }}
-            className="handed-bar w-full bg-primary text-white rounded-2xl p-4 flex items-center justify-between shadow-lg active:scale-98 transition-all min-h-[56px] cursor-pointer"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-surface/20 flex items-center justify-center font-black text-xs">
-                {totalItems}
-              </div>
-              <span className="text-sm font-bold tracking-wide">
-                Ver Orden ({pluralizar(totalItems, 'producto', 'productos')})
-              </span>
-            </div>
-            <div className="text-sm font-black tabular-nums">{formatCurrency(total)}</div>
-          </button>
-        </div>
-      )}
-
-      {/* 5. Bottom Sheet de Resumen de la Orden (Solo móvil) */}
-      <div className="md:hidden">
-        <BottomSheet
-          isOpen={mostrarResumen}
-          onClose={() => setMostrarResumen(false)}
-          title="Orden para Llevar"
-        >
-          {renderContenidoResumen()}
-        </BottomSheet>
-      </div>
-
-      {/* Confirmación para Registrar Pedido para Llevar (P-E) */}
-      <ConfirmSheet
-        isOpen={mostrarConfirmEnviar}
-        titulo="Registrar pedido para llevar"
-        mensaje={`¿Desea registrar el pedido para llevar a nombre de "${referencia.trim()}"? La comanda se enviará a cocina.`}
-        etiquetaConfirmar="Registrar y enviar"
-        etiquetaCancelar="Seguir editando"
-        tono="normal"
-        onConfirmar={ejecutarRegistroPedidoLlevar}
-        onCancelar={() => setMostrarConfirmEnviar(false)}
-      />
-
-      {/* Confirmación para Descartar Pedido para Llevar */}
-      <ConfirmSheet
-        isOpen={mostrarConfirmDescartar}
-        titulo="Descartar pedido en curso"
-        mensaje="Tiene un pedido para llevar sin registrar. ¿Desea descartarlo? Los productos seleccionados no se guardarán."
-        etiquetaConfirmar="Descartar"
-        etiquetaCancelar="Seguir editando"
-        tono="peligro"
-        onConfirmar={descartarPedido}
-        onCancelar={() => setMostrarConfirmDescartar(false)}
-      />
-
-      {/* Asistente Paso a Paso para Armar Menú Completo (P-E) */}
-      <ArmarMenuSheet
-        isOpen={Boolean(menuParaArmar)}
-        onClose={() => setMenuParaArmar(null)}
-        menu={menuParaArmar}
-        esMozo={false}
-        onAgregar={(nuevaLinea) => {
-          setLineas((prev) => [...prev, nuevaLinea]);
-          setMenuParaArmar(null);
-        }}
-      />
-
-      {/* Modal para Nota de Cocina (P-E) */}
-      <NotaCocinaSheet
-        isOpen={Boolean(lineaParaNota)}
-        onClose={() => setLineaParaNota(null)}
-        nombrePlato={lineaParaNota?.nombre || ''}
-        notaInicial={lineaParaNota?.observacion || ''}
-        onGuardarNota={(nota) => {
-          if (lineaParaNota) {
-            actualizarObservacion(lineaParaNota.id, nota);
-            setLineaParaNota(null);
-          }
-        }}
-      />
+      <ResumenComandaMovil contenido={contenido} abierto={p.mostrarPanelOrden} tituloSheet="Orden para Llevar" onAbrir={() => { p.triggerLight(); p.setMostrarPanelOrden(true); }} onCerrar={() => p.setMostrarPanelOrden(false)} />
+      <ModalesPedido orden="llevar" {...construirModalesLlevar(p)} />
     </div>
   );
 };
