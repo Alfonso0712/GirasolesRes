@@ -20,25 +20,12 @@ import { useBackHandler } from '../../hooks/useBackHandler';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { esProductoDeCarta } from '../../utils/pedidos';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoLlevarViewProps {
   onPedidoCreado: (mensaje: string) => void;
   onIrACobros?: () => void;
-}
-
-const ROLES_COMPONENTE_SET = new Set<string>([
-  'bebidadesayuno',
-  'platodesayuno',
-  'sopa',
-  'entrada',
-  'segundo',
-]);
-
-function esProductoDeCarta(prod: ProductoMenuPedidoDto): boolean {
-  if (prod.rol && prod.rol.trim() !== '') return false;
-  if (!prod.categoria) return false;
-  return !ROLES_COMPONENTE_SET.has(prod.categoria.trim().toLowerCase());
 }
 
 export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({

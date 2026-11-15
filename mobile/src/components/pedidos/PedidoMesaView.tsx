@@ -23,6 +23,7 @@ import { useBackHandler } from '../../hooks/useBackHandler';
 import { useToast } from '../../context/ToastContext';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { formatCurrency, pluralizar } from '../../utils/format';
+import { esProductoDeCarta } from '../../utils/pedidos';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoMesaViewProps {
@@ -32,23 +33,6 @@ interface PedidoMesaViewProps {
   onIrADefinirMenu?: () => void;
   onVolver: () => void;
   onPedidoExitoso: (mensaje: string) => void;
-}
-
-const ROLES_COMPONENTE_SET = new Set<string>([
-  'bebidadesayuno',
-  'platodesayuno',
-  'sopa',
-  'entrada',
-  'segundo',
-]);
-
-/**
- * RN-140: Los componentes de menú no se pueden ordenar como productos individuales de carta.
- */
-function esProductoDeCarta(prod: ProductoMenuPedidoDto): boolean {
-  if (prod.rol && prod.rol.trim() !== '') return false;
-  if (!prod.categoria) return false;
-  return !ROLES_COMPONENTE_SET.has(prod.categoria.trim().toLowerCase());
 }
 
 function esLineaBorrador(valor: unknown): valor is LineaBorrador {
