@@ -7,7 +7,7 @@ import {
 } from '../../utils/menuDia';
 import { Card } from '../ui/Card';
 import { Switch } from '../ui/Switch';
-import { formatCurrency } from '../../utils/format';
+import { formatCurrency, pluralizar } from '../../utils/format';
 import { useHaptics } from '../../hooks/useHaptics';
 
 export interface TarjetaMenuCompletoEdicionProps {
@@ -93,7 +93,7 @@ export const TarjetaMenuCompletoEdicion: React.FC<TarjetaMenuCompletoEdicionProp
               </span>
             ) : (
               <span className="text-ink-muted block mt-0.5 break-words">
-                {parte.opcionesNombres.length} opción(es):{' '}
+                {pluralizar(parte.opcionesNombres.length, 'opción', 'opciones')}:{' '}
                 {parte.opcionesNombres.join(', ')}
               </span>
             )}

@@ -940,7 +940,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
                   <div>
                     <p className="font-bold">No se puede cerrar la caja: hay pedidos pendientes</p>
                     <p>
-                      Hay {pedidosPendientes.length} pedido(s) pendiente(s) de cobro. Cobre o anule todos los pedidos antes de cerrar la caja.
+                      Hay {pluralizar(pedidosPendientes.length, 'pedido pendiente', 'pedidos pendientes')} de cobro. Cobre o anule todos los pedidos antes de cerrar la caja.
                     </p>
                   </div>
                 </div>
