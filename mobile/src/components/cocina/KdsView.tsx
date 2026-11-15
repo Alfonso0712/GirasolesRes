@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ChefHat, Clock, CheckCircle2, Flame, AlertTriangle, RotateCcw, X } from 'lucide-react';
 import type { ComandaKdsItem } from '../../types/comanda';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useAccionConAviso } from '../../hooks/useAccionConAviso';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { Card } from '../ui/Card';
@@ -45,6 +46,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
   const [deshaciendo, setDeshaciendo] = useState(false);
 
   const { triggerSuccess, triggerLight, triggerError } = useHaptics();
+  const { ejecutar } = useAccionConAviso();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Temporizador de 10 segundos para deshacer
@@ -71,42 +73,38 @@ export const KdsView: React.FC<KdsViewProps> = ({
     };
   }, [undoAccion, onShowToast]);
 
+  const alFallarAccion = () => { triggerError(); void onRefresh(); };
+
   const handleAccionEstado = async (comanda: ComandaKdsItem, nuevoEstado: 'enPreparacion' | 'lista') => {
     triggerLight();
     setProcesandoId(comanda.id);
-    try {
-      await onCambiarEstado(comanda.id, nuevoEstado);
+    const ok = await ejecutar(() => onCambiarEstado(comanda.id, nuevoEstado), {
+      mensajeError: 'No se pudo actualizar la comanda.',
+      prefijoServidor: 'No se pudo actualizar la comanda.',
+      reintentar: () => handleAccionEstado(comanda, nuevoEstado),
+      onError: alFallarAccion,
+    });
+    if (ok) {
       triggerSuccess();
       reproducirSonidoKds(nuevoEstado === 'enPreparacion' ? 'preparacion' : 'lista');
-
-      // Iniciar cuenta regresiva de 10 segundos para deshacer
-      setUndoAccion({
-        comandaId: comanda.id,
-        pedidoNumero: comanda.pedidoNumero,
-        nuevoEstado,
-        segundosRestantes: SEGUNDOS_UNDO_KDS,
-      });
-    } catch {
-      triggerError();
-    } finally {
-      setProcesandoId(null);
+      setUndoAccion({ comandaId: comanda.id, pedidoNumero: comanda.pedidoNumero, nuevoEstado, segundosRestantes: SEGUNDOS_UNDO_KDS });
     }
+    setProcesandoId(null);
   };
 
   const handleEjecutarDeshacer = async () => {
     if (!undoAccion || !onDeshacer) return;
+    const { comandaId } = undoAccion;
     setDeshaciendo(true);
     triggerLight();
-    try {
-      await onDeshacer(undoAccion.comandaId);
-      triggerSuccess();
-      onShowToast?.('Estado revertido con éxito.');
-      setUndoAccion(null);
-    } catch {
-      triggerError();
-    } finally {
-      setDeshaciendo(false);
-    }
+    const ok = await ejecutar(() => onDeshacer(comandaId), {
+      mensajeError: 'No se pudo revertir la comanda.',
+      prefijoServidor: 'No se pudo revertir la comanda.',
+      reintentar: () => handleEjecutarDeshacer(),
+      onError: alFallarAccion,
+    });
+    if (ok) { triggerSuccess(); onShowToast?.('Estado revertido con éxito.'); setUndoAccion(null); }
+    setDeshaciendo(false);
   };
 
   // Filtrado de comandas

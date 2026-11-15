@@ -78,7 +78,7 @@ export function usePedidoMesa({ mesa, rol, menuDiaInicial = null, onVolver, onPe
   const [pedidoActivo, setPedidoActivo] = useState<PedidoAbiertoMesaDto | null>(null);
   const draftKey = `girasoles_borrador_mesa_${mesa.id}`;
   const cargarAdicional = useCallback(async () => {
-    const pedidos = mesa.ocupacion === 'Ocupada' ? await pedidoService.obtenerPedidosActivosPorMesa(mesa.id).catch(() => []) : [];
+    const pedidos = mesa.ocupacion === 'Ocupada' ? await pedidoService.obtenerPedidosActivosPorMesa(mesa.id) : [];
     setPedidoActivo(pedidos.length > 0 ? pedidos[0] : null);
   }, [mesa.id, mesa.ocupacion]);
   const borrador = useBorradorPedido({ draftKey, menuDiaInicial, onCargarAdicional: cargarAdicional });

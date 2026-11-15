@@ -2,190 +2,27 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { mesaService } from '../services/mesaService';
 import { pedidoService } from '../services/pedidoService';
 import { cobroService } from '../services/cobroService';
-const INTERVALO_POLLING_MESAS_MS = 15_000;
 import { authService } from '../services/authService';
 import { evaluarVigenciaSesion } from '../config/sesion';
 import { puede } from '../config/permisos';
 import { mensajeDeError } from '../utils/errores';
-import type { MesaItem, PedidoMesaResumen } from '../types/mesa';
+import { useAvisoPorTransicion } from './useAvisoPorTransicion';
+import {
+  normalizarNombreMesa,
+  calcularMinutosOcupadaDesdeHora,
+  combinarMesasConPedidos,
+  preservarDatosMesasOcupadas,
+} from '../utils/mesasPedidos';
+import type { MesaItem } from '../types/mesa';
 import type { RolUsuario } from '../types/auth';
 import type { PedidoItemDto } from '../types/pedido';
 import type { PedidoPendienteCobro } from '../types/cobro';
 
-const ZONA_LIMA = 'America/Lima';
+export { normalizarNombreMesa, calcularMinutosOcupadaDesdeHora, combinarMesasConPedidos };
 
-/**
- * Normaliza el nombre de una mesa para comparaciones insensibles a mayúsculas y espacios.
- */
-export function normalizarNombreMesa(nombre?: string | null): string {
-  if (!nombre) return '';
-  return nombre.trim().toLowerCase().replace(/\s+/g, ' ');
-}
-
-/**
- * Calcula los minutos transcurridos desde una hora ("HH:mm" en America/Lima o ISO 8601)
- * hasta el instante `ahoraMs`. Devuelve `null` si la hora no es válida.
- * Nunca devuelve 0 para una mesa ocupada con hora válida (mínimo 1 minuto).
- */
-export function calcularMinutosOcupadaDesdeHora(
-  hora?: string | null,
-  ahoraMs: number = Date.now()
-): number | null {
-  if (!hora || typeof hora !== 'string') return null;
-  const limpia = hora.trim();
-  if (!limpia) return null;
-
-  // Caso 1: Cadena ISO o fecha completa
-  if (limpia.includes('T') || limpia.includes('-')) {
-    const fechaMs = new Date(limpia).getTime();
-    if (!isNaN(fechaMs)) {
-      const diffMin = Math.floor((ahoraMs - fechaMs) / 60_000);
-      return Math.max(1, diffMin);
-    }
-  }
-
-  // Caso 2: Formato "HH:mm" en hora de Lima
-  const match = /^(\d{1,2}):(\d{2})/.exec(limpia);
-  if (!match) return null;
-
-  const hPedido = Number(match[1]);
-  const mPedido = Number(match[2]);
-  if (isNaN(hPedido) || isNaN(mPedido) || hPedido < 0 || hPedido > 23 || mPedido < 0 || mPedido > 59) {
-    return null;
-  }
-
-  const partes = new Intl.DateTimeFormat('en-GB', {
-    timeZone: ZONA_LIMA,
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).formatToParts(new Date(ahoraMs));
-
-  const hActual = Number(partes.find((p) => p.type === 'hour')?.value ?? NaN);
-  const mActual = Number(partes.find((p) => p.type === 'minute')?.value ?? NaN);
-  if (isNaN(hActual) || isNaN(mActual)) return null;
-
-  const totalActual = hActual * 60 + mActual;
-  const totalPedido = hPedido * 60 + mPedido;
-
-  const diff =
-    totalActual >= totalPedido
-      ? totalActual - totalPedido
-      : totalActual + 24 * 60 - totalPedido;
-
-  return Math.max(1, diff);
-}
-
-/**
- * Determina si un estado de pedido corresponde a un pedido abierto en salón.
- */
-function esPedidoAbiertoEnMesa(estado?: string | null): boolean {
-  if (!estado) return false;
-  const norm = estado.trim().toLowerCase();
-  if (norm === 'pagado' || norm === 'anulado') return false;
-  if (norm.startsWith('pagado') || norm.endsWith('pagado')) return false;
-  return true;
-}
-
-/**
- * Combina la lista de mesas con los pedidos abiertos (del listado de pedidos o de cobros pendientes)
- * para poblar `totalPendiente`, `minutosOcupada` y `pedidosMesa` con datos reales.
- */
-export function combinarMesasConPedidos(
-  mesas: MesaItem[],
-  pedidosDia: PedidoItemDto[],
-  cobrosPendientes: PedidoPendienteCobro[],
-  ahoraMs: number = Date.now()
-): MesaItem[] {
-  return mesas.map((mesa) => {
-    if (mesa.ocupacion !== 'Ocupada') {
-      return {
-        ...mesa,
-        totalPendiente: null,
-        minutosOcupada: null,
-        pedidosMesa: [],
-      };
-    }
-
-    const nombreNorm = normalizarNombreMesa(mesa.nombre);
-    const mapaPedidos = new Map<string, PedidoMesaResumen>();
-    let mozoDetectado = mesa.mozo ?? null;
-
-    // 1. Incorporar desde cobrosPendientes (Cajero)
-    for (const c of cobrosPendientes) {
-      const coincideId = Boolean(c.mesaId && c.mesaId === mesa.id);
-      const nombreCobro = normalizarNombreMesa(c.mesa || c.mesaNombre);
-      const coincideNombre = Boolean(nombreNorm && nombreCobro && nombreNorm === nombreCobro);
-
-      if (coincideId || coincideNombre) {
-        const id = c.pedidoId;
-        mapaPedidos.set(id, {
-          id,
-          numero: c.numero ?? 0,
-          estado: c.estado || (c.estaListo ? 'Listo' : 'Pendiente'),
-          total: typeof c.total === 'number' ? c.total : 0,
-          hora: c.hora || c.fechaCreacion,
-        });
-        if (!mozoDetectado && c.mozoNombre) {
-          mozoDetectado = c.mozoNombre;
-        }
-      }
-    }
-
-    // 2. Incorporar desde pedidosDia (Administrador / Mozo / respaldo Cajero)
-    for (const p of pedidosDia) {
-      if (!esPedidoAbiertoEnMesa(p.estado)) continue;
-      const coincideNombre =
-        Boolean(nombreNorm) && normalizarNombreMesa(p.mesa) === nombreNorm;
-      if (!coincideNombre) continue;
-
-      const existente = mapaPedidos.get(p.id);
-      mapaPedidos.set(p.id, {
-        id: p.id,
-        numero: p.numero || existente?.numero || 0,
-        estado: p.estado || existente?.estado || 'Pendiente',
-        total: typeof p.total === 'number' ? p.total : (existente?.total ?? 0),
-        hora: p.hora || existente?.hora,
-      });
-      if (!mozoDetectado && p.registradoPor) {
-        mozoDetectado = p.registradoPor;
-      }
-    }
-
-    const listaPedidos = Array.from(mapaPedidos.values()).sort((a, b) => a.numero - b.numero);
-
-    // Calcular total acumulado real
-    let totalPendiente: number | null =
-      typeof mesa.totalPendiente === 'number' && mesa.totalPendiente > 0
-        ? mesa.totalPendiente
-        : null;
-
-    if (listaPedidos.length > 0) {
-      totalPendiente = listaPedidos.reduce((acc, item) => acc + item.total, 0);
-    }
-
-    // Calcular minutos ocupada reales (el mayor tiempo entre los pedidos abiertos de la mesa)
-    let minutosOcupada: number | null =
-      typeof mesa.minutosOcupada === 'number' && mesa.minutosOcupada > 0
-        ? mesa.minutosOcupada
-        : null;
-
-    for (const ped of listaPedidos) {
-      const min = calcularMinutosOcupadaDesdeHora(ped.hora, ahoraMs);
-      if (min !== null && (minutosOcupada === null || min > minutosOcupada)) {
-        minutosOcupada = min;
-      }
-    }
-
-    return {
-      ...mesa,
-      mozo: mozoDetectado,
-      totalPendiente,
-      minutosOcupada,
-      pedidosMesa: listaPedidos,
-    };
-  });
-}
+const INTERVALO_POLLING_MESAS_MS = 15_000;
+const MSG_ERROR_PEDIDOS_MESAS =
+  'No se pudieron cargar los pedidos de las mesas. Los totales no están disponibles.';
 
 export interface UseMesasConPedidosOpciones {
   rol?: RolUsuario;
@@ -201,10 +38,52 @@ export interface UseMesasConPedidosResultado {
   recargar: () => Promise<void>;
 }
 
+interface ResultadoPedidosMesas {
+  ok: boolean;
+  error?: unknown;
+  pedidosDia: PedidoItemDto[];
+  cobrosPendientes: PedidoPendienteCobro[];
+}
+
+async function consultarPedidosPorRol(rol?: RolUsuario): Promise<ResultadoPedidosMesas> {
+  if (puede(rol, 'cobros.procesar')) {
+    const [resCobros, resPedidos] = await Promise.allSettled([
+      cobroService.obtenerPedidosPendientes(),
+      pedidoService.listarPedidos({ tamano: 200 }),
+    ]);
+    const cobrosOk = resCobros.status === 'fulfilled';
+    const pedidosOk = resPedidos.status === 'fulfilled';
+    if (cobrosOk && pedidosOk) {
+      return {
+        ok: true,
+        cobrosPendientes: Array.isArray(resCobros.value) ? resCobros.value : [],
+        pedidosDia: Array.isArray(resPedidos.value) ? resPedidos.value : [],
+      };
+    }
+    const err =
+      resCobros.status === 'rejected'
+        ? resCobros.reason
+        : resPedidos.status === 'rejected'
+          ? resPedidos.reason
+          : undefined;
+    return { ok: false, error: err, pedidosDia: [], cobrosPendientes: [] };
+  }
+
+  try {
+    const lista = await pedidoService.listarPedidos({ tamano: 200 });
+    return {
+      ok: true,
+      pedidosDia: Array.isArray(lista) ? lista : [],
+      cobrosPendientes: [],
+    };
+  } catch (err: unknown) {
+    return { ok: false, error: err, pedidosDia: [], cobrosPendientes: [] };
+  }
+}
+
 /**
  * Hook con sondeo cada 15 segundos que obtiene las mesas del salón y las enriquece
- * con los pedidos abiertos reales según el rol (Cajero: cobros pendientes + pedidos;
- * Administrador y Mozo: listado de pedidos).
+ * con los pedidos abiertos reales según el rol.
  */
 export function useMesasConPedidos(
   opciones: UseMesasConPedidosOpciones = {}
@@ -216,6 +95,13 @@ export function useMesasConPedidos(
   const [cargandoPedidos, setCargandoPedidos] = useState<boolean>(enabled);
   const [error, setError] = useState<string | null>(null);
   const montadoRef = useRef<boolean>(true);
+  const mesasRef = useRef<MesaItem[]>([]);
+  const { registrarExito, registrarFallo } = useAvisoPorTransicion();
+
+  const actualizarMesas = useCallback((lista: MesaItem[]) => {
+    mesasRef.current = lista;
+    setMesas(lista);
+  }, []);
 
   const cargarTodo = useCallback(
     async (esFondo: boolean = false) => {
@@ -236,43 +122,37 @@ export function useMesasConPedidos(
         const mesasBase = await mesaService.getMesas({ incluirInactivas });
         if (!montadoRef.current) return;
 
-        const hayOcupadas = mesasBase.some((m) => m.ocupacion === 'Ocupada');
-        if (!hayOcupadas) {
-          setMesas(combinarMesasConPedidos(mesasBase, [], []));
-          setCargando(false);
-          setCargandoPedidos(false);
+        if (!mesasBase.some((m) => m.ocupacion === 'Ocupada')) {
+          actualizarMesas(combinarMesasConPedidos(mesasBase, [], []));
+          registrarExito();
           return;
         }
 
-        let pedidosDia: PedidoItemDto[] = [];
-        let cobrosPendientes: PedidoPendienteCobro[] = [];
-
-        if (puede(rol, 'cobros.procesar')) {
-          const [resCobros, resPedidos] = await Promise.allSettled([
-            cobroService.obtenerPedidosPendientes(),
-            pedidoService.listarPedidos({ tamano: 200 }),
-          ]);
-          if (resCobros.status === 'fulfilled' && Array.isArray(resCobros.value)) {
-            cobrosPendientes = resCobros.value;
-          }
-          if (resPedidos.status === 'fulfilled' && Array.isArray(resPedidos.value)) {
-            pedidosDia = resPedidos.value;
-          }
-        } else {
-          try {
-            pedidosDia = await pedidoService.listarPedidos({ tamano: 200 });
-          } catch {
-            pedidosDia = [];
-          }
-        }
-
+        const resPedidos = await consultarPedidosPorRol(rol);
         if (!montadoRef.current) return;
 
-        const enriquecidas = combinarMesasConPedidos(mesasBase, pedidosDia, cobrosPendientes);
-        setMesas(enriquecidas);
+        if (resPedidos.ok) {
+          actualizarMesas(
+            combinarMesasConPedidos(mesasBase, resPedidos.pedidosDia, resPedidos.cobrosPendientes)
+          );
+          registrarExito();
+        } else {
+          actualizarMesas(preservarDatosMesasOcupadas(mesasBase, mesasRef.current));
+          registrarFallo(resPedidos.error, {
+            mensajePorDefecto: MSG_ERROR_PEDIDOS_MESAS,
+            reintentar: () => cargarTodo(false),
+          });
+        }
       } catch (err: unknown) {
         if (!montadoRef.current) return;
-        setError(mensajeDeError(err, 'Error al cargar las mesas del salón.'));
+        if (esFondo && mesasRef.current.length > 0) {
+          registrarFallo(err, {
+            mensajePorDefecto: 'No se pudieron actualizar las mesas del salón.',
+            reintentar: () => cargarTodo(false),
+          });
+        } else {
+          setError(mensajeDeError(err, 'Error al cargar las mesas del salón.'));
+        }
       } finally {
         if (montadoRef.current) {
           setCargando(false);
@@ -280,7 +160,7 @@ export function useMesasConPedidos(
         }
       }
     },
-    [enabled, incluirInactivas, rol]
+    [enabled, incluirInactivas, rol, actualizarMesas, registrarExito, registrarFallo]
   );
 
   useEffect(() => {

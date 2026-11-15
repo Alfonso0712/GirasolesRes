@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useReportes } from '../hooks/useRecurso';
+import { useAccionConAviso } from '../hooks/useAccionConAviso';
 import { cajaService } from '../services/cajaService';
 import { puede } from '../config/permisos';
 import { AccesoRestringido } from '../components/layout/AccesoRestringido';
@@ -45,36 +46,39 @@ export const ReportesPage: React.FC<ReportesPageProps> = ({
   }, [periodo, mesElegido]);
 
   const { datos, cargando, error, recargar } = useReportes(rango, { enabled: autorizado });
+  const { ejecutar } = useAccionConAviso();
+
+  const cargarCierres = useCallback(
+    async (canceladoRef?: { current: boolean }) => {
+      await ejecutar(
+        async () => {
+          const res = await cajaService.obtenerHistorialCierres();
+          if (!canceladoRef?.current) setCierres(res.items || []);
+        },
+        {
+          mensajeError: 'No se pudo cargar el historial de cierres.',
+          reintentar: () => cargarCierres(),
+        }
+      );
+    },
+    [ejecutar]
+  );
 
   useEffect(() => {
     if (!autorizado) return;
-    let cancelado = false;
-    cajaService
-      .obtenerHistorialCierres()
-      .then((res) => {
-        if (!cancelado) setCierres(res.items || []);
-      })
-      .catch(() => {
-        if (!cancelado) setCierres([]);
-      });
-
+    const canceladoRef = { current: false };
+    void cargarCierres(canceladoRef);
     return () => {
-      cancelado = true;
+      canceladoRef.current = true;
     };
-  }, [autorizado]);
+  }, [autorizado, cargarCierres]);
 
   if (!autorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
   const handleRefresh = async () => {
-    await Promise.all([
-      recargar(),
-      cajaService
-        .obtenerHistorialCierres()
-        .then((res) => setCierres(res.items || []))
-        .catch(() => setCierres([])),
-    ]);
+    await Promise.all([recargar(), cargarCierres()]);
   };
 
   return (

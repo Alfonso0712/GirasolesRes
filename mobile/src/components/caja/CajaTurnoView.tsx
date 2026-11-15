@@ -43,7 +43,7 @@ import { useToast } from '../../context/ToastContext';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { calcularEfectivoEsperado } from '../../utils/caja';
 import { formatLimaFechaHora } from '../../utils/fechas';
-import { mensajeDeError } from '../../utils/errores';
+import { extraerEstadoError, mensajeDeError } from '../../utils/errores';
 import { puede } from '../../config/permisos';
 import { MONTO_MAXIMO_CAJA } from '../../config/constantes';
 
@@ -429,10 +429,11 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
       const msg = mensajeDeError(err, 'Error al cerrar caja');
       if (msg.toLowerCase().includes('concurrente') || msg.toLowerCase().includes('actualizado')) {
         try {
-          const nuevoResumen = await cajaService.obtenerResumenCierre();
-          setResumenCierre(nuevoResumen);
-        } catch {
-          // ignorar
+          setResumenCierre(await cajaService.obtenerResumenCierre());
+        } catch (errResumen: unknown) {
+          if (extraerEstadoError(errResumen) !== 401) {
+            mostrar({ tipo: 'error', mensaje: mensajeDeError(errResumen, 'No se pudo actualizar el resumen de cierre.') });
+          }
         }
       }
       setErrorModal(msg);

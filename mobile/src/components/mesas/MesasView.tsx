@@ -16,6 +16,7 @@ import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
 import { useHaptics } from '../../hooks/useHaptics';
+import { useAccionConAviso } from '../../hooks/useAccionConAviso';
 import { formatCurrency, pluralizar } from '../../utils/format';
 import { naturalCompare } from '../../utils/canonico';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
@@ -70,7 +71,8 @@ export const MesasView: React.FC<MesasViewProps> = ({
   const [mesaParaDesactivar, setMesaParaDesactivar] = useState<MesaItem | null>(null);
   const [desactivando, setDesactivando] = useState(false);
 
-  const { triggerLight, triggerSuccess } = useHaptics();
+  const { triggerLight, triggerSuccess, triggerError } = useHaptics();
+  const { ejecutar } = useAccionConAviso();
   const { sinConexion } = useNetworkStatus();
 
   const puedeGestionar = puede(rol, 'mesas.gestionar');
@@ -130,36 +132,30 @@ export const MesasView: React.FC<MesasViewProps> = ({
   };
 
   const handleGuardarForm = async (nombre: string) => {
-    if (mesaAEditar) {
-      if (onEditarMesa) {
-        await onEditarMesa(mesaAEditar.id, nombre);
-      }
-    } else {
-      if (onCrearMesa) {
-        await onCrearMesa(nombre);
-      }
-    }
+    if (mesaAEditar && onEditarMesa) await onEditarMesa(mesaAEditar.id, nombre);
+    else if (!mesaAEditar && onCrearMesa) await onCrearMesa(nombre);
     triggerSuccess();
   };
 
-  const handleActivarDirecto = async (mesa: MesaItem) => {
+  const cambiarEstadoConAviso = (mesa: MesaItem, activa: boolean, alCompletar: () => void) => {
+    if (!onCambiarEstadoMesa) return Promise.resolve();
+    return ejecutar(() => onCambiarEstadoMesa(mesa.id, activa), {
+      mensajeError: `No se pudo ${activa ? 'activar' : 'desactivar'} la mesa.`,
+      reintentar: () => void cambiarEstadoConAviso(mesa, activa, alCompletar),
+      onError: triggerError,
+    }).then((ok) => { if (ok) { triggerSuccess(); alCompletar(); } });
+  };
+
+  const handleActivarDirecto = (mesa: MesaItem) => {
     triggerLight();
-    if (onCambiarEstadoMesa) {
-      await onCambiarEstadoMesa(mesa.id, true);
-      triggerSuccess();
-    }
+    return cambiarEstadoConAviso(mesa, true, () => undefined);
   };
 
   const handleConfirmarDesactivar = async () => {
-    if (!mesaParaDesactivar || !onCambiarEstadoMesa) return;
+    if (!mesaParaDesactivar) return;
     setDesactivando(true);
-    try {
-      await onCambiarEstadoMesa(mesaParaDesactivar.id, false);
-      triggerSuccess();
-      setMesaParaDesactivar(null);
-    } finally {
-      setDesactivando(false);
-    }
+    await cambiarEstadoConAviso(mesaParaDesactivar, false, () => setMesaParaDesactivar(null));
+    setDesactivando(false);
   };
 
   const chips = useMemo(() => {

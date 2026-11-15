@@ -7,6 +7,7 @@ import { avisoService } from '../services/avisoService';
 import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
 import { esApiError, extraerEstadoError } from '../utils/errores';
 import { useHaptics } from './useHaptics';
+import { useAccionConAviso } from './useAccionConAviso';
 import type { RolUsuario } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
 
@@ -28,6 +29,7 @@ export function useKitchenNotifications({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { triggerSuccess } = useHaptics();
+  const { ejecutar } = useAccionConAviso();
   const triggerSuccessRef = useRef(triggerSuccess);
   triggerSuccessRef.current = triggerSuccess;
 
@@ -85,15 +87,19 @@ export function useKitchenNotifications({
     }
   }, [puedeConsultar]);
 
-  const marcarVisto = useCallback(async (id: string) => {
-    try {
-      await avisoService.marcarAvisoVisto(id);
-      setAvisos((prev) => prev.filter((a) => a.id !== id));
-      avisosPreviosRef.current.delete(id);
-    } catch (err) {
-      console.warn('Error al marcar aviso de comanda visto:', err);
-    }
-  }, []);
+  const marcarVisto = useCallback(
+    async (id: string) => {
+      const ok = await ejecutar(() => avisoService.marcarAvisoVisto(id), {
+        mensajeError: 'No se pudo marcar el aviso como visto.',
+        reintentar: () => marcarVisto(id),
+      });
+      if (ok) {
+        setAvisos((prev) => prev.filter((a) => a.id !== id));
+        avisosPreviosRef.current.delete(id);
+      }
+    },
+    [ejecutar]
+  );
 
   useEffect(() => {
     if (!puedeConsultar || !esSesionAlmacenadaValida()) {

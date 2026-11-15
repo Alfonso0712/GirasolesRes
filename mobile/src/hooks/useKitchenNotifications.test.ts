@@ -1,8 +1,14 @@
 // @vitest-environment jsdom
+import { createElement, type ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useKitchenNotifications } from './useKitchenNotifications';
+import { ToastProvider } from '../context/ToastContext';
 import { avisoService } from '../services/avisoService';
+
+function Wrapper({ children }: { children: ReactNode }) {
+  return createElement(ToastProvider, null, children);
+}
 
 vi.mock('../hooks/useHaptics', () => ({
   useHaptics: () => ({
@@ -25,8 +31,9 @@ describe('useKitchenNotifications - Avisos de Pedidos Listos', () => {
   it('no debe consultar avisos si el rol es Cocinero', async () => {
     const spy = vi.spyOn(avisoService, 'obtenerAvisosPendientes');
 
-    const { unmount } = renderHook(() =>
-      useKitchenNotifications({ rol: 'Cocinero', enabled: true })
+    const { unmount } = renderHook(
+      () => useKitchenNotifications({ rol: 'Cocinero', enabled: true }),
+      { wrapper: Wrapper }
     );
 
     expect(spy).not.toHaveBeenCalled();
@@ -47,8 +54,9 @@ describe('useKitchenNotifications - Avisos de Pedidos Listos', () => {
     vi.spyOn(avisoService, 'obtenerAvisosPendientes').mockResolvedValue([aviso1]);
     const marcarSpy = vi.spyOn(avisoService, 'marcarAvisoVisto').mockResolvedValue(undefined);
 
-    const { result, unmount } = renderHook(() =>
-      useKitchenNotifications({ rol: 'Mozo', enabled: true })
+    const { result, unmount } = renderHook(
+      () => useKitchenNotifications({ rol: 'Mozo', enabled: true }),
+      { wrapper: Wrapper }
     );
 
     await act(async () => {
