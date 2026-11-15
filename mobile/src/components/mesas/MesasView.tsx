@@ -196,6 +196,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
             : `${pluralizar(libresCount, 'libre', 'libres')} · ${pluralizar(ocupadasCount, 'ocupada', 'ocupadas')}`
         }
         icon={!modoGestion ? <Utensils className="w-5 h-5 text-white" aria-hidden="true" /> : undefined}
+        etiquetas={modoGestion ? <StatusBadge estado="Modo gestión" /> : undefined}
         onVolver={
           modoGestion
             ? () => {
@@ -208,19 +209,17 @@ export const MesasView: React.FC<MesasViewProps> = ({
         isRefreshing={cargando}
         actions={
           !modoGestion && puedeGestionar ? (
-            <Button
-              variant="secondary"
-              size="sm"
+            <IconButton
+              variant="outline"
               onClick={() => {
                 triggerLight();
                 onToggleModoGestion?.(true);
               }}
-              className="min-h-[44px] px-3 flex items-center gap-1.5 font-bold"
               aria-label="Gestionar mesas"
+              className="w-11 h-11 min-w-[44px] min-h-[44px]"
             >
-              <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
-              <span>Gestionar</span>
-            </Button>
+              <SlidersHorizontal className="w-5 h-5 text-ink" aria-hidden="true" />
+            </IconButton>
           ) : undefined
         }
       />

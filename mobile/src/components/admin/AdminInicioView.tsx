@@ -44,16 +44,6 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
 }) => {
   const { triggerLight } = useHaptics();
 
-  const textoActualizado = useMemo(() => {
-    if (!actualizadoEn) return 'Panel general del restaurante';
-    const segundos = Math.max(0, Math.floor((Date.now() - actualizadoEn.getTime()) / 1000));
-    if (segundos < 60) {
-      return `Actualizado hace ${segundos} s`;
-    }
-    const minutos = Math.floor(segundos / 60);
-    return `Actualizado hace ${pluralizar(minutos, 'minuto', 'minutos')}`;
-  }, [actualizadoEn]);
-
   const bloques = datos?.bloques || {};
   const ventasHoy = bloques.ventasHoy?.estado === 'ok' ? bloques.ventasHoy.datos : null;
   const mesas = bloques.mesas?.estado === 'ok' ? bloques.mesas.datos : null;
@@ -95,7 +85,8 @@ export const AdminInicioView: React.FC<AdminInicioViewProps> = ({
       {/* 1. Encabezado */}
       <PageHeader
         title="Inicio"
-        subtitle={textoActualizado}
+        subtitle="Panel general del restaurante"
+        actualizadoEn={actualizadoEn}
         icon={<LayoutDashboard className="w-5 h-5 text-white" aria-hidden="true" />}
         onRefresh={onRefresh}
         isRefreshing={cargando}

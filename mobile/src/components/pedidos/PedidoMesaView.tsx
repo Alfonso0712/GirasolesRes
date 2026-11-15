@@ -563,7 +563,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
             : 'Toma de Pedido de Salón'
         }
         onVolver={solicitarVolver}
-        actions={<StatusBadge estado={esAmpliacion ? 'Ocupada' : mesa.ocupacion} />}
+        etiquetas={<StatusBadge estado={esAmpliacion ? 'Ocupada' : mesa.ocupacion} />}
         onRefresh={() => void cargarDatos(false)}
         isRefreshing={cargando}
       />

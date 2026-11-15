@@ -192,7 +192,7 @@ export const DefinirMenuView: React.FC<DefinirMenuViewProps> = ({
           void recargar();
         }}
         isRefreshing={cargando}
-        actions={<StatusBadge estado={etiquetaEstadoMenu} />}
+        etiquetas={<StatusBadge estado={etiquetaEstadoMenu} />}
       />
 
       {headerExtra}
