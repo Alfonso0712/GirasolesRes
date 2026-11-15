@@ -26,14 +26,26 @@ const InicioPage = lazy(() => import('../pages/InicioPage'));
 const PerfilPage = lazy(() => import('../pages/PerfilPage'));
 const MasPage = lazy(() => import('../pages/MasPage'));
 
+export type VistaPestana =
+  | typeof SalonPage
+  | typeof PedidosPage
+  | typeof CocinaPage
+  | typeof PlatosPage
+  | typeof CajaPage
+  | typeof CobrosPage
+  | typeof LlevarPage
+  | typeof ReportesPage
+  | typeof InicioPage
+  | typeof PerfilPage
+  | typeof MasPage;
+
 export interface NavTabConfig {
   id: string;
   etiqueta: string; // Máximo 9 caracteres según glosario web
   label?: string; // Compatibilidad con BottomNav
   icono: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
   icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Componente polimórfico de vista diferida con props heterogéneas por rol
-  vista: React.LazyExoticComponent<React.ComponentType<any>>;
+  vista: VistaPestana;
 }
 
 /**

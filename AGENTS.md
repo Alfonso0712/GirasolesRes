@@ -131,3 +131,19 @@ Los siguientes archivos componen el núcleo de conexión y modo demostración de
 6. **Disciplina de Git:** Trabajar en la rama autorizada desde `main` con árbol limpio. Realizar un commit atómico por subpaso usando `git add` de RUTAS EXACTAS (prohibido `git add .` o `-A`). No realizar `push` ni `merge` sin instrucción explícita.
 7. **Resolución de contradicciones y seguridad:** Si algún requisito contradice los controladores del backend o la arquitectura del repositorio, detenerse y consultar. Prohibido imprimir contraseñas, tokens JWT o credenciales en registros e informes.
 
+---
+
+## 7. Reglas de arquitectura vigiladas (Móvil)
+
+El cliente móvil (`mobile/`) incorpora guardias automáticas de arquitectura y calidad ejecutadas mediante `npm --prefix mobile run check:arquitectura`, `npm --prefix mobile run check:layout`, `npm --prefix mobile run test:coverage` y `npm --prefix mobile run verify:todo`:
+
+1. **Seguridad de tipos y aserciones:** Prohibido usar `any`, aserciones non-null (`!`) y directivas `@ts-ignore` / `@ts-expect-error` en `mobile/src/`. Las aserciones `as` (distintas de `as const`) solo se toleran en la línea base documentada (`mobile/scripts/architecture-baseline.json`) sin admitir nuevos archivos ni incrementos.
+2. **Grafo sin ciclos y sin código muerto:** Cero importaciones circulares dentro de `mobile/src/` y cero exportaciones de valor sin uso fuera de la lista explícita en línea base.
+3. **Límites de tamaño con trinquete (*ratchet*):** Componentes en `mobile/src/components/**/*.tsx` hasta 150 líneas y módulos de producción restantes hasta 200 líneas. Ningún archivo nuevo puede exceder esos topes y los listados en línea base no pueden crecer.
+4. **Dirección estricta de dependencias entre capas:**
+   - `utils/`, `config/` y `types/` no importan de `services/`, `components/`, `pages/` ni `hooks/` (solo se tolera la tabla histórica de rutas diferidas en `config/navigation.ts`).
+   - `components/ui/` no importa de `services/`, `pages/` ni `components/<dominio>/`.
+   - `components/<dominio>/` no puede añadir nuevas importaciones de valor hacia `services/` respecto a la línea base.
+5. **Centralización de reglas de negocio:** Prohibido duplicar comparaciones directas de roles fuera de `config/permisos.ts` y `config/navigation.ts`, cálculos fiscales (`1.18` o umbral boleta `700`) fuera de `utils/fiscal.ts`, o constantes de carta (`ROLES_COMPONENTE`) fuera de `utils/pedidos.ts`.
+6. **Cobertura mínima:** `vitest.config.ts` exige umbrales mínimos globales y por capa (`utils/`, `config/`, `hooks/`, `components/ui/`, `services/`, `pages/`) integrados en `verify:todo` junto a `check:arquitectura`, `check:layout` y `check:budget`.
+
