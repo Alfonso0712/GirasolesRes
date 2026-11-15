@@ -128,8 +128,8 @@ describe('permisos - Matriz RBAC', () => {
     it('cada acción debe ser evaluable sin lanzar excepciones para todos los roles', () => {
       todasLasAcciones.forEach((accion) => {
         roles.forEach((rol) => {
-          const resultado = puede(rol, accion);
-          expect(typeof resultado).toBe('boolean');
+          const tienePermiso = puede(rol, accion);
+          expect(typeof tienePermiso).toBe('boolean');
         });
       });
     });

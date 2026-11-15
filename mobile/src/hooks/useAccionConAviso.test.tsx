@@ -17,15 +17,15 @@ describe('useAccionConAviso', () => {
 
   it('retorna true y no muestra toast cuando la accion tiene exito', async () => {
     const { result } = renderHook(() => useAccionConAviso(), { wrapper: Wrapper });
-    let exito = false;
+    let esExitoso = false;
 
     await act(async () => {
-      exito = await result.current.ejecutar(async () => undefined, {
+      esExitoso = await result.current.ejecutar(async () => undefined, {
         mensajeError: 'No se pudo completar la accion.',
       });
     });
 
-    expect(exito).toBe(true);
+    expect(esExitoso).toBe(true);
     expect(screen.queryByRole('alert')).toBeNull();
   });
 

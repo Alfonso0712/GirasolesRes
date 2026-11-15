@@ -30,17 +30,17 @@ describe('useAvisoPorTransicion', () => {
 
       useEffect(() => {
         const timer = setInterval(() => {
-          const ok = resultados[indice];
+          const esExitoso = resultados[indice];
           indice += 1;
-          if (ok) {
+          if (esExitoso) {
             registrarExito();
           } else {
-            const emitio = registrarFallo(
+            const estaEmitido = registrarFallo(
               new ApiError({ status: 503, mensaje: 'Servicio temporalmente no disponible' }),
               {
               mensajePorDefecto: 'No se pudieron cargar los pedidos de las mesas.',
             });
-            if (emitio) avisosEmitidos.push(indice);
+            if (estaEmitido) avisosEmitidos.push(indice);
           }
         }, 15_000);
         return () => clearInterval(timer);

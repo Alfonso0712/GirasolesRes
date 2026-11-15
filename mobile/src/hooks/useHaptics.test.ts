@@ -37,8 +37,8 @@ describe('useHaptics - Respuesta Háptica con Interruptor y Respaldo (R-B)', () 
   it('inicia habilitada por defecto e invoca Haptics.impact con estilo Light en triggerLight', async () => {
     const { result } = renderHook(() => useHaptics());
     expect(result.current.hapticsHabilitado).toBe(true);
-    const ok = await result.current.triggerLight();
-    expect(ok).toBe(true);
+    const tieneVibracion = await result.current.triggerLight();
+    expect(tieneVibracion).toBe(true);
     expect(Haptics.impact).toHaveBeenCalledWith({ style: ImpactStyle.Light });
   });
 
@@ -70,11 +70,11 @@ describe('useHaptics - Respuesta Háptica con Interruptor y Respaldo (R-B)', () 
     expect(result.current.hapticsHabilitado).toBe(false);
     expect(localStorage.getItem(CLAVE_HAPTICS)).toBe('false');
 
-    const okLight = await result.current.triggerLight();
-    const okProbar = await result.current.probarHaptics();
+    const tieneVibracionLight = await result.current.triggerLight();
+    const tieneVibracionProbar = await result.current.probarHaptics();
 
-    expect(okLight).toBe(false);
-    expect(okProbar).toBe(false);
+    expect(tieneVibracionLight).toBe(false);
+    expect(tieneVibracionProbar).toBe(false);
     expect(Haptics.impact).not.toHaveBeenCalled();
   });
 
@@ -88,11 +88,11 @@ describe('useHaptics - Respuesta Háptica con Interruptor y Respaldo (R-B)', () 
     });
 
     const { result } = renderHook(() => useHaptics());
-    const ok = await result.current.probarHaptics();
+    const tieneVibracion = await result.current.probarHaptics();
 
     expect(Haptics.impact).toHaveBeenCalledTimes(1);
     expect(vibrateMock).toHaveBeenCalledWith(20);
-    expect(ok).toBe(true);
+    expect(tieneVibracion).toBe(true);
   });
 
   it('retorna false en probarHaptics si ni el plugin ni navigator.vibrate están disponibles', async () => {
@@ -104,8 +104,8 @@ describe('useHaptics - Respuesta Háptica con Interruptor y Respaldo (R-B)', () 
     });
 
     const { result } = renderHook(() => useHaptics());
-    const ok = await result.current.probarHaptics();
+    const tieneVibracion = await result.current.probarHaptics();
 
-    expect(ok).toBe(false);
+    expect(tieneVibracion).toBe(false);
   });
 });

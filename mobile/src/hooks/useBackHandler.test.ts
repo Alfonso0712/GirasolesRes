@@ -9,9 +9,9 @@ describe('useBackHandler - Pila LIFO del Botón Atrás', () => {
     const unreg1 = pushBackHandler(handler1);
     const unreg2 = pushBackHandler(handler2);
 
-    const manejado = executeTopBackHandler();
+    const esManejado = executeTopBackHandler();
 
-    expect(manejado).toBe(true);
+    expect(esManejado).toBe(true);
     expect(handler2).toHaveBeenCalledTimes(1);
     expect(handler1).not.toHaveBeenCalled();
 
@@ -26,9 +26,9 @@ describe('useBackHandler - Pila LIFO del Botón Atrás', () => {
     const unreg1 = pushBackHandler(handlerFondo);
     const unreg2 = pushBackHandler(handlerTopePasa);
 
-    const manejado = executeTopBackHandler();
+    const esManejado = executeTopBackHandler();
 
-    expect(manejado).toBe(true);
+    expect(esManejado).toBe(true);
     expect(handlerTopePasa).toHaveBeenCalledTimes(1);
     expect(handlerFondo).toHaveBeenCalledTimes(1);
 
@@ -46,9 +46,9 @@ describe('useBackHandler - Pila LIFO del Botón Atrás', () => {
     // Desuscribimos el tope
     unreg2();
 
-    const manejado = executeTopBackHandler();
+    const esManejado = executeTopBackHandler();
 
-    expect(manejado).toBe(true);
+    expect(esManejado).toBe(true);
     expect(handler1).toHaveBeenCalledTimes(1);
     expect(handler2).not.toHaveBeenCalled();
 
