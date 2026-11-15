@@ -90,7 +90,7 @@ export const MesSheet: React.FC<MesSheetProps> = ({
   onClose,
   mesSeleccionadoId,
   selectedId,
-  incluirTodos = false,
+  incluirTodos: debeIncluirTodos = false,
   titulo = 'Seleccionar mes',
   onSeleccionar,
   onSelect,
@@ -116,7 +116,7 @@ export const MesSheet: React.FC<MesSheetProps> = ({
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title={titulo}>
       <div className="space-y-1.5 max-h-96 overflow-y-auto pr-1">
-        {incluirTodos && (
+        {debeIncluirTodos && (
           <button
             type="button"
             onClick={() => {
@@ -140,7 +140,7 @@ export const MesSheet: React.FC<MesSheetProps> = ({
         )}
 
         {meses.map((mes) => {
-          const activo = idActual === mes.id;
+          const estaActivo = idActual === mes.id;
           return (
             <button
               key={mes.id}
@@ -150,7 +150,7 @@ export const MesSheet: React.FC<MesSheetProps> = ({
                 onClose();
               }}
               className={`w-full min-h-11 px-3.5 py-2.5 rounded-xl border text-left flex items-center justify-between gap-3 transition-colors cursor-pointer ${
-                activo
+                estaActivo
                   ? 'bg-primary text-white border-primary font-bold'
                   : 'bg-canvas text-ink border-line hover:bg-surface-warm font-semibold'
               }`}
@@ -159,7 +159,7 @@ export const MesSheet: React.FC<MesSheetProps> = ({
                 <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>{mes.etiqueta}</span>
               </span>
-              {activo && <Check className="w-4 h-4 shrink-0" aria-hidden="true" />}
+              {estaActivo && <Check className="w-4 h-4 shrink-0" aria-hidden="true" />}
             </button>
           );
         })}

@@ -84,7 +84,7 @@ const App: React.FC = () => {
   const [masSeccionInicial, setMasSeccionInicial] = useState<'lista' | 'menu-dia' | 'perfil'>('lista');
   const [tieneCambiosMenuDia, setTieneCambiosMenuDia] = useState<boolean>(false);
   const [solicitudSalirMenuDia, setSolicitudSalirMenuDia] = useState<(() => void) | null>(null);
-  const [enPedidoModo, setEnPedidoModo] = useState<boolean>(false);
+  const [estaEnPedidoModo, setEstaEnPedidoModo] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
       return localStorage.getItem('girasoles_theme') === 'dark' || document.documentElement.classList.contains('dark');
@@ -188,20 +188,20 @@ const App: React.FC = () => {
   }
 
   const toggleDarkMode = () => {
-    setIsDark((prev) => {
-      const next = !prev;
+    setIsDark((estaOscuroPrevio) => {
+      const esOscuroSiguiente = !estaOscuroPrevio;
       try {
-        localStorage.setItem('girasoles_theme', next ? 'dark' : 'light');
+        localStorage.setItem('girasoles_theme', esOscuroSiguiente ? 'dark' : 'light');
       } catch {
         // Ignorar error de acceso a almacenamiento local
       }
-      if (next) {
+      if (esOscuroSiguiente) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      perfilService.actualizarTema(next ? 'dark' : 'light');
-      return next;
+      perfilService.actualizarTema(esOscuroSiguiente ? 'dark' : 'light');
+      return esOscuroSiguiente;
     });
   };
 
@@ -215,15 +215,15 @@ const App: React.FC = () => {
       setAvisoSesion(null);
     }
     setSession(null);
-    setEnPedidoModo(false);
+    setEstaEnPedidoModo(false);
     await authService.logout();
   }, [mostrar]);
 
   // Gestión de ciclo de vida de sesión e inactividad (10 min por rol / aviso a los 9 min)
   const {
-    avisoInactividadVisible,
+    avisoInactividadVisible: mostrarAvisoInactividad,
     segundosRestantes,
-    renovando: renovandoSesion,
+    renovando: estaRenovandoSesion,
     continuarSesion,
     cerrarSesionInactividad,
   } = useSesionInactividad({
@@ -260,7 +260,7 @@ const App: React.FC = () => {
 
       {/* 2. Contenedor principal responsive: riel lateral en tableta (md:) e inferior en móvil */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative min-h-0">
-        {!enPedidoModo && (
+        {!estaEnPedidoModo && (
           <BottomNav
             tabs={tabsDisponibles}
             currentTab={activeTab}
@@ -294,7 +294,7 @@ const App: React.FC = () => {
                     onNavigateToCobro={puede(session.rol, 'cobros.procesar') ? () => handleSelectTab('cobros') : undefined}
                     onIrADefinirMenu={puede(session.rol, 'menuDia.definir') ? () => handleSelectTab('menu-dia') : undefined}
                     onShowToast={showToast}
-                    onPedidoModoChange={setEnPedidoModo}
+                    onPedidoModoChange={setEstaEnPedidoModo}
                   />
                 )}
 
@@ -392,9 +392,9 @@ const App: React.FC = () => {
 
       {/* Aviso de inactividad con cuenta regresiva (RN-20 / RV-32) */}
       <InactivitySheet
-        isOpen={avisoInactividadVisible}
+        isOpen={mostrarAvisoInactividad}
         segundosRestantes={segundosRestantes}
-        renovando={renovandoSesion}
+        renovando={estaRenovandoSesion}
         onContinuar={continuarSesion}
         onCerrar={cerrarSesionInactividad}
       />

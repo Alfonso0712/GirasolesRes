@@ -17,10 +17,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   session,
   isDark,
   onToggleDarkMode,
-  sinConexion: propSinConexion,
+  sinConexion: estaSinConexionProp,
 }) => {
-  const { sinConexion: hookSinConexion } = useNetworkStatus();
-  const sinConexion = propSinConexion !== undefined ? propSinConexion : hookSinConexion;
+  const { sinConexion: estaSinConexionHook } = useNetworkStatus();
+  const estaSinConexion = estaSinConexionProp !== undefined ? estaSinConexionProp : estaSinConexionHook;
 
   return (
     <div className="relative z-20 shrink-0">
@@ -62,7 +62,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
       </header>
 
       {/* Banner de Estado Sin Conexión */}
-      {sinConexion && (
+      {estaSinConexion && (
         <div
           role="status"
           aria-live="assertive"

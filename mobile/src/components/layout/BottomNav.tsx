@@ -34,7 +34,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       {tabs.map((tab) => {
         const Icon = tab.icono || tab.icon;
         const texto = tab.etiqueta || tab.label;
-        const activo = currentTab === tab.id;
+        const estaActivo = currentTab === tab.id;
         const badgeCount = badges[tab.id] || 0;
 
         if (!Icon) return null;
@@ -43,17 +43,17 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           <button
             key={tab.id}
             type="button"
-            aria-current={activo ? 'page' : undefined}
+            aria-current={estaActivo ? 'page' : undefined}
             onClick={() => {
               triggerLight();
               onSelectTab(tab.id);
             }}
             className={`relative flex flex-col items-center justify-center min-w-[52px] md:w-full h-14 md:h-16 px-1.5 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-xl ${
-              activo ? 'text-accent font-bold' : 'text-ink-muted hover:text-ink'
+              estaActivo ? 'text-accent font-bold' : 'text-ink-muted hover:text-ink'
             }`}
           >
             {/* Indicador visual activo (superior en móvil, lateral izquierdo en tablet) */}
-            {activo && (
+            {estaActivo && (
               <span
                 aria-hidden="true"
                 className="absolute top-0 md:top-2 md:bottom-2 md:left-0 w-8 md:w-1 h-1 md:h-auto bg-primary rounded-full animate-in fade-in zoom-in-75 duration-200"

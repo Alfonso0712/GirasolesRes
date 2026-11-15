@@ -31,10 +31,10 @@ ReactDOM.createRoot(rootElement).render(
 );
 
 // Ocultar splash nativo tras el primer render garantizando dos requestAnimationFrame
-let splashHidden = false;
+let estaSplashOculto = false;
 const hideSplash = async (): Promise<void> => {
-  if (splashHidden) return;
-  splashHidden = true;
+  if (estaSplashOculto) return;
+  estaSplashOculto = true;
   try {
     await SplashScreen.hide({ fadeOutDuration: 200 });
   } catch {

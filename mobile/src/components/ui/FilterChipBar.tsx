@@ -89,15 +89,15 @@ export function FilterChipBar<T extends string = string>({
         aria-label={ariaLabel}
         className="flex gap-2 overflow-x-auto px-1 py-1 [scrollbar-width:none] [-webkit-overflow-scrolling:touch]"
       >
-        {chipList.map((item) => {
-          const isSelected = item.id === currentSelected;
+        {chipList.map((chip) => {
+          const isSelected = chip.id === currentSelected;
           return (
-            <div key={item.id} ref={isSelected ? activeRef : undefined} className="shrink-0">
+            <div key={chip.id} ref={isSelected ? activeRef : undefined} className="shrink-0">
               <FilterChip
-                label={item.label}
-                count={item.count}
+                label={chip.label}
+                count={chip.count}
                 active={isSelected}
-                onClick={() => onSelect(item.id)}
+                onClick={() => onSelect(chip.id)}
               />
             </div>
           );

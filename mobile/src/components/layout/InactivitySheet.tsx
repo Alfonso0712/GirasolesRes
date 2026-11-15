@@ -12,7 +12,7 @@ export interface InactivitySheetProps {
 export const InactivitySheet: React.FC<InactivitySheetProps> = ({
   isOpen,
   segundosRestantes,
-  renovando,
+  renovando: estaRenovando,
   onContinuar,
   onCerrar,
 }) => {
@@ -24,7 +24,7 @@ export const InactivitySheet: React.FC<InactivitySheetProps> = ({
       etiquetaConfirmar="Continuar"
       etiquetaCancelar="Cerrar sesión"
       tono="normal"
-      cargando={renovando}
+      cargando={estaRenovando}
       onConfirmar={() => void onContinuar()}
       onCancelar={() => void onCerrar()}
     />

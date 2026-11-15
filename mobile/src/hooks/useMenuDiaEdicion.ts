@@ -81,7 +81,7 @@ const SELECCION_VACIA: SeleccionMenuDia = {
 export function useMenuDiaEdicion(
   options?: UseMenuDiaEdicionOptions
 ): UseMenuDiaEdicionReturn {
-  const enabled = options?.enabled ?? true;
+  const estaHabilitado = options?.enabled ?? true;
 
   const fetcher = useCallback(async (): Promise<DatosEdicionMenuDia> => {
     const [hoy, candidatos] = await Promise.all([
@@ -94,17 +94,17 @@ export function useMenuDiaEdicion(
     };
   }, []);
 
-  const { datos, cargando, error, recargar, setDatos } = useRecurso<DatosEdicionMenuDia>(
+  const { datos, cargando: estaCargando, error, recargar, setDatos } = useRecurso<DatosEdicionMenuDia>(
     fetcher,
     {
       pausarEnSegundoPlano: true,
-      enabled,
+      enabled: estaHabilitado,
     }
   );
 
   const [original, setOriginal] = useState<SeleccionMenuDia>(SELECCION_VACIA);
   const [actual, setActual] = useState<SeleccionMenuDia>(SELECCION_VACIA);
-  const [guardando, setGuardando] = useState<boolean>(false);
+  const [estaGuardando, setEstaGuardando] = useState<boolean>(false);
   const [errorValidacion, setErrorValidacion] = useState<string | null>(null);
 
   useEffect(() => {
@@ -182,7 +182,7 @@ export function useMenuDiaEdicion(
       return { exito: false, mensaje: msg };
     }
 
-    setGuardando(true);
+    setEstaGuardando(true);
     setErrorValidacion(null);
     try {
       const payload = armarSolicitud(actual);
@@ -214,7 +214,7 @@ export function useMenuDiaEdicion(
         mensaje: msg,
       };
     } finally {
-      setGuardando(false);
+      setEstaGuardando(false);
     }
   }, [actual, candidatos, setDatos]);
 
@@ -226,8 +226,8 @@ export function useMenuDiaEdicion(
     original,
     actual,
     agotadosPorId,
-    cargando,
-    guardando,
+    cargando: estaCargando,
+    guardando: estaGuardando,
     error,
     errorValidacion,
     tieneCambios,

@@ -39,7 +39,7 @@ export interface UseMesasConPedidosResultado {
 }
 
 interface ResultadoPedidosMesas {
-  ok: boolean;
+  tuvoExito: boolean;
   error?: unknown;
   pedidosDia: PedidoItemDto[];
   cobrosPendientes: PedidoPendienteCobro[];
@@ -51,11 +51,11 @@ async function consultarPedidosPorRol(rol?: RolUsuario): Promise<ResultadoPedido
       cobroService.obtenerPedidosPendientes(),
       pedidoService.listarPedidos({ tamano: 200 }),
     ]);
-    const cobrosOk = resCobros.status === 'fulfilled';
-    const pedidosOk = resPedidos.status === 'fulfilled';
-    if (cobrosOk && pedidosOk) {
+    const tieneCobrosOk = resCobros.status === 'fulfilled';
+    const tienePedidosOk = resPedidos.status === 'fulfilled';
+    if (tieneCobrosOk && tienePedidosOk) {
       return {
-        ok: true,
+        tuvoExito: true,
         cobrosPendientes: Array.isArray(resCobros.value) ? resCobros.value : [],
         pedidosDia: Array.isArray(resPedidos.value) ? resPedidos.value : [],
       };
@@ -66,18 +66,18 @@ async function consultarPedidosPorRol(rol?: RolUsuario): Promise<ResultadoPedido
         : resPedidos.status === 'rejected'
           ? resPedidos.reason
           : undefined;
-    return { ok: false, error: err, pedidosDia: [], cobrosPendientes: [] };
+    return { tuvoExito: false, error: err, pedidosDia: [], cobrosPendientes: [] };
   }
 
   try {
     const lista = await pedidoService.listarPedidos({ tamano: 200 });
     return {
-      ok: true,
+      tuvoExito: true,
       pedidosDia: Array.isArray(lista) ? lista : [],
       cobrosPendientes: [],
     };
   } catch (err: unknown) {
-    return { ok: false, error: err, pedidosDia: [], cobrosPendientes: [] };
+    return { tuvoExito: false, error: err, pedidosDia: [], cobrosPendientes: [] };
   }
 }
 
@@ -88,11 +88,15 @@ async function consultarPedidosPorRol(rol?: RolUsuario): Promise<ResultadoPedido
 export function useMesasConPedidos(
   opciones: UseMesasConPedidosOpciones = {}
 ): UseMesasConPedidosResultado {
-  const { rol, incluirInactivas = false, enabled = true } = opciones;
+  const {
+    rol,
+    incluirInactivas: debeIncluirInactivas = false,
+    enabled: estaHabilitado = true,
+  } = opciones;
 
   const [mesas, setMesas] = useState<MesaItem[]>([]);
-  const [cargando, setCargando] = useState<boolean>(enabled);
-  const [cargandoPedidos, setCargandoPedidos] = useState<boolean>(enabled);
+  const [estaCargando, setEstaCargando] = useState<boolean>(estaHabilitado);
+  const [estaCargandoPedidos, setEstaCargandoPedidos] = useState<boolean>(estaHabilitado);
   const [error, setError] = useState<string | null>(null);
   const montadoRef = useRef<boolean>(true);
   const mesasRef = useRef<MesaItem[]>([]);
@@ -105,7 +109,7 @@ export function useMesasConPedidos(
 
   const cargarTodo = useCallback(
     async (esFondo: boolean = false) => {
-      if (!enabled) return;
+      if (!estaHabilitado) return;
 
       const sesion = authService.getStoredSession();
       if (!sesion || !evaluarVigenciaSesion(sesion).valida) {
@@ -113,13 +117,13 @@ export function useMesasConPedidos(
       }
 
       if (!esFondo) {
-        setCargando(true);
-        setCargandoPedidos(true);
+        setEstaCargando(true);
+        setEstaCargandoPedidos(true);
       }
       setError(null);
 
       try {
-        const mesasBase = await mesaService.getMesas({ incluirInactivas });
+        const mesasBase = await mesaService.getMesas({ incluirInactivas: debeIncluirInactivas });
         if (!montadoRef.current) return;
 
         if (!mesasBase.some((m) => m.ocupacion === 'Ocupada')) {
@@ -131,7 +135,7 @@ export function useMesasConPedidos(
         const resPedidos = await consultarPedidosPorRol(rol);
         if (!montadoRef.current) return;
 
-        if (resPedidos.ok) {
+        if (resPedidos.tuvoExito) {
           actualizarMesas(
             combinarMesasConPedidos(mesasBase, resPedidos.pedidosDia, resPedidos.cobrosPendientes)
           );
@@ -155,19 +159,19 @@ export function useMesasConPedidos(
         }
       } finally {
         if (montadoRef.current) {
-          setCargando(false);
-          setCargandoPedidos(false);
+          setEstaCargando(false);
+          setEstaCargandoPedidos(false);
         }
       }
     },
-    [enabled, incluirInactivas, rol, actualizarMesas, registrarExito, registrarFallo]
+    [estaHabilitado, debeIncluirInactivas, rol, actualizarMesas, registrarExito, registrarFallo]
   );
 
   useEffect(() => {
     montadoRef.current = true;
-    if (!enabled) {
-      setCargando(false);
-      setCargandoPedidos(false);
+    if (!estaHabilitado) {
+      setEstaCargando(false);
+      setEstaCargandoPedidos(false);
       return;
     }
 
@@ -183,7 +187,7 @@ export function useMesasConPedidos(
       montadoRef.current = false;
       window.clearInterval(id);
     };
-  }, [enabled, cargarTodo]);
+  }, [estaHabilitado, cargarTodo]);
 
   const recargar = useCallback(async () => {
     await cargarTodo(false);
@@ -191,8 +195,8 @@ export function useMesasConPedidos(
 
   return {
     mesas,
-    cargando,
-    cargandoPedidos,
+    cargando: estaCargando,
+    cargandoPedidos: estaCargandoPedidos,
     error,
     recargar,
   };
