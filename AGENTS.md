@@ -147,3 +147,17 @@ El cliente móvil (`mobile/`) incorpora guardias automáticas de arquitectura y 
 5. **Centralización de reglas de negocio:** Prohibido duplicar comparaciones directas de roles fuera de `config/permisos.ts` y `config/navigation.ts`, cálculos fiscales (`1.18` o umbral boleta `700`) fuera de `utils/fiscal.ts`, o constantes de carta (`ROLES_COMPONENTE`) fuera de `utils/pedidos.ts`.
 6. **Cobertura mínima:** `vitest.config.ts` exige umbrales mínimos globales y por capa (`utils/`, `config/`, `hooks/`, `components/ui/`, `services/`, `pages/`) integrados en `verify:todo` junto a `check:arquitectura`, `check:layout` y `check:budget`.
 
+---
+
+## 8. Política de Errores y Visibilidad del Estado (Móvil)
+
+Toda falla en operaciones asíncronas de `mobile/` debe regirse por la regla de comunicación uniforme según el origen del error:
+
+| Escenario | Comportamiento obligatorio | Utilidad / Hook | Estado visible |
+| --- | --- | --- | --- |
+| **Acción del usuario fallida** | Mostrar aviso de error con el mensaje del servidor (`ApiError` / `MSG-xx`) o el mensaje base seguro en Español y botón **`Reintentar`**. | `useAccionConAviso` | No inventar cambios ni alterar el estado visible actual; resincronizar si aplica (`KdsView`). |
+| **Carga periódica (polling) fallida** | **No** avisar en cada intervalo repetido. Emitir **un solo** aviso al pasar de OK a fallo y rearmar únicamente tras una carga exitosa. | `useAvisoPorTransicion` | Conservar datos válidos anteriores si existen; si nunca hubo datos para esa entidad, mantener `null` / **`—`** (prohibido inventar ceros). |
+| **Sesión expirada (`401`)** | No mostrar toast ni errores técnicos; el flujo global redirige al inicio de sesión. | `extraerEstadoError(err) === 401` | Se limpia sesión según ciclo de vida global. |
+| **Extracción de mensaje** | Mostrar `ApiError.mensaje` tal cual cuando exista; ante errores técnicos inesperados, devolver siempre el mensaje seguro por defecto (`porDefecto`). | `esApiError`, `mensajeDeError` | Prohibido exponer `err.message` técnico de JS/red al usuario o dejar bloques `catch {}` vacíos y promesas `void fn()` sin manejo. |
+
+

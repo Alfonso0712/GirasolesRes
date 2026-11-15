@@ -91,3 +91,13 @@ Los textos mostrados al usuario deben apegarse estrictamente a la nomenclatura o
 - **Acciones en filas:** Las acciones dentro de filas de lista deben ser botones solo de ícono de 44×44 px con `aria-label` para evitar comprimir el texto principal.
 - **Ancho mínimo de lectura:** El bloque textual principal (`flex-1 min-w-0`) debe conservar al menos el 60 % del ancho de la fila en pantallas de 360 px y 412 px.
 - **Integridad de palabras:** Está prohibido usar `break-all` o `overflow-wrap: anywhere`; los saltos de línea ocurren únicamente entre palabras completas (`check:layout`).
+
+---
+
+## 8. Avisos de Error
+
+- **Canal único:** Las fallas en acciones del usuario y degradaciones de carga periódica se comunican mediante `ToastProvider` (`tipo: 'error'`), conservando los estados de página completos (`ErrorState`) para fallas bloqueantes de carga inicial.
+- **Tono y claridad:** Todo aviso se redacta en **USTED**, mostrando verbatim los mensajes de negocio del servidor (`MSG-xx`) o un mensaje comprensible en español; jamás se muestran trazas técnicas ni mensajes internos en inglés.
+- **Acción de recuperación:** Las acciones de usuario fallidas incluyen la acción **`Reintentar`** y preservan intacto el estado visible previo hasta que el servidor confirme el cambio.
+- **Datos no disponibles:** Cuando una carga secundaria o de sondeo falla sin datos históricos previos para un monto o contador, se muestra **`—`** y nunca ceros inventados.
+- **Silencio ante `401`:** Los errores de autenticación (`401`) no generan toasts de error para no superponerse con la redirección global de sesión expirada.
