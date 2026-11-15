@@ -139,6 +139,13 @@ html, body {
   -webkit-user-select: none;
 }
 
+@layer base {
+  h1, h2, h3, h4, p, label, span, li, a {
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+}
+
 button, [role="button"] {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
