@@ -1,9 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React from 'react';
 import { ShoppingBag, Plus, Minus, Search, Send, User, UtensilsCrossed, Utensils, FileText, Trash2, Receipt } from 'lucide-react';
-import type { ProductoMenuPedidoDto, LineaBorrador } from '../../types/pedido';
-import type { MenuDiaResponseDto, MenuCompletoDiaDto } from '../../types/menuDia';
-import { pedidoService } from '../../services/pedidoService';
-import { menuDiaService } from '../../services/menuDiaService';
 import { ArmarMenuSheet } from '../pedidos/ArmarMenuSheet';
 import { NotaCocinaSheet } from '../pedidos/NotaCocinaSheet';
 import { BottomSheet } from '../ui/BottomSheet';
@@ -15,13 +11,8 @@ import { SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
 import { EmptyState } from '../ui/EmptyState';
-import { useHaptics } from '../../hooks/useHaptics';
-import { useBackHandler } from '../../hooks/useBackHandler';
-import { useToast } from '../../context/ToastContext';
-import { useNetworkStatus } from '../../hooks/useNetworkStatus';
+import { usePedidoLlevar } from '../../hooks/usePedidoLlevar';
 import { formatCurrency, pluralizar } from '../../utils/format';
-import { esProductoDeCarta } from '../../utils/pedidos';
-import { MAX_CANTIDAD_POR_LINEA } from '../../config/constantes';
 import { BannerMenuNoDefinido } from '../menu-dia/BannerMenuNoDefinido';
 
 interface PedidoLlevarViewProps {
@@ -33,289 +24,46 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
   onPedidoCreado,
   onIrACobros,
 }) => {
-  const [catalogo, setCatalogo] = useState<ProductoMenuPedidoDto[]>([]);
-  const [menuDia, setMenuDia] = useState<MenuDiaResponseDto | null>(() =>
-    menuDiaService.obtenerMenuHoyCacheado()
-  );
-  const [cargando, setCargando] = useState<boolean>(false);
-  const [errorCarga, setErrorCarga] = useState<string | null>(null);
-  const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
-  const [lineas, setLineas] = useState<LineaBorrador[]>([]);
-  const [referencia, setReferencia] = useState<string>('');
-  const [busqueda, setBusqueda] = useState<string>('');
-  const [busquedaDebounced, setBusquedaDebounced] = useState<string>('');
-  const [categoriaActiva, setCategoriaActiva] = useState<string>('Todas');
-  const [mostrarResumen, setMostrarResumen] = useState<boolean>(false);
-  const [mostrarConfirmDescartar, setMostrarConfirmDescartar] = useState<boolean>(false);
-  const [mostrarConfirmEnviar, setMostrarConfirmEnviar] = useState<boolean>(false);
-  const [lineaParaNota, setLineaParaNota] = useState<LineaBorrador | null>(null);
-  const [menuParaArmar, setMenuParaArmar] = useState<MenuCompletoDiaDto | null>(null);
-  const [enviando, setEnviando] = useState<boolean>(false);
-
-  const { triggerLight, triggerSuccess, triggerError } = useHaptics();
-  const { mostrar: mostrarToast } = useToast();
-  const { sinConexion } = useNetworkStatus();
-
-  // Debounce de 250 ms para el buscador
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setBusquedaDebounced(busqueda);
-    }, 250);
-    return () => clearTimeout(handler);
-  }, [busqueda]);
-
-  // Manejo del botón Atrás
-  useBackHandler(lineas.length > 0 || mostrarConfirmDescartar || Boolean(referencia.trim()), () => {
-    if (mostrarConfirmEnviar) {
-      setMostrarConfirmEnviar(false);
-      return true;
-    }
-    if (lineaParaNota) {
-      setLineaParaNota(null);
-      return true;
-    }
-    if (menuParaArmar) {
-      setMenuParaArmar(null);
-      return true;
-    }
-    if (mostrarResumen) {
-      setMostrarResumen(false);
-      return true;
-    }
-    if (mostrarConfirmDescartar) {
-      setMostrarConfirmDescartar(false);
-      return true;
-    }
-    if (lineas.length > 0 || referencia.trim().length > 0) {
-      setMostrarConfirmDescartar(true);
-      return true;
-    }
-    return false;
-  });
-
-  const cargarDatos = useCallback(async (usarCache = true) => {
-    setCargando(true);
-    setErrorCarga(null);
-    try {
-      const [prods, menu] = await Promise.all([
-        pedidoService.obtenerCatalogoPedido(),
-        menuDiaService.obtenerMenuHoy({ usarCache }).catch(() => null),
-      ]);
-      setCatalogo(prods || []);
-      setMenuDia(menu);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al cargar los productos disponibles';
-      setErrorCarga(msg);
-      setCatalogo([]);
-    } finally {
-      setCargando(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void cargarDatos(true);
-    const handleMenuActualizado = () => {
-      void cargarDatos(false);
-    };
-    window.addEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
-    return () => {
-      window.removeEventListener('girasoles:menu-dia-actualizado', handleMenuActualizado);
-    };
-  }, [cargarDatos]);
-
-  // Categorías reales dinámicas excluyendo componentes de menú (RN-140)
-  const categoriasDinamicas = useMemo(() => {
-    const catsSet = new Set<string>();
-    catalogo.filter(esProductoDeCarta).forEach((p) => {
-      if (p.categoria && p.categoria.trim()) {
-        catsSet.add(p.categoria.trim());
-      }
-    });
-    const lista = Array.from(catsSet).sort();
-    const tieneMenus = Boolean(menuDia?.definido && (menuDia.menusCompletos?.length ?? 0) > 0);
-    return ['Todas', ...(tieneMenus ? ['Menús'] : []), ...lista];
-  }, [catalogo, menuDia]);
-
-  // Menús completos disponibles
-  const menusFiltrados = useMemo(() => {
-    if (!menuDia?.definido || !menuDia.menusCompletos?.length) return [];
-    if (categoriaActiva !== 'Todas' && categoriaActiva !== 'Menús') return [];
-    if (!busquedaDebounced.trim()) return menuDia.menusCompletos;
-    const query = busquedaDebounced.trim().toLowerCase();
-    return menuDia.menusCompletos.filter((m) => m.nombre.toLowerCase().includes(query));
-  }, [menuDia, categoriaActiva, busquedaDebounced]);
-
-  // Productos de carta filtrados
-  const productosFiltrados = useMemo(() => {
-    if (categoriaActiva === 'Menús') {
-      return [];
-    }
-    return catalogo.filter((p) => {
-      if (!esProductoDeCarta(p)) return false;
-      if (categoriaActiva !== 'Todas' && p.categoria !== categoriaActiva) return false;
-      if (busquedaDebounced.trim()) {
-        const query = busquedaDebounced.trim().toLowerCase();
-        return p.nombre.toLowerCase().includes(query);
-      }
-      return true;
-    });
-  }, [catalogo, categoriaActiva, busquedaDebounced]);
-
-  const agregarProducto = (producto: ProductoMenuPedidoDto) => {
-    if (producto.agotado) {
-      triggerError();
-      return;
-    }
-
-    const lineaExistente = lineas.find((l) => l.productoId === producto.id);
-    if (lineaExistente && lineaExistente.cantidad >= MAX_CANTIDAD_POR_LINEA) {
-      triggerError();
-      mostrarToast({
-        tipo: 'aviso',
-        mensaje: `La cantidad máxima por línea es ${MAX_CANTIDAD_POR_LINEA}.`,
-      });
-      return;
-    }
-
-    triggerLight();
-    setLineas((prev) => {
-      const idx = prev.findIndex((l) => l.productoId === producto.id);
-      if (idx >= 0) {
-        const next = [...prev];
-        const nuevaCant = next[idx].cantidad + 1;
-        next[idx] = {
-          ...next[idx],
-          cantidad: nuevaCant,
-          subtotal: nuevaCant * next[idx].precioUnitario,
-        };
-        return next;
-      }
-      return [
-        ...prev,
-        {
-          id: `prod-${producto.id}-${Date.now()}`,
-          productoId: producto.id,
-          nombre: producto.nombre,
-          precioUnitario: producto.precio,
-          cantidad: 1,
-          observacion: '',
-          subtotal: producto.precio,
-          agotado: producto.agotado,
-        },
-      ];
-    });
-  };
-
-  const modificarCantidad = (lineaId: string, delta: number) => {
-    const linea = lineas.find((l) => l.id === lineaId);
-    if (!linea) return;
-
-    if (delta > 0 && linea.cantidad >= MAX_CANTIDAD_POR_LINEA) {
-      triggerError();
-      mostrarToast({
-        tipo: 'aviso',
-        mensaje: `La cantidad máxima por línea es ${MAX_CANTIDAD_POR_LINEA}.`,
-      });
-      return;
-    }
-
-    triggerLight();
-    setLineas((prev) =>
-      prev
-        .map((l) => {
-          if (l.id === lineaId) {
-            const nueva = l.cantidad + delta;
-            return nueva > 0
-              ? { ...l, cantidad: nueva, subtotal: nueva * l.precioUnitario }
-              : null;
-          }
-          return l;
-        })
-        .filter((l): l is LineaBorrador => l !== null)
-    );
-  };
-
-  const actualizarObservacion = (lineaId: string, observacion: string) => {
-    setLineas((prev) =>
-      prev.map((l) => (l.id === lineaId ? { ...l, observacion } : l))
-    );
-  };
-
-  const total = lineas.reduce((acc, l) => acc + l.subtotal, 0);
-  const totalItems = lineas.reduce((acc, l) => acc + l.cantidad, 0);
-
-  const solicitarRegistroPedido = () => {
-    if (lineas.length === 0) return;
-
-    const ref = referencia.trim();
-    if (ref.length < 2 || ref.length > 30) {
-      triggerError();
-      setErrorEnvio('La referencia del cliente para llevar debe tener entre 2 y 30 caracteres.');
-      mostrarToast({
-        tipo: 'error',
-        mensaje: 'La referencia del cliente para llevar debe tener entre 2 y 30 caracteres.',
-      });
-      return;
-    }
-
-    setErrorEnvio(null);
-    setMostrarConfirmEnviar(true);
-  };
-
-  const ejecutarRegistroPedidoLlevar = async () => {
-    setEnviando(true);
-    setErrorEnvio(null);
-
-    const ref = referencia.trim();
-    const solicitudId =
-      typeof crypto !== 'undefined' && crypto.randomUUID
-        ? crypto.randomUUID()
-        : `sol-llevar-${Date.now()}`;
-
-    try {
-      const res = await pedidoService.registrarPedidoLlevar({
-        solicitudId,
-        referencia: ref,
-        lineas: lineas.map((l) => ({
-          productoId: l.productoId,
-          menuCompletoId: l.menuCompletoId,
-          elecciones: l.elecciones?.map((e) => ({
-            parte: e.parte,
-            productoId: e.productoId,
-          })),
-          cantidad: l.cantidad,
-          observacion: l.observacion || undefined,
-        })),
-      });
-
-      triggerSuccess();
-      const numPedido = res.numero;
-      const mensajeExito = `Pedido para llevar N.º ${numPedido} registrado. La comanda se envió a cocina.`;
-
-      setLineas([]);
-      setReferencia('');
-      setMostrarConfirmEnviar(false);
-      setMostrarResumen(false);
-      onPedidoCreado(mensajeExito);
-
-      if (onIrACobros) {
-        onIrACobros();
-      }
-    } catch (err: unknown) {
-      triggerError();
-      const msg = err instanceof Error ? err.message : 'Error al registrar el pedido para llevar';
-      setErrorEnvio(msg);
-      setMostrarConfirmEnviar(false);
-      if (msg.toLowerCase().includes('agotado') || msg.includes('103')) {
-        mostrarToast({
-          tipo: 'error',
-          mensaje: 'Hay platos agotados en su pedido. Quite o cambie las líneas marcadas.',
-        });
-      }
-    } finally {
-      setEnviando(false);
-    }
-  };
+  const {
+    catalogo,
+    menuDia,
+    cargando,
+    errorCarga,
+    errorEnvio,
+    lineas,
+    setLineas,
+    referencia,
+    cambiarReferencia,
+    busqueda,
+    setBusqueda,
+    categoriaActiva,
+    setCategoriaActiva,
+    mostrarPanelOrden: mostrarResumen,
+    setMostrarPanelOrden: setMostrarResumen,
+    mostrarConfirmDescartar,
+    setMostrarConfirmDescartar,
+    mostrarConfirmEnviar,
+    setMostrarConfirmEnviar,
+    lineaParaNota,
+    setLineaParaNota,
+    menuParaArmar,
+    setMenuParaArmar,
+    enviando,
+    sinConexion,
+    total,
+    totalItems,
+    categoriasDinamicas,
+    menusFiltrados,
+    productosFiltrados,
+    cargarDatos,
+    agregarProducto,
+    modificarCantidad,
+    actualizarObservacion,
+    solicitarRegistroPedido,
+    ejecutarRegistroPedidoLlevar,
+    descartarPedido,
+    triggerLight,
+  } = usePedidoLlevar({ onPedidoCreado, onIrACobros });
 
   const renderContenidoResumen = () => (
     <div className="space-y-4">
@@ -485,10 +233,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
               type="text"
               maxLength={30}
               value={referencia}
-              onChange={(e) => {
-                setReferencia(e.target.value);
-                if (errorEnvio) setErrorEnvio(null);
-              }}
+              onChange={(e) => cambiarReferencia(e.target.value)}
               placeholder="Nombre o referencia del cliente (ej. Juan P.)"
               className="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-canvas text-xs focus:outline-hidden focus:border-primary text-ink font-medium"
             />
@@ -745,11 +490,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
         etiquetaConfirmar="Descartar"
         etiquetaCancelar="Seguir editando"
         tono="peligro"
-        onConfirmar={() => {
-          setMostrarConfirmDescartar(false);
-          setLineas([]);
-          setReferencia('');
-        }}
+        onConfirmar={descartarPedido}
         onCancelar={() => setMostrarConfirmDescartar(false)}
       />
 
