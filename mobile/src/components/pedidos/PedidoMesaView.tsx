@@ -51,6 +51,18 @@ function esProductoDeCarta(prod: ProductoMenuPedidoDto): boolean {
   return !ROLES_COMPONENTE_SET.has(prod.categoria.trim().toLowerCase());
 }
 
+function esLineaBorrador(valor: unknown): valor is LineaBorrador {
+  if (typeof valor !== 'object' || valor === null) return false;
+  return (
+    'id' in valor && typeof valor.id === 'string' &&
+    'nombre' in valor && typeof valor.nombre === 'string' &&
+    'precioUnitario' in valor && typeof valor.precioUnitario === 'number' &&
+    'cantidad' in valor && typeof valor.cantidad === 'number' &&
+    'observacion' in valor && typeof valor.observacion === 'string' &&
+    'subtotal' in valor && typeof valor.subtotal === 'number'
+  );
+}
+
 export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
   mesa,
   rol = 'Mozo',
@@ -93,9 +105,10 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
     try {
       const raw = sessionStorage.getItem(DRAFT_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setBorradorRecuperado(parsed as LineaBorrador[]);
+        const parsed: unknown = JSON.parse(raw);
+        const lineasValidas = Array.isArray(parsed) ? parsed.filter(esLineaBorrador) : [];
+        if (lineasValidas.length > 0) {
+          setBorradorRecuperado(lineasValidas);
           setHayBorradorGuardado(true);
         }
       }
@@ -321,7 +334,7 @@ export const PedidoMesaView: React.FC<PedidoMesaViewProps> = ({
           }
           return l;
         })
-        .filter(Boolean) as LineaBorrador[]
+        .filter((l): l is LineaBorrador => l !== null)
     );
   };
 

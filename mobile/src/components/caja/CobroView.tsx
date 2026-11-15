@@ -319,7 +319,7 @@ export const CobroView: React.FC<CobroViewProps> = ({
                 Tipo de Comprobante
               </span>
               <div className="grid grid-cols-3 gap-2">
-                {(['Ticket', 'Boleta', 'Factura'] as TipoComprobante[]).map((tipo) => (
+                {(['Ticket', 'Boleta', 'Factura'] satisfies TipoComprobante[]).map((tipo) => (
                   <button
                     key={tipo}
                     type="button"

@@ -120,7 +120,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
 
       {/* 3. Filtros de Estado */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
-        <FilterChipBar
+        <FilterChipBar<typeof filtro>
           chips={[
             { id: 'todos', label: 'Todos', count: platos.length },
             { id: 'disponibles', label: 'Disponibles', count: disponiblesCount },
@@ -129,7 +129,7 @@ export const MenuDiaView: React.FC<MenuDiaViewProps> = ({
           activeId={filtro}
           onSelect={(id) => {
             triggerLight();
-            setFiltro(id as typeof filtro);
+            setFiltro(id);
           }}
         />
       </div>

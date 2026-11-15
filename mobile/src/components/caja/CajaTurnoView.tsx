@@ -33,7 +33,7 @@ import { Numpad } from '../ui/Numpad';
 import { ErrorState } from '../ui/ErrorState';
 import { SkeletonList } from '../ui/Skeleton';
 import { EmptyState } from '../ui/EmptyState';
-import { FilterChipBar } from '../ui/FilterChipBar';
+import { FilterChipBar, type FilterChipItem } from '../ui/FilterChipBar';
 import { MesSheet, type SeleccionMes } from '../ui/MesSheet';
 import { VentaDetalleSheet } from './VentaDetalleSheet';
 import { CierreDetalleSheet } from './CierreDetalleSheet';
@@ -454,10 +454,10 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
   const tienePendientes = pedidosPendientes.length > 0 || ((resumenCierre?.pedidosPendientesCobro ?? 0) > 0);
 
   // Chips para control segmentado
-  const chipsSeccion = [
+  const chipsSeccion: Array<FilterChipItem<'turno' | 'ventas' | 'cierres'>> = [
     { id: 'turno', label: 'Turno' },
     { id: 'ventas', label: 'Ventas' },
-    ...(esAdmin ? [{ id: 'cierres', label: 'Cierres' }] : []),
+    ...(esAdmin ? [{ id: 'cierres' as const, label: 'Cierres' }] : []),
   ];
 
   return (
@@ -473,12 +473,12 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
       {/* 2. Control Segmentado de Sección */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
-        <FilterChipBar
+        <FilterChipBar<'turno' | 'ventas' | 'cierres'>
           chips={chipsSeccion}
           activeId={seccion}
           onSelect={(id) => {
             triggerLight();
-            setSeccion(id as typeof seccion);
+            setSeccion(id);
           }}
         />
       </div>
@@ -588,7 +588,7 @@ export const CajaTurnoView: React.FC<CajaTurnoViewProps> = ({
 
                       <StatCard
                         titulo="Efectivo en Caja"
-                        valor={formatCurrency(apertura!.montoInicial + parcial.totalEfectivo)}
+                        valor={formatCurrency((apertura?.montoInicial ?? 0) + parcial.totalEfectivo)}
                         subtitulo="Incluye fondo inicial"
                       />
                     </div>

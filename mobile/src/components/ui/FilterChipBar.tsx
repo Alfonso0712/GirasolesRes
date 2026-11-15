@@ -27,7 +27,7 @@ export function FilterChipBar<T extends string = string>({
   'aria-label': ariaLabel = 'Filtros',
 }: FilterChipBarProps<T>): React.ReactElement {
   const chipList = items || chips || [];
-  const currentSelected = (selectedId ?? activeId) as T;
+  const currentSelected = selectedId ?? activeId;
   const containerRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLDivElement>(null);
 

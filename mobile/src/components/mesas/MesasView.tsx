@@ -10,7 +10,7 @@ import { IconButton } from '../ui/IconButton';
 import { Card } from '../ui/Card';
 import { Switch } from '../ui/Switch';
 import { StatusBadge } from '../ui/StatusBadge';
-import { FilterChipBar } from '../ui/FilterChipBar';
+import { FilterChipBar, type FilterChipItem } from '../ui/FilterChipBar';
 import { Skeleton, SkeletonList } from '../ui/Skeleton';
 import { PageHeader } from '../layout/PageHeader';
 import { ErrorState } from '../ui/ErrorState';
@@ -163,7 +163,7 @@ export const MesasView: React.FC<MesasViewProps> = ({
   };
 
   const chips = useMemo(() => {
-    const base = [
+    const base: Array<FilterChipItem<'todas' | 'libres' | 'ocupadas' | 'inactivas'>> = [
       {
         id: 'todas',
         label: 'Todas',
@@ -255,12 +255,12 @@ export const MesasView: React.FC<MesasViewProps> = ({
 
       {/* 3. Barra de Filtros */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
-        <FilterChipBar
+        <FilterChipBar<'todas' | 'libres' | 'ocupadas' | 'inactivas'>
           chips={chips}
           activeId={filtro}
           onSelect={(id) => {
             triggerLight();
-            setFiltro(id as 'todas' | 'libres' | 'ocupadas' | 'inactivas');
+            setFiltro(id);
           }}
         />
       </div>

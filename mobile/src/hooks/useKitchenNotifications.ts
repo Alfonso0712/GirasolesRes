@@ -5,6 +5,7 @@ import { ApiError } from '../services/apiClient';
 import { esSesionAlmacenadaValida } from '../config/sesion';
 import { avisoService } from '../services/avisoService';
 import { reproducirSonidoKds, desbloquearAudioKds } from '../utils/audioKds';
+import { extraerEstadoError } from '../utils/errores';
 import { useHaptics } from './useHaptics';
 import type { RolUsuario } from '../types/auth';
 import type { AvisoComandaDto } from '../types/pedido';
@@ -70,7 +71,7 @@ export function useKitchenNotifications({
         }
       }
     } catch (err: unknown) {
-      const status = err instanceof ApiError ? err.status : (err as { status?: number })?.status;
+      const status = err instanceof ApiError ? err.status : extraerEstadoError(err);
       if (status === 401) {
         if (timerRef.current) {
           clearInterval(timerRef.current);

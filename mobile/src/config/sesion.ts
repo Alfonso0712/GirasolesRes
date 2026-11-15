@@ -45,8 +45,11 @@ export function extraerExpJwt(token?: string | null): number | null {
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-    const parsed = JSON.parse(jsonPayload) as { exp?: unknown };
-    return typeof parsed.exp === 'number' ? parsed.exp : null;
+    const parsed: unknown = JSON.parse(jsonPayload);
+    if (typeof parsed === 'object' && parsed !== null && 'exp' in parsed && typeof parsed.exp === 'number') {
+      return parsed.exp;
+    }
+    return null;
   } catch {
     return null;
   }
@@ -169,6 +172,42 @@ export function evaluarVigenciaSesion(
   return { valida: true };
 }
 
+const ROLES_VALIDOS = new Set<string>(['Administrador', 'Mozo', 'Cocinero', 'Cajero']);
+
+function esRolValido(valor: unknown): valor is RolUsuario {
+  return typeof valor === 'string' && ROLES_VALIDOS.has(valor);
+}
+
+/**
+ * Parsea y valida de forma segura una sesión serializada desde localStorage.
+ */
+export function parsearUserSession(raw: string): UserSession | null {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== 'object' || parsed === null) return null;
+    if (
+      'id' in parsed && typeof parsed.id === 'string' &&
+      'nombre' in parsed && typeof parsed.nombre === 'string' &&
+      'apellido' in parsed && typeof parsed.apellido === 'string' &&
+      'correo' in parsed && typeof parsed.correo === 'string' &&
+      'rol' in parsed && esRolValido(parsed.rol) &&
+      'token' in parsed && typeof parsed.token === 'string'
+    ) {
+      return {
+        id: parsed.id,
+        nombre: parsed.nombre,
+        apellido: parsed.apellido,
+        correo: parsed.correo,
+        rol: parsed.rol,
+        token: parsed.token,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Verifica si existe una sesión almacenada en localStorage y si sigue vigente.
  * Si no hay sesión en localStorage (ej. pruebas unitarias aisladas de hooks), retorna true
@@ -178,7 +217,7 @@ export function esSesionAlmacenadaValida(ahoraMs: number = Date.now()): boolean 
   try {
     const raw = localStorage.getItem('GIRASOLES_SESSION');
     if (!raw) return true;
-    const parsed = JSON.parse(raw) as UserSession;
+    const parsed = parsearUserSession(raw);
     return evaluarVigenciaSesion(parsed, ahoraMs).valida;
   } catch {
     return false;

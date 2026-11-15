@@ -146,7 +146,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
 
       {/* 2. Filtros de Estado */}
       <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
-        <FilterChipBar
+        <FilterChipBar<typeof filtro>
           chips={[
             { id: 'todas', label: 'Todas', count: pendientesCount + enPreparacionCount },
             { id: 'pendientes', label: 'Pendientes', count: pendientesCount },
@@ -155,7 +155,7 @@ export const KdsView: React.FC<KdsViewProps> = ({
           activeId={filtro}
           onSelect={(id) => {
             triggerLight();
-            setFiltro(id as typeof filtro);
+            setFiltro(id);
           }}
         />
       </div>

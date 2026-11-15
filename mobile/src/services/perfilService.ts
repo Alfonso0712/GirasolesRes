@@ -36,9 +36,11 @@ export const perfilService = {
         localStorage.setItem('GIRASOLES_TOKEN', res.token);
         const rawSession = localStorage.getItem('GIRASOLES_SESSION');
         if (rawSession) {
-          const sessionObj = JSON.parse(rawSession) as Record<string, unknown>;
-          sessionObj.token = res.token;
-          localStorage.setItem('GIRASOLES_SESSION', JSON.stringify(sessionObj));
+          const parsed: unknown = JSON.parse(rawSession);
+          if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+            const sessionObj: Record<string, unknown> = { ...parsed, token: res.token };
+            localStorage.setItem('GIRASOLES_SESSION', JSON.stringify(sessionObj));
+          }
         }
       } catch {
         // Ignorar error de almacenamiento

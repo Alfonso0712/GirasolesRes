@@ -29,16 +29,15 @@ export const MesaFormSheet: React.FC<MesaFormSheetProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      setNombre(mesaAEditar?.nombre || '');
-      setErrorNombre(null);
-      setGuardando(false);
-      const timer = setTimeout(() => {
-        inputRef.current?.focus();
-        inputRef.current?.select();
-      }, 80);
-      return () => clearTimeout(timer);
-    }
+    if (!isOpen) return;
+    setNombre(mesaAEditar?.nombre || '');
+    setErrorNombre(null);
+    setGuardando(false);
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }, 80);
+    return () => clearTimeout(timer);
   }, [isOpen, mesaAEditar]);
 
   const handleBlur = () => {

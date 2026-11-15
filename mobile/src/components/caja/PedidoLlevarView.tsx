@@ -243,7 +243,7 @@ export const PedidoLlevarView: React.FC<PedidoLlevarViewProps> = ({
           }
           return l;
         })
-        .filter(Boolean) as LineaBorrador[]
+        .filter((l): l is LineaBorrador => l !== null)
     );
   };
 

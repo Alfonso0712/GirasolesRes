@@ -115,7 +115,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
 
           {/* 2. Filtros de Estado */}
           <div className="bg-surface border-b border-line px-4 py-2 shrink-0">
-            <FilterChipBar
+            <FilterChipBar<typeof filtro>
               chips={[
                 { id: 'todos', label: 'Todos', count: pedidos.length },
                 { id: 'pendiente', label: 'Pendientes', count: pedidos.filter((p) => p.estado === 'Pendiente').length },
@@ -125,7 +125,7 @@ export const MisPedidosView: React.FC<MisPedidosViewProps> = ({
               activeId={filtro}
               onSelect={(id) => {
                 triggerLight();
-                setFiltro(id as typeof filtro);
+                setFiltro(id);
               }}
             />
           </div>

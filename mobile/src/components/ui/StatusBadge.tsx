@@ -144,7 +144,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   if (raw === undefined || raw === null || raw === '') {
     return null;
   }
-  const finalStatus = raw as string | boolean;
+  const finalStatus = raw;
   const config = resolveStatus(finalStatus, category);
   const Icon = config.icon;
   const label = customLabel || config.label;

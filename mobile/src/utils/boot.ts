@@ -5,7 +5,7 @@
  */
 
 const bootStartTime: number =
-  (typeof window !== 'undefined' && (window as unknown as { __bootStartTime?: number }).__bootStartTime) ||
+  (typeof window !== 'undefined' && window.__bootStartTime) ||
   (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
 const MIN_BOOT_DURATION_MS = 600;

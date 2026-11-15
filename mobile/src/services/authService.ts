@@ -3,6 +3,7 @@ import type { UserSession, LoginResponse } from '../types/auth';
 import {
   guardarUltimaActividad,
   limpiarAlmacenamientoSesion,
+  parsearUserSession,
   CLAVE_AVISO_SESION,
 } from '../config/sesion';
 
@@ -50,10 +51,6 @@ export const authService = {
   getStoredSession: (): UserSession | null => {
     const raw = localStorage.getItem('GIRASOLES_SESSION');
     if (!raw) return null;
-    try {
-      return JSON.parse(raw) as UserSession;
-    } catch {
-      return null;
-    }
+    return parsearUserSession(raw);
   },
 };

@@ -44,8 +44,8 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
     (dif === 0 ? 'Cuadra' : dif > 0 ? 'Sobrante' : 'Faltante');
 
   const platos = cierre?.platos || cierre?.platosVendidos || [];
-  const tieneAjustes =
-    cierre?.ajustesPosteriores && cierre.ajustesPosteriores.length > 0;
+  const ajustesPosteriores = cierre?.ajustesPosteriores ?? [];
+  const tieneAjustes = ajustesPosteriores.length > 0;
 
   const handleDescargarActaPdf = async () => {
     if (!cierre) return;
@@ -205,12 +205,12 @@ export const CierreDetalleSheet: React.FC<CierreDetalleSheetProps> = ({
               <div className="flex items-center gap-1.5 text-warning font-bold text-xs">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>
-                  Ajustes Posteriores al Cierre ({cierre.ajustesPosteriores!.length})
+                  Ajustes Posteriores al Cierre ({ajustesPosteriores.length})
                 </span>
               </div>
 
               <div className="divide-y divide-line bg-canvas rounded-xl border border-warning/40 overflow-hidden">
-                {cierre.ajustesPosteriores!.map((a) => (
+                {ajustesPosteriores.map((a) => (
                   <div key={a.ventaId} className="p-3 text-xs space-y-1">
                     <div className="flex justify-between items-center font-bold">
                       <span className="text-ink">{a.comprobante}</span>

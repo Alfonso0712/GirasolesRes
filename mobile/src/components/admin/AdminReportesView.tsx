@@ -191,7 +191,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
 
         {/* 3. Filtros de Período y Botón Descargar PDF */}
         <div className="bg-surface border border-line p-3 rounded-2xl shadow-xs space-y-3">
-          <FilterChipBar
+          <FilterChipBar<PeriodoReporte>
             chips={[
               { id: 'hoy', label: 'Hoy' },
               { id: '7dias', label: '7 días' },
@@ -204,7 +204,7 @@ export const AdminReportesView: React.FC<AdminReportesViewProps> = ({
               if (p === 'otroMes') {
                 setMesSheetAbierto(true);
               } else {
-                onCambiarPeriodo(p as PeriodoReporte);
+                onCambiarPeriodo(p);
               }
             }}
           />

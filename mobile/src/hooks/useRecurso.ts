@@ -3,6 +3,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ApiError } from '../services/apiClient';
 import { esSesionAlmacenadaValida } from '../config/sesion';
+import { extraerEstadoError } from '../utils/errores';
 import { mesaService } from '../services/mesaService';
 import { cajaService } from '../services/cajaService';
 import { cobroService } from '../services/cobroService';
@@ -87,7 +88,7 @@ export function useRecurso<T>(
         setError(null);
         setActualizadoEn(new Date());
       } catch (err: unknown) {
-        const status = err instanceof ApiError ? err.status : (err as { status?: number })?.status;
+        const status = err instanceof ApiError ? err.status : extraerEstadoError(err);
         if (status === 401) {
           if (timerRef.current) {
             clearInterval(timerRef.current);

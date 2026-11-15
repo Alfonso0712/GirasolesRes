@@ -10,6 +10,7 @@ import { BottomSheet } from '../ui/BottomSheet';
 import { SheetActions } from '../ui/SheetActions';
 import { useHaptics } from '../../hooks/useHaptics';
 import { useToast } from '../../context/ToastContext';
+import { extraerEstadoError, extraerMensajeError } from '../../utils/errores';
 
 export interface CambiarContrasenaSheetProps {
   isOpen: boolean;
@@ -101,26 +102,21 @@ export const CambiarContrasenaSheet: React.FC<CambiarContrasenaSheetProps> = ({
       onContrasenaCambiada?.();
     } catch (err: unknown) {
       triggerError();
-      let errorMsg = 'Error al actualizar la contraseña.';
+      const status = extraerEstadoError(err);
+      const mensajeExtraido = extraerMensajeError(err);
 
-      if (err && typeof err === 'object') {
-        const anyErr = err as { status?: number; mensaje?: string; message?: string };
-        if (anyErr.status === 423) {
-          mostrar({
-            tipo: 'error',
-            mensaje: anyErr.mensaje || anyErr.message || 'Demasiados intentos fallidos. Su sesión ha sido bloqueada.',
-          });
-          resetCampos();
-          onClose();
-          onForzarLogout?.();
-          return;
-        }
-        errorMsg = anyErr.mensaje || anyErr.message || errorMsg;
-      } else if (err instanceof Error) {
-        errorMsg = err.message;
+      if (status === 423) {
+        mostrar({
+          tipo: 'error',
+          mensaje: mensajeExtraido || 'Demasiados intentos fallidos. Su sesión ha sido bloqueada.',
+        });
+        resetCampos();
+        onClose();
+        onForzarLogout?.();
+        return;
       }
 
-      setError(errorMsg);
+      setError(mensajeExtraido || 'Error al actualizar la contraseña.');
     } finally {
       setProcesando(false);
     }

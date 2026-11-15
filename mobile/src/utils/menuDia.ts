@@ -354,14 +354,16 @@ export function contarSeleccionados(
     return 0;
   }
 
-  let conjuntoSeleccionados: Set<string>;
+  let conjuntoSeleccionados: ReadonlySet<string>;
   if (fuenteSeleccion instanceof Set) {
     conjuntoSeleccionados = fuenteSeleccion;
-  } else if (Array.isArray(fuenteSeleccion)) {
-    conjuntoSeleccionados = new Set(fuenteSeleccion);
+  } else if ('opciones' in fuenteSeleccion && 'productosCarta' in fuenteSeleccion) {
+    conjuntoSeleccionados = new Set([
+      ...fuenteSeleccion.opciones,
+      ...fuenteSeleccion.productosCarta,
+    ]);
   } else {
-    const sel = fuenteSeleccion as SeleccionMenuDia;
-    conjuntoSeleccionados = new Set([...sel.opciones, ...sel.productosCarta]);
+    conjuntoSeleccionados = new Set(fuenteSeleccion);
   }
 
   let contador = 0;
