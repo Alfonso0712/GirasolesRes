@@ -27,12 +27,7 @@ export function setApiBaseUrl(url: string): void {
   }
 }
 
-import {
-  lanzarErrorHttp,
-  normalizarErrorCatch,
-  PERFIL_ERROR_BINARIO,
-  PERFIL_ERROR_JSON,
-} from './http/clasificarFallo';
+import { PERFIL_ERROR_BINARIO, PERFIL_ERROR_JSON } from './http/clasificarFallo';
 import {
   agregarQueryParams,
   construirCabecerasBinario,
@@ -40,6 +35,7 @@ import {
   extraerHost,
   formatearUrl,
 } from './http/construirPeticion';
+import { ejecutarPeticionHttp } from './http/ejecutarConTimeout';
 import { ApiError } from './http/errorHttp';
 import type { ApiErrorTipo, OpcionesApiError } from './http/errorHttp';
 import { setOnUnauthorizedCallback } from './http/noAutorizado';
@@ -49,54 +45,43 @@ import { esRutaAuthEspecial, resolverTokenPeticion } from './http/renovacionToke
 export { ApiError, setOnUnauthorizedCallback };
 export type { ApiErrorTipo, OpcionesApiError };
 
-// Manejo centralizado de 401 delegado a ./http/noAutorizado
-
-// Renovación preventiva de token delegada a ./http/renovacionToken
-
-// Reintentos exponenciales delegados a ./http/reintentos
+async function interpretarJson<T>(response: Response): Promise<T> {
+  if (response.status === 204) {
+    return {} as T;
+  }
+  return (await response.json()) as T;
+}
 
 class ApiClient {
+  private enviarConCuerpo<T>(
+    method: 'POST' | 'PATCH' | 'PUT',
+    endpoint: string,
+    body?: unknown,
+    token?: string
+  ): Promise<T> {
+    return this.request<T>(
+      endpoint,
+      {
+        method,
+        body: body ? JSON.stringify(body) : undefined,
+      },
+      token
+    );
+  }
+
   async request<T>(endpoint: string, options: RequestInit = {}, token?: string): Promise<T> {
     const authToken = await resolverTokenPeticion(token, esRutaAuthEspecial(endpoint));
-
     const url = formatearUrl(endpoint);
-    const requestHost = extraerHost(url);
     const headers = construirCabecerasJson(options.headers, options.body, authToken);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('girasoles:network-success'));
-      }
-
-      if (!response.ok) {
-        return await lanzarErrorHttp(response, requestHost, PERFIL_ERROR_JSON);
-      }
-
-      if (response.status === 204) {
-        return {} as T;
-      }
-
-      return (await response.json()) as T;
-    } catch (err: unknown) {
-      clearTimeout(timeoutId);
-
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('girasoles:network-error', { detail: err }));
-      }
-
-      return normalizarErrorCatch(err, controller.signal.aborted, requestHost, PERFIL_ERROR_JSON);
-    }
+    return ejecutarPeticionHttp<T>({
+      url,
+      init: { ...options, headers },
+      timeoutMs: 15000,
+      host: extraerHost(url),
+      perfilError: PERFIL_ERROR_JSON,
+      interpretar: interpretarJson,
+    });
   }
 
   get<T>(endpoint: string, token?: string): Promise<T> {
@@ -104,36 +89,15 @@ class ApiClient {
   }
 
   post<T>(endpoint: string, body?: unknown, token?: string): Promise<T> {
-    return this.request<T>(
-      endpoint,
-      {
-        method: 'POST',
-        body: body ? JSON.stringify(body) : undefined,
-      },
-      token
-    );
+    return this.enviarConCuerpo<T>('POST', endpoint, body, token);
   }
 
   patch<T>(endpoint: string, body?: unknown, token?: string): Promise<T> {
-    return this.request<T>(
-      endpoint,
-      {
-        method: 'PATCH',
-        body: body ? JSON.stringify(body) : undefined,
-      },
-      token
-    );
+    return this.enviarConCuerpo<T>('PATCH', endpoint, body, token);
   }
 
   put<T>(endpoint: string, body?: unknown, token?: string): Promise<T> {
-    return this.request<T>(
-      endpoint,
-      {
-        method: 'PUT',
-        body: body ? JSON.stringify(body) : undefined,
-      },
-      token
-    );
+    return this.enviarConCuerpo<T>('PUT', endpoint, body, token);
   }
 
   delete<T>(endpoint: string, token?: string): Promise<T> {
@@ -150,41 +114,19 @@ class ApiClient {
     token?: string
   ): Promise<Blob> {
     const authToken = await resolverTokenPeticion(token);
-    const endpointFinal = agregarQueryParams(ruta, params);
-    const url = formatearUrl(endpointFinal);
-    const requestHost = extraerHost(url);
-    const headers = construirCabecerasBinario(authToken);
+    const url = formatearUrl(agregarQueryParams(ruta, params));
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-    try {
-      const response = await fetch(url, {
+    return ejecutarPeticionHttp<Blob>({
+      url,
+      init: {
         method: 'GET',
-        headers,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('girasoles:network-success'));
-      }
-
-      if (!response.ok) {
-        return await lanzarErrorHttp(response, requestHost, PERFIL_ERROR_BINARIO);
-      }
-
-      return await response.blob();
-    } catch (err: unknown) {
-      clearTimeout(timeoutId);
-
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('girasoles:network-error', { detail: err }));
-      }
-
-      return normalizarErrorCatch(err, controller.signal.aborted, requestHost, PERFIL_ERROR_BINARIO);
-    }
+        headers: construirCabecerasBinario(authToken),
+      },
+      timeoutMs: 30000,
+      host: extraerHost(url),
+      perfilError: PERFIL_ERROR_BINARIO,
+      interpretar: (response) => response.blob(),
+    });
   }
 }
 
