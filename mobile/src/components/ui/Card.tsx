@@ -14,7 +14,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Card: React.FC<CardProps> = ({
   children,
   variant = 'default',
-  interactive,
+  interactive: esInteractivoProp,
   accent = 'none',
   padding = 'md',
   className = '',
@@ -23,7 +23,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   const { triggerLight } = useHaptics();
 
-  const isInteractive = variant === 'interactive' || Boolean(interactive) || Boolean(onClick);
+  const isInteractive = variant === 'interactive' || Boolean(esInteractivoProp) || Boolean(onClick);
 
   const paddingStyles = {
     none: 'p-0',

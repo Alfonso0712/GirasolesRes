@@ -32,8 +32,8 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({
     };
   }, []);
 
-  const autorizado = puede(rol, 'comandas.gestionar');
-  const { datos, cargando, error, recargar } = useComandas({ enabled: autorizado });
+  const estaAutorizado = puede(rol, 'comandas.gestionar');
+  const { datos, cargando: estaCargando, error, recargar } = useComandas({ enabled: estaAutorizado });
   const comandas = datos?.items || [];
 
   // Detección de nuevas comandas entrantes para sonido y vibración
@@ -59,7 +59,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({
     comandasPreviasRef.current = idsActuales;
   }, [datos, triggerMedium]);
 
-  if (!autorizado) {
+  if (!estaAutorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
@@ -76,7 +76,7 @@ export const CocinaPage: React.FC<CocinaPageProps> = ({
   return (
     <KdsView
       comandas={comandas}
-      cargando={cargando}
+      cargando={estaCargando}
       error={error}
       onRefresh={recargar}
       onCambiarEstado={handleCambiarEstado}

@@ -13,7 +13,7 @@ export interface FilterChipProps {
 export const FilterChip: React.FC<FilterChipProps> = ({
   label,
   count,
-  active,
+  active: estaActivo,
   onClick,
   className = '',
   id,
@@ -29,10 +29,10 @@ export const FilterChip: React.FC<FilterChipProps> = ({
     <button
       id={id}
       type="button"
-      aria-pressed={active}
+      aria-pressed={estaActivo}
       onClick={handleClick}
       className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all min-h-[44px] shrink-0 select-none cursor-pointer focus-visible:ring-2 focus-visible:ring-accent outline-hidden ${
-        active
+        estaActivo
           ? 'bg-primary text-white shadow-xs'
           : 'bg-canvas text-ink-muted hover:text-ink border border-line active:bg-surface'
       } ${className}`}
@@ -41,7 +41,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
       {typeof count === 'number' && (
         <span
           className={`px-1.5 py-0.5 rounded-full text-xs font-black tabular-nums ${
-            active ? 'bg-white/20 text-white' : 'bg-surface text-ink-muted border border-line'
+            estaActivo ? 'bg-white/20 text-white' : 'bg-surface text-ink-muted border border-line'
           }`}
         >
           {count}

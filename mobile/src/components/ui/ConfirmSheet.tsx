@@ -22,7 +22,7 @@ export const ConfirmSheet: React.FC<ConfirmSheetProps> = ({
   etiquetaConfirmar = 'Confirmar',
   etiquetaCancelar = 'Cancelar',
   tono = 'normal',
-  cargando = false,
+  cargando: estaCargando = false,
   onConfirmar,
   onCancelar,
 }) => {
@@ -54,7 +54,7 @@ export const ConfirmSheet: React.FC<ConfirmSheetProps> = ({
           secondaryLabel={etiquetaCancelar}
           primaryLabel={etiquetaConfirmar}
           primaryVariant={esPeligro ? 'danger' : 'primary'}
-          isLoading={cargando}
+          isLoading={estaCargando}
           onSecondary={onCancelar}
           onPrimary={onConfirmar}
         />

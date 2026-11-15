@@ -70,7 +70,7 @@ export const MasPage: React.FC<MasPageProps> = ({
   solicitudSalirPendiente = null,
   onCancelarSolicitudSalir,
 }) => {
-  const autorizado = puede(session.rol, 'menuDia.definir');
+  const estaAutorizado = puede(session.rol, 'menuDia.definir');
   const [seccion, setSeccion] = useState<SeccionMasAdmin>(seccionInicial);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export const MasPage: React.FC<MasPageProps> = ({
   };
 
   const { datos: menuHoy } = useMenuDia({
-    enabled: autorizado && seccion === 'lista',
+    enabled: estaAutorizado && seccion === 'lista',
   });
 
   useBackHandler(seccion === 'perfil', () => {
@@ -91,7 +91,7 @@ export const MasPage: React.FC<MasPageProps> = ({
     return true;
   });
 
-  if (!autorizado) {
+  if (!estaAutorizado) {
     return <AccesoRestringido onVolverAlInicio={onVolverAlInicio} />;
   }
 
@@ -138,20 +138,20 @@ export const MasPage: React.FC<MasPageProps> = ({
       />
 
       <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-3">
-        {OPCIONES_MAS_ADMIN.map((item) => {
-          const Icono = item.icono;
+        {OPCIONES_MAS_ADMIN.map((opcion) => {
+          const Icono = opcion.icono;
           return (
             <FilaNavegacion
-              key={item.id}
+              key={opcion.id}
               icono={<Icono className="w-5 h-5" aria-hidden="true" />}
-              titulo={item.titulo}
-              descripcion={item.subtitulo}
+              titulo={opcion.titulo}
+              descripcion={opcion.subtitulo}
               etiqueta={
-                item.mostrarEstadoMenu ? (
+                opcion.mostrarEstadoMenu ? (
                   <StatusBadge estado={etiquetaEstadoMenu} />
                 ) : undefined
               }
-              onClick={() => cambiarSeccion(item.id)}
+              onClick={() => cambiarSeccion(opcion.id)}
             />
           );
         })}

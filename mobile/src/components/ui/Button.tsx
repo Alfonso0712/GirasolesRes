@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
   size = 'md',
-  fullWidth = false,
+  fullWidth: esAnchoCompleto = false,
   isLoading = false,
   icon,
   disabled,
@@ -55,7 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled || isLoading}
       onClick={handleClick}
       className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${
-        fullWidth ? 'w-full' : ''
+        esAnchoCompleto ? 'w-full' : ''
       } ${className}`}
     >
       {isLoading ? (

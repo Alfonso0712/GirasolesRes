@@ -30,8 +30,8 @@ export const SheetActions: React.FC<SheetActionsProps> = ({
   onSecondary,
   primaryType = 'button',
   primaryVariant = 'primary',
-  primaryDisabled = false,
-  secondaryDisabled = false,
+  primaryDisabled: estaPrimarioDeshabilitado = false,
+  secondaryDisabled: estaSecundarioDeshabilitado = false,
   isLoading = false,
   primaryIcon,
   primaryTitle,
@@ -51,7 +51,7 @@ export const SheetActions: React.FC<SheetActionsProps> = ({
       variant="secondary"
       size="md"
       fullWidth
-      disabled={secondaryDisabled || isLoading}
+      disabled={estaSecundarioDeshabilitado || isLoading}
       onClick={onSecondary}
       className="min-h-12 whitespace-nowrap px-3 text-xs font-bold"
     >
@@ -67,7 +67,7 @@ export const SheetActions: React.FC<SheetActionsProps> = ({
       size="md"
       fullWidth
       isLoading={isLoading}
-      disabled={primaryDisabled || isLoading}
+      disabled={estaPrimarioDeshabilitado || isLoading}
       title={primaryTitle}
       onClick={onPrimary}
       icon={primaryIcon}
