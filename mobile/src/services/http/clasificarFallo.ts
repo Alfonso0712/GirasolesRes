@@ -76,12 +76,8 @@ async function leerDatosError(response: Response): Promise<DatosErrorHttp> {
 }
 
 function resolverPlantillaHttp(status: number, backendMsg: string | undefined, perfil: PerfilMensajesError) {
-  if (status === 401) {
-    return { mensaje: 'Sesión expirada. Inicie sesión nuevamente.', codigoDefecto: 'UNAUTHORIZED' };
-  }
-  if (status === 403) {
-    return { mensaje: 'No tiene permiso para realizar esta acción.', codigoDefecto: 'FORBIDDEN' };
-  }
+  if (status === 401) return { mensaje: 'Sesión expirada. Inicie sesión nuevamente.', codigoDefecto: 'UNAUTHORIZED' };
+  if (status === 403) return { mensaje: 'No tiene permiso para realizar esta acción.', codigoDefecto: 'FORBIDDEN' };
   if (status >= 500) {
     const msg500 = perfil.error5xxFijo ? perfil.error5xxFallback : backendMsg ?? perfil.error5xxFallback;
     return { mensaje: msg500, codigoDefecto: 'SERVER_ERROR' };
@@ -89,11 +85,7 @@ function resolverPlantillaHttp(status: number, backendMsg: string | undefined, p
   return { mensaje: backendMsg ?? perfil.error4xx, codigoDefecto: 'BAD_REQUEST' };
 }
 
-export async function lanzarErrorHttp(
-  response: Response,
-  host: string,
-  perfil: PerfilMensajesError
-): Promise<never> {
+export async function lanzarErrorHttp(response: Response, host: string, perfil: PerfilMensajesError): Promise<never> {
   const datos = await leerDatosError(response);
   if (response.status === 401) manejarNoAutorizado();
   const { mensaje, codigoDefecto } = resolverPlantillaHttp(response.status, datos.backendMsg, perfil);
@@ -112,12 +104,7 @@ function esErrorFetch(err: unknown): boolean {
   return err instanceof Error && (err.name === 'TypeError' || err.message.toLowerCase().includes('fetch'));
 }
 
-export function normalizarErrorCatch(
-  err: unknown,
-  abortado: boolean,
-  host: string,
-  perfil: PerfilMensajesError
-): never {
+export function normalizarErrorCatch(err: unknown, abortado: boolean, host: string, perfil: PerfilMensajesError): never {
   if (err instanceof ApiError) throw err;
   if ((err instanceof Error && err.name === 'AbortError') || abortado) {
     throw new ApiError({ status: 0, mensaje: perfil.timeout, codigo: 'ERR_TIMEOUT', tipo: 'timeout', host });
