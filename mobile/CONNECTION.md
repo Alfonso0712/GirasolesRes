@@ -20,6 +20,13 @@
 - `mobile/src/config/demoAccounts.ts`
 - `mobile/src/components/auth/ServidorConfigSheet.tsx`
 - `mobile/src/services/apiClient.ts`
+- `mobile/src/services/http/errorHttp.ts`
+- `mobile/src/services/http/noAutorizado.ts`
+- `mobile/src/services/http/renovacionToken.ts`
+- `mobile/src/services/http/construirPeticion.ts`
+- `mobile/src/services/http/clasificarFallo.ts`
+- `mobile/src/services/http/reintentos.ts`
+- `mobile/src/services/http/ejecutarConTimeout.ts`
 - `mobile/scripts/verify-connection.mjs`
 
 ## 5. Pruebas Manuales Obligatorias
