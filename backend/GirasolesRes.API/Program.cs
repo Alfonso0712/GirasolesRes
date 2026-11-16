@@ -24,6 +24,24 @@ var swaggerHabilitado = SuperficieHttpHelper.EsSwaggerHabilitado(
     builder.Configuration,
     builder.Environment.IsDevelopment());
 
+var rateLimitConfig = RateLimitHelper.LeerConfiguracion(builder.Configuration);
+
+// Limitación de tasa: política estricta para autenticación por IP real (vía ForwardedHeaders)
+// y límite global generoso por usuario autenticado o IP para no afectar el sondeo normal.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = (rejectedContext, ct) =>
+        RateLimitHelper.EscribirRespuestaRechazoAsync(rejectedContext, rateLimitConfig.AutenticacionVentanaSegundos, ct);
+
+    options.AddPolicy(
+        RateLimitConfiguracion.PoliticaAutenticacion,
+        httpContext => RateLimitHelper.ConstruirParticionAutenticacion(httpContext, rateLimitConfig));
+
+    options.GlobalLimiter = System.Threading.RateLimiting.PartitionedRateLimiter.Create<HttpContext, string>(
+        httpContext => RateLimitHelper.ConstruirParticionGlobal(httpContext, rateLimitConfig));
+});
+
 // Encabezados reenviados: confiar únicamente en el proxy local (loopback) detrás del túnel HTTPS
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -230,6 +248,7 @@ app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllers();
 
