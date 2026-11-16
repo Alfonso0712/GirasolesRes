@@ -97,6 +97,7 @@ analisis/
 # Database Dumps & Backups
 # ==============================
 database/backup_completo_*.sql
+respaldo_*.sql
 backend/sql/
 *.dump
 *.backup
