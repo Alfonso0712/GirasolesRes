@@ -10,6 +10,20 @@ obj/
 *.suo
 *.userprefs
 appsettings.Development.json
+appsettings.Production.json
+appsettings.*.local.json
+*.pfx
+*.key
+
+# ==============================
+# Variables de entorno y secretos locales
+# ==============================
+.env
+.env.*
+!.env.example
+!mobile/.env.demo
+!mobile/.env.example
+!mobile/.env.production
 
 # ==============================
 # Node & Vite (Frontend & Mobile)

@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RollForward>LatestMajor</RollForward>
+    <UserSecretsId>girasolesres-api-dev-secrets</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

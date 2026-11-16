@@ -113,28 +113,36 @@ GirasolesRes/
 
 ### Opción A: Despliegue con Docker Compose (Recomendado)
 
-Levanta la base de datos PostgreSQL con el esquema y datos iniciales preconfigurados:
+1. Copia `.env.example` a `.env` en la raíz y completa tus credenciales (`POSTGRES_PASSWORD`, `JWT_SECRET_KEY`, `APISPERU_TOKEN`, etc.).
+2. Levanta PostgreSQL y la API configurados mediante variables de entorno:
 
 ```bash
+cp .env.example .env
 docker compose up -d
 ```
 
-La base de datos estará disponible en `localhost:5432` con la base de datos `girasoles_db` ya inicializada.
+La base de datos estará disponible en `127.0.0.1:5432` y la API en `http://localhost:5050` (en `Production`, Swagger queda deshabilitado por defecto).
 
-Luego, inicia el Backend y el Frontend:
+Luego, si deseas ejecutar Backend y Frontend manualmente en desarrollo:
 
 ```bash
-# 1. En una terminal (Backend):
+# 1. Configura tus user-secrets de desarrollo (sin guardar secretos en appsettings.json):
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<SU_CADENA_CONEXION_POSTGRESQL>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Jwt:SecretKey" "<SU_CLAVE_JWT_MINIMO_32_CARACTERES>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Seed:PasswordInicial" "<SU_PASSWORD_INICIAL_DESARROLLO>" --project backend/GirasolesRes.API
+dotnet user-secrets set "ApisPeru:Token" "<SU_TOKEN_APISPERU>" --project backend/GirasolesRes.API
+
+# 2. En una terminal (Backend en Development):
 dotnet run --project backend/GirasolesRes.API/GirasolesRes.API.csproj
 
-# 2. En otra terminal (Frontend):
+# 3. En otra terminal (Frontend):
 cd frontend
 npm install
 npm run dev
 ```
 
 - **Frontend:** `http://localhost:5173`
-- **Backend API & Swagger UI:** `http://localhost:5050/swagger`
+- **Backend API & Swagger UI (solo Development):** `http://localhost:5050/swagger`
 
 ---
 
@@ -176,16 +184,16 @@ Correctas! - Con error: 0, Superado: 96, Omitido: 0, Total: 96
 
 ---
 
-## 7. Credenciales de Demostración
+## 7. Cuentas Semilla de Desarrollo (`Seed`)
 
-El sistema incluye cuentas de prueba operativas precargadas:
+Cuando `Seed__Habilitado=true` (valor por defecto únicamente en `Development`; en `Production` es `false`) y la tabla `usuarios` está vacía, el inicializador crea las cuentas base usando la contraseña definida obligatoriamente en `Seed__PasswordInicial` (vía `user-secrets` o variable de entorno; sin valor por defecto en código y sin modificar usuarios existentes):
 
 | Rol | Usuario | Contraseña | Permisos Operativos |
 | :--- | :--- | :--- | :--- |
-| **Administrador** | `admin` | `Password123!` | Acceso irrestricto: Usuarios, Carta, Salón, Caja, Reportes y Auditoría. |
-| **Cajero** | `atorres` | `Password123!` | Apertura/cierre de caja, liquidación de pedidos y emisión de comprobantes. |
-| **Mozo** | `lperez` | `Password123!` | Mapa de salón, toma de pedidos en mesa y mostrador. |
-| **Cocinero** | `msoto` | `Password123!` | Pantalla KDS de cocina, preparación y despacho de comandas. |
+| **Administrador** | `admin` | `<Seed__PasswordInicial>` | Acceso irrestricto: Usuarios, Carta, Salón, Caja, Reportes y Auditoría. |
+| **Cajero** | `atorres` | `<Seed__PasswordInicial>` | Apertura/cierre de caja, liquidación de pedidos y emisión de comprobantes. |
+| **Mozo** | `lperez` | `<Seed__PasswordInicial>` | Mapa de salón, toma de pedidos en mesa y mostrador. |
+| **Cocinero** | `msoto` | `<Seed__PasswordInicial>` | Pantalla KDS de cocina, preparación y despacho de comandas. |
 
 ---
 

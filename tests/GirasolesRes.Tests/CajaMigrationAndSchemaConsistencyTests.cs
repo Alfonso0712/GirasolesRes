@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using GirasolesRes.Tests.Helpers;
 using Npgsql;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,9 +12,7 @@ namespace GirasolesRes.Tests;
 public class CajaMigrationAndSchemaConsistencyTests
 {
     private readonly ITestOutputHelper _output;
-    private static readonly string ConnectionString = 
-        Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING") ?? 
-        "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=73268812";
+    private static string ConnectionString => TestDatabaseConfig.ObtenerConnectionStringPostgres();
 
     public CajaMigrationAndSchemaConsistencyTests(ITestOutputHelper output)
     {

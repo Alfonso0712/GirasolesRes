@@ -4,12 +4,18 @@ using GirasolesRes.Application;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Security;
 using GirasolesRes.Infrastructure;
+using GirasolesRes.Infrastructure.Configuration;
 using GirasolesRes.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Validación temprana de secretos y configuración de seguridad (sin valores sensibles por defecto)
+var configuracionSeguridad = ConfiguracionSeguridadValidator.ValidarOpcionesOLanzar(
+    builder.Configuration,
+    builder.Environment.IsDevelopment());
 
 // Inyección de dependencias de Clean Architecture
 builder.Services.AddApplicationServices();
@@ -52,10 +58,10 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Configuración de JWT
-var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "GirasolesRestauranteSuperClaveSecretaSegura2026!@#$%^";
-var issuer = builder.Configuration["Jwt:Issuer"] ?? "GirasolesRes";
-var audience = builder.Configuration["Jwt:Audience"] ?? "GirasolesResApp";
+// Configuración de JWT (validada previamente al arranque)
+var secretKey = configuracionSeguridad.JwtSecretKey;
+var issuer = configuracionSeguridad.JwtIssuer;
+var audience = configuracionSeguridad.JwtAudience;
 
 builder.Services.AddAuthentication(options =>
 {
@@ -162,9 +168,19 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<GirasolesDbContext>();
     var passwordHasher = services.GetRequiredService<IPasswordHasherService>();
 
+    foreach (var advertencia in configuracionSeguridad.Advertencias)
+    {
+        logger.LogWarning("{AdvertenciaConfiguracion}", advertencia);
+    }
+
     try
     {
-        await DatabaseSeeder.SeedAsync(context, passwordHasher, logger);
+        await DatabaseSeeder.SeedAsync(
+            context,
+            passwordHasher,
+            logger,
+            configuracionSeguridad.SeedHabilitado,
+            configuracionSeguridad.SeedPasswordInicial);
     }
     catch (Exception ex)
     {

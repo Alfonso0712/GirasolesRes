@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using GirasolesRes.Application.Interfaces.Security;
 using GirasolesRes.Domain.Entities;
+using GirasolesRes.Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,14 +20,29 @@ public class JwtGenerator : IJwtGenerator
 
     public string GenerarToken(Usuario usuario)
     {
-        var secretKey = _configuration["Jwt:SecretKey"] ?? "GirasolesRestauranteSuperClaveSecretaSegura2026!@#$%^";
-        var issuer = _configuration["Jwt:Issuer"] ?? "GirasolesRes";
-        var audience = _configuration["Jwt:Audience"] ?? "GirasolesResApp";
-        var expiryMinutesStr = _configuration["Jwt:ExpiryMinutes"] ?? "30";
-
-        if (!int.TryParse(expiryMinutesStr, out var expiryMinutes))
+        var secretKey = (_configuration["Jwt:SecretKey"] ?? string.Empty).Trim();
+        var errores = new List<string>();
+        ConfiguracionSeguridadValidator.ValidarClaveJwt(secretKey, errores);
+        if (errores.Count > 0)
         {
-            expiryMinutes = 30;
+            throw new InvalidOperationException(string.Join(" ", errores));
+        }
+
+        var issuer = string.IsNullOrWhiteSpace(_configuration["Jwt:Issuer"])
+            ? "GirasolesRes"
+            : _configuration["Jwt:Issuer"]!.Trim();
+        var audience = string.IsNullOrWhiteSpace(_configuration["Jwt:Audience"])
+            ? "GirasolesResApp"
+            : _configuration["Jwt:Audience"]!.Trim();
+
+        var erroresExpiracion = new List<string>();
+        var expiryMinutes = ConfiguracionSeguridadValidator.ResolverExpiracionJwt(
+            _configuration["Jwt:ExpiracionMinutos"],
+            _configuration["Jwt:ExpiryMinutes"],
+            erroresExpiracion);
+        if (erroresExpiracion.Count > 0)
+        {
+            throw new InvalidOperationException(string.Join(" ", erroresExpiracion));
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));

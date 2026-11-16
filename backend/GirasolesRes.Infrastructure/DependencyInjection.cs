@@ -1,6 +1,7 @@
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Security;
 using GirasolesRes.Application.Interfaces.Services;
+using GirasolesRes.Infrastructure.Configuration;
 using GirasolesRes.Infrastructure.Data;
 using GirasolesRes.Infrastructure.Repositories;
 using GirasolesRes.Infrastructure.Security;
@@ -8,6 +9,7 @@ using GirasolesRes.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 
 namespace GirasolesRes.Infrastructure;
@@ -16,8 +18,14 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=73268812";
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "Falta configurar 'ConnectionStrings:DefaultConnection'. Defínala mediante variables de entorno, user-secrets o appsettings no versionado.");
+        }
+
+        services.AddSingleton<IValidateOptions<ConfiguracionSeguridadOpciones>, ConfiguracionSeguridadValidator>();
 
         services.AddDbContext<GirasolesDbContext>(options =>
             options.UseNpgsql(connectionString));
