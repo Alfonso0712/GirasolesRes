@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using GirasolesRes.API.Configuration;
 using GirasolesRes.API.Middleware;
+using GirasolesRes.API.Services;
 using GirasolesRes.Application;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Security;
@@ -63,6 +64,7 @@ builder.Services.AddHsts(options =>
 // Inyección de dependencias de Clean Architecture
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddHostedService<LimpiezaTokensRevocadosService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
