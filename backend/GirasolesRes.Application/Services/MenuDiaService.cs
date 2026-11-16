@@ -172,10 +172,11 @@ public class MenuDiaService : IMenuDiaService
             var todosLosPlatosIds = productosCartaIds.Concat(opcionesIds).Distinct().ToList();
 
             var menu = await _menuDiaRepository.ObtenerMenuHoyConDetalleAsync(cancellationToken);
-            var esNuevo = menu == null;
+            bool esNuevo;
 
-            if (esNuevo)
+            if (menu == null)
             {
+                esNuevo = true;
                 menu = new MenuDia(fechaHoy, usuario);
                 menu.SincronizarPlatos(todosLosPlatosIds, usuario);
                 menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
@@ -183,7 +184,8 @@ public class MenuDiaService : IMenuDiaService
             }
             else
             {
-                                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
+                esNuevo = false;
+                // RN-33 / E-80: Conserva los platos y opciones ya marcados como agotados
                 menu.SincronizarPlatos(todosLosPlatosIds, usuario);
                 menu.SincronizarMenusCompletos(menusCompletosIds, usuario);
                 await _menuDiaRepository.ActualizarAsync(menu, cancellationToken);

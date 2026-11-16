@@ -225,4 +225,38 @@ public class MenuDiaServiceUnitTests
         Assert.Contains("MenusCompletos", propiedades);
         Assert.DoesNotContain("PlatoIds", propiedades);
     }
+
+    [Fact]
+    public async Task GuardarMenuHoy_CuandoMenuYaExiste_ActualizaSinErrorYConservaAgotados()
+    {
+        // Arrange: menú ya existente en BD con un plato marcado como agotado
+        var fechaHoy = TimeZoneHelper.ObtenerFechaActualLima();
+        var plato1 = new Producto("Lomo saltado", CategoriaProducto.PlatosExtras, 25.00m, true);
+        var plato2 = new Producto("Ceviche mixto", CategoriaProducto.PlatosExtras, 28.00m, true);
+
+        var menuExistente = new MenuDia(fechaHoy, "admin");
+        menuExistente.SincronizarPlatos(new[] { plato1.Id_Producto }, "admin");
+        menuExistente.CambiarDisponibilidadPlato(plato1.Id_Producto, agotado: true, "cocinero");
+
+        _mockMenuDiaRepo.Setup(r => r.ObtenerMenuHoyConDetalleAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(menuExistente);
+        _mockProductoRepo.Setup(r => r.ObtenerPorIdsAsync(It.IsAny<IEnumerable<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Producto> { plato1, plato2 });
+
+        var request = new GuardarMenuDiaRequest
+        {
+            ProductosCarta = new List<Guid> { plato1.Id_Producto, plato2.Id_Producto },
+            Opciones = new List<Guid>(),
+            MenusCompletos = new List<int>()
+        };
+
+        // Act
+        var result = await _service.GuardarMenuHoyAsync(request, "admin", "127.0.0.1");
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockMenuDiaRepo.Verify(r => r.ActualizarAsync(menuExistente, It.IsAny<CancellationToken>()), Times.Once);
+        _mockMenuDiaRepo.Verify(r => r.AgregarAsync(It.IsAny<MenuDia>(), It.IsAny<CancellationToken>()), Times.Never);
+        Assert.True(menuExistente.Men_Platos.First(p => p.Id_Producto == plato1.Id_Producto).Mdp_Agotado);
+    }
 }
