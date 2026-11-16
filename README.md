@@ -5,7 +5,7 @@
 [![.NET 8](https://img.shields.io/badge/.NET-8.0%20LTS-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![React 19](https://img.shields.io/badge/React-19.2.8-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%20%7C%2018-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Tailwind CSS 4](https://img.shields.io/badge/Tailwind%20CSS-4.3.3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 
 Plataforma web transaccional integral diseñada para optimizar el ciclo operativo, sincronizar en tiempo real el salón, la cocina (KDS) y la caja registradora, y garantizar el cumplimiento tributario (SUNAT) y la cuadratura financiera del restaurante **"Girasoles"**.
@@ -35,7 +35,7 @@ Plataforma web transaccional integral diseñada para optimizar el ciclo operativ
 | **Backend Framework** | ASP.NET Core Web API | `8.0.6` | API RESTful con inyección de dependencias nativa y middleware modular. |
 | **Lenguaje Backend** | C# | `12.0` | Tipado estricto, pattern matching y records inmutables. |
 | **Acceso a Datos (ORM)**| Entity Framework Core & Npgsql | `9.0.2` | Consultas tipadas en LINQ, migraciones y transacciones ACID. |
-| **Base de Datos** | PostgreSQL | `16 / 18` | Motor relacional con integridad referencial y auditoría transaccional. |
+| **Base de Datos** | PostgreSQL | `18` | Motor relacional con integridad referencial, auditoría inmutable por triggers y respaldo lógico. |
 | **Seguridad y Cripto** | JWT Bearer & PBKDF2 | `9.0.0` | Tokens firmados con HS256 y hashing de claves (100k iteraciones, salt 128b). |
 | **Generador PDF** | `PdfCanvasBuilder` | Nativo C# | Motor vectorial de bajo nivel sin librerías de terceros (comprobantes y actas). |
 | **Frontend Framework**| React | `19.2.8` | UI declarativa basada en componentes y hooks de ciclo de vida. |
@@ -54,7 +54,7 @@ El proyecto implementa una arquitectura cliente-servidor desacoplada siguiendo l
 ```text
 GirasolesRes/
 ├── .github/workflows/          # Integración Continua (GitHub Actions CI)
-├── docker-compose.yml          # Contenedor de PostgreSQL 16 con init script
+├── docker-compose.yml          # Orquestación de PostgreSQL 18 y API REST
 ├── GirasolesRes.sln            # Solución .NET estándar
 ├── CHANGELOG.md                # Historial de cambios y entregas (SemVer)
 ├── AGENTS.md                   # Reglas y gobernanza de arquitectura y desarrollo
@@ -101,12 +101,39 @@ GirasolesRes/
 
 ---
 
-## 4. Requisitos Previos
+## 4. Requisitos Previos e Instalación por Sistema
 
-- [.NET SDK 8.0+](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Node.js 20+ LTS](https://nodejs.org/) y npm
-- [Docker y Docker Compose](https://www.docker.com/) (opcional para ejecución en contenedores)
-- [PostgreSQL 16 o 18](https://www.postgresql.org/) (si se ejecuta sin Docker)
+- [.NET SDK 8.0 LTS](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js 22 LTS](https://nodejs.org/) y npm (compatibles con frontend web y cliente móvil)
+- [PostgreSQL 18](https://www.postgresql.org/) (motor y herramientas cliente `psql`, `pg_dump`, `pg_restore`, versión unificada con CI y volcado oficial)
+- [Docker y Docker Compose](https://www.docker.com/) *(opcional, recomendado para despliegue en contenedores)*
+
+### Instalación rápida en Windows (PowerShell con `winget`)
+
+```powershell
+winget install Microsoft.DotNet.SDK.8
+winget install OpenJS.NodeJS.LTS
+winget install PostgreSQL.PostgreSQL.18
+# Opcional para Android: Java JDK 17 y Android Studio
+```
+
+### Instalación rápida en Linux (Ubuntu / Debian)
+
+```bash
+# .NET 8 SDK
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
+
+# Node.js 22 LTS (vía repositorio oficial NodeSource)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# PostgreSQL 18 (repositorio PGDG oficial)
+sudo apt-get install -y curl ca-certificates
+sudo install -d /usr/share/postgresql-common/pgdg
+sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+sudo apt-get update && sudo apt-get install -y postgresql-18 postgresql-client-18
+```
 
 ---
 
