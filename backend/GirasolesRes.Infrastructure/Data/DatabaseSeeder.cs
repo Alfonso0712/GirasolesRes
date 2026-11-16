@@ -8,7 +8,12 @@ namespace GirasolesRes.Infrastructure.Data;
 
 public static class DatabaseSeeder
 {
-    public static async Task SeedAsync(GirasolesDbContext context, IPasswordHasherService passwordHasher, ILogger logger)
+    public static async Task SeedAsync(
+        GirasolesDbContext context,
+        IPasswordHasherService passwordHasher,
+        ILogger logger,
+        bool seedUsuariosHabilitado = false,
+        string? passwordInicial = null)
     {
         try
         {
@@ -66,12 +71,17 @@ public static class DatabaseSeeder
                 logger.LogWarning(ex, "Aviso al ejecutar saneamiento preventivo de caracteres UTF-8.");
             }
 
-            if (!await context.Usuarios.AnyAsync())
+            if (seedUsuariosHabilitado && !await context.Usuarios.AnyAsync())
             {
+                if (string.IsNullOrWhiteSpace(passwordInicial))
+                {
+                    throw new InvalidOperationException(
+                        "El sembrado inicial de usuarios está habilitado, pero falta configurar 'Seed:PasswordInicial'.");
+                }
+
                 logger.LogInformation("Iniciando sembrado inicial de usuarios para el Restaurante Girasoles...");
 
-                var defaultPassword = "Password123!";
-                var passwordHash = passwordHasher.HashPassword(defaultPassword);
+                var passwordHash = passwordHasher.HashPassword(passwordInicial);
 
                 var usuarios = new List<Usuario>
                 {
@@ -120,7 +130,11 @@ public static class DatabaseSeeder
                 await context.Usuarios.AddRangeAsync(usuarios);
                 await context.SaveChangesAsync();
 
-                logger.LogInformation("Sembrado completado: 5 usuarios creados con contraseña '{Password}'", defaultPassword);
+                logger.LogInformation("Sembrado completado: {Count} usuarios iniciales creados.", usuarios.Count);
+            }
+            else if (!seedUsuariosHabilitado)
+            {
+                logger.LogInformation("Sembrado inicial de usuarios omitido porque 'Seed:Habilitado' está desactivado.");
             }
 
             if (!await context.Mesas.AnyAsync())

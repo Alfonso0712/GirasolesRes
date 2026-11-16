@@ -25,9 +25,20 @@ public class ConsultaDocumentoService : IConsultaDocumentoService
 
     private (string baseUrl, string token) ObtenerCredenciales()
     {
-        var baseUrl = _configuration["ApisPeru:BaseUrl"] ?? "https://dniruc.apisperu.com/api/v1";
-        var token = _configuration["ApisPeru:Token"] ?? "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNqYXp6dGluN0BnbWFpbC5jb20ifQ.5NcXq2oQNzTUSEHiGwzZvCqY57fktdSPdBx9kjkXw8k";
-        return (baseUrl.TrimEnd('/'), token.Trim());
+        var baseUrl = _configuration["ApisPeru:BaseUrl"];
+        if (string.IsNullOrWhiteSpace(baseUrl))
+        {
+            baseUrl = "https://dniruc.apisperu.com/api/v1";
+        }
+
+        var token = _configuration["ApisPeru:Token"];
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            throw new InvalidOperationException(
+                "Falta configurar 'ApisPeru:Token' en la configuración del servidor.");
+        }
+
+        return (baseUrl.Trim().TrimEnd('/'), token.Trim());
     }
 
     public async Task<ConsultaDniResultadoDto?> ConsultarDniAsync(string dni, CancellationToken ct = default)

@@ -2,6 +2,7 @@ using GirasolesRes.Domain.Entities;
 using GirasolesRes.Domain.Enums;
 using GirasolesRes.Infrastructure.Data;
 using GirasolesRes.Infrastructure.Repositories;
+using GirasolesRes.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -9,9 +10,7 @@ namespace GirasolesRes.Tests;
 
 public class CajaRepositoryPostgreSqlIntegrationTests
 {
-    private static readonly string ConnectionString = 
-        Environment.GetEnvironmentVariable("TEST_CONNECTION_STRING") ?? 
-        "Host=localhost;Port=5432;Database=girasoles_db;Username=postgres;Password=73268812";
+    private static string ConnectionString => TestDatabaseConfig.ObtenerConnectionStringPostgres();
 
     private static GirasolesDbContext CreatePostgresDbContext()
     {

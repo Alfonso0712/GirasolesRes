@@ -1,61 +1,116 @@
+using System.Net;
 using System.Text;
+using GirasolesRes.API.Configuration;
 using GirasolesRes.API.Middleware;
+using GirasolesRes.API.Services;
 using GirasolesRes.Application;
 using GirasolesRes.Application.Interfaces.Persistence;
 using GirasolesRes.Application.Interfaces.Security;
 using GirasolesRes.Infrastructure;
+using GirasolesRes.Infrastructure.Configuration;
 using GirasolesRes.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Validación temprana de secretos y configuración de seguridad (sin valores sensibles por defecto)
+var configuracionSeguridad = ConfiguracionSeguridadValidator.ValidarOpcionesOLanzar(
+    builder.Configuration,
+    builder.Environment.IsDevelopment());
+
+var swaggerHabilitado = SuperficieHttpHelper.EsSwaggerHabilitado(
+    builder.Configuration,
+    builder.Environment.IsDevelopment());
+
+var rateLimitConfig = RateLimitHelper.LeerConfiguracion(builder.Configuration);
+
+// Limitación de tasa: política estricta para autenticación por IP real (vía ForwardedHeaders)
+// y límite global generoso por usuario autenticado o IP para no afectar el sondeo normal.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = (rejectedContext, ct) =>
+        RateLimitHelper.EscribirRespuestaRechazoAsync(rejectedContext, rateLimitConfig.AutenticacionVentanaSegundos, ct);
+
+    options.AddPolicy(
+        RateLimitConfiguracion.PoliticaAutenticacion,
+        httpContext => RateLimitHelper.ConstruirParticionAutenticacion(httpContext, rateLimitConfig));
+
+    options.GlobalLimiter = System.Threading.RateLimiting.PartitionedRateLimiter.Create<HttpContext, string>(
+        httpContext => RateLimitHelper.ConstruirParticionGlobal(httpContext, rateLimitConfig));
+});
+
+// Encabezados reenviados: confiar únicamente en el proxy local (loopback) detrás del túnel HTTPS
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+    options.KnownProxies.Add(IPAddress.Loopback);
+    options.KnownProxies.Add(IPAddress.IPv6Loopback);
+});
+
+builder.Services.AddHsts(options =>
+{
+    options.Preload = false;
+    options.IncludeSubDomains = false;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
 // Inyección de dependencias de Clean Architecture
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddHostedService<LimpiezaTokensRevocadosService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+
+if (swaggerHabilitado)
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
+    builder.Services.AddSwaggerGen(options =>
     {
-        Title = "GirasolesRes API",
-        Version = "v1",
-        Description = "API REST del Sistema de Gestión de Restaurante Girasoles (Clean Architecture)"
-    });
-
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Ingrese su token JWT (sin escribir Bearer, Swagger lo antepone automáticamente)."
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        options.SwaggerDoc("v1", new OpenApiInfo
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
+            Title = "GirasolesRes API",
+            Version = "v1",
+            Description = "API REST del Sistema de Gestión de Restaurante Girasoles (Clean Architecture)"
+        });
 
-// Configuración de JWT
-var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "GirasolesRestauranteSuperClaveSecretaSegura2026!@#$%^";
-var issuer = builder.Configuration["Jwt:Issuer"] ?? "GirasolesRes";
-var audience = builder.Configuration["Jwt:Audience"] ?? "GirasolesResApp";
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Ingrese su token JWT (sin escribir Bearer, Swagger lo antepone automáticamente)."
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+    });
+}
+
+// Configuración de JWT (validada previamente al arranque)
+var secretKey = configuracionSeguridad.JwtSecretKey;
+var issuer = configuracionSeguridad.JwtIssuer;
+var audience = configuracionSeguridad.JwtAudience;
 
 builder.Services.AddAuthentication(options =>
 {
@@ -122,30 +177,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// CORS para React + Vite en desarrollo y Cloudflare Pages en producción
+// CORS para React + Vite en desarrollo, app móvil Capacitor (https://localhost) y Cloudflare Pages en producción
+// Se rechaza origen nulo o vacío para evitar omisiones vía iframe sandbox o file://;
+// https://localhost y http://localhost quedan cubiertos explícitamente por la regla de host == "localhost".
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.SetIsOriginAllowed(origin =>
-        {
-            if (string.IsNullOrWhiteSpace(origin) || origin == "null") return true;
-            if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri)) return false;
-
-            var host = uri.Host.ToLowerInvariant();
-
-            // Localhost y desarrollo
-            if (host == "localhost" || host == "127.0.0.1") return true;
-
-            // Dominio de producción y subdominios
-            if (host == "girasolesres.pp.ua" || host.EndsWith(".girasolesres.pp.ua")) return true;
-            if (host == "girasoles.astrazynk.pp.ua" || host.EndsWith(".astrazynk.pp.ua")) return true;
-
-            // Despliegues de Cloudflare Pages (*.pages.dev)
-            if (host.EndsWith(".pages.dev")) return true;
-
-            return false;
-        })
+        policy.SetIsOriginAllowed(SuperficieHttpHelper.EsOrigenCorsPermitido)
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -162,9 +201,19 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<GirasolesDbContext>();
     var passwordHasher = services.GetRequiredService<IPasswordHasherService>();
 
+    foreach (var advertencia in configuracionSeguridad.Advertencias)
+    {
+        logger.LogWarning("{AdvertenciaConfiguracion}", advertencia);
+    }
+
     try
     {
-        await DatabaseSeeder.SeedAsync(context, passwordHasher, logger);
+        await DatabaseSeeder.SeedAsync(
+            context,
+            passwordHasher,
+            logger,
+            configuracionSeguridad.SeedHabilitado,
+            configuracionSeguridad.SeedPasswordInicial);
     }
     catch (Exception ex)
     {
@@ -172,29 +221,36 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Orden del pipeline HTTP: primero encabezados reenviados del proxy local y cabeceras de seguridad
+app.UseForwardedHeaders();
+app.UseMiddleware<SecurityHeadersMiddleware>();
+
+if (!app.Environment.IsDevelopment())
+{
+    // HSTS solo en producción; UseHttpsRedirection() no se activa porque Kestrel escucha solo HTTP (:5050)
+    // detrás del túnel Cloudflare / proxy inverso y redirigir a HTTPS sin puerto TLS local causaría bucles.
+    app.UseHsts();
+}
+
 // Middleware global para manejo homogéneo de excepciones (Clean Architecture)
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Swagger habilitado tanto en desarrollo como en producción
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+// Swagger habilitado solo si Swagger:Habilitado=true (por defecto true en Development, false en Production)
+if (swaggerHabilitado)
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GirasolesRes API v1");
-    c.RoutePrefix = "swagger";
-});
-
-// RNF-09: Las pantallas protegidas no se guardan en la caché del navegador
-app.Use(async (context, next) =>
-{
-    context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
-    context.Response.Headers["Pragma"] = "no-cache";
-    await next();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GirasolesRes API v1");
+        c.RoutePrefix = "swagger";
+    });
+}
 
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllers();
 

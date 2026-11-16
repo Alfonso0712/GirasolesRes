@@ -41,7 +41,7 @@ public class TokenRevocadoRepository : ITokenRevocadoRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task LimpiarExpiradosAsync(CancellationToken cancellationToken = default)
+    public async Task<int> LimpiarExpiradosAsync(CancellationToken cancellationToken = default)
     {
         var ahora = DateTime.UtcNow;
         var expirados = await _context.TokensRevocados
@@ -53,5 +53,7 @@ public class TokenRevocadoRepository : ITokenRevocadoRepository
             _context.TokensRevocados.RemoveRange(expirados);
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        return expirados.Count;
     }
 }

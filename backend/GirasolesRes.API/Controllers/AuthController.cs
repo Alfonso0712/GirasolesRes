@@ -1,10 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using GirasolesRes.API.Configuration;
 using GirasolesRes.Application.Common;
 using GirasolesRes.Application.DTOs.Auth;
 using GirasolesRes.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace GirasolesRes.API.Controllers;
 
@@ -27,6 +29,7 @@ public class AuthController : ControllerBase
     /// CUS01.1: Inicio de sesión con validación de ModelState y respuestas HTTP estructuradas
     /// </summary>
     [HttpPost("login")]
+    [EnableRateLimiting(RateLimitConfiguracion.PoliticaAutenticacion)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         // Semana 06: Validación defensiva del ModelState
@@ -88,6 +91,7 @@ public class AuthController : ControllerBase
     /// CUS01.2: Solicitar código de recuperación de contraseña
     /// </summary>
     [HttpPost("forgot-password")]
+    [EnableRateLimiting(RateLimitConfiguracion.PoliticaAutenticacion)]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -123,6 +127,7 @@ public class AuthController : ControllerBase
     /// CUS01.2: Restablecer contraseña con código de 6 dígitos
     /// </summary>
     [HttpPost("reset-password")]
+    [EnableRateLimiting(RateLimitConfiguracion.PoliticaAutenticacion)]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
