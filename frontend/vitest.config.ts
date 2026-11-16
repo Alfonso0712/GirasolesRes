@@ -7,5 +7,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    execArgv: [
+      '--import=data:text/javascript,import zlib from "node:zlib";import {syncBuiltinESMExports} from "node:module";if(typeof zlib.createZstdDecompress!=="function"){zlib.createZstdDecompress=zlib.createGunzip;syncBuiltinESMExports();}',
+    ],
   },
 });
