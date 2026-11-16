@@ -6,10 +6,18 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backend-ci:
     name: Backend Build & Tests (.NET 8)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     services:
       postgres:
@@ -57,12 +65,52 @@ jobs:
       - name: Build Solution (Release)
         run: dotnet build GirasolesRes.sln --no-restore --configuration Release
 
-      - name: Run Unit & Integration Tests (xUnit)
-        run: dotnet test GirasolesRes.sln --no-build --configuration Release --verbosity normal
+      - name: Run Unit & Integration Tests with Coverage (xUnit)
+        run: >-
+          dotnet test GirasolesRes.sln --no-build --configuration Release --verbosity normal
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=backend-results.trx"
+          --results-directory "${{ github.workspace }}/TestResults"
+
+      - name: Publish Test Summary
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'EOF'
+          import glob, os, xml.etree.ElementTree as ET
+          files = glob.glob("TestResults/**/*.trx", recursive=True)
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if not summary_path:
+              raise SystemExit(0)
+          lines = ["### Resumen de Pruebas Backend (.NET 8)", ""]
+          if not files:
+              lines.append("- No se encontró archivo `.trx` en `TestResults/`.")
+          else:
+              ns = {"t": "http://microsoft.com/schemas/VisualStudio/TeamTest/2010"}
+              for path in files:
+                  root = ET.parse(path).getroot()
+                  counters = root.find(".//t:Counters", ns)
+                  if counters is not None:
+                      total = counters.attrib.get("total", "0")
+                      passed = counters.attrib.get("passed", "0")
+                      failed = counters.attrib.get("failed", "0")
+                      lines.append(f"- **Total:** {total} | **Superadas:** {passed} | **Fallidas:** {failed}")
+          with open(summary_path, "a", encoding="utf-8") as fh:
+              fh.write("\n".join(lines) + "\n")
+          EOF
+
+      - name: Upload Backend Coverage & Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: TestResults/
+          retention-days: 14
 
   frontend-ci:
-    name: Frontend Typecheck & Build (Vite + React 19)
+    name: Frontend Lint, Tests & Build (Vite + React 19)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -79,6 +127,42 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Lint Frontend (oxlint)
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Run Frontend Unit Tests (Vitest)
+        working-directory: frontend
+        run: npm test
+
       - name: Compile and Build Frontend (TypeScript + Vite)
         working-directory: frontend
         run: npm run build
+
+  mobile-ci:
+    name: Mobile Lint, Coverage, Architecture & Build (Node 22)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: Run Mobile Full Verification (verify:todo)
+        working-directory: mobile
+        run: npm run verify:todo
+
+      - name: Verify Mobile Bundle Budget (check:budget)
+        working-directory: mobile
+        run: npm run check:budget

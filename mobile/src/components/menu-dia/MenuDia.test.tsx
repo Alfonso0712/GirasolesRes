@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DefinirMenuView } from './DefinirMenuView';
 import {
   BannerMenuNoDefinido,
@@ -173,6 +173,7 @@ describe('Definir el menú del día y permisos por rol (M-B, M-C, M-D, M-E)', ()
       await waitFor(() => {
         expect(screen.getByRole('tab', { name: 'Menús completos (1)' })).toBeTruthy();
       });
+      await act(async () => {});
 
       expect(screen.getByRole('tab', { name: 'Opciones (3)' })).toBeTruthy();
       expect(screen.getByRole('tab', { name: 'Carta (1)' })).toBeTruthy();
@@ -213,14 +214,16 @@ describe('Definir el menú del día y permisos por rol (M-B, M-C, M-D, M-E)', ()
       );
 
       await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Menús completos (1)' })).toBeTruthy();
         expect(screen.getByRole('checkbox', { name: /Seco de Res con Frejoles/i })).toBeTruthy();
       });
+      await act(async () => {});
 
       // Desmarcar el único segundo seleccionado mientras Almuerzo completo está habilitado
       fireEvent.click(screen.getByRole('checkbox', { name: /Seco de Res con Frejoles/i }));
 
       // Intentar guardar
-      fireEvent.click(screen.getByRole('button', { name: /Guardar menú del día/i }));
+      fireEvent.click(await screen.findByRole('button', { name: /Guardar menú del día/i }));
 
       expect(screen.getByRole('alert').textContent).toContain(
         MSG_219('Almuerzo completo', 'Segundo')
@@ -238,13 +241,15 @@ describe('Definir el menú del día y permisos por rol (M-B, M-C, M-D, M-E)', ()
       );
 
       await waitFor(() => {
+        expect(screen.getByText('Menú no definido hoy')).toBeTruthy();
         expect(screen.getByRole('checkbox', { name: /Sopa Criolla/i })).toBeTruthy();
       });
+      await act(async () => {});
 
       // Seleccionar solo una opción de componente sin habilitar ningún menú completo ni plato de carta
       fireEvent.click(screen.getByRole('checkbox', { name: /Sopa Criolla/i }));
 
-      fireEvent.click(screen.getByRole('button', { name: /Guardar menú del día/i }));
+      fireEvent.click(await screen.findByRole('button', { name: /Guardar menú del día/i }));
 
       expect(screen.getByRole('alert').textContent).toContain(MSG_224);
       expect(menuDiaService.guardarMenuHoy).not.toHaveBeenCalled();
@@ -259,19 +264,22 @@ describe('Definir el menú del día y permisos por rol (M-B, M-C, M-D, M-E)', ()
         </ToastProvider>
       );
 
+      // Esperar a que los contadores reflejen que useEffect inicializó original/actual desde datos
       await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Carta (1)' })).toBeTruthy();
         expect(screen.getByRole('checkbox', { name: /Bisteck a lo Pobre/i })).toBeTruthy();
       });
+      await act(async () => {});
 
       // Marcar un plato adicional de carta
       fireEvent.click(screen.getByRole('checkbox', { name: /Bisteck a lo Pobre/i }));
-      expect(screen.getByText('Tiene cambios sin guardar')).toBeTruthy();
+      expect(await screen.findByText('Tiene cambios sin guardar')).toBeTruthy();
 
       // Intentar volver atrás con el botón del encabezado
       fireEvent.click(screen.getByRole('button', { name: 'Volver' }));
 
       // Debe abrir ConfirmSheet con MSG-102 y no llamar a onVolver todavía
-      expect(screen.getByText(MSG_102)).toBeTruthy();
+      expect(await screen.findByText(MSG_102)).toBeTruthy();
       expect(onVolver).not.toHaveBeenCalled();
 
       // Elegir "Seguir editando"
@@ -281,7 +289,7 @@ describe('Definir el menú del día y permisos por rol (M-B, M-C, M-D, M-E)', ()
       // Ahora pulsar "Guardar menú del día" en la barra inferior y confirmar en el ConfirmSheet
       fireEvent.click(screen.getByRole('button', { name: /Guardar menú del día/i }));
       expect(
-        screen.getByText(
+        await screen.findByText(
           '¿Desea guardar el menú del día de hoy? El personal verá estas opciones al registrar pedidos.'
         )
       ).toBeTruthy();
