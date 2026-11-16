@@ -16,7 +16,10 @@ namespace GirasolesRes.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureServices(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        bool esDesarrollo = false)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrWhiteSpace(connectionString))
@@ -25,6 +28,7 @@ public static class DependencyInjection
                 "Falta configurar 'ConnectionStrings:DefaultConnection'. Defínala mediante variables de entorno, user-secrets o appsettings no versionado.");
         }
 
+        services.AddSingleton(new EntornoAplicacion(esDesarrollo));
         services.AddSingleton<IValidateOptions<ConfiguracionSeguridadOpciones>, ConfiguracionSeguridadValidator>();
 
         services.AddDbContext<GirasolesDbContext>(options =>

@@ -19,7 +19,7 @@ var configuracionSeguridad = ConfiguracionSeguridadValidator.ValidarOpcionesOLan
 
 // Inyección de dependencias de Clean Architecture
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

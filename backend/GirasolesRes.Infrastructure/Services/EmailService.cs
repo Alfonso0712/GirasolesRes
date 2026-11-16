@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using GirasolesRes.Application.Interfaces.Services;
+using GirasolesRes.Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -12,39 +13,47 @@ public class EmailService : IEmailService
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly ILogger<EmailService> _logger;
+    private readonly EntornoAplicacion _entorno;
 
     public EmailService(
         HttpClient httpClient,
         IConfiguration configuration,
-        ILogger<EmailService> logger)
+        ILogger<EmailService> logger,
+        EntornoAplicacion? entorno = null)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _logger = logger;
+        _entorno = entorno ?? new EntornoAplicacion(EsDesarrollo: false);
     }
 
     public async Task<bool> EnviarCodigoRecuperacionAsync(string correo, string codigo, CancellationToken cancellationToken = default)
     {
-        var apiKey = _configuration["Mailjet:ApiKey"] ?? _configuration["Resend:ApiKey"];
-        var secretKey = _configuration["Mailjet:SecretKey"];
-        var fromEmail = _configuration["Mailjet:FromEmail"] ?? "no-reply@girasolesres.pp.ua";
-        var fromName = _configuration["Mailjet:FromName"] ?? "Restaurante Girasoles";
+        var apiKey = ResolverConfiguracion("Email:ApiKey", "Mailjet:ApiKey");
+        var secretKey = ResolverConfiguracion("Email:SecretKey", "Mailjet:SecretKey");
+        var fromEmail = ResolverConfiguracion("Email:FromEmail", "Mailjet:FromEmail") ?? "no-reply@girasolesres.pp.ua";
+        var fromName = ResolverConfiguracion("Email:FromName", "Mailjet:FromName") ?? "Restaurante Girasoles";
 
-        var destinatarioReal = correo.EndsWith("@girasoles.com", StringComparison.OrdinalIgnoreCase)
-            ? "cjazztin7@gmail.com"
+        var destinatarioPrueba = _configuration["Email:DestinatarioDePrueba"];
+        var destinatarioReal = _entorno.EsDesarrollo && !string.IsNullOrWhiteSpace(destinatarioPrueba)
+            ? destinatarioPrueba.Trim()
             : correo;
-
-        _logger.LogInformation("==================================================");
-        _logger.LogInformation(" [SISTEMA GIRASOLES] Código de Recuperación: {Codigo}", codigo);
-        _logger.LogInformation(" Correo Solicitado: {Correo}", correo);
-        _logger.LogInformation(" Destinatario Mailjet: {DestinatarioReal}", destinatarioReal);
-        _logger.LogInformation(" Remitente: {FromName} <{FromEmail}>", fromName, fromEmail);
-        _logger.LogInformation("==================================================");
 
         if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(secretKey))
         {
-            _logger.LogWarning("No se encontraron 'Mailjet:ApiKey' o 'Mailjet:SecretKey' configuradas. Omitiendo despacho HTTP.");
-            return true;
+            if (_entorno.EsDesarrollo)
+            {
+                _logger.LogInformation(
+                    "Simulación local de correo de recuperación (Development) para usuario '{UsuarioCorreo}'.",
+                    correo);
+                Console.WriteLine($"[DEV][EmailService] Código de recuperación para {destinatarioReal}: {codigo}");
+                return true;
+            }
+
+            _logger.LogError(
+                "No existen credenciales de proveedor de correo configuradas ('Email:ApiKey' / 'Email:SecretKey'). Envío cancelado para usuario '{UsuarioCorreo}'.",
+                correo);
+            return false;
         }
 
         try
@@ -113,21 +122,40 @@ public class EmailService : IEmailService
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
-            var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Correo de recuperación despachado con éxito vía Mailjet API a {DestinatarioReal}. Respuesta: {Respuesta}", destinatarioReal, responseBody);
+                _logger.LogInformation(
+                    "Correo de recuperación despachado con éxito para usuario '{UsuarioCorreo}'.",
+                    correo);
                 return true;
             }
 
-            _logger.LogError("Fallo al enviar correo vía Mailjet API a {DestinatarioReal}. Código HTTP {StatusCode}. Respuesta: {Respuesta}", destinatarioReal, response.StatusCode, responseBody);
+            _logger.LogError(
+                "Fallo al despachar correo de recuperación para usuario '{UsuarioCorreo}'. Código HTTP {StatusCode}.",
+                correo,
+                response.StatusCode);
             return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Excepción no controlada al enviar correo vía Mailjet API a {DestinatarioReal}", destinatarioReal);
+            _logger.LogError(
+                ex,
+                "Excepción no controlada al despachar correo de recuperación para usuario '{UsuarioCorreo}'.",
+                correo);
             return false;
         }
+    }
+
+    private string? ResolverConfiguracion(string clavePrincipal, string claveRespaldo)
+    {
+        var valor = _configuration[clavePrincipal];
+        if (!string.IsNullOrWhiteSpace(valor))
+        {
+            return valor.Trim();
+        }
+
+        var respaldo = _configuration[claveRespaldo];
+        return string.IsNullOrWhiteSpace(respaldo) ? null : respaldo.Trim();
     }
 }

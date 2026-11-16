@@ -1,6 +1,11 @@
 namespace GirasolesRes.Infrastructure.Configuration;
 
 /// <summary>
+/// Representa el entorno de ejecución de la aplicación sin acoplar Infrastructure a Hosting.
+/// </summary>
+public sealed record EntornoAplicacion(bool EsDesarrollo);
+
+/// <summary>
 /// Opciones tipadas para la generación y validación de tokens JWT.
 /// </summary>
 public class JwtOpciones
