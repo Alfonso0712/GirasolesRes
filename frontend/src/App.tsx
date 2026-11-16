@@ -1,8 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { LoginPage } from './pages/LoginPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { HomePage } from './pages/HomePage';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { LandingPage } from './pages/LandingPage';
+import { PageLoader } from './components/ui/PageLoader';
 import { setTheme } from './hooks/useTheme';
 import { setHandedness, applyUserHandedness } from './hooks/useHandedness';
 import { obtenerTemaActual, obtenerOrientacionActual } from './services/perfilService';
@@ -15,6 +13,10 @@ import {
   resetUnauthorizedGuard,
 } from './services/apiClient';
 import type { UserSession } from './types/auth';
+
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const HomePage = lazy(() => import('./pages/HomePage'));
 
 type BannerState = {
   type: 'success' | 'error' | 'info' | 'warning';
@@ -219,27 +221,18 @@ export function App() {
   };
 
   if (verificandoSesion) {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="min-h-screen w-full bg-canvas flex flex-col items-center justify-center p-6 text-center"
-      >
-        <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-accent mb-3 animate-pulse">
-          <div className="w-5 h-5 rounded-full border-2 border-accent border-t-transparent animate-spin" />
-        </div>
-        <p className="text-sm font-semibold text-ink">Verificando sesión…</p>
-      </div>
-    );
+    return <PageLoader fullScreen mensaje="Verificando sesión…" />;
   }
 
   if (currentPage === 'home' && session) {
     return (
-      <HomePage
-        session={session}
-        onLogout={handleLogout}
-        onUpdateSession={handleUpdateSession}
-      />
+      <Suspense fallback={<PageLoader fullScreen />}>
+        <HomePage
+          session={session}
+          onLogout={handleLogout}
+          onUpdateSession={handleUpdateSession}
+        />
+      </Suspense>
     );
   }
 
@@ -249,16 +242,22 @@ export function App() {
 
   if (currentPage === 'login') {
     return (
-      <LoginPage
-        onSuccess={handleLoginSuccess}
-        onForgotPasswordClick={navigateToForgotPassword}
-        initialBanner={logoutBanner}
-        onBackToLanding={navigateToLanding}
-      />
+      <Suspense fallback={<PageLoader fullScreen />}>
+        <LoginPage
+          onSuccess={handleLoginSuccess}
+          onForgotPasswordClick={navigateToForgotPassword}
+          initialBanner={logoutBanner}
+          onBackToLanding={navigateToLanding}
+        />
+      </Suspense>
     );
   }
 
-  return <ForgotPasswordPage onBackToLogin={navigateToLogin} onBackToLanding={navigateToLanding} />;
+  return (
+    <Suspense fallback={<PageLoader fullScreen />}>
+      <ForgotPasswordPage onBackToLogin={navigateToLogin} onBackToLanding={navigateToLanding} />
+    </Suspense>
+  );
 }
 
 export default App;

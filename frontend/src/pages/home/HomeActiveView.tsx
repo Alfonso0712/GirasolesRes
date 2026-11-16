@@ -1,20 +1,22 @@
-import React from 'react';
-import { UsersPage } from '../UsersPage';
-import { MesasPage } from '../MesasPage';
-import { ProductsPage } from '../ProductsPage';
-import { MenuDiaPage } from '../MenuDiaPage';
-import { PedidoMesaPage } from '../PedidoMesaPage';
-import { PedidoLlevarPage } from '../PedidoLlevarPage';
-import { PedidosPage } from '../PedidosPage';
-import { CocinaPage } from '../CocinaPage';
-import { CobrosPage } from '../CobrosPage';
-import { VentasPage } from '../VentasPage';
-import { HistorialCierresPage } from '../HistorialCierresPage';
-import { ReportesPage } from '../ReportesPage';
-import { DashboardPage } from '../DashboardPage';
-import { ConfiguracionPage } from '../ConfiguracionPage';
+import React, { lazy, Suspense } from 'react';
 import { AccesoRestringidoView } from '../../components/layout';
+import { PageLoader } from '../../components/ui/PageLoader';
 import type { UserSession } from '../../types/auth';
+
+const UsersPage = lazy(() => import('../UsersPage'));
+const MesasPage = lazy(() => import('../MesasPage').then((m) => ({ default: m.MesasPage })));
+const ProductsPage = lazy(() => import('../ProductsPage'));
+const MenuDiaPage = lazy(() => import('../MenuDiaPage'));
+const PedidoMesaPage = lazy(() => import('../PedidoMesaPage'));
+const PedidoLlevarPage = lazy(() => import('../PedidoLlevarPage'));
+const PedidosPage = lazy(() => import('../PedidosPage'));
+const CocinaPage = lazy(() => import('../CocinaPage'));
+const CobrosPage = lazy(() => import('../CobrosPage'));
+const VentasPage = lazy(() => import('../VentasPage'));
+const HistorialCierresPage = lazy(() => import('../HistorialCierresPage'));
+const ReportesPage = lazy(() => import('../ReportesPage'));
+const DashboardPage = lazy(() => import('../DashboardPage'));
+const ConfiguracionPage = lazy(() => import('../ConfiguracionPage'));
 
 export interface HomeActiveViewProps {
   paginaActiva: string;
@@ -73,169 +75,170 @@ export const HomeActiveView: React.FC<HomeActiveViewProps> = ({
         : 'inicio'
     );
 
-  if (paginaActiva === 'productos' && session.rol === 'Administrador') {
-    return <ProductsPage session={session} onLogout={onLogout} />;
-  }
+  const renderVista = () => {
+    if (paginaActiva === 'productos' && session.rol === 'Administrador') {
+      return <ProductsPage session={session} onLogout={onLogout} />;
+    }
 
-  if (paginaActiva === 'menu-dia' && (session.rol === 'Administrador' || session.rol === 'Cocinero')) {
+    if (paginaActiva === 'menu-dia' && (session.rol === 'Administrador' || session.rol === 'Cocinero')) {
+      return (
+        <MenuDiaPage
+          session={session}
+          onLogout={onLogout}
+          onNavigateToProductos={() => setPaginaActiva('productos')}
+        />
+      );
+    }
+
+    if (paginaActiva === 'usuarios' && session.rol === 'Administrador') {
+      return <UsersPage session={session} onLogout={onLogout} />;
+    }
+
+    if (
+      paginaActiva === 'mesas' &&
+      (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero')
+    ) {
+      return (
+        <MesasPage
+          session={session}
+          onLogout={onLogout}
+          onNavigateToPedido={(mesaId, modo, pedidoId) => {
+            setMesaSeleccionadaParaPedido(mesaId);
+            setModoPedidoMesa(modo || 'nuevo');
+            setPedidoIdParaPedidoMesa(pedidoId || null);
+            setPaginaActiva('pedidos-mesa');
+          }}
+          onNavigateToCobro={(mesa) => {
+            setMesaParaCobro(mesa);
+            setPaginaActiva('caja');
+          }}
+          onNavigateToPedidoLlevar={
+            session.rol === 'Cajero'
+              ? () => setPaginaActiva('pedidos-llevar')
+              : undefined
+          }
+          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
+        />
+      );
+    }
+
+    if (
+      paginaActiva === 'pedidos-mesa' &&
+      (session.rol === 'Administrador' || session.rol === 'Mozo')
+    ) {
+      return mesaSeleccionadaParaPedido ? (
+        <PedidoMesaPage
+          session={session}
+          mesaIdInicial={mesaSeleccionadaParaPedido}
+          modoInicial={modoPedidoMesa}
+          pedidoIdInicial={pedidoIdParaPedidoMesa}
+          onLogout={onLogout}
+          onVolverAMesas={() => {
+            setMesaSeleccionadaParaPedido(null);
+            setPedidoIdParaPedidoMesa(null);
+            setPaginaActiva('mesas');
+          }}
+          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
+        />
+      ) : null;
+    }
+
+    if (paginaActiva === 'pedidos-llevar' && session.rol === 'Cajero') {
+      return (
+        <PedidoLlevarPage
+          session={session}
+          onLogout={onLogout}
+          onVolver={() => setPaginaActiva('mesas')}
+          onNavigateToCobro={() => setPaginaActiva('caja')}
+          onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
+        />
+      );
+    }
+
+    if (
+      paginaActiva === 'pedidos' &&
+      (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero')
+    ) {
+      return (
+        <PedidosPage
+          session={session}
+          onLogout={onLogout}
+          filtroEstadoInicial={filtroEstadoPedidos}
+          onNavigateToCobro={(pedidoId) => {
+            setPedidoIdParaCobro(pedidoId);
+            setPaginaActiva('caja');
+          }}
+        />
+      );
+    }
+
+    if ((paginaActiva === 'caja' || paginaActiva === 'cobros') && session.rol === 'Cajero') {
+      return (
+        <CobrosPage
+          session={session}
+          onLogout={onLogout}
+          mesaSeleccionadaInicial={mesaParaCobro}
+          pedidoIdInicial={pedidoIdParaCobro}
+          onClearMesaInicial={() => {
+            setMesaParaCobro(null);
+            setPedidoIdParaCobro(null);
+          }}
+          onCajaEstadoChange={consultarCajaGlobal}
+        />
+      );
+    }
+
+    if (paginaActiva === 'ventas' && (session.rol === 'Administrador' || session.rol === 'Cajero')) {
+      return <VentasPage session={session} onLogout={onLogout} />;
+    }
+
+    if (paginaActiva === 'historial-cierres') {
+      return session.rol === 'Administrador' ? (
+        <HistorialCierresPage session={session} onLogout={onLogout} />
+      ) : (
+        <AccesoRestringidoView modulo="historial-cierres" onIrAModuloPrincipal={irAModuloPrincipal} />
+      );
+    }
+
+    if (paginaActiva === 'reportes') {
+      return session.rol === 'Administrador' ? (
+        <ReportesPage
+          session={session}
+          onLogout={onLogout}
+          onNavigateToCierres={() => setPaginaActiva('historial-cierres')}
+        />
+      ) : (
+        <AccesoRestringidoView modulo="reportes" onIrAModuloPrincipal={irAModuloPrincipal} />
+      );
+    }
+
+    if (paginaActiva === 'cocina' && session.rol === 'Cocinero') {
+      return (
+        <CocinaPage
+          session={session}
+          onLogout={onLogout}
+          onUpdateSession={onUpdateSession}
+        />
+      );
+    }
+
+    if (paginaActiva === 'configuracion') {
+      return (
+        <ConfiguracionPage
+          session={session}
+          onLogout={onLogout}
+          onCambiarPassword={onCambiarPassword}
+        />
+      );
+    }
+
     return (
-      <MenuDiaPage
+      <DashboardPage
         session={session}
-        onLogout={onLogout}
-        onNavigateToProductos={() => setPaginaActiva('productos')}
+        onNavigate={handleDashboardNavigate}
       />
     );
-  }
+  };
 
-  if (paginaActiva === 'usuarios' && session.rol === 'Administrador') {
-    return <UsersPage session={session} onLogout={onLogout} />;
-  }
-
-  if (
-    paginaActiva === 'mesas' &&
-    (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero')
-  ) {
-    return (
-      <MesasPage
-        session={session}
-        onLogout={onLogout}
-        onNavigateToPedido={(mesaId, modo, pedidoId) => {
-          setMesaSeleccionadaParaPedido(mesaId);
-          setModoPedidoMesa(modo || 'nuevo');
-          setPedidoIdParaPedidoMesa(pedidoId || null);
-          setPaginaActiva('pedidos-mesa');
-        }}
-        onNavigateToCobro={(mesa) => {
-          setMesaParaCobro(mesa);
-          setPaginaActiva('caja');
-        }}
-        onNavigateToPedidoLlevar={
-          session.rol === 'Cajero'
-            ? () => setPaginaActiva('pedidos-llevar')
-            : undefined
-        }
-        onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
-      />
-    );
-  }
-
-  if (
-    paginaActiva === 'pedidos-mesa' &&
-    (session.rol === 'Administrador' || session.rol === 'Mozo')
-  ) {
-    return mesaSeleccionadaParaPedido ? (
-      <PedidoMesaPage
-        session={session}
-        mesaIdInicial={mesaSeleccionadaParaPedido}
-        modoInicial={modoPedidoMesa}
-        pedidoIdInicial={pedidoIdParaPedidoMesa}
-        onLogout={onLogout}
-        onVolverAMesas={() => {
-          setMesaSeleccionadaParaPedido(null);
-          setPedidoIdParaPedidoMesa(null);
-          setPaginaActiva('mesas');
-        }}
-        onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
-      />
-    ) : null;
-  }
-
-  if (
-    paginaActiva === 'pedidos-llevar' &&
-    session.rol === 'Cajero'
-  ) {
-    return (
-      <PedidoLlevarPage
-        session={session}
-        onLogout={onLogout}
-        onVolver={() => setPaginaActiva('mesas')}
-        onNavigateToCobro={() => setPaginaActiva('caja')}
-        onNavigateToMenuDia={() => setPaginaActiva('menu-dia')}
-      />
-    );
-  }
-
-  if (
-    paginaActiva === 'pedidos' &&
-    (session.rol === 'Administrador' || session.rol === 'Mozo' || session.rol === 'Cajero')
-  ) {
-    return (
-      <PedidosPage
-        session={session}
-        onLogout={onLogout}
-        filtroEstadoInicial={filtroEstadoPedidos}
-        onNavigateToCobro={(pedidoId) => {
-          setPedidoIdParaCobro(pedidoId);
-          setPaginaActiva('caja');
-        }}
-      />
-    );
-  }
-
-  if ((paginaActiva === 'caja' || paginaActiva === 'cobros') && session.rol === 'Cajero') {
-    return (
-      <CobrosPage
-        session={session}
-        onLogout={onLogout}
-        mesaSeleccionadaInicial={mesaParaCobro}
-        pedidoIdInicial={pedidoIdParaCobro}
-        onClearMesaInicial={() => {
-          setMesaParaCobro(null);
-          setPedidoIdParaCobro(null);
-        }}
-        onCajaEstadoChange={consultarCajaGlobal}
-      />
-    );
-  }
-
-  if (paginaActiva === 'ventas' && (session.rol === 'Administrador' || session.rol === 'Cajero')) {
-    return <VentasPage session={session} onLogout={onLogout} />;
-  }
-
-  if (paginaActiva === 'historial-cierres') {
-    return session.rol === 'Administrador' ? (
-      <HistorialCierresPage session={session} onLogout={onLogout} />
-    ) : (
-      <AccesoRestringidoView modulo="historial-cierres" onIrAModuloPrincipal={irAModuloPrincipal} />
-    );
-  }
-
-  if (paginaActiva === 'reportes') {
-    return session.rol === 'Administrador' ? (
-      <ReportesPage
-        session={session}
-        onLogout={onLogout}
-        onNavigateToCierres={() => setPaginaActiva('historial-cierres')}
-      />
-    ) : (
-      <AccesoRestringidoView modulo="reportes" onIrAModuloPrincipal={irAModuloPrincipal} />
-    );
-  }
-
-  if (paginaActiva === 'cocina' && session.rol === 'Cocinero') {
-    return (
-      <CocinaPage
-        session={session}
-        onLogout={onLogout}
-        onUpdateSession={onUpdateSession}
-      />
-    );
-  }
-
-  if (paginaActiva === 'configuracion') {
-    return (
-      <ConfiguracionPage
-        session={session}
-        onLogout={onLogout}
-        onCambiarPassword={onCambiarPassword}
-      />
-    );
-  }
-
-  return (
-    <DashboardPage
-      session={session}
-      onNavigate={handleDashboardNavigate}
-    />
-  );
+  return <Suspense fallback={<PageLoader />}>{renderVista()}</Suspense>;
 };
