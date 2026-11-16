@@ -21,7 +21,7 @@ Plataforma web transaccional integral diseñada para optimizar el ciclo operativ
 - [5. Inicio Rápido](#5-inicio-rápido)
   - [Opción A: Despliegue con Docker Compose (Recomendado)](#opción-a-despliegue-con-docker-compose-recomendado)
   - [Opción B: Despliegue en Entorno Local](#opción-b-despliegue-en-entorno-local)
-- [6. Suite de Pruebas Automatizadas (96 Tests)](#6-suite-de-pruebas-automatizadas-96-tests)
+- [6. Integración Continua (CI) y Suite de Pruebas Automatizadas](#6-integración-continua-ci-y-suite-de-pruebas-automatizadas)
 - [7. Cuentas Semilla de Desarrollo (`Seed`)](#7-cuentas-semilla-de-desarrollo-seed)
 - [8. Seguridad y Configuración](#8-seguridad-y-configuración)
 - [9. Arquitectura y Gobernanza](#9-arquitectura-y-gobernanza)
@@ -197,17 +197,18 @@ npm run dev
 
 ---
 
-## 6. Suite de Pruebas Automatizadas (96 Tests)
+## 6. Integración Continua (CI) y Suite de Pruebas Automatizadas
 
-El proyecto cuenta con **96 pruebas unitarias y de integración** formuladas con xUnit, Moq y Microsoft.EntityFrameworkCore.InMemory, validando casos de uso, transacciones atómicas, reglas de negocio y el patrón `Result<T>`:
+La insignia `Build and Test CI` al inicio de este documento refleja el estado del workflow [.github/workflows/ci.yml](.github/workflows/ci.yml) sobre la rama `main` (`push` y `pull_request`):
+
+- **`backend-ci` (.NET 8 + PostgreSQL 18):** compila la solución en `Release`, inicializa el esquema con `database/init_girasoles_db.sql`, ejecuta todas las pruebas xUnit recolectando cobertura (`XPlat Code Coverage` vía `coverlet.collector`), publica el resumen de conteos en el job y sube el artefacto `backend-coverage`.
+- **`frontend-ci` (Node 20):** ejecuta `npm run lint` (`oxlint`), `npm test` (`vitest run`) y `npm run build` (`tsc -b && vite build`).
+- **`mobile-ci` (Node 22):** ejecuta `npm run verify:todo` (ESLint + `jsx-a11y`, cobertura Vitest, builds producción/demo, `verify-connection.mjs`, reglas de layout y arquitectura) y `npm run check:budget`.
+- **Dependabot (`.github/dependabot.yml`):** revisión semanal automática para NuGet (`backend/` y `tests/`), npm (`frontend/` y `mobile/`) y `github-actions`.
 
 ```bash
+# Ejecutar suite backend localmente (requiere cadena de pruebas en TEST_CONNECTION_STRING)
 dotnet test GirasolesRes.sln
-```
-
-Salida esperada:
-```text
-Correctas! - Con error: 0, Superado: 96, Omitido: 0, Total: 96
 ```
 
 ---
