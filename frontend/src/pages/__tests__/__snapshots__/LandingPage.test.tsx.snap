@@ -18,7 +18,10 @@ exports[`LandingPage - Vista de Bienvenida y Carta Pública > debe coincidir con
           <img
             alt="Isotipo Girasoles"
             class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl object-cover shrink-0 shadow-md ring-2 ring-amber-400/30 group-hover:scale-105 transition-transform"
-            src="/favicon.png"
+            decoding="async"
+            height="130"
+            src="/src/assets/isotipo-girasoles-opt.webp"
+            width="128"
           />
           <div
             class="flex flex-col"
@@ -26,7 +29,10 @@ exports[`LandingPage - Vista de Bienvenida y Carta Pública > debe coincidir con
             <img
               alt="Restaurante Girasoles"
               class="h-8 sm:h-9 md:h-10 w-auto object-contain drop-shadow-md"
-              src="/src/assets/LOGO_GIRASOLES.png"
+              decoding="async"
+              height="100"
+              src="/src/assets/logo-girasoles-opt.webp"
+              width="573"
             />
             <span
               class="text-[10px] sm:text-[11px] text-amber-200/80 tracking-wide font-medium -mt-1 hidden sm:block"
@@ -1863,7 +1869,10 @@ exports[`LandingPage - Vista de Bienvenida y Carta Pública > debe coincidir con
           <img
             alt="Isotipo Girasoles"
             class="w-10 h-10 rounded-2xl object-cover shrink-0 shadow-md ring-1 ring-white/20"
-            src="/favicon.png"
+            decoding="async"
+            height="130"
+            src="/src/assets/isotipo-girasoles-opt.webp"
+            width="128"
           />
           <div
             class="flex flex-col"
@@ -1871,7 +1880,10 @@ exports[`LandingPage - Vista de Bienvenida y Carta Pública > debe coincidir con
             <img
               alt="Restaurante Girasoles"
               class="h-6 sm:h-7 w-auto object-contain drop-shadow-xs mb-1"
-              src="/src/assets/LOGO_GIRASOLES.png"
+              decoding="async"
+              height="100"
+              src="/src/assets/logo-girasoles-opt.webp"
+              width="573"
             />
             <p
               class="font-semibold text-stone-200"

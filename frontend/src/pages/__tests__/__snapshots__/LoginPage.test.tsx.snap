@@ -17,12 +17,18 @@ exports[`LoginPage - Navegación y Heurísticas de Usabilidad > debe coincidir c
         <img
           alt="Isotipo Girasoles"
           class="w-9 h-9 rounded-full object-cover shrink-0"
-          src="/favicon.png"
+          decoding="async"
+          height="130"
+          src="/src/assets/isotipo-girasoles-opt.webp"
+          width="128"
         />
         <img
           alt="Girasoles Restaurante"
           class="h-6 w-auto object-contain"
-          src="/LOGO_GIRASOLES.png"
+          decoding="async"
+          height="100"
+          src="/src/assets/logo-girasoles-opt.webp"
+          width="573"
         />
       </button>
     </header>
@@ -32,7 +38,10 @@ exports[`LoginPage - Navegación y Heurísticas de Usabilidad > debe coincidir c
       <img
         alt="Gastronomía Restaurante Girasoles"
         class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none z-0"
-        src="/bg-login-gastronomia.png"
+        decoding="async"
+        height="496"
+        src="/src/assets/bg-login-gastronomia-opt.webp"
+        width="1024"
       />
       <div
         aria-hidden="true"
@@ -48,12 +57,18 @@ exports[`LoginPage - Navegación y Heurísticas de Usabilidad > debe coincidir c
         <img
           alt="Isotipo Girasoles"
           class="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg ring-2 ring-white/20 group-hover:ring-primary group-hover:scale-105 transition-all duration-200"
-          src="/favicon.png"
+          decoding="async"
+          height="130"
+          src="/src/assets/isotipo-girasoles-opt.webp"
+          width="128"
         />
         <img
           alt="Girasoles Restaurante"
           class="h-8 w-auto object-contain drop-shadow-md group-hover:brightness-110 group-hover:drop-shadow-[0_2px_8px_rgba(243,156,18,0.4)] transition-all duration-200"
-          src="/LOGO_GIRASOLES.png"
+          decoding="async"
+          height="100"
+          src="/src/assets/logo-girasoles-opt.webp"
+          width="573"
         />
       </button>
       <div

@@ -73,6 +73,7 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cargando panel de inicio|Panel/i)).toBeInTheDocument();
     });
 
     expect(screen.getByAltText(/Girasoles Restaurante/i)).toBeInTheDocument();
@@ -99,6 +100,7 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     );
     await waitFor(() => {
       expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cargando panel de inicio|Panel/i)).toBeInTheDocument();
     });
     expect(screen.queryByText(/Pedido para Llevar/i)).not.toBeInTheDocument();
     unmountAdmin();
@@ -165,6 +167,7 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cargando panel de inicio|Panel/i)).toBeInTheDocument();
     });
     expect(screen.queryByText(/Catálogo de Productos para Llevar/i)).not.toBeInTheDocument();
   });
@@ -179,6 +182,7 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     );
     await waitFor(() => {
       expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cargando panel de inicio|Panel/i)).toBeInTheDocument();
     });
     expect(document.title).toBe('Inicio - Girasoles');
     unmount();
@@ -202,6 +206,7 @@ describe('HomePage - Pruebas de Caracterización y Layout Principal', () => {
     );
     await waitFor(() => {
       expect(screen.getByText(/Carlos Admin/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cargando panel de inicio|Panel/i)).toBeInTheDocument();
     });
     const quickActionSpans = container.querySelectorAll('button > span.font-semibold');
     expect(quickActionSpans.length).toBeGreaterThan(0);

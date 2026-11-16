@@ -1,6 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import logoGirasoles from '../../../assets/LOGO_GIRASOLES.png';
+import logoGirasoles from '../../../assets/logo-girasoles-opt.webp';
 
 interface SidebarHeaderProps {
   onCloseMobile?: () => void;
@@ -13,6 +13,9 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onCloseMobile }) =
         <img
           src={logoGirasoles}
           alt="Girasoles Restaurante"
+          width={573}
+          height={100}
+          decoding="async"
           className="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
         />
       </div>
