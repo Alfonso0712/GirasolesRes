@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using GirasolesRes.API.Configuration;
+using GirasolesRes.API.Health;
 using GirasolesRes.API.Middleware;
 using GirasolesRes.API.Services;
 using GirasolesRes.Application;
@@ -10,7 +11,9 @@ using GirasolesRes.Infrastructure;
 using GirasolesRes.Infrastructure.Configuration;
 using GirasolesRes.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -65,6 +68,8 @@ builder.Services.AddHsts(options =>
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.AddHostedService<LimpiezaTokensRevocadosService>();
+builder.Services.AddHealthChecks()
+    .AddCheck<BaseDatosHealthCheck>("postgresql");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -251,6 +256,17 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = HealthResponseWriter.EscribirRespuestaAsync,
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Degraded] = StatusCodes.Status503ServiceUnavailable,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+    }
+}).AllowAnonymous();
 
 app.MapControllers();
 
