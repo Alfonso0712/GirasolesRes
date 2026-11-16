@@ -1,6 +1,7 @@
 import React from 'react';
 import { LogIn, Menu as MenuIcon } from 'lucide-react';
-import logoGirasoles from '../../assets/LOGO_GIRASOLES.png';
+import isotipoGirasoles from '../../assets/isotipo-girasoles-opt.webp';
+import logoGirasoles from '../../assets/logo-girasoles-opt.webp';
 
 export interface LandingHeaderProps {
   onGoToLogin: () => void;
@@ -19,14 +20,20 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         {/* Logo Oficial del Sistema */}
         <a href="#inicio" className="flex items-center gap-3.5 group focus:outline-none">
           <img
-            src="/favicon.png"
+            src={isotipoGirasoles}
             alt="Isotipo Girasoles"
+            width={128}
+            height={130}
+            decoding="async"
             className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl object-cover shrink-0 shadow-md ring-2 ring-amber-400/30 group-hover:scale-105 transition-transform"
           />
           <div className="flex flex-col">
             <img
               src={logoGirasoles}
               alt="Restaurante Girasoles"
+              width={573}
+              height={100}
+              decoding="async"
               className="h-8 sm:h-9 md:h-10 w-auto object-contain drop-shadow-md"
             />
             <span className="text-[10px] sm:text-[11px] text-amber-200/80 tracking-wide font-medium -mt-1 hidden sm:block">

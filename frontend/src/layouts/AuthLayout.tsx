@@ -1,6 +1,8 @@
 import React from 'react';
 import { AuthBrandPanel } from '../components/layout/AuthBrandPanel';
 import { useHandedness } from '../hooks/useHandedness';
+import isotipoGirasoles from '../assets/isotipo-girasoles-opt.webp';
+import logoGirasoles from '../assets/logo-girasoles-opt.webp';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -27,26 +29,38 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, onLogoClick })
             className="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg transition-transform active:scale-95 cursor-pointer"
           >
             <img
-              src="/favicon.png"
+              src={isotipoGirasoles}
               alt="Isotipo Girasoles"
+              width={128}
+              height={130}
+              decoding="async"
               className="w-9 h-9 rounded-full object-cover shrink-0"
             />
             <img
-              src="/LOGO_GIRASOLES.png"
+              src={logoGirasoles}
               alt="Girasoles Restaurante"
+              width={573}
+              height={100}
+              decoding="async"
               className="h-6 w-auto object-contain"
             />
           </button>
         ) : (
           <div className="flex items-center gap-3">
             <img
-              src="/favicon.png"
+              src={isotipoGirasoles}
               alt="Isotipo Girasoles"
+              width={128}
+              height={130}
+              decoding="async"
               className="w-9 h-9 rounded-full object-cover shrink-0"
             />
             <img
-              src="/LOGO_GIRASOLES.png"
+              src={logoGirasoles}
               alt="Girasoles Restaurante"
+              width={573}
+              height={100}
+              decoding="async"
               className="h-6 w-auto object-contain"
             />
           </div>

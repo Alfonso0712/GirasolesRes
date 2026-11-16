@@ -1,6 +1,7 @@
 import React from 'react';
 import { Lock } from 'lucide-react';
-import logoGirasoles from '../../assets/LOGO_GIRASOLES.png';
+import isotipoGirasoles from '../../assets/isotipo-girasoles-opt.webp';
+import logoGirasoles from '../../assets/logo-girasoles-opt.webp';
 
 export interface LandingFooterProps {
   onGoToLogin: () => void;
@@ -12,14 +13,20 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({ onGoToLogin }) => 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <img
-            src="/favicon.png"
+            src={isotipoGirasoles}
             alt="Isotipo Girasoles"
+            width={128}
+            height={130}
+            decoding="async"
             className="w-10 h-10 rounded-2xl object-cover shrink-0 shadow-md ring-1 ring-white/20"
           />
           <div className="flex flex-col">
             <img
               src={logoGirasoles}
               alt="Restaurante Girasoles"
+              width={573}
+              height={100}
+              decoding="async"
               className="h-6 sm:h-7 w-auto object-contain drop-shadow-xs mb-1"
             />
             <p className="font-semibold text-stone-200">

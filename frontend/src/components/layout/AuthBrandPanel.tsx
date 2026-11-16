@@ -1,4 +1,7 @@
 import React from 'react';
+import bgLoginGastronomia from '../../assets/bg-login-gastronomia-opt.webp';
+import isotipoGirasoles from '../../assets/isotipo-girasoles-opt.webp';
+import logoGirasoles from '../../assets/logo-girasoles-opt.webp';
 
 interface AuthBrandPanelProps {
   onLogoClick?: () => void;
@@ -9,8 +12,11 @@ export const AuthBrandPanel: React.FC<AuthBrandPanelProps> = ({ onLogoClick }) =
     <aside className="hidden lg:flex lg:w-[60%] lg:max-w-[60%] lg:basis-[60%] text-white p-12 xl:p-16 flex-col justify-between relative overflow-hidden shrink-0 grow-0 select-none h-full bg-ink-fill">
       {/* Fotografía gastronómica de fondo con imagen oficial del restaurante */}
       <img
-        src="/bg-login-gastronomia.png"
+        src={bgLoginGastronomia}
         alt="Gastronomía Restaurante Girasoles"
+        width={1024}
+        height={496}
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none z-0"
       />
 
@@ -34,26 +40,38 @@ export const AuthBrandPanel: React.FC<AuthBrandPanelProps> = ({ onLogoClick }) =
           className="relative z-10 flex items-center gap-3.5 p-2 -m-2 rounded-2xl transition-all duration-200 group cursor-pointer hover:bg-white/10 hover:backdrop-blur-xs border border-transparent hover:border-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary w-fit text-left active:scale-[0.98]"
         >
           <img
-            src="/favicon.png"
+            src={isotipoGirasoles}
             alt="Isotipo Girasoles"
+            width={128}
+            height={130}
+            decoding="async"
             className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg ring-2 ring-white/20 group-hover:ring-primary group-hover:scale-105 transition-all duration-200"
           />
           <img
-            src="/LOGO_GIRASOLES.png"
+            src={logoGirasoles}
             alt="Girasoles Restaurante"
+            width={573}
+            height={100}
+            decoding="async"
             className="h-8 w-auto object-contain drop-shadow-md group-hover:brightness-110 group-hover:drop-shadow-[0_2px_8px_rgba(243,156,18,0.4)] transition-all duration-200"
           />
         </button>
       ) : (
         <div className="relative z-10 flex items-center gap-3.5">
           <img
-            src="/favicon.png"
+            src={isotipoGirasoles}
             alt="Isotipo Girasoles"
+            width={128}
+            height={130}
+            decoding="async"
             className="w-12 h-12 rounded-full object-cover shrink-0 shadow-lg ring-2 ring-white/20"
           />
           <img
-            src="/LOGO_GIRASOLES.png"
+            src={logoGirasoles}
             alt="Girasoles Restaurante"
+            width={573}
+            height={100}
+            decoding="async"
             className="h-8 w-auto object-contain drop-shadow-md"
           />
         </div>

@@ -18,7 +18,10 @@ exports[`Sidebar - Pruebas de Caracterización y Navegación > debe renderizar g
         <img
           alt="Girasoles Restaurante"
           class="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
-          src="/src/assets/LOGO_GIRASOLES.png"
+          decoding="async"
+          height="100"
+          src="/src/assets/logo-girasoles-opt.webp"
+          width="573"
         />
       </div>
       <button
@@ -309,7 +312,10 @@ exports[`Sidebar - Pruebas de Caracterización y Navegación > debe renderizar l
         <img
           alt="Girasoles Restaurante"
           class="h-10 sm:h-11 xl:h-12 w-auto max-w-[190px] xl:max-w-[210px] object-contain drop-shadow-xs"
-          src="/src/assets/LOGO_GIRASOLES.png"
+          decoding="async"
+          height="100"
+          src="/src/assets/logo-girasoles-opt.webp"
+          width="573"
         />
       </div>
     </div>
