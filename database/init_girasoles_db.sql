@@ -2261,6 +2261,65 @@ ALTER TABLE ONLY public.menus_completos_partes
 
 
 --
+-- Name: fn_impedir_modificacion_auditoria(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE OR REPLACE FUNCTION public.fn_impedir_modificacion_auditoria() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RAISE EXCEPTION 'Operación % prohibida: la tabla de auditoría "%" es de solo inserción e inmutable.',
+        TG_OP,
+        TG_TABLE_NAME
+        USING ERRCODE = '42501';
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_impedir_modificacion_auditoria() OWNER TO postgres;
+
+
+--
+-- Name: auditorias_cobro trg_auditorias_cobro_inmutable; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+DROP TRIGGER IF EXISTS trg_auditorias_cobro_inmutable ON public.auditorias_cobro;
+CREATE TRIGGER trg_auditorias_cobro_inmutable BEFORE UPDATE OR DELETE ON public.auditorias_cobro FOR EACH ROW EXECUTE FUNCTION public.fn_impedir_modificacion_auditoria();
+
+
+--
+-- Name: auditorias_mesa trg_auditorias_mesa_inmutable; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+DROP TRIGGER IF EXISTS trg_auditorias_mesa_inmutable ON public.auditorias_mesa;
+CREATE TRIGGER trg_auditorias_mesa_inmutable BEFORE UPDATE OR DELETE ON public.auditorias_mesa FOR EACH ROW EXECUTE FUNCTION public.fn_impedir_modificacion_auditoria();
+
+
+--
+-- Name: auditorias_pedido trg_auditorias_pedido_inmutable; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+DROP TRIGGER IF EXISTS trg_auditorias_pedido_inmutable ON public.auditorias_pedido;
+CREATE TRIGGER trg_auditorias_pedido_inmutable BEFORE UPDATE OR DELETE ON public.auditorias_pedido FOR EACH ROW EXECUTE FUNCTION public.fn_impedir_modificacion_auditoria();
+
+
+--
+-- Name: auditorias_reporte trg_auditorias_reporte_inmutable; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+DROP TRIGGER IF EXISTS trg_auditorias_reporte_inmutable ON public.auditorias_reporte;
+CREATE TRIGGER trg_auditorias_reporte_inmutable BEFORE UPDATE OR DELETE ON public.auditorias_reporte FOR EACH ROW EXECUTE FUNCTION public.fn_impedir_modificacion_auditoria();
+
+
+--
+-- Name: auditorias_usuario trg_auditorias_usuario_inmutable; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+DROP TRIGGER IF EXISTS trg_auditorias_usuario_inmutable ON public.auditorias_usuario;
+CREATE TRIGGER trg_auditorias_usuario_inmutable BEFORE UPDATE OR DELETE ON public.auditorias_usuario FOR EACH ROW EXECUTE FUNCTION public.fn_impedir_modificacion_auditoria();
+
+
+--
 -- PostgreSQL database dump complete
 --
 

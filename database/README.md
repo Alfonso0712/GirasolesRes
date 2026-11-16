@@ -39,3 +39,17 @@ Todas las cuentas de prueba tienen la contraseña: `Password123!`
 | `lperez` | Mozo | Activo | `lperez@girasoles.com` |
 | `msoto` | Cocinero | Activo | `msoto@girasoles.com` |
 | `crojas` | Mozo | Inactivo | `crojas@girasoles.com` |
+
+---
+
+## Inmutabilidad de Tablas de Auditoría (`migrate_auditorias_inmutables.sql`)
+
+Las cinco tablas de auditoría (`auditorias_cobro`, `auditorias_mesa`, `auditorias_pedido`, `auditorias_reporte` y `auditorias_usuario`) son de **solo inserción**. Ninguna clave foránea apunta hacia ellas ni sale de ellas.
+
+El script idempotente `database/migrate_auditorias_inmutables.sql` (incluido también en `database/init_girasoles_db.sql`) crea la función `public.fn_impedir_modificacion_auditoria()` y cinco triggers `BEFORE UPDATE OR DELETE` que lanzan una excepción (`SQLSTATE 42501`) si se intenta modificar o eliminar cualquier registro histórico.
+
+Para aplicarlo en una base de datos existente:
+
+```bash
+psql -U postgres -d girasoles_db -f database/migrate_auditorias_inmutables.sql
+```
