@@ -22,8 +22,9 @@ Plataforma web transaccional integral diseñada para optimizar el ciclo operativ
   - [Opción A: Despliegue con Docker Compose (Recomendado)](#opción-a-despliegue-con-docker-compose-recomendado)
   - [Opción B: Despliegue en Entorno Local](#opción-b-despliegue-en-entorno-local)
 - [6. Suite de Pruebas Automatizadas (96 Tests)](#6-suite-de-pruebas-automatizadas-96-tests)
-- [7. Credenciales de Demostración](#7-credenciales-de-demostración)
-- [8. Documentación Académica y Técnica](#8-documentación-académica-y-técnica)
+- [7. Cuentas Semilla de Desarrollo (`Seed`)](#7-cuentas-semilla-de-desarrollo-seed)
+- [8. Seguridad y Configuración](#8-seguridad-y-configuración)
+- [9. Arquitectura y Gobernanza](#9-arquitectura-y-gobernanza)
 
 ---
 
@@ -197,7 +198,71 @@ Cuando `Seed__Habilitado=true` (valor por defecto únicamente en `Development`; 
 
 ---
 
-## 8. Arquitectura y Gobernanza
+## 8. Seguridad y Configuración
+
+### Política de Secretos y Arranque Seguro
+
+- Ningún archivo versionado (`appsettings.json`, código C#, `docker-compose.yml`) contiene contraseñas, tokens ni claves reales. Use las plantillas [backend/GirasolesRes.API/appsettings.Example.json](backend/GirasolesRes.API/appsettings.Example.json) y [.env.example](.env.example).
+- Al arrancar, la API valida que existan `ConnectionStrings:DefaultConnection` y `Jwt:SecretKey` (mínimo 32 caracteres y no débil/marcador) y que, si `Seed:Habilitado` es `true`, esté definida `Seed:PasswordInicial`. Si falta o es inválida, la aplicación detiene el arranque sin imprimir el valor secreto.
+- En producción (`ASPNETCORE_ENVIRONMENT=Production`), `Swagger` y el sembrado de usuarios (`Seed__Habilitado`) quedan deshabilitados por defecto, y se habilita `HSTS`. `UseHttpsRedirection` se omite deliberadamente porque Kestrel atiende HTTP local detrás del túnel HTTPS Cloudflare, evitando bucles de redirección.
+
+### Cómo generar una clave JWT segura (sin ejemplos reales)
+
+Genere al menos 32 bytes aleatorios criptográficos (mínimo 256 bits) y guárdelos únicamente en `user-secrets` (desarrollo) o variables de entorno (servidor):
+
+```bash
+# Linux / macOS / Git Bash (OpenSSL):
+openssl rand -base64 48
+```
+
+```powershell
+# Windows PowerShell (.NET):
+[Convert]::ToBase64String((1..48 | ForEach-Object { [byte](Get-Random -Minimum 0 -Maximum 256) }))
+```
+
+*(Para máxima entropía en PowerShell con CSPRNG, use `[Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(48))`.)*
+
+### Configuración local en Desarrollo (`dotnet user-secrets`)
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<SU_CADENA_CONEXION_POSTGRESQL>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Jwt:SecretKey" "<SU_CLAVE_JWT_GENERADA>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Seed:PasswordInicial" "<SU_PASSWORD_INICIAL_DESARROLLO>" --project backend/GirasolesRes.API
+dotnet user-secrets set "ApisPeru:Token" "<SU_TOKEN_APISPERU>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Email:ApiKey" "<SU_API_KEY_MAILJET>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Email:SecretKey" "<SU_SECRET_KEY_MAILJET>" --project backend/GirasolesRes.API
+dotnet user-secrets set "Email:DestinatarioDePrueba" "<SU_CORREO_PRUEBA_DEV>" --project backend/GirasolesRes.API
+```
+
+### Variables de Entorno Requeridas en el Servidor Real (`Production`)
+
+| Variable | Obligatoria | Valor por defecto | Descripción |
+| :--- | :---: | :--- | :--- |
+| `ASPNETCORE_ENVIRONMENT` | Sí | `Production` | Define el modo de ejecución del servidor. |
+| `ConnectionStrings__DefaultConnection` | Sí | *(ninguno)* | Cadena de conexión a PostgreSQL. |
+| `Jwt__SecretKey` | Sí | *(ninguno)* | Clave aleatoria HMAC-SHA256 ($\ge 32$ caracteres). |
+| `Jwt__Issuer` | No | `GirasolesRes` | Emisor del token JWT. |
+| `Jwt__Audience` | No | `GirasolesResApp` | Audiencia válida del token JWT. |
+| `Jwt__ExpiracionMinutos` | No | `30` | Vigencia del token JWT en minutos (`1..1440`). |
+| `ApisPeru__BaseUrl` | No | `https://dniruc.apisperu.com/api/v1` | URL base para consultas RENIEC/SUNAT. |
+| `ApisPeru__Token` | Recomendada | *(vacío)* | Token de ApisPeru para DNI/RUC en cobros. |
+| `Email__ApiKey` | Recomendada | *(vacío)* | API Key de Mailjet para recuperación de contraseña. |
+| `Email__SecretKey` | Recomendada | *(vacío)* | Secret Key de Mailjet. |
+| `Email__FromEmail` | No | `no-reply@girasolesres.pp.ua` | Dirección remitente verificada. |
+| `Email__FromName` | No | `Restaurante Girasoles` | Nombre visible del remitente. |
+| `Email__DestinatarioDePrueba` | No | *(ignorado en Prod)* | Redirección de correos válida solo en `Development`. |
+| `Seed__Habilitado` | No | `false` (Prod) / `true` (Dev) | Controla la creación inicial de usuarios si la tabla está vacía. |
+| `Seed__PasswordInicial` | Si `Seed=true` | *(ninguno)* | Contraseña inicial mínima de 8 caracteres para cuentas semilla nuevas. |
+| `Swagger__Habilitado` | No | `false` (Prod) / `true` (Dev) | Habilita o deshabilita Swagger UI. |
+| `RateLimit__Autenticacion__PermitLimit` | No | `10` | Intentos permitidos por ventana en `/api/auth/login`, `/forgot-password`, `/reset-password`. |
+| `RateLimit__Autenticacion__VentanaSegundos` | No | `60` | Duración de la ventana fija de autenticación en segundos. |
+| `RateLimit__Global__PermitLimit` | No | `300` | Límite global generoso por usuario autenticado o IP. |
+| `RateLimit__Global__VentanaSegundos` | No | `60` | Ventana del límite global en segundos. |
+| `Seguridad__LimpiezaTokensDias` | No | `7` | Periodicidad en días para purgar `tokens_revocados` expirados. |
+
+---
+
+## 9. Arquitectura y Gobernanza
 
 - 📐 **Estándares y Reglas de Desarrollo:** [AGENTS.md](AGENTS.md)
 - 📜 **Historial de Versiones:** [CHANGELOG.md](CHANGELOG.md)

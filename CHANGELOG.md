@@ -7,6 +7,19 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ---
 
+## [No publicado] — Endurecimiento de Seguridad (Fase H1)
+
+### Seguridad y Configuración
+- **Retiro completo de secretos versionados:** Limpieza de `appsettings.json`, `docker-compose.yml`, `DatabaseSeeder`, `JwtGenerator`, `ConsultaDocumentoService`, `DependencyInjection`, `Program.cs` y utilidades de pruebas; incorporación de `appsettings.Example.json` y `.env.example`.
+- **Validación estricta al arranque (`ConfiguracionSeguridadValidator`):** Falla de forma temprana sin imprimir valores sensibles si falta `ConnectionStrings:DefaultConnection`, `Jwt:SecretKey`, si la clave JWT es menor a 32 caracteres o débil, o si `Seed:Habilitado=true` sin `Seed:PasswordInicial`.
+- **Sembrado seguro (`Seed`):** Creación inicial de usuarios desactivada por defecto en `Production`, contraseña por configuración obligatoria cuando se habilita y retiro de contraseña en texto claro de los registros de log.
+- **Protección de códigos OTP y correo (`EmailService`):** Eliminación del registro de códigos OTP en `ILogger`, aislamiento de simulación local por consola únicamente en `Development` y reemplazo del destinatario hardcoded por `Email:DestinatarioDePrueba` (ignorado en producción).
+- **Superficie HTTP y proxy inverso:** Swagger configurable mediante `Swagger:Habilitado` (`false` por defecto en producción), `ForwardedHeaders` restringido a loopback local, `HSTS` en producción, middleware de encabezados de seguridad (`nosniff`, `DENY`, `no-referrer`, `Permissions-Policy`, `Cache-Control: no-store` en `/api/auth/*`) y lista blanca CORS estricta sin permisión de origen `"null"`.
+- **Limitación de tasa (`RateLimiter` HTTP 429):** Política `"autenticacion"` (10 solicitudes/minuto por IP real) y límite global (300/min por usuario autenticado o IP) con cabecera `Retry-After` y cuerpo JSON homogéneo.
+- **Limpieza programada de tokens revocados:** Nuevo `BackgroundService` (`LimpiezaTokensRevocadosService`) configurable con `Seguridad:LimpiezaTokensDias` (7 días por defecto) para purgar tokens expirados.
+
+---
+
 ## [1.0.0] - 2026-10-20
 
 ### Añadido
